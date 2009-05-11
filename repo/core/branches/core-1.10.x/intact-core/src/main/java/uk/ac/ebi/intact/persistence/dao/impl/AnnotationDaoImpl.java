@@ -18,7 +18,7 @@ import java.util.List;
  * @since <pre>07-jul-2006</pre>
  */
 @Repository
-@Transactional
+@Transactional(readOnly = true)
 @SuppressWarnings( {"unchecked"} )
 public class AnnotationDaoImpl extends IntactObjectDaoImpl<Annotation> implements AnnotationDao {
 

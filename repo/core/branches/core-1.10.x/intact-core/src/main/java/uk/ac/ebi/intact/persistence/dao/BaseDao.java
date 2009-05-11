@@ -59,6 +59,8 @@ public interface BaseDao<T> {
 
     void deleteAll( Collection<T> objsToDelete );
 
+    int deleteAll();
+
     void saveOrUpdate( T objToPersist );
 
     void refresh( T obj );

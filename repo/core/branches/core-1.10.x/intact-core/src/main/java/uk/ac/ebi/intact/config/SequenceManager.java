@@ -22,11 +22,16 @@ import org.hibernate.dialect.Oracle8iDialect;
 import org.hibernate.dialect.Oracle9Dialect;
 import org.hibernate.ejb.HibernateEntityManagerFactory;
 import org.hibernate.engine.SessionFactoryImplementor;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.config.hibernate.SequenceAuxiliaryDatabaseObject;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
+import javax.persistence.PersistenceContext;
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**
@@ -36,25 +41,43 @@ import java.util.List;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
+@Component
 public class SequenceManager {
 
     private static final Log log = LogFactory.getLog( SequenceManager.class );
 
+//    @Autowired
+//    private EntityManagerFactory entityManagerFactory;
+
     private Dialect dialect;
 
-    public SequenceManager(DataConfig dataConfig) {
-        final EntityManagerFactory entityManagerFactory = dataConfig.getEntityManagerFactory();
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public SequenceManager() {
+
+    }
+
+    public SequenceManager(EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
+        init();
+    }
+
+    @PostConstruct
+    public void init() {
         HibernateEntityManagerFactory hemf = (HibernateEntityManagerFactory) entityManagerFactory;
         this.dialect = ((SessionFactoryImplementor) hemf.getSessionFactory()).getDialect();
     }
 
     /**
      * Checks if a sequence exists.
-     * @param entityManager The entity manager to use
      * @param sequenceName The name of the sequence
      * @return True if the sequence exists
      */
-    public boolean sequenceExists(EntityManager entityManager, String sequenceName) {
+    public boolean sequenceExists(String sequenceName) {
         List<String> existingSequences = getExistingSequenceNames(entityManager);
 
         for (String existingSequence : existingSequences) {
@@ -68,24 +91,23 @@ public class SequenceManager {
 
     /**
      * Creates a sequence in the database, if it does not exist already. Uses the default initial value, which is 1.
-     * @param entityManager The entity manager to use
      * @param sequenceName The name of the new sequence
      * @throws SequenceCreationException
      */
-    public void createSequenceIfNotExists(EntityManager entityManager, String sequenceName) throws SequenceCreationException {
-        createSequenceIfNotExists(entityManager, sequenceName, 1);
+    public void createSequenceIfNotExists(String sequenceName) throws SequenceCreationException {
+        createSequenceIfNotExists(sequenceName, 1);
     }
 
     /**
      * Creates a sequence in the database, if it does not exist already.
-     * @param entityManager The entity manager to use
      * @param sequenceName The name of the new sequence
      * @param initialValue The initial value of the sequence. This will be the first value given by the sequence
      * when the next value is invoked
      * @throws SequenceCreationException Will happen if there are problems creating the sequence in the database
      */
-    public void createSequenceIfNotExists(EntityManager entityManager, String sequenceName, int initialValue) throws SequenceCreationException {
-        if (!sequenceExists(entityManager, sequenceName)) {
+    @Transactional
+    public void createSequenceIfNotExists(String sequenceName, int initialValue) throws SequenceCreationException {
+        if (!sequenceExists(sequenceName)) {
             if (log.isInfoEnabled()) log.info("Sequence could not be found and it is going to be created: "+sequenceName);
 
             String sql = new SequenceAuxiliaryDatabaseObject(sequenceName, initialValue).sqlCreateString(dialect);
@@ -94,7 +116,7 @@ public class SequenceManager {
                 final Query createSeqQuery = entityManager.createNativeQuery(sql);
                 createSeqQuery.executeUpdate();
             } catch (Exception e) {
-                throw new SequenceCreationException("Exception creating the sequence: "+sequenceName+" (initial value: "+initialValue+")");
+                throw new SequenceCreationException("Exception creating the sequence: "+sequenceName+" (initial value: "+initialValue+")", e);
             }
         }
     }
@@ -104,6 +126,7 @@ public class SequenceManager {
      * @param entityManager The entity manager to use
      * @return the names of the sequences
      */
+    @Transactional(readOnly = true)
     public List<String> getExistingSequenceNames(EntityManager entityManager) {
         Query query ;
 
@@ -113,19 +136,18 @@ public class SequenceManager {
             query = entityManager.createNativeQuery(dialect.getQuerySequencesString());
         }
 
-
         List<String> existingSequences = query.getResultList();
         return existingSequences;
     }
 
     /**
      * Gets the next value for the provided sequence
-     * @param entityManager The entity manager to use
      * @param sequenceName The sequence name to query
      * @return The next value for that sequence; null if the sequence does not exist;
      */
-    public Long getNextValueForSequence( EntityManager entityManager, String sequenceName ) {
-        if ( !sequenceExists( entityManager, sequenceName ) ) {
+    @Transactional(readOnly = true)
+    public Long getNextValueForSequence(String sequenceName ) {
+        if ( !sequenceExists(sequenceName ) ) {
             throw new IllegalArgumentException( "Sequence does not exist: " + sequenceName +
                                                 ". Sequences found in the database: " + getExistingSequenceNames( entityManager ) );
         }

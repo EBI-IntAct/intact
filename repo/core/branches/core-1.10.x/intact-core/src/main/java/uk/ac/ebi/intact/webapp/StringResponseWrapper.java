@@ -13,6 +13,7 @@ import java.io.StringWriter;
  * Time: 11:19:14
  * To change this template use File | Settings | File Templates.
  */
+@Deprecated
 public class StringResponseWrapper extends HttpServletResponseWrapper {
 
     private PrintWriter writer;

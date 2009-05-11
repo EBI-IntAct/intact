@@ -10,6 +10,8 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.Scope;
+import org.springframework.beans.factory.config.BeanDefinition;
 import uk.ac.ebi.intact.annotation.PotentialThreat;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactSession;
@@ -35,6 +37,7 @@ import java.util.List;
  */
 @Repository
 @Transactional
+@Scope(org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE)
 @SuppressWarnings( "unchecked" )
 public class CvObjectDaoImpl<T extends CvObject> extends AnnotatedObjectDaoImpl<T> implements CvObjectDao<T> {
 

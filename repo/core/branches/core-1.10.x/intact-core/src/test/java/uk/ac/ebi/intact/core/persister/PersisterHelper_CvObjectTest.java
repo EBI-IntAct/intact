@@ -15,11 +15,13 @@
  */
 package uk.ac.ebi.intact.core.persister;
 
-import org.junit.Assert;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
+import org.springframework.test.annotation.DirtiesContext;
+import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.intact.config.DataConfig;
+import uk.ac.ebi.intact.config.SequenceManager;
+import uk.ac.ebi.intact.config.IntactAuxiliaryConfigurator;
 import uk.ac.ebi.intact.config.impl.InMemoryDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactEnvironment;
@@ -28,10 +30,13 @@ import uk.ac.ebi.intact.context.impl.StandaloneSession;
 import uk.ac.ebi.intact.core.persister.stats.PersisterStatistics;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
+import uk.ac.ebi.intact.core.spring.IntactInitializer;
+import uk.ac.ebi.intact.core.util.SchemaUtils;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 import uk.ac.ebi.intact.model.util.CvObjectBuilder;
 
+import javax.persistence.Query;
 import java.util.Properties;
 
 /**
@@ -42,7 +47,21 @@ import java.util.Properties;
  */
 public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
 
+//    @Before
+//    public void deleteCvs() {
+////        getDaoFactory().getCvObjectDao().deleteAll();
+////
+////        IntactInitializer initializer = (IntactInitializer)getApplicationContext().getBean("intactInitializer");
+////        initializer.persistBasicCvObjects();
+//
+//        for (String del : SchemaUtils.generateDeleteAllTables()) {
+//            Query query = getEntityManager().createNativeQuery(del);
+//            query.executeUpdate();
+//        }
+//    }
+    
     @Test
+    @DirtiesContext
     public void persist_recursive_object() throws Exception {
         // Note: CvDatabase( psi-mi ) has an Xref to psi-mi (that is itself)
         CvObjectBuilder builder = new CvObjectBuilder();
@@ -57,6 +76,7 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
     }
 
     @Test
+    @DirtiesContext
     public void persist_default() throws Exception {
         CvObjectBuilder builder = new CvObjectBuilder();
         CvXrefQualifier cvXrefQual = builder.createIdentityCvXrefQualifier( getIntactContext().getInstitution() );
@@ -81,6 +101,7 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
     }
 
     @Test
+    @DirtiesContext
     public void persist_existing_object() throws Exception {
         final String expRoleLabel = "EXP_ROLE";
 
@@ -97,6 +118,7 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
     }
 
     @Test (expected = PersisterException.class)
+    @DirtiesContext
     public void add_annotation_on_existing_cv() throws Exception {
         final String expRoleLabel = "EXP_ROLE";
 
@@ -112,22 +134,23 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
     }
 
     @Test
+    @DirtiesContext
     public void add_annotation_on_existing_cv_transientsPersisted() throws Exception {
         final String expRoleLabel = "EXP_ROLE";
 
         CvExperimentalRole expRole = getMockBuilder().createCvObject( CvExperimentalRole.class, "MI:xxxx", expRoleLabel);
         Assert.assertEquals( 0, expRole.getAnnotations().size());
-        PersisterHelper.saveOrUpdate(expRole);
-        commitTransaction();
+        getPersisterHelper().save(expRole);
+        //commitTransaction();
 
-        beginTransaction();
+        //beginTransaction();
         final CvExperimentalRole role = getDaoFactory().getCvObjectDao( CvExperimentalRole.class ).getByShortLabel( expRoleLabel );
         Assert.assertNotNull( role );
         Annotation annotation = getMockBuilder().createAnnotation( "text", null, "topic" );
         role.addAnnotation( annotation );
 
         // if we pass the cvTopic to the saveOrUpdate, the PersisterException won't happen
-        PersisterHelper.saveOrUpdate(annotation.getCvTopic(), role);
+        getPersisterHelper().save(annotation.getCvTopic(), role);
 
         final CvExperimentalRole role2 = getDaoFactory().getCvObjectDao( CvExperimentalRole.class ).getByShortLabel( expRoleLabel );
         Assert.assertNotNull( role2 );
@@ -136,6 +159,7 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
     }
 
     @Test
+    @DirtiesContext
     public void persist_prepareMi() throws Exception {
         CvObject cv = getMockBuilder().createCvObject(CvDatabase.class, CvDatabase.UNIPARC_MI_REF, CvDatabase.UNIPARC);
         Assert.assertNotNull(cv.getIdentifier());
@@ -149,6 +173,7 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
     }
 
     @Test
+    @DirtiesContext
     public void persist_dagObject() throws Exception {
         CvInteractorType proteinType = getMockBuilder().createCvObject(CvInteractorType.class, CvInteractorType.PROTEIN_MI_REF, CvInteractorType.PROTEIN);
         CvInteractorType megaProteinType = getMockBuilder().createCvObject(CvInteractorType.class, "MI:xxx5", "mega-protein");
@@ -162,6 +187,7 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
     }
 
     @Test
+    @DirtiesContext
     public void persist_dagObject_duplicatedInvokation() throws Exception {
         CvInteractorType proteinType = getMockBuilder().createCvObject(CvInteractorType.class, CvInteractorType.PROTEIN_MI_REF, CvInteractorType.PROTEIN);
         CvInteractorType megaProteinType = getMockBuilder().createCvObject(CvInteractorType.class, "MI:xxx5", "mega-protein");
@@ -175,6 +201,7 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
     }
 
     @Test
+    @DirtiesContext
     public void persist_dagObject_saveParent() throws Exception {
         CvInteractorType proteinType = getMockBuilder().createCvObject(CvInteractorType.class, CvInteractorType.PROTEIN_MI_REF, CvInteractorType.PROTEIN);
         CvInteractorType megaProteinType = getMockBuilder().createCvObject(CvInteractorType.class, "MI:xxx5", "mega-protein");
@@ -188,6 +215,7 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
     }
 
     @Test
+    @DirtiesContext
     public void persist_duplicatedInHierarchy() throws Exception {
         CvDatabase citation = getMockBuilder().createCvObject(CvDatabase.class, "MI:0444", "database citation");
         CvDatabase psiMi = getMockBuilder().createCvObject(CvDatabase.class, CvDatabase.PSI_MI_MI_REF, CvDatabase.PSI_MI);
@@ -210,6 +238,7 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
     }
 
     @Test
+    @DirtiesContext
     public void persist_parameterType_duplicated() throws Exception {
         CvParameterType paramType1 = getMockBuilder().createCvObject(CvParameterType.class, "MI:0835", "koff");
         PersisterHelper.saveOrUpdate(paramType1);
@@ -287,7 +316,12 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
     }
 
     @Test
+    @DirtiesContext
     public void prePersist_prepareIdentifier() throws Exception {
+        SequenceManager seqManager = (SequenceManager) getApplicationContext().getBean("sequenceManager");
+        seqManager.createSequenceIfNotExists(IntactAuxiliaryConfigurator.CV_LOCAL_SEQ);
+        Long seqValue = seqManager.getNextValueForSequence(IntactAuxiliaryConfigurator.CV_LOCAL_SEQ);
+
         CvDatabase premDb = getMockBuilder().createCvObject(CvDatabase.class,  null, "prem-db");
         CvDatabase brunoDb = getMockBuilder().createCvObject(CvDatabase.class,  null, "bruno-db");
         premDb.getXrefs().clear();
@@ -303,7 +337,7 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
 
         Assert.assertNotNull(refreshedPremDb);
         Assert.assertNotNull(refreshedPremDb.getIdentifier());
-        Assert.assertEquals("IA:0001", refreshedPremDb.getIdentifier());
+        Assert.assertEquals("IA:000"+(seqValue+1), refreshedPremDb.getIdentifier());
 
         Assert.assertEquals(1, refreshedPremDb.getXrefs().size());
 
@@ -311,12 +345,13 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
 
         Assert.assertNotNull(brunoDb);
         Assert.assertNotNull(brunoDb.getIdentifier());
-        Assert.assertEquals("IA:0002", brunoDb.getIdentifier());
+        Assert.assertEquals("IA:000"+(seqValue+2), brunoDb.getIdentifier());
         
         Assert.assertEquals(1, brunoDb.getXrefs().size());
     }
 
     @Test
+    @DirtiesContext
     public void updateCvObjectAnnotation_updateWithoutAcDisabled() throws Exception {
         // setup the database
         int initialCvCount = getDaoFactory().getCvObjectDao().countAll();
@@ -348,6 +383,7 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
     }
 
     @Test
+    @DirtiesContext
     public void updateCvObjectAnnotation_updateWithoutAcEnabled() throws Exception {
         // setup the database
         int initialCvCount = getDaoFactory().getCvObjectDao().countAll();
@@ -363,11 +399,8 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
         sameTopic.addAnnotation(getMockBuilder().createAnnotation("Experiment", null, CvTopic.USED_IN_CLASS));
 
         Assert.assertNull(sameTopic.getAc());
-
-        CorePersister corePersister = new CorePersister();
-        corePersister.setUpdateWithoutAcEnabled(true);   // <----- update without AC enabled
-
-        PersisterHelper.saveOrUpdate(corePersister, sameTopic);
+        getPersisterHelper().getCorePersister().setUpdateWithoutAcEnabled(true); // <----- update without AC enabled
+        getPersisterHelper().save( sameTopic);
 
         // final assertions
         CvTopic reloadedTopic = getDaoFactory().getCvObjectDao(CvTopic.class).getByPsiMiRef(CvTopic.COMMENT_MI_REF);
@@ -380,22 +413,5 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
         // as updating without cv is enabled, we expect the annotation text to be updated
         Assert.assertEquals("Experiment", usedInClassAnnot.getAnnotationText());
     }
-    
-    @Test
-    public void usingInstitutionIntact() throws Exception {
-        Properties properties = new Properties();
-        properties.put(IntactEnvironment.INSTITUTION_LABEL.getFqn(), "intact");
 
-        IntactSession session = new StandaloneSession(properties);
-        DataConfig dataConfig = new InMemoryDataConfig(session);
-
-        IntactContext.initContext(dataConfig, session);
-
-        IntactMockBuilder mockBuilder = new IntactMockBuilder(IntactContext.getCurrentInstance().getConfig().getInstitution());
-
-        CvTopic mySuperHappyTopic = mockBuilder.createCvObject(CvTopic.class, "MY:super", "happyTopic");
-        PersisterHelper.saveOrUpdate(mySuperHappyTopic);
-
-        Assert.assertTrue(getDaoFactory().getCvObjectDao().getByAc(mySuperHappyTopic.getAc()) != null);
-    }
 }

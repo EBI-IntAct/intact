@@ -120,7 +120,7 @@ public class ExperimentDaoTest extends IntactBasicTestCase {
 
         final int eSize = e.getAnnotations().size();
 
-        Institution owner = IntactContext.getCurrentInstance().getConfig().getInstitution();
+        Institution owner = IntactContext.getCurrentInstance().getInstitution();
         CvTopic topic = new CvTopic( owner, "topic" );
         daoFactory.getCvObjectDao( CvTopic.class ).persist( topic );
         Assert.assertNotNull( topic.getAc() );

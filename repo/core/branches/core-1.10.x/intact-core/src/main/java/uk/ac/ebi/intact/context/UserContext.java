@@ -26,50 +26,14 @@ public class UserContext implements Serializable {
 
     private Connection connection;
 
+    public UserContext() {
+        this.userId = "default";
+        this.userPassword = "";
+    }
+
     public UserContext( String userId, String userPassword ) {
         this.userId = userId;
         this.userPassword = userPassword;
-    }
-
-    public static UserContext getCurrentInstance( RuntimeConfig runtimeConfig, IntactSession session ) {
-        if ( session != null && session.isRequestAvailable() ) {
-            Object obj = session.getAttribute( SESSION_ATT_NAME );
-
-            if ( obj != null ) {
-                return ( UserContext ) obj;
-            }
-        }
-
-        UserContext userContext = createDefaultUserContext( runtimeConfig, session );
-
-        if ( session != null && session.isRequestAvailable() ) {
-            session.setAttribute( SESSION_ATT_NAME, userContext );
-        }
-
-        return userContext;
-    }
-
-    private static UserContext createDefaultUserContext( RuntimeConfig runtimeConfig, IntactSession session ) {
-        if ( log.isDebugEnabled() ) {
-            log.debug( "Creating UserContext..." );
-        }
-
-//        DataConfig defaultDataConfig = runtimeConfig.getDefaultDataConfig();
-//        Configuration configuration = (Configuration) defaultDataConfig.getConfiguration();
-//
-//        String currentUser = configuration.getProperty( Environment.USER );
-//        String password = configuration.getProperty( Environment.PASS );
-//
-//        if (currentUser == null) {
-//            currentUser = "UNKNOWN";
-//            log.warn("No current user found. Using: "+currentUser);
-//        }
-//
-//        UserContext userContext = new UserContext( currentUser, password );
-
-        UserContext userContext = new UserContext("not_implemented", "nopass");
-
-        return userContext;
     }
 
     public String getUserId() {

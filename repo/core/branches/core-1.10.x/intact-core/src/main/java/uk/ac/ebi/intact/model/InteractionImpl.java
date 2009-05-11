@@ -19,7 +19,6 @@ import uk.ac.ebi.intact.context.IntactContext;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Represents an interaction.
@@ -264,7 +263,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      */
     public void synchronizeShortLabel() {
         if( IntactContext.currentInstanceExists() ) {
-            if( IntactContext.getCurrentInstance().getConfig().isAutoUpdateInteractionShortlabel() ) {
+            if( IntactContext.getCurrentInstance().getConfig().isAutoUpdateInteractionLabel() ) {
                 String newShortLabel = null;
                 try {
                     newShortLabel = InteractionUtils.syncShortLabelWithDb(shortLabel);

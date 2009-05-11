@@ -92,6 +92,8 @@ public class PersisterHelper {
         //dataContext.getDaoFactory().getDataConfig().setAutoFlush(false);
         entityManager.setFlushMode(FlushModeType.COMMIT);
 
+        corePersister.getStatistics().reset();
+
         try {
             for ( AnnotatedObject ao : annotatedObjects ) {
                 corePersister.synchronize( ao );
@@ -101,7 +103,6 @@ public class PersisterHelper {
             //dataContext.getDaoFactory().getDataConfig().setAutoFlush(originalAutoFlush);
             entityManager.setFlushMode(FlushModeType.AUTO);
         }
-
 
         // we reload the annotated objects by its AC
         // note: if an object does not have one, it is probably a duplicate

@@ -22,14 +22,20 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.AbstractSingleSpringContextTests;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
+import uk.ac.ebi.intact.core.spring.IntactInitializer;
+import uk.ac.ebi.intact.core.util.SchemaUtils;
 
 import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;
@@ -42,11 +48,14 @@ import javax.persistence.EntityManagerFactory;
  * @version $Id$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/intact.spring.xml", "/META-INF/standalone/jpa-standalone.spring.xml"})
+@ContextConfiguration(locations = {"/intact.spring.xml", "/META-INF/standalone/jpa-standalone.spring.xml",
+        "/META-INF/standalone/intact-standalone.spring.xml"})
 @TransactionConfiguration
 @Transactional
 public abstract class IntactBasicTestCase
 {
+    @Autowired
+    private IntactContext intactContext;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -57,22 +66,29 @@ public abstract class IntactBasicTestCase
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
+
     private IntactMockBuilder mockBuilder;
 
     @Before
-    public final void prepareBasicTest() throws Exception {
+    public void prepareBasicTest() throws Exception {
         mockBuilder = new IntactMockBuilder();
     }
 
     @After
-    public final void afterBasicTest() throws Exception {
+    public void afterBasicTest() throws Exception {
         mockBuilder = null;
-        entityManager.clear();
     }
 
     @After
     public void end() throws Exception {
-       // IntactContext.closeCurrentInstance();
+       //((ConfigurableApplicationContext)applicationContext).close();
+    }
+
+    @AfterClass
+    public static void afterAll() throws Exception {
+       // IntactContext.getCurrentInstance().close();
     }
 
     protected void beginTransaction() {
@@ -90,7 +106,7 @@ public abstract class IntactBasicTestCase
     }
 
     protected IntactContext getIntactContext() {
-        return IntactContext.getCurrentInstance();
+        return intactContext;
     }
 
     protected DataContext getDataContext() {

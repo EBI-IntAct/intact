@@ -7,7 +7,6 @@ package uk.ac.ebi.intact.webapp;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.context.IntactConfigurator;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.WebappSession;
@@ -29,6 +28,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>24-Apr-2006</pre>
  */
+@Deprecated
 public class JpaIntactSessionRequestFilter implements Filter {
 
     private static final Log log = LogFactory.getLog( IntactSessionRequestFilter.class );
@@ -108,8 +108,8 @@ public class JpaIntactSessionRequestFilter implements Filter {
             log.debug( "Creating JPA IntactContext, for request url: " + req.getRequestURL() + " ; session id: "+session.getId() +" ; thread: "+Thread.currentThread().getName());
         }
         IntactSession intactSession = new WebappSession( session.getServletContext(), session, req );
-        //IntactContext context = IntactConfigurator.createIntactContext( intactSession );
-        if (true) throw new UnsupportedOperationException();
+
+        if (true) throw new UnsupportedOperationException("Use Spring instead");
         IntactContext context = null;
 
         assert IntactContext.currentInstanceExists();

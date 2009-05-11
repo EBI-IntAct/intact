@@ -14,11 +14,12 @@ import org.springframework.stereotype.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.intact.config.DataConfig;
-import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.context.RuntimeConfig;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.persistence.dao.impl.*;
@@ -40,13 +41,8 @@ public class DaoFactory implements Serializable {
 
     private static final Log log = LogFactory.getLog( DaoFactory.class );
 
-    private static final String DAO_FACTORY_ATT_NAME = DaoFactory.class.getName();
-
     @PersistenceContext
     private EntityManager currentEntityManager;
-    
-    @Autowired
-    private RuntimeConfig runtimeConfig;
 
     @Autowired AliasDao aliasDao;
     @Autowired AnnotationDao annotationDao;
@@ -78,66 +74,12 @@ public class DaoFactory implements Serializable {
 
     }
 
-    protected DaoFactory( DataConfig dataConfig, IntactSession intactSession ) {
-        //this.dataConfig = dataConfig;
-        this.intactSession = intactSession;
-    }
-
     public static DaoFactory getCurrentInstance( IntactContext context ) {
-        return getCurrentInstance( context.getSession(), context.getConfig().getDefaultDataConfig() );
-    }
-
-    public static DaoFactory getCurrentInstance( IntactContext context, String dataConfigName ) {
-        return getCurrentInstance( context.getSession(), context.getConfig().getDataConfig( dataConfigName ) );
-    }
-
-    public static DaoFactory getCurrentInstance( IntactSession session, DataConfig dataConfig ) {
-        String attName = DAO_FACTORY_ATT_NAME + "-" + dataConfig.getName();
-
-        // when an application starts (with IntactConfigurator) the request is not yet available
-        // the we store the daoFactory in application scope
-        if ( !session.isRequestAvailable() ) {
-            log.debug( "Getting DaoFactory from application, because request is not available at this point" +
-                       " (probably the application is initializing)" );
-            if ( session.getApplicationAttribute( attName ) != null ) {
-                return ( DaoFactory ) session.getApplicationAttribute( attName );
-            }
-
-            DaoFactory daoFactory = new DaoFactory( dataConfig, session );
-            session.setApplicationAttribute( attName, daoFactory );
-
-            return daoFactory;
-        }
-
-        if ( session.getRequestAttribute( attName ) != null ) {
-            return ( DaoFactory ) session.getRequestAttribute( attName );
-        }
-
-        DaoFactory daoFactory = new DaoFactory( dataConfig, session );
-        session.setRequestAttribute( attName, daoFactory );
-
-        return daoFactory;
-    }
-
-    public static DaoFactory getCurrentInstance( IntactSession session, DataConfig dataConfig, boolean forceCreationOfFactory ) {
-        if ( forceCreationOfFactory ) {
-            return new DaoFactory( dataConfig, session );
-        }
-
-        String attName = DAO_FACTORY_ATT_NAME + "-" + dataConfig.getName();
-
-        if ( session.getRequestAttribute( attName ) != null ) {
-            return ( DaoFactory ) session.getRequestAttribute( attName );
-        }
-
-        DaoFactory daoFactory = new DaoFactory( dataConfig, session );
-        session.setRequestAttribute( attName, daoFactory );
-
-        return daoFactory;
+        return context.getDataContext().getDaoFactory();
     }
 
     public AliasDao<Alias> getAliasDao() {
-        return aliasDao;
+        return getAliasDao(Alias.class);
     }
 
     public <T extends Alias> AliasDao<T> getAliasDao( Class<T> aliasType ) {
@@ -151,7 +93,7 @@ public class DaoFactory implements Serializable {
         } else if (Publication.class.isAssignableFrom(entityType)) {
             return (AnnotatedObjectDao<T>)publicationDao;
         } else if (CvObject.class.isAssignableFrom(entityType)) {
-            return cvObjectDao;
+            return getCvObjectDao((Class)entityType);
         } else if (Experiment.class.isAssignableFrom(entityType)) {
             return (AnnotatedObjectDao<T>)experimentDao;
         } else if (Interaction.class.isAssignableFrom(entityType)) {
@@ -188,10 +130,11 @@ public class DaoFactory implements Serializable {
     }
 
     public CvObjectDao<CvObject> getCvObjectDao() {
-        return cvObjectDao;
+        return getCvObjectDao(CvObject.class);
     }
 
     public <T extends CvObject> CvObjectDao<T> getCvObjectDao( Class<T> entityType ) {
+        cvObjectDao.setEntityClass(entityType);
         return cvObjectDao;
     }
 
@@ -234,11 +177,12 @@ public class DaoFactory implements Serializable {
     }
 
     public <T extends InteractorImpl> InteractorDao<T> getInteractorDao( Class<T> entityType ) {
+        interactorDao.setEntityClass(entityType);
         return interactorDao;
     }
 
     public InteractorDao<InteractorImpl> getInteractorDao() {
-        return interactorDao;
+        return getInteractorDao((Class) InteractorImpl.class);
     }
 
     /**
@@ -249,11 +193,12 @@ public class DaoFactory implements Serializable {
     }
 
     public PolymerDao<PolymerImpl> getPolymerDao() {
-        return polymerDao;
+        return getPolymerDao(PolymerImpl.class);
     }
 
     public <T extends PolymerImpl> PolymerDao<T> getPolymerDao( Class<T> clazz ) {
-        return new PolymerDaoImpl<T>( clazz, getEntityManager(), intactSession );
+        polymerDao.setEntityClass(clazz);
+        return polymerDao;
     }
 
     public ProteinDao getProteinDao() {
@@ -285,7 +230,7 @@ public class DaoFactory implements Serializable {
     }
 
     public XrefDao<Xref> getXrefDao() {
-        return xrefDao;
+        return getXrefDao(Xref.class);
     }
 
     public <T extends Xref> XrefDao<T> getXrefDao( Class<T> xrefClass ) {
@@ -294,6 +239,7 @@ public class DaoFactory implements Serializable {
         return xrefDao;
     }
 
+    @Deprecated
     public Connection connection() {
         return getCurrentSession().connection();
     }
@@ -311,6 +257,7 @@ public class DaoFactory implements Serializable {
     }
 
     public void commitTransaction() {
+        getEntityManager().flush();
 //        if (currentEntityManager.getTransaction().isActive()) {
 //            if (log.isDebugEnabled()) log.debug("Committing transaction");
 //
@@ -324,6 +271,12 @@ public class DaoFactory implements Serializable {
 //        } else {
 //            if (log.isWarnEnabled()) log.warn("Attempted commit on a transaction that was not active");
 //        }
+
+//        JpaTransactionManager transactionManager = (JpaTransactionManager) getApplicationContext().getBean("transactionManager");
+//        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_MANDATORY));
+//        System.out.println("Is new: "+status.isNewTransaction());
+//        transactionManager.commit(status);
+//        System.out.println("Completed: "+status.isCompleted());
     }
 
     public EntityManager getEntityManager() {
@@ -359,28 +312,7 @@ public class DaoFactory implements Serializable {
 
     @Deprecated
     public synchronized Session getCurrentSession() {
-        Session session = (Session) getEntityManager().getDelegate();
-
-        //Session session = getSessionFromSessionFactory(dataConfig);
-
-        if (!runtimeConfig.getDataConfig().isAutoFlush()) {
-            session.setFlushMode(FlushMode.MANUAL);
-        }
-
-        if ( !session.isOpen() ) {
-            // this only should happen for hibernate data configs
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Opening new session because the current is closed" );
-            }
-            session = ((AbstractHibernateDataConfig)getDataConfig()).getSessionFactory().openSession();
-        }
-
-        return session;
-    }
-
-
-    protected Session getSessionFromSessionFactory(DataConfig dataConfig) {
-        return ((HibernateEntityManager)runtimeConfig.getDataConfig().getEntityManagerFactory().createEntityManager()).getSession();
+        return (Session) getEntityManager().getDelegate();
     }
 
     public boolean isTransactionActive() {
@@ -400,9 +332,5 @@ public class DaoFactory implements Serializable {
 
     public EntityTransaction getCurrentTransaction() {
         return currentEntityManager.getTransaction();
-    }
-
-    public DataConfig getDataConfig() {
-        return runtimeConfig.getDataConfig();
     }
 }

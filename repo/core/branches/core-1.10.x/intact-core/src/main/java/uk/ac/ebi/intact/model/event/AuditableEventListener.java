@@ -42,9 +42,6 @@ public class AuditableEventListener {
             }
             auditable.setUpdated(now);
 
-            // Note: in this method we cannot assume that there is an instance of IntactContext running,
-            // as it could be called during IntAct initialization (IntactConfigurator)
-
             String currentUser = "INTACT";
 
             if (IntactContext.currentInstanceExists()) {

@@ -17,8 +17,12 @@ package uk.ac.ebi.intact.model.clone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.*;
+import org.springframework.context.annotation.Scope;
+import org.springframework.beans.factory.config.BeanDefinition;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 
@@ -34,6 +38,8 @@ import java.util.Map;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
+@org.springframework.stereotype.Component
+@Scope(org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE)
 public class IntactCloner {
 
     private static final Log log = LogFactory.getLog( IntactCloner.class );
@@ -538,8 +544,15 @@ public class IntactCloner {
         // as annotations, alias and xrefs could potentially be dettached, we should check if these
         // collections are accessible
         if (!AnnotatedObjectUtils.isNewOrManaged(ao)) {
+            Class<? extends AnnotatedObject> clazz = ao.getClass();
+            String ac = ao.getAc();
+
             ao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
-                    .getAnnotatedObjectDao(ao.getClass()).getByAc(ao.getAc());
+                    .getAnnotatedObjectDao(clazz).getByAc(ac);
+
+            if (ao == null) {
+                throw new IllegalStateException("Annotated object was expected to be found: "+clazz.getSimpleName()+" "+ac);
+            }
         }
 
         for ( Annotation annotation : ao.getAnnotations() ) {

@@ -4,10 +4,15 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.transaction.BeforeTransaction;
+import org.springframework.test.context.transaction.AfterTransaction;
 import uk.ac.ebi.intact.core.persister.finder.DefaultFinder;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.clone.IntactCloner;
+
+import javax.persistence.FlushModeType;
 
 /**
  * DefaultFinder Tester.
@@ -18,16 +23,17 @@ import uk.ac.ebi.intact.model.clone.IntactCloner;
  */
 public class DefaultFinderTest extends IntactBasicTestCase {
 
+    @Autowired
     private Finder finder;
 
-    @Before
-    public void initFinder() {
-        finder = new DefaultFinder();
+    @BeforeTransaction
+    public void beforeTransaction() {
+        getEntityManager().setFlushMode(FlushModeType.COMMIT);
     }
 
-    @After
-    public void cleanUp() {
-        finder = null;
+    @AfterTransaction
+    public void afterTransaction() {
+        getEntityManager().setFlushMode(FlushModeType.AUTO);
     }
 
     @Test
@@ -246,6 +252,8 @@ public class DefaultFinderTest extends IntactBasicTestCase {
 
         // different uniprot id and shortlabel
         Assert.assertNull( finder.findAc( getMockBuilder().createProtein( "Q98765", "bar" ) ) );
+
+        getEntityManager().clear();
 
         // same xrefs but different type, should not work
         final SmallMolecule sm = getMockBuilder().createSmallMoleculeRandom();

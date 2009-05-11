@@ -129,7 +129,6 @@ public class CorePersister  {
     @Transactional
     public void saveOrUpdate( AnnotatedObject ao ) {
 
-        boolean originalAutoFlush = dataContext.getDaoFactory().getDataConfig().isAutoFlush();
         dataContext.getDaoFactory().getEntityManager().setFlushMode(FlushModeType.COMMIT);
         //dataContext.getDaoFactory().getDataConfig().setAutoFlush(false);
 
@@ -137,14 +136,10 @@ public class CorePersister  {
             synchronize( ao );
             commit();
         } finally {
-          // dataContext.getDaoFactory().getDataConfig().setAutoFlush(originalAutoFlush);
             dataContext.getDaoFactory().getEntityManager().setFlushMode(FlushModeType.AUTO);
         }
 
         reload( ao );
-
-
-
     }
 
     protected void commitTransactionAndRollbackIfNecessary() throws PersisterException {
@@ -278,7 +273,12 @@ public class CorePersister  {
                 // updated the managed object based on ao's properties, but only add it to merge
                 // if something has been copied (it was not a duplicate)
                 try {
-                    boolean copied = entityStateCopier.copy( ao, managedObject );
+                    boolean copied = false;
+                    try {
+                        copied = entityStateCopier.copy( ao, managedObject );
+                    } catch (Exception e) {
+                        throw new PersisterException("Problem copying state to managed object of type "+ao.getClass().getSimpleName()+" and AC "+ao.getAc()+", from object: "+ao, e);
+                    }
 
                     // this will allow to reload the AO by its AC after flushing
                     ao.setAc(managedObject.getAc());
@@ -484,7 +484,11 @@ public class CorePersister  {
                 log.warn( "Object to persist should NOT have an AC: " + DebugUtil.annotatedObjectToString(ao, true) );
             } else {
 
-                daoFactory.getBaseDao().persist( ao );
+                try {
+                    daoFactory.getBaseDao().persist( ao );
+                } catch (Exception e) {
+                    throw new PersisterException("Problem persisting: "+ao, e);
+                }
                 if (statisticsEnabled) statistics.addPersisted(ao);
                 logPersistence( ao );
             }
