@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.core.persister.stats.impl;
 
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.core.persister.stats.StatsUnit;
+import uk.ac.ebi.intact.core.persistence.util.CgLibUtil;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
