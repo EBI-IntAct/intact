@@ -27,9 +27,11 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactInitializationError;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.meta.DbInfo;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.persistence.dao.DbInfoDao;
+import uk.ac.ebi.intact.persistence.dao.InstitutionDao;
 
 /**
  * TODO write description of the class.
@@ -55,6 +57,9 @@ public class IntactInitializer implements InitializingBean {
     @Autowired
     private DbInfoDao dbInfoDao;
 
+    @Autowired
+    private InstitutionDao institutionDao;
+
     private static final Log log = LogFactory.getLog(IntactInitializer.class);
 
     public IntactInitializer() {
@@ -75,7 +80,13 @@ public class IntactInitializer implements InitializingBean {
 
     @Transactional
     public void persistInstitution() {
-        persisterHelper.save(configuration.getDefaultInstitution());
+        Institution institution = institutionDao.getByShortLabel(configuration.getDefaultInstitution().getShortLabel());
+
+        if (institution == null) {
+            persisterHelper.save(configuration.getDefaultInstitution());
+        } else {
+            configuration.setDefaultInstitution(institution);
+        }
     }
 
     @Transactional
