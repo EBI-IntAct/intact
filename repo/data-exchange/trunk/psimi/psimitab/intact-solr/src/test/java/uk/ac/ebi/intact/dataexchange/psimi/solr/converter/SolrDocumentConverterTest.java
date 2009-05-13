@@ -23,7 +23,7 @@ import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 
 /**
- * TODO comment that class header
+ * SolrDocumentConverter Tester.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -129,6 +129,4 @@ public class SolrDocumentConverterTest {
         Assert.assertTrue(field.getValues().contains("Dst"));
 
     }
-
-
 }
