@@ -334,8 +334,7 @@ public class SolrDocumentConverter {
             return ontologyTermCache.get(field.getValue());
         }
 
-        // auto update the description of the term from the ontology
-        return new LazyLoadedOntologyTerm(ontologySearcher, field.getValue());
+        return new LazyLoadedOntologyTerm(ontologySearcher, field.getValue(), field.getDescription());
     }
 
     private void addFilteredField(Row row, SolrInputDocument doc, String fieldName, int columnIndex, FieldFilter filter) {
