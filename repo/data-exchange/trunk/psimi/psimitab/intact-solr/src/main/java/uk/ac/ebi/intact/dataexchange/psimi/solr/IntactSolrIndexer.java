@@ -218,8 +218,6 @@ public class IntactSolrIndexer {
             }
 
             lineCount++;
-            if ( log.isDebugEnabled() ) log.debug("linecount: " + lineCount); 
-
         }
 
         commitSolr(true, timesToRetry);
