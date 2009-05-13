@@ -45,31 +45,24 @@ public class LazyLoadedOntologyTerm implements OntologyTerm {
     private List<OntologyTerm> children;
 
     public LazyLoadedOntologyTerm(OntologySearcher searcher, String id) throws SolrServerException {
-        this.searcher = searcher;
-        this.id = id;
-        this.name = findName(searcher, id);
+        this( searcher, id, null );
     }
-
-
 
     public LazyLoadedOntologyTerm(OntologySearcher searcher, String id, String name) throws SolrServerException {
         this.searcher = searcher;
         this.id = id;
-        this.name = name;
-
-        if (name == null) {
-           this.name = findName(searcher, id);
-        }
+        this.name = findName(searcher, id, name);
     }
 
-    private String findName(OntologySearcher searcher, String id) throws SolrServerException {
+    private String findName(OntologySearcher searcher, String id, String defaultValue) throws SolrServerException {
         QueryResponse queryResponse = searcher.searchByParentId(id, 0, 1);
 
+        String parentName = null;
         if (queryResponse.getResults().getNumFound() > 0) {
-            return (String) queryResponse.getResults().iterator().next().getFieldValue(OntologyFieldNames.PARENT_NAME);
+            parentName = (String) queryResponse.getResults().iterator().next().getFieldValue( OntologyFieldNames.PARENT_NAME);
         }
 
-        return null;
+        return parentName == null ? defaultValue : parentName;
     }
 
     public String getId() {
