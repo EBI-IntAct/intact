@@ -299,6 +299,7 @@ public class SolrDocumentConverter {
 
             if (expandableColumn) {
                 doc.addField(fieldName+"_exact", field.toString(), boost);
+                doc.addField(fieldName+"_exact_id", field.getValue(), boost);
             }
             addDescriptionField(doc, field.getType(), field);
             doc.addField(fieldName, field.toString(), boost);
@@ -306,7 +307,8 @@ public class SolrDocumentConverter {
 
             if (field.getType() != null) {
                 doc.addField(field.getType()+"_xref", field.getValue(), boost);
-                doc.addField(field.getType()+"_xref_ms", field.toString(), boost);
+                doc.addField(fieldName+"_"+field.getType()+"_xref", field.getValue(), boost);
+                doc.addField(fieldName+"_"+field.getType()+"_xref_ms", field.toString(), boost);
             }
 
             addDescriptionField(doc, field.getType(), field);
