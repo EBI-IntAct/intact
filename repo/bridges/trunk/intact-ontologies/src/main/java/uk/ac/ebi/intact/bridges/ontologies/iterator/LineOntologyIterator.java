@@ -34,7 +34,7 @@ import java.net.URL;
 public abstract class LineOntologyIterator implements OntologyIterator{
 
     private LineIterator lineIterator;
-    private String nextLine;
+    private String currentLine;
 
     public LineOntologyIterator(URL url) throws IOException {
         this(url.openStream());
@@ -49,30 +49,22 @@ public abstract class LineOntologyIterator implements OntologyIterator{
     }
 
     public boolean hasNext() {
-        nextLine = nextLine();
+        while (lineIterator.hasNext()) {
+            currentLine = (String) lineIterator.next();
 
-        return nextLine != null;
-    }
-
-    private String nextLine() {
-        if (!lineIterator.hasNext()) {
-            return null;
+            if (!skipLine(currentLine)) {
+                return true;
+            }
         }
 
-        nextLine = (String) lineIterator.next();
-
-        if (skipLine(nextLine)) {
-           return nextLine();
-        }
-
-        return nextLine;
+        return false;
     }
 
     public OntologyDocument next() {
         try {
-            return processLine(nextLine);
+            return processLine(currentLine);
         } catch (Throwable e) {
-            throw new RuntimeException("Problem processing line: "+nextLine, e);
+            throw new RuntimeException("Problem processing line: "+ currentLine, e);
         }
     }
 
