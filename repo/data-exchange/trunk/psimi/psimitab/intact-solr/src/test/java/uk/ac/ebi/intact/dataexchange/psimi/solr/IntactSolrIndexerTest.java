@@ -176,7 +176,7 @@ public class IntactSolrIndexerTest {
 
         Collection<Object> expandedTaxidA = doc.getFieldValues("taxidA_expanded");
         Assert.assertTrue(expandedTaxidA.contains("taxid:314295(Catarrhini)"));
-        Assert.assertTrue(expandedTaxidA.contains("taxid:207598(Hominidae)"));
+        Assert.assertTrue(expandedTaxidA.contains("taxid:207598(Homininae)"));
         Assert.assertTrue(expandedTaxidA.contains("taxid:9605(Homo)"));
         Assert.assertTrue(expandedTaxidA.contains("taxid:9604(Hominidae)"));
         Assert.assertTrue(expandedTaxidA.contains("taxid:9606(Human)"));
