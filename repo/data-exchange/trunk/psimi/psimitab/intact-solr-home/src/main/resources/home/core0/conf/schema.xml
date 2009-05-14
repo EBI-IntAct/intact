@@ -521,26 +521,43 @@
 
     <copyField source="detmethod_exact" dest="detmethod"/>
     <copyField source="detmethod_expanded" dest="detmethod"/>
+
+    <copyField source="detmethod_exact_id" dest="detmethod_id"/>
+    <copyField source="detmethod_expanded_id" dest="detmethod_id"/>
+
     <copyField source="type_exact" dest="type"/>
     <copyField source="type_expanded" dest="type"/>
 
+    <copyField source="type_exact_id" dest="type_id"/>
+    <copyField source="type_expanded_id" dest="type_id"/>
+
     <copyField source="experimentalRoleA_exact" dest="experimentalRoleA"/>
     <copyField source="experimentalRoleA_expanded" dest="experimentalRoleA"/>
-    <copyField source="experimentalRoleA_exact" dest="experimentalRole"/>
-    <copyField source="experimentalRoleA_expanded" dest="experimentalRole"/>
     <copyField source="experimentalRoleB_exact" dest="experimentalRoleB"/>
     <copyField source="experimentalRoleB_expanded" dest="experimentalRoleB"/>
+    <copyField source="experimentalRoleA_exact" dest="experimentalRole"/>
+    <copyField source="experimentalRoleA_expanded" dest="experimentalRole"/>
     <copyField source="experimentalRoleB_exact" dest="experimentalRole"/>
     <copyField source="experimentalRoleB_expanded" dest="experimentalRole"/>
+    
+    <copyField source="experimentalRoleA_exact_id" dest="experimentalRole_id"/>
+    <copyField source="experimentalRoleA_expanded_id" dest="experimentalRole_id"/>
+    <copyField source="experimentalRoleB_exact_id" dest="experimentalRole_id"/>
+    <copyField source="experimentalRoleB_expanded_id" dest="experimentalRole_id"/>
 
     <copyField source="biologicalRoleA_exact" dest="biologicalRoleA"/>
-    <copyField source="biologicalRoleA_expanded" dest="biologicalRoleA"/>
-    <copyField source="biologicalRoleA_exact" dest="biologicalRole"/>
     <copyField source="biologicalRoleA_expanded" dest="biologicalRole"/>
     <copyField source="biologicalRoleB_exact" dest="biologicalRoleB"/>
     <copyField source="biologicalRoleB_expanded" dest="biologicalRoleB"/>
+    <copyField source="biologicalRoleA_exact" dest="biologicalRole"/>
+    <copyField source="biologicalRoleA_expanded" dest="biologicalRole"/>
     <copyField source="biologicalRoleB_exact" dest="biologicalRole"/>
     <copyField source="biologicalRoleB_expanded" dest="biologicalRole"/>
+
+    <copyField source="biologicalRoleA_expanded_id" dest="biologicalRole_id"/>
+    <copyField source="biologicalRoleA_exact_id" dest="biologicalRole_id"/>
+    <copyField source="biologicalRoleB_exact_id" dest="biologicalRole_id"/>
+    <copyField source="biologicalRoleB_expanded_id" dest="biologicalRole_id"/>
 
     <copyField source="propertiesA_exact" dest="propertiesA"/>
     <copyField source="propertiesA_expanded" dest="propertiesA"/>
@@ -550,6 +567,11 @@
     <copyField source="propertiesA_expanded" dest="properties"/>
     <copyField source="propertiesB_exact" dest="properties"/>
     <copyField source="propertiesB_expanded" dest="properties"/>
+
+    <copyField source="propertiesA_exact_id" dest="properties_id"/>
+    <copyField source="propertiesA_expanded_id" dest="properties_id"/>
+    <copyField source="propertiesB_exact_id" dest="properties_id"/>
+    <copyField source="propertiesB_expanded_id" dest="properties_id"/>
     <!--<copyField source="propertiesA" dest="properties"/>-->
     <!--<copyField source="propertiesB" dest="properties"/>-->
 
@@ -561,9 +583,15 @@
     <copyField source="typeA_exact" dest="interactorType"/>
     <copyField source="typeB_expanded" dest="interactorType"/>
     <copyField source="typeB_exact" dest="interactorType"/>
+    <copyField source="typeA_expanded_id" dest="interactorType_id"/>
+    <copyField source="typeA_exact_id" dest="interactorType_id"/>
+    <copyField source="typeB_expanded" dest="interactorType_id"/>
+    <copyField source="typeB_exact_id" dest="interactorType_id"/>
 
     <copyField source="hostOrganism_expanded" dest="hostOrganism"/>
     <copyField source="hostOrganism_exact" dest="hostOrganism"/>
+    <copyField source="hostOrganism_expanded_id" dest="hostOrganism_id"/>
+    <copyField source="hostOrganism_exact_id" dest="hostOrganism_id"/>
 
     <copyField source="annotationA" dest="annotation"/>
     <copyField source="annotationB" dest="annotation"/>
