@@ -509,11 +509,15 @@
     <copyField source="taxidA_expanded" dest="taxidA"/>
     <copyField source="taxidA_exact" dest="species"/>
     <copyField source="taxidA_expanded" dest="species"/>
+    <copyField source="taxidA_exact_id" dest="species_id"/>
+    <copyField source="taxidA_expanded_id" dest="species_id"/>
 
     <copyField source="taxidB_exact" dest="taxidB"/>
     <copyField source="taxidB_expanded" dest="taxidB"/>
     <copyField source="taxidB_exact" dest="species"/>
     <copyField source="taxidB_expanded" dest="species"/>
+    <copyField source="taxidB_exact_id" dest="species_id"/>
+    <copyField source="taxidB_expanded_id" dest="species_id"/>
 
     <copyField source="detmethod_exact" dest="detmethod"/>
     <copyField source="detmethod_expanded" dest="detmethod"/>
