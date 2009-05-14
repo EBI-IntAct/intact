@@ -54,7 +54,7 @@ public class UniprotTaxonomyOntologyIterator extends LineOntologyIterator {
     }
 
     public UniprotTaxonomyOntologyIterator(String query, int offset, int limit) throws IOException {
-       this(query, offset, limit, true);
+       this(query, offset, limit, false);
     }
 
     public UniprotTaxonomyOntologyIterator(String query, int offset, int limit, boolean onlyReviewed) throws IOException {
