@@ -92,7 +92,26 @@ public class UniprotTaxonomyOntologyIteratorTest {
         }
 
         Assert.assertEquals(1, count);
-        
+    }
+
+    @Test
+    public void processLine_recursive() throws Exception {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i=0; i<100000; i++) {
+            sb.append("12345\n");
+        }
+
+        UniprotTaxonomyOntologyIterator iterator = new UniprotTaxonomyOntologyIterator(new ByteArrayInputStream(sb.toString().getBytes()));
+
+        int count = 0;
+
+        while (iterator.hasNext()) {
+            iterator.next();
+            count++;
+        }
+
+        Assert.assertEquals(0, count);
     }
 
 }
