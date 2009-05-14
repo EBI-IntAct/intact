@@ -15,14 +15,10 @@
  */
 package uk.ac.ebi.intact.dataexchange.psimi.solr.ontology;
 
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.Hits;
-import uk.ac.ebi.intact.bridges.ontologies.OntologyHits;
 
 /**
  * Searches the ontology, using a SolrServer pointing to an ontology core.
@@ -43,8 +39,16 @@ public class OntologySearcher {
         return solrServer.query(query);
     }
 
+    public QueryResponse searchByChildId(String id, Integer firstResult, Integer maxResults) throws SolrServerException {
+        return searchById(OntologyFieldNames.CHILD_ID, id, firstResult, maxResults);
+    }
+
     public QueryResponse searchByParentId(String id, Integer firstResult, Integer maxResults) throws SolrServerException {
-        SolrQuery query = new SolrQuery(OntologyFieldNames.PARENT_ID + ":\"" + id + "\"");
+        return searchById(OntologyFieldNames.PARENT_ID, id, firstResult, maxResults);
+    }
+
+    private QueryResponse searchById(String fieldId, String id, Integer firstResult, Integer maxResults) throws SolrServerException {
+        SolrQuery query = new SolrQuery(fieldId + ":\"" + id + "\"");
 
         if (firstResult != null) query.setStart(firstResult);
         if (maxResults != null) query.setRows(maxResults);

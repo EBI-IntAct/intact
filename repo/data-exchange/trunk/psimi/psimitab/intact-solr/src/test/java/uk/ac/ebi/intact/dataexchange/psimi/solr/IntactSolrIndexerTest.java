@@ -22,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
+import uk.ac.ebi.intact.bridges.ontologies.iterator.OntologyIterator;
+import uk.ac.ebi.intact.bridges.ontologies.iterator.UniprotTaxonomyOntologyIterator;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.server.SolrJettyRunner;
@@ -148,6 +150,36 @@ public class IntactSolrIndexerTest {
 
         IntactBinaryInteraction binaryInteraction = (IntactBinaryInteraction) converter.toBinaryInteraction(doc);
         Assert.assertEquals("carbohydrate binding", binaryInteraction.getInteractorB().getProperties().iterator().next().getText());
+    }
+
+    @Test
+    public void toSolrDocument_taxidUpdate() throws Exception {
+         String mitab = "uniprotkb:P35568|intact:EBI-517592\tuniprotkb:Q08345-2|intact:EBI-711903\tuniprotkb:IRS1(gene name)" +
+                "\t-\tintact:irs1_human(shortLabel)\tuniprotkb:CAK II(isoform synonym)|uniprotkb:Short(isoform synonym)|intact:Q08345-2(shortLabel)" +
+                "\tMI:0424(protein kinase assay)\tBantscheff et al. (2007)" +
+                "\tpubmed:17721511\ttaxid:9606(human)\ttaxid:9606(human)\tMI:0217(phosphorylation)" +
+                "\tMI:0469(intact)\tintact:EBI-1381086\t-\t" +
+                "MI:0499(unspecified role)\tMI:0499(unspecified role)" +
+                "\tMI:0502(enzyme target)\tMI:0501(enzyme)" +
+                "\tgo:\"GO:0030188\"|go:\"GO:0005159\"|" +
+                "go:\"GO:0005158\"|interpro:IPR002404|" +
+                "interpro:IPR001849|interpro:IPR011993|ensembl:ENSG00000169047|rcsb pdb:1IRS|rcsb pdb:1K3A|rcsb pdb:1QQG" +
+                "\tintact:EBI-711879\tMI:0326(protein)\tMI:0326(protein)\ttaxid:-1(in vitro)\t-\t-\t-";
+
+        OntologyIterator taxonomyIterator = new UniprotTaxonomyOntologyIterator(IntactSolrSearcherTest.class.getResourceAsStream("/META-INF/hominidae-taxonomy.tsv"));
+        indexer.indexOntology(taxonomyIterator);
+
+        OntologySearcher ontologySearcher = new OntologySearcher(solrJettyRunner.getSolrServer(CoreNames.CORE_ONTOLOGY_PUB));
+        SolrDocumentConverter converter = new SolrDocumentConverter(new IntactDocumentDefinition(), ontologySearcher);
+
+        SolrInputDocument doc = converter.toSolrDocument(mitab);
+
+        Collection<Object> expandedTaxidA = doc.getFieldValues("taxidA_expanded");
+        Assert.assertTrue(expandedTaxidA.contains("taxid:314295(Catarrhini)"));
+        Assert.assertTrue(expandedTaxidA.contains("taxid:207598(Hominidae)"));
+        Assert.assertTrue(expandedTaxidA.contains("taxid:9605(Homo)"));
+        Assert.assertTrue(expandedTaxidA.contains("taxid:9604(Hominidae)"));
+        Assert.assertTrue(expandedTaxidA.contains("taxid:9606(Human)"));
     }
 
     @Test

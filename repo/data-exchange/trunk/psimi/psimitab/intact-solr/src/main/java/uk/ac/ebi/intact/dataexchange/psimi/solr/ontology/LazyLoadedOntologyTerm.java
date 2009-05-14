@@ -55,11 +55,11 @@ public class LazyLoadedOntologyTerm implements OntologyTerm {
     }
 
     private String findName(OntologySearcher searcher, String id, String defaultValue) throws SolrServerException {
-        QueryResponse queryResponse = searcher.searchByParentId(id, 0, 1);
+        QueryResponse queryResponse = searcher.searchByChildId(id, 0, 1);
 
         String parentName = null;
         if (queryResponse.getResults().getNumFound() > 0) {
-            parentName = (String) queryResponse.getResults().iterator().next().getFieldValue( OntologyFieldNames.PARENT_NAME);
+            parentName = (String) queryResponse.getResults().iterator().next().getFieldValue( OntologyFieldNames.CHILD_NAME);
         }
 
         return parentName == null ? defaultValue : parentName;
