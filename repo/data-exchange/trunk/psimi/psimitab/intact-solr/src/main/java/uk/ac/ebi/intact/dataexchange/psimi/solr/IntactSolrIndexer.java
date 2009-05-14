@@ -18,16 +18,17 @@ package uk.ac.ebi.intact.dataexchange.psimi.solr;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
-import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.SolrException;
+import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
+import uk.ac.ebi.intact.bridges.ontologies.iterator.OntologyIterator;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
-import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologyIndexer;
-import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.failure.FailFastFailureHandling;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.failure.FailureHandlingStrategy;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologyIndexer;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 
 import java.io.*;
@@ -96,6 +97,15 @@ public class IntactSolrIndexer {
         
         OntologyIndexer ontologyIndexer = new OntologyIndexer(ontologySolrServer);
         ontologyIndexer.indexObo(ontologyMappings);
+    }
+
+    public void indexOntology(OntologyIterator ontologyIterator) throws IntactSolrException {
+        if (ontologySolrServer == null) {
+            throw new IllegalStateException("To index an ontology, an ontology SolrServer must be passed to the constructor");
+        }
+
+        OntologyIndexer ontologyIndexer = new OntologyIndexer(ontologySolrServer);
+        ontologyIndexer.indexOntology(ontologyIterator);
     }
 
     public int indexMitab(File mitabFile, boolean hasHeader) throws IOException, IntactSolrException {
