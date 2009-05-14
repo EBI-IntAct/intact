@@ -21,7 +21,6 @@ import uk.ac.ebi.intact.bridges.ontologies.OntologyDocument;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.NoSuchElementException;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -58,16 +57,42 @@ public class UniprotTaxonomyOntologyIteratorTest {
         Assert.assertEquals(117, count);
     }
 
-    @Test (expected = NoSuchElementException.class)
+    @Test
     public void testProcessEmptyFile() throws Exception {
         String line = "Taxon\tMnemonic\tScientific Name\tCommon Name\tSynonym\tOther Names\tReviewed\tRank\tLineage\tParent";
 
          UniprotTaxonomyOntologyIterator iterator = new UniprotTaxonomyOntologyIterator(new ByteArrayInputStream(line.getBytes()));
 
-         while (iterator.hasNext()) {
-             iterator.next();
-         }
+         Assert.assertFalse(iterator.hasNext());
 
      }
+
+    @Test
+    public void testProcessEmptyFile2() throws Exception {
+        String line = "Taxon\tMnemonic\tScientific Name\tCommon Name\tSynonym\tOther Names\tReviewed\tRank\tLineage\tParent\n"+
+                "44433";
+
+         UniprotTaxonomyOntologyIterator iterator = new UniprotTaxonomyOntologyIterator(new ByteArrayInputStream(line.getBytes()));
+
+         Assert.assertFalse(iterator.hasNext());
+
+     }
+
+    @Test
+    public void testProcessLine_onlyTaxon() throws Exception {
+        InputStream is = UniprotTaxonomyOntologyIteratorTest.class.getResourceAsStream("/META-INF/rat_taxonomy_uniprot2.tsv");
+
+        UniprotTaxonomyOntologyIterator iterator = new UniprotTaxonomyOntologyIterator(is);
+
+        int count = 0;
+
+        while (iterator.hasNext()) {
+            iterator.next();
+            count++;
+        }
+
+        Assert.assertEquals(1, count);
+        
+    }
 
 }
