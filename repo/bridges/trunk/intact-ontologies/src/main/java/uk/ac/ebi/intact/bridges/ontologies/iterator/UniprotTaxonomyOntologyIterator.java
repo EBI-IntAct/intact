@@ -100,7 +100,7 @@ public class UniprotTaxonomyOntologyIterator extends LineOntologyIterator {
         String commonName = cols[3];
 
         if (commonName != null && commonName.length() > 0) {
-            childName = childName + " ("+commonName+")";
+            childName = commonName;
         }
 
         String parentId = cols[9];
@@ -113,7 +113,7 @@ public class UniprotTaxonomyOntologyIterator extends LineOntologyIterator {
         }
 
         OntologyDocument doc = new OntologyDocument("uniprot taxonomy", parentId, parentName,
-                childId, childName, "is_a", false);
+                childId, childName, "OBO_REL:is_a", false);
 
         return doc;
     }
