@@ -65,7 +65,9 @@ public class UniprotTaxonomyOntologyIterator extends LineOntologyIterator {
 
     @Override
     public boolean skipLine(String line) {
-        if (line.startsWith("Taxon")) {
+        String[] cols = line.split("\t");
+
+        if (line.startsWith("Taxon") || cols.length < 4) {
             return true;
         }
 
@@ -94,18 +96,18 @@ public class UniprotTaxonomyOntologyIterator extends LineOntologyIterator {
     protected OntologyDocument processLine(String line) {
         String[] cols = line.split("\t");
 
-        String childId = cols[0];
-        String childName = cols[2];
+        String childId = safeGet(cols, 0);
+        String childName = safeGet(cols, 2);
 
-        String commonName = cols[3];
+        String commonName = safeGet(cols, 3);
 
         if (commonName != null && commonName.length() > 0) {
             childName = commonName;
         }
 
-        String parentId = cols[9];
+        String parentId = safeGet(cols, 9);
         String parentName = "";
-        String lineage = cols[8];
+        String lineage = safeGet(cols, 8);
 
         // the parent name is the last element in the lineage
         if (lineage.lastIndexOf(";") > -1) {
@@ -116,5 +118,13 @@ public class UniprotTaxonomyOntologyIterator extends LineOntologyIterator {
                 childId, childName, "OBO_REL:is_a", false);
 
         return doc;
+    }
+
+    private String safeGet(String[] cols, int index) {
+        if (cols.length > index) {
+            return cols[index];
+        } else {
+            return "";
+        }
     }
 }

@@ -15,18 +15,15 @@
  */
 package uk.ac.ebi.intact.bridges.ontologies.iterator;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyDocument;
 
-import java.net.URL;
-import java.io.Reader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
-import java.util.NoSuchElementException;
-
-import org.apache.commons.io.LineIterator;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+import java.io.Reader;
+import java.net.URL;
 
 /**
  * Ontology iterator that gets the documents from lines;
@@ -37,6 +34,7 @@ import org.apache.commons.io.IOUtils;
 public abstract class LineOntologyIterator implements OntologyIterator{
 
     private LineIterator lineIterator;
+    private String nextLine;
 
     public LineOntologyIterator(URL url) throws IOException {
         this(url.openStream());
@@ -51,21 +49,31 @@ public abstract class LineOntologyIterator implements OntologyIterator{
     }
 
     public boolean hasNext() {
-        return lineIterator.hasNext();
+        nextLine = nextLine();
+
+        return nextLine != null;
+    }
+
+    private String nextLine() {
+        if (!lineIterator.hasNext()) {
+            return null;
+        }
+
+        nextLine = (String) lineIterator.next();
+
+        if (skipLine(nextLine)) {
+           return nextLine();
+        }
+
+        return nextLine;
     }
 
     public OntologyDocument next() {
-        if (!lineIterator.hasNext()) {
-            throw new NoSuchElementException("There are no more elements for this iterator");
+        try {
+            return processLine(nextLine);
+        } catch (Throwable e) {
+            throw new RuntimeException("Problem processing line: "+nextLine, e);
         }
-        
-        String line = (String) lineIterator.next();
-
-        if (skipLine(line)) {
-            return next();
-        }
-
-        return processLine(line);
     }
 
     public void remove() {
