@@ -15,13 +15,12 @@
  */
 package uk.ac.ebi.intact.bridges.ontologies.iterator;
 
-import org.junit.Test;
-import org.junit.Before;
 import org.junit.Assert;
+import org.junit.Test;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyDocument;
 
-import java.io.InputStream;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.NoSuchElementException;
 
 /**
@@ -38,7 +37,7 @@ public class UniprotTaxonomyOntologyIteratorTest {
         OntologyDocument ontologyDocument = iterator.processLine(line);
 
         Assert.assertEquals("218834", ontologyDocument.getChildId());
-        Assert.assertEquals("Pseudoryzomys simplex (Brazilian false rice rat)", ontologyDocument.getChildName());
+        Assert.assertEquals("Brazilian false rice rat", ontologyDocument.getChildName());
         Assert.assertEquals("218833", ontologyDocument.getParentId());
         Assert.assertEquals("Pseudoryzomys", ontologyDocument.getParentName());
     }
