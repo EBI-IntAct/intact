@@ -37,7 +37,8 @@
         <module>plugins</module>
         <module>uniprot-export</module>
         <module>ebeye</module>
-  </modules>
+        <module>pdbe</module>
+    </modules>
 
     <build>
         <plugins>
