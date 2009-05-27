@@ -2,6 +2,7 @@ package uk.ac.ebi.intact.core.context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
@@ -20,6 +21,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
 import java.io.File;
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * The {@code IntactContext} class is the central point of access to the IntAct Core API.  *
@@ -117,7 +119,7 @@ public class IntactContext implements DisposableBean, Serializable {
      * for testing.
      */
     public static void initStandaloneContextInMemory() {
-        initContext();
+        initContext(new String[] { "classpath*:/META-INF/standalone/*-standalone.spring.xml" });
     }
 
     /**
@@ -146,7 +148,7 @@ public class IntactContext implements DisposableBean, Serializable {
      * Initializes a standalone {@code IntactContext} using a {@code DataConfig} instance and an {@code IntactSession} instance.
      * standalone applications or a {@code WebappSession} for web applications. This value cannot be null.
      */
-    public static void initContext( ) {
+    public static void initContext( String[] configurationResourcePaths ) {
         // check for overflow initialization
         for (int i=5; i< Thread.currentThread().getStackTrace().length; i++) {
             StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[i];
@@ -158,11 +160,10 @@ public class IntactContext implements DisposableBean, Serializable {
             }
         }
 
+        ArrayUtils.add(configurationResourcePaths, "classpath*:/META-INF/intact.spring.xml");
+
         // init Spring
-        ClassPathXmlApplicationContext springContext = new ClassPathXmlApplicationContext(
-                new String[] {"classpath*:/META-INF/intact.spring.xml",
-                                "classpath:/META-INF/intact-base.spring.xml",
-                                "classpath*:/META-INF/standalone/*-standalone.spring.xml"});
+        ClassPathXmlApplicationContext springContext = new ClassPathXmlApplicationContext(configurationResourcePaths);
 
         instance = (IntactContext) springContext.getBean("intactContext");
     }
