@@ -79,7 +79,7 @@ public class CvObjectDaoTest extends IntactBasicTestCase {
             }
         }
 
-        assertEquals( 2, cvTopicCount );
+        assertEquals( 4, cvTopicCount );
         assertEquals( 3, cvXrefQualifierCount );
     }
 
@@ -107,6 +107,6 @@ public class CvObjectDaoTest extends IntactBasicTestCase {
     @Test
     public void getLastCvIdentifierWithPrefix() throws Exception {
         createSomeCvs();
-        Assert.assertEquals(612, getDaoFactory().getCvObjectDao().getLastCvIdentifierWithPrefix("MI").intValue());
+        Assert.assertEquals(634, getDaoFactory().getCvObjectDao().getLastCvIdentifierWithPrefix("MI").intValue());
     }
 }
