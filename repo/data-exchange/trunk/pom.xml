@@ -33,7 +33,6 @@
         <module>intact-cvutils</module>
         <module>psimi</module>
         <module>intact-enricher</module>
-        <module>imex</module>
         <module>plugins</module>
         <module>uniprot-export</module>
         <module>ebeye</module>
