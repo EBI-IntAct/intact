@@ -42,7 +42,6 @@ import javax.persistence.PersistenceContext;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath*:/META-INF/intact.spring.xml",
-        "classpath:/META-INF/intact-base.spring.xml",
         "classpath*:/META-INF/standalone/*-standalone.spring.xml"})
 @TransactionConfiguration
 @Transactional
