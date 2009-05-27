@@ -3,6 +3,7 @@ package uk.ac.ebi.intact.core.context;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -27,7 +28,7 @@ import java.io.Serializable;
  * @version $Id$
  */
 @Controller
-public class IntactContext implements Serializable {
+public class IntactContext implements DisposableBean, Serializable {
 
     private static final Log log = LogFactory.getLog( IntactContext.class );
 
@@ -57,7 +58,7 @@ public class IntactContext implements Serializable {
     private ApplicationContext springContext;
 
     public IntactContext() {
-
+                                                                                          
     }
 
     @PostConstruct
@@ -159,7 +160,9 @@ public class IntactContext implements Serializable {
 
         // init Spring
         ClassPathXmlApplicationContext springContext = new ClassPathXmlApplicationContext(
-                new String[] {"/META-INF/intact-base.spring.xml", "/META-INF/standalone/jpa-standalone.spring.xml", "/META-INF/standalone/intact-standalone.spring.xml"});
+                new String[] {"classpath*:/META-INF/intact.spring.xml",
+                                "classpath:/META-INF/intact-base.spring.xml",
+                                "classpath*:/META-INF/standalone/*-standalone.spring.xml"});
 
         instance = (IntactContext) springContext.getBean("intactContext");
     }
@@ -237,5 +240,9 @@ public class IntactContext implements Serializable {
 
     public ConfigurableApplicationContext getSpringContext() {
         return (ConfigurableApplicationContext) springContext;
+    }
+
+    public void destroy() throws Exception {
+        instance = null;
     }
 }

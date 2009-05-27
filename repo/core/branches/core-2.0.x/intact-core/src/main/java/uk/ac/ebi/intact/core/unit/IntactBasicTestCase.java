@@ -41,8 +41,9 @@ import javax.persistence.PersistenceContext;
  * @version $Id$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/intact-base.spring.xml", "/META-INF/standalone/jpa-standalone.spring.xml",
-        "/META-INF/standalone/intact-standalone.spring.xml"})
+@ContextConfiguration(locations = {"classpath*:/META-INF/intact.spring.xml",
+        "classpath:/META-INF/intact-base.spring.xml",
+        "classpath*:/META-INF/standalone/*-standalone.spring.xml"})
 @TransactionConfiguration
 @Transactional
 public abstract class IntactBasicTestCase {
