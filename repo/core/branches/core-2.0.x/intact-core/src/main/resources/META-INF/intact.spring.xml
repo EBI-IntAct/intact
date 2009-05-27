@@ -26,7 +26,7 @@
 
     <!-- Default institutions -->
     <bean name="institutionIntact" class="uk.ac.ebi.intact.model.util.InstitutionFactoryBean">
-        <property name="name" value="IntAct"/>
+        <property name="name" value="intact"/>
         <property name="description" value="European Bioinformatics Institute"/>
         <property name="miAc" value="MI:0469"/>
         <property name="pubmed" value="14681455"/>
@@ -34,14 +34,14 @@
         <property name="address" value="European Bioinformatics Institute; Wellcome Trust Genome Campus; Hinxton, Cambridge; CB10 1SD; United Kingdom"/>
     </bean>
     <bean name="institutionMint" class="uk.ac.ebi.intact.model.util.InstitutionFactoryBean">
-        <property name="name" value="MINT"/>
+        <property name="name" value="mint"/>
         <property name="description" value="MINT, Dpt of Biology, University of Rome Tor Vergata"/>
         <property name="miAc" value="MI:0471"/>
         <property name="pubmed" value="14681455"/>
         <property name="url" value="http://mint.bio.uniroma2.it/mint"/>
     </bean>
     <bean name="institutionDip" class="uk.ac.ebi.intact.model.util.InstitutionFactoryBean">
-        <property name="name" value="DIP"/>
+        <property name="name" value="dip"/>
         <property name="description" value="Database of Interacting Proteins"/>
         <property name="miAc" value="MI:0465"/>
         <property name="pubmed" value="14681454"/>
