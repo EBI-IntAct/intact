@@ -1,6 +1,6 @@
 package uk.ac.ebi.intact.util.msd.util;
 
-import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.core.IntactException;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
