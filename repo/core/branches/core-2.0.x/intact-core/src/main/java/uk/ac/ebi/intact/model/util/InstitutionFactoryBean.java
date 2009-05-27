@@ -16,8 +16,8 @@
 package uk.ac.ebi.intact.model.util;
 
 import org.springframework.beans.factory.FactoryBean;
-import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
+import uk.ac.ebi.intact.model.*;
 
 /**
  * Used to create institutions;
@@ -56,13 +56,6 @@ public class InstitutionFactoryBean implements FactoryBean {
             CvDatabase cvPubmed = mockBuilder.createCvObject(CvDatabase.class, CvDatabase.PUBMED_MI_REF, CvDatabase.PUBMED);
             InstitutionXref pubmedXref = mockBuilder.createIdentityXref(institution, pubmed, cvPubmed);
             institution.addXref(pubmedXref);
-        }
-
-        if (address != null) {
-            CvTopic postalAddress = CvObjectUtils.createCvObject(institution, CvTopic.class, null, "postaladdress");
-
-            Annotation annotation = mockBuilder.createAnnotation(address, postalAddress);
-            institution.addAnnotation(annotation);
         }
 
         if (url != null) {
