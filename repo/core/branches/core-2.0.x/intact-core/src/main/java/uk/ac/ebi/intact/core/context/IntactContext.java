@@ -75,11 +75,8 @@ public class IntactContext implements Serializable {
      */
     public static IntactContext getCurrentInstance() {
         if ( !currentInstanceExists() ) {
-            // stack trace element to know from where this method was called
-            StackTraceElement ste = Thread.currentThread().getStackTrace()[3];
 
-            log.debug( "Current instance of IntactContext is null. Initializing a context in memory.\nCalled at:\n\t" +
-                      ste.toString() );
+            log.warn( "Current instance of IntactContext is null. Initializing a context in memory." );
 
             initStandaloneContextInMemory();
         }
@@ -149,6 +146,16 @@ public class IntactContext implements Serializable {
      * standalone applications or a {@code WebappSession} for web applications. This value cannot be null.
      */
     public static void initContext( ) {
+        // check for overflow initialization
+        for (int i=5; i< Thread.currentThread().getStackTrace().length; i++) {
+            StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[i];
+
+            if (stackTraceElement.getClassName().equals(IntactContext.class.getName())
+                    && stackTraceElement.getMethodName().equals("initContext")) {
+                throw new IntactInitializationError("Infinite recursive invocation to IntactContext.initContext(). This" +
+                        " may be due to an illegal invocation of IntactContext.getCurrentInstance() during bean instantiation.");
+            }
+        }
 
         // init Spring
         ClassPathXmlApplicationContext springContext = new ClassPathXmlApplicationContext(
