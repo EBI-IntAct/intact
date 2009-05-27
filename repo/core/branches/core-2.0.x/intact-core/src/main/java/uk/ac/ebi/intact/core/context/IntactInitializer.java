@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.core.context;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.config.IntactConfiguration;
 import uk.ac.ebi.intact.core.config.SchemaVersion;
@@ -29,6 +30,8 @@ import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.meta.DbInfo;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
+
+import java.util.Map;
 
 /**
  * TODO write description of the class.
@@ -59,6 +62,9 @@ public class IntactInitializer {
     @Autowired
     private InstitutionDao institutionDao;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     private static final Log log = LogFactory.getLog(IntactInitializer.class);
 
     public IntactInitializer() {
@@ -73,17 +79,27 @@ public class IntactInitializer {
         }
 
         checkSchemaCompatibility();
-        persistInstitution();
+        persistInstitution(configuration.getDefaultInstitution(), true);
+
+        // persist all institutions
+        Map<String,Institution> institutionMap = applicationContext.getBeansOfType(Institution.class);
+
+        for (Institution institution : institutionMap.values()) {
+            persistInstitution(institution, false);
+        }
+
         persistBasicCvObjects();
     }
 
     @Transactional
-    public void persistInstitution() {
-        Institution institution = institutionDao.getByShortLabel(configuration.getDefaultInstitution().getShortLabel());
+    public void persistInstitution(Institution candidateInstitution, boolean isDefault) {
+        Institution institution = institutionDao.getByShortLabel(candidateInstitution.getShortLabel());
 
         if (institution == null) {
-            persisterHelper.save(configuration.getDefaultInstitution());
-        } else {
+            if (log.isDebugEnabled()) log.debug("Persisting institution: "+candidateInstitution);
+            persisterHelper.save(candidateInstitution);
+
+        } else if (isDefault) {
             configuration.setDefaultInstitution(institution);
         }
     }
@@ -121,7 +137,7 @@ public class IntactInitializer {
         if (cvObjectDao.getByPsiMiRef(CvDatabase.INTACT_MI_REF) == null) {
             log.info("Persisting necessary CvObjects");
 
-            CvDatabase intact = CvObjectUtils.createCvObject(intactContext.getInstitution(), CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT);
+            CvDatabase intact = CvObjectUtils.createCvObject(configuration.getDefaultInstitution(), CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT);
             persisterHelper.save(intact);
         }
     }
