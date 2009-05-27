@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.CvTissue;
 
 /**
@@ -23,8 +22,8 @@ public class PersisterHelper_BioSourceTest extends IntactBasicTestCase
 
         Assert.assertEquals(1, getDaoFactory().getBioSourceDao().countAll());
         Assert.assertEquals(3, getDaoFactory().getInstitutionDao().countAll());
-        Assert.assertEquals(4, getDaoFactory().getCvObjectDao().countAll());
-        Assert.assertEquals(7, getDaoFactory().getXrefDao().countAll());
+        Assert.assertEquals(7, getDaoFactory().getCvObjectDao().countAll());
+        Assert.assertEquals(14, getDaoFactory().getXrefDao().countAll());
 
         BioSource bs2 = getMockBuilder().createBioSource( 9606, "human" );
         PersisterHelper.saveOrUpdate( bs2 );
@@ -32,7 +31,7 @@ public class PersisterHelper_BioSourceTest extends IntactBasicTestCase
         Assert.assertEquals(1, getDaoFactory().getBioSourceDao().countAll());
         Assert.assertEquals(3, getDaoFactory().getInstitutionDao().countAll());
         Assert.assertEquals(7, getDaoFactory().getCvObjectDao().countAll());
-        Assert.assertEquals(6, getDaoFactory().getXrefDao().countAll());
+        Assert.assertEquals(14, getDaoFactory().getXrefDao().countAll());
     }
 
     @Test
@@ -42,27 +41,19 @@ public class PersisterHelper_BioSourceTest extends IntactBasicTestCase
 
         Assert.assertEquals(1, getDaoFactory().getBioSourceDao().countAll());
         Assert.assertEquals(3, getDaoFactory().getInstitutionDao().countAll());
-        Assert.assertEquals(4, getDaoFactory().getCvObjectDao().countAll());
-        Assert.assertEquals(7, getDaoFactory().getXrefDao().countAll());
-
-        for (CvObject cv : getDaoFactory().getCvObjectDao().getAll()) {
-            System.out.println("1: "+cv);
-        }
+        Assert.assertEquals(7, getDaoFactory().getCvObjectDao().countAll());
+        Assert.assertEquals(14, getDaoFactory().getXrefDao().countAll());
 
         getEntityManager().clear();
 
         BioSource bs2 = getMockBuilder().createBioSource( 9606, "human" );
         bs2.setCvTissue(getMockBuilder().createCvObject(CvTissue.class, "IA:xxxx", "blood"));
         PersisterHelper.saveOrUpdate( bs2 );
-        
-        for (CvObject cv : getDaoFactory().getCvObjectDao().getAll()) {
-            System.out.println("2: "+cv);
-        }
 
         Assert.assertEquals(2, getDaoFactory().getBioSourceDao().countAll());
         Assert.assertEquals(3, getDaoFactory().getInstitutionDao().countAll());
-        Assert.assertEquals(5, getDaoFactory().getCvObjectDao().countAll());
-        Assert.assertEquals(9, getDaoFactory().getXrefDao().countAll());
+        Assert.assertEquals(8, getDaoFactory().getCvObjectDao().countAll());
+        Assert.assertEquals(16, getDaoFactory().getXrefDao().countAll());
     }
 
     @Test

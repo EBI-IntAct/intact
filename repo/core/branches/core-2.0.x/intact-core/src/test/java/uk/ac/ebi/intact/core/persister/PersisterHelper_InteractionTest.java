@@ -100,7 +100,7 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         final Institution intact2 = getDaoFactory().getInteractionDao().getAll().iterator().next().getOwner();
         Assert.assertEquals( intact1, intact2 );
 
-        Assert.assertEquals( 21, getDaoFactory().getCvObjectDao().getAll().size() );
+        Assert.assertEquals( 23, getDaoFactory().getCvObjectDao().getAll().size() );
         Assert.assertEquals( 4, getDaoFactory().getInteractionDao().getAll().size() );
 
         intactEntry = builder.createIntactEntryRandom(2, 2, 2);

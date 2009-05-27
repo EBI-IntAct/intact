@@ -65,7 +65,7 @@ public abstract class IntactBasicTestCase {
 
     @Before
     public void prepareBasicTest() throws Exception {
-        mockBuilder = new IntactMockBuilder();
+        mockBuilder = new IntactMockBuilder(intactContext.getConfig().getDefaultInstitution());
     }
 
     @After
