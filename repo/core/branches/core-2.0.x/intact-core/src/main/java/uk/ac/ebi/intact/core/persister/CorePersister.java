@@ -258,18 +258,22 @@ public class CorePersister  {
             final BaseDao baseDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao();
             if ( baseDao.isTransient( ao )) {
 
-                if (log.isTraceEnabled()) log.trace("Transient "+ao.getClass().getSimpleName()+": "+ao.getShortLabel()+" - Decision: SYNCHRONIZE-REFRESH");
+                if (log.isTraceEnabled()) log.trace("Transient "+ao.getClass().getSimpleName()+": "+ao.getAc()+" "+ao.getShortLabel()+" - Decision: SYNCHRONIZE-REFRESH");
 
                 // transient object: that is not attached to the session
                 //ao = transientObjectHandler.handle( ao );
+
 
                 if (statisticsEnabled) statistics.addTransient(ao);
 
                 // object exists in the database, we will update it
                 final DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
                 final AnnotatedObjectDao<T> dao = daoFactory.getAnnotatedObjectDao( ( Class<T> ) ao.getClass() );
-                final T managedObject = dao.getByAc( ao.getAc() );
 
+                String ac = ao.getAc();
+
+                final T managedObject = dao.getByAc(ac);
+                
                 // updated the managed object based on ao's properties, but only add it to merge
                 // if something has been copied (it was not a duplicate)
                 try {
@@ -281,7 +285,7 @@ public class CorePersister  {
                     }
 
                     // this will allow to reload the AO by its AC after flushing
-                    ao.setAc(managedObject.getAc());
+                    ao.setAc(ac);
 
                     // traverse annotatedObject's properties and assign AC where appropriate
                     copyAnnotatedObjectAttributeAcs(managedObject, ao);
