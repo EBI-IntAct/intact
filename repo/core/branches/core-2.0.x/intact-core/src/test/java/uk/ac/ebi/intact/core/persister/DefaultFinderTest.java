@@ -1,13 +1,10 @@
 package uk.ac.ebi.intact.core.persister;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.context.transaction.AfterTransaction;
-import uk.ac.ebi.intact.core.persister.finder.DefaultFinder;
+import org.springframework.test.context.transaction.BeforeTransaction;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.clone.IntactCloner;
@@ -59,7 +56,7 @@ public class DefaultFinderTest extends IntactBasicTestCase {
         Assert.assertEquals( i.getAc(), ac );
 
         // cannot be found
-        Assert.assertNull( finder.findAc( getMockBuilder().createInstitution( "MI:zzzz", "mint" ) ) );
+        Assert.assertNull( finder.findAc( getMockBuilder().createInstitution( "MI:zzzz", "lala" ) ) );
     }
 
     @Test

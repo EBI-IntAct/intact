@@ -4,8 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.CvTissue;
 import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.CvTissue;
 
 /**
  * TODO comment this
@@ -22,7 +22,7 @@ public class PersisterHelper_BioSourceTest extends IntactBasicTestCase
         PersisterHelper.saveOrUpdate( bs1 );
 
         Assert.assertEquals(1, getDaoFactory().getBioSourceDao().countAll());
-        Assert.assertEquals(2, getDaoFactory().getInstitutionDao().countAll());
+        Assert.assertEquals(3, getDaoFactory().getInstitutionDao().countAll());
         Assert.assertEquals(4, getDaoFactory().getCvObjectDao().countAll());
         Assert.assertEquals(6, getDaoFactory().getXrefDao().countAll());
 
@@ -41,7 +41,7 @@ public class PersisterHelper_BioSourceTest extends IntactBasicTestCase
         PersisterHelper.saveOrUpdate( bs1 );
 
         Assert.assertEquals(1, getDaoFactory().getBioSourceDao().countAll());
-        Assert.assertEquals(2, getDaoFactory().getInstitutionDao().countAll());
+        Assert.assertEquals(3, getDaoFactory().getInstitutionDao().countAll());
         Assert.assertEquals(4, getDaoFactory().getCvObjectDao().countAll());
         Assert.assertEquals(6, getDaoFactory().getXrefDao().countAll());
 

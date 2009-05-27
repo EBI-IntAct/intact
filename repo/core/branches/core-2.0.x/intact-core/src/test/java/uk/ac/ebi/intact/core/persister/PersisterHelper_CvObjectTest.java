@@ -155,7 +155,7 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
 
         PersisterStatistics stats = PersisterHelper.saveOrUpdate(proteinType);
 
-        Assert.assertEquals(5, getDaoFactory().getCvObjectDao().countAll());
+        Assert.assertEquals(8, getDaoFactory().getCvObjectDao().countAll());
         Assert.assertEquals(2, stats.getPersistedCount(CvInteractorType.class, false));
     }
 
@@ -169,7 +169,7 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
 
         PersisterStatistics stats = PersisterHelper.saveOrUpdate(proteinType, megaProteinType);
 
-        Assert.assertEquals(5, getDaoFactory().getCvObjectDao().countAll());
+        Assert.assertEquals(8, getDaoFactory().getCvObjectDao().countAll());
         Assert.assertEquals(2, stats.getPersistedCount(CvInteractorType.class, false));
     }
 
@@ -183,7 +183,7 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
 
         PersisterStatistics stats = PersisterHelper.saveOrUpdate(megaProteinType);
 
-        Assert.assertEquals(5, getDaoFactory().getCvObjectDao().countAll());
+        Assert.assertEquals(8, getDaoFactory().getCvObjectDao().countAll());
         Assert.assertEquals(2, stats.getPersistedCount(CvInteractorType.class, false));
     }
 
@@ -206,7 +206,7 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
         
         PersisterStatistics stats = PersisterHelper.saveOrUpdate(citation);
 
-        Assert.assertEquals(7, getDaoFactory().getCvObjectDao().countAll());
+        Assert.assertEquals(10, getDaoFactory().getCvObjectDao().countAll());
         Assert.assertEquals(4, stats.getPersistedCount(CvDatabase.class, false));
     }
 
@@ -276,7 +276,7 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
 
         PersisterHelper.saveOrUpdate(postalAddress);
 
-        Assert.assertEquals(1, getDaoFactory().getCvObjectDao(CvTopic.class).countAll());
+        Assert.assertEquals(3, getDaoFactory().getCvObjectDao(CvTopic.class).countAll());
         Assert.assertEquals("postaladdress", getDaoFactory().getCvObjectDao(CvTopic.class).getAll().get(0).getShortLabel());
 
         CvTopic repeatedPostalAddress = getMockBuilder().createCvObject(CvTopic.class, "removed", "postalAddress");
@@ -285,7 +285,7 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
 
         PersisterHelper.saveOrUpdate(repeatedPostalAddress);
 
-        Assert.assertEquals(1, getDaoFactory().getCvObjectDao(CvTopic.class).countAll());
+        Assert.assertEquals(3, getDaoFactory().getCvObjectDao(CvTopic.class).countAll());
     }
 
     @Test
