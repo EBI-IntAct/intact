@@ -5,8 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util.msd.util;
 
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.core.IntactException;
+import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.util.PropertyLoader;
 

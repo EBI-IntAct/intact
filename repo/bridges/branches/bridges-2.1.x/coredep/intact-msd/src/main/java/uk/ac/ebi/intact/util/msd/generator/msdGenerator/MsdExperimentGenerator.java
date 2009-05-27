@@ -1,6 +1,6 @@
 package uk.ac.ebi.intact.util.msd.generator.msdGenerator;
 
-import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.core.IntactException;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.util.msd.model.PdbBean;
 import uk.ac.ebi.intact.util.msd.util.CvMapper;

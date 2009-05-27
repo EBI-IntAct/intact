@@ -2,7 +2,7 @@ package uk.ac.ebi.intact.util.msd.generator.intactGenerator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.core.IntactException;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvInteraction;
 import uk.ac.ebi.intact.model.Experiment;

@@ -2,7 +2,7 @@ package uk.ac.ebi.intact.util.msd.util;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
-import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.core.IntactException;
 import uk.ac.ebi.intact.util.msd.model.PdbBean;
 
 import java.sql.Connection;
