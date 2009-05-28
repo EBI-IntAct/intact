@@ -1,16 +1,16 @@
 package uk.ac.ebi.intact.model.clone;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
+import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
+import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.visitor.BaseIntactVisitor;
 import uk.ac.ebi.intact.model.visitor.DefaultTraverser;
 
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * IntactCloner Tester.
@@ -21,12 +21,8 @@ import java.util.ArrayList;
  */
 public class IntactClonerTest extends IntactBasicTestCase {
 
-    IntactCloner cloner;
-
-    @Before
-    public void init() {
-        cloner = new IntactCloner();
-    }
+    @Autowired
+    private IntactCloner cloner;
 
     private void clone( IntactObject io ) throws IntactClonerException {
         final IntactObject clone = cloner.clone( io );
@@ -123,7 +119,6 @@ public class IntactClonerTest extends IntactBasicTestCase {
 
         citation.addChild( psiMi );
 
-        IntactCloner cloner = new IntactCloner();
         cloner.setCloneCvObjectTree( true );
 
         CvDatabase citationClone = cloner.clone( citation );
@@ -135,11 +130,12 @@ public class IntactClonerTest extends IntactBasicTestCase {
     public void clone_excludeAcs() throws Exception {
         Experiment exp = getMockBuilder().createExperimentRandom( 2 );
 
-        IntactCloner cloner = new IntactCloner();
         cloner.setExcludeACs( true );
 
+        Experiment clonedExp = cloner.cloneExperiment(exp);
+
         DefaultTraverser traverser = new DefaultTraverser();
-        traverser.traverse( exp, new BaseIntactVisitor() {
+        traverser.traverse( clonedExp, new BaseIntactVisitor() {
             @Override
             public void visitIntactObject( IntactObject intactObject ) {
                 if ( intactObject.getAc() != null ) {
