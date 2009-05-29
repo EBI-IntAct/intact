@@ -1,10 +1,10 @@
 package uk.ac.ebi.intact.core.context;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.lang.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -21,7 +21,6 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
 import java.io.File;
 import java.io.Serializable;
-import java.util.Arrays;
 
 /**
  * The {@code IntactContext} class is the central point of access to the IntAct Core API.  *
@@ -164,6 +163,7 @@ public class IntactContext implements DisposableBean, Serializable {
 
         // init Spring
         ClassPathXmlApplicationContext springContext = new ClassPathXmlApplicationContext(configurationResourcePaths);
+        springContext.registerShutdownHook();
 
         instance = (IntactContext) springContext.getBean("intactContext");
     }
