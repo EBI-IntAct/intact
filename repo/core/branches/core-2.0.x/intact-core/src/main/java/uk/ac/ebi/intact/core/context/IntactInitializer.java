@@ -65,6 +65,8 @@ public class IntactInitializer {
     @Autowired
     private ApplicationContext applicationContext;
 
+    private boolean autoPersist = true;
+
     private static final Log log = LogFactory.getLog(IntactInitializer.class);
 
     public IntactInitializer() {
@@ -84,18 +86,20 @@ public class IntactInitializer {
         // persist all institutions
         Map<String,Institution> institutionMap = applicationContext.getBeansOfType(Institution.class);
 
-        for (Institution institution : institutionMap.values()) {
-            persistInstitution(institution, false);
-        }
+        if (isAutoPersist()) {
+            for (Institution institution : institutionMap.values()) {
+                persistInstitution(institution, false);
+            }
 
-        persistBasicCvObjects();
+            persistBasicCvObjects();
+        }
     }
 
     @Transactional
     public void persistInstitution(Institution candidateInstitution, boolean isDefault) {
         Institution institution = institutionDao.getByShortLabel(candidateInstitution.getShortLabel());
 
-        if (institution == null) {
+        if (institution == null && isAutoPersist()) {
             if (log.isDebugEnabled()) log.debug("Persisting institution: "+candidateInstitution);
             persisterHelper.save(candidateInstitution);
 
@@ -111,30 +115,31 @@ public class IntactInitializer {
 
         SchemaVersion schemaVersion;
 
-        if (dbInfoSchemaVersion == null) {
+        if (dbInfoSchemaVersion == null && isAutoPersist()) {
             log.info("Schema version does not exist. Will be created: " + requiredSchemaVersion);
             DbInfo dbInfo = new DbInfo(DbInfo.SCHEMA_VERSION, requiredSchemaVersion.toString());
             dbInfoDao.persist(dbInfo);
             return;
-        }
+        } else {
 
-        try {
-            schemaVersion = SchemaVersion.parse(dbInfoSchemaVersion.getValue());
-        }
-        catch (Exception e) {
-            throw new IntactInitializationError("Error parsing schema version", e);
-        }
+            try {
+                schemaVersion = SchemaVersion.parse(dbInfoSchemaVersion.getValue());
+            }
+            catch (Exception e) {
+                throw new IntactInitializationError("Error parsing schema version", e);
+            }
 
-        if (!schemaVersion.isCompatibleWith(requiredSchemaVersion)) {
-            throw new IntactInitializationError("Database schema version " + requiredSchemaVersion + " is required" +
-                    " to use this version of intact-core. Schema version found: " + schemaVersion);
+            if (!schemaVersion.isCompatibleWith(requiredSchemaVersion)) {
+                throw new IntactInitializationError("Database schema version " + requiredSchemaVersion + " is required" +
+                        " to use this version of intact-core. Schema version found: " + schemaVersion);
+            }
         }
     }
 
     @Transactional
      public void persistBasicCvObjects() {
 
-        if (cvObjectDao.getByPsiMiRef(CvDatabase.INTACT_MI_REF) == null) {
+        if (isAutoPersist() && cvObjectDao.getByPsiMiRef(CvDatabase.INTACT_MI_REF) == null) {
             log.info("Persisting necessary CvObjects");
 
             CvDatabase intact = CvObjectUtils.createCvObject(configuration.getDefaultInstitution(), CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT);
@@ -142,4 +147,11 @@ public class IntactInitializer {
         }
     }
 
+    public boolean isAutoPersist() {
+        return autoPersist;
+    }
+
+    public void setAutoPersist(boolean autoPersist) {
+        this.autoPersist = autoPersist;
+    }
 }
