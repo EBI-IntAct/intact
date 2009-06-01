@@ -17,12 +17,10 @@ package uk.ac.ebi.intact.core.persister;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.context.annotation.Scope;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.stats.PersisterStatistics;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -30,8 +28,8 @@ import uk.ac.ebi.intact.model.IntactEntry;
 import uk.ac.ebi.intact.model.Interaction;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.FlushModeType;
+import javax.persistence.PersistenceContext;
 
 /**
  * Helper class to reduce the code needed to save or update an Annotated object.
@@ -55,10 +53,12 @@ public class PersisterHelper {
 
     public PersisterHelper() {}
 
+    @Deprecated
     public static void saveOrUpdate( IntactEntry... intactEntries ) throws PersisterException {
         IntactContext.getCurrentInstance().getPersisterHelper().save(intactEntries);
     }
 
+    @Deprecated
     public static PersisterStatistics saveOrUpdate( AnnotatedObject... annotatedObjects ) throws PersisterException {
         return IntactContext.getCurrentInstance().getPersisterHelper().save(annotatedObjects);
     }
@@ -66,7 +66,7 @@ public class PersisterHelper {
     public void save( IntactEntry... intactEntries ) throws PersisterException {
         for ( IntactEntry intactEntry : intactEntries ) {
             for ( Interaction interaction : intactEntry.getInteractions() ) {
-                saveOrUpdate( interaction );
+                save( interaction );
             }
         }
     }
@@ -82,7 +82,7 @@ public class PersisterHelper {
 
         CorePersister corePersister = getCorePersister();
 
-        //corePersister.getStatistics().reset();
+        corePersister.getStatistics().reset();
 
         try {
             for ( AnnotatedObject ao : annotatedObjects ) {
