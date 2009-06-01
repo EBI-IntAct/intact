@@ -32,6 +32,11 @@
         <property name="pubmed" value="14681455"/>
         <property name="url" value="http://www.ebi.ac.uk/intact/"/>
         <property name="address" value="European Bioinformatics Institute; Wellcome Trust Genome Campus; Hinxton, Cambridge; CB10 1SD; United Kingdom"/>
+        <property name="aliases">
+            <list>
+                <value>ebi</value>
+            </list>
+        </property>
     </bean>
     <bean name="institutionMint" class="uk.ac.ebi.intact.model.util.InstitutionFactoryBean">
         <property name="name" value="mint"/>
@@ -48,6 +53,11 @@
         <property name="url" value="http://dip.doe-mbi.ucla.edu/"/>
         <property name="address" value="611 Young Drive East; Los Angeles CA 90095; USA"/>
         <property name="email" value="dip@mbi.ucla.edu"/>
+        <property name="aliases">
+            <list>
+                <value>ucla</value>
+            </list>
+        </property>
     </bean>
 
 </beans>
