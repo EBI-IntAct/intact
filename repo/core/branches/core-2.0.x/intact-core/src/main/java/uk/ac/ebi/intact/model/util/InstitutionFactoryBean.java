@@ -19,6 +19,9 @@ import org.springframework.beans.factory.FactoryBean;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
 import uk.ac.ebi.intact.model.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Used to create institutions;
  *
@@ -34,6 +37,11 @@ public class InstitutionFactoryBean implements FactoryBean {
     private String address;
     private String pubmed;
     private String email;
+    private List<String> aliases;
+
+    public InstitutionFactoryBean() {
+        aliases = new ArrayList<String>();
+    }
 
     public Object getObject() throws Exception {
         if (name == null) {
@@ -70,6 +78,11 @@ public class InstitutionFactoryBean implements FactoryBean {
 
             Annotation annotation = mockBuilder.createAnnotation(email, cvEmail);
             institution.addAnnotation(annotation);
+        }
+
+        for (String aliasName : aliases) {
+            InstitutionAlias alias = new InstitutionAlias(institution, institution, null, aliasName);
+            institution.addAlias(alias);
         }
 
         return institution;
@@ -137,5 +150,13 @@ public class InstitutionFactoryBean implements FactoryBean {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<String> getAliases() {
+        return aliases;
+    }
+
+    public void setAliases(List<String> aliases) {
+        this.aliases = aliases;
     }
 }
