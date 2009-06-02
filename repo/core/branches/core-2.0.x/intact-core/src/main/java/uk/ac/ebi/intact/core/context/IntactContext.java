@@ -244,6 +244,10 @@ public class IntactContext implements DisposableBean, Serializable {
     }
 
     public void destroy() throws Exception {
+        if (log.isDebugEnabled()) log.debug( "Releasing LogFactory" );
+        LogFactory.release( Thread.currentThread().getContextClassLoader() );
+
+        if (log.isDebugEnabled()) log.debug( "Destroying IntacContext" );
         instance = null;
     }
 }
