@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.dataexchange.enricher.standard;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.model.IntactEntry;
 import uk.ac.ebi.intact.model.Interaction;
 
@@ -24,25 +26,16 @@ import uk.ac.ebi.intact.model.Interaction;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class IntactEntryEnricher implements Enricher<IntactEntry> {
+@Controller
+public class IntactEntryEnricher {
 
-     private static ThreadLocal<IntactEntryEnricher> instance = new ThreadLocal<IntactEntryEnricher>() {
-        @Override
-        protected IntactEntryEnricher initialValue() {
-            return new IntactEntryEnricher();
-        }
-    };
+    @Autowired
+    private InteractionEnricher interactionEnricher;
 
-    public static IntactEntryEnricher getInstance() {
-        return instance.get();
-    }
-
-    protected IntactEntryEnricher() {
+    public IntactEntryEnricher() {
     }
 
     public void enrich(IntactEntry objectToEnrich) {
-        InteractionEnricher interactionEnricher = InteractionEnricher.getInstance();
-
         for (Interaction interaction : objectToEnrich.getInteractions()) {
             interactionEnricher.enrich(interaction);
         }

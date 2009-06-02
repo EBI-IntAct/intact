@@ -20,7 +20,7 @@ import org.apache.maven.plugin.logging.SystemStreamLog;
 
 import java.io.File;
 
-import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.core.context.IntactContext;
 
 public class OboImportMojoTest extends AbstractMojoTestCase
 {

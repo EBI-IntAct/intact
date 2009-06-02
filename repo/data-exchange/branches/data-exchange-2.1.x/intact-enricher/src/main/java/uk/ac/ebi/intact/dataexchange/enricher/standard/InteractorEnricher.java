@@ -17,6 +17,8 @@ package uk.ac.ebi.intact.dataexchange.enricher.standard;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import uk.ac.ebi.chebi.webapps.chebiWS.model.Entity;
 import uk.ac.ebi.intact.dataexchange.enricher.fetch.CvObjectFetcher;
 import uk.ac.ebi.intact.dataexchange.enricher.fetch.InteractorFetcher;
@@ -33,22 +35,24 @@ import java.util.Collection;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
+@Controller
 public class InteractorEnricher extends AnnotatedObjectEnricher<Interactor> {
 
     private static final Log log = LogFactory.getLog(InteractorEnricher.class);
 
-    private static ThreadLocal<InteractorEnricher> instance = new ThreadLocal<InteractorEnricher>() {
-        @Override
-        protected InteractorEnricher initialValue() {
-            return new InteractorEnricher();
-        }
-    };
+    @Autowired
+    private CvObjectEnricher cvObjectEnricher;
 
-    public static InteractorEnricher getInstance() {
-        return instance.get();
-    }
+    @Autowired
+    private BioSourceEnricher bioSourceEnricher;
 
-    protected InteractorEnricher() {
+    @Autowired
+    private InteractorFetcher interactorFetcher;
+
+    @Autowired
+    private CvObjectFetcher cvObjectFetcher;
+
+    public InteractorEnricher() {
     }
 
     /**
@@ -71,8 +75,6 @@ public class InteractorEnricher extends AnnotatedObjectEnricher<Interactor> {
 
         // replace short label invalid chars
         objectToEnrich.setShortLabel(replaceLabelInvalidChars(objectToEnrich.getShortLabel()));
-
-        CvObjectEnricher cvObjectEnricher = CvObjectEnricher.getInstance();
 
         if (objectToEnrich.getCvInteractorType() != null) {
             cvObjectEnricher.enrich(objectToEnrich.getCvInteractorType());
@@ -98,13 +100,13 @@ public class InteractorEnricher extends AnnotatedObjectEnricher<Interactor> {
 
                 if (log.isDebugEnabled()) log.debug("\tEnriching Uniprot protein: " + uniprotId + " (taxid:"+taxId+")"+" (taxid:"+taxId+")");
 
-                uniprotProt = InteractorFetcher.getInstance().fetchInteractorFromUniprot(uniprotId, taxId);
+                uniprotProt = interactorFetcher.fetchInteractorFromUniprot(uniprotId, taxId);
 
             } else  {
                 if (log.isDebugEnabled()) log.debug("\tEnriching Uniprot protein by shortLabel: "+proteinToEnrich.getShortLabel()+" (taxid:"+taxId+")");
 
                 if (proteinToEnrich.getShortLabel() != null) {
-                    uniprotProt = InteractorFetcher.getInstance().fetchInteractorFromUniprot(proteinToEnrich.getShortLabel(), taxId);
+                    uniprotProt = interactorFetcher.fetchInteractorFromUniprot(proteinToEnrich.getShortLabel(), taxId);
                 }
             }
 
@@ -122,7 +124,7 @@ public class InteractorEnricher extends AnnotatedObjectEnricher<Interactor> {
             }
 
             if (objectToEnrich.getBioSource() != null) {
-                BioSourceEnricher.getInstance().enrich(objectToEnrich.getBioSource());
+                bioSourceEnricher.enrich(objectToEnrich.getBioSource());
             }
 
         }
@@ -153,7 +155,7 @@ public class InteractorEnricher extends AnnotatedObjectEnricher<Interactor> {
             if ( log.isDebugEnabled() ) {
                 log.debug( "Enriching Chebi SmallMolecule: " + chebiId );
             }
-            final Entity smallMoleculeChebiEntity = InteractorFetcher.getInstance().fetchInteractorFromChebi( chebiId );
+            final Entity smallMoleculeChebiEntity = interactorFetcher.fetchInteractorFromChebi( chebiId );
 
             if ( smallMoleculeChebiEntity != null ) {
                 String chebiAsciiName = smallMoleculeChebiEntity.getChebiAsciiName();
@@ -163,7 +165,7 @@ public class InteractorEnricher extends AnnotatedObjectEnricher<Interactor> {
                 }
                 String inchiId = smallMoleculeChebiEntity.getInchi();
                 //update annotation
-                CvTopic inchiCvTopic = CvObjectFetcher.getInstance().fetchByTermId(CvTopic.class, CvTopic.INCHI_ID_MI_REF);
+                CvTopic inchiCvTopic = cvObjectFetcher.fetchByTermId(CvTopic.class, CvTopic.INCHI_ID_MI_REF);
                 if(inchiCvTopic!=null){
                 updateAnnotations( smallMoleculeToEnrich,inchiCvTopic,inchiId);
                 }

@@ -20,9 +20,9 @@ import org.apache.commons.logging.LogFactory;
 import psidev.psi.mi.tab.model.CrossReference;
 import psidev.psi.mi.tab.model.CrossReferenceImpl;
 import psidev.psi.mi.tab.model.builder.Row;
-import uk.ac.ebi.intact.business.IntactTransactionException;
-import uk.ac.ebi.intact.context.DataContext;
-import uk.ac.ebi.intact.context.IntactContext;
+ 
+import uk.ac.ebi.intact.core.context.DataContext;
+import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.XrefUtils;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
@@ -33,7 +33,7 @@ import uk.ac.ebi.intact.psimitab.model.ExtendedInteractor;
 import uk.ac.ebi.intact.psimitab.converters.Intact2BinaryInteractionConverter;
 import uk.ac.ebi.intact.psimitab.converters.expansion.SpokeWithoutBaitExpansion;
 import uk.ac.ebi.intact.psimitab.converters.expansion.ExpansionStrategy;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.commons.util.ETACalculator;
 import uk.ac.ebi.intact.irefindex.seguid.RigDataModel;
 import uk.ac.ebi.intact.irefindex.seguid.RogidGenerator;
@@ -64,11 +64,9 @@ public class DatabaseSimpleMitabExporter {
     public DatabaseSimpleMitabExporter() {
     }
 
-    public void exportAllInteractions(Writer mitabWriter) throws IOException, IntactTransactionException {
-        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+    public void exportAllInteractions(Writer mitabWriter) throws IOException {
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         final int interactionCount = daoFactory.getInteractorDao( InteractionImpl.class ).countAll();
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         final String allInteractorsHql = "from InteractorImpl where objclass = '" + InteractionImpl.class.getName()+"'";
         exportInteractions(allInteractorsHql, interactionCount, mitabWriter);
@@ -76,7 +74,7 @@ public class DatabaseSimpleMitabExporter {
 
     public void exportInteractions(String interactionHqlQuery,
                                    int interactionTotalCount,
-                                   Writer mitabWriter) throws IOException, IntactTransactionException {
+                                   Writer mitabWriter) throws IOException {
 
         if (interactionHqlQuery == null) {
             throw new NullPointerException("Query for interactions is null: interactionQuery");
@@ -96,8 +94,6 @@ public class DatabaseSimpleMitabExporter {
 
         // build the interaction clusters
 
-        final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
-
         List<? extends Interaction> interactions = null;
 
         Intact2BinaryInteractionConverter converter =
@@ -113,7 +109,6 @@ public class DatabaseSimpleMitabExporter {
         final ExpansionStrategy expansion = new SpokeWithoutBaitExpansion();
 
         do {
-            dataContext.beginTransaction();
             interactions = findInteractions(interactionHqlQuery, firstResult, maxResults);
 
             firstResult = firstResult + maxResults;
@@ -187,8 +182,6 @@ public class DatabaseSimpleMitabExporter {
                     mitabWriter.flush();
                 }
             }
-
-            dataContext.commitTransaction();
 
         } while (!interactions.isEmpty());
 

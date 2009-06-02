@@ -20,18 +20,20 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Directory;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Controller;
 import psidev.psi.mi.tab.model.CrossReference;
 import psidev.psi.mi.tab.model.builder.Row;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexSearcher;
-import uk.ac.ebi.intact.business.IntactTransactionException;
+ 
 import uk.ac.ebi.intact.commons.util.ETACalculator;
-import uk.ac.ebi.intact.context.DataContext;
-import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.core.context.DataContext;
+import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.InteractionImpl;
 import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 import uk.ac.ebi.intact.psimitab.OntologyNameFinder;
@@ -68,7 +70,7 @@ public class DatabaseMitabExporter {
     private IntactPsimiTabIndexWriter interactionIndexer;
     private IntactInteractorIndexWriter interactorIndexer;
 
-    public DatabaseMitabExporter(OntologyIndexSearcher ontologiesIndexSearcher, String ... supportedOntologies) {
+    protected DatabaseMitabExporter(OntologyIndexSearcher ontologiesIndexSearcher, String ... supportedOntologies) {
         this.ontologiesIndexSearcher = ontologiesIndexSearcher;
         this.nameFinder = new OntologyNameFinder(ontologiesIndexSearcher);
         this.ontologiesToExpand = supportedOntologies;
@@ -78,13 +80,11 @@ public class DatabaseMitabExporter {
         }
     }
 
-    public void exportAllInteractors(Writer mitabWriter, Directory interactionDirectory, Directory interactorDirectory) throws IOException, IntactTransactionException {
-        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+    public void exportAllInteractors(Writer mitabWriter, Directory interactionDirectory, Directory interactorDirectory) throws IOException {
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         final int interactionCount = daoFactory.getInteractorDao( InteractionImpl.class ).countAll();
         final int allinteractorCount = daoFactory.getInteractorDao().countAll();
         final int interactingMoleculeTotalCount = allinteractorCount - interactionCount;
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         final String allInteractorsHql = "from InteractorImpl where objclass <> '" + InteractionImpl.class.getName()+"'";
         exportInteractors(allInteractorsHql, interactingMoleculeTotalCount, mitabWriter, interactionDirectory, interactorDirectory);
@@ -93,7 +93,7 @@ public class DatabaseMitabExporter {
     public void exportInteractors(String interactorQueryHql, int interactorTotalCount,
                                   Writer mitabWriter,
                                   Directory interactionDirectory,
-                                  Directory interactorDirectory) throws IOException, IntactTransactionException {
+                                  Directory interactorDirectory) throws IOException {
         if (interactorQueryHql == null) {
             throw new NullPointerException("Query for interactors is null: interactorQuery");
         }
@@ -128,7 +128,6 @@ public class DatabaseMitabExporter {
             interactorIndexer = new IntactInteractorIndexWriter(ontologiesIndexSearcher, ontologiesToExpand);
         }
 
-        final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
         final Set<String> interactionAcProcessed = new HashSet<String>();
 
         List<? extends Interactor> interactors = null;
@@ -145,7 +144,6 @@ public class DatabaseMitabExporter {
         int interactorCount = 0;
 
         do {
-            dataContext.beginTransaction();
             interactors = findInteractors(interactorQueryHql, firstResult, maxResults);
 
             firstResult = firstResult + maxResults;
@@ -199,8 +197,6 @@ public class DatabaseMitabExporter {
                     log.debug("No interactions to convert for: "+interactor.getShortLabel());
                 }
             }
-
-            dataContext.commitTransaction();
 
         } while (!interactors.isEmpty());
 

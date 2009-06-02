@@ -17,11 +17,9 @@ package uk.ac.ebi.intact.dataexchange.psimi.xml.exchange;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.Before;
-import org.junit.After;
+import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
-import uk.ac.ebi.intact.core.unit.IntactUnit;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.IntactEntry;
@@ -35,6 +33,9 @@ import uk.ac.ebi.intact.model.CvTopic;
  */
 public class PsiExchange_BasicTest extends IntactBasicTestCase {
 
+    @Autowired
+    private PsiExchangeImpl psiExchange;
+
     @Test
     public void importIntoIntact_default() throws Exception {
         Institution institution = getMockBuilder().createInstitution("IA:0000", "lalaInstitution");
@@ -44,14 +45,10 @@ public class PsiExchange_BasicTest extends IntactBasicTestCase {
         IntactEntry entry = new IntactEntry(experiment.getInteractions());
         entry.setInstitution(institution);
 
-        beginTransaction();
-        PsiExchange.importIntoIntact(entry);
-        commitTransaction();
-        
-        beginTransaction();
+        psiExchange.importIntoIntact(entry);
+
         Assert.assertEquals(3, getDaoFactory().getInteractionDao().countAll());
         Assert.assertEquals(1, getDaoFactory().getExperimentDao().countAll());
-        commitTransaction();
     }
 
 }

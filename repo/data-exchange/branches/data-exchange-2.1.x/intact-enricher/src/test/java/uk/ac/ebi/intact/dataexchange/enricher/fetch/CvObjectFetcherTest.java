@@ -15,16 +15,17 @@
  */
 package uk.ac.ebi.intact.dataexchange.enricher.fetch;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ebi.intact.dataexchange.cvutils.model.CvTerm;
-import uk.ac.ebi.intact.dataexchange.enricher.EnricherContext;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.ebi.intact.dataexchange.enricher.EnricherBasicTestCase;
 import uk.ac.ebi.intact.model.CvExperimentalRole;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.CvInteractorType;
 import uk.ac.ebi.intact.model.CvInteraction;
+import uk.ac.ebi.intact.model.CvInteractorType;
+import uk.ac.ebi.intact.model.CvObject;
 
 /**
  * TODO comment this
@@ -32,19 +33,10 @@ import uk.ac.ebi.intact.model.CvInteraction;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class CvObjectFetcherTest {
+public class CvObjectFetcherTest extends EnricherBasicTestCase {
 
+    @Autowired
     private CvObjectFetcher fetcher;
-
-    @Before
-    public void before() throws Exception {
-        fetcher = CvObjectFetcher.getInstance();
-    }
-
-    @After
-    public void after() throws Exception {
-        EnricherContext.getInstance().close();
-    }
 
     @Test
     public void fetchByTermId_short() {

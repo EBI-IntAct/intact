@@ -15,14 +15,12 @@
  */
 package uk.ac.ebi.intact.dataexchange.enricher.standard;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
+import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ebi.intact.dataexchange.enricher.EnricherBasicTestCase;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
-import uk.ac.ebi.intact.model.clone.IntactCloner;
 
 /**
  * TODO comment this
@@ -31,21 +29,10 @@ import uk.ac.ebi.intact.model.clone.IntactCloner;
  * @version $Id$
  */
 
-public class ExperimentEnricherTest extends IntactBasicTestCase {
+public class ExperimentEnricherTest extends EnricherBasicTestCase {
 
+    @Autowired
     private ExperimentEnricher enricher;
-
-    @Before
-    public void beforeMethod() {
-        enricher = ExperimentEnricher.getInstance();
-    }
-
-    @After
-    public void afterMethod() {
-        enricher.close();
-        enricher = null;
-    }
-
 
     @Test
     public void enrich_pub() {

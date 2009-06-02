@@ -17,6 +17,8 @@ package uk.ac.ebi.intact.dataexchange.enricher.standard;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.dataexchange.enricher.EnricherContext;
 import uk.ac.ebi.intact.dataexchange.enricher.EnricherException;
 import uk.ac.ebi.intact.model.Component;
@@ -31,6 +33,7 @@ import uk.ac.ebi.intact.model.util.InteractionUtils;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
+@Controller
 public class InteractionEnricher extends AnnotatedObjectEnricher<Interaction> {
 
     /**
@@ -38,29 +41,25 @@ public class InteractionEnricher extends AnnotatedObjectEnricher<Interaction> {
      */
     private static final Log log = LogFactory.getLog(InteractionEnricher.class);
 
-    private static ThreadLocal<InteractionEnricher> instance = new ThreadLocal<InteractionEnricher>() {
-        @Override
-        protected InteractionEnricher initialValue() {
-            return new InteractionEnricher();
-        }
-    };
+    @Autowired
+    private EnricherContext enricherContext;
 
-    public static InteractionEnricher getInstance() {
-        return instance.get();
-    }
+    @Autowired
+    private CvObjectEnricher cvObjectEnricher;
 
-    protected InteractionEnricher() {
+    @Autowired
+    private ExperimentEnricher experimentEnricher;
+
+    @Autowired
+    private ComponentEnricher componentEnricher;
+
+    public InteractionEnricher() {
     }
 
     public void enrich(Interaction objectToEnrich) {
-
-        ExperimentEnricher experimentEnricher = ExperimentEnricher.getInstance();
-        
         for (Experiment experiment : objectToEnrich.getExperiments()) {
             experimentEnricher.enrich(experiment);
         }
-
-        ComponentEnricher componentEnricher = ComponentEnricher.getInstance();
 
         if (objectToEnrich.getComponents() == null) {
             throw new EnricherException("Interaction without components: "+objectToEnrich.getShortLabel());
@@ -69,14 +68,12 @@ public class InteractionEnricher extends AnnotatedObjectEnricher<Interaction> {
         for (Component component : objectToEnrich.getComponents()) {
              componentEnricher.enrich(component);
         }
-
-        CvObjectEnricher cvObjectEnricher = CvObjectEnricher.getInstance();
         
         if (objectToEnrich.getCvInteractionType() != null) {
             cvObjectEnricher.enrich(objectToEnrich.getCvInteractionType());
         }
 
-        if (EnricherContext.getInstance().getConfig().isUpdateInteractionShortLabels()) {
+        if (enricherContext.getConfig().isUpdateInteractionShortLabels()) {
             try {
                 String label = InteractionUtils.calculateShortLabel(objectToEnrich);
                 objectToEnrich.setShortLabel(AnnotatedObjectUtils.prepareShortLabel(label));

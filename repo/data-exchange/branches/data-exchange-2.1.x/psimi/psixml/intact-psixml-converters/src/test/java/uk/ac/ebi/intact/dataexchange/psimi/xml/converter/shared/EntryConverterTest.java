@@ -107,7 +107,6 @@ public class EntryConverterTest extends AbstractConverterTest {
     }
 
     @Test
-    @Ignore // TODO: temporarily ignored
     public void roundtrip_mint() throws Exception {
         File file = getMintFile();
         assertTrue("Document must be valid: " + file, xmlIsValid(new FileInputStream(file)));

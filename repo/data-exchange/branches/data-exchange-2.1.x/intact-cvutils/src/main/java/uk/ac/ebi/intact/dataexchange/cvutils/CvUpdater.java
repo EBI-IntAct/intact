@@ -22,7 +22,13 @@ import org.apache.commons.collections.bag.HashBag;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.obo.dataadapter.OBOParseException;
-import uk.ac.ebi.intact.context.IntactContext;
+import org.springframework.stereotype.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.Scope;
+import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.CorePersister;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.persister.stats.PersisterStatistics;
@@ -32,8 +38,12 @@ import uk.ac.ebi.intact.dataexchange.cvutils.model.AnnotationInfoDataset;
 import uk.ac.ebi.intact.dataexchange.cvutils.model.CvObjectOntologyBuilder;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
-import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.FlushModeType;
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.*;
 
@@ -58,6 +68,10 @@ public class CvUpdater {
 
     private CvTopic obsoleteTopic;
 
+    private IntactContext intactContext;
+
+    private PersisterHelper persisterHelper;
+
     /**
      * This map is used internally to keep track of the created topics during the update.
      */
@@ -65,10 +79,21 @@ public class CvUpdater {
 
 
     public CvUpdater() throws IOException, OBOParseException {
-        this.nonMiCvDatabase = CvObjectUtils.createCvObject( IntactContext.getCurrentInstance().getInstitution(),
-                                                             CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT );
         this.processed = new HashMap<String, CvObject>();
         this.stats = new CvUpdaterStatistics();
+    }
+
+    public CvUpdater(IntactContext intactContext) {
+        this.processed = new HashMap<String, CvObject>();
+        this.stats = new CvUpdaterStatistics();
+        this.intactContext = intactContext;
+        this.persisterHelper = intactContext.getPersisterHelper();
+    }
+
+    @PostConstruct
+    private void init() {
+        this.nonMiCvDatabase = CvObjectUtils.createCvObject( IntactContext.getCurrentInstance().getInstitution(),
+                                                             CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT );
     }
 
     protected Map<String, Class> getMapOfExistingCvs() {
@@ -100,6 +125,7 @@ public class CvUpdater {
      * @param annotationInfoDataset A seperate dataset specific for intact
      * @return An object containing some statistics about the update
      */
+    @Transactional
     public CvUpdaterStatistics createOrUpdateCVs( List<CvDagObject> allValidCvs, AnnotationInfoDataset annotationInfoDataset ) {
 
         if ( allValidCvs == null ) {
@@ -110,11 +136,7 @@ public class CvUpdater {
         }
 
         // in order to prevent Transient object problems we disable the autoflush. We will set it to what it was after the update.
-        final boolean wasAutoFlushEnabled = IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().isAutoFlush();
-        if( wasAutoFlushEnabled ) {
-            if ( log.isInfoEnabled() ) log.info( "Turning hibernate auto-flush OFF" );
-            IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().setAutoFlush( false );
-        }
+        //entityManager.setFlushMode(FlushModeType.COMMIT);
 
         List<CvDagObject> alreadyExistingObsoleteCvList = new ArrayList<CvDagObject>();
         List<CvDagObject> orphanCvList = dealWithOrphans( allValidCvs,alreadyExistingObsoleteCvList );
@@ -135,10 +157,10 @@ public class CvUpdater {
          // update the cvs using the annotation info dataset
         updateCVsUsingAnnotationDataset( cleanedList, annotationInfoDataset );
 
-        CorePersister corePersister = new CorePersister();
+        CorePersister corePersister = persisterHelper.getCorePersister();
         corePersister.setUpdateWithoutAcEnabled(true);
 
-        PersisterStatistics persisterStats = PersisterHelper.saveOrUpdate( corePersister, cleanedList.toArray( new CvObject[cleanedList.size()] ) );
+        PersisterStatistics persisterStats = persisterHelper.saveOrUpdate( cleanedList.toArray( new CvObject[cleanedList.size()] ) );
         addCvObjectsToUpdaterStats( persisterStats, stats );
 
         if ( log.isDebugEnabled() ) {
@@ -148,10 +170,7 @@ public class CvUpdater {
         }
 
         // set autoupdate to what it was before the CV update.
-        if( wasAutoFlushEnabled ) {
-            if ( log.isInfoEnabled() ) log.info( "Turning hibernate auto-flush ON" );
-            IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().setAutoFlush( wasAutoFlushEnabled );
-        }
+        //entityManager.setFlushMode(FlushModeType.AUTO);
 
         return stats;
     } //end method
@@ -357,7 +376,7 @@ public class CvUpdater {
                     existingCv.addAnnotation( annotation );
                     stats.addUpdatedCv( existingCv );
 
-                    PersisterHelper.saveOrUpdate( obsoleteTopic );
+                    persisterHelper.saveOrUpdate( obsoleteTopic );
                     
                     stats.addCreatedCv( obsoleteTopic );
                 } //end if

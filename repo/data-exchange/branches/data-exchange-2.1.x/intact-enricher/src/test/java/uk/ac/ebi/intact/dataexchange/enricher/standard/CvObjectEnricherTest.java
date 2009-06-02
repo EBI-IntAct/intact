@@ -15,11 +15,10 @@
  */
 package uk.ac.ebi.intact.dataexchange.enricher.standard;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
+import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ebi.intact.dataexchange.enricher.EnricherBasicTestCase;
 import uk.ac.ebi.intact.model.CvBiologicalRole;
 import uk.ac.ebi.intact.model.CvIdentification;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
@@ -30,20 +29,10 @@ import uk.ac.ebi.intact.model.util.CvObjectUtils;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class CvObjectEnricherTest extends IntactBasicTestCase {
+public class CvObjectEnricherTest extends EnricherBasicTestCase {
 
+    @Autowired
     private CvObjectEnricher enricher;
-
-    @Before
-    public void beforeMethod() {
-        enricher = CvObjectEnricher.getInstance();
-    }
-
-    @After
-    public void afterMethod() {
-        enricher.close();
-        enricher = null;
-    }
 
     @Test
     public void enrich_noShortLabel() throws Exception {
