@@ -11,6 +11,13 @@
 
    <persistence-unit name="intact-core-mem" transaction-type="RESOURCE_LOCAL">
       <properties>
+         <property name="hibernate.max_fetch_depth" value="3"/>
+         <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+      </properties>
+   </persistence-unit>
+
+   <persistence-unit name="intact-core-mem-h2" transaction-type="RESOURCE_LOCAL">
+      <properties>
          <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
          <property name="hibernate.connection.driver_class" value="org.h2.Driver"/>
          <property name="hibernate.connection.username" value="sa"/>
