@@ -16,13 +16,13 @@
 package uk.ac.ebi.intact.dataexchange.enricher.fetch;
 
 import net.sf.ehcache.CacheManager;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ebi.chebi.webapps.chebiWS.model.Entity;
+import uk.ac.ebi.intact.dataexchange.enricher.EnricherBasicTestCase;
 import uk.ac.ebi.intact.dataexchange.enricher.EnricherContext;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
-import uk.ac.ebi.chebi.webapps.chebiWS.model.Entity;
 
 /**
  * TODO comment this
@@ -30,23 +30,17 @@ import uk.ac.ebi.chebi.webapps.chebiWS.model.Entity;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class InteractorFetcherTest {
+public class InteractorFetcherTest extends EnricherBasicTestCase {
 
+    @Autowired
     private InteractorFetcher fetcher;
 
-    @Before
-    public void before() throws Exception {
-        fetcher = InteractorFetcher.getInstance();
-    }
-
-    @After
-    public void after() throws Exception {
-        EnricherContext.getInstance().close();
-    }
+    @Autowired
+    private EnricherContext enricherContext;
 
     @Test
     public void fetchFromUniprot() throws Exception {
-        EnricherContext.getInstance().getCache("Interactor").getStatistics().clearStatistics();
+        enricherContext.getCache("Interactor").getStatistics().clearStatistics();
         
         UniprotProtein uniprotProtein = fetcher.fetchInteractorFromUniprot("MK01_HUMAN", 9606);
         Assert.assertNotNull(uniprotProtein);
@@ -62,7 +56,7 @@ public class InteractorFetcherTest {
     @Test
     public void fetchFromChebi() throws Exception {
 
-        EnricherContext.getInstance().getCache( "Interactor" ).getStatistics().clearStatistics();
+        enricherContext.getCache( "Interactor" ).getStatistics().clearStatistics();
 
         Entity smallMoleculeEntity = fetcher.fetchInteractorFromChebi( "CHEBI:16851" );
         Assert.assertNotNull( smallMoleculeEntity );

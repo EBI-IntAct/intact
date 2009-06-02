@@ -22,10 +22,9 @@ import org.obo.datamodel.OBOSession;
 import uk.ac.ebi.intact.dataexchange.cvutils.model.CvObjectOntologyBuilder;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
-import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
-import uk.ac.ebi.intact.core.unit.IntactUnit;
 
 import java.util.List;
 import java.util.Date;
@@ -64,14 +63,10 @@ public class CvUtilsTest extends IntactBasicTestCase {
 
     @Test
     public void getCvsInIntactNotInPsiAndDateTest() throws Exception {
-        new IntactUnit().createSchema( true );
-
         String DATE_FORMAT = "yyyy-MM-dd";
         SimpleDateFormat sdf = new SimpleDateFormat( DATE_FORMAT );
 
         Institution owner = IntactContext.getCurrentInstance().getInstitution();
-
-        beginTransaction();
 
         CvObject twoHybrid = CvObjectUtils.createCvObject( owner, CvInteraction.class, "MI:0018", "two hybrid" );
         twoHybrid.setCreated( sdf.parse( "2008-06-17" ) );
@@ -119,9 +114,6 @@ public class CvUtilsTest extends IntactBasicTestCase {
         //with exclusion list
         List<CvObject> cvsafterWithExclusion = CvUtils.getCvsAddedAfter( cutoffDate,exclusionList );
         Assert.assertEquals( 4, cvsafterWithExclusion.size() );
-
-        //one term which is added on the date provided (2008-06-19) is left out
-        commitTransaction();
     
     }
 

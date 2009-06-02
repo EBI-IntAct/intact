@@ -17,7 +17,9 @@ package uk.ac.ebi.intact.dataexchange.psimi.xml.exchange.enricher;
 
 import org.junit.Test;
 import org.junit.Assert;
+import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ebi.intact.dataexchange.enricher.EnricherConfig;
+import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 
 import java.io.*;
 
@@ -32,9 +34,12 @@ import psidev.psi.mi.xml.model.Entry;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class PsiEnricherTest {
+public class PsiEnricherTest extends IntactBasicTestCase {
 
     private static final String DIP_FILE = "/xml/dip_2006-11-01.xml";
+
+    @Autowired
+    private PsiEnricher psiEnricher;
 
     @Test
     public void enrichFile() throws Exception {
@@ -45,7 +50,7 @@ public class PsiEnricherTest {
         EnricherConfig config = new EnricherConfig();
         config.setUpdateInteractionShortLabels(true);
 
-        PsiEnricher.enrichPsiXml(is, writer, config);
+        psiEnricher.enrichPsiXml(is, writer, config);
 
         //System.out.println(writer.toString());
 
@@ -73,7 +78,7 @@ public class PsiEnricherTest {
         config.setUpdateInteractionShortLabels(true);
 
         // the actual method
-        PsiEnricher.enrichPsiXml(PsiEnricherTest.class.getResourceAsStream(pathToXml), writer, config);
+        psiEnricher.enrichPsiXml(PsiEnricherTest.class.getResourceAsStream(pathToXml), writer, config);
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         ByteArrayOutputStream expandedBaos = new ByteArrayOutputStream();

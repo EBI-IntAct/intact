@@ -15,11 +15,10 @@
  */
 package uk.ac.ebi.intact.dataexchange.enricher.standard;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
+import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ebi.intact.dataexchange.enricher.EnricherBasicTestCase;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.Protein;
@@ -33,21 +32,10 @@ import uk.ac.ebi.intact.model.util.ProteinUtils;
  * @version $Id$
  */
 
-public class InteractorEnricherTest extends IntactBasicTestCase {
+public class InteractorEnricherTest extends EnricherBasicTestCase {
 
+    @Autowired
     private InteractorEnricher enricher;
-
-    @Before
-    public void beforeMethod() {
-        enricher = InteractorEnricher.getInstance();
-    }
-
-    @After
-    public void afterMethod() {
-        enricher.close();
-        enricher = null;
-    }
-
 
     @Test
     public void enrich_uniprot() {

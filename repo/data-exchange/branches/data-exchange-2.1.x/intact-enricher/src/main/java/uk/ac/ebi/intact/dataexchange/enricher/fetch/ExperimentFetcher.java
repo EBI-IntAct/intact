@@ -19,17 +19,13 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.bridges.taxonomy.NewtTaxonomyService;
-import uk.ac.ebi.intact.bridges.taxonomy.TaxonomyService;
-import uk.ac.ebi.intact.bridges.taxonomy.TaxonomyServiceException;
-import uk.ac.ebi.intact.bridges.taxonomy.TaxonomyTerm;
-import uk.ac.ebi.intact.bridges.citexplore.CitexploreClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.dataexchange.enricher.EnricherContext;
 import uk.ac.ebi.intact.dataexchange.enricher.EnricherException;
 import uk.ac.ebi.intact.util.cdb.ExperimentAutoFill;
 import uk.ac.ebi.intact.util.cdb.PublicationNotFoundException;
 import uk.ac.ebi.intact.util.cdb.UnexpectedException;
-import uk.ac.ebi.cdb.webservice.Citation;
 
 /**
  * TODO comment this
@@ -37,6 +33,7 @@ import uk.ac.ebi.cdb.webservice.Citation;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
+@Controller
 public class ExperimentFetcher {
 
     /**
@@ -44,21 +41,14 @@ public class ExperimentFetcher {
      */
     public static final Log log = LogFactory.getLog(BioSourceFetcher.class);
 
-    private static ThreadLocal<ExperimentFetcher> instance = new ThreadLocal<ExperimentFetcher>() {
-        @Override
-        protected ExperimentFetcher initialValue() {
-            return new ExperimentFetcher();
-        }
-    };
+    @Autowired
+    private EnricherContext enricherContext;
 
-    public static ExperimentFetcher getInstance() {
-        return instance.get();
-    }
     public ExperimentFetcher() {
     }
 
     public ExperimentAutoFill fetchByPubmedId(String pubmedId) {
-        Cache experimentCache = EnricherContext.getInstance().getCache("Experiment");
+        Cache experimentCache = enricherContext.getCache("Experiment");
 
         ExperimentAutoFill autoFill = null;
 
