@@ -1,17 +1,13 @@
 package uk.ac.ebi.intact.dataexchange.cvutils;
 
-import static org.junit.Assert.*;
-import org.junit.*;
-import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
-import uk.ac.ebi.intact.core.util.SchemaUtils;
+import org.junit.Assert;
+import org.junit.Test;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
- 
-import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
+import uk.ac.ebi.intact.dataexchange.cvutils.model.AnnotationInfoDataset;
 import uk.ac.ebi.intact.model.CvFeatureType;
 import uk.ac.ebi.intact.model.CvInteraction;
-import uk.ac.ebi.intact.dataexchange.cvutils.model.AnnotationInfoDataset;
-import uk.ac.ebi.intact.core.context.DataContext;
-import uk.ac.ebi.intact.core.context.IntactContext;
+import uk.ac.ebi.intact.model.CvTopic;
 
 import java.util.Arrays;
 
@@ -26,8 +22,6 @@ public class AnnotationInfoDatasetServiceTest extends IntactBasicTestCase {
 
     @Test
     public void retrieveAnnotationInfoDataset() throws Exception {
-
-        // here we are localy managing transactions
 
         final CvTopic comment = getMockBuilder().createCvObject( CvTopic.class, "MI:0001", "comment" );
         final CvTopic remark = getMockBuilder().createCvObject( CvTopic.class, "MI:0002", "remark" );

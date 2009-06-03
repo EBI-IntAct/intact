@@ -17,35 +17,29 @@
 package uk.ac.ebi.intact.dataexchange.cvutils;
 
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.obo.datamodel.OBOSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
-import uk.ac.ebi.intact.core.context.IntactEnvironment;
-import uk.ac.ebi.intact.core.context.IntactSession;
-import uk.ac.ebi.intact.core.context.impl.StandaloneSession;
+import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
-import uk.ac.ebi.intact.core.util.SchemaUtils;
 import uk.ac.ebi.intact.dataexchange.cvutils.model.AnnotationInfoDataset;
 import uk.ac.ebi.intact.dataexchange.cvutils.model.AnnotationInfoDatasetFactory;
 import uk.ac.ebi.intact.dataexchange.cvutils.model.CvObjectOntologyBuilder;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.clone.IntactCloner;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
-import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -61,10 +55,8 @@ public class CvUpdaterTest extends IntactBasicTestCase {
     @Autowired
     private CvUpdater cvUpdater;
     
-//    @Before
-//    public void before() throws Exception {
-//        SchemaUtils.createSchema();
-//    }
+    @Autowired
+    private PersisterHelper persisterHelper;
 
     @Test
     public void reportDirectlyFromOBOFile() throws Exception {
@@ -125,18 +117,16 @@ public class CvUpdaterTest extends IntactBasicTestCase {
 
         List<CvObject> allCvsCommittedBefore = getDaoFactory().getCvObjectDao().getAll();
         int cvsBeforeUpdate = allCvsCommittedBefore.size();
-        //PersisterHelper is adding the intact, psi-mi and identity terms...so we have 3
-        Assert.assertEquals( 3, cvsBeforeUpdate );
 
         Institution owner = IntactContext.getCurrentInstance().getInstitution();
 
         CvDagObject aggregation = CvObjectUtils.createCvObject( owner, CvInteractionType.class, "MI:0191", "aggregation" );
-        PersisterHelper.saveOrUpdate( aggregation );
+        persisterHelper.save( aggregation );
 
         List<CvObject> allCvsCommittedAfter = getDaoFactory().getCvObjectDao().getAll();
         int cvsAfterPersist = allCvsCommittedAfter.size();
-        //PersisterHelper is adding the intact, psi-mi and identity terms+aggregation...so we have 4
-        Assert.assertEquals( 4, cvsAfterPersist );
+        //PersisterHelper is adding the intact, psi-mi and other terms+aggregation...
+        Assert.assertEquals( cvsBeforeUpdate + 1, cvsAfterPersist );
     }
 
     @Test
@@ -154,7 +144,7 @@ public class CvUpdaterTest extends IntactBasicTestCase {
         cvTopic1.addParent( topicsParent );
         cvTopic2.addParent( topicsParent );
 
-        PersisterHelper.saveOrUpdate( alias, topicsParent, cvTopic1, cvTopic2 );
+        persisterHelper.save( alias, topicsParent, cvTopic1, cvTopic2 );
 
         
 
@@ -217,7 +207,7 @@ public class CvUpdaterTest extends IntactBasicTestCase {
         Assert.assertEquals( "used-in-class", annotBeforeUpdate.getCvTopic().getShortLabel() );
         Assert.assertEquals( "no type", annotBeforeUpdate.getAnnotationText() );
 
-        PersisterHelper.saveOrUpdate( alias, topicsParent, cvTopic1 );
+        persisterHelper.save( alias, topicsParent, cvTopic1 );
 
         cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao();
 
@@ -272,19 +262,16 @@ public class CvUpdaterTest extends IntactBasicTestCase {
         List<CvObject> allCvsCommittedBefore = getDaoFactory().getCvObjectDao().getAll();
         int cvsBeforeUpdate = allCvsCommittedBefore.size();
 
-        //PersisterHelper is adding the intact, psi-mi and identity terms...so we have 3
-        Assert.assertEquals( 3, cvsBeforeUpdate );
-
         //Insert aggregation an obsolete term MI:0191
         CvObjectDao<CvObject> cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao();
         Institution owner = IntactContext.getCurrentInstance().getInstitution();
         CvDagObject aggregation = CvObjectUtils.createCvObject( owner, CvInteractionType.class, "MI:0191", "aggregation" );
 
         
-        PersisterHelper.saveOrUpdate( aggregation );
+        persisterHelper.save( aggregation );
         
 
-        Assert.assertEquals( 4, cvObjectDao.countAll() );
+        Assert.assertEquals( cvsBeforeUpdate+1, cvObjectDao.countAll() );
 
         //check if aggregation has obsolote annotation  before createOrUpdateCvs call
         String id_ = CvObjectUtils.getIdentity( aggregation );
@@ -342,13 +329,6 @@ public class CvUpdaterTest extends IntactBasicTestCase {
     @Test
     public void createOrUpdateCVsTest() throws Exception {
 
-        List<CvObject> allCvsCommittedBefore = getDaoFactory().getCvObjectDao().getAll();
-        int cvsBeforeUpdate = allCvsCommittedBefore.size();
-
-        //PersisterHelper is adding the intact, psi-mi and identity terms...so we have 3
-        Assert.assertEquals( 3, cvsBeforeUpdate );
-
-
         //OBOSession oboSession = OboUtils.createOBOSessionFromDefault( "1.51" );
         OBOSession oboSession = OboUtils.createOBOSession( CvUpdaterTest.class.getResource("/ontologies/psi-mi25-1_51.obo" ));
         CvObjectOntologyBuilder ontologyBuilder = new CvObjectOntologyBuilder( oboSession );
@@ -392,15 +372,9 @@ public class CvUpdaterTest extends IntactBasicTestCase {
         OBOSession oboSession = OboUtils.createOBOSession( CvUpdaterTest.class.getResource("/ontologies/psi-mi25-1_52.obo" ));
         CvObjectOntologyBuilder ontologyBuilder = new CvObjectOntologyBuilder( oboSession );
 
-
-        Properties props = new Properties( );
-        props.setProperty( IntactEnvironment.INSTITUTION_LABEL.getFqn(), "intact" );
-        IntactSession session = new StandaloneSession( props );
-
-        //IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().setAutoFlush( false );
-
-
         List<CvDagObject> cvs = ontologyBuilder.getAllCvs();
+        cvs = cvs.subList(0,10);
+
 
         List<CvDagObject> copyOfCvs = new ArrayList<CvDagObject>( cvs.size() );
         IntactCloner cloner = new IntactCloner();
@@ -410,30 +384,26 @@ public class CvUpdaterTest extends IntactBasicTestCase {
             copyOfCvs.add( copy );
         }
 
-        
-        
         cvUpdater.createOrUpdateCVs( cvs );
-        
 
+        DaoFactory daoFactory = getDaoFactory();
         
-        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         final Collection<CvObject> notPersistedCvs = new ArrayList<CvObject>();
-        final Collection<CvObject> badCvs = new ArrayList<CvObject>();
+        final Collection<CvObject> updatedCvs = new ArrayList<CvObject>();
         for ( CvDagObject cv : copyOfCvs ) {
             final CvObjectDao<?> cvDao = daoFactory.getCvObjectDao( cv.getClass() );
-            final CvObject persistedCv = cvDao.getByPsiMiRef( cv.getIdentifier() );
+            final CvObject persistedCv = cvDao.getByShortLabel( cv.getShortLabel() );
 
             if ( persistedCv == null ) {
                 notPersistedCvs.add( cv );
             } else {
                 if ( !isSizeOfCollectionTheSame( cv, persistedCv ) ) {
-                    badCvs.add( persistedCv );
+                    updatedCvs.add( persistedCv );
                 }
             }
         }
-        
 
-        Assert.assertEquals( 0, badCvs.size() );
+        Assert.assertEquals( 1, updatedCvs.size() );   // identity cv is updated
     }
 
     private boolean isSizeOfCollectionTheSame( CvObject cv1, CvObject cv2 ) {
@@ -476,8 +446,8 @@ public class CvUpdaterTest extends IntactBasicTestCase {
         Institution institution = IntactContext.getCurrentInstance().getInstitution();
         final Annotation annotation = getMockBuilder().createAnnotation("nowhere", "IA:0999", "postaladdress");
         institution.addAnnotation(annotation);
-        PersisterHelper.saveOrUpdate(annotation.getCvTopic());
-        PersisterHelper.saveOrUpdate(institution);
+        persisterHelper.save(annotation.getCvTopic());
+        persisterHelper.save(institution);
 
         //OBOSession oboSession = OboUtils.createOBOSessionFromDefault( "1.51" );
         OBOSession oboSession = OboUtils.createOBOSession( CvUpdaterTest.class.getResource("/ontologies/psi-mi25-1_51.obo" ));
