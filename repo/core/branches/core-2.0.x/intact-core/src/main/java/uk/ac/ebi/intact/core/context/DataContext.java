@@ -73,7 +73,7 @@ public class DataContext implements Serializable {
         } catch (TransactionException e) {
             rollbackTransaction(transactionStatus);
             throw new IntactTransactionException( e );
-        } 
+        }
     }
 
     public void rollbackTransaction( TransactionStatus transactionStatus ) throws IntactTransactionException {

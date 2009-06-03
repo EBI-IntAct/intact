@@ -1,13 +1,9 @@
 package uk.ac.ebi.intact.core;
 
 /**
- * Created by IntelliJ IDEA.
- * User: CatherineLeroy
- * Date: 08-Jan-2007
- * Time: 10:14:51
- * To change this template use File | Settings | File Templates.
+ * Thrown if a transaction fails.
  */
-public class IntactTransactionException extends Exception {
+public class IntactTransactionException extends RuntimeException {
 
     private String nestedMessage;
     private Exception rootCause;
