@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.obo.datamodel.OBOSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
@@ -52,6 +53,7 @@ public class CvUtilsTest extends IntactBasicTestCase {
     }
 
     @Test
+    @DirtiesContext
     public void findLowerCommonAncestor() throws Exception {
         Assert.assertEquals( "MI:0116", CvUtils.findLowestCommonAncestor( ontology, "MI:0252", "MI:0505" ) );
         Assert.assertEquals( "MI:0505", CvUtils.findLowestCommonAncestor( ontology, "MI:0253", "MI:0505" ) );
@@ -62,6 +64,7 @@ public class CvUtilsTest extends IntactBasicTestCase {
 
 
     @Test
+    @DirtiesContext
     public void getCvsInIntactNotInPsiAndDateTest() throws Exception {
         String DATE_FORMAT = "yyyy-MM-dd";
         SimpleDateFormat sdf = new SimpleDateFormat( DATE_FORMAT );
