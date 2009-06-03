@@ -13,31 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.task.reader;
+package uk.ac.ebi.intact.task.mitab;
 
-import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.ItemStream;
 import psidev.psi.mi.tab.model.BinaryInteraction;
-import psidev.psi.mi.tab.model.builder.DocumentDefinition;
+import org.springframework.batch.item.ItemWriter;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class MitabItemReader extends FlatFileItemReader<BinaryInteraction>{
-
-    private DocumentDefinition documentDefinition;
-
-    @Override
-    protected void doOpen() throws Exception {
-        MitabLineMapper mitabLineMapper = new MitabLineMapper();
-        mitabLineMapper.setDocumentDefinition(documentDefinition);
-        setLineMapper(mitabLineMapper);
-
-        super.doOpen();
-    }
-
-    public void setDocumentDefinition(DocumentDefinition documentDefinition) {
-        this.documentDefinition = documentDefinition;
-    }
+public interface BinaryInteractionItemWriter extends ItemWriter<BinaryInteraction> {
 }

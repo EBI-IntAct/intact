@@ -28,24 +28,52 @@
     </bean>
 
     <!-- Some beans -->
-    <bean id="mitabWriter" class="uk.ac.ebi.intact.task.writer.MitabItemWriter"
-          p:resource="target/lala.txt"/>
+    <bean id="mitabWriter" class="uk.ac.ebi.intact.task.mitab.MitabItemWriter">
+        <property name="resource" value="target/lala.txt"/>
+     </bean>
 
-    <bean id="compositeMitabWriter" class="uk.ac.ebi.intact.task.writer.MitabCollectionCompositeWriter">
-        <property name="delegate" ref="mitabWriter"/>
+    <bean id="luceneMitabWriter" class="uk.ac.ebi.intact.task.mitab.index.LuceneItemWriter">
+        <property name="directory" value="target/lala-lucene"/>
     </bean>
 
-    
+    <bean id="solrMitabWriter" class="uk.ac.ebi.intact.task.mitab.index.SolrItemWriter">
+        <property name="interactionsSolrUrl" value=""/>
+    </bean>
+
+    <bean id="compositeMitabWriter" class="uk.ac.ebi.intact.task.mitab.MitabCollectionCompositeWriter">
+        <property name="delegates">
+            <list>
+                <ref bean="mitabWriter"/>
+                <ref bean="luceneMitabWriter"/>
+                <ref bean="solrMitabWriter"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="mitabCompositeItemProcessor"
+            class="org.springframework.batch.item.support.CompositeItemProcessor">
+        <property name="itemProcessors">
+          <list>
+            <ref bean="interactionToBinaryInteractionProcessor" />
+            <bean class="uk.ac.ebi.intact.task.mitab.index.OntologyEnricherItemProcessor">
+                <property name="ontologiesSolrUrl" value=""/>
+            </bean>
+          </list>
+        </property>
+      </bean>
+
 
     <!-- Some tests jobs -->
-     <batch:job id="createMitabJob" job-repository="intactJobRepository" >
+     <batch:job id="createMitabJob" job-repository="intactJobRepository" restartable="true">
         <batch:step id="interactionsToMitabStep" parent="intactBatchStep">
             <batch:tasklet>
                 <batch:chunk reader="interactionReader"
-                             processor="interactionToBinaryInteractionProcessor"
+                             processor="mitabCompositeItemProcessor"
                              writer="compositeMitabWriter">
                     <batch:streams>
                         <batch:stream ref="mitabWriter"/>
+                        <batch:stream ref="luceneMitabWriter"/>
+                        <batch:stream ref="solrMitabWriter"/>
                     </batch:streams>
                 </batch:chunk>
             </batch:tasklet>

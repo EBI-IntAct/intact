@@ -13,22 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.task.writer;
+package uk.ac.ebi.intact.task.mitab;
 
 import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.PsimiTabWriter;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.ItemStream;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStreamException;
 import org.springframework.batch.item.file.ResourceAwareItemWriterItemStream;
-import org.springframework.stereotype.Component;
 import org.springframework.core.io.Resource;
 
 import java.util.List;
-import java.util.Collection;
 import java.util.ArrayList;
-import java.io.File;
 import java.io.Writer;
 import java.io.IOException;
 import java.io.FileWriter;

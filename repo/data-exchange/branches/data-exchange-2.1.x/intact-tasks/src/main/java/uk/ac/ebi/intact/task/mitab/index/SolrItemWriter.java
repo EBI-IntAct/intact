@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.task.writer;
+package uk.ac.ebi.intact.task.mitab.index;
 
 import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.model.builder.DocumentDefinition;
@@ -23,8 +23,8 @@ import java.io.IOException;
 
 import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
+import uk.ac.ebi.intact.task.mitab.BinaryInteractionItemWriter;
 import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.core.io.Resource;

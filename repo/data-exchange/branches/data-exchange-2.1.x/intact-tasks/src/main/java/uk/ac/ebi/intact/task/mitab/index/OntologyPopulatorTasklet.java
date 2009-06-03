@@ -13,14 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.task.writer;
+package uk.ac.ebi.intact.task.mitab.index;
 
-import psidev.psi.mi.tab.model.BinaryInteraction;
-import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.core.step.tasklet.TaskletStep;
+import org.springframework.batch.core.step.AbstractStep;
+import org.springframework.batch.core.StepContribution;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.scope.context.ChunkContext;
+import org.springframework.batch.repeat.RepeatStatus;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public interface BinaryInteractionItemWriter extends ItemWriter<BinaryInteraction> {
+public class OntologyPopulatorTasklet implements Tasklet{
+
+    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+        throw new UnsupportedOperationException();
+    }
 }
