@@ -7,11 +7,13 @@ package uk.ac.ebi.intact.externalservices.searchengine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.transaction.TransactionStatus;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.core.persistence.dao.ExperimentDao;
- 
+import uk.ac.ebi.intact.core.IntactTransactionException;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -81,7 +83,8 @@ public class ExperimentIndexExporter extends AbstractIndexExporter<Experiment> {
         while ( current < count ) {
             DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
             ExperimentDao edao = daoFactory.getExperimentDao();
-            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+            TransactionStatus transactionStatus =
+                    IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
             List<Experiment> experiments = edao.getAll( current, CHUNK_SIZE );
             if ( log.isDebugEnabled() ) {
@@ -94,7 +97,7 @@ public class ExperimentIndexExporter extends AbstractIndexExporter<Experiment> {
             }
 
             try {
-                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+                IntactContext.getCurrentInstance().getDataContext().commitTransaction(transactionStatus);
             } catch ( IntactTransactionException e ) {
                 throw new IndexerException( e );
             }
@@ -190,13 +193,13 @@ public class ExperimentIndexExporter extends AbstractIndexExporter<Experiment> {
             DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
             ExperimentDao edao = daoFactory.getExperimentDao();
 
-            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+            TransactionStatus transactionStatus = IntactContext.getCurrentInstance().getDataContext().beginTransaction();
             // TODO do not take into account interactor that do not interact.
 
             count = edao.countAll();
 
             try {
-                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+                IntactContext.getCurrentInstance().getDataContext().commitTransaction(transactionStatus);
             } catch ( IntactTransactionException e ) {
                 throw new IndexerException( e );
             }
