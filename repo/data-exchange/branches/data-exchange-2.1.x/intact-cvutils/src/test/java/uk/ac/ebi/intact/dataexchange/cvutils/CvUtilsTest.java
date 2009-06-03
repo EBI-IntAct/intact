@@ -77,7 +77,7 @@ public class CvUtilsTest extends IntactBasicTestCase {
         persisterHelper.save(exp );
 
         CvObject negative = CvObjectUtils.createCvObject( owner, CvTopic.class, null, "negative" );
-        negative.setCreated( sdf.parse( "2008-06-19" ) );
+        negative.setCreated( sdf.parse( "2008-06-20" ) );
         persisterHelper.save( negative );
 
         CvObject positive = CvObjectUtils.createCvObject( owner, CvTopic.class, null, "positive" );
@@ -93,8 +93,8 @@ public class CvUtilsTest extends IntactBasicTestCase {
         persisterHelper.save( pc12 );
 
         Collection<String> exclusionList = new ArrayList<String>();
-        exclusionList.add( "uk.ac.ebi.intact.model.CvCellType" );
-        exclusionList.add( "uk.ac.ebi.intact.model.CvTissue" );
+        exclusionList.add( CvCellType.class.getName() );
+        exclusionList.add( CvTissue.class.getName() );
 
 
         List<CvObject> notInPsiCvs = CvUtils.getCvsInIntactNotInPsi(exclusionList);
@@ -109,11 +109,11 @@ public class CvUtilsTest extends IntactBasicTestCase {
 
         // it should be 6+3 terms(intact+identity+psi-mi)
         List<CvObject> cvsafter = CvUtils.getCvsAddedAfter( cutoffDate,null );
-        Assert.assertEquals( 9, cvsafter.size() );
+        Assert.assertEquals( 10, cvsafter.size() );
 
         //with exclusion list
         List<CvObject> cvsafterWithExclusion = CvUtils.getCvsAddedAfter( cutoffDate,exclusionList );
-        Assert.assertEquals( 7, cvsafterWithExclusion.size() );
+        Assert.assertEquals( 8, cvsafterWithExclusion.size() );
     
     }
 
