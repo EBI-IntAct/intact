@@ -19,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.config.IntactConfiguration;
 import uk.ac.ebi.intact.core.config.SchemaVersion;
@@ -95,7 +96,7 @@ public class IntactInitializer {
         }
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void persistInstitution(Institution candidateInstitution, boolean isDefault) {
         Institution institution = institutionDao.getByShortLabel(candidateInstitution.getShortLabel());
 
@@ -108,7 +109,7 @@ public class IntactInitializer {
         }
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void checkSchemaCompatibility() {
 
         DbInfo dbInfoSchemaVersion = dbInfoDao.get(DbInfo.SCHEMA_VERSION);
@@ -136,7 +137,7 @@ public class IntactInitializer {
         }
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
      public void persistBasicCvObjects() {
 
         if (isAutoPersist() && cvObjectDao.getByPsiMiRef(CvDatabase.INTACT_MI_REF) == null) {

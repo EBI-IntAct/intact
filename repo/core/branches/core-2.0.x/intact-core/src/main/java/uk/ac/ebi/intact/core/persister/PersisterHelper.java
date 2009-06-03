@@ -20,8 +20,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.intact.core.annotations.IntactFlushMode;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.stats.PersisterStatistics;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -73,27 +73,18 @@ public class PersisterHelper {
     }
 
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
+    @IntactFlushMode(FlushModeType.COMMIT)
     public PersisterStatistics save( AnnotatedObject... annotatedObjects ) throws PersisterException {
-
-        // during synchronization-persistence there is a lot of things going on, which involve
-        // reading the database and persisting at the same time, but only flushing at the very end.
-        // If autoflush, the entity manager will attempt a flush when not everything is ready, and it will fail.
-        entityManager.setFlushMode(FlushModeType.COMMIT);
 
         CorePersister corePersister = getCorePersister();
 
         corePersister.getStatistics().reset();
 
-        try {
-            for ( AnnotatedObject ao : annotatedObjects ) {
-                corePersister.synchronize( ao );
+            for (AnnotatedObject ao : annotatedObjects) {
+                corePersister.synchronize(ao);
             }
-            corePersister.commit();
-        } finally {
-            //dataContext.getDaoFactory().getDataConfig().setAutoFlush(originalAutoFlush);
-            entityManager.setFlushMode(FlushModeType.AUTO);
-        }
+        corePersister.commit();
 
         // we reload the annotated objects by its AC
         // note: if an object does not have one, it is probably a duplicate
