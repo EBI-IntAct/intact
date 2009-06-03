@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.stats.PersisterStatistics;
@@ -72,7 +73,7 @@ public class PersisterHelper {
     }
 
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public PersisterStatistics save( AnnotatedObject... annotatedObjects ) throws PersisterException {
 
         // during synchronization-persistence there is a lot of things going on, which involve
