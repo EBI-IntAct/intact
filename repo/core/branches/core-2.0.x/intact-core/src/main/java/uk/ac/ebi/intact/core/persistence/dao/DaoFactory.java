@@ -15,7 +15,6 @@ import uk.ac.ebi.intact.core.persistence.dao.impl.*;
 import uk.ac.ebi.intact.model.*;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 
@@ -229,26 +228,12 @@ public class DaoFactory implements Serializable {
         return dao;
     }
 
-    @Deprecated
-    public EntityTransaction beginTransaction() {
-        return null;
-    }
-
-    @Deprecated
-    public void commitTransaction() {
-        getEntityManager().flush();
-    }
-
     public EntityManager getEntityManager() {
         return currentEntityManager;
     }
 
     public void setEntityManager(EntityManager entityManager) {
         currentEntityManager = entityManager;
-    }
-
-    public EntityTransaction getCurrentTransaction() {
-        return currentEntityManager.getTransaction();
     }
 
     private <T> T getBean(Class<T> beanType) {

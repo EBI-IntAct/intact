@@ -8,7 +8,13 @@ package uk.ac.ebi.intact.core.context;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionException;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import uk.ac.ebi.intact.core.IntactTransactionException;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 
@@ -29,6 +35,9 @@ public class DataContext implements Serializable {
     @Autowired
     private DaoFactory daoFactory;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     public DataContext( ) {
     }
 
@@ -37,34 +46,49 @@ public class DataContext implements Serializable {
 //    }
 
     @Deprecated
-    public void beginTransactionManualFlush() {
+    public TransactionStatus beginTransactionManualFlush() {
         //getDefaultDataConfig().setAutoFlush(true);
-        beginTransaction(  );
+        return beginTransaction( TransactionDefinition.PROPAGATION_REQUIRED );
     }
 
-    @Deprecated
-    public void beginTransaction(  ) {
-        daoFactory.beginTransaction();
+    public TransactionStatus beginTransaction() {
+        return beginTransaction( TransactionDefinition.PROPAGATION_REQUIRES_NEW );
     }
 
-    @Deprecated
-    public void commitTransaction(  ) throws IntactTransactionException {
+    public TransactionStatus beginTransaction( int propagation ) {
+        PlatformTransactionManager transactionManager = getTransactionManager();
+
+        TransactionDefinition transactionDefinition = new DefaultTransactionDefinition(propagation);
+        
+        if (log.isDebugEnabled()) log.debug("Beginning transaction: "+transactionDefinition.getName()+" Propagation="+propagation);
+
+        return transactionManager.getTransaction(transactionDefinition);
+    }
+
+    public void commitTransaction( TransactionStatus transactionStatus ) throws IntactTransactionException {
+        PlatformTransactionManager transactionManager = getTransactionManager();
         try {
-            DaoFactory daoFactory = getDaoFactory();
-
-            if (log.isDebugEnabled()) {
-               log.debug( "Committing transaction. "  );
-            }
-
-            daoFactory.commitTransaction();
-
-        } catch (Exception e) {
+            if (log.isDebugEnabled()) log.debug("Committing transaction");
+            transactionManager.commit(transactionStatus);
+        } catch (TransactionException e) {
+            rollbackTransaction(transactionStatus);
             throw new IntactTransactionException( e );
+        } 
+    }
+
+    public void rollbackTransaction( TransactionStatus transactionStatus ) throws IntactTransactionException {
+        PlatformTransactionManager transactionManager = getTransactionManager();
+
+        try {
+            if (log.isDebugEnabled()) log.debug("Rolling back transaction");
+            transactionManager.rollback(transactionStatus);
+        } catch (TransactionException e) {
+            throw new IntactTransactionException(e);
         }
     }
 
-    public void commitAllActiveTransactions() throws IntactTransactionException {
-          daoFactory.commitTransaction();
+    public PlatformTransactionManager getTransactionManager() {
+        return (PlatformTransactionManager) applicationContext.getBean("transactionManager");
     }
 
     public DaoFactory getDaoFactory() {
@@ -80,5 +104,5 @@ public class DataContext implements Serializable {
         getDaoFactory().getEntityManager().flush();
     }
 
-   
+
 }
