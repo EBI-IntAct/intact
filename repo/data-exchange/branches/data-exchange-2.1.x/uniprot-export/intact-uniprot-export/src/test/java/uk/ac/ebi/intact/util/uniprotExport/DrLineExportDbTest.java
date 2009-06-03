@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.*;
 import uk.ac.ebi.intact.core.context.IntactContext;
+import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.ProteinImpl;
 
 /**
@@ -19,20 +20,9 @@ import uk.ac.ebi.intact.model.ProteinImpl;
  * @since <pre>24-Aug-2006</pre>
  */
 @Ignore
-public class DrLineExportDbTest {
+public class DrLineExportDbTest extends IntactBasicTestCase {
 
     private static final Log log = LogFactory.getLog(DrLineExportDbTest.class);
-
-
-    @After
-    protected void tearDown() throws Exception {
-        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
-    }
-
-    @Before
-    protected void setUp() throws Exception {
-        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
-    }
 
     @Test
     public void testIsProteinEligible() throws Exception {
