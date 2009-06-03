@@ -13,26 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.task.writer;
+package uk.ac.ebi.intact.task.mitab;
 
 import psidev.psi.mi.tab.model.BinaryInteraction;
-import psidev.psi.mi.tab.PsimiTabWriter;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.ItemStream;
-import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.item.ItemStreamException;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Collection;
 import java.util.ArrayList;
-import java.io.File;
-import java.io.Writer;
-import java.io.IOException;
-import java.io.FileWriter;
-
-import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
-import uk.ac.ebi.intact.psimitab.IntactPsimiTabWriter;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -40,15 +28,17 @@ import uk.ac.ebi.intact.psimitab.IntactPsimiTabWriter;
  */
 public class MitabCollectionCompositeWriter implements ItemWriter<Collection<? extends BinaryInteraction>> {
 
-    private BinaryInteractionItemWriter delegate;
+    private List<BinaryInteractionItemWriter> delegates;
 
     public void write(List<? extends Collection<? extends BinaryInteraction>> items) throws Exception {
         for (Collection<? extends BinaryInteraction> binaryInteraction : items) {
-            delegate.write(new ArrayList<BinaryInteraction>(binaryInteraction));
+            for (BinaryInteractionItemWriter delegate : delegates) {
+                delegate.write(new ArrayList<BinaryInteraction>(binaryInteraction));
+            }
         }
     }
 
-    public void setDelegate(BinaryInteractionItemWriter delegate) {
-        this.delegate = delegate;
+    public void setDelegates(List<BinaryInteractionItemWriter> delegates) {
+        this.delegates = delegates;
     }
 }

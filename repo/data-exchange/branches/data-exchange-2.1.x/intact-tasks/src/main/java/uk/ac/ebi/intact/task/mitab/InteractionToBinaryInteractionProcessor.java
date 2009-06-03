@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.task.processor;
+package uk.ac.ebi.intact.task.mitab;
 
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;

@@ -13,34 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.task.reader;
+package uk.ac.ebi.intact.task.mitab;
 
-import org.springframework.batch.item.file.LineMapper;
+import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.item.ItemStreamException;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.model.builder.DocumentDefinition;
-import psidev.psi.mi.tab.model.builder.MitabDocumentDefinition;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class MitabLineMapper implements LineMapper<BinaryInteraction>{
+public class MitabItemReader extends FlatFileItemReader<BinaryInteraction>{
 
     private DocumentDefinition documentDefinition;
 
-    public MitabLineMapper() {
-    }
+    @Override
+    protected void doOpen() throws Exception {
+        MitabLineMapper mitabLineMapper = new MitabLineMapper();
+        mitabLineMapper.setDocumentDefinition(documentDefinition);
+        setLineMapper(mitabLineMapper);
 
-    public BinaryInteraction mapLine(String line, int lineNumber) throws Exception {
-        if (documentDefinition == null) {
-            documentDefinition = new MitabDocumentDefinition();
-        }
-        
-        try {
-            return documentDefinition.interactionFromString(line);
-        } catch (Exception e) {
-            throw new Exception("Problem converting to binary interaction line "+lineNumber+": "+line);
-        }
+        super.doOpen();
     }
 
     public void setDocumentDefinition(DocumentDefinition documentDefinition) {
