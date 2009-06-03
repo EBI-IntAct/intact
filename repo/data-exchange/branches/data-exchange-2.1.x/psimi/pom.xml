@@ -20,7 +20,6 @@
     <modules>
         <module>psixml</module>
         <module>psimitab</module>
-        <module>legacy</module>
   </modules>
 
       <!-- EBI repositories -->
