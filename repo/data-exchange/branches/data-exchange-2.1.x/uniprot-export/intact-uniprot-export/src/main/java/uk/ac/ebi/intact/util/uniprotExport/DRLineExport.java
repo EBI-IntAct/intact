@@ -350,7 +350,7 @@ public class DRLineExport extends LineExport {
      * @return a distinct set of Uniprot ID of the protein eligible to export in Swiss-Prot.
      *
      * @throws java.sql.SQLException error when handling the JDBC connection or query.
-     * @throws uk.ac.ebi.intact.business.IntactException
+     * @throws uk.ac.ebi.intact.core.business.IntactException
      *
      * @throws uk.ac.ebi.intact.util.uniprotExport.CCLineExport.DatabaseContentException
      *                               if the initialisation process failed (CV not found)
