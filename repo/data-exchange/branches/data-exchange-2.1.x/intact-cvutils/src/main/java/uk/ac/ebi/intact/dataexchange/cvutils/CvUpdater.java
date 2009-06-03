@@ -22,13 +22,10 @@ import org.apache.commons.collections.bag.HashBag;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.obo.dataadapter.OBOParseException;
-import org.springframework.stereotype.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.context.annotation.Scope;
 import uk.ac.ebi.intact.core.context.IntactContext;
+import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.core.persister.CorePersister;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.persister.stats.PersisterStatistics;
@@ -38,11 +35,7 @@ import uk.ac.ebi.intact.dataexchange.cvutils.model.AnnotationInfoDataset;
 import uk.ac.ebi.intact.dataexchange.cvutils.model.CvObjectOntologyBuilder;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
-import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.FlushModeType;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.*;
@@ -96,6 +89,7 @@ public class CvUpdater {
                                                              CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT );
     }
 
+
     protected Map<String, Class> getMapOfExistingCvs() {
 
         Map<String, Class> existingMi2Class = new HashMap<String, Class>();
@@ -125,7 +119,7 @@ public class CvUpdater {
      * @param annotationInfoDataset A seperate dataset specific for intact
      * @return An object containing some statistics about the update
      */
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public CvUpdaterStatistics createOrUpdateCVs( List<CvDagObject> allValidCvs, AnnotationInfoDataset annotationInfoDataset ) {
 
         if ( allValidCvs == null ) {
@@ -134,9 +128,6 @@ public class CvUpdater {
         if ( annotationInfoDataset == null ) {
             throw new IllegalArgumentException( "You must give a non null AnnotationInfoDataset" );
         }
-
-        // in order to prevent Transient object problems we disable the autoflush. We will set it to what it was after the update.
-        //entityManager.setFlushMode(FlushModeType.COMMIT);
 
         List<CvDagObject> alreadyExistingObsoleteCvList = new ArrayList<CvDagObject>();
         List<CvDagObject> orphanCvList = dealWithOrphans( allValidCvs,alreadyExistingObsoleteCvList );
