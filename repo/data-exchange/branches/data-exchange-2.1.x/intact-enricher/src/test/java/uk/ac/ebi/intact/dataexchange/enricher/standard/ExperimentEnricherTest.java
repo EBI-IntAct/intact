@@ -50,7 +50,7 @@ public class ExperimentEnricherTest extends EnricherBasicTestCase {
         Assert.assertEquals("The flexible loop of Bcl-2 is required for molecular interaction with immunosuppressant FK-506 binding protein 38 (FKBP38).", experiment.getFullName());
         Assert.assertEquals(2, experiment.getAnnotations().size());
 
-        Assert.assertEquals("DIP", experiment.getOwner().getShortLabel());
+        Assert.assertEquals("dip", experiment.getOwner().getShortLabel());
     }
 
     @Test
