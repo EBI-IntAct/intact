@@ -199,7 +199,7 @@ public class IntactSolrIndexerTest {
         IntactSolrSearcher searcher = new IntactSolrSearcher(solrJettyRunner.getSolrServer(CoreNames.CORE_PUB));
         SolrSearchResult result = searcher.search(searchQuery, null, null);
 
-        assertEquals(count, result.getTotalCount());
+        assertEquals(Long.valueOf(count), result.getTotalCount());
     }
 
     @Test
