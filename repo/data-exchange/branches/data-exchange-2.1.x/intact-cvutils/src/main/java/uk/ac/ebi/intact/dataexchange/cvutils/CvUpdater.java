@@ -22,8 +22,8 @@ import org.apache.commons.collections.bag.HashBag;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.obo.dataadapter.OBOParseException;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.intact.core.annotations.IntactFlushMode;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.core.persister.CorePersister;
@@ -37,6 +37,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.FlushModeType;
 import java.io.IOException;
 import java.util.*;
 
@@ -119,7 +120,8 @@ public class CvUpdater {
      * @param annotationInfoDataset A seperate dataset specific for intact
      * @return An object containing some statistics about the update
      */
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
+    @IntactFlushMode(FlushModeType.COMMIT)
     public CvUpdaterStatistics createOrUpdateCVs( List<CvDagObject> allValidCvs, AnnotationInfoDataset annotationInfoDataset ) {
 
         if ( allValidCvs == null ) {

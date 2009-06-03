@@ -263,14 +263,14 @@ public class CvUpdaterTest extends IntactBasicTestCase {
         int cvsBeforeUpdate = allCvsCommittedBefore.size();
 
         //Insert aggregation an obsolete term MI:0191
-        CvObjectDao<CvObject> cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao();
         Institution owner = IntactContext.getCurrentInstance().getInstitution();
         CvDagObject aggregation = CvObjectUtils.createCvObject( owner, CvInteractionType.class, "MI:0191", "aggregation" );
 
-        
-        persisterHelper.save( aggregation );
-        
 
+        persisterHelper.save( aggregation );
+
+
+        CvObjectDao<CvObject> cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao();
         Assert.assertEquals( cvsBeforeUpdate+1, cvObjectDao.countAll() );
 
         //check if aggregation has obsolote annotation  before createOrUpdateCvs call
@@ -356,7 +356,7 @@ public class CvUpdaterTest extends IntactBasicTestCase {
         int totalCvsAfterUpdate = getDaoFactory().getCvObjectDao().countAll();
 
         Assert.assertEquals( 938, totalCvsAfterUpdate );
-        Assert.assertEquals( 932, stats.getCreatedCvs().size() );
+        Assert.assertEquals( 929, stats.getCreatedCvs().size() );
 
         //54-1 obsolete term
         Assert.assertEquals( 53, stats.getOrphanCvs().size() );
@@ -446,8 +446,8 @@ public class CvUpdaterTest extends IntactBasicTestCase {
         Institution institution = IntactContext.getCurrentInstance().getInstitution();
         final Annotation annotation = getMockBuilder().createAnnotation("nowhere", "IA:0999", "postaladdress");
         institution.addAnnotation(annotation);
-        persisterHelper.save(annotation.getCvTopic());
-        persisterHelper.save(institution);
+        persisterHelper.saveInNewTransaction(annotation.getCvTopic());
+        persisterHelper.saveInNewTransaction(institution);
 
         //OBOSession oboSession = OboUtils.createOBOSessionFromDefault( "1.51" );
         OBOSession oboSession = OboUtils.createOBOSession( CvUpdaterTest.class.getResource("/ontologies/psi-mi25-1_51.obo" ));
