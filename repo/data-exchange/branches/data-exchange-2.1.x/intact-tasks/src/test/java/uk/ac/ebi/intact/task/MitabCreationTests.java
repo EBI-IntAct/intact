@@ -18,15 +18,18 @@ package uk.ac.ebi.intact.task;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.After;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.server.SolrJettyRunner;
 
 import javax.annotation.Resource;
 
@@ -34,7 +37,8 @@ import javax.annotation.Resource;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class TaskTests extends IntactBasicTestCase {
+@ContextConfiguration(locations = {"/META-INF/mitab-creation.spring.xml"})
+public class MitabCreationTests extends IntactBasicTestCase {
 
     @Resource(name = "intactBatchJobLauncher")
     private JobLauncher jobLauncher;
@@ -45,6 +49,18 @@ public class TaskTests extends IntactBasicTestCase {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private SolrJettyRunner solrJettyRunner;
+
+    @Before
+    public void before() throws Exception {
+        solrJettyRunner.start();
+    }
+
+    @After
+    public void after() throws Exception {
+        solrJettyRunner.stop();
+    }
 
     @Test
     public void writeMitab() throws Exception {
