@@ -22,6 +22,13 @@ import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.core.io.Resource;
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologyIndexer;
+import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
+
+import java.util.List;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -29,7 +36,36 @@ import org.springframework.batch.repeat.RepeatStatus;
  */
 public class OntologyPopulatorTasklet implements Tasklet{
 
+    private Resource ontologiesSolrUrl;
+    private List<OntologyMapping> oboOntologyMappings;
+    private boolean indexUniprotTaxonomy;
+
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        throw new UnsupportedOperationException();
+        if (ontologiesSolrUrl == null) {
+            throw new NullPointerException("ontologiesSolrUrl is null");
+        }
+        SolrServer ontologiesSolrServer = new CommonsHttpSolrServer(ontologiesSolrUrl.getURL());
+
+        OntologyIndexer ontologyIndexer = new OntologyIndexer(ontologiesSolrServer);
+
+        if (indexUniprotTaxonomy) {
+            ontologyIndexer.indexUniprotTaxonomy();
+        }
+
+        ontologyIndexer.indexObo(oboOntologyMappings.toArray(new OntologyMapping[oboOntologyMappings.size()]));
+
+        return RepeatStatus.FINISHED;
+    }
+
+    public void setOntologiesSolrUrl(Resource ontologiesSolrUrl) {
+        this.ontologiesSolrUrl = ontologiesSolrUrl;
+    }
+
+    public void setOboOntologyMappings(List<OntologyMapping> oboOntologyMappings) {
+        this.oboOntologyMappings = oboOntologyMappings;
+    }
+
+    public void setIndexUniprotTaxonomy(boolean indexUniprotTaxonomy) {
+        this.indexUniprotTaxonomy = indexUniprotTaxonomy;
     }
 }

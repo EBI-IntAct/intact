@@ -33,25 +33,26 @@ import uk.ac.ebi.intact.irefindex.seguid.SeguidException;
 import psidev.psi.mi.tab.processor.PostProcessorStrategy;
 import psidev.psi.mi.tab.model.CrossReferenceImpl;
 import psidev.psi.mi.tab.model.CrossReference;
+import psidev.psi.mi.tab.model.BinaryInteraction;
 
-import java.util.Collection;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class InteractionToBinaryInteractionProcessor implements ItemProcessor<Interaction, Collection<IntactBinaryInteraction>> {
+public class InteractionExpansionCompositeProcessor implements ItemProcessor<Interaction, Collection<IntactBinaryInteraction>> {
 
     private static final String SMALLMOLECULE_MI_REF = "MI:0328";
     private static final String UNKNOWN_TAXID = "-3";
 
     private ExpansionStrategy expansionStategy;
 
-    public InteractionToBinaryInteractionProcessor() {
+    private List<ItemProcessor<BinaryInteraction, BinaryInteraction>> delegates;
+
+    public InteractionExpansionCompositeProcessor() {
         this.expansionStategy = new SpokeWithoutBaitExpansion();
+        this.delegates = new ArrayList<ItemProcessor<BinaryInteraction, BinaryInteraction>>();
     }
 
     public Collection<IntactBinaryInteraction> process(Interaction item) throws Exception {
@@ -106,6 +107,12 @@ public class InteractionToBinaryInteractionProcessor implements ItemProcessor<In
             } catch (SeguidException e) {
                 throw new RuntimeException("An error occured while generating RIG/ROG identifier for " +
                         "interaction " + interaction.getAc(), e);
+            }
+        }
+
+        for (BinaryInteraction binaryInteraction : binaryInteractions) {
+            for (ItemProcessor<BinaryInteraction,BinaryInteraction> delegate : delegates) {
+                delegate.process(binaryInteraction);
             }
         }
 
@@ -214,5 +221,9 @@ public class InteractionToBinaryInteractionProcessor implements ItemProcessor<In
 
     public void setExpansionStategy(ExpansionStrategy expansionStategy) {
         this.expansionStategy = expansionStategy;
+    }
+
+    public void setBinaryItemProcessors(List<ItemProcessor<BinaryInteraction, BinaryInteraction>> delegates) {
+        this.delegates = delegates;
     }
 }

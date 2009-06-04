@@ -28,16 +28,21 @@
     </bean>
 
     <!-- Some beans -->
+    <bean id="solrJettyRunner" class="uk.ac.ebi.intact.dataexchange.psimi.solr.server.SolrJettyRunner"/>
+    
     <bean id="mitabWriter" class="uk.ac.ebi.intact.task.mitab.MitabItemWriter">
-        <property name="resource" value="target/lala.txt"/>
+        <property name="resource" value="file://d:/tmp/lala.txt"/>
      </bean>
 
     <bean id="luceneMitabWriter" class="uk.ac.ebi.intact.task.mitab.index.LuceneItemWriter">
-        <property name="directory" value="target/lala-lucene"/>
+        <property name="directory" value="file://d:/tmp/lala-lucene"/>
     </bean>
 
     <bean id="solrMitabWriter" class="uk.ac.ebi.intact.task.mitab.index.SolrItemWriter">
-        <property name="interactionsSolrUrl" value=""/>
+        <property name="interactionsSolrUrl" value="http://localhost:18080/solr/core_pub"/>
+        <property name="documentDefinition">
+            <bean class="uk.ac.ebi.intact.psimitab.IntactDocumentDefinition"/>
+        </property>
     </bean>
 
     <bean id="compositeMitabWriter" class="uk.ac.ebi.intact.task.mitab.MitabCollectionCompositeWriter">
@@ -50,25 +55,39 @@
         </property>
     </bean>
 
-    <bean id="mitabCompositeItemProcessor"
-            class="org.springframework.batch.item.support.CompositeItemProcessor">
-        <property name="itemProcessors">
+    <bean id="interactionExpansionCompositeItemProcessor"
+            class="uk.ac.ebi.intact.task.mitab.InteractionExpansionCompositeProcessor">
+        <property name="binaryItemProcessors">
           <list>
-            <ref bean="interactionToBinaryInteractionProcessor" />
             <bean class="uk.ac.ebi.intact.task.mitab.index.OntologyEnricherItemProcessor">
-                <property name="ontologiesSolrUrl" value=""/>
+                <property name="ontologiesSolrUrl" value="http://localhost:18080/solr/core_ontology_pub"/>
             </bean>
           </list>
         </property>
       </bean>
 
+    <bean id="smallOntologyPopulator" class="uk.ac.ebi.intact.task.mitab.index.OntologyPopulatorTasklet" scope="prototype">
+        <property name="ontologiesSolrUrl" value="http://localhost:18080/solr/core_ontology_pub"/>
+        <property name="indexUniprotTaxonomy" value="false"/>
+        <property name="oboOntologyMappings">
+            <list>
+                <bean class="uk.ac.ebi.intact.task.mitab.index.OntologyMappingFactoryBean">
+                    <property name="name" value="psi-mi"/>
+                    <property name="resource" value="http://psidev.cvs.sourceforge.net/viewvc/psidev/psi/mi/rel25/data/psi-mi25.obo?revision=1.52"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
 
     <!-- Some tests jobs -->
      <batch:job id="createMitabJob" job-repository="intactJobRepository" restartable="true">
+         <batch:step id="prepareOntologies" next="interactionsToMitabStep">
+             <batch:tasklet ref="smallOntologyPopulator"/>
+         </batch:step>
         <batch:step id="interactionsToMitabStep" parent="intactBatchStep">
             <batch:tasklet>
                 <batch:chunk reader="interactionReader"
-                             processor="mitabCompositeItemProcessor"
+                             processor="interactionExpansionCompositeItemProcessor"
                              writer="compositeMitabWriter">
                     <batch:streams>
                         <batch:stream ref="mitabWriter"/>

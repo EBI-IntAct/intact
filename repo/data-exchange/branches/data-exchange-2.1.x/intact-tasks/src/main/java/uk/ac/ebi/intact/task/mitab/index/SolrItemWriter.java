@@ -46,6 +46,9 @@ public class SolrItemWriter implements BinaryInteractionItemWriter, ItemStream{
         if (interactionsSolrUrl == null) {
             throw new NullPointerException("No 'interactionsSolrUrl' configured for SolrItemWriter");
         }
+        if (documentDefinition == null) {
+            throw new NullPointerException("No 'documentDefinition' configured for SolrItemWriter");
+        }
 
         SolrServer interactionsSolrServer = new CommonsHttpSolrServer(interactionsSolrUrl.getURL());
 
@@ -96,5 +99,7 @@ public class SolrItemWriter implements BinaryInteractionItemWriter, ItemStream{
         this.ontologiesSolrUrl = ontologiesSolrUrl;
     }
 
-
+    public void setDocumentDefinition(DocumentDefinition documentDefinition) {
+        this.documentDefinition = documentDefinition;
+    }
 }
