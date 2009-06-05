@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project relativePaths="true" version="4">
-  <component name="AntConfiguration">
-    <defaultAnt bundledAnt="true" />
-  </component>
   <component name="BuildJarProjectSettings">
     <option name="BUILD_JARS_ON_MAKE" value="false" />
   </component>
@@ -33,23 +30,76 @@
   <component name="CopyrightManager" default="">
     <module2copyright />
   </component>
+  <component name="DaemonCodeAnalyzer">
+    <disable_hints />
+  </component>
+  <component name="DebuggerManager">
+    <breakpoint_any>
+      <breakpoint>
+        <option name="NOTIFY_CAUGHT" value="true" />
+        <option name="NOTIFY_UNCAUGHT" value="true" />
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="false" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint>
+        <option name="NOTIFY_CAUGHT" value="true" />
+        <option name="NOTIFY_UNCAUGHT" value="true" />
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="false" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+    </breakpoint_any>
+    <breakpoint_rules />
+    <ui_properties />
+  </component>
   <component name="DependencyValidationManager">
     <option name="SKIP_IMPORT_STATEMENTS" value="false" />
   </component>
+  <component name="EclipseCompilerSettings">
+    <option name="DEBUGGING_INFO" value="true" />
+    <option name="GENERATE_NO_WARNINGS" value="true" />
+    <option name="DEPRECATION" value="false" />
+    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
+    <option name="MAXIMUM_HEAP_SIZE" value="128" />
+  </component>
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" />
-  <component name="IdProvider" IDEtalkID="4255F13EDF2BAB247676A36F54083E9E" />
+  <component name="IdProvider" IDEtalkID="912080B50A53907B36BDBA3A1C3718AD" />
   <component name="InspectionProjectProfileManager">
     <option name="PROJECT_PROFILE" value="Project Default" />
-    <option name="USE_PROJECT_LEVEL_SETTINGS" value="false" />
-    <scopes />
+    <version value="1.0" />
     <profiles>
       <profile version="1.0" is_locked="false">
         <option name="myName" value="Project Default" />
         <option name="myLocal" value="false" />
-        <inspection_tool class="HtmlDeprecatedTag" level="WARNING" enabled="false" />
+      </profile>
+      <profile version="1.0" is_locked="false">
+        <option name="myName" value="_Default" />
+        <option name="myLocal" value="true" />
       </profile>
     </profiles>
-    <list size="0" />
+    <list size="4">
+      <item index="0" class="java.lang.String" itemvalue="SERVER PROBLEM" />
+      <item index="1" class="java.lang.String" itemvalue="INFO" />
+      <item index="2" class="java.lang.String" itemvalue="WARNING" />
+      <item index="3" class="java.lang.String" itemvalue="ERROR" />
+    </list>
   </component>
   <component name="JavacSettings">
     <option name="DEBUGGING_INFO" value="true" />
@@ -75,12 +125,24 @@
     <option name="LOCALE" />
     <option name="OPEN_IN_BROWSER" value="true" />
   </component>
+  <component name="JikesSettings">
+    <option name="JIKES_PATH" value="" />
+    <option name="DEBUGGING_INFO" value="true" />
+    <option name="DEPRECATION" value="true" />
+    <option name="GENERATE_NO_WARNINGS" value="false" />
+    <option name="IS_EMACS_ERRORS_MODE" value="true" />
+    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
+  </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
+  </component>
+  <component name="ModuleEditorState">
+    <option name="LAST_EDITED_MODULE_NAME" />
+    <option name="LAST_EDITED_TAB_NAME" />
   </component>
   <component name="Palette2">
     <group name="Swing">
@@ -208,14 +270,27 @@
   </component>
   <component name="ProjectFileVersion" converted="true" />
   <component name="ProjectKey">
-    <option name="state" value="project://C:\cygwin\home\Samuel\projects\intact\data-exchange\pdbe\intact-pdbe-import\intact-pdbe-import.ipr" />
+    <option name="state" value="https://intact.svn.sourceforge.net/svnroot/intact/repo/data-exchange/branches/data-exchange-2.1.x/pdbe/intact-pdbe-import/intact-pdbe-import.ipr" />
+  </component>
+  <component name="ProjectLevelVcsManager">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/intact-pdbe-import.iml" filepath="$PROJECT_DIR$/intact-pdbe-import.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.5" project-jdk-type="JavaSDK">
+  <component name="ProjectReloadState">
+    <option name="STATE" value="0" />
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/classes" />
   </component>
   <component name="ResourceManagerContainer">
@@ -232,24 +307,119 @@
     <option name="GENERATE_IIOP_STUBS" value="false" />
     <option name="ADDITIONAL_OPTIONS_STRING" value="" />
   </component>
+  <component name="RunManager">
+    <configuration default="true" type="Remote" factoryName="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application" enabled="false" merge="false" runner="emma">
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit" enabled="false" merge="false" runner="emma">
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="ADDITIONAL_CLASS_PATH" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <list size="0" />
+    <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
+      <Host>localhost</Host>
+      <Port>5050</Port>
+    </configuration>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
   <component name="SvnBranchConfigurationManager">
-    <option name="myVersion" value="124" />
     <option name="mySupportsUserInfoFilter" value="true" />
+  </component>
+  <component name="SvnConfiguration">
+    <option name="USER" value="" />
+    <option name="PASSWORD" value="" />
+    <option name="LAST_MERGED_REVISION" />
+    <option name="UPDATE_RUN_STATUS" value="false" />
+    <option name="MERGE_DRY_RUN" value="false" />
+    <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
+    <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
+    <option name="IGNORE_SPACES_IN_MERGE" value="false" />
+    <option name="DETECT_NESTED_COPIES" value="true" />
+    <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="" />
+    <mapping directory="$PROJECT_DIR$" vcs="svn" />
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
+  <component name="XPathView.XPathProjectComponent">
+    <history />
+    <find-history />
+  </component>
   <component name="libraryTable">
-    <library name="Maven: junit:junit:4.3.1">
+    <library name="Maven: junit:junit:4.4">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.3.1/junit-4.3.1.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.4/junit-4.4.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.3.1/junit-4.3.1-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.4/junit-4.4-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.3.1/junit-4.3.1-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.4/junit-4.4-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.easymock:easymockclassextension:2.2.2">
@@ -483,6 +653,28 @@
         <root url="jar://$MAVEN_REPOSITORY$/com/h2database/h2/1.0.20070429/h2-1.0.20070429-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: org.springframework:spring-test:2.5.6">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-test/2.5.6/spring-test-2.5.6.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-test/2.5.6/spring-test-2.5.6-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-test/2.5.6/spring-test-2.5.6-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: uk.ac.ebi.intact.core:intact-core:1.9.6-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-core/1.9.6-SNAPSHOT/intact-core-1.9.6-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-core/1.9.6-SNAPSHOT/intact-core-1.9.6-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-core/1.9.6-SNAPSHOT/intact-core-1.9.6-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: uk.ac.ebi.intact.commons:intact-commons:2.1.6">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/commons/intact-commons/2.1.6/intact-commons-2.1.6.jar!/" />
@@ -593,15 +785,26 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/apache/geronimo/specs/geronimo-javamail_1.4_spec/1.1/geronimo-javamail_1.4_spec-1.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: uk.ac.ebi.intact.core:intact-annotations:1.9.5">
+    <library name="Maven: uk.ac.ebi.intact.core:intact-annotations:2.0.0-SNAPSHOT">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-annotations/1.9.5/intact-annotations-1.9.5.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-annotations/2.0.0-SNAPSHOT/intact-annotations-2.0.0-SNAPSHOT.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-annotations/1.9.5/intact-annotations-1.9.5-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-annotations/2.0.0-SNAPSHOT/intact-annotations-2.0.0-SNAPSHOT-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-annotations/1.9.5/intact-annotations-1.9.5-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-annotations/2.0.0-SNAPSHOT/intact-annotations-2.0.0-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: uk.ac.ebi.intact.core:intact-apt:1.9.6-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-apt/1.9.6-SNAPSHOT/intact-apt-1.9.6-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-apt/1.9.6-SNAPSHOT/intact-apt-1.9.6-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-apt/1.9.6-SNAPSHOT/intact-apt-1.9.6-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: velocity:velocity-dep:1.4">
@@ -617,13 +820,13 @@
     </library>
     <library name="Maven: sun.jdk:tools:1.5.0">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/../../../../../../../../dev/java/jdk1.6.0_10/jre/../lib/tools.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../../../apps/jdk1.6.0_10/jre/../lib/tools.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$PROJECT_DIR$/../../../../../../../../dev/java/jdk1.6.0_10/jre/../lib/tools-javadoc.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../../../apps/jdk1.6.0_10/jre/../lib/tools-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$PROJECT_DIR$/../../../../../../../../dev/java/jdk1.6.0_10/jre/../lib/tools-sources.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../../../apps/jdk1.6.0_10/jre/../lib/tools-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: commons-net:commons-net:1.4.1">
@@ -758,6 +961,28 @@
         <root url="jar://$MAVEN_REPOSITORY$/joda-time/joda-time-hibernate/1.0/joda-time-hibernate-1.0-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: commons-logging:commons-logging-api:1.0.4">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging-api/1.0.4/commons-logging-api-1.0.4.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging-api/1.0.4/commons-logging-api-1.0.4-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging-api/1.0.4/commons-logging-api-1.0.4-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: hsqldb:hsqldb:1.7.3.3">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/hsqldb/hsqldb/1.7.3.3/hsqldb-1.7.3.3.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/hsqldb/hsqldb/1.7.3.3/hsqldb-1.7.3.3-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/hsqldb/hsqldb/1.7.3.3/hsqldb-1.7.3.3-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: uk.ac.ebi.intact.dataexchange.psimi:intact-psixml-exchange:2.0.3-SNAPSHOT">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/dataexchange/psimi/intact-psixml-exchange/2.0.3-SNAPSHOT/intact-psixml-exchange-2.0.3-SNAPSHOT.jar!/" />
@@ -780,15 +1005,15 @@
         <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/dataexchange/psimi/intact-psixml-converters/2.0.3-SNAPSHOT/intact-psixml-converters-2.0.3-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: psidev.psi.mi:psi25-xml:1.7.3">
+    <library name="Maven: psidev.psi.mi:psi25-xml:1.7.4">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/psidev/psi/mi/psi25-xml/1.7.3/psi25-xml-1.7.3.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/psidev/psi/mi/psi25-xml/1.7.4/psi25-xml-1.7.4.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/psidev/psi/mi/psi25-xml/1.7.3/psi25-xml-1.7.3-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/psidev/psi/mi/psi25-xml/1.7.4/psi25-xml-1.7.4-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/psidev/psi/mi/psi25-xml/1.7.3/psi25-xml-1.7.3-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/psidev/psi/mi/psi25-xml/1.7.4/psi25-xml-1.7.4-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: psidev.psi.tools:xxindex:0.3">
@@ -1044,15 +1269,15 @@
         <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/intact-uniprot/2.0.10-SNAPSHOT/intact-uniprot-2.0.10-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: uk.ac.ebi.uniprot.kraken:uniprotjapi:15.0">
+    <library name="Maven: uk.ac.ebi.uniprot.kraken:uniprotjapi:15.3">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/uniprot/kraken/uniprotjapi/15.0/uniprotjapi-15.0.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/uniprot/kraken/uniprotjapi/15.3/uniprotjapi-15.3.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/uniprot/kraken/uniprotjapi/15.0/uniprotjapi-15.0-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/uniprot/kraken/uniprotjapi/15.3/uniprotjapi-15.3-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/uniprot/kraken/uniprotjapi/15.0/uniprotjapi-15.0-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/uniprot/kraken/uniprotjapi/15.3/uniprotjapi-15.3-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: commons-codec:commons-codec:1.3">
@@ -1286,17 +1511,6 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis-jaxrpc/1.4/axis-jaxrpc-1.4-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.apache.axis:axis-saaj:1.4">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis-saaj/1.4/axis-saaj-1.4.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis-saaj/1.4/axis-saaj-1.4-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis-saaj/1.4/axis-saaj-1.4-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: soap:soap:2.3.1">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/soap/soap/2.3.1/soap-2.3.1.jar!/" />
@@ -1319,28 +1533,6 @@
         <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/chebi/webapps/chebiWS/client/chebiWS-client/1.1.1/chebiWS-client-1.1.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: uk.ac.ebi.intact.core:intact-core:1.9.6-SNAPSHOT">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-core/1.9.6-SNAPSHOT/intact-core-1.9.6-SNAPSHOT.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-core/1.9.6-SNAPSHOT/intact-core-1.9.6-SNAPSHOT-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-core/1.9.6-SNAPSHOT/intact-core-1.9.6-SNAPSHOT-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: uk.ac.ebi.intact.core:intact-apt:1.9.6-SNAPSHOT">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-apt/1.9.6-SNAPSHOT/intact-apt-1.9.6-SNAPSHOT.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-apt/1.9.6-SNAPSHOT/intact-apt-1.9.6-SNAPSHOT-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-apt/1.9.6-SNAPSHOT/intact-apt-1.9.6-SNAPSHOT-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: com.oracle:oracle-thin:10.2.0.4">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/com/oracle/oracle-thin/10.2.0.4/oracle-thin-10.2.0.4.jar!/" />
@@ -1353,8 +1545,72 @@
       </SOURCES>
     </library>
   </component>
+  <component name="masterDetails">
+    <option name="states">
+      <map>
+        <entry key="Copyright.UI">
+          <value>
+            <UIState>
+              <option name="proportions">
+                <SplitterProportionsDataImpl />
+              </option>
+            </UIState>
+          </value>
+        </entry>
+        <entry key="Errors.UI">
+          <value>
+            <UIState>
+              <option name="proportions">
+                <SplitterProportionsDataImpl />
+              </option>
+            </UIState>
+          </value>
+        </entry>
+        <entry key="ScopeChooserConfigurable.UI">
+          <value>
+            <UIState>
+              <option name="proportions">
+                <SplitterProportionsDataImpl />
+              </option>
+            </UIState>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="myStates">
+      <map>
+        <entry key="Copyright.UI">
+          <value>
+            <UIState>
+              <option name="proportions">
+                <SplitterProportionsDataImpl />
+              </option>
+            </UIState>
+          </value>
+        </entry>
+        <entry key="Errors.UI">
+          <value>
+            <UIState>
+              <option name="proportions">
+                <SplitterProportionsDataImpl />
+              </option>
+            </UIState>
+          </value>
+        </entry>
+        <entry key="ScopeChooserConfigurable.UI">
+          <value>
+            <UIState>
+              <option name="proportions">
+                <SplitterProportionsDataImpl />
+              </option>
+            </UIState>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <UsedPathMacros>
-    <macro name="MAVEN_REPOSITORY" description="Maven Local Repostiry" />
+    <macro name="MAVEN_REPOSITORY" />
   </UsedPathMacros>
 </project>
 
