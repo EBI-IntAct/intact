@@ -10,6 +10,8 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/sprint-aop-2.5.xsd">
 
+    <bean class="uk.ac.ebi.intact.core.context.IntactInitializer" init-method="init"/>
+
     <bean name="intactConfig" class="uk.ac.ebi.intact.core.config.IntactConfiguration">
         <property name="acPrefix" value="TEST"/>
         <property name="defaultInstitution" ref="institutionIntact"/>
