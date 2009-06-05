@@ -22,7 +22,7 @@
         <constructor-arg value="0"/>
     </bean>
 
-    <bean class="uk.ac.ebi.intact.core.context.IntactInitializer" init-method="init"/>
+    
 
     <bean name="corePersister" class="uk.ac.ebi.intact.core.persister.CorePersisterImpl" scope="prototype">
         <constructor-arg ref="intactContext"/>
