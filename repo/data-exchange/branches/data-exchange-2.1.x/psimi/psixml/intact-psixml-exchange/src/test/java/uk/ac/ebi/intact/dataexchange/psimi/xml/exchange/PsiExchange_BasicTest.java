@@ -20,10 +20,10 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
+import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.IntactEntry;
-import uk.ac.ebi.intact.model.CvTopic;
 
 /**
  * TODO comment this
@@ -34,7 +34,7 @@ import uk.ac.ebi.intact.model.CvTopic;
 public class PsiExchange_BasicTest extends IntactBasicTestCase {
 
     @Autowired
-    private PsiExchangeImpl psiExchange;
+    private PsiExchange psiExchange;
 
     @Test
     public void importIntoIntact_default() throws Exception {
