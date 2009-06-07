@@ -17,14 +17,15 @@ package uk.ac.ebi.intact.dataexchange.pdbe;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.transaction.TransactionStatus;
 import psidev.psi.mi.xml.PsimiXmlReader;
 import psidev.psi.mi.xml.PsimiXmlWriter;
 import psidev.psi.mi.xml.model.*;
 import psidev.psi.mi.xml.model.Xref;
 import uk.ac.ebi.intact.core.context.IntactContext;
+import uk.ac.ebi.intact.core.context.DataContext;
 import uk.ac.ebi.intact.core.persister.stats.PersisterStatistics;
 import uk.ac.ebi.intact.dataexchange.enricher.EnricherConfig;
-import uk.ac.ebi.intact.dataexchange.enricher.EnricherContext;
 import uk.ac.ebi.intact.dataexchange.psimi.xml.exchange.PsiExchange;
 import uk.ac.ebi.intact.dataexchange.psimi.xml.exchange.enricher.PsiEnricher;
 import uk.ac.ebi.intact.dataexchange.psimi.xml.exchange.enricher.PsiEnricherException;
@@ -62,14 +63,15 @@ public class ImportPdbXmlFiles {
         IntactContext.initStandaloneContext( dbConfigFile );
 
         // Initialise institution
-        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
-        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+        DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
+        TransactionStatus transactionStatus = dataContext.beginTransaction();
+        DaoFactory daoFactory = dataContext.getDaoFactory();
         final int institutionCount = daoFactory.getInstitutionDao().countAll();
         log.info( "Found " + institutionCount + " institutions in this IntAct node:" );
         for ( Institution institution : daoFactory.getInstitutionDao().getAll() ) {
             log.info( " - " + institution.getShortLabel() + " (" + institution.getAc() + ")" );
         }
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        dataContext.commitTransaction(transactionStatus);
 
 
         // Prepare files to be imported
@@ -136,8 +138,10 @@ public class ImportPdbXmlFiles {
 
             xmlFile = enrich( xmlFile );
 
+            TransactionStatus transactionStatus2 = null;
+
             try {
-                IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+                transactionStatus2 = dataContext.beginTransaction();
 
                 // Check if that PMID was already annotated in IntAct and skip/log if so.
                 // check that we have a single PMID for that Entry
@@ -156,7 +160,7 @@ public class ImportPdbXmlFiles {
                             if ( ref != null ) {
                                 // found it, now check in IntAct
                                 final String pmid = ref.getId();
-                                daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+                                daoFactory = dataContext.getDaoFactory();
                                 final List<Experiment> experiments = daoFactory.getExperimentDao().getByPubId( pmid );
                                 if ( !experiments.isEmpty() ) {
                                     log.info( "IntAct has already " + experiments.size() + " experiment(s) for PMID: " + pmid );
@@ -187,8 +191,8 @@ public class ImportPdbXmlFiles {
                                             totalExperimentDeleted++;
 
                                             // commit and re-open transaction...
-                                            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
-                                            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+                                            dataContext.commitTransaction(transactionStatus2);
+                                            transactionStatus2 = dataContext.beginTransaction();
 
                                         } else {
                                             log.info( e.getAc() + " is NOT from dataset(MSD)" );
@@ -216,7 +220,9 @@ public class ImportPdbXmlFiles {
                     log.info( "After careful checking, about to import data file..." );
 
                     // new FileInputStream( xmlFile )
-                    final PersisterStatistics stats = PsiExchange.importIntoIntact( entrySet );
+                    PsiExchange psiExchange = (PsiExchange) IntactContext.getCurrentInstance().getSpringContext()
+                            .getBean("psiExchange");
+                    final PersisterStatistics stats = psiExchange.importIntoIntact( entrySet );
 
                     final int experimentCount = stats.getPersistedCount( Experiment.class, false );
                     final int interactionCount = stats.getPersistedCount( InteractionImpl.class, false );
@@ -250,13 +256,12 @@ public class ImportPdbXmlFiles {
 
             } catch ( Exception e ) {
                 log.error( "An error occur while importing: " + xmlFilename, e );
-                if ( IntactContext.getCurrentInstance().getDataContext().isTransactionActive() ) {
-                    daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
-                    daoFactory.getCurrentTransaction().rollback();
+                if ( !transactionStatus2.isCompleted() ) {
+                    dataContext.rollbackTransaction(transactionStatus2);
                 }
             } finally {
-                if ( IntactContext.getCurrentInstance().getDataContext().isTransactionActive() ) {
-                    IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+                if ( !transactionStatus2.isCompleted() ) {
+                    dataContext.commitTransaction(transactionStatus2);
                 }
             }
 
@@ -300,7 +305,9 @@ public class ImportPdbXmlFiles {
         log.info( fileToImport.getAbsolutePath() + " was enriched into " + tempFile.getAbsolutePath() );
 
         try {
-            PsiEnricher.enrichPsiXml( is, writer, enricherConfig );
+            PsiEnricher psiEnricher = (PsiEnricher) IntactContext.getCurrentInstance().getSpringContext()
+                            .getBean("psiEnricher");
+            psiEnricher.enrichPsiXml( is, writer, enricherConfig );
         } catch ( PsiEnricherException e ) {
             throw new RuntimeException( "Error while enriching: " + fileToImport.getAbsolutePath(), e );
         }
