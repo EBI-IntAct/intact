@@ -36,6 +36,7 @@
         <module>uniprot-export</module>
         <module>ebeye</module>
         <module>pdbe</module>
+        <module>intact-tasks</module>
     </modules>
 
     <build>
