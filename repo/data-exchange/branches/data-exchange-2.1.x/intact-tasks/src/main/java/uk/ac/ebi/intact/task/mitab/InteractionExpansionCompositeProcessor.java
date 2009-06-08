@@ -16,24 +16,22 @@
 package uk.ac.ebi.intact.task.mitab;
 
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.stereotype.Component;
+import psidev.psi.mi.tab.model.BinaryInteraction;
+import psidev.psi.mi.tab.model.CrossReference;
+import psidev.psi.mi.tab.model.CrossReferenceImpl;
+import uk.ac.ebi.intact.irefindex.seguid.RigDataModel;
+import uk.ac.ebi.intact.irefindex.seguid.RigidGenerator;
+import uk.ac.ebi.intact.irefindex.seguid.RogidGenerator;
+import uk.ac.ebi.intact.irefindex.seguid.SeguidException;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
+import uk.ac.ebi.intact.model.util.InteractionUtils;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.PsimitabTools;
-import uk.ac.ebi.intact.psimitab.model.ExtendedInteractor;
 import uk.ac.ebi.intact.psimitab.converters.Intact2BinaryInteractionConverter;
 import uk.ac.ebi.intact.psimitab.converters.expansion.ExpansionStrategy;
 import uk.ac.ebi.intact.psimitab.converters.expansion.SpokeWithoutBaitExpansion;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.model.util.InteractionUtils;
-import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
-import uk.ac.ebi.intact.irefindex.seguid.RogidGenerator;
-import uk.ac.ebi.intact.irefindex.seguid.RigDataModel;
-import uk.ac.ebi.intact.irefindex.seguid.RigidGenerator;
-import uk.ac.ebi.intact.irefindex.seguid.SeguidException;
-import psidev.psi.mi.tab.processor.PostProcessorStrategy;
-import psidev.psi.mi.tab.model.CrossReferenceImpl;
-import psidev.psi.mi.tab.model.CrossReference;
-import psidev.psi.mi.tab.model.BinaryInteraction;
+import uk.ac.ebi.intact.psimitab.model.ExtendedInteractor;
 
 import java.util.*;
 
@@ -48,11 +46,11 @@ public class InteractionExpansionCompositeProcessor implements ItemProcessor<Int
 
     private ExpansionStrategy expansionStategy;
 
-    private List<ItemProcessor<BinaryInteraction, BinaryInteraction>> delegates;
+    private List<ItemProcessor<BinaryInteraction, BinaryInteraction>> binaryItemProcessors;
 
     public InteractionExpansionCompositeProcessor() {
         this.expansionStategy = new SpokeWithoutBaitExpansion();
-        this.delegates = new ArrayList<ItemProcessor<BinaryInteraction, BinaryInteraction>>();
+        this.binaryItemProcessors = new ArrayList<ItemProcessor<BinaryInteraction, BinaryInteraction>>();
     }
 
     public Collection<IntactBinaryInteraction> process(Interaction item) throws Exception {
@@ -111,7 +109,7 @@ public class InteractionExpansionCompositeProcessor implements ItemProcessor<Int
         }
 
         for (BinaryInteraction binaryInteraction : binaryInteractions) {
-            for (ItemProcessor<BinaryInteraction,BinaryInteraction> delegate : delegates) {
+            for (ItemProcessor<BinaryInteraction,BinaryInteraction> delegate : binaryItemProcessors) {
                 delegate.process(binaryInteraction);
             }
         }
@@ -224,6 +222,6 @@ public class InteractionExpansionCompositeProcessor implements ItemProcessor<Int
     }
 
     public void setBinaryItemProcessors(List<ItemProcessor<BinaryInteraction, BinaryInteraction>> delegates) {
-        this.delegates = delegates;
+        this.binaryItemProcessors = delegates;
     }
 }
