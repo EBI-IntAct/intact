@@ -159,35 +159,4 @@ public class ExperimentAutoFill {
         return citation.getYear();
     }
 
-    /////////////////////////
-    // D E M O
-
-    public static void main( String[] args ) throws Exception {
-
-        // working cases
-//        ExperimentAutoFill eaf = new ExperimentAutoFill( "12130660" ); // with more than one pub by year
-//        ExperimentAutoFill eaf = new ExperimentAutoFill( "16104060" );   // not in IntAct, neither in CitExplore
-//        ExperimentAutoFill eaf = new ExperimentAutoFill( "12029088" );   // not in IntAct, neither in CitExplore
-//        ExperimentAutoFill eaf = new ExperimentAutoFill( "14517332" );   // not in IntAct, neither in CitExplore
-//        ExperimentAutoFill eaf = new ExperimentAutoFill( "12244133" );   // not in IntAct, neither in CitExplore
-        ExperimentAutoFill eaf = new ExperimentAutoFill( "9010225" );   // not in IntAct, neither in CitExplore
-
-        // error case
-//        ExperimentAutoFill eaf = new ExperimentAutoFill( "16104058" );   // not in IntAct, neither in CitExplore
-//        ExperimentAutoFill eaf = new ExperimentAutoFill( "-1" );   // invalid pubmed id
-//        ExperimentAutoFill eaf = new ExperimentAutoFill( "blabla" );   // invalid pubmed id
-
-
-        log.info( eaf.getShortlabel( ) );
-
-        log.info( eaf.getFullname() );
-        log.info( eaf.getAuthorList() );
-        if ( eaf.hasAuthorEmail() ) {
-            log.info( eaf.getAuthorEmail() );
-        } else {
-            log.info( "No email" );
-        }
-
-        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
-    }
 }
