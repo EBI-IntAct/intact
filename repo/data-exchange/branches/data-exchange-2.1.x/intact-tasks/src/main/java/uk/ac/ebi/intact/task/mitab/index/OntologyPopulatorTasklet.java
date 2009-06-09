@@ -15,18 +15,15 @@
  */
 package uk.ac.ebi.intact.task.mitab.index;
 
-import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.core.step.tasklet.TaskletStep;
-import org.springframework.batch.core.step.AbstractStep;
-import org.springframework.batch.core.StepContribution;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.scope.context.ChunkContext;
-import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.core.io.Resource;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
-import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologyIndexer;
+import org.springframework.batch.core.StepContribution;
+import org.springframework.batch.core.scope.context.ChunkContext;
+import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.core.io.Resource;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologyIndexer;
 
 import java.util.List;
 
@@ -40,11 +37,19 @@ public class OntologyPopulatorTasklet implements Tasklet{
     private List<OntologyMapping> oboOntologyMappings;
     private boolean indexUniprotTaxonomy;
 
+    private boolean clearIndex = true;
+
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         if (ontologiesSolrUrl == null) {
             throw new NullPointerException("ontologiesSolrUrl is null");
         }
         SolrServer ontologiesSolrServer = new CommonsHttpSolrServer(ontologiesSolrUrl.getURL());
+
+        if (clearIndex) {
+            ontologiesSolrServer.deleteByQuery("*:*");
+            ontologiesSolrServer.commit();
+            ontologiesSolrServer.optimize();
+        }
 
         OntologyIndexer ontologyIndexer = new OntologyIndexer(ontologiesSolrServer);
 
@@ -67,5 +72,9 @@ public class OntologyPopulatorTasklet implements Tasklet{
 
     public void setIndexUniprotTaxonomy(boolean indexUniprotTaxonomy) {
         this.indexUniprotTaxonomy = indexUniprotTaxonomy;
+    }
+
+    public void setClearIndex(boolean clearIndex) {
+        this.clearIndex = clearIndex;
     }
 }
