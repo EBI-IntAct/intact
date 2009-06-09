@@ -55,6 +55,10 @@
         <property name="commitInterval" value="50"/>
     </bean>
 
+    <bean id="intactBatchJob" class="org.springframework.batch.core.job.SimpleJob" abstract="true">
+        <property name="jobRepository" ref="intactJobRepository"/>
+    </bean>
+
     <!-- model readers -->
     <bean id="baseModelReader" abstract="true">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>

@@ -31,7 +31,7 @@
     <bean id="intactObjectCounterWriter" class="uk.ac.ebi.intact.core.batch.IntactObjectCounterWriter"/>
 
     <!-- Some tests jobs -->
-     <batch:job id="readInteractionsJob" job-repository="intactJobRepository">
+     <batch:job id="readInteractionsJob" parent="intactBatchJob">
         <batch:step id="readInteractionsStep" parent="intactBatchStep">
             <batch:tasklet>
                 <batch:chunk reader="interactionReader" writer="intactObjectCounterWriter"/>
@@ -39,7 +39,7 @@
         </batch:step>
     </batch:job>
 
-    <batch:job id="readExperimentsJob" job-repository="intactJobRepository">
+    <batch:job id="readExperimentsJob" parent="intactBatchJob">
         <batch:step id="readExperimentsStep" parent="intactBatchStep">
             <batch:tasklet>
                 <batch:chunk reader="experimentReader" writer="intactObjectCounterWriter"/>
