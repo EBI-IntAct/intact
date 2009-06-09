@@ -15,24 +15,23 @@
  */
 package uk.ac.ebi.intact.task.mitab.index;
 
-import uk.ac.ebi.intact.task.mitab.BinaryInteractionItemWriter;
-import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
-import uk.ac.ebi.intact.psimitab.search.IntactPsimiTabIndexWriter;
-import psidev.psi.mi.tab.model.BinaryInteraction;
-import psidev.psi.mi.search.index.PsimiIndexWriter;
-import psidev.psi.mi.search.index.impl.BinaryInteractionIndexWriter;
-
-import java.util.List;
-import java.io.IOException;
-
-import org.springframework.core.io.Resource;
-import org.springframework.batch.item.ItemStream;
-import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.item.ItemStreamException;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.item.ItemStream;
+import org.springframework.batch.item.ItemStreamException;
+import psidev.psi.mi.search.index.PsimiIndexWriter;
+import psidev.psi.mi.search.index.impl.BinaryInteractionIndexWriter;
+import psidev.psi.mi.tab.model.BinaryInteraction;
+import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
+import uk.ac.ebi.intact.psimitab.search.IntactPsimiTabIndexWriter;
+import uk.ac.ebi.intact.task.mitab.BinaryInteractionItemWriter;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -40,7 +39,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
  */
 public class LuceneItemWriter implements BinaryInteractionItemWriter, ItemStream {
 
-    private Resource directory;
+    private File directory;
 
     private IndexWriter indexWriter;
 
@@ -63,7 +62,7 @@ public class LuceneItemWriter implements BinaryInteractionItemWriter, ItemStream
         indexWriter.flush();
     }
 
-    public void setDirectory(Resource directory) {
+    public void setDirectory(File directory) {
         this.directory = directory;
     }
 
@@ -72,7 +71,7 @@ public class LuceneItemWriter implements BinaryInteractionItemWriter, ItemStream
             throw new NullPointerException("No directory set");
         }
         try {
-            Directory luceneDirectory = FSDirectory.getDirectory(directory.getFile());
+            Directory luceneDirectory = FSDirectory.getDirectory(directory);
             indexWriter = new IndexWriter(luceneDirectory, new StandardAnalyzer());
         } catch (Throwable e) {
             throw new ItemStreamException("Problem creating lucene index writer for directory: "+directory, e);

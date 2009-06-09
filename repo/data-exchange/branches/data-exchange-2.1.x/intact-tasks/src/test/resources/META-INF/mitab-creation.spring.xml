@@ -31,11 +31,11 @@
     <bean id="solrJettyRunner" class="uk.ac.ebi.intact.dataexchange.psimi.solr.server.SolrJettyRunner"/>
     
     <bean id="mitabWriter" class="uk.ac.ebi.intact.task.mitab.MitabItemWriter">
-        <property name="resource" value="file://d:/tmp/lala.txt"/>
+        <property name="outputFile" value="target/lala.txt"/>
      </bean>
 
     <bean id="luceneMitabWriter" class="uk.ac.ebi.intact.task.mitab.index.LuceneItemWriter">
-        <property name="directory" value="file://d:/tmp/lala-lucene"/>
+        <property name="directory" value="target/lala-lucene"/>
     </bean>
 
     <bean id="solrMitabWriter" class="uk.ac.ebi.intact.task.mitab.index.SolrItemWriter">
