@@ -24,7 +24,23 @@
 		<property name="jobRepository" ref="intactJobRepository" />
 	</bean>
 
-    <bean id="batchTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+    <bean id="intactJobExplorer" class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean"
+            p:dataSource-ref="intactBatchDataSource" />
+
+    <bean id="intactJobRegistry" class="org.springframework.batch.core.configuration.support.MapJobRegistry"/>
+
+    <bean id="intactJobOperator" class="org.springframework.batch.core.launch.support.SimpleJobOperator">
+        <property name="jobExplorer">
+          <bean class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean">
+            <property name="dataSource" ref="intactBatchDataSource" />
+          </bean>
+        </property>
+        <property name="jobRepository" ref="intactJobRepository" />
+        <property name="jobRegistry" ref="intactJobRegistry" />
+        <property name="jobLauncher" ref="intactBatchJobLauncher" />
+      </bean>
+
+   <bean id="batchTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
           lazy-init="true">
         <property name="dataSource" ref="intactBatchDataSource"/>
     </bean>
