@@ -88,6 +88,7 @@ public class MitabItemWriter implements BinaryInteractionItemWriter, ItemStream 
 
     public void setOutputFile(File file) {
         try {
+            file.getParentFile().mkdirs();
             setOutputWriter(new FileWriter(file));
         } catch (IOException e) {
             throw new IllegalArgumentException("Problem creating writer with file: "+file, e);
