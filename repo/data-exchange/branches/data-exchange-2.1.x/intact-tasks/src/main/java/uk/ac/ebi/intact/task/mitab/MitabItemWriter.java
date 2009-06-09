@@ -15,28 +15,26 @@
  */
 package uk.ac.ebi.intact.task.mitab;
 
-import psidev.psi.mi.tab.model.BinaryInteraction;
-import psidev.psi.mi.tab.PsimiTabWriter;
 import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.item.ItemStream;
 import org.springframework.batch.item.ItemStreamException;
-import org.springframework.batch.item.file.ResourceAwareItemWriterItemStream;
-import org.springframework.core.io.Resource;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.io.Writer;
-import java.io.IOException;
-import java.io.FileWriter;
-
+import psidev.psi.mi.tab.PsimiTabWriter;
+import psidev.psi.mi.tab.model.BinaryInteraction;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.IntactPsimiTabWriter;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class MitabItemWriter implements BinaryInteractionItemWriter,
-                                    ResourceAwareItemWriterItemStream<BinaryInteraction> {
+public class MitabItemWriter implements BinaryInteractionItemWriter, ItemStream {
 
     private Writer outputWriter;
     private boolean header = true;
@@ -88,11 +86,11 @@ public class MitabItemWriter implements BinaryInteractionItemWriter,
         this.header = header;
     }
 
-    public void setResource(Resource resource) {
+    public void setOutputFile(File file) {
         try {
-            setOutputWriter(new FileWriter(resource.getFile()));
+            setOutputWriter(new FileWriter(file));
         } catch (IOException e) {
-            throw new IllegalArgumentException("Problem creating writer with file: "+resource, e);
+            throw new IllegalArgumentException("Problem creating writer with file: "+file, e);
         }
     }
 }
