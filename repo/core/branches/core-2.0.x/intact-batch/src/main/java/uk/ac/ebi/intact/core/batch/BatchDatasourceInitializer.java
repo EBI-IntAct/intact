@@ -24,6 +24,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.StatementCallback;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -34,11 +35,13 @@ import org.springframework.util.StringUtils;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.List;
+import java.util.ArrayList;
+import java.sql.*;
 
 /**
  * Wrapper for a {@link DataSource} that can run scripts on start up and shut
  * down.  Us as a bean definition <br/><br/>
- *
+ * <p/>
  * Run this class to initialize a database in a running server process.
  * Make sure the server is running first by launching the "hsql-server" from the
  * <code>hsql.server</code> project. Then you can right click in Eclipse and
@@ -46,132 +49,134 @@ import java.util.List;
  * database and start again.
  *
  * @author Dave Syer
- *
  */
 public class BatchDatasourceInitializer implements InitializingBean, DisposableBean {
 
-	private static final Log logger = LogFactory.getLog(BatchDatasourceInitializer.class);
+    private static final Log logger = LogFactory.getLog(BatchDatasourceInitializer.class);
 
-	private Resource[] initScripts;
+    private Resource[] initScripts;
 
-	private Resource[] destroyScripts;
+    private Resource[] destroyScripts;
 
-	private DataSource dataSource;
+    private DataSource dataSource;
 
-	private boolean ignoreFailedDrop = true;
+    private boolean ignoreFailedCreate = true;
+    private boolean ignoreFailedDrop = true;
 
-	private static boolean initialized = false;
+    private boolean initialized = false;
 
 
-	/**
-	 * @throws Throwable
-	 * @see java.lang.Object#finalize()
-	 */
-	protected void finalize() throws Throwable {
-		super.finalize();
-		initialized = false;
-		logger.debug("finalize called");
-	}
+    /**
+     * @throws Throwable
+     * @see java.lang.Object#finalize()
+     */
+    protected void finalize() throws Throwable {
+        super.finalize();
+        initialized = false;
+        logger.debug("finalize called");
+    }
 
-	public void destroy() {
-		if (destroyScripts==null) return;
-		for (int i = 0; i < destroyScripts.length; i++) {
-			Resource destroyScript = initScripts[i];
-			try {
-				doExecuteScript(destroyScript);
-			}
-			catch (Exception e) {
-				if (logger.isDebugEnabled()) {
-					logger.warn("Could not execute destroy script [" + destroyScript + "]", e);
-				}
-				else {
-					logger.warn("Could not execute destroy script [" + destroyScript + "]");
-				}
-			}
-		}
-	}
+    public void destroy() {
+        if (destroyScripts == null) return;
+        for (int i = 0; i < destroyScripts.length; i++) {
+            Resource destroyScript = initScripts[i];
+            try {
+                doExecuteScript(destroyScript);
+            }
+            catch (Exception e) {
+                if (logger.isDebugEnabled()) {
+                    logger.warn("Could not execute destroy script [" + destroyScript + "]", e);
+                } else {
+                    logger.warn("Could not execute destroy script [" + destroyScript + "]");
+                }
+            }
+        }
+    }
 
-	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(dataSource);
-		initialize();
-	}
+    public void afterPropertiesSet() throws Exception {
+        Assert.notNull(dataSource);
+        initialize();
+    }
 
-	private void initialize() {
-		if (!initialized) {
-			destroy();
-			if (initScripts != null) {
-				for (int i = 0; i < initScripts.length; i++) {
-					Resource initScript = initScripts[i];
-					doExecuteScript(initScript);
-				}
-			}
-			initialized = true;
-		}
-	}
+    private void initialize() {
+        if (!initialized) {
+            destroy();
+            if (initScripts != null) {
+                for (int i = 0; i < initScripts.length; i++) {
+                    Resource initScript = initScripts[i];
+                    doExecuteScript(initScript);
+                }
+            }
+            initialized = true;
+        }
+    }
 
-	private void doExecuteScript(final Resource scriptResource) {
-		if (scriptResource == null || !scriptResource.exists())
-			return;
-		TransactionTemplate transactionTemplate = new TransactionTemplate(new DataSourceTransactionManager(dataSource));
-		transactionTemplate.execute(new TransactionCallback() {
+    private void doExecuteScript(final Resource scriptResource) {
+        if (scriptResource == null || !scriptResource.exists())
+            return;
 
-			@SuppressWarnings("unchecked")
-			public Object doInTransaction(TransactionStatus status) {
-				JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-				String[] scripts;
-				try {
-					scripts = StringUtils.delimitedListToStringArray(stripComments(IOUtils.readLines(scriptResource
-							.getInputStream())), ";");
-				}
-				catch (IOException e) {
-					throw new BeanInitializationException("Cannot load script from [" + scriptResource + "]", e);
-				}
-				for (int i = 0; i < scripts.length; i++) {
-					String script = scripts[i].trim();
-					if (StringUtils.hasText(script)) {
-						try {
-							jdbcTemplate.execute(script);
-						}
-						catch (DataAccessException e) {
-							if (ignoreFailedDrop && script.toLowerCase().startsWith("drop")) {
-								logger.debug("DROP script failed (ignoring): " + script);
-							}
-							else {
-								throw e;
-							}
-						}
-					}
-				}
-				return null;
-			}
+        TransactionTemplate transactionTemplate = new TransactionTemplate(new DataSourceTransactionManager(dataSource));
+        transactionTemplate.execute(new TransactionCallback() {
 
-		});
+            @SuppressWarnings("unchecked")
+            public Object doInTransaction(TransactionStatus status) {
+                JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+                String[] scripts;
+                try {
+                    scripts = StringUtils.delimitedListToStringArray(stripComments(IOUtils.readLines(scriptResource
+                            .getInputStream())), ";");
+                }
+                catch (IOException e) {
+                    throw new BeanInitializationException("Cannot load script from [" + scriptResource + "]", e);
+                }
+                for (int i = 0; i < scripts.length; i++) {
+                    String script = scripts[i].trim();
+                    if (StringUtils.hasText(script)) {
+                        try {
+                            jdbcTemplate.execute(script);
+                        }
+                        catch (DataAccessException e) {
+                            if (ignoreFailedDrop && script.toLowerCase().startsWith("drop")) {
+                                logger.debug("DROP script failed (ignoring): " + script);
+                            } else if (ignoreFailedCreate) {
+                                logger.debug("Ignoring failed create. Database probably exists");
+                                break;
+                            } else {
+                                throw e;
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
 
-	}
+        });
 
-	private String stripComments(List<String> list) {
-		StringBuffer buffer = new StringBuffer();
-		for (String line : list) {
-			if (!line.startsWith("//") && !line.startsWith("--")) {
-				buffer.append(line + "\n");
-			}
-		}
-		return buffer.toString();
-	}
+    }
 
-	public void setInitScripts(Resource[] initScripts) {
-		this.initScripts = initScripts;
-	}
+    private String stripComments(List<String> list) {
+        StringBuffer buffer = new StringBuffer();
+        for (String line : list) {
+            if (!line.startsWith("//") && !line.startsWith("--")) {
+                buffer.append(line + "\n");
+            }
+        }
+        return buffer.toString();
+    }
 
-	public void setDestroyScripts(Resource[] destroyScripts) {
-		this.destroyScripts = destroyScripts;
-	}
+    public void setInitScripts(Resource[] initScripts) {
+        this.initScripts = initScripts;
+    }
 
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+    public void setDestroyScripts(Resource[] destroyScripts) {
+        this.destroyScripts = destroyScripts;
+    }
 
-	public void setIgnoreFailedDrop(boolean ignoreFailedDrop) {
-		this.ignoreFailedDrop = ignoreFailedDrop;
-	}
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public void setIgnoreFailedDrop(boolean ignoreFailedDrop) {
+        this.ignoreFailedDrop = ignoreFailedDrop;
+    }
 }
