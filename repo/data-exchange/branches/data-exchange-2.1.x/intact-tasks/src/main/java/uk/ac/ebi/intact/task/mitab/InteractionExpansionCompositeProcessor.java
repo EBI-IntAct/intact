@@ -32,6 +32,7 @@ import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.PsimitabTools;
 import uk.ac.ebi.intact.psimitab.converters.Intact2BinaryInteractionConverter;
 import uk.ac.ebi.intact.psimitab.converters.expansion.ExpansionStrategy;
+import uk.ac.ebi.intact.psimitab.converters.expansion.NotExpandableInteractionException;
 import uk.ac.ebi.intact.psimitab.converters.expansion.SpokeWithoutBaitExpansion;
 import uk.ac.ebi.intact.psimitab.model.ExtendedInteractor;
 
@@ -58,6 +59,11 @@ public class InteractionExpansionCompositeProcessor implements ItemProcessor<Int
     }
 
     public Collection<? extends BinaryInteraction> process(Interaction item) throws Exception {
+        if (!expansionStategy.isExpandable(item)) {
+            if (log.isWarnEnabled()) log.warn("Filtered interaction: "+item.getAc()+" (not expandable)");
+            return null;
+        }
+
         Collection<Interaction> interactions;
 
         boolean expanded = false;
@@ -65,7 +71,11 @@ public class InteractionExpansionCompositeProcessor implements ItemProcessor<Int
         if (InteractionUtils.isBinaryInteraction(item)) {
             interactions = Collections.singleton(item);
         } else {
-            interactions = expansionStategy.expand(item);
+            try {
+                interactions = expansionStategy.expand(item);
+            } catch (NotExpandableInteractionException e) {
+                throw new InteractionExpansionException(e);
+            }
             expanded = true;
         }
 
