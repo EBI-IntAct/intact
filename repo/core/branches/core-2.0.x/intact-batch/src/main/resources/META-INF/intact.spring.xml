@@ -22,19 +22,18 @@
     <bean id="intactBatchJobLauncher"
 		class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
 		<property name="jobRepository" ref="intactJobRepository" />
+        <property name="taskExecutor" ref="syncTaskExecutor" />
 	</bean>
+
+    <bean id="syncTaskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
 
     <bean id="intactJobExplorer" class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean"
             p:dataSource-ref="intactBatchDataSource" />
 
-    <bean id="intactJobRegistry" class="org.springframework.batch.core.configuration.support.MapJobRegistry"/>
+    <bean id="intactJobRegistry" class="uk.ac.ebi.intact.core.batch.IntactJobRegistry"/>
 
     <bean id="intactJobOperator" class="org.springframework.batch.core.launch.support.SimpleJobOperator">
-        <property name="jobExplorer">
-          <bean class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean">
-            <property name="dataSource" ref="intactBatchDataSource" />
-          </bean>
-        </property>
+        <property name="jobExplorer" ref="intactJobExplorer"/>
         <property name="jobRepository" ref="intactJobRepository" />
         <property name="jobRegistry" ref="intactJobRegistry" />
         <property name="jobLauncher" ref="intactBatchJobLauncher" />
