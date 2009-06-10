@@ -24,6 +24,7 @@ import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.processor.IntactClusterInteractorPairProcessor;
 import uk.ac.ebi.intact.psimitab.converters.expansion.ExpansionStrategy;
 import uk.ac.ebi.intact.psimitab.converters.expansion.SpokeWithoutBaitExpansion;
+import uk.ac.ebi.intact.psimitab.converters.expansion.NotExpandableInteractionException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,11 +77,11 @@ public class Intact2BinaryInteractionConverter {
         this.postProcessor = postProssesorStrategy;
     }
 
-    public Collection<IntactBinaryInteraction> convert( Interaction ... interactions ) {
+    public Collection<IntactBinaryInteraction> convert( Interaction ... interactions ) throws NotExpandableInteractionException {
         return convert(Arrays.asList(interactions));
     }
 
-    public Collection<IntactBinaryInteraction> convert( Collection<Interaction> interactions ) {
+    public Collection<IntactBinaryInteraction> convert( Collection<Interaction> interactions ) throws NotExpandableInteractionException{
         if ( interactions == null ) {
             throw new IllegalArgumentException( "Interaction(s) must not be null" );
         }
@@ -90,24 +91,15 @@ public class Intact2BinaryInteractionConverter {
         for ( Interaction interaction : interactions ) {
             IntactBinaryInteraction bi;
 
-            if ( expansionStrategy != null ) {
-                Collection<Interaction> expandedInteractions = expansionStrategy.expand( interaction );
-                final boolean isExpanded = expandedInteractions.size() > 1;
+            Collection<Interaction> expandedInteractions = expansionStrategy.expand(interaction);
+            final boolean isExpanded = expandedInteractions.size() > 1;
 
-                for ( Interaction expandedInteraction : expandedInteractions ) {
+            for (Interaction expandedInteraction : expandedInteractions) {
 
-                    bi = interactionConverter.toBinaryInteraction( expandedInteraction, expansionStrategy, isExpanded );
+                bi = interactionConverter.toBinaryInteraction(expandedInteraction, expansionStrategy, isExpanded);
 
-                    if ( bi != null ) {
-                        result.add( bi );
-                    }
-                }
-
-            } else {
-                bi = interactionConverter.toBinaryInteraction( interaction );
-
-                if ( bi != null ) {
-                    result.add( bi );
+                if (bi != null) {
+                    result.add(bi);
                 }
             }
         }

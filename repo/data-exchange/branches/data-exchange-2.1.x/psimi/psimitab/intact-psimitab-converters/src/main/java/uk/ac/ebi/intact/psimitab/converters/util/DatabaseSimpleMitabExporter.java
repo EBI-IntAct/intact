@@ -33,6 +33,7 @@ import uk.ac.ebi.intact.psimitab.model.ExtendedInteractor;
 import uk.ac.ebi.intact.psimitab.converters.Intact2BinaryInteractionConverter;
 import uk.ac.ebi.intact.psimitab.converters.expansion.SpokeWithoutBaitExpansion;
 import uk.ac.ebi.intact.psimitab.converters.expansion.ExpansionStrategy;
+import uk.ac.ebi.intact.psimitab.converters.expansion.NotExpandableInteractionException;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.commons.util.ETACalculator;
 import uk.ac.ebi.intact.irefindex.seguid.RigDataModel;
@@ -117,14 +118,33 @@ public class DatabaseSimpleMitabExporter {
 
                 if (log.isTraceEnabled()) log.trace("Processing interaction: "+interaction.getShortLabel());
 
+                if (!expansion.isExpandable(interaction)) {
+                    if (log.isTraceEnabled()) log.trace("\tNot expandable. Skipped");
+                    continue;
+                }
+
                 // expand our interaction into binary
-                final Collection<Interaction> expandedInteractions = expansion.expand( interaction );
+                final Collection<Interaction> expandedInteractions;
+
+                try {
+                    expandedInteractions = expansion.expand( interaction );
+                } catch (NotExpandableInteractionException e) {
+                    throw new IllegalStateException("Should be expandable as we checked just before");
+                }
+
                 final boolean isExpanded = expandedInteractions.size() > 1;
                 if (log.isTraceEnabled()) log.trace( expansion.getName() + " generated "+ expandedInteractions.size() + " binary interactions");
 
                 for ( Interaction expandedInteraction : expandedInteractions ) {
 
-                    final Collection<IntactBinaryInteraction> mitabInteractions = converter.convert( expandedInteraction );
+                    final Collection<IntactBinaryInteraction> mitabInteractions;
+
+                    try {
+                        mitabInteractions = converter.convert( expandedInteraction );
+                    } catch (NotExpandableInteractionException e) {
+                         throw new IllegalStateException("Should be expandable as we checked just before");
+                    }
+                    
                     final IntactBinaryInteraction mitabInteraction = mitabInteractions.iterator().next();
 
                     //adding the expansion strategy here
