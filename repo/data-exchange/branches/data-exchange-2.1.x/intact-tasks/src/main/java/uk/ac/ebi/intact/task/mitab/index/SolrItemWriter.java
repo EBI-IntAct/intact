@@ -15,22 +15,21 @@
  */
 package uk.ac.ebi.intact.task.mitab.index;
 
-import psidev.psi.mi.tab.model.BinaryInteraction;
-import psidev.psi.mi.tab.model.builder.DocumentDefinition;
-
-import java.util.List;
-import java.io.IOException;
-
-import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
-import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
-import uk.ac.ebi.intact.task.mitab.BinaryInteractionItemWriter;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
-import org.springframework.core.io.Resource;
-import org.springframework.batch.item.ItemStream;
 import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.item.ItemStream;
 import org.springframework.batch.item.ItemStreamException;
+import org.springframework.core.io.Resource;
+import psidev.psi.mi.tab.model.BinaryInteraction;
+import psidev.psi.mi.tab.model.builder.DocumentDefinition;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
+import uk.ac.ebi.intact.task.mitab.BinaryInteractionItemWriter;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -48,6 +47,10 @@ public class SolrItemWriter implements BinaryInteractionItemWriter, ItemStream{
         }
         if (documentDefinition == null) {
             throw new NullPointerException("No 'documentDefinition' configured for SolrItemWriter");
+        }
+
+        if (items.isEmpty()) {
+            return;
         }
 
         SolrServer interactionsSolrServer = new CommonsHttpSolrServer(interactionsSolrUrl.getURL());

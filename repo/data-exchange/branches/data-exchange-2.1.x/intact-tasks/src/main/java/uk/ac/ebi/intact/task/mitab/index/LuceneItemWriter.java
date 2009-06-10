@@ -44,6 +44,9 @@ public class LuceneItemWriter implements BinaryInteractionItemWriter, ItemStream
     private IndexWriter indexWriter;
 
     public void write(List<? extends BinaryInteraction> items) throws Exception {
+        if (items.isEmpty()) {
+            return;
+        }
 
         PsimiIndexWriter psimiIndexWriter;
 
