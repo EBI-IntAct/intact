@@ -111,16 +111,19 @@ public class SpokeExpansion extends BinaryExpansionStrategy {
             return false;
         }
 
-        boolean containsBait = false;
+        if (interaction.getComponents().size() > 1) {
+            boolean containsBait = false;
 
-        for (Component component : interaction.getComponents()) {
-            if (containsRole(component.getExperimentalRoles(), new String[] {CvExperimentalRole.BAIT_PSI_REF})) {
-                containsBait = true;
-                break;
+            for (Component component : interaction.getComponents()) {
+                if (containsRole(component.getExperimentalRoles(), new String[] {CvExperimentalRole.BAIT_PSI_REF})) {
+                    containsBait = true;
+                    break;
+                }
             }
-        }
 
-        return containsBait;
+            return containsBait;
+        }
+        return true;
     }
 
     public String getName() {
