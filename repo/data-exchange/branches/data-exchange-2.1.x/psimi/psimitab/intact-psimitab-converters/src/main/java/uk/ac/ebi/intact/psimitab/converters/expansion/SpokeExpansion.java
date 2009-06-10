@@ -53,7 +53,11 @@ public class SpokeExpansion extends BinaryExpansionStrategy {
      * @return a non null collection of interaction, in case the expansion is not possible, we may return an empty
      *         collection.
      */
-    public Collection<Interaction> expand(Interaction interaction) {
+    public Collection<Interaction> expand(Interaction interaction) throws NotExpandableInteractionException{
+        if (!isExpandable(interaction)) {
+            throw new NotExpandableInteractionException("Interaction is not expandable: "+interaction);
+        }
+
         Collection<Interaction> interactions = new ArrayList<Interaction>();
         Collection<Component> components = interaction.getComponents();
 

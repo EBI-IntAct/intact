@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.psimitab.converters.expansion;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.InteractionImpl;
+import uk.ac.ebi.intact.model.util.InteractionUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,4 +58,17 @@ public abstract class BinaryExpansionStrategy implements ExpansionStrategy {
         return newInteraction;
     }
 
+    public boolean isExpandable(Interaction interaction) {
+        if (interaction.getComponents().size() == 1) {
+            Component c = interaction.getComponents().iterator().next();
+
+            if (c.getStoichiometry() >= 2) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
