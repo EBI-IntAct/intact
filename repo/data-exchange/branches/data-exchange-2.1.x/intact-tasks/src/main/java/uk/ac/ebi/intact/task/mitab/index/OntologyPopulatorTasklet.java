@@ -40,21 +40,11 @@ public class OntologyPopulatorTasklet implements Tasklet{
     private List<OntologyMapping> oboOntologyMappings;
     private boolean indexUniprotTaxonomy;
 
-    private boolean clearIndex = true;
-
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         if (ontologiesSolrUrl == null) {
             throw new NullPointerException("ontologiesSolrUrl is null");
         }
         SolrServer ontologiesSolrServer = new CommonsHttpSolrServer(ontologiesSolrUrl.getURL());
-
-        if (clearIndex) {
-            ontologiesSolrServer.deleteByQuery("*:*");
-            ontologiesSolrServer.commit();
-            ontologiesSolrServer.optimize();
-
-            contribution.getExitStatus().addExitDescription("Index cleared");
-        }
 
         OntologyIndexer ontologyIndexer = new OntologyIndexer(ontologiesSolrServer);
 
@@ -88,9 +78,5 @@ public class OntologyPopulatorTasklet implements Tasklet{
 
     public void setIndexUniprotTaxonomy(boolean indexUniprotTaxonomy) {
         this.indexUniprotTaxonomy = indexUniprotTaxonomy;
-    }
-
-    public void setClearIndex(boolean clearIndex) {
-        this.clearIndex = clearIndex;
     }
 }
