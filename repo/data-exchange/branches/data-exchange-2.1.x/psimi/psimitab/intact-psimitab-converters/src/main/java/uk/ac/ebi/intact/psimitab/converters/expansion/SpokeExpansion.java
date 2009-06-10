@@ -67,8 +67,9 @@ public class SpokeExpansion extends BinaryExpansionStrategy {
             if (interaction.getComponents().size() == 1) {
                 // single Interaction
                 Component singleComponent = components.iterator().next();
-                if (singleComponent.getCvExperimentalRole() != null && CvExperimentalRole.SELF_PSI_REF
-                        .equals(singleComponent.getCvExperimentalRole().getIdentifier())) {
+
+                if (singleComponent.getStoichiometry() >= 2 ||
+                        containsRole(singleComponent.getExperimentalRoles(), new String[] {CvExperimentalRole.SELF_PSI_REF, PUTATIVE_SELF_PSI_REF})) {
                     Interaction newSelfInteraction = buildInteraction(interaction, singleComponent, singleComponent);
                     interactions.add(newSelfInteraction);
                 }

@@ -22,7 +22,7 @@ import java.util.List;
 public class SpokeExpansionTest extends IntactBasicTestCase {
 
     @Test
-    public void expandTest_1() {
+    public void expandTest_1() throws Exception{
 
         Component baitComponent = getMockBuilder().createComponentBait( getMockBuilder().createProteinRandom() );
         Component preyComponent1 = getMockBuilder().createComponentPrey( getMockBuilder().createProteinRandom() );
@@ -49,7 +49,7 @@ public class SpokeExpansionTest extends IntactBasicTestCase {
     }
 
     @Test
-    public void expandTest_2() {
+    public void expandTest_2() throws Exception{
 
         Component baitComponent = getMockBuilder().createComponentBait( getMockBuilder().createProteinRandom() );
         Component preyComponent = getMockBuilder().createComponentPrey( getMockBuilder().createProteinRandom() );
@@ -62,7 +62,7 @@ public class SpokeExpansionTest extends IntactBasicTestCase {
     }
 
     @Test
-    public void expandTest_3() {
+    public void expandTest_3() throws Exception{
 
         // relies on the fact that the created component have role: neutral
         Interaction interaction = getMockBuilder().createInteraction( "neutral1", "neutral2", "neutral3" );
@@ -74,7 +74,7 @@ public class SpokeExpansionTest extends IntactBasicTestCase {
     }
 
     @Test
-    public void expandTest_4() {
+    public void expandTest_4() throws Exception{
 
         Component selfComponent = getMockBuilder().createComponentPrey(getMockBuilder().createProteinRandom());
         selfComponent.getCvExperimentalRole().setShortLabel(CvExperimentalRole.SELF);

@@ -40,6 +40,7 @@ import uk.ac.ebi.intact.psimitab.OntologyNameFinder;
 import uk.ac.ebi.intact.psimitab.PsimitabTools;
 import uk.ac.ebi.intact.psimitab.converters.Intact2BinaryInteractionConverter;
 import uk.ac.ebi.intact.psimitab.converters.expansion.SpokeWithoutBaitExpansion;
+import uk.ac.ebi.intact.psimitab.converters.expansion.NotExpandableInteractionException;
 import uk.ac.ebi.intact.psimitab.model.ExtendedInteractor;
 import uk.ac.ebi.intact.psimitab.processor.IntactClusterInteractorPairProcessor;
 import uk.ac.ebi.intact.psimitab.search.IntactInteractorIndexWriter;
@@ -176,7 +177,12 @@ public class DatabaseMitabExporter {
                 if (log.isTraceEnabled()) log.trace("Starting conversion and property enrichment: "+interactor.getShortLabel());
 
                 if (!interactions.isEmpty()) {
-                    Collection<IntactBinaryInteraction> binaryInteractions = converter.convert(interactions);
+                    Collection<IntactBinaryInteraction> binaryInteractions = null;
+                    try {
+                        binaryInteractions = converter.convert(interactions);
+                    } catch (NotExpandableInteractionException e) {
+                        e.printStackTrace();
+                    }
                     enrich(binaryInteractions);
     
 

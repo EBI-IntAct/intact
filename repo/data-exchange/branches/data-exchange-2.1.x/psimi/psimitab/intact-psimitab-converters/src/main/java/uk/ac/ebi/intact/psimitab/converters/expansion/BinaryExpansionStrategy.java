@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.psimitab.converters.expansion;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.InteractionImpl;
+import uk.ac.ebi.intact.model.CvExperimentalRole;
 import uk.ac.ebi.intact.model.util.InteractionUtils;
 
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ import java.util.Collection;
  * @since 2.0.0
  */
 public abstract class BinaryExpansionStrategy implements ExpansionStrategy {
+
+    protected static final String PUTATIVE_SELF_PSI_REF = "MI:0898";
 
     /**
      * Builds a new interaction object based the given interaction template.
@@ -62,13 +65,24 @@ public abstract class BinaryExpansionStrategy implements ExpansionStrategy {
         if (interaction.getComponents().size() == 1) {
             Component c = interaction.getComponents().iterator().next();
 
-            if (c.getStoichiometry() >= 2) {
-                return true;
-            } else {
-                return false;
-            }
+            return (c.getStoichiometry() >= 2 ||
+                    containsRole(c.getExperimentalRoles(), new String[]{CvExperimentalRole.SELF_PSI_REF, PUTATIVE_SELF_PSI_REF}));
+
         }
 
         return true;
+    }
+
+    protected boolean containsRole(Collection<CvExperimentalRole> experimentalRoles, String[] rolesToFind) {
+        if (experimentalRoles != null) {
+            for (CvExperimentalRole expRole : experimentalRoles) {
+                for (String roleToFind : rolesToFind) {
+                    if (roleToFind.equals(expRole.getIdentifier())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
