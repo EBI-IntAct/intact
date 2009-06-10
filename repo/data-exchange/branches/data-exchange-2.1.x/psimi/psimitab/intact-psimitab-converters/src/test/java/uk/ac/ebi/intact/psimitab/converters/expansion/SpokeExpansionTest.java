@@ -61,7 +61,7 @@ public class SpokeExpansionTest extends IntactBasicTestCase {
         assertEquals( 1, interactions.size() );
     }
 
-    @Test
+    @Test (expected = NotExpandableInteractionException.class)
     public void expandTest_3() throws Exception{
 
         // relies on the fact that the created component have role: neutral
@@ -69,8 +69,6 @@ public class SpokeExpansionTest extends IntactBasicTestCase {
         
         SpokeExpansion spokeExpansion = new SpokeExpansion();
         Collection<Interaction> interactions = spokeExpansion.expand( interaction );
-        assertNotNull( interactions );
-        assertEquals( 0, interactions.size() );
     }
 
     @Test

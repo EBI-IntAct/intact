@@ -105,6 +105,24 @@ public class SpokeExpansion extends BinaryExpansionStrategy {
         return interactions;
     }
 
+    @Override
+    public boolean isExpandable(Interaction interaction) {
+        if (!super.isExpandable(interaction)) {
+            return false;
+        }
+
+        boolean containsBait = false;
+
+        for (Component component : interaction.getComponents()) {
+            if (containsRole(component.getExperimentalRoles(), new String[] {CvExperimentalRole.BAIT_PSI_REF})) {
+                containsBait = true;
+                break;
+            }
+        }
+
+        return containsBait;
+    }
+
     public String getName() {
         return EXPANSION_NAME;
     }
