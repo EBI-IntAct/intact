@@ -23,7 +23,6 @@ import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.converters.expansion.ExpansionStrategy;
 import uk.ac.ebi.intact.psimitab.converters.expansion.NotExpandableInteractionException;
 import uk.ac.ebi.intact.psimitab.converters.expansion.SpokeWithoutBaitExpansion;
-import uk.ac.ebi.intact.psimitab.processor.IntactClusterInteractorPairProcessor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,11 +47,11 @@ public class Intact2BinaryInteractionConverter {
     private PostProcessorStrategy<IntactBinaryInteraction> postProcessor;
                                     
     public Intact2BinaryInteractionConverter() {
-        this(new SpokeWithoutBaitExpansion(), new IntactClusterInteractorPairProcessor());
+        this(new SpokeWithoutBaitExpansion(), null);
     }
 
     public Intact2BinaryInteractionConverter(ExpansionStrategy expansionStrategy) {
-        this(expansionStrategy, new IntactClusterInteractorPairProcessor());
+        this(expansionStrategy, null);
     }
 
     public Intact2BinaryInteractionConverter(ExpansionStrategy expansionStrategy, PostProcessorStrategy<IntactBinaryInteraction> postProcessor) {
