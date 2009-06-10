@@ -17,14 +17,13 @@ package uk.ac.ebi.intact.psimitab.converters;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import psidev.psi.mi.tab.processor.ClusterInteractorPairProcessor;
 import psidev.psi.mi.tab.processor.PostProcessorStrategy;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
-import uk.ac.ebi.intact.psimitab.processor.IntactClusterInteractorPairProcessor;
 import uk.ac.ebi.intact.psimitab.converters.expansion.ExpansionStrategy;
-import uk.ac.ebi.intact.psimitab.converters.expansion.SpokeWithoutBaitExpansion;
 import uk.ac.ebi.intact.psimitab.converters.expansion.NotExpandableInteractionException;
+import uk.ac.ebi.intact.psimitab.converters.expansion.SpokeWithoutBaitExpansion;
+import uk.ac.ebi.intact.psimitab.processor.IntactClusterInteractorPairProcessor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,8 +48,11 @@ public class Intact2BinaryInteractionConverter {
     private PostProcessorStrategy<IntactBinaryInteraction> postProcessor;
                                     
     public Intact2BinaryInteractionConverter() {
-        expansionStrategy = new SpokeWithoutBaitExpansion();
-        postProcessor = new IntactClusterInteractorPairProcessor();
+        this(new SpokeWithoutBaitExpansion(), new IntactClusterInteractorPairProcessor());
+    }
+
+    public Intact2BinaryInteractionConverter(ExpansionStrategy expansionStrategy) {
+        this(expansionStrategy, new IntactClusterInteractorPairProcessor());
     }
 
     public Intact2BinaryInteractionConverter(ExpansionStrategy expansionStrategy, PostProcessorStrategy<IntactBinaryInteraction> postProcessor) {
@@ -84,6 +86,10 @@ public class Intact2BinaryInteractionConverter {
     public Collection<IntactBinaryInteraction> convert( Collection<Interaction> interactions ) throws NotExpandableInteractionException{
         if ( interactions == null ) {
             throw new IllegalArgumentException( "Interaction(s) must not be null" );
+        }
+
+        if (expansionStrategy == null) {
+            throw new NullPointerException("No expansion strategy defined");
         }
 
         Collection<IntactBinaryInteraction> result = new ArrayList<IntactBinaryInteraction>();
