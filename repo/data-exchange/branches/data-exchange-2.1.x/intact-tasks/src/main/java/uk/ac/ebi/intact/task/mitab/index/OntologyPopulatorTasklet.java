@@ -15,8 +15,11 @@
  */
 package uk.ac.ebi.intact.task.mitab.index;
 
+import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -49,6 +52,8 @@ public class OntologyPopulatorTasklet implements Tasklet{
             ontologiesSolrServer.deleteByQuery("*:*");
             ontologiesSolrServer.commit();
             ontologiesSolrServer.optimize();
+
+            contribution.getExitStatus().addExitDescription("Index cleared");
         }
 
         OntologyIndexer ontologyIndexer = new OntologyIndexer(ontologiesSolrServer);
@@ -59,7 +64,18 @@ public class OntologyPopulatorTasklet implements Tasklet{
 
         ontologyIndexer.indexObo(oboOntologyMappings.toArray(new OntologyMapping[oboOntologyMappings.size()]));
 
+        long count = countDocs(ontologiesSolrServer);
+        contribution.getExitStatus().addExitDescription("Total docs in index: "+count);
+
         return RepeatStatus.FINISHED;
+    }
+
+    private long countDocs(SolrServer ontologiesSolrServer) throws SolrServerException {
+        SolrQuery countQuery = new SolrQuery("*:*");
+        countQuery.setRows(0);
+        QueryResponse queryResponse = ontologiesSolrServer.query(countQuery);
+        long count = queryResponse.getResults().getNumFound();
+        return count;
     }
 
     public void setOntologiesSolrUrl(Resource ontologiesSolrUrl) {
