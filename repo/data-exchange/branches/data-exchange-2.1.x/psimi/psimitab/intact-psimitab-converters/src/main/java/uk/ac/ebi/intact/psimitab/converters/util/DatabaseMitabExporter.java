@@ -20,27 +20,23 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Directory;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.stereotype.Controller;
 import psidev.psi.mi.tab.model.CrossReference;
 import psidev.psi.mi.tab.model.builder.Row;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexSearcher;
- 
 import uk.ac.ebi.intact.commons.util.ETACalculator;
-import uk.ac.ebi.intact.core.context.DataContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
+import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.InteractionImpl;
 import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 import uk.ac.ebi.intact.psimitab.OntologyNameFinder;
 import uk.ac.ebi.intact.psimitab.PsimitabTools;
 import uk.ac.ebi.intact.psimitab.converters.Intact2BinaryInteractionConverter;
-import uk.ac.ebi.intact.psimitab.converters.expansion.SpokeWithoutBaitExpansion;
 import uk.ac.ebi.intact.psimitab.converters.expansion.NotExpandableInteractionException;
+import uk.ac.ebi.intact.psimitab.converters.expansion.SpokeWithoutBaitExpansion;
 import uk.ac.ebi.intact.psimitab.model.ExtendedInteractor;
 import uk.ac.ebi.intact.psimitab.processor.IntactClusterInteractorPairProcessor;
 import uk.ac.ebi.intact.psimitab.search.IntactInteractorIndexWriter;
@@ -57,6 +53,7 @@ import java.util.*;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
+@Deprecated
 public class DatabaseMitabExporter {
 
     private static final Log log = LogFactory.getLog( DatabaseMitabExporter.class );

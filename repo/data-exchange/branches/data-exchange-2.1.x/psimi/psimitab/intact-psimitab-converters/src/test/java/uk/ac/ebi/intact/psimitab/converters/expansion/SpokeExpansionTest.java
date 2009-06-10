@@ -89,6 +89,9 @@ public class SpokeExpansionTest extends IntactBasicTestCase {
         interaction.setComponents( selfComponents );
 
         SpokeExpansion spokeExpansion = new SpokeExpansion();
+
+        assertTrue(spokeExpansion.isExpandable(interaction));
+
         Collection<Interaction> interactions = spokeExpansion.expand( interaction );
         assertNotNull( interactions );
         assertEquals( 1, interactions.size() );
