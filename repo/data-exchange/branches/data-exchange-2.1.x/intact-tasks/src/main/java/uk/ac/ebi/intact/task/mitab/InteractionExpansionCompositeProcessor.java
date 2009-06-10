@@ -30,7 +30,7 @@ import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 import uk.ac.ebi.intact.model.util.InteractionUtils;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.PsimitabTools;
-import uk.ac.ebi.intact.psimitab.converters.Intact2BinaryInteractionConverter;
+import uk.ac.ebi.intact.psimitab.converters.InteractionConverter;
 import uk.ac.ebi.intact.psimitab.converters.expansion.ExpansionStrategy;
 import uk.ac.ebi.intact.psimitab.converters.expansion.NotExpandableInteractionException;
 import uk.ac.ebi.intact.psimitab.converters.expansion.SpokeWithoutBaitExpansion;
@@ -86,16 +86,21 @@ public class InteractionExpansionCompositeProcessor implements ItemProcessor<Int
             }
         }
 
-        Intact2BinaryInteractionConverter converter = new Intact2BinaryInteractionConverter(null, null);
         Collection<BinaryInteraction> binaryInteractions = new ArrayList<BinaryInteraction>(interactions.size());
+
+        InteractionConverter interactionConverter = new InteractionConverter();
 
         for (Interaction interaction : interactions) {
 
-            IntactBinaryInteraction binaryInteraction = converter.convert(interaction).iterator().next();
+            IntactBinaryInteraction binaryInteraction = interactionConverter.toBinaryInteraction(interaction);
 
             //adding the expansion strategy here
             if (expanded) {
                 binaryInteraction.getExpansionMethods().add(expansionStategy.getName());
+            }
+
+            for (ItemProcessor<BinaryInteraction,BinaryInteraction> delegate : binaryItemProcessors) {
+                binaryInteraction = (IntactBinaryInteraction) delegate.process(binaryInteraction);
             }
 
             flipInteractorsIfNecessary(binaryInteraction);
@@ -130,22 +135,15 @@ public class InteractionExpansionCompositeProcessor implements ItemProcessor<Int
             }
         }
 
-        BinaryInteraction[] binaryInteractionArr = binaryInteractions.toArray(new BinaryInteraction[binaryInteractions.size()]);
-
-        for (int i=0; i<binaryInteractionArr.length; i++) {
-            for (ItemProcessor<BinaryInteraction,BinaryInteraction> delegate : binaryItemProcessors) {
-                binaryInteractionArr[i] = delegate.process(binaryInteractionArr[i]);
-            }
-        }
-
-        binaryInteractions = Arrays.asList(binaryInteractionArr);
-
-        if (binaryInteractions.isEmpty()) {
-            if (log.isErrorEnabled()) {
-                log.error("Expansion did not generate any interaction after processing for: "+item);
-                throw new InteractionExpansionException("Could not expand interaction after processing: "+item);
-            }
-        }
+//        BinaryInteraction[] binaryInteractionArr = binaryInteractions.toArray(new BinaryInteraction[binaryInteractions.size()]);
+//
+//        for (int i=0; i<binaryInteractionArr.length; i++) {
+//            for (ItemProcessor<BinaryInteraction,BinaryInteraction> delegate : binaryItemProcessors) {
+//                binaryInteractionArr[i] = delegate.process(binaryInteractionArr[i]);
+//            }
+//        }
+//
+//        binaryInteractions = Arrays.asList(binaryInteractionArr);
 
         return binaryInteractions;
     }

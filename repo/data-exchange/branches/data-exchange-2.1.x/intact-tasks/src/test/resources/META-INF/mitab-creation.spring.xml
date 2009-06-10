@@ -80,7 +80,7 @@
     </bean>
 
     <!-- Some tests jobs -->
-     <batch:job id="createMitabJob" job-repository="intactJobRepository" restartable="true">
+     <batch:job id="createMitabJob" job-repository="intactJobRepository">
          <batch:step id="prepareOntologies" next="interactionsToMitabStep">
              <batch:tasklet ref="smallOntologyPopulator"/>
          </batch:step>
