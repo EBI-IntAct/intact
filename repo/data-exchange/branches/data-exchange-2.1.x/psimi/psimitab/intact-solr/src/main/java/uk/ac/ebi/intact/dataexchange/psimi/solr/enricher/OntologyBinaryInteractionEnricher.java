@@ -15,14 +15,14 @@
  */
 package uk.ac.ebi.intact.dataexchange.psimi.solr.enricher;
 
+import org.apache.solr.client.solrj.SolrServerException;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.model.CrossReference;
 import psidev.psi.mi.tab.model.Interactor;
-import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
 import uk.ac.ebi.intact.bridges.ontologies.term.OntologyTerm;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.model.ExtendedInteractor;
-import org.apache.solr.client.solrj.SolrServerException;
 
 import java.util.Collection;
 
@@ -52,7 +52,9 @@ public class OntologyBinaryInteractionEnricher implements BinaryInteractionEnric
     }
 
     public void enrich(Interactor interactor) throws Exception {
-        enrich(interactor.getOrganism().getIdentifiers());
+        if (interactor.getOrganism() != null) {
+            enrich(interactor.getOrganism().getIdentifiers());
+        }
 
         if (interactor instanceof ExtendedInteractor) {
             ExtendedInteractor ei = (ExtendedInteractor) interactor;
@@ -64,6 +66,10 @@ public class OntologyBinaryInteractionEnricher implements BinaryInteractionEnric
     }
 
     public void enrich(Collection<CrossReference> xrefs) throws SolrServerException {
+        if (xrefs == null) {
+            return;
+        }
+        
         for (CrossReference xref : xrefs) {
             enrich(xref);
         }
