@@ -43,6 +43,10 @@ public class MitabItemWriter implements BinaryInteractionItemWriter, ItemStream 
     public void write(List<? extends BinaryInteraction> items) throws Exception {
         PsimiTabWriter writer;
 
+        if (items.isEmpty()) {
+            return;
+        }
+
         BinaryInteraction firstInteraction = items.iterator().next();
 
         if (firstInteraction instanceof IntactBinaryInteraction) {

@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.task.mitab;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.ItemProcessor;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.model.CrossReference;
@@ -40,6 +42,8 @@ import java.util.*;
  * @version $Id$
  */
 public class InteractionExpansionCompositeProcessor implements ItemProcessor<Interaction, Collection<IntactBinaryInteraction>> {
+
+    private static final Log log = LogFactory.getLog( InteractionExpansionCompositeProcessor.class );
 
     private static final String SMALLMOLECULE_MI_REF = "MI:0328";
     private static final String UNKNOWN_TAXID = "-3";
@@ -111,6 +115,13 @@ public class InteractionExpansionCompositeProcessor implements ItemProcessor<Int
         for (BinaryInteraction binaryInteraction : binaryInteractions) {
             for (ItemProcessor<BinaryInteraction,BinaryInteraction> delegate : binaryItemProcessors) {
                 delegate.process(binaryInteraction);
+            }
+        }
+
+        if (binaryInteractions.isEmpty()) {
+            if (log.isErrorEnabled()) {
+                log.error("Expansion did not generate any interaction for: "+item);
+                throw new InteractionExpansionException("Could not expand interaction: "+item);
             }
         }
 
