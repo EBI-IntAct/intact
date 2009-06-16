@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.core.IntactException;
 import uk.ac.ebi.intact.core.config.ConfigurationException;
@@ -114,11 +115,26 @@ public class IntactContext implements DisposableBean, Serializable {
     }
 
     /**
-     * Initializes a standalone {@code IntactContext} using a temporary database. This is probably only useful
-     * for testing.
+     * Initializes a standalone {@code IntactContext} using a memory database.
      */
     public static void initStandaloneContextInMemory() {
-        initContext(new String[] { "classpath*:/META-INF/standalone/*-standalone.spring.xml" });
+        initStandaloneContextInMemory((ApplicationContext)null);
+    }
+
+    /**
+     * Initializes a standalone {@code IntactContext} using a memory database.
+     */
+    public static void initStandaloneContextInMemory(IntactConfiguration config) {
+        ConfigurableApplicationContext parent = new GenericApplicationContext();
+        parent.getBeanFactory().registerSingleton("intactConfig", config);
+        parent.refresh();
+
+        initContext(new String[] { "classpath*:/META-INF/standalone/jpa-standalone.spring.xml",
+                                   "classpath*:/META-INF/standalone/intact-standalone.spring.xml"}, parent);
+    }
+
+    public static void initStandaloneContextInMemory(ApplicationContext parent) {
+        initContext(new String[] { "classpath*:/META-INF/standalone/*-standalone.spring.xml" }, parent);
     }
 
     /**
@@ -144,10 +160,16 @@ public class IntactContext implements DisposableBean, Serializable {
     }
 
     /**
-     * Initializes a standalone {@code IntactContext} using a {@code DataConfig} instance and an {@code IntactSession} instance.
-     * standalone applications or a {@code WebappSession} for web applications. This value cannot be null.
+     * Initializes a standalone context.
      */
     public static void initContext( String[] configurationResourcePaths ) {
+        initContext(configurationResourcePaths, null);
+    }
+
+    /**
+     * Initializes a standalone context.
+     */
+    public static void initContext( String[] configurationResourcePaths, ApplicationContext parent ) {
         // check for overflow initialization
         for (int i=5; i< Thread.currentThread().getStackTrace().length; i++) {
             StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[i];
@@ -159,10 +181,10 @@ public class IntactContext implements DisposableBean, Serializable {
             }
         }
 
-        ArrayUtils.add(configurationResourcePaths, "classpath*:/META-INF/intact.spring.xml");
+        configurationResourcePaths = (String[]) ArrayUtils.add(configurationResourcePaths, "classpath*:/META-INF/intact.spring.xml");
 
         // init Spring
-        ClassPathXmlApplicationContext springContext = new ClassPathXmlApplicationContext(configurationResourcePaths);
+        ClassPathXmlApplicationContext springContext = new ClassPathXmlApplicationContext(configurationResourcePaths, parent);
         springContext.registerShutdownHook();
 
         instance = (IntactContext) springContext.getBean("intactContext");

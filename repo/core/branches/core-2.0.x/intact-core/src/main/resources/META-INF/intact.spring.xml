@@ -66,5 +66,9 @@
             </list>
         </property>
     </bean>
+    <bean name="institutionUndefined" class="uk.ac.ebi.intact.model.util.InstitutionFactoryBean">
+        <property name="name" value="unknown"/>
+        <property name="description" value="Undefined institution"/>
+    </bean>
 
 </beans>
