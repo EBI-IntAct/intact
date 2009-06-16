@@ -15,12 +15,18 @@
  */
 package uk.ac.ebi.intact.core.context;
 
+import org.hibernate.ejb.HibernateEntityManagerFactory;
+import org.hibernate.stat.Statistics;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.core.persistence.dao.InstitutionDao;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
+
+import javax.persistence.EntityManagerFactory;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -34,9 +40,21 @@ public class IntactInitializerTest extends IntactBasicTestCase {
     @Autowired
     private CvObjectDao cvObjectDao;
 
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
+
     @Test
     public void testInit() {
         Assert.assertEquals(3, institutionDao.countAll());
         Assert.assertEquals(6, cvObjectDao.countAll());
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public void sessionLeakTest() {
+        HibernateEntityManagerFactory hemf = (HibernateEntityManagerFactory) entityManagerFactory;
+        Statistics statistics = hemf.getSessionFactory().getStatistics();
+
+        Assert.assertEquals(statistics.getSessionCloseCount(), statistics.getSessionOpenCount());
     }
 }
