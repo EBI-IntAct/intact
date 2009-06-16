@@ -17,10 +17,13 @@ package uk.ac.ebi.intact.core.context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import uk.ac.ebi.intact.core.config.IntactConfiguration;
 import uk.ac.ebi.intact.core.config.SchemaVersion;
 import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
@@ -40,12 +43,11 @@ import java.util.Map;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class IntactInitializer {
+public class IntactInitializer implements ApplicationContextAware{
 
     @Autowired
     private IntactContext intactContext;
 
-    @Autowired
     private IntactConfiguration configuration;
 
     @Autowired
@@ -75,14 +77,21 @@ public class IntactInitializer {
     }
 
     public void init() {
+        this.configuration = (IntactConfiguration) applicationContext.getBean("intactConfig");
+
+        Assert.notNull(configuration, "An IntactConfiguration must exist in the context");
+
+
+        Institution defaultInstitution = getDefaultInstitution(configuration);
+
         if (log.isInfoEnabled()) {
             log.info("Starting IntAct Core module");
-            log.info("\tDefault institution: " + configuration.getDefaultInstitution());
+            log.info("\tDefault institution: " + defaultInstitution);
             log.info("\tSchema version: " + requiredSchemaVersion);
         }
 
         checkSchemaCompatibility();
-        persistInstitution(configuration.getDefaultInstitution(), true);
+        persistInstitution(defaultInstitution, true);
 
         // persist all institutions
         Map<String,Institution> institutionMap = applicationContext.getBeansOfType(Institution.class);
@@ -94,6 +103,14 @@ public class IntactInitializer {
 
             persistBasicCvObjects();
         }
+    }
+
+    private Institution getDefaultInstitution(IntactConfiguration configuration) {
+        if (configuration.getDefaultInstitution() != null) {
+            return configuration.getDefaultInstitution();
+        }
+
+        return (Institution) applicationContext.getBean("institutionUndefined");
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -154,5 +171,9 @@ public class IntactInitializer {
 
     public void setAutoPersist(boolean autoPersist) {
         this.autoPersist = autoPersist;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }

@@ -74,7 +74,7 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
     public void allPersistedWithFeature() throws Exception {
         IntactMockBuilder builder = getMockBuilder();
         IntactEntry intactEntry = builder.createIntactEntryRandom(2, 2, 2);
-        Assert.assertEquals( "intact", builder.getInstitution().getShortLabel() );
+        Assert.assertEquals( "unknown", builder.getInstitution().getShortLabel() );
         getIntactContext().getConfig().setAcPrefix( "IA" );
 
         // add extra features/ranges on components
@@ -95,8 +95,8 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
 
         // having already persisted an entry in the database, we will persist an other one.
         // That involves reusing CV terms, Institution...
-        Assert.assertEquals( 3, getDaoFactory().getInstitutionDao().getAll().size() );
-        final Institution intact1 = getDaoFactory().getInstitutionDao().getByShortLabel( "intact" );
+        Assert.assertEquals( 4, getDaoFactory().getInstitutionDao().getAll().size() );
+        final Institution intact1 = getDaoFactory().getInstitutionDao().getByShortLabel( "unknown" );
         final Institution intact2 = getDaoFactory().getInteractionDao().getAll().iterator().next().getOwner();
         Assert.assertEquals( intact1, intact2 );
 
@@ -286,7 +286,7 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         Interaction reloadedInteraction = getDaoFactory().getInteractionDao()
                 .getByShortLabel(interaction.getShortLabel());
 
-        Assert.assertEquals(4, getDaoFactory().getInstitutionDao().countAll());
+        Assert.assertEquals(5, getDaoFactory().getInstitutionDao().countAll());
         Assert.assertEquals(ownerName, reloadedInstitution.getShortLabel());
         Assert.assertEquals(ownerName, reloadedInteraction.getOwner().getShortLabel());
     }
@@ -302,7 +302,7 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
 
         PersisterHelper.saveOrUpdate(interaction);
 
-        Assert.assertEquals(3, getDaoFactory().getInstitutionDao().countAll());
+        Assert.assertEquals(4, getDaoFactory().getInstitutionDao().countAll());
     }
 
     @Test
@@ -316,7 +316,7 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
 
         PersisterHelper.saveOrUpdate(interaction);
 
-        Assert.assertEquals(3, getDaoFactory().getInstitutionDao().countAll());
+        Assert.assertEquals(4, getDaoFactory().getInstitutionDao().countAll());
     }
 
 
