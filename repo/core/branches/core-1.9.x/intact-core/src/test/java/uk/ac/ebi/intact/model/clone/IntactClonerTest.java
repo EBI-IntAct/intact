@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.model.visitor.DefaultTraverser;
 
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * IntactCloner Tester.
@@ -37,6 +38,74 @@ public class IntactClonerTest extends IntactBasicTestCase {
     @Test
     public void cloneInteraction() throws Exception {
         clone( getMockBuilder().createDeterministicInteraction() );
+    }
+
+    @Test
+    public void cloneInteractionWithMultipleFeature() throws Exception {
+        final Interaction interaction = getMockBuilder().createDeterministicInteraction();
+
+        final Iterator<Component> iterator = interaction.getComponents().iterator();
+
+        Component c1 = iterator.next();
+        c1.setShortLabel( "c1" );
+        c1.getBindingDomains().clear();
+        addFeature( c1, CvFeatureType.MUTATION_DECREASING, CvFeatureType.MUTATION_DECREASING_MI_REF, 10, 50, "f1" );
+        addFeature( c1, CvFeatureType.EXPERIMENTAL_FEATURE, CvFeatureType.EXPERIMENTAL_FEATURE_MI_REF, 20, 25, "f2" );
+
+        Component c2 = iterator.next();
+        c2.setShortLabel( "c2" );
+        c2.getBindingDomains().clear();
+        addFeature( c2, CvFeatureType.MUTATION_DECREASING, CvFeatureType.MUTATION_DECREASING_MI_REF, 10, 50, "f1" );
+        addFeature( c2, CvFeatureType.MUTATION_DISRUPTING, CvFeatureType.MUTATION_DISRUPTING_MI_REF, 10, 55, "f2" );
+
+        final Interaction clone = cloner.clone( interaction );
+
+        for ( Component component : clone.getComponents() ) {
+            if( component.getShortLabel().equals( "c1" ) ) {
+                Assert.assertTrue( "Component c1 is lacking feature 1", hasFeature( component, "f1", CvFeatureType.MUTATION_DECREASING, 10, 50 ) );
+                Assert.assertTrue( "Component c1 is lacking feature 2", hasFeature( component, "f2", CvFeatureType.EXPERIMENTAL_FEATURE, 20, 25 ) );
+            } else if( component.getShortLabel().equals( "c2" ) ) {
+                Assert.assertTrue( "Component c2 is lacking feature 1", hasFeature( component, "f1", CvFeatureType.MUTATION_DECREASING, 10, 50 ) );
+                Assert.assertTrue( "Component c2 is lacking feature 2", hasFeature( component, "f2", CvFeatureType.MUTATION_DISRUPTING, 10, 55 ) );
+            } else {
+                Assert.fail();
+            }
+        }
+    }
+
+    private boolean hasFeature( Component component, String label, String type, int start, int stop ) {
+        boolean foundByLabel = false;
+        for ( Feature feature : component.getBindingDomains() ) {
+            if( label.equals( feature.getShortLabel() ) ) {
+                foundByLabel = true;
+                if( type.equals( feature.getCvFeatureType().getShortLabel() ) ) {
+                    final Range range = feature.getRanges().iterator().next();
+                    if( range.getFromIntervalStart() == start && range.getToIntervalStart() == stop ) {
+                        return true;
+                    } else {
+                        System.out.println( "Failed on range" );
+                    }
+                } else {
+                    System.out.println( "Failed on type" );
+                }
+            }
+        }
+
+        if( !foundByLabel ) {
+            System.out.println( "Failed on Label" );
+        }
+
+        return false;
+    }
+
+    private void addFeature( Component component, String type, String typeMi, int start, int stop, String shortlabel ) {
+        CvFeatureType featureType = getMockBuilder().createCvObject( CvFeatureType.class, typeMi, type );
+        Feature feature = getMockBuilder().createFeature( shortlabel, featureType );
+        feature.setComponent(null);
+
+        Range range = getMockBuilder().createRange( start, start, stop, stop );
+        feature.addRange(range);
+        component.getBindingDomains().add( feature );
     }
 
     @Test
