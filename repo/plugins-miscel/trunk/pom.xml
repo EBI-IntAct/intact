@@ -24,9 +24,9 @@
     <description>Intact maven plugins</description>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/plugins-miscel/trunk</url>
+        <connection>scm:svn:https://intact.googlecode.com/svn/repo/plugins-miscel/trunk</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/plugins-miscel/trunk</developerConnection>
+        <url>http://code.google.com/p/intact/source/browse/repo/plugins-miscel/trunk</url>
     </scm>
 
     <properties>
