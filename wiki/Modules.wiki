@@ -1,0 +1,7 @@
+#Modules
+
+= Modules =
+
+This is an schema representing the different modules. It is not up to date.
+
+<img src="http://intact.googlecode.com/svn/repo/current/intact-modules.png"/>
