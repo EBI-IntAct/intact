@@ -23,9 +23,9 @@
     </properties>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/sanity/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/sanity/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/sanity/trunk</url>
+        <connection>scm:svn:https://intact.googlecode.com/svn/repo/sanity/trunk</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/sanity/trunk</developerConnection>
+        <url>http://code.google.com/p/intact/source/browse/repo/sanity/trunk</url>
     </scm>
 
     <modules>
