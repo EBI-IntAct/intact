@@ -15,9 +15,9 @@
  */
 package uk.ac.ebi.intact.dbupdate.smallmolecules;
 
-import uk.ac.ebi.intact.context.DataContext;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.business.IntactTransactionException;
+import uk.ac.ebi.intact.core.context.DataContext;
+import uk.ac.ebi.intact.core.context.IntactContext;
+import uk.ac.ebi.intact.core.IntactTransactionException;
 import uk.ac.ebi.intact.core.unit.IntactTestException;
 
 import java.util.List;

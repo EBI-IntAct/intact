@@ -17,7 +17,7 @@ package uk.ac.ebi.intact.dbupdate.smallmolecules;
 
 import org.junit.Test;
 import org.junit.Ignore;
-import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.core.context.IntactContext;
 
 import java.net.URL;
 import java.io.File;
