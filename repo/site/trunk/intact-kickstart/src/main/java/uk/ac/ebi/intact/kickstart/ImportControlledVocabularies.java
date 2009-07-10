@@ -34,9 +34,9 @@ public class ImportControlledVocabularies {
 
     public static void main(String[] args) throws Exception {
 
-        // Initialize the IntactContext, with the postgres hibernate file (change it accordingly to your custom info).
+        // Initialize the IntactContext, using the default configuration found in the file h2-hibernate.cfg.xml..
         // Initialization has to be always the first statement of your application and needs to be invoked only once.
-        File pgConfigFile = new File(ImportPsiData.class.getResource("/postgres-hibernate.cfg.xml").getFile());
+        File pgConfigFile = new File(ImportPsiData.class.getResource("/h2-hibernate.cfg.xml").getFile());
         IntactContext.initStandaloneContext(pgConfigFile);
 
         // load the latest ontology from internet

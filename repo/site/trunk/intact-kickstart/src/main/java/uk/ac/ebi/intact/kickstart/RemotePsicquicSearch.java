@@ -16,14 +16,8 @@
 package uk.ac.ebi.intact.kickstart;
 
 import psidev.psi.mi.search.SearchResult;
-import uk.ac.ebi.intact.binarysearch.wsclient.BinarySearchServiceClient;
-
-import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psicquic.wsclient.MitabPsicquicClient;
-import org.hupo.psi.mi.psicquic.QueryResponse;
-import org.hupo.psi.mi.psicquic.DbRef;
-import org.hupo.psi.mi.psicquic.RequestInfo;
-import org.hupo.psi.mi.psicquic.PsicquicService;
+import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 
 /**
  * This example does not need the database to work and shows how to access the EBI IntAct database

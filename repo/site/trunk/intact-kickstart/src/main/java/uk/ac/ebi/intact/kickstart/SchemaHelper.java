@@ -2,6 +2,7 @@ package uk.ac.ebi.intact.kickstart;
 
 import uk.ac.ebi.intact.core.util.SchemaUtils;
 import org.hibernate.dialect.H2Dialect;
+import org.hibernate.dialect.HSQLDialect;
 
 /**
  * Helps to create the DDL. This will output the file that you can use to create
@@ -19,8 +20,8 @@ public class SchemaHelper {
         // print to the console the DDL to create the schema with Oracle
         //printOracleSchema();
 
-        // print to the console the DDL to create the schema with H2 database
-        //printH2Schema();
+        // print to the console the DDL to create the schema with HSQL database
+        //printHSQLSchema();
     }
 
     public static void printPostgreSQLSchema() {
@@ -35,8 +36,8 @@ public class SchemaHelper {
         }
     }
 
-    public static void printH2Schema() {
-        for (String str : SchemaUtils.generateCreateSchemaDDL(H2Dialect.class.getName())) {
+    public static void printHSQLSchema() {
+        for (String str : SchemaUtils.generateCreateSchemaDDL(HSQLDialect.class.getName())) {
             System.out.println(str);
         }
     }

@@ -15,23 +15,12 @@
  */
 package uk.ac.ebi.intact.kickstart;
 
-import psidev.psi.mi.tab.PsimiTabWriter;
-import psidev.psi.mi.tab.expansion.SpokeExpansion;
-import psidev.psi.mi.tab.converter.xml2tab.Xml2Tab;
-import psidev.psi.mi.tab.model.BinaryInteraction;
-import psidev.psi.mi.xml.model.EntrySet;
-import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.dataexchange.psimi.xml.exchange.PsiExchange;
-import uk.ac.ebi.intact.model.IntactEntry;
-import uk.ac.ebi.intact.persistence.dao.entry.IntactEntryFactory;
 import uk.ac.ebi.intact.psimitab.converters.util.DatabaseSimpleMitabExporter;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Collection;
 
 /**
  * Creates an IntAct-extended PSI-MITAB file using all the data from the database.
@@ -42,9 +31,9 @@ public class ExportDbToIntactPsiMiTab {
 
     public static void main(String[] args) throws Exception {
 
-        // Initialize the IntactContext, with the postgres hibernate file (change it accordingly to your custom info).
+        // Initialize the IntactContext, using the default configuration found in the file h2-hibernate.cfg.xml..
         // Initialization has to be always the first statement of your application and needs to be invoked only once.
-        File pgConfigFile = new File(ImportPsiData.class.getResource("/postgres-hibernate.cfg.xml").getFile());
+        File pgConfigFile = new File(ImportPsiData.class.getResource("/h2-hibernate.cfg.xml").getFile());
         IntactContext.initStandaloneContext(pgConfigFile);
 
         // the writer use to write the MITAB
