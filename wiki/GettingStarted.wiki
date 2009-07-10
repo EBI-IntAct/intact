@@ -21,7 +21,7 @@ The first thing to do is to load !IntAct with controlled vocabularies (CVs). Cvs
 
 === Create a database with the !IntAct schema ===
 
-Creating a database can be very simple. Is it a matter of starting the IntAct context with an specific configuration.
+Creating a database can be very simple. Is it a matter of starting the !IntAct context with an specific configuration.
 
 Run the following program: `CreateDatabase`
 
