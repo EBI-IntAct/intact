@@ -41,7 +41,7 @@ Run the program: `ExportToFasta`
 
 Note that if you take a closer look at the programs provided we have left a lot of comments for you to read, their purpose being to explain how things are managed in the API. Exporting data `PSI-MI XML`
 
-=== Exporting data in `PSI-MI XML` format ===
+=== Exporting data in PSI-MI XML format ===
 
 Now we are going to export some of the data we have stored in the database in PSI-MI XML 2.5 format.
 
@@ -51,7 +51,7 @@ This program selects all interactions involved in the publication having the sho
 
 In this stage we are going to export the interactions of a publication in PSI-MITAB2.5 format.
 
-=== Export data in PSI-MITAB format ===
+=== Export data in PSI-MI TAB format ===
 
 Run the program: `ExportToPsiMiTab`
 
@@ -59,6 +59,6 @@ This format provides a very simple tabular format on !IntAct binary interactions
 
 === Indexing data with LUCENE for fast searches ===
 
-Here we are going to index a PSI-MITAB2.5 file (provided in the kickstart application) and do a search on the indexed data.
+Here we are going to index a PSI-MI TAB 2.5 file (provided in the kickstart application) and do a search on the indexed data.
 
 Run the program: `IndexingAndSearchingPsiMiTab` 
