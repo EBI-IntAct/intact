@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="UniProt Bridge">
+    <bannerLeft>
+        <name>UniProt Bridge</name>
+    </bannerLeft>
+
+    <body>
+        <links>
+            <item name="PSI-MI home page" href="http://psidev.sf.net"/>
+            <item name="PSI-MI @ SourceForge" href="http://sf.net/projects/psidev"/>
+        </links>
+
+        <menu name="Development">
+            <item name="How to use it ?" href="howto.html"/>
+        </menu>
+
+        ${reports}
+
+    </body>
+</project>
