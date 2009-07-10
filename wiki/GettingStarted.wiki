@@ -19,6 +19,12 @@ The goal is two-fold:
 
 The first thing to do is to load !IntAct with controlled vocabularies (CVs). Cvs are a corner stone of the !IntAct data model. They allow to represent unambiguously concept such as database (eg. !UniProt), interaction detection method (eg. yeast two hybrid), participant identification (eg. mass spectrometry) ... 
 
+=== Create a database with the !IntAct schema ===
+
+Creating a database can be very simple. Is it a matter of starting the IntAct context with an specific configuration.
+
+Run the following program: `CreateDatabase`
+
 === Importing Controlled vocabularies === 
 
 Now you are going to run your first program: `ImportControlledVocabularies`
