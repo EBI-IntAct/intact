@@ -1,3 +1,4 @@
+#labels Deprecated
 Introduction
 
 The aim of this page is to give IntAct? users an overview of how to perform a local installation of the IntAct? framework. This is going to cover the installation of the database, import/export of data...
