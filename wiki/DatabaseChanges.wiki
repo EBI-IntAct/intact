@@ -1,14 +1,12 @@
 #summary List of changes at the database level for each version
 #labels Phase-Implementation
 
-IntAct is a Molecular Interaction framework including a relational database system that we are going to describe further here. A slightly outdated but very useful explanation of the schema can be found [DatabaseSchema here]
+!IntAct is a Molecular Interaction framework including a relational database system that we are going to describe further here. A slightly outdated but very useful explanation of the schema can be found [DatabaseSchema here]
 
 
 = Database schema versions =
 
 Here we are going to describe the different versions of the relational database and there major features/update. 
-
- []
 
 
 ==== Version 1.7.0 ==== 
@@ -159,4 +157,3 @@ Changes in this version:
 
 
    
-
