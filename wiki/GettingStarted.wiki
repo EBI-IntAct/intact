@@ -1,4 +1,4 @@
-#summary A little project that will get you started.
+#summary Using the API by following examples.
 #labels Phase-Implementation
 
 = Getting started =
