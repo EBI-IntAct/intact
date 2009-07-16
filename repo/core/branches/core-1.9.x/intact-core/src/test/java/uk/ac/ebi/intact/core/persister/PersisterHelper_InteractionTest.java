@@ -28,10 +28,9 @@ import uk.ac.ebi.intact.model.clone.IntactCloner;
 import uk.ac.ebi.intact.model.util.CrcCalculator;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
+
+import com.google.common.collect.Maps;
 
 /**
  * InteractionPersister tester.
@@ -804,6 +803,43 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         Assert.assertEquals(1, stats.getMergedCount(Interaction.class, true));
 
         Assert.assertEquals("fullName", reloadByAc(interactionUpdatedFullName).getFullName());
+    }
+
+    @Test
+    public void identityHashCode() throws Exception {
+
+        System.out.println("Interaction");
+        Interaction i = getMockBuilder().createDeterministicInteraction();
+        System.out.println( i.hashCode() );
+        System.out.println( new IntactCloner().clone(i).hashCode() );
+        System.out.println( new IntactCloner().clone(i).hashCode() );
+        System.out.println( new IntactCloner().clone(i).hashCode() );
+
+        System.out.println("\nComponent");
+        Component c = getMockBuilder().createDeterministicInteraction().getComponents().iterator().next();
+        System.out.println( c.hashCode() );
+        System.out.println( new IntactCloner().clone(c).hashCode() );
+        System.out.println( new IntactCloner().clone(c).hashCode() );
+        System.out.println( new IntactCloner().clone(c).hashCode() );
+
+        System.out.println("\nFeature");
+        final Feature f = getMockBuilder().createFeatureRandom();
+        System.out.println( f.hashCode() );
+        System.out.println( new IntactCloner().clone(f).hashCode() );
+        System.out.println( new IntactCloner().clone(f).hashCode() );
+        System.out.println( new IntactCloner().clone(f).hashCode() );
+
+//        Map<String, Object> field2type = Maps.newHashMap();
+//        field2type.put( "ranges", Arrays.asList( new Range(new Institution( "ebi" ), 1, 5, "ABC") ) );
+//        BeanTestCase.assertMeetsHashCodeContract( Feature.class, field2type );
+//        BeanTestCase.assertMeetsEqualsContract( Feature.class, field2type );
+
+        System.out.println("\nRange");
+        final Range r = getMockBuilder().createRangeRandom();
+        System.out.println( r.hashCode() );
+        System.out.println( new IntactCloner().clone(r).hashCode() );
+        System.out.println( new IntactCloner().clone(r).hashCode() );
+        System.out.println( new IntactCloner().clone(r).hashCode() );
     }
 
     @Test
