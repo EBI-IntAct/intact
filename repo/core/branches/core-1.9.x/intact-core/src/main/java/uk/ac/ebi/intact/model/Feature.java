@@ -267,7 +267,7 @@ public class Feature extends AnnotatedObjectImpl<FeatureXref, FeatureAlias> impl
 
         // Make sure we don't end up in an infinite loop checking on linked features
         if( includeLinkedFeature ) {
-            if ( binds != null ? !binds.equals( feature.binds, false, true ) : feature.binds != null )
+            if ( binds != null ? !binds.equals( feature.binds, false, false ) : feature.binds != null )
                 return false;
         }
 
@@ -294,7 +294,7 @@ public class Feature extends AnnotatedObjectImpl<FeatureXref, FeatureAlias> impl
 
         // make sure we don't end up in an infinite loop checking on linked features
         if( includeBinds ) {
-            result = 31 * result + ( binds != null ? binds.hashCode( false, true ) : 0 );
+            result = 31 * result + ( binds != null ? binds.hashCode( false, false ) : 0 );
         }
 
         return result;

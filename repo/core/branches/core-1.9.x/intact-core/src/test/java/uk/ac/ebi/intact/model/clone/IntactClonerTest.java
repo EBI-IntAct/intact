@@ -263,6 +263,85 @@ public class IntactClonerTest extends IntactBasicTestCase {
         }
     }
 
+    @Test
+    public void cloneInteractionWithMultipleFeature_linked() throws Exception {
+
+        final Interaction interaction = getMockBuilder().createDeterministicInteraction();
+        interaction.setShortLabel( "ptp61f-dock-1" );
+
+        final Iterator<Component> iterator = interaction.getComponents().iterator();
+
+        Component c1 = iterator.next();
+        c1.setShortLabel( "c1" );
+        c1.getBindingDomains().clear();
+        Feature f1 = addFeature( c1, CvFeatureType.EXPERIMENTAL_FEATURE, CvFeatureType.EXPERIMENTAL_FEATURE_MI_REF, 234, 256, false, "x" );
+
+        Component c2 = iterator.next();
+        c2.setShortLabel( "c2" );
+        c2.getBindingDomains().clear();
+        Feature f2 = addFeature( c2, CvFeatureType.MUTATION, CvFeatureType.MUTATION_MI_REF, 235, 235, false, "lys235thr-ser283thr" );
+        final Range range = createRange(283, 283, false);
+        f2.addRange( range );
+
+        // Linking the features
+        f1.setBoundDomain( f2 );
+        f2.setBoundDomain( f1 );
+        
+        final Interaction clone = cloner.clone( interaction );
+
+        for ( Component component : clone.getComponents() ) {
+            if( component.getShortLabel().equals( "c1" ) ) {
+
+                Assert.assertEquals( 1, component.getBindingDomains().size() );
+
+                Assert.assertTrue( "Component c1 is lacking at least one feature: 234-256",
+                                   hasFeature( component, "x", CvFeatureType.EXPERIMENTAL_FEATURE, 234, 256 ) );
+
+            } else if( component.getShortLabel().equals( "c2" ) ) {
+
+                Assert.assertEquals( 1, component.getBindingDomains().size() );
+
+                Assert.assertTrue( "Component c1 is lacking at least one feature: 235-235",
+                        hasFeature( component, "lys235thr-ser283thr", CvFeatureType.MUTATION, 235, 235 ));
+
+            } else {
+                Assert.fail();
+            }
+        }
+
+        clone.setShortLabel( "Cloned version of ptp61f-dock-1" );
+
+        IntactContext.getCurrentInstance().getConfig().setAutoUpdateExperimentShortlabel(false);
+
+        PersisterHelper.saveOrUpdate( clone );
+        getDataContext().commitAllActiveTransactions();
+
+        final List<InteractionImpl> all = getDaoFactory().getInteractionDao().getAll();
+        Assert.assertEquals( 1, all.size() );
+        Interaction reloaded = all.iterator().next();
+        Assert.assertNotNull( reloaded );
+
+        for ( Component component : reloaded.getComponents() ) {
+            if( component.getShortLabel().equals( "c1" ) ) {
+
+                Assert.assertEquals( 1, component.getBindingDomains().size() );
+
+                Assert.assertTrue( "Component c1 is lacking at least one feature: 234-256",
+                                   hasFeature( component, "x", CvFeatureType.EXPERIMENTAL_FEATURE, 234, 256 ) );
+
+            } else if( component.getShortLabel().equals( "c2" ) ) {
+
+                Assert.assertEquals( 1, component.getBindingDomains().size() );
+
+                Assert.assertTrue( "Component c1 is lacking at least one feature: 235-235",
+                        hasFeature( component, "lys235thr-ser283thr", CvFeatureType.MUTATION, 235, 235 ));
+
+            } else {
+                Assert.fail();
+            }
+        }
+    }
+
     private boolean hasFeature( Component component, String label, String type, int start, int stop ) {
         boolean foundByLabel = false;
         for ( Feature feature : component.getBindingDomains() ) {
