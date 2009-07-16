@@ -3,15 +3,20 @@ package uk.ac.ebi.intact.model.clone;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
+import uk.ac.ebi.intact.core.persister.CorePersister;
+import uk.ac.ebi.intact.core.persister.finder.DefaultFinder;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.visitor.BaseIntactVisitor;
 import uk.ac.ebi.intact.model.visitor.DefaultTraverser;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * IntactCloner Tester.
@@ -21,74 +26,6 @@ import java.util.Iterator;
  * @since 1.7.2
  */
 public class IntactClonerTest extends IntactBasicTestCase {
-
-    public class EditorIntactCloner extends IntactCloner {
-
-        public EditorIntactCloner() {
-            setExcludeACs(true);
-        }
-
-        @Override
-        public BioSource cloneBioSource(BioSource bioSource) throws IntactClonerException {
-            return bioSource;
-        }
-
-        @Override
-        public Institution cloneInstitution(Institution institution) throws IntactClonerException {
-            return institution;
-        }
-
-        @Override
-        protected AnnotatedObject cloneAnnotatedObjectCommon(AnnotatedObject<?, ?> ao, AnnotatedObject clone) throws IntactClonerException {
-
-            if(clone==null){
-                return null;
-            }
-
-            if (clone instanceof Interaction) {
-                Interaction interaction = (Interaction) clone;
-                interaction.getExperiments().clear();
-            } else if (clone instanceof Experiment) {
-                Experiment experiment = (Experiment) clone;
-                experiment.getInteractions().clear();
-            }
-
-            if (ao == clone) {
-                return ao;
-            }
-
-            return super.cloneAnnotatedObjectCommon(ao, clone);
-        }
-    }
-
-    public class InteractionIntactCloner extends EditorIntactCloner {
-
-        /**
-         * This cloner will be used by the editor to clone the
-         * interaction. As some experiment has 1000s of experiment,
-         * the system unnecessarily attempts to clone experiments,
-         * which is not needed.
-         *
-         * @param experiment, the experiment to be cloned
-         * @return null (experiment is not cloned)
-         * @throws IntactClonerException
-         */
-        @Override
-        public Experiment cloneExperiment( Experiment experiment ) throws IntactClonerException {
-            return new Experiment();
-        }
-
-        @Override
-        protected IntactObject cloneIntactObjectCommon( IntactObject ao, IntactObject clone ) throws IntactClonerException {
-
-            if (clone == null || clone instanceof Interaction ) {
-                return null;
-            }
-
-            return super.cloneIntactObjectCommon( ao, clone );
-        }
-    }
-
 
     IntactCloner cloner;
 
@@ -127,7 +64,6 @@ public class IntactClonerTest extends IntactBasicTestCase {
         addFeature( c2, CvFeatureType.MUTATION_DISRUPTING, CvFeatureType.MUTATION_DISRUPTING_MI_REF, 10, 55, false, "region" );
 
         final Interaction clone = cloner.clone( interaction );
-//        final Interaction clone = new InteractionIntactCloner().clone( interaction );
 
         for ( Component component : clone.getComponents() ) {
             if( component.getShortLabel().equals( "c1" ) ) {
@@ -140,7 +76,7 @@ public class IntactClonerTest extends IntactBasicTestCase {
             } else if( component.getShortLabel().equals( "c2" ) ) {
 
                 Assert.assertEquals(2, component.getBindingDomains().size());
-                Assert.assertTrue( "Component c2 is lacking at least one feature", 
+                Assert.assertTrue( "Component c2 is lacking at least one feature",
                                    hasFeature( component, "region", CvFeatureType.MUTATION_DECREASING, 10, 50 )
                                    || hasFeature( component, "region", CvFeatureType.MUTATION_DISRUPTING, 10, 55 ) );
             } else {
@@ -192,17 +128,157 @@ public class IntactClonerTest extends IntactBasicTestCase {
         }
     }
 
+    private class EditorFinder extends DefaultFinder {
+
+        public String findAc( AnnotatedObject annotatedObject ) {
+
+            String ac;
+
+            if ( annotatedObject.getAc() != null ) {
+                return annotatedObject.getAc();
+            }
+
+            if ( annotatedObject instanceof Institution ) {
+                ac = findAcForInstitution( ( Institution ) annotatedObject );
+            } else if ( annotatedObject instanceof Publication ) {
+                ac = findAcForPublication( ( Publication ) annotatedObject );
+            } else if ( annotatedObject instanceof CvObject ) {
+                ac = findAcForCvObject( ( CvObject ) annotatedObject );
+            } else if ( annotatedObject instanceof Experiment ) {
+                ac = null;
+            } else if ( annotatedObject instanceof Interaction ) {
+                ac = null;
+            } else if ( annotatedObject instanceof Interactor ) {
+                ac = findAcForInteractor( ( InteractorImpl ) annotatedObject );
+            } else if ( annotatedObject instanceof BioSource ) {
+                ac = findAcForBioSource( ( BioSource ) annotatedObject );
+            } else if ( annotatedObject instanceof Component ) {
+                ac = findAcForComponent( ( Component ) annotatedObject );
+            } else if ( annotatedObject instanceof Feature ) {
+                ac = findAcForFeature( ( Feature ) annotatedObject );
+            } else {
+                throw new IllegalArgumentException( "Cannot find Ac for type: " + annotatedObject.getClass().getName() );
+            }
+
+            return ac;
+        }
+    }
+
+    @Test
+    public void cloneInteractionWithMultipleFeature_multipleRanges() throws Exception {
+
+        final Interaction interaction = getMockBuilder().createDeterministicInteraction();
+        interaction.setShortLabel( "ptp61f-dock-1" );
+
+        final Iterator<Component> iterator = interaction.getComponents().iterator();
+
+        Component c1 = iterator.next();
+        c1.setShortLabel( "c1" );
+        c1.getBindingDomains().clear();
+        addFeature( c1, CvFeatureType.SUFFICIENT_FOR_BINDING, CvFeatureType.SUFFICIENT_FOR_BINDING_MI_REF, 0, 0, true, "region" );
+        addFeature( c1, CvFeatureType.EXPERIMENTAL_FEATURE, CvFeatureType.EXPERIMENTAL_FEATURE_MI_REF, 234, 256, false, "x" );
+        addFeature( c1, CvFeatureType.EXPERIMENTAL_FEATURE, CvFeatureType.EXPERIMENTAL_FEATURE_MI_REF, 234, 256, false, "x" );
+
+        Component c2 = iterator.next();
+        c2.setShortLabel( "c2" );
+        c2.getBindingDomains().clear();
+        Feature f = addFeature( c2, CvFeatureType.MUTATION, CvFeatureType.MUTATION_MI_REF, 235, 235, false, "lys235thr-ser283thr" );
+        final Range range = createRange(283, 283, false);
+        f.addRange( range );
+        addFeature( c2, CvFeatureType.MUTATION, CvFeatureType.MUTATION_MI_REF, 5632, 5632, false, "lys5632thr" );
+
+        final Interaction clone = cloner.clone( interaction );
+
+        for ( Component component : clone.getComponents() ) {
+            if( component.getShortLabel().equals( "c1" ) ) {
+
+                Assert.assertEquals( 2, component.getBindingDomains().size() );
+                Assert.assertTrue( "Component c1 is lacking at least one feature: ?-?",
+                                   hasFeature( component, "region", CvFeatureType.SUFFICIENT_FOR_BINDING, 0, 0 )
+                                    );
+
+                Assert.assertTrue( "Component c1 is lacking at least one feature: 234-256",
+                                   hasFeature( component, "x", CvFeatureType.EXPERIMENTAL_FEATURE, 234, 256 ) );
+
+            } else if( component.getShortLabel().equals( "c2" ) ) {
+
+                Assert.assertEquals( 2, component.getBindingDomains().size() );
+
+                Assert.assertTrue( "Component c1 is lacking at least one feature: 235-235",
+                        hasFeature( component, "lys235thr-ser283thr", CvFeatureType.MUTATION, 235, 235 ));
+
+                Assert.assertTrue( "Component c1 is lacking at least one feature: 283-283",
+                        hasFeature( component, "lys235thr-ser283thr", CvFeatureType.MUTATION, 283, 283 ) );
+
+                Assert.assertTrue( "Component c1 is lacking at least one feature: 5632-5632",
+                        hasFeature( component, "lys5632thr", CvFeatureType.MUTATION, 5632, 5632 ) );
+            } else {
+                Assert.fail();
+            }
+        }
+
+        clone.setShortLabel( "Cloned version of ptp61f-dock-1" );
+
+        IntactContext.getCurrentInstance().getConfig().setAutoUpdateExperimentShortlabel(false);
+
+
+//        CorePersister corePersister = new CorePersister();
+//        corePersister.setFinder( new EditorFinder() );
+//        PersisterHelper.saveOrUpdate( corePersister, clone );
+        
+        PersisterHelper.saveOrUpdate( clone );
+        getDataContext().commitAllActiveTransactions();
+
+        final List<InteractionImpl> all = getDaoFactory().getInteractionDao().getAll();
+        Assert.assertEquals( 1, all.size() );
+        Interaction reloaded = all.iterator().next();
+        Assert.assertNotNull( reloaded );
+
+        for ( Component component : reloaded.getComponents() ) {
+            if( component.getShortLabel().equals( "c1" ) ) {
+
+                Assert.assertEquals( 2, component.getBindingDomains().size() );
+
+                Assert.assertTrue( "Component c1 is lacking at least one feature: ?-?",
+                                   hasFeature( component, "region", CvFeatureType.SUFFICIENT_FOR_BINDING, 0, 0 ));
+
+                Assert.assertTrue( "Component c1 is lacking at least one feature: 234-256",
+                                   hasFeature( component, "x", CvFeatureType.EXPERIMENTAL_FEATURE, 234, 256 ) );
+
+            } else if( component.getShortLabel().equals( "c2" ) ) {
+
+                Assert.assertEquals( 2, component.getBindingDomains().size() );
+
+                Assert.assertTrue( "Component c1 is lacking at least one feature: 235-235",
+                        hasFeature( component, "lys235thr-ser283thr", CvFeatureType.MUTATION, 235, 235 ));
+
+                Assert.assertTrue( "Component c1 is lacking at least one feature: 283-283",
+                        hasFeature( component, "lys235thr-ser283thr", CvFeatureType.MUTATION, 283, 283 ) );
+
+                Assert.assertTrue( "Component c1 is lacking at least one feature: 5632-5632",
+                        hasFeature( component, "lys5632thr", CvFeatureType.MUTATION, 5632, 5632 ) );
+            } else {
+                Assert.fail();
+            }
+        }
+    }
+
     private boolean hasFeature( Component component, String label, String type, int start, int stop ) {
         boolean foundByLabel = false;
         for ( Feature feature : component.getBindingDomains() ) {
             if( label.equals( feature.getShortLabel() ) ) {
                 foundByLabel = true;
                 if( type.equals( feature.getCvFeatureType().getShortLabel() ) ) {
-                    final Range range = feature.getRanges().iterator().next();
-                    if( range.getFromIntervalStart() == start && range.getToIntervalStart() == stop ) {
-                        return true;
+                    boolean foundRange = false;
+                    for (Range range : feature.getRanges()) {
+                        if( range.getFromIntervalStart() == start && range.getToIntervalStart() == stop ) {
+                            foundRange = true;
+                        }
+                    }
+                    if( ! foundRange ){
+                        System.out.println("Failed on range" );
                     } else {
-                        System.out.println( "Failed on range" );
+                        return true;
                     }
                 } else {
                     System.out.println( "Failed on type" );
@@ -217,16 +293,27 @@ public class IntactClonerTest extends IntactBasicTestCase {
         return false;
     }
 
-    private void addFeature( Component component, String type, String typeMi, int start, int stop, boolean undertermined, String shortlabel ) {
+    private Feature addFeature( Component component, String type, String typeMi, int start, int stop, boolean undertermined, String shortlabel ) {
         CvFeatureType featureType = getMockBuilder().createCvObject( CvFeatureType.class, typeMi, type );
         Feature feature = getMockBuilder().createFeature( shortlabel, featureType );
         feature.setComponent(null);
 
+        Range range = createRange( start, stop, undertermined );
+        feature.addRange( range );
+        component.getBindingDomains().add( feature );
+        return feature;
+    }
+
+    private Range createRange( int start, int stop, boolean undertermined ) {
         Range range = getMockBuilder().createRange( start, start, stop, stop );
         range.setUndetermined( undertermined );
+        if( undertermined ) {
+            final CvFuzzyType fuzzy = getMockBuilder().createCvObject(CvFuzzyType.class, CvFuzzyType.UNDETERMINED, CvFuzzyType.UNDETERMINED_MI_REF);
+            range.setFromCvFuzzyType( fuzzy );
+            range.setToCvFuzzyType( fuzzy );
+        }
         range.setLinked( false );
-        feature.addRange(range);
-        component.getBindingDomains().add( feature );
+        return range;
     }
 
     @Test
@@ -305,7 +392,6 @@ public class IntactClonerTest extends IntactBasicTestCase {
         Assert.assertEquals( 2, clonedComponent.getExperimentalRoles().size() );
     }
 
-
     @Test
     public void clone_cloneCvObjectTree() throws Exception {
         CvDatabase citation = getMockBuilder().createCvObject( CvDatabase.class, "MI:0444", "database citation" );
@@ -352,5 +438,98 @@ public class IntactClonerTest extends IntactBasicTestCase {
     @Test
     public void cloneComponentParameter() throws Exception {
         clone( getMockBuilder().createDeterministicComponentParameter() );
+    }
+
+    private void assertRespectEqualsContract( Object o1, Object o2 ) {
+        Assert.assertTrue( o1.equals( o1 ) );
+        Assert.assertTrue( o1.equals( o2 ) );
+        Assert.assertTrue( o2.equals( o1 ) );
+    }
+
+    private void assertRespectHashCodeContract( Object o1, Object o2 ) {
+        Assert.assertEquals( o1.hashCode(), o1.hashCode() );
+        Assert.assertEquals( o1.hashCode(), o2.hashCode() );
+    }
+
+    @Test
+    public void clone_equality_experiment() throws Exception {
+        final Experiment e = getMockBuilder().createDeterministicExperiment();
+        final Experiment clone = new IntactCloner().clone(e);
+        assertRespectEqualsContract( e, clone);
+    }
+
+    @Test
+    public void clone_equality_interaction() throws Exception {
+        final Interaction i = getMockBuilder().createDeterministicInteraction();
+        final Interaction clone = new IntactCloner().clone(i);
+        assertRespectEqualsContract( i, clone);
+        assertRespectHashCodeContract( i, clone);
+    }
+
+    @Test
+    public void clone_equality_Component() throws Exception {
+        final Component c = getMockBuilder().createDeterministicInteraction().getComponents().iterator().next();
+        final Component clone = new IntactCloner().clone(c);
+        assertRespectEqualsContract( c, clone);
+        assertRespectHashCodeContract( c, clone);
+    }
+
+    @Test
+    public void clone_equality_Feature_noRange() throws Exception {
+        final Feature f = getMockBuilder().createFeatureRandom();
+        f.getRanges().clear();
+        final Feature clone = new IntactCloner().clone(f);
+        assertRespectEqualsContract( f, clone);
+        assertRespectHashCodeContract( f, clone);
+    }
+
+    @Test
+    public void clone_equality_Feature_withRange() throws Exception {
+        final Feature f = getMockBuilder().createFeatureRandom();
+        f.getRanges().clear();
+        f.addRange( getMockBuilder().createRangeCTerminal() );
+        final Feature clone = new IntactCloner().clone(f);
+        assertRespectEqualsContract( f, clone);
+        assertRespectHashCodeContract( f, clone);
+    }
+
+    @Test
+    public void clone_equality_RangeCTerminus() throws Exception {
+        final Range r = getMockBuilder().createRangeCTerminal();
+        final Range clone = new IntactCloner().clone(r);
+        assertRespectEqualsContract( r, clone);
+        assertRespectHashCodeContract( r, clone);
+    }
+
+    @Test
+    public void clone_equality_RangeUndertermined() throws Exception {
+        final Range r = getMockBuilder().createRangeUndetermined();
+        final Range clone = new IntactCloner().clone(r);
+        assertRespectEqualsContract( r, clone);
+        assertRespectHashCodeContract( r, clone);
+    }
+
+    @Test
+    public void clone_equality_Biosource() throws Exception {
+        final BioSource b = getMockBuilder().createBioSource( 9606, "human" );
+        final BioSource clone = new IntactCloner().clone(b);
+        assertRespectEqualsContract( b, clone);
+        assertRespectHashCodeContract( b, clone);
+    }
+
+    @Test
+    public void clone_equality_cv() throws Exception {
+        final CvXrefQualifier cv = getMockBuilder().createCvObject( CvXrefQualifier.class, "MI:xxxx", "test" );
+        final CvXrefQualifier clone = new IntactCloner().clone(cv);
+        assertRespectEqualsContract( cv, clone);
+        assertRespectHashCodeContract( cv, clone);
+    }
+
+    @Test
+    public void clone_equality_parameter() throws Exception {
+        final Parameter p = getMockBuilder().createDeterministicInteractionParameter();
+        final Parameter clone = new IntactCloner().clone(p);
+        assertRespectEqualsContract( p, clone);
+        assertRespectHashCodeContract( p, clone);
     }
 }
