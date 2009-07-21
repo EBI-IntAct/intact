@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:tr="http://myfaces.apache.org/trinidad"
+                xmlns:c="http://java.sun.com/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:sf="http://www.ebi.ac.uk/faces/site"
+                xmlns:ebi="http://ebi.ac.uk/faces/components"
+                xmlns:iav="http://intact.ebi.ac.uk/view"
+                xmlns:iaf="http://intact.ebi.ac.uk/functions"
+                xmlns:iax="http://intact.ebi.ac.uk/extlinks"
+                xmlns:iamf="http://intact.ebi.ac.uk/mitabfunctions"
+                xmlns:trh="http://myfaces.apache.org/trinidad/html">
+
+    <!-- RESULT SUMMARY -->
+
+    <!--<ui:include src="/pages/inc/queryDisplay.xhtml"/>-->
+
+    <br/>
+
+    <!-- RESULTS TABLE -->
+
+
+    <tr:table id="proteinListResults" value="#{searchBean.proteinResults}" var="interactorWrapper" varStatus="status"
+              summary="Proteins" emptyText="No proteins found matching the query."
+              rows="#{userQuery.pageSize}" rowBandingInterval="1"
+              rowSelection="multiple">
+
+        <f:facet name="actions">
+            <tr:panelHorizontalLayout inlineStyle="width:100%">
+                <f:facet name="separator">
+                    <tr:outputFormatted value="&#160;&#160;&lt;b>|&lt;/b>&#160;&#160;"/>
+                </f:facet>
+
+                <tr:panelButtonBar id="buttonBar">
+                    <strong>
+                        <tr:outputText value="Selection actions: " inlineStyle="white-space: nowrap"/>
+                    </strong>
+                    <tr:commandButton text="Search Interactions"
+                                      actionListener="#{searchBean.doSearchInteractionsFromProteinListSelection}"
+                                      action="interactions"/>
+
+                    <tr:commandButton text="Domains" partialSubmit="true"
+                                      actionListener="#{proteinListController.goDomains}"/>
+
+                    <tr:commandButton text="Pathways" partialSubmit="true"
+                                      actionListener="#{proteinListController.goReactome}"/>
+
+                    <tr:commandButton text="Chromosome Location" partialSubmit="true"
+                                      icon="/images/logos/ensembl_12.png"
+                                      actionListener="#{proteinListController.goChromosomalLocation}"/>
+
+                    <tr:commandButton text="mRNA Expression" partialSubmit="true"
+                                      actionListener="#{proteinListController.goExpression}"/>
+
+                </tr:panelButtonBar>
+
+            </tr:panelHorizontalLayout>
+        </f:facet>
+
+        <tr:column>
+            <tr:outputText value="#{status.index + 1}"/>
+        </tr:column>
+
+        <tr:column headerText="#{messages['list.names']}">
+            <tr:outputText value="#{interactorWrapper.interactor.shortLabel}"/>
+        </tr:column>
+
+        <tr:column headerText="Interactions">
+            <tr:commandLink action="#{searchBean.doBinarySearchAction}" text="#{interactorWrapper.count}">
+                <f:setPropertyActionListener value="+(#{userQuery.searchQuery}) +#{interactorWrapper.interactor.ac}" target="#{userQuery.searchQuery}"/>
+            </tr:commandLink>
+        </tr:column>
+
+        <tr:column headerText="#{messages['list.links']}">
+
+            <tr:iterator var="xref" value="#{interactorWrapper.interactor.xrefs}"
+                         varStatus="rowStatus" rows="0">
+                <tr:switcher facetName="#{xref.cvDatabase.shortLabel}">
+                    <f:facet name="uniprotkb">
+                        <h:panelGroup rendered="#{xref.cvXrefQualifier.identifier == 'MI:0356'}">
+                            <iax:goUniprot query="#{xref.primaryId}" onlyLogo="true"/>
+                            <br/>
+                            <!--<iax:goDrugPortProteinView query="#{xref.primaryId}" onlyLogo="true"/>-->
+                            <!--<br/>-->
+                        </h:panelGroup>
+                    </f:facet>
+                    <f:facet name="chebi">
+                        <h:panelGroup>
+                            <iax:goChebi query="#{xref.primaryId}" onlyLogo="true"/>
+                            <br/>
+                        </h:panelGroup>
+                    </f:facet>
+                    <f:facet name="drugbank">
+                        <h:panelGroup>
+                            <iax:goDrugbank query="#{xref.primaryId}" onlyLogo="true"/>
+                            <br/>
+                        </h:panelGroup>
+                    </f:facet>
+                </tr:switcher>
+            </tr:iterator>
+            <h:panelGroup>
+                <iax:goMoleculeView query="#{interactorWrapper.interactor.ac}" onlyLogo="true"/>
+                <br/>
+            </h:panelGroup>
+        </tr:column>
+
+        <tr:column headerText="#{messages['list.species']}">
+            <iax:goOls query="#{interactorWrapper.interactor.bioSource.taxId}"
+                       termName="#{interactorWrapper.interactor.bioSource.shortLabel}"/>
+        </tr:column>
+
+        <tr:column headerText="#{messages['list.accessionnumber']}">
+            <tr:outputText value="#{interactorWrapper.interactor.ac}"/>
+        </tr:column>
+
+        <tr:column headerText="#{messages['list.description']}">
+            <ui:param name="intactIdentifier"
+                      value="#{interactorWrapper.interactor.ac}"/>
+            <ui:param name="interactor" value="#{interactorWrapper.interactor}"/>
+            <tr:outputText value="#{interactorWrapper.interactor.fullName}"/>
+        </tr:column>
+
+    </tr:table>
+
+</ui:composition>

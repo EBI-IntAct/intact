@@ -1,0 +1,64 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:jsp="http://java.sun.com/JSP/Page"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:tr="http://myfaces.apache.org/trinidad"
+                xmlns:c="http://java.sun.com/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:ebi="http://ebi.ac.uk/faces/components"
+                xmlns:iav="http://intact.ebi.ac.uk/view" xmlns:trh="http://myfaces.apache.org/trinidad/html">
+
+    <tr:document>
+
+        <tr:panelHeader text="#{cvBean.className}">
+
+            <tr:panelFormLayout inlineStyle="width:550px;" >
+                <tr:panelLabelAndMessage label="Accession:" labelStyle="font-weight:bold;">
+                    <tr:inputText readOnly="true" value="#{cvBean.cvObject.ac}"/>
+                </tr:panelLabelAndMessage>
+
+                <tr:panelLabelAndMessage label="Name:" labelStyle="font-weight:bold;">
+                    <tr:inputText readOnly="true" value="#{cvBean.cvObject.shortLabel}"/>
+                </tr:panelLabelAndMessage>
+
+                <tr:panelLabelAndMessage label="Description:" rendered="#{cvBean.cvObject.shortLabel != cvBean.cvObject.fullName}"
+                                         labelStyle="font-weight:bold;">
+                    <tr:inputText readOnly="true"
+                                  value="#{(cvBean.cvObject.fullName == null ? '-' : cvBean.cvObject.fullName )}"/>
+                </tr:panelLabelAndMessage>
+
+            </tr:panelFormLayout>
+
+            <trh:tableLayout width="690" cellPadding="3" cellSpacing="0">
+                <trh:rowLayout rendered="#{not empty cvBean.cvObject.xrefs}">
+                    <trh:cellFormat valign="top">
+                        <tr:spacer height="10"/>
+                        <tr:outputText value="Cross References:" inlineStyle="font-weight:bold;"/>
+                    </trh:cellFormat>
+                    <trh:cellFormat>
+                        <tr:spacer height="10"/>
+                        <ui:decorate template="/pages/details/xrefs.xhtml">
+                            <ui:param name="xrefs" value="#{cvBean.cvObject.xrefs}"/>
+                        </ui:decorate>
+                    </trh:cellFormat>
+                </trh:rowLayout>
+                <trh:rowLayout rendered="#{not empty cvBean.cvObject.annotations}">
+                    <trh:cellFormat valign="top">
+                        <tr:spacer height="10"/>
+                        <tr:outputText value="Annotations:" inlineStyle="font-weight:bold;"/>
+                    </trh:cellFormat>
+                    <trh:cellFormat>
+                        <tr:spacer height="10"/>
+                        <ui:decorate template="/pages/details/annotations.xhtml">
+                            <ui:param name="annotations" value="#{cvBean.cvObject.annotations}"/>
+                        </ui:decorate>
+                    </trh:cellFormat>
+                </trh:rowLayout>
+            </trh:tableLayout>
+
+        </tr:panelHeader>
+
+    </tr:document>
+
+</ui:composition>
