@@ -3,7 +3,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.plugins</groupId>
         <artifactId>plugins-miscel</artifactId>
-        <version>1.9.0-SNAPSHOT</version>
+        <version>1.9.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -11,16 +11,16 @@
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>psimitab-indexer-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.9.0-SNAPSHOT</version>
+    <version>1.9.0</version>
 
     <name>Plugin - psimitab-indexer-maven-plugin</name> 
     <description>Plugin for IntAct</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/psimitab-indexer-maven-plugin</url>
 
     <scm> 
-        <connection>scm:svn:https://intact.googlecode.com/svn/repo/plugins-miscel/trunk/psimitab-indexer-maven-plugin</connection>
-        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/plugins-miscel/trunk/psimitab-indexer-maven-plugin</developerConnection>
-        <url>http://code.google.com/p/intact/source/browse/repo/plugins-miscel/trunk/psimitab-indexer-maven-plugin/</url>
+        <connection>scm:svn:https://intact.googlecode.com/svn/repo/plugins-miscel/tags/plugins-miscel-1.9.0/psimitab-indexer-maven-plugin</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/plugins-miscel/tags/plugins-miscel-1.9.0/psimitab-indexer-maven-plugin</developerConnection>
+        <url>http://code.google.com/p/intact/source/browse/repo/plugins-miscel/tags/plugins-miscel-1.9.0/psimitab-indexer-maven-plugin</url>
     </scm>
 
     <dependencies>

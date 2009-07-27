@@ -17,16 +17,16 @@
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>plugins-miscel</artifactId>
     <packaging>pom</packaging>
-    <version>1.9.0-SNAPSHOT</version>
+    <version>1.9.0</version>
 
     <name>IntAct Maven Plugins</name>
     <url>http://www.ebi.ac.uk/~baranda/intact/maven-plugins</url>
     <description>Intact maven plugins</description>
 
     <scm>
-        <connection>scm:svn:https://intact.googlecode.com/svn/repo/plugins-miscel/trunk</connection>
-        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/plugins-miscel/trunk</developerConnection>
-        <url>http://code.google.com/p/intact/source/browse/repo/plugins-miscel/trunk</url>
+        <connection>scm:svn:https://intact.googlecode.com/svn/repo/plugins-miscel/tags/plugins-miscel-1.9.0</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/plugins-miscel/tags/plugins-miscel-1.9.0</developerConnection>
+        <url>http://code.google.com/p/intact/source/browse/repo/plugins-miscel/tags/plugins-miscel-1.9.0</url>
     </scm>
 
     <properties>
@@ -118,7 +118,7 @@
 
     <repositories>
         <repository>
-            <releases/>
+            <releases />
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -130,7 +130,7 @@
             <releases>
                 <enabled>false</enabled>
             </releases>
-            <snapshots/>
+            <snapshots />
             <id>ebi-repo-snapshots</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
