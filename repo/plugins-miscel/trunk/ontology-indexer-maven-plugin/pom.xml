@@ -20,9 +20,9 @@
 
 
     <!-- <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk/ontology-indexer-maven-plugin</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk/ontology-indexer-maven-plugin</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/plugins-miscel/trunk/ontology-indexer-maven-plugin/</url>
+        <connection>scm:svn:https://intact.googlecode.com/svn/repo/plugins-miscel/trunk/ontology-indexer-maven-plugin</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/plugins-miscel/trunk/ontology-indexer-maven-plugin</developerConnection>
+        <url>http://code.google.com/p/intact/source/browse/repo/plugins-miscel/trunk/ontology-indexer-maven-plugin/</url>
     </scm>-->
 
 
