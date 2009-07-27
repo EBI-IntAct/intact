@@ -19,10 +19,10 @@
 
     <scm>
         <connection>
-            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk/psimitab-maven-plugin
+            scm:svn:https://intact.googlecode.com/svn/repo/plugins-miscel/trunk/psimitab-maven-plugin
         </connection>
         <developerConnection>
-            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk/psimitab-maven-plugin
+            scm:svn:https://intact.googlecode.com/svn/repo/plugins-miscel/trunk/psimitab-maven-plugin
         </developerConnection>
         <url>http://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk/psimitab-maven-plugin/</url>
     </scm>
