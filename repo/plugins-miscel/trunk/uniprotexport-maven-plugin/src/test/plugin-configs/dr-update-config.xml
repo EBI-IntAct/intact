@@ -8,7 +8,7 @@
                     <indexPath>target/index</indexPath>
                     <uniprotLinksFilename>target/uniprotlinks.dat</uniprotLinksFilename>
                     <updatedUniprotLinksFilename>target/uniprotlinks.updated.dat</updatedUniprotLinksFilename>
-                    <hibernateConfig>dev-hibernate.cfg.xml</hibernateConfig>
+                    <hibernateConfig>src/test/resources/test-hibernate.cfg.xml</hibernateConfig>
                     <overwrite>true</overwrite>
                 </configuration>
             </plugin>
