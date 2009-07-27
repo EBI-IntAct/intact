@@ -91,24 +91,24 @@ public class DrLineInteractionCountUpdatetMojoTest extends AbstractMojoTestCase 
     }
 
     @Ignore
-    public void testRerunUpdate() throws Exception {
-
-        // index a MITAB file into a Lucene index
-        File luceneDirectory = new File( "C:\\intact-cfg\\dr-export\\psimitab-index-20090120" );
-
-        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/dr-update-config.xml" );
-        DrLineInteractionCountUpdatetMojo mojo =
-                ( DrLineInteractionCountUpdatetMojo ) lookupMojo( "dr-update", pluginXmlFile );
-        Assert.assertNotNull( mojo );
-
-        // set parameters
-        mojo.setTargetPath( getTargetDirectory().getAbsolutePath() );
-        mojo.setUpdatedUniprotLinksFilename( "uniprotlinks.updated.dat" );
-        mojo.setOverwrite( true );
-        mojo.setIndexPath( luceneDirectory.getAbsolutePath() );
-        mojo.setUniprotLinksFilename( "C:\\intact-cfg\\dr-export\\uniprotlinks.dat" );
-
-        // action !
-        mojo.execute();
-    }
+//    public void testRerunUpdate() throws Exception {
+//
+//        // index a MITAB file into a Lucene index
+//        File luceneDirectory = new File( "C:\\intact-cfg\\dr-export\\psimitab-index-20090120" );
+//
+//        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/dr-update-config.xml" );
+//        DrLineInteractionCountUpdatetMojo mojo =
+//                ( DrLineInteractionCountUpdatetMojo ) lookupMojo( "dr-update", pluginXmlFile );
+//        Assert.assertNotNull( mojo );
+//
+//        // set parameters
+//        mojo.setTargetPath( getTargetDirectory().getAbsolutePath() );
+//        mojo.setUpdatedUniprotLinksFilename( "uniprotlinks.updated.dat" );
+//        mojo.setOverwrite( true );
+//        mojo.setIndexPath( luceneDirectory.getAbsolutePath() );
+//        mojo.setUniprotLinksFilename( "C:\\intact-cfg\\dr-export\\uniprotlinks.dat" );
+//
+//        // action !
+//        mojo.execute();
+//    }
 }
