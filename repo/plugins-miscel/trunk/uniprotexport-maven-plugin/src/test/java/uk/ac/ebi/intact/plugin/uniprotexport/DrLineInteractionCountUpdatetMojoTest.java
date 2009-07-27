@@ -90,7 +90,7 @@ public class DrLineInteractionCountUpdatetMojoTest extends AbstractMojoTestCase 
         in.close();
     }
 
-    @Ignore
+//    @Ignore
 //    public void testRerunUpdate() throws Exception {
 //
 //        // index a MITAB file into a Lucene index
