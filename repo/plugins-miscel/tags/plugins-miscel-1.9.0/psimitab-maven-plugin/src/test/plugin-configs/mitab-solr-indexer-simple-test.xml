@@ -1,0 +1,39 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>psimitab-maven-plugin</artifactId>
+
+                <configuration>
+
+                    <!--<solrServerUrl></solrServerUrl>-->
+
+                    <!--<ontologySolrServerUrl></ontologySolrServerUrl>-->
+
+                    <ontologyMappings>
+                        <!--<ontologyMapping>-->
+                            <!--<name>go</name>-->
+                            <!--<url>http://www.geneontology.org/GO_slims/goslim_generic.obo</url>-->
+                        <!--</ontologyMapping>-->
+                        <ontologyMapping>
+                            <name>psi-mi</name>
+                            <url>http://psidev.sourceforge.net/mi/rel25/data/psi-mi25.obo</url>
+                        </ontologyMapping>
+                    </ontologyMappings>
+
+                    <recreateOntologyData>false</recreateOntologyData>
+
+                    <hasMitabHeader>true</hasMitabHeader>
+
+                    <mitabFileUrl>target/export.tsv</mitabFileUrl>
+
+                    <removeExistingData>false</removeExistingData>
+
+                    <firstLine>0</firstLine>
+
+                    <logFilePath>target/export-solr.log</logFilePath>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,11 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>uniprotexport-maven-plugin</artifactId>
+                <configuration>
+                </configuration>
+            </plugin>
+        </plugins>
+     </build>
+</project>
