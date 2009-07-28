@@ -1,9 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>uk.ac.ebi.intact.plugins</groupId>
         <artifactId>plugins-miscel</artifactId>
-        <version>1.9.0</version>
+        <version>1.9.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -11,16 +13,16 @@
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>dataminer-export-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.9.0</version>
+    <version>1.9.0-SNAPSHOT</version>
 
     <name>dataminer-export-maven-plugin</name>
     <description>Dataminer export plugin for IntAct</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/dataminer-export-maven-plugin</url>
 
     <scm>
-        <connection>scm:svn:https://intact.googlecode.com/svn/repo/plugins-miscel/tags/plugins-miscel-1.9.0/dataminer-export-maven-plugin</connection>
-        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/plugins-miscel/tags/plugins-miscel-1.9.0/dataminer-export-maven-plugin</developerConnection>
-        <url>http://code.google.com/p/intact/source/browse/repo/plugins-miscel/tags/plugins-miscel-1.9.0/dataminer-export-maven-plugin</url>
+        <connection>scm:svn:https://intact.googlecode.com/svn/repo/plugins-miscel/trunk/dataminer-export-maven-plugin</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/plugins-miscel/trunk/dataminer-export-maven-plugin</developerConnection>
+        <url>http://code.google.com/p/intact/source/browse/repo/plugins-miscel/trunk/dataminer-export-maven-plugin</url>
     </scm>
 
 </project>
