@@ -1,0 +1,39 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>psimitab-maven-plugin</artifactId>
+
+                <configuration>
+
+                    <ontologyMappings>
+                        <ontologyMapping>
+                            <name>go</name>
+                            <url>http://www.geneontology.org/ontology/gene_ontology_edit.obo</url>
+                        </ontologyMapping>
+                        <ontologyMapping>
+                            <name>interpro</name>
+                            <url>http://www.ebi.ac.uk/~intact/external/InterProHierarchyOBO.obo</url>
+                        </ontologyMapping>
+                        <ontologyMapping>
+                            <name>psi-mi</name>
+                            <url>http://psidev.sourceforge.net/mi/rel25/data/psi-mi25.obo</url>
+                        </ontologyMapping>
+                    </ontologyMappings>
+
+                    <ontologyIndexPath>target/ontologyIndex</ontologyIndexPath>
+
+                    <mitabFilePath>target/export.tsv</mitabFilePath>
+
+                    <overwrite>true</overwrite>
+
+                    <interactionIndexPath>target/interactionIndex</interactionIndexPath>
+
+                    <interactorIndexPath>target/interactorIndex</interactorIndexPath>
+
+                    <logFilePath>target/export.log</logFilePath>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
