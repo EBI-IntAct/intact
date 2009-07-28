@@ -17,14 +17,12 @@
     <description>This is a master POM that contains the data access (hibernate) configuration</description>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk</developerConnection>
-        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk</url>
+        <connection>scm:svn:https://intact.googlecode.com/svn/repo/maven/trunk/</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/maven/trunk/</developerConnection>
+        <url>https://intact.googlecode.com/svn/repo/maven/trunk/</url>
     </scm>
 
     <properties>
-        <db.hbm2ddlAuto>none</db.hbm2ddlAuto>
-        <showSql>false</showSql>
         <hibernate.scope>runtime</hibernate.scope>
     </properties>
 
@@ -35,77 +33,6 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
-
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>uk.ac.ebi.intact.commons</groupId>
-                    <artifactId>hibernateconfig-maven-plugin</artifactId>
-                    <version>2.1.0</version>
-                    <configuration>
-                        <sessionFactoryName>${sessionFactoryName}</sessionFactoryName>
-                        <dialect>${db.dialect}</dialect>
-                        <driver>${db.driver}</driver>
-                        <url>${db.protocol}:${db.subprotocol}${db.separator}${db.alias}</url>
-                        <user>${db.user}</user>
-                        <password>${db.password}</password>
-                        <showSql>${showSql}</showSql>
-                        <scope>${hibernate.scope}</scope>
-                        <hbm2ddlAuto>${db.hbm2ddlAuto}</hbm2ddlAuto>
-                        <connectionProviderClass>${db.connectionProviderClass}</connectionProviderClass>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <phase>generate-sources</phase>
-                            <goals>
-                                <goal>generate-config</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <!-- This next plugin is here for legacy purposes. Use of previous plugin is recommended instead --> 
-                <plugin>
-                    <groupId>uk.ac.ebi.intact.plugins</groupId>
-                    <artifactId>hibernateconfig-maven-plugin</artifactId>
-                    <version>1.3.0</version>
-                    <configuration>
-                        <sessionFactoryName>${sessionFactoryName}</sessionFactoryName>
-                        <dialect>${db.dialect}</dialect>
-                        <driver>${db.driver}</driver>
-                        <url>${db.protocol}:${db.subprotocol}${db.separator}${db.alias}</url>
-                        <user>${db.user}</user>
-                        <password>${db.password}</password>
-                        <showSql>${showSql}</showSql>
-                        <scope>${hibernate.scope}</scope>
-                        <hbm2ddlAuto>${db.hbm2ddlAuto}</hbm2ddlAuto>
-                        <connectionProviderClass>${db.connectionProviderClass}</connectionProviderClass>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <phase>generate-sources</phase>
-                            <goals>
-                                <goal>generate-config</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
-                    <groupId>uk.ac.ebi.intact.plugins</groupId>
-                    <artifactId>dbtest-maven-plugin</artifactId>
-
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>h2-preload</goal>
-                                <goal>import-psi</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 
     <profiles>
