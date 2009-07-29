@@ -172,10 +172,6 @@ public class ReflectionCrossReferenceBuilder {
         String desc = null;
 
         // Build the Generic Cross reference
-        if( id == null ) {
-            System.out.println( "db = " + db + " desc = " + desc );
-        }
-
         return new UniprotCrossReference( id, db, desc );
     }
 
