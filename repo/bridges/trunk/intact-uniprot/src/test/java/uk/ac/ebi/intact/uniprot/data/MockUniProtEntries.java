@@ -150,7 +150,7 @@ public class MockUniProtEntries {
         DefaultXRefFactory factory = DefaultXRefFactory.getInstance();
 
         EnsemblImpl e = new EnsemblImpl();
-        e.setEnsemblAccessionNumber( factory.buildEnsemblAccessionNumber( id ) );
+        e.setEnsemblGeneIdentifier( factory.buildEnsemblGeneIdentifier( id ) );
         e.setDatabase( DatabaseType.ENSEMBL );
 
         return e;
