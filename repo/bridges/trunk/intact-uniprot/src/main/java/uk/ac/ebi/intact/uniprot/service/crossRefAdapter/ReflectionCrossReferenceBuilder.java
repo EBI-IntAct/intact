@@ -92,7 +92,7 @@ public class ReflectionCrossReferenceBuilder {
                 String methodName = candidateMethod.getName();
 
                 if ( ( !methodName.equals( "getId" ) ) && methodName.startsWith( "get" ) &&
-                     ( methodName.endsWith( "Id" ) || methodName.endsWith( "Number" ) ) ) {
+                     ( methodName.endsWith( "Id" ) || methodName.endsWith( "Number" ) || methodName.endsWith( "GeneIdentifier" ) ) ) {
                     method = candidateMethod;
                     foundId = true;
                 }
@@ -172,6 +172,10 @@ public class ReflectionCrossReferenceBuilder {
         String desc = null;
 
         // Build the Generic Cross reference
+        if( id == null ) {
+            System.out.println( "db = " + db + " desc = " + desc );
+        }
+
         return new UniprotCrossReference( id, db, desc );
     }
 

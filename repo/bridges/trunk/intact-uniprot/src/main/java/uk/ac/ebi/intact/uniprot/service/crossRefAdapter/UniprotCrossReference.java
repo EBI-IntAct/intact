@@ -6,7 +6,7 @@
 package uk.ac.ebi.intact.uniprot.service.crossRefAdapter;
 
 /**
- * TODO comment this
+ * Uniprot cross reference.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -19,17 +19,14 @@ public class UniprotCrossReference {
     private String description;
 
     public UniprotCrossReference( String accessionNumber, String database ) {
-        this.accessionNumber = accessionNumber;
-        this.database = database;
+        setAccessionNumber( accessionNumber );
+        setDatabase( database );
     }
-
 
     public UniprotCrossReference( String accessionNumber, String database, String description ) {
-        this.accessionNumber = accessionNumber;
-        this.database = database;
-        this.description = description;
+        this(accessionNumber, database);
+        setDescription( description );
     }
-
 
     /**
      * Getter for property 'accessionNumber'.
@@ -90,7 +87,6 @@ public class UniprotCrossReference {
     public void setDescription( String description ) {
         this.description = description;
     }
-
 
     public boolean equals( Object o ) {
         if ( this == o ) {
