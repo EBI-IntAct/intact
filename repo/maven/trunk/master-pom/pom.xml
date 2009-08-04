@@ -13,9 +13,9 @@
     </description>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-16</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-16</developerConnection>
-        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-master-16</url>
+        <connection>scm:svn:https://intact.googlecode.com/svn/repo/maven/trunk/master-pom</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/maven/trunk/master-pom</developerConnection>
+        <url>https://intact.googlecode.com/svn/repo/maven/trunk/master-pom</url>
     </scm>
 
     <properties>
