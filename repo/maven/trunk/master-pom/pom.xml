@@ -266,18 +266,6 @@
 	        <url>http://download.java.net/maven/2/</url>
         </repository>
 
-        <repository>
-            <id>codehaus</id>
-            <url>http://repository.codehaus.org/</url>
-            <layout>default</layout>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-
        <repository>
             <id>jboss</id>
             <name>JBoss Repository</name>
@@ -297,17 +285,6 @@
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </pluginRepository>
-
-        <pluginRepository>
-            <id>codehaus-plugins</id>
-            <url>http://repository.codehaus.org/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
