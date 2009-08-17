@@ -1,4 +1,6 @@
-#summary Explains what happens in the database when triggering an export.
+#summary Explains the process, API and database regarding an IMEx export.
+
+The code and tables refered in this page are available in *Intact Core >= 2.1.0*.
 
 = IMEx Export =
 
@@ -16,7 +18,7 @@ Two database tables are important for this task:
 || imex_exp_release     || uk.ac.ebi.intact.model.meta.!ImexExportRelease     || Contains a row per exported release ||
 || imex_exp_interaction || uk.ac.ebi.intact.model.meta.!ImexExportInteraction || Rows represent an IMEx action (CREATED, UPDATE, DELETED) for an interaction and refer to an specific exported release. No two rows containing the same interaction will be present for a specific release ||
 
-== Annotation ==
+== Annotation Phase ==
 
 An annotation, _last-relevant-imex-update_ is added to Interactions and Publications when a modification that is relevant for IMEx is done. 
 
@@ -26,10 +28,18 @@ When an interaction is deleted, a record is directly added to the _imex_exp_rele
 
 *TODO*: API
 
-== Preparation ==
+== Preparation Phase ==
 
+In this phase, the interactions containing IMEx-relevant modifications will be fetched and the changes will be recorded in the IMEx export tables.
 
+This process can be triggered using this code:
 
-== Export ==
+*TODO*: API
+
+That would create a new !ImexExportRelease with the current date and this entity would be used in all the created !ImexExportInteractions.
+
+At this moment, all the DELETED interaction records with no !ImexExportRelease will get the current one assigned.
+
+== Export Phase ==
 
 This part involves exporting the data to an IMEx FTP site. This task is handled by an extension for the IMEx repository that is an !IntAct provider. The provider will read the IMEx export tables and fetch the data that needs to be releasing. The IMEx repository will handle the PSI-MI XML conversion and the publication in the FTP site.
