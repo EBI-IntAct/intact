@@ -30,7 +30,9 @@ When an interaction is deleted, a record is directly added to the _imex_exp_rele
 
 == Preparation Phase ==
 
-In this phase, the interactions containing IMEx-relevant modifications will be fetched and the changes will be recorded in the IMEx export tables.
+In this phase, the interactions containing IMEx-relevant modifications will be fetched and the changes will be recorded in the IMEx export tables. The following image summarises the flow:
+
+<img src="http://intact.googlecode.com/svn/wiki/images/imex/preparation-phase.png"/>
 
 This process can be triggered using this code:
 
