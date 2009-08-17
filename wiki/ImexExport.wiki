@@ -1,0 +1,5 @@
+#summary Explains what happens in the database when triggering an export.
+
+= IMEx Export =
+
+This page explains how to prepare an IMEx export using the IntAct API and model.
