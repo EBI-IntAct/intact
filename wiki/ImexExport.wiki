@@ -22,10 +22,14 @@ An annotation, _last-relevant-imex-update_ is added to Interactions and Publicat
 
 *TODO*: explain API to do this when it is implemented.
 
-When an Interaction or Publication is deleted, a record is directly added to the _imex_exp_release_ table.
+When an interaction is deleted, a record is directly added to the _imex_exp_release_ table if the interaction had an IMEx ID.
 
 *TODO*: API
 
 == Preparation ==
 
+
+
 == Export ==
+
+This part involves exporting the data to an IMEx FTP site. This task is handled by an extension for the IMEx repository that is an !IntAct provider. The provider will read the IMEx export tables and fetch the data that needs to be releasing. The IMEx repository will handle the PSI-MI XML conversion and the publication in the FTP site.
