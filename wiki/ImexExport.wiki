@@ -2,9 +2,9 @@
 
 = IMEx Export =
 
-This page explains how to prepare an !IMEx export using the IntAct API and model.
+This page explains how to prepare an IMEx export using the !IntAct API and model.
 
-An !IMEx export consists in three phases:
+An IMEx export consists in three phases:
 
   * *Annotation*: this phase is the longest and spans for the time between two releases. Modified data (e.g. interactions, publications) are annotated so the preparation phase can detect what has been modified after the previous release.
   * *Preparation*: in this phase the tables that contain information about the exported data are populated by fetching all the !IMEx-relevant data that has been modified during a specific period of time.
