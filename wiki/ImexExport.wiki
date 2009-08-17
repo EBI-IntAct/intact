@@ -6,11 +6,25 @@ This page explains how to prepare an IMEx export using the !IntAct API and model
 
 An IMEx export consists in three phases:
 
-  * *Annotation*: this phase is the longest and spans for the time between two releases. Modified data (e.g. interactions, publications) are annotated so the preparation phase can detect what has been modified after the previous release.
+  * *Annotation*: this phase spans for the time between two exports. Modified data (e.g. interactions, publications) during normal curation is annotated so the preparation phase can detect what has been modified after the previous release.
   * *Preparation*: in this phase the tables that contain information about the exported data are populated by fetching all the !IMEx-relevant data that has been modified during a specific period of time.
   * *Export*: this is not controlled by the !IntAct API, but by an [http://code.google.com/p/imex-repository/ IMEx repository] extension.
 
+Two database tables are important for this task:
+
+|| *Table*              || *Entity* || *Description*                         ||
+|| imex_exp_release     || uk.ac.ebi.intact.model.meta.ImexExportRelease     || Contains a row per exported release ||
+|| imex_exp_interaction || uk.ac.ebi.intact.model.meta.ImexExportInteraction || Rows represent an IMEx action (CREATED, UPDATE, DELETED) for an interaction and refer to an specific exported release. No two rows containing the same interaction will be present for a specific release ||
+
 == Annotation ==
+
+An annotation, _last-relevant-imex-update_ is added to Interactions and Publications when a modification that is relevant for IMEx is done. 
+
+*TODO*: explain API to do this when it is implemented.
+
+When an Interaction or Publication is deleted, a record is directly added to the _imex_exp_release_ table.
+
+*TODO*: API
 
 == Preparation ==
 
