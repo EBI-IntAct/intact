@@ -78,6 +78,7 @@ public class CvObjectUtils {
         cv.setIdentifier( miIdentifier );
 
         if (miIdentifier != null) {
+            cv.setIdentifier( miIdentifier );
             CvObjectXref idXref = XrefUtils.createIdentityXrefPsiMi( cv, miIdentifier );
             cv.addXref( idXref );
             idXref.prepareParentMi();
