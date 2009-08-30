@@ -9,10 +9,11 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.check.model.*;
 import uk.ac.ebi.intact.sanity.commons.report.InsaneObject;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 
 
 /**
- * TODO comment it.
+ * Editor Url Builder.
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id: EditorUrlBuilder.java,v 1.5 2006/05/18 08:34:28 catherineleroy Exp $
@@ -89,15 +90,27 @@ public class EditorUrlBuilder {
         return url;
     }
 
+    @Deprecated
     public String getEditorUrl(String type, String ac){
+        return getEditorUrl( type, ac, null );
+    }
+
+    public String getEditorUrl(String type, String ac, String ruleKey){
         type = type.replaceAll("Impl", "");
         String url = editorUrl + "ac=" + ac + "&type=" + type;
+        if( ruleKey != null ) {
+            url = url + "&rule=" + ruleKey;
+        }
         return url;
     }
 
+    @Deprecated
     public void addEditorUrl(InsaneObject insaneObject) {
-        String url = getEditorUrl(insaneObject.getObjclass(), insaneObject.getAc());
-        insaneObject.setUrl(url);
+        addEditorUrl( insaneObject, null );
     }
 
+    public void addEditorUrl(InsaneObject insaneObject, String ruleKey ) {
+        String url = getEditorUrl(insaneObject.getObjclass(), insaneObject.getAc(), ruleKey );
+        insaneObject.setUrl(url);
+    }
 }

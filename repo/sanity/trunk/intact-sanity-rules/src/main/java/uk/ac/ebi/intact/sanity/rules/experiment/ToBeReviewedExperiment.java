@@ -26,14 +26,16 @@ import java.util.Collection;
  */
 
 @SanityRule(target = Experiment.class, group = RuleGroup.INTACT )
-public class ToBeReviewedExperiment implements Rule<Experiment> {
+public class ToBeReviewedExperiment extends Rule<Experiment> {
 
     // TODO what about experiments imported through IMEx ?
 
     public Collection<GeneralMessage> check(Experiment experiment) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-        if(ExperimentUtils.isToBeReviewed(experiment)){
-            messages.add(new GeneralMessage( MessageDefinition.EXPERIMENT_TO_BE_REVIEWED, experiment));
+        if( ! isIgnored( experiment, MessageDefinition.EXPERIMENT_TO_BE_REVIEWED ) ) {
+            if(ExperimentUtils.isToBeReviewed(experiment)){
+                messages.add(new GeneralMessage( MessageDefinition.EXPERIMENT_TO_BE_REVIEWED, experiment));
+            }
         }
         return messages;
     }

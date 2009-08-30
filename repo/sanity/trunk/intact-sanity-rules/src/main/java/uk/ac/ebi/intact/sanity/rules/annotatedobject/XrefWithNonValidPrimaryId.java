@@ -19,25 +19,27 @@ import java.util.Collection;
  */
 
 @SanityRule (target = AnnotatedObject.class, group = { RuleGroup.INTACT, RuleGroup.IMEX })
-public class XrefWithNonValidPrimaryId implements Rule<AnnotatedObject<?,?>> {
+public class XrefWithNonValidPrimaryId extends Rule<AnnotatedObject<?,?>> {
 
     public Collection<GeneralMessage> check(AnnotatedObject<?,?> intactObject) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
 
-        for (Xref xref : intactObject.getXrefs()) {
-            String primaryId = xref.getPrimaryId();
+        if( ! isIgnored( intactObject, MessageDefinition.XREF_INVALID_PRIMARYID ) ) {
+            for (Xref xref : intactObject.getXrefs()) {
+                String primaryId = xref.getPrimaryId();
 
-            String idValidationRegexp = getIdValidationRegexp(xref.getCvDatabase());
+                String idValidationRegexp = getIdValidationRegexp(xref.getCvDatabase());
 
-            if (idValidationRegexp != null && !primaryId.matches(idValidationRegexp)) {
-                XrefMessage xrefMessage = new XrefMessage( MessageDefinition.XREF_INVALID_PRIMARYID, intactObject, xref);
+                if (idValidationRegexp != null && !primaryId.matches(idValidationRegexp)) {
+                    XrefMessage xrefMessage = new XrefMessage( MessageDefinition.XREF_INVALID_PRIMARYID, intactObject, xref);
 
-                Field regexField = new Field();
-                regexField.setName("Regexp");
-                regexField.setValue(idValidationRegexp);
-                xrefMessage.getInsaneObject().getFields().add(regexField);
+                    Field regexField = new Field();
+                    regexField.setName("Regexp");
+                    regexField.setValue(idValidationRegexp);
+                    xrefMessage.getInsaneObject().getFields().add(regexField);
 
-                messages.add(xrefMessage);
+                    messages.add(xrefMessage);
+                }
             }
         }
 

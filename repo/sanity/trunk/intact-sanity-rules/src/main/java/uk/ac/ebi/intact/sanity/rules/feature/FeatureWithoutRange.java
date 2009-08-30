@@ -24,13 +24,15 @@ import java.util.Collection;
  * @since 2.0.0
  */
 
-@SanityRule(target = Feature.class, group = { RuleGroup.INTACT, RuleGroup.IMEX })
-public class FeatureWithoutRange implements Rule<Feature> {
+@SanityRule( target = Feature.class, group = {RuleGroup.INTACT, RuleGroup.IMEX} )
+public class FeatureWithoutRange extends Rule<Feature> {
 
-    public Collection<GeneralMessage> check(Feature feature) throws SanityRuleException {
+    public Collection<GeneralMessage> check( Feature feature ) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-        if(feature.getRanges().isEmpty()){
-            messages.add(new GeneralMessage( MessageDefinition.FEATURE_WITHOUT_RANGE, feature));
+        if ( !isIgnored( feature, MessageDefinition.FEATURE_WITHOUT_RANGE ) ) {
+            if ( feature.getRanges().isEmpty() ) {
+                messages.add( new GeneralMessage( MessageDefinition.FEATURE_WITHOUT_RANGE, feature ) );
+            }
         }
         return messages;
     }

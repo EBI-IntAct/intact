@@ -7,9 +7,7 @@ package uk.ac.ebi.intact.sanity.rules.interaction;
 
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.CvExperimentalRole;
-import uk.ac.ebi.intact.model.CvObjectXref;
 import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
@@ -29,7 +27,7 @@ import java.util.Collection;
  */
 
 @SanityRule( target = Interaction.class, group = { RuleGroup.INTACT, RuleGroup.IMEX })
-public class InteractionAndComponentRole implements Rule<Interaction> {
+public class InteractionAndComponentRole extends Rule<Interaction> {
 
     private static final String NO_CATEGORY_DESCRIPTION = "ReportTopic.INTERACTION_WITH_NO_CATEGORIES";
     private static final String MIXED_CATEGORIES_DESCRIPTION = "ReportTopic.INTERACTION_WITH_MIXED_COMPONENT_CATEGORIES";
@@ -67,8 +65,7 @@ public class InteractionAndComponentRole implements Rule<Interaction> {
 
 
         for ( Component component : components ) {
-            CvObjectXref cvRoleIdentityXref = CvObjectUtils.getPsiMiIdentityXref( component.getCvExperimentalRole() );
-            String cvRoleMiRef = cvRoleIdentityXref.getPrimaryId();
+            String cvRoleMiRef = component.getCvExperimentalRole().getIdentifier();
             if ( CvExperimentalRole.BAIT_PSI_REF.equals( cvRoleMiRef ) ) {
                 baitCount++;
             } else if ( CvExperimentalRole.PREY_PSI_REF.equals( cvRoleMiRef ) ) {
@@ -123,59 +120,67 @@ public class InteractionAndComponentRole implements Rule<Interaction> {
         boolean isAMixedCategoryInteraction = false;
         switch ( categoryCountWithoutInhibCat ) {
             case 0:
-                messages.add( new GeneralMessage(MessageDefinition.INTERACTION_ROLES_NO_CATEGORY, interaction ) );
+                if ( !isIgnored( interaction, MessageDefinition.INTERACTION_ROLES_NO_CATEGORY ) ) {
+                    messages.add( new GeneralMessage(MessageDefinition.INTERACTION_ROLES_NO_CATEGORY, interaction ) );
+                }
                 break;
             case 1:
-                if ( baitPrey == 1 ) {
-                    if ( baitCount == 0 ) {
-                        messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
-                    } else if ( preyCount == 0 ) {
-                        messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
-                    }
-                } else if ( fluorophoreAcceptorDonor == 1 ) {
-                    if ( fluorophoreDonorCount == 0 ) {
-                        messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
-                    }
-                } else if ( electronAcceptorDonor == 1 ) {
-                    if ( electronAcceptorCount == 0 ) {
-                        messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
-                    } else if ( electronDonorCount == 0 ) {
-                        messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
-                    }
-                } else if ( enzymeTarget == 1 ) {
-                    if ( enzymeCount == 0 ) {
-                        messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
-                    } else if ( enzymeTargetCount == 0 ) {
-                        messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
-                    }
-                } else if ( self == 1 ) {
-                    if ( selfCount > 1 ) {
-                        messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
-                    } else {
-                        if ( selfStoichiometry < 1F ) {
 
-                        }
-                    }
-                } else {
-                    if ( neutralCount == 1 && inhibitedInhibitor == 0 ) {
-                        if ( neutralStoichiometry == 1 ) {
+                if ( !isIgnored( interaction, MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES ) ) {
+                    if ( baitPrey == 1 ) {
+                        if ( baitCount == 0 ) {
                             messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
+                        } else if ( preyCount == 0 ) {
+                            messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
+                        }
+                    } else if ( fluorophoreAcceptorDonor == 1 ) {
+                        if ( fluorophoreDonorCount == 0 ) {
+                            messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
+                        }
+                    } else if ( electronAcceptorDonor == 1 ) {
+                        if ( electronAcceptorCount == 0 ) {
+                            messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
+                        } else if ( electronDonorCount == 0 ) {
+                            messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
+                        }
+                    } else if ( enzymeTarget == 1 ) {
+                        if ( enzymeCount == 0 ) {
+                            messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
+                        } else if ( enzymeTargetCount == 0 ) {
+                            messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
+                        }
+                    } else if ( self == 1 ) {
+                        if ( selfCount > 1 ) {
+                            messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
+                        } else {
+                            if ( selfStoichiometry < 1F ) {
+
+                            }
+                        }
+                    } else {
+                        if ( neutralCount == 1 && inhibitedInhibitor == 0 ) {
+                            if ( neutralStoichiometry == 1 ) {
+                                messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
+                            }
                         }
                     }
                 }
                 break;
             default:
                 isAMixedCategoryInteraction = true;
-                messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
+                if ( !isIgnored( interaction, MessageDefinition.INTERACTION_ROLES_NO_CATEGORY ) ) {
+                    messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
+                }
                 break;
         }
         // It was no mixed interaction counting all categories but not InhibitedInhibitor, we now check if there's no
         // mixed interaction counting all categories but not Neutral
         if ( categoryCountWithoutNeutralCat > 1 && isAMixedCategoryInteraction == false ) {
-            messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
+            if ( !isIgnored( interaction, MessageDefinition.INTERACTION_ROLES_NO_CATEGORY ) ) {
+                messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
+            }
         }
 
         return messages;
     }
-
 }

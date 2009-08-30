@@ -35,53 +35,55 @@ import java.util.Collection;
 
 @SanityRule( target = AnnotatedObject.class, group = {RuleGroup.INTACT, RuleGroup.IMEX} )
 
-public class BrokenUrl implements Rule<AnnotatedObject> {
+public class BrokenUrl extends Rule<AnnotatedObject> {
 
     public Collection<GeneralMessage> check( AnnotatedObject ao ) throws SanityRuleException {
 
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
 
-        for ( Annotation annotation : ao.getAnnotations() ) {
-            String topicMi = null;
-            CvObjectXref topicIdentityXref = CvObjectUtils.getPsiMiIdentityXref( annotation.getCvTopic() );
-            if ( topicIdentityXref != null ) {
-                topicMi = topicIdentityXref.getPrimaryId();
-            }
-            if ( CvTopic.URL_MI_REF.equals( topicMi ) ) {
-
-                String urlString = annotation.getAnnotationText();
-
-                HttpURL httpUrl = null;
-
-                //Creating the httpUrl object corresponding to the the url string contained in the annotation
-                try {
-                    httpUrl = new HttpURL( urlString );
-                } catch ( Exception e ) {
-                    messages.add( new AnnotationMessage( MessageDefinition.BROKEN_URL, ao, annotation ) );
-                    return messages;
+        if( ! isIgnored( ao, MessageDefinition.BROKEN_URL ) ) {
+            for ( Annotation annotation : ao.getAnnotations() ) {
+                String topicMi = null;
+                CvObjectXref topicIdentityXref = CvObjectUtils.getPsiMiIdentityXref( annotation.getCvTopic() );
+                if ( topicIdentityXref != null ) {
+                    topicMi = topicIdentityXref.getPrimaryId();
                 }
+                if ( CvTopic.URL_MI_REF.equals( topicMi ) ) {
 
-                // If httpUrl is not null, get the method corresponding to the uri, execute if and analyze the
-                // status code to know whether the url is valide or not.
-                if ( httpUrl != null ) {
+                    String urlString = annotation.getAnnotationText();
 
-                    HttpClient client = new HttpClient();
-                    HttpMethod method = null;
-                    int statusCode = -1;
+                    HttpURL httpUrl = null;
+
+                    //Creating the httpUrl object corresponding to the the url string contained in the annotation
                     try {
-                        method = new GetMethod( urlString );
-                        if ( method != null ) {
-                            statusCode = client.executeMethod( method );
-                        }
+                        httpUrl = new HttpURL( urlString );
                     } catch ( Exception e ) {
                         messages.add( new AnnotationMessage( MessageDefinition.BROKEN_URL, ao, annotation ) );
                         return messages;
                     }
 
-                    if ( statusCode != -1 ) {
-                        if ( statusCode >= 300 && statusCode < 600 ) {
+                    // If httpUrl is not null, get the method corresponding to the uri, execute if and analyze the
+                    // status code to know whether the url is valide or not.
+                    if ( httpUrl != null ) {
+
+                        HttpClient client = new HttpClient();
+                        HttpMethod method = null;
+                        int statusCode = -1;
+                        try {
+                            method = new GetMethod( urlString );
+                            if ( method != null ) {
+                                statusCode = client.executeMethod( method );
+                            }
+                        } catch ( Exception e ) {
                             messages.add( new AnnotationMessage( MessageDefinition.BROKEN_URL, ao, annotation ) );
                             return messages;
+                        }
+
+                        if ( statusCode != -1 ) {
+                            if ( statusCode >= 300 && statusCode < 600 ) {
+                                messages.add( new AnnotationMessage( MessageDefinition.BROKEN_URL, ao, annotation ) );
+                                return messages;
+                            }
                         }
                     }
                 }

@@ -26,12 +26,14 @@ import java.util.Collection;
 
 @SanityRule(target = Interaction.class, group = { RuleGroup.INTACT, RuleGroup.IMEX })
 
-public class InteractionWithNoType implements Rule<Interaction> {
+public class InteractionWithNoType extends Rule<Interaction> {
 
     public Collection<GeneralMessage> check(Interaction interaction) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-        if(interaction.getCvInteractionType() == null){
-            messages.add(new GeneralMessage( MessageDefinition.INTERACTION_WITHOUT_TYPE, interaction ));
+        if ( !isIgnored( interaction, MessageDefinition.INTERACTION_WITHOUT_TYPE ) ) {
+            if(interaction.getCvInteractionType() == null){
+                messages.add(new GeneralMessage( MessageDefinition.INTERACTION_WITHOUT_TYPE, interaction ));
+            }
         }
         return messages;
     }

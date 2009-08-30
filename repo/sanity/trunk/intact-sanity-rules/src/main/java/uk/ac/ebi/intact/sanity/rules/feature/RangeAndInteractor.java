@@ -27,7 +27,7 @@ import java.util.Collection;
 
 @SanityRule( target = Feature.class, group = RuleGroup.INTACT )
 
-public class RangeAndInteractor implements Rule<Feature> {
+public class RangeAndInteractor extends Rule<Feature> {
 
     public Collection<GeneralMessage> check( Feature feature ) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
@@ -67,17 +67,20 @@ public class RangeAndInteractor implements Rule<Feature> {
                           isFromRange || isToRange
                         ) ) {
 
-                messages.add( new RangeMessage( MessageDefinition.FEATURE_WITH_INCOMPATIBLE_INTERACTOR, feature,
-                                                range, interactor ) );
-
+                if ( !isIgnored( feature, MessageDefinition.FEATURE_WITH_INCOMPATIBLE_INTERACTOR ) ) {
+                    messages.add( new RangeMessage( MessageDefinition.FEATURE_WITH_INCOMPATIBLE_INTERACTOR, feature,
+                                                    range, interactor ) );
+                }
             } else if ( isPolymer && ( hasFrom || hasTo ) ) {
 
                 final String seq = ( ( Polymer ) interactor ).getSequence();
                 final int length = ( seq == null ? 0 : seq.length() );
 
                 if ( length == 0 ) {
-                    messages.add( new RangeMessage( MessageDefinition.DETERMINED_RANGE_WITHOUT_SEQUENCE, feature,
-                                                    range, interactor ) );
+                    if ( !isIgnored( feature, MessageDefinition.DETERMINED_RANGE_WITHOUT_SEQUENCE ) ) {
+                        messages.add( new RangeMessage( MessageDefinition.DETERMINED_RANGE_WITHOUT_SEQUENCE, feature,
+                                                        range, interactor ) );
+                    }
                 } else {
 
                     if ( range.getFromIntervalStart() > length ||
@@ -85,8 +88,10 @@ public class RangeAndInteractor implements Rule<Feature> {
                          range.getToIntervalStart() > length ||
                          range.getToIntervalEnd() > length ) {
 
-                        messages.add( new RangeMessage( MessageDefinition.RANGE_AND_INTERACTOR_BOUNDARIES_MISMATCH,
-                                                        feature, range, interactor ) );
+                        if ( !isIgnored( feature, MessageDefinition.RANGE_AND_INTERACTOR_BOUNDARIES_MISMATCH ) ) {
+                            messages.add( new RangeMessage( MessageDefinition.RANGE_AND_INTERACTOR_BOUNDARIES_MISMATCH,
+                                                            feature, range, interactor ) );
+                        }
                     }
                 }
             }

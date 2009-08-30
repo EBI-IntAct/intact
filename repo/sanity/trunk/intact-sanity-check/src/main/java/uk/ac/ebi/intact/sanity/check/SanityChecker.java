@@ -136,7 +136,7 @@ public class SanityChecker {
 
                 for ( SanityResult sanityResult : report.getSanityResults() ) {
                     for ( InsaneObject insaneObject : sanityResult.getInsaneObjects() ) {
-                        editorUrlBuilder.addEditorUrl( insaneObject );
+                        editorUrlBuilder.addEditorUrl( insaneObject, sanityResult.getKey() );
                     }
                 }
             }

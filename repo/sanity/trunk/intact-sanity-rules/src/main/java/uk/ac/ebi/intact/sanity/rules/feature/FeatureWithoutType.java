@@ -26,12 +26,14 @@ import java.util.Collection;
 
 @SanityRule( target = Feature.class, group = {RuleGroup.INTACT, RuleGroup.IMEX} )
 
-public class FeatureWithoutType implements Rule<Feature> {
+public class FeatureWithoutType extends Rule<Feature> {
 
     public Collection<GeneralMessage> check( Feature feature ) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-        if ( feature.getCvFeatureType() == null ) {
-            messages.add( new GeneralMessage( MessageDefinition.FEATURE_WITHOUT_TYPE, feature ) );
+        if ( !isIgnored( feature, MessageDefinition.FEATURE_WITHOUT_TYPE ) ) {
+            if ( feature.getCvFeatureType() == null ) {
+                messages.add( new GeneralMessage( MessageDefinition.FEATURE_WITHOUT_TYPE, feature ) );
+            }
         }
         return messages;
     }

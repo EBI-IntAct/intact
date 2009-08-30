@@ -28,15 +28,17 @@ import java.util.Collection;
 
 @SanityRule( target = Polymer.class, group = {RuleGroup.INTACT, RuleGroup.IMEX} )
 
-public class PolymerWithoutSequence implements Rule<Polymer> {
+public class PolymerWithoutSequence extends Rule<Polymer> {
 
     public Collection<GeneralMessage> check( Polymer polymer ) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-        final String sequence = polymer.getSequence();
-        if ( sequence == null || sequence.trim().length() == 0 ) {
+        if ( !isIgnored( polymer, MessageDefinition.POLYMER_WITHOUT_SEQUENCE ) ) {
+            final String sequence = polymer.getSequence();
+            if ( sequence == null || sequence.trim().length() == 0 ) {
 
-            messages.add( new InteractorMessage( MessageDefinition.POLYMER_WITHOUT_SEQUENCE, ( Interactor ) polymer ) );
+                messages.add( new InteractorMessage( MessageDefinition.POLYMER_WITHOUT_SEQUENCE, ( Interactor ) polymer ) );
 
+            }
         }
         return messages;
     }

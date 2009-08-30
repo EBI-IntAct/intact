@@ -27,37 +27,39 @@ import java.util.Map;
  */
 
 @SanityRule(target = AnnotatedObject.class, group = RuleGroup.INTACT)
-public class AnnotationNotUsingAnAppropriateCvTopic implements Rule<AnnotatedObject> {
+public class AnnotationNotUsingAnAppropriateCvTopic extends Rule<AnnotatedObject> {
 
     private static Map<String,Annotation> CACHE = new HashMap<String,Annotation>();
 
     public Collection<GeneralMessage> check(AnnotatedObject intactObject) throws SanityRuleException {
 
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-        
-        Collection<Annotation> annotations = intactObject.getAnnotations();
-        for(Annotation annotation  : annotations){
-            CvTopic cvTopic = annotation.getCvTopic();
-            Annotation usedInClass = null;
-            if(CACHE.containsKey(cvTopic)){
-                usedInClass = CACHE.get(cvTopic.getShortLabel());
-            }else{
-                usedInClass = getUsedInClassAnnotation(cvTopic);
-            }
-            if(usedInClass == null){
-                //No usedInClass annotation for this cvTopic
-                messages.add(new GeneralMessage( MessageDefinition.TOPIC_WITHOUT_USED_IN_CLASS, cvTopic ) );
-            }else{
-                // annotation.getAnnotationText() can't be null as this is checked in the getUsedInClassAnnotation
-                // method.
-                if(!usedInClass.getAnnotationText().contains(intactObject.getClass().getSimpleName())){
-                    messages.add(new AnnotationMessage(MessageDefinition.ANNOTATION_WITH_WRONG_TOPIC,
-                                                       intactObject,
-                                                       annotation));
+
+        if( ! isIgnored( intactObject, MessageDefinition.ANNOTATION_WITH_WRONG_TOPIC ) ) {
+
+            Collection<Annotation> annotations = intactObject.getAnnotations();
+            for(Annotation annotation  : annotations){
+                CvTopic cvTopic = annotation.getCvTopic();
+                Annotation usedInClass = null;
+                if(CACHE.containsKey(cvTopic)){
+                    usedInClass = CACHE.get(cvTopic.getShortLabel());
+                }else{
+                    usedInClass = getUsedInClassAnnotation(cvTopic);
+                }
+                if(usedInClass == null){
+                    //No usedInClass annotation for this cvTopic
+                    messages.add(new GeneralMessage( MessageDefinition.TOPIC_WITHOUT_USED_IN_CLASS, cvTopic ) );
+                }else{
+                    // annotation.getAnnotationText() can't be null as this is checked in the getUsedInClassAnnotation
+                    // method.
+                    if(!usedInClass.getAnnotationText().contains(intactObject.getClass().getSimpleName())){
+                        messages.add(new AnnotationMessage(MessageDefinition.ANNOTATION_WITH_WRONG_TOPIC,
+                                intactObject,
+                                annotation));
+                    }
                 }
             }
         }
-
         return messages;
     }
 

@@ -25,17 +25,19 @@ import java.util.Collection;
  * @since TODO
  */
 
-@SanityRule(target = Protein.class, group = RuleGroup.INTACT )
-public class NotValidCrc64 implements Rule<Protein> {
+@SanityRule( target = Protein.class, group = RuleGroup.INTACT )
+public class NotValidCrc64 extends Rule<Protein> {
 
-    public Collection<GeneralMessage> check(Protein protein) throws SanityRuleException {
+    public Collection<GeneralMessage> check( Protein protein ) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-        String sequence = protein.getSequence();
-        if (sequence != null) {
-            String calculatedCrc64 = Crc64.getCrc64(sequence);
-            String storedCrc64 = protein.getCrc64();
-            if(!calculatedCrc64.equals(storedCrc64)){
-                messages.add(new GeneralMessage(MessageDefinition.PROTEIN_INCORRECT_CRC64, protein));
+        if ( !isIgnored( protein, MessageDefinition.PROTEIN_INCORRECT_CRC64 ) ) {
+            String sequence = protein.getSequence();
+            if ( sequence != null ) {
+                String calculatedCrc64 = Crc64.getCrc64( sequence );
+                String storedCrc64 = protein.getCrc64();
+                if ( !calculatedCrc64.equals( storedCrc64 ) ) {
+                    messages.add( new GeneralMessage( MessageDefinition.PROTEIN_INCORRECT_CRC64, protein ) );
+                }
             }
         }
         return messages;

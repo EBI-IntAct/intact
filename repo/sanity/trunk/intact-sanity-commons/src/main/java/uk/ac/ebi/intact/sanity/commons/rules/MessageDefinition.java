@@ -105,7 +105,7 @@ public enum MessageDefinition {
     ////////////////////////
     // Interaction
 
-    INTERACTION_ROLES_NO_CATEGORY( Interaction.class, INTERACTION, 1, "Interaction without any recognized categories", ERROR ),
+    INTERACTION_ROLES_NO_CATEGORY( Interaction.class, INTERACTION, 1, "Interaction's experimental role without any recognized categories", ERROR ),
 
     INTERACTION_ROLES_MIXED_CATEGORIES( Interaction.class, INTERACTION, 2, "Interaction with mixed component roles", ERROR ),
 

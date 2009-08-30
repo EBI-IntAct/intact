@@ -27,7 +27,7 @@ import java.util.Collection;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class SimpleRule implements Rule<Experiment> {
+public class SimpleRule extends Rule<Experiment> {
 
     public Collection<GeneralMessage> check(Experiment intactObject) throws SanityRuleException {
         return Arrays.asList(new GeneralMessage(MessageDefinition.BROKEN_URL, intactObject));

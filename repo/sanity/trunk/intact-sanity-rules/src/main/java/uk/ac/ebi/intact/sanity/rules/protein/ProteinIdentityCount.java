@@ -6,7 +6,6 @@
 package uk.ac.ebi.intact.sanity.rules.protein;
 
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
@@ -26,8 +25,8 @@ import java.util.Collection;
  * @since TODO
  */
 
-@SanityRule(target = Protein.class, group = { RuleGroup.INTACT, RuleGroup.IMEX })
-public class ProteinIdentityCount implements Rule<Protein> {
+@SanityRule( target = Protein.class, group = {RuleGroup.INTACT, RuleGroup.IMEX} )
+public class ProteinIdentityCount extends Rule<Protein> {
 
     private static final String NO_UNIPROT_DESCRIPTION = "These Proteins have no xref identity to UniProt.";
     private static final String NO_UNIPROT_SUGGESTION = "Edit the Protein and add an identity xref to UniProt.";
@@ -36,29 +35,33 @@ public class ProteinIdentityCount implements Rule<Protein> {
     private static final String MULTIPLE_IDENTITY_SUGGESTION = "";
 
 
-    public Collection<GeneralMessage> check(Protein protein) throws SanityRuleException {
+    public Collection<GeneralMessage> check( Protein protein ) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
 
-        if(!CommonMethods.isNoUniprotUpdate(protein)){
+        if ( !CommonMethods.isNoUniprotUpdate( protein ) ) {
             int uniprotIdentityCount = 0;
             Collection<InteractorXref> xrefs = protein.getXrefs();
 
-            for(InteractorXref xref : xrefs){
+            for ( InteractorXref xref : xrefs ) {
                 CvXrefQualifier qualifier = xref.getCvXrefQualifier();
-                if(qualifier != null){
-                    CvObjectXref qualifierPsiMiXref = CvObjectUtils.getPsiMiIdentityXref(qualifier);
-                    if(qualifierPsiMiXref != null && CvXrefQualifier.IDENTITY_MI_REF.equals(qualifierPsiMiXref.getPrimaryId())){
-                        CvObjectXref databasePsiMiXref = CvObjectUtils.getPsiMiIdentityXref(xref.getCvDatabase());
-                        if(databasePsiMiXref != null && CvDatabase.UNIPROT_MI_REF.equals(databasePsiMiXref.getPrimaryId())){
+                if ( qualifier != null ) {
+                    String qualifierMi = qualifier.getIdentifier();
+                    if ( qualifierMi != null && CvXrefQualifier.IDENTITY_MI_REF.equals( qualifierMi ) ) {
+                        String databaseMi = xref.getCvDatabase().getIdentifier();
+                        if ( databaseMi != null && CvDatabase.UNIPROT_MI_REF.equals( databaseMi ) ) {
                             uniprotIdentityCount++;
                         }
                     }
                 }
             }
-            if(uniprotIdentityCount == 0){
-                messages.add(new GeneralMessage(MessageDefinition.PROTEIN_UNIPROT_NO_XREF, protein));
-            }else if(uniprotIdentityCount > 1){
-                messages.add(new GeneralMessage(MessageDefinition.PROTEIN_UNIPROT_MULTIPLE_XREF, protein));
+            if ( uniprotIdentityCount == 0 ) {
+                if ( !isIgnored( protein, MessageDefinition.PROTEIN_UNIPROT_NO_XREF ) ) {
+                    messages.add( new GeneralMessage( MessageDefinition.PROTEIN_UNIPROT_NO_XREF, protein ) );
+                }
+            } else if ( uniprotIdentityCount > 1 ) {
+                if ( !isIgnored( protein, MessageDefinition.PROTEIN_UNIPROT_MULTIPLE_XREF ) ) {
+                    messages.add( new GeneralMessage( MessageDefinition.PROTEIN_UNIPROT_MULTIPLE_XREF, protein ) );
+                }
             }
         }
 
