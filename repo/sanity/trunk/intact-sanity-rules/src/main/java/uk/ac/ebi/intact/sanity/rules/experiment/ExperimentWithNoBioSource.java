@@ -25,12 +25,14 @@ import java.util.Collection;
  */
 
 @SanityRule(target = Experiment.class, group = { RuleGroup.INTACT, RuleGroup.IMEX })
-public class ExperimentWithNoBioSource implements Rule<Experiment> {
+public class ExperimentWithNoBioSource extends Rule<Experiment> {
 
     public Collection<GeneralMessage> check(Experiment experiment) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-        if(experiment.getBioSource() == null){
-            messages.add(new GeneralMessage( MessageDefinition.EXPERIMENT_WITHOUT_BIOSOURCE, experiment ));
+        if( ! isIgnored( experiment, MessageDefinition.EXPERIMENT_WITHOUT_BIOSOURCE ) ) {
+            if(experiment.getBioSource() == null){
+                messages.add(new GeneralMessage( MessageDefinition.EXPERIMENT_WITHOUT_BIOSOURCE, experiment ));
+            }
         }
         return messages;
     }

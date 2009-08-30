@@ -26,24 +26,27 @@ import java.util.Collection;
  */
 
 @SanityRule(target = Experiment.class, group = { RuleGroup.INTACT, RuleGroup.IMEX })
-public class ExperimentWithNoInteraction implements Rule<Experiment> {
+public class ExperimentWithNoInteraction extends Rule<Experiment> {
 
     public Collection<GeneralMessage> check(Experiment experiment) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
 
-        int interactionCount = 0;
+        if( ! isIgnored( experiment, MessageDefinition.EXPERIMENT_WITHOUT_INTERACTION ) ) {
 
-        if (experiment.getAc() != null) {
-            interactionCount = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
-                .getExperimentDao().countInteractionsForExperimentWithAc(experiment.getAc());
-        } 
+            int interactionCount = 0;
 
-        if (interactionCount == 0) {
-            interactionCount = experiment.getInteractions().size();
-        }
+            if (experiment.getAc() != null) {
+                interactionCount = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                        .getExperimentDao().countInteractionsForExperimentWithAc(experiment.getAc());
+            }
 
-        if(interactionCount == 0){
-            messages.add(new GeneralMessage( MessageDefinition.EXPERIMENT_WITHOUT_INTERACTION, experiment ));
+            if (interactionCount == 0) {
+                interactionCount = experiment.getInteractions().size();
+            }
+
+            if(interactionCount == 0){
+                messages.add(new GeneralMessage( MessageDefinition.EXPERIMENT_WITHOUT_INTERACTION, experiment ));
+            }
         }
         return messages;
     }

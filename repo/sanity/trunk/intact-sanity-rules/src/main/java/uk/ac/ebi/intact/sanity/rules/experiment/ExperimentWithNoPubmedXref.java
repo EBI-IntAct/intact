@@ -29,7 +29,7 @@ import java.util.Collections;
 
 @SanityRule( target = Experiment.class, group = {RuleGroup.INTACT, RuleGroup.IMEX} )
 
-public class ExperimentWithNoPubmedXref implements Rule<Experiment> {
+public class ExperimentWithNoPubmedXref extends Rule<Experiment> {
 
     public static final String TO_BE_ASSIGNED = "to_be_assigned";
 
@@ -37,22 +37,28 @@ public class ExperimentWithNoPubmedXref implements Rule<Experiment> {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         Collection<ExperimentXref> xrefs = getAllPrimaryRefToPubmedAndDoi( experiment );
         if ( xrefs.isEmpty() ) {
-            messages.add( new GeneralMessage( MessageDefinition.EXPERIMENT_WITHOUT_PRIMARY_REF, experiment ) );
+            if( ! isIgnored( experiment, MessageDefinition.EXPERIMENT_WITHOUT_PRIMARY_REF ) ) {
+                messages.add( new GeneralMessage( MessageDefinition.EXPERIMENT_WITHOUT_PRIMARY_REF, experiment ) );
+            }
         } else {
             switch ( xrefs.size() ) {
                 case 1:
                     final Xref xref = xrefs.iterator().next();
                     final String id = xref.getPrimaryId();
                     if ( id != null && id.startsWith( TO_BE_ASSIGNED ) ) {
-                        messages.add( new GeneralMessage( MessageDefinition.EXPERIMENT_WITH_PUBMED_TO_BE_ASSIGNED,
-                                                          experiment ) );
+                        if( ! isIgnored( experiment, MessageDefinition.EXPERIMENT_WITH_PUBMED_TO_BE_ASSIGNED ) ) {
+                            messages.add( new GeneralMessage( MessageDefinition.EXPERIMENT_WITH_PUBMED_TO_BE_ASSIGNED,
+                                                              experiment ) );
+                        }
                     }
                     break;
 
                 default:
                     // more than one Xref
-                    messages.add( new GeneralMessage( MessageDefinition.EXPERIMENT_WITH_MULTIPLE_PRIMARY_REF,
-                                                      experiment ) );
+                    if( ! isIgnored( experiment, MessageDefinition.EXPERIMENT_WITH_MULTIPLE_PRIMARY_REF ) ) {
+                        messages.add( new GeneralMessage( MessageDefinition.EXPERIMENT_WITH_MULTIPLE_PRIMARY_REF,
+                                                          experiment ) );
+                    }
             }
         }
         return messages;

@@ -6,7 +6,6 @@
 package uk.ac.ebi.intact.sanity.rules.biosource;
 
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
@@ -25,28 +24,30 @@ import java.util.Collection;
  * @since 2.0.0
  */
 
-@SanityRule( target = BioSource.class, group = RuleGroup.INTACT )
-public class NoNewtIdentity implements Rule<BioSource> {
+@SanityRule(target = BioSource.class, group = RuleGroup.INTACT)
+public class NoNewtIdentity extends Rule<BioSource> {
 
-    public Collection<GeneralMessage> check( BioSource bs ) throws SanityRuleException {
+    public Collection<GeneralMessage> check(BioSource bs) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
 
-        int validIdentityXref = 0;
-        for ( BioSourceXref bioSourceXref : bs.getXrefs() ) {
+        if (!isIgnored(bs, MessageDefinition.BIOSOURCE_WITHOUT_NEWT_XREF)) {
+            int validIdentityXref = 0;
+            for (BioSourceXref bioSourceXref : bs.getXrefs()) {
 
-            String qualifierMi = bioSourceXref.getCvXrefQualifier().getMiIdentifier();
+                String qualifierMi = bioSourceXref.getCvXrefQualifier().getMiIdentifier();
 
-            if ( CvXrefQualifier.IDENTITY_MI_REF.equals( qualifierMi ) ) {
-                String dbMi = bioSourceXref.getCvDatabase().getMiIdentifier();
+                if (CvXrefQualifier.IDENTITY_MI_REF.equals(qualifierMi)) {
+                    String dbMi = bioSourceXref.getCvDatabase().getMiIdentifier();
 
-                if ( CvDatabase.NEWT_MI_REF.equals( dbMi ) ) {
-                    validIdentityXref++;
+                    if (CvDatabase.NEWT_MI_REF.equals(dbMi)) {
+                        validIdentityXref++;
+                    }
                 }
             }
-        }
 
-        if ( validIdentityXref == 0 ) {
-            messages.add( new GeneralMessage( MessageDefinition.BIOSOURCE_WITHOUT_NEWT_XREF, bs ) );
+            if (validIdentityXref == 0) {
+                messages.add(new GeneralMessage(MessageDefinition.BIOSOURCE_WITHOUT_NEWT_XREF, bs));
+            }
         }
 
         return messages;

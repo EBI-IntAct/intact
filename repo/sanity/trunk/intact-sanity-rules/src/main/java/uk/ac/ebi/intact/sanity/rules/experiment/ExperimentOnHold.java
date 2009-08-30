@@ -28,27 +28,31 @@ import java.util.List;
  */
 
 @SanityRule(target = Experiment.class, group = RuleGroup.INTACT_DB )
-public class ExperimentOnHold implements Rule<Experiment> {
+public class ExperimentOnHold extends Rule<Experiment> {
 
     public Collection<GeneralMessage> check(Experiment experiment) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-        if(ExperimentUtils.isOnHold(experiment)){
-            messages.add(new GeneralMessage( MessageDefinition.EXPERIMENT_ON_HOLD, experiment));
-        } else {
-            // TODO this can be removed when all the experiments have a Publication object in the DB
-            String pubmedId = ExperimentUtils.getPubmedId(experiment);
 
-            if (pubmedId != null) {
-                final List<Experiment> experimentsSamePubmed = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
-                        .getExperimentDao().getByPubId(pubmedId);
+        if( ! isIgnored( experiment, MessageDefinition.EXPERIMENT_ON_HOLD ) ) {
+            if(ExperimentUtils.isOnHold(experiment)){
+                messages.add(new GeneralMessage( MessageDefinition.EXPERIMENT_ON_HOLD, experiment));
+            } else {
+                // TODO this can be removed when all the experiments have a Publication object in the DB
+                String pubmedId = ExperimentUtils.getPubmedId(experiment);
 
-                for (Experiment experimentSamePubmed : experimentsSamePubmed) {
-                    if (ExperimentUtils.isOnHold(experimentSamePubmed)) {
-                        messages.add(new GeneralMessage( MessageDefinition.EXPERIMENT_ON_HOLD, experiment));
+                if (pubmedId != null) {
+                    final List<Experiment> experimentsSamePubmed = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                            .getExperimentDao().getByPubId(pubmedId);
+
+                    for (Experiment experimentSamePubmed : experimentsSamePubmed) {
+                        if (ExperimentUtils.isOnHold(experimentSamePubmed)) {
+                            messages.add(new GeneralMessage( MessageDefinition.EXPERIMENT_ON_HOLD, experiment));
+                        }
                     }
                 }
             }
         }
+
         return messages;
     }
 }

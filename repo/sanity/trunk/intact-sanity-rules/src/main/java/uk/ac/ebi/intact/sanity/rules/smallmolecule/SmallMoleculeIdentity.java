@@ -26,29 +26,35 @@ import java.util.Collection;
  * @since 2.0.0
  */
 
-@SanityRule( target = SmallMolecule.class, group = { RuleGroup.INTACT, RuleGroup.IMEX })
+@SanityRule( target = SmallMolecule.class, group = {RuleGroup.INTACT, RuleGroup.IMEX} )
 
-public class SmallMoleculeIdentity implements Rule<SmallMolecule> {
+public class SmallMoleculeIdentity extends Rule<SmallMolecule> {
 
     public Collection<GeneralMessage> check( SmallMolecule smallMolecule ) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
 
         final Collection<InteractorXref> identities = XrefUtils.getIdentityXrefs( smallMolecule );
-        switch( identities.size() ) {
+        switch ( identities.size() ) {
             case 0:
-                messages.add( new GeneralMessage( MessageDefinition.SMALL_MOLECULE_IDENTITY_MISSING, smallMolecule ) );
+                if ( !isIgnored( smallMolecule, MessageDefinition.SMALL_MOLECULE_IDENTITY_MISSING ) ) {
+                    messages.add( new GeneralMessage( MessageDefinition.SMALL_MOLECULE_IDENTITY_MISSING, smallMolecule ) );
+                }
                 break;
 
             case 1:
                 final InteractorXref xref = identities.iterator().next();
-                if ( ! CvObjectUtils.hasIdentity( xref.getCvDatabase(), CvDatabase.CHEBI_MI_REF ) ) {
-                    messages.add( new GeneralMessage(MessageDefinition.SMALL_MOLECULE_IDENTITY_INVALID_DB, smallMolecule ) );
+                if ( !CvObjectUtils.hasIdentity( xref.getCvDatabase(), CvDatabase.CHEBI_MI_REF ) ) {
+                    if ( !isIgnored( smallMolecule, MessageDefinition.SMALL_MOLECULE_IDENTITY_INVALID_DB ) ) {
+                        messages.add( new GeneralMessage( MessageDefinition.SMALL_MOLECULE_IDENTITY_INVALID_DB, smallMolecule ) );
+                    }
                 }
                 break;
 
             default:
                 // more than 1
-                messages.add( new GeneralMessage( MessageDefinition.SMALL_MOLECULE_IDENTITY_MULTIPLE, smallMolecule ) );
+                if ( !isIgnored( smallMolecule, MessageDefinition.SMALL_MOLECULE_IDENTITY_MULTIPLE ) ) {
+                    messages.add( new GeneralMessage( MessageDefinition.SMALL_MOLECULE_IDENTITY_MULTIPLE, smallMolecule ) );
+                }
         }
 
         return messages;

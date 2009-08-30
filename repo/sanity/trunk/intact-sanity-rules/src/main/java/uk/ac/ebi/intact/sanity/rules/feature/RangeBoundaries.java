@@ -28,7 +28,7 @@ import java.util.Collection;
 
 @SanityRule( target = Feature.class, group = RuleGroup.INTACT )
 
-public class RangeBoundaries implements Rule<Feature> {
+public class RangeBoundaries extends Rule<Feature> {
 
     public Collection<GeneralMessage> check( Feature feature ) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
@@ -59,11 +59,15 @@ public class RangeBoundaries implements Rule<Feature> {
             // Check on mismatch between range boundaries and range attribute: undetermined
             if ( isUndertermined && ( hasFrom || hasTo ) ) {
 
-                messages.add( new RangeMessage( MessageDefinition.UNDETERMINED_RANGE_WITH_BOUNDARIES, feature, range ) );
+                if ( !isIgnored( feature, MessageDefinition.UNDETERMINED_RANGE_WITH_BOUNDARIES ) ) {
+                    messages.add( new RangeMessage( MessageDefinition.UNDETERMINED_RANGE_WITH_BOUNDARIES, feature, range ) );
+                }
 
             } else if ( !isUndertermined && !( hasFrom || hasTo ) ) {
 
-                messages.add( new RangeMessage( MessageDefinition.DETERMINED_RANGE_WITHOUT_BOUNDARIES, feature, range ) );
+                if ( !isIgnored( feature, MessageDefinition.DETERMINED_RANGE_WITHOUT_BOUNDARIES ) ) {
+                    messages.add( new RangeMessage( MessageDefinition.DETERMINED_RANGE_WITHOUT_BOUNDARIES, feature, range ) );
+                }
 
             } else {
 
@@ -71,12 +75,16 @@ public class RangeBoundaries implements Rule<Feature> {
                 if ( ( hasFrom && !( isFromCertain || isFromRange || isFromLess || isFromGreater ) ) ||
                      ( hasTo && !( isToCertain || isToRange || isToLess || isToGreater ) ) ) {
 
+                    if ( !isIgnored( feature, MessageDefinition.DETERMINED_RANGE_WITHOUT_BOUNDARIES ) ) {
                     messages.add( new RangeMessage( MessageDefinition.DETERMINED_RANGE_WITHOUT_BOUNDARIES, feature, range ) );
+                    }
 
                 } else if ( ( !hasFrom && !( isFromCTerminal || isFromNTerminal || isFromUndetermined ) ) ||
                             ( !hasTo && !( isToCTerminal || isToNTerminal || isToUndetermined ) ) ) {
 
-                    messages.add( new RangeMessage( MessageDefinition.UNDETERMINED_RANGE_WITH_BOUNDARIES, feature, range ) );
+                    if ( !isIgnored( feature, MessageDefinition.UNDETERMINED_RANGE_WITH_BOUNDARIES ) ) {
+                        messages.add( new RangeMessage( MessageDefinition.UNDETERMINED_RANGE_WITH_BOUNDARIES, feature, range ) );
+                    }
                 }
             }
         }

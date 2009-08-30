@@ -25,7 +25,7 @@ import java.util.Collection;
  */
 
 @SanityRule(target = CvObject.class, group = RuleGroup.INTACT )
-public class CvInteractionWithoutUniprotDrExport implements Rule<CvObject> {
+public class CvInteractionWithoutUniprotDrExport extends Rule<CvObject> {
 
     private static final String DESCRIPTION = "This/these CvInteraction have uniprot-dr-export annotation";
     private static final String SUGGESTION = "Add a uniprot-dr-export annotation";
@@ -33,13 +33,14 @@ public class CvInteractionWithoutUniprotDrExport implements Rule<CvObject> {
     public Collection<GeneralMessage> check(CvObject cvObject) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
 
-        if(cvObject instanceof CvInteraction){
-            if (!hasUniprotDrExportAnnotation(cvObject)){
-                messages.add(new GeneralMessage( MessageDefinition.INTERACTION_DETECTION_WITHOUT_UNIPROT_EXPORT,
-                                                 cvObject ) );
+        if( ! isIgnored( cvObject, MessageDefinition.INTERACTION_DETECTION_WITHOUT_UNIPROT_EXPORT ) ) {
+            if(cvObject instanceof CvInteraction){
+                if (!hasUniprotDrExportAnnotation(cvObject)){
+                    messages.add(new GeneralMessage( MessageDefinition.INTERACTION_DETECTION_WITHOUT_UNIPROT_EXPORT,
+                            cvObject ) );
+                }
             }
         }
-
         return messages;
     }
 

@@ -26,13 +26,15 @@ import java.util.Collection;
  */
 
 @SanityRule(target = Interaction.class, group = { RuleGroup.INTACT, RuleGroup.IMEX })
-public class InteractionWithNoComponent  implements Rule<Interaction> {
+public class InteractionWithNoComponent  extends Rule<Interaction> {
 
     public Collection<GeneralMessage> check(Interaction interaction) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-        Collection<Component> components = interaction.getComponents();
-        if(components.size() == 0){
-            messages.add(new GeneralMessage(MessageDefinition.INTERACTION_WITHOUT_COMPONENT, interaction));
+        if ( !isIgnored( interaction, MessageDefinition.INTERACTION_WITHOUT_COMPONENT ) ) {
+            Collection<Component> components = interaction.getComponents();
+            if(components.size() == 0){
+                messages.add(new GeneralMessage(MessageDefinition.INTERACTION_WITHOUT_COMPONENT, interaction));
+            }
         }
         return messages;
     }

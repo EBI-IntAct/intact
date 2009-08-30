@@ -27,18 +27,24 @@ import java.util.Collection;
 
 @SanityRule( target = Interaction.class, group = {RuleGroup.INTACT, RuleGroup.IMEX} )
 
-public class InteractionAndExperiment implements Rule<Interaction> {
+public class InteractionAndExperiment extends Rule<Interaction> {
 
     public Collection<GeneralMessage> check( Interaction interaction ) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
 
         final Collection<Experiment> experiments = interaction.getExperiments();
         if ( experiments == null ) {
-            messages.add( new GeneralMessage( MessageDefinition.INTERACTION_WITHOUT_EXPERIMENT, interaction ) );
+            if ( !isIgnored( interaction, MessageDefinition.INTERACTION_WITHOUT_EXPERIMENT ) ) {
+                messages.add( new GeneralMessage( MessageDefinition.INTERACTION_WITHOUT_EXPERIMENT, interaction ) );
+            }
         } else if ( experiments.size() > 1 ) {
-            messages.add( new GeneralMessage( MessageDefinition.INTERACTION_WITH_MANY_EXPERIMENTS, interaction ) );
+            if ( !isIgnored( interaction, MessageDefinition.INTERACTION_WITH_MANY_EXPERIMENTS ) ) {
+                messages.add( new GeneralMessage( MessageDefinition.INTERACTION_WITH_MANY_EXPERIMENTS, interaction ) );
+            }
         } else if ( experiments.isEmpty() ) {
-            messages.add( new GeneralMessage( MessageDefinition.INTERACTION_WITHOUT_EXPERIMENT, interaction ) );
+            if ( !isIgnored( interaction, MessageDefinition.INTERACTION_WITHOUT_EXPERIMENT ) ) {
+                messages.add( new GeneralMessage( MessageDefinition.INTERACTION_WITHOUT_EXPERIMENT, interaction ) );
+            }
         }
 
         return messages;

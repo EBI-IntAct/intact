@@ -6,7 +6,6 @@
 package uk.ac.ebi.intact.sanity.rules.nucleicacid;
 
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
@@ -18,15 +17,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * 
- *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
  * @since 2.0.0
  */
 
-@SanityRule( target = NucleicAcid.class, group = { RuleGroup.INTACT, RuleGroup.IMEX })
-public class NucleicAcidIdentity implements Rule<NucleicAcid> {
+@SanityRule( target = NucleicAcid.class, group = {RuleGroup.INTACT, RuleGroup.IMEX} )
+public class NucleicAcidIdentity extends Rule<NucleicAcid> {
 
     private static Collection<String> cvDatabaseMis = new ArrayList<String>();
 
@@ -44,24 +41,29 @@ public class NucleicAcidIdentity implements Rule<NucleicAcid> {
         int identityCount = 0;
         for ( InteractorXref xref : xrefs ) {
             if ( xref.getCvXrefQualifier() != null ) {
-                CvObjectXref qualifierIdentity = CvObjectUtils.getPsiMiIdentityXref( xref.getCvXrefQualifier() );
-                if ( qualifierIdentity != null && CvXrefQualifier.IDENTITY_MI_REF.equals( qualifierIdentity.getPrimaryId() ) ) {
-                    CvObjectXref databaseIdentity = CvObjectUtils.getPsiMiIdentityXref( xref.getCvDatabase() );
-                    if ( cvDatabaseMis.contains( databaseIdentity.getPrimaryId() ) ) {
+                String qualifierIdentityMi = xref.getCvXrefQualifier().getIdentifier();
+                if ( qualifierIdentityMi != null && CvXrefQualifier.IDENTITY_MI_REF.equals( qualifierIdentityMi ) ) {
+                    String databaseIdentityMi = xref.getCvDatabase().getIdentifier();
+                    if ( cvDatabaseMis.contains( databaseIdentityMi ) ) {
                         identityCount++;
                     } else {
-                        messages.add( new GeneralMessage(MessageDefinition.NUC_ACID_IDENTITY_INVALID_DB, nucleicAcid ) );
+                        if ( !isIgnored( nucleicAcid, MessageDefinition.NUC_ACID_IDENTITY_INVALID_DB ) ) {
+                            messages.add( new GeneralMessage( MessageDefinition.NUC_ACID_IDENTITY_INVALID_DB, nucleicAcid ) );
+                        }
                     }
                 }
             }
         }
         if ( identityCount > 1 ) {
-            messages.add( new GeneralMessage( MessageDefinition.NUC_ACID_IDENTITY_MULTIPLE, nucleicAcid ) );
+            if ( !isIgnored( nucleicAcid, MessageDefinition.NUC_ACID_IDENTITY_MULTIPLE ) ) {
+                messages.add( new GeneralMessage( MessageDefinition.NUC_ACID_IDENTITY_MULTIPLE, nucleicAcid ) );
+            }
         } else if ( identityCount == 0 ) {
-            messages.add( new GeneralMessage( MessageDefinition.NUC_ACID_IDENTITY_MISSING, nucleicAcid ) );
+            if ( !isIgnored( nucleicAcid, MessageDefinition.NUC_ACID_IDENTITY_MISSING ) ) {
+                messages.add( new GeneralMessage( MessageDefinition.NUC_ACID_IDENTITY_MISSING, nucleicAcid ) );
+            }
         }
 
         return messages;
     }
-
 }
