@@ -1,4 +1,4 @@
-#summary How to create a custom installation of the database.
+#summary Guide explaining how to create a custom installation of the database.
 
 = Local install =
 
