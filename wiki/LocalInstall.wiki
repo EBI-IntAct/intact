@@ -1,0 +1,7 @@
+#summary How to create a custom installation of the database.
+
+= Local install =
+
+This section will explain how to create a local instance of the database, which can be used to work with your own molecular interaction data. Having a local instance allows you to use the full power of the API, save time and even re-use the web applications already created for IntAct to show and browse your data.
+
+TODO
