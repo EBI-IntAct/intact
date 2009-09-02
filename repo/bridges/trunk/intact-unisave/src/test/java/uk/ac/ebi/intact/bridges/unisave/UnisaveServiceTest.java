@@ -21,7 +21,7 @@ public class UnisaveServiceTest {
         UnisaveService service = new UnisaveService();
         final List<EntryVersionInfo> versions = service.getVersions( "P12345", false );
         Assert.assertNotNull( versions );
-        Assert.assertEquals( 60, versions.size() );
+        Assert.assertEquals( 61, versions.size() );
     }
 
     /*
@@ -108,7 +108,7 @@ public class UnisaveServiceTest {
         Assert.assertNotNull( sv );
         Assert.assertNotNull( sv.getSequence() );
         Assert.assertEquals( "SSWWAHVEMGPPDPILGVTEAYKRDTNSKK", sv.getSequence().getSequence() );
-        Assert.assertEquals( "UniProtKB/Swiss-Prot|P12345|Release 15.6/57.6|28-JUL-2009", sv.getSequence().getHeader() );
+        Assert.assertEquals( "UniProtKB/Swiss-Prot|P12345|Release 15.7/57.7|01-SEP-2009", sv.getSequence().getHeader() );
         Assert.assertEquals( 1, sv.getVersion() );
     }
 
@@ -135,7 +135,7 @@ public class UnisaveServiceTest {
         Assert.assertNotNull( sv );
         Assert.assertNotNull( sv.getSequence() );
         Assert.assertEquals( "VPFLSKAVRCGPVIPFVIHHFNFRRVTTTKRRRNKYVLVPGYGWVLQDDYLVNSVKMTGENDLPPNQLPHDDDLLFTYAKILLYDYISYFPKFRHNNPDLLDHKTELELFPLKADSAARNKANFYARTLWNDTITDKSAFKPGTYNDTVAGLLLWQQCALMWSLPKSVINRTISGVCDALTNRTSLTLLKRISDWLKQLGLACSPIHRLFIELPTLLGRGAIPGDADKDIKHRLAFDPSITVDVPKEQLHLLIYRLLSRNLNITKVNSFEHHLEERLLWSKSGSHYYPDDKINELLPPQPTRKEFLDVVTTEYIKECKPQVFIRQSRKLEHGKERFIYNCDTVSYVYFDFILKLFETGWQDSEAILSPGDYTSERLHAKISSYKYKAMLDYTDFNSQHTIQSMRLIFETMKELLPPEATFALDWCIASFDNMQTSDGLKWMATLPSGHRATTFINTVLNWCYTQMVGLKFDSFMCAGDDVILMSQQPISLAPILTSHFKFNPSKQSTGTRGEFLRKHYSEAGVFAYPCRAIASLVSGNWLSQSLRENTPILVPIQNGIDRLRSRAGLLGVPWKLGLSELIEREAIPKEVGMALLNSHAAGPGLITRDYSSFTVTPKPPKLSSTLEYTATRYGLQDLSKHVPWKQLTTVESDKLSRQIKKISYRHCSQAKITYNCTYEVFKPRGLPTVLSGSSQPSLSMLWWQAMLKQAIQDDSTKKIDARMFAANACTSSVSGDAFLRANASMAGVLITSLITSSS", sv.getSequence().getSequence() );
-        Assert.assertEquals( "UniProtKB/TrEMBL|Q98753|Release 15.6/40.6|28-JUL-2009", sv.getSequence().getHeader() );
+        Assert.assertEquals( "UniProtKB/TrEMBL|Q98753|Release 15.7/40.7|01-SEP-2009", sv.getSequence().getHeader() );
         Assert.assertEquals( 2, sv.getVersion() );
     }
 
