@@ -13,7 +13,6 @@ import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseCrossReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -91,8 +90,10 @@ public class ReflectionCrossReferenceBuilder {
                 Method candidateMethod = methods[i];
                 String methodName = candidateMethod.getName();
 
-                if ( ( !methodName.equals( "getId" ) ) && methodName.startsWith( "get" ) &&
-                     ( methodName.endsWith( "Id" ) || methodName.endsWith( "Number" ) || methodName.endsWith( "GeneIdentifier" ) ) ) {
+                if ( !methodName.equals( "getId" ) && !methodName.equals("getDbAccession") &&
+                       methodName.startsWith( "get" ) &&
+                     ( methodName.endsWith( "Id" ) || methodName.endsWith( "Number" )
+                             || methodName.endsWith( "GeneIdentifier" ) || methodName.endsWith("Accession")) ) {
                     method = candidateMethod;
                     foundId = true;
                 }
@@ -171,16 +172,11 @@ public class ReflectionCrossReferenceBuilder {
         // TODO > so far we cannot, the UniProt Team is going to provide a tool to replace this Builder soon.
         String desc = null;
 
+        if (id == null) {
+            throw new IllegalArgumentException("Cannot get id from cross reference: "+crossRef.getClass().getSimpleName()+" [ "+crossRef+" ]");
+        }
+
         // Build the Generic Cross reference
         return new UniprotCrossReference( id, db, desc );
-    }
-
-    public void printMethodCached() {
-        for ( Iterator<Class> iterator = methodCache.keySet().iterator(); iterator.hasNext(); ) {
-            Class key = iterator.next();
-            System.out.println( key.getSimpleName() );
-        }
-        System.out.println( "---------------------------" );
-        System.out.println( "Total: " + methodCache.size() );
     }
 }
