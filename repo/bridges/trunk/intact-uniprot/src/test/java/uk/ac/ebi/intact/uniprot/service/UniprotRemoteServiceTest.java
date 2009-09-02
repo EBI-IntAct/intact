@@ -3,9 +3,8 @@ package uk.ac.ebi.intact.uniprot.service;
 import static junit.framework.Assert.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.Test;
-import org.junit.Ignore;
 import org.junit.Assert;
+import org.junit.Test;
 import uk.ac.ebi.intact.uniprot.UniprotServiceException;
 import uk.ac.ebi.intact.uniprot.data.MockUniProtEntries;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
@@ -265,7 +264,7 @@ public class UniprotRemoteServiceTest {
         assertEquals( 7, protein.getKeywords().size() );
 
         // cross references
-        assertEquals( 38, protein.getCrossReferences().size() );
+        assertEquals( 39, protein.getCrossReferences().size() );
 
         // splice variants
         assertEquals( 0, protein.getSpliceVariants().size() );
