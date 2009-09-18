@@ -2,6 +2,40 @@
 
 = Local install =
 
-This section will explain how to create a local instance of the database, which can be used to work with your own molecular interaction data. Having a local instance allows you to use the full power of the API, save time and even re-use the web applications already created for IntAct to show and browse your data.
+This section will explain how to create a local instance of the database, which can be used to work with your own molecular interaction data. Having a local instance allows you to use the full power of the API, save time and even re-use the web applications already created for !IntAct to show and browse your data.
+
+== Database ==
+
+!IntAct uses a database to store all the interactions and related information, but it is not tied to any specific database brand. You can use the database of your choice, the only requirement is that it has to support sequences (most modern databases fall into this category). IntAct has been tested to run successfully on Oracle, PostgreSQL, HSQLDB and H2 databases.
+
+In this tutorial, we are going to use PostgreSQL. If you want to use another database, just install it and skip the following section.
+
+=== Installing PosgreSQL ===
+
+Install [http://www.postgresql.org/download/ PostgreSQL 8.x] or above (please refer to the [http://www.postgresql.org/ PostgreSQL web site] to download it of if you require support). 
+
+The Windows 'one-click' installer comes with a handy client application called [http://www.pgadmin.org/download/ pgAdmin III], which you may want to use to run queries or to view the data in the database. You may want to install the tool manually if using a different OS (e.g. Linux, Mac OS X...).
+
+To start PostgreSQL (as user postgres), run the appropriate command:
+
+_Using Linux_: 
+
+{{{ 
+$POSTGRES_HOME/bin/psql -h localhost -p 5432 postgres "postgres" 
+}}}
+
+_Using Windows_: start it by using the shortcut created by the installer or run this command in a terminal:
+
+{{{ 
+$POSTGRES_HOME/psql.exe" -h localhost -p 5432 postgres "postgres" 
+}}}
+
+*Note*: _$POSTGRES_HOME_ is the directory where PostgreSQL has been installed.
+
+Now, you have to create a database:
+
+ # TODO
+
+=== Creating the schema ===
 
 TODO
