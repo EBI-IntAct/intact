@@ -58,7 +58,12 @@ You are now connected to database "intact-db" as user "intact".
 
 And we are now ready to work with this database. The next step is creating the schema (the database tables) !IntAct is going to need.
 
-You can find here the DDLs for IntAct Core 2.0, for some databases.
+
+=== Creating the schema ===
+
+Once we have any database installed and ready, it is time to create the !IntAct schema. 
+
+You can find the DDLs -the scripts to create the tables- for !IntAct Core 2.0 by clicking the following links. If you want to use another database, read below.
 
 *TODO*
 
@@ -67,11 +72,6 @@ You can find here the DDLs for IntAct Core 2.0, for some databases.
  * HSQL
 
 These have been generated using the [http://code.google.com/p/intact/source/browse/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/SchemaHelper.java SchemaHelper] class present in the [http://code.google.com/p/intact/wiki/GettingStarted IntAct Kickstart project]. You can create DDLs for other databases by invoking {{{SchemaUtils.generateCreateSchemaDDL(Dialect)}}}, like it is done in the {{{SchemaHelper}}}, using the corresponding [https://www.hibernate.org/hib_docs/v3/api/org/hibernate/dialect/package-summary.html Hibernate dialect] class.
-
-
-=== Creating the schema ===
-
-Once we have any database installed and ready, it is time to create the !IntAct schema. 
 
 ==== Updating an schema ====
 
