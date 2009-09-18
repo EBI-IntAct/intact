@@ -16,25 +16,48 @@ Install [http://www.postgresql.org/download/ PostgreSQL 8.x] or above (please re
 
 The Windows 'one-click' installer comes with a handy client application called [http://www.pgadmin.org/download/ pgAdmin III], which you may want to use to run queries or to view the data in the database. You may want to install the tool manually if using a different OS (e.g. Linux, Mac OS X...).
 
-To start PostgreSQL (as user postgres), run the appropriate command:
+After the database has been installed and started, we can now connect to it. At this point, using a tool like pgAdmin III is possible, but for simplicity we are going to show how to do this using the command line. Before doing this, PostgreSQL must be running already (in port 5432 by default, user postgres).
 
-_Using Linux_: 
+_Connect using Linux_: 
 
 {{{ 
-$POSTGRES_HOME/bin/psql -h localhost -p 5432 postgres "postgres" 
+$POSTGRES_HOME/bin/psql -h localhost -p 5432 postgres
 }}}
 
-_Using Windows_: start it by using the shortcut created by the installer or run this command in a terminal:
+_Or Windows_: 
 
 {{{ 
-$POSTGRES_HOME/psql.exe" -h localhost -p 5432 postgres "postgres" 
+$POSTGRES_HOME/psql.exe" -h localhost -p 5432 postgres 
 }}}
 
 *Note*: _$POSTGRES_HOME_ is the directory where PostgreSQL has been installed.
 
-Now, you have to create a database:
+Now, run the following commands in order to create the _intact_ user. Instead of _'change-me'_ use your own password within quotes:
 
- # TODO
+{{{
+CREATE USER intact WITH encrypted password 'change-me' CREATEDB;
+}}}
+
+And create the database with INTACT as its owner:
+
+{{{
+CREATE DATABASE "intact-db" WITH OWNER = intact ENCODING = 'SQL_ASCII' TABLESPACE = pg_default;
+}}}
+
+We can now connect to the newly created database, using the user _intact_. To do so, write the following in the console:
+
+{{{ 
+\c intact-db intact
+}}}
+
+It will return:
+
+{{{
+You are now connected to database "intact-db" as user "intact".
+}}}
+
+And we are now ready to work with this database. The next step is creating the schema, that is, the database tables |IntAct is going to need.
+
 
 === Creating the schema ===
 
