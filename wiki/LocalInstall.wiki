@@ -67,9 +67,9 @@ You can find the DDLs -the scripts to create the tables- for !IntAct Core 2.0 by
 
 *TODO*
 
- * PostgreSQL
- * Oracle
- * HSQL
+ * [https://intact.googlecode.com/svn/wiki/ddl/postgres-2.0.ddl PostgreSQL]
+ * [https://intact.googlecode.com/svn/wiki/ddl/oracle-2.0.ddl Oracle]
+ * [https://intact.googlecode.com/svn/wiki/ddl/hsql-2.0.ddl HSQL]
 
 These have been generated using the [http://code.google.com/p/intact/source/browse/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/SchemaHelper.java SchemaHelper] class present in the [http://code.google.com/p/intact/wiki/GettingStarted IntAct Kickstart project]. You can create DDLs for other databases by invoking {{{SchemaUtils.generateCreateSchemaDDL(Dialect)}}}, like it is done in the {{{SchemaHelper}}}, using the corresponding [https://www.hibernate.org/hib_docs/v3/api/org/hibernate/dialect/package-summary.html Hibernate dialect] class.
 
