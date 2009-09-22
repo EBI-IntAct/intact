@@ -1,8 +1,7 @@
 package uk.ac.ebi.intact.kickstart;
 
-import uk.ac.ebi.intact.core.util.SchemaUtils;
-import org.hibernate.dialect.H2Dialect;
 import org.hibernate.dialect.HSQLDialect;
+import uk.ac.ebi.intact.core.util.SchemaUtils;
 
 /**
  * Helps to create the DDL. This will output the file that you can use to create
@@ -15,13 +14,13 @@ public class SchemaHelper {
 
     public static void main(String[] args) {
         // print to the console the DDL to create the schema with postgreSQL
-        printPostgreSQLSchema();
+        //printPostgreSQLSchema();
         
         // print to the console the DDL to create the schema with Oracle
         //printOracleSchema();
 
         // print to the console the DDL to create the schema with HSQL database
-        //printHSQLSchema();
+        printHSQLSchema();
     }
 
     public static void printPostgreSQLSchema() {
@@ -31,7 +30,7 @@ public class SchemaHelper {
     }
 
     public static void printOracleSchema() {
-         for (String str : SchemaUtils.generateCreateSchemaDDLForOracle()) {
+        for (String str : SchemaUtils.generateCreateSchemaDDLForOracle()) {
             System.out.println(str);
         }
     }

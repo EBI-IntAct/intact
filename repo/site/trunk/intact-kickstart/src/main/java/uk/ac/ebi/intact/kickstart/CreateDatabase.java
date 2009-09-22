@@ -15,9 +15,7 @@
  */
 package uk.ac.ebi.intact.kickstart;
 
-import uk.ac.ebi.intact.context.IntactContext;
-
-import java.io.File;
+import uk.ac.ebi.intact.core.context.IntactContext;
 
 /**
  * This class uses a special configuration file (/hsqldb-create-hibernate.cfg.xml) where the property hbm2ddl.auto
@@ -30,8 +28,6 @@ import java.io.File;
 public class CreateDatabase {
 
     public static void main(String[] args) throws Exception {
-
-        File configFile = new File(ImportPsiData.class.getResource("/h2-create-hibernate.cfg.xml").getFile());
-        IntactContext.initStandaloneContext(configFile);
+        IntactContext.initContext(new String[] {"/META-INF/hsqldb-create.spring.xml"});
     }
 }

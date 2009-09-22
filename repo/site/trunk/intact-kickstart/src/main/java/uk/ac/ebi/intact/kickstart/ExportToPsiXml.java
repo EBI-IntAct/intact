@@ -15,16 +15,16 @@
  */
 package uk.ac.ebi.intact.kickstart;
 
-import uk.ac.ebi.intact.context.DataContext;
-import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.core.context.DataContext;
+import uk.ac.ebi.intact.core.context.IntactContext;
+import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.dataexchange.psimi.xml.exchange.PsiExchange;
+import uk.ac.ebi.intact.dataexchange.psimi.xml.exchange.PsiExchangeFactory;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.IntactEntry;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Publication;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
-import java.io.File;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -40,10 +40,8 @@ public class ExportToPsiXml {
 
     public static void main(String[] args) throws Exception {
 
-        // Initialize the IntactContext, using the default configuration found in the file h2-hibernate.cfg.xml..
-        // Initialization has to be always the first statement of your application and needs to be invoked only once.
-        File pgConfigFile = new File(ImportPsiData.class.getResource("/h2-hibernate.cfg.xml").getFile());
-        IntactContext.initStandaloneContext(pgConfigFile);
+        // Initialize the IntactContext, using the default configuration found in the file hsql.spring.xml..
+        IntactContext.initContext(new String[] {"/META-INF/hsqldb.spring.xml"});
 
         // Once an IntactContext has been initialized, we can access to it by getting the current instance
         IntactContext intactContext = IntactContext.getCurrentInstance();
@@ -79,7 +77,8 @@ public class ExportToPsiXml {
         Writer writer = new StringWriter();
 
         // This is the main method to export data. You need to provide the IntactEntry and a writer/file.
-        PsiExchange.exportToPsiXml(writer, intactEntry);
+        final PsiExchange psiExchange = PsiExchangeFactory.createPsiExchange(intactContext);
+        psiExchange.exportToPsiXml(writer, intactEntry);
 
         // We print what has been writen in the console
         System.out.println("\n\nPSI-XML Formatted output:\n\n");

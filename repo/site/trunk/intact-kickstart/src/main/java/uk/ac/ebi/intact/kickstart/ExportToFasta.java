@@ -15,12 +15,12 @@
  */
 package uk.ac.ebi.intact.kickstart;
 
-import uk.ac.ebi.intact.context.DataContext;
-import uk.ac.ebi.intact.context.IntactContext;
+import org.springframework.transaction.TransactionStatus;
+import uk.ac.ebi.intact.core.context.DataContext;
+import uk.ac.ebi.intact.core.context.IntactContext;
+import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -35,10 +35,8 @@ public class ExportToFasta {
 
     public static void main(String[] args) throws Exception {
 
-        // Initialize the IntactContext, using the default configuration found in the file h2-hibernate.cfg.xml..
-        // Initialization has to be always the first statement of your application and needs to be invoked only once.
-        File pgConfigFile = new File(ImportPsiData.class.getResource("/h2-hibernate.cfg.xml").getFile());
-        IntactContext.initStandaloneContext(pgConfigFile);
+        // Initialize the IntactContext, using the default configuration found in the file hsql.spring.xml..
+        IntactContext.initContext(new String[] {"/META-INF/hsqldb.spring.xml"});
 
         // Once an IntactContext has been initialized, we can access to it by getting the current instance
         IntactContext intactContext = IntactContext.getCurrentInstance();
@@ -49,7 +47,7 @@ public class ExportToFasta {
         DaoFactory daoFactory = dataContext.getDaoFactory();
 
         // When using DAOs, we need to begin a transaction first
-        dataContext.beginTransaction();
+        final TransactionStatus transactionStatus = dataContext.beginTransaction();
 
         // We get an iterator that contains all the interactions from the database
         Iterator<InteractionImpl> interactions = daoFactory.getInteractionDao().getAllIterator();
@@ -87,7 +85,7 @@ public class ExportToFasta {
         }
 
         // Don't forget to commit the transaction
-        dataContext.commitTransaction();
+        dataContext.commitTransaction(transactionStatus);
 
         // Note that we could have just gotten all the database proteins using the ProteinDao,
         // but for educational purposes it is good to understand how the information is organized.
