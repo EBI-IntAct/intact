@@ -15,18 +15,19 @@
  */
 package uk.ac.ebi.intact.kickstart;
 
+import org.springframework.transaction.TransactionStatus;
 import psidev.psi.mi.tab.PsimiTabWriter;
-import psidev.psi.mi.tab.expansion.SpokeExpansion;
 import psidev.psi.mi.tab.converter.xml2tab.Xml2Tab;
+import psidev.psi.mi.tab.expansion.SpokeExpansion;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.xml.model.EntrySet;
-import uk.ac.ebi.intact.context.DataContext;
-import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.core.context.DataContext;
+import uk.ac.ebi.intact.core.context.IntactContext;
+import uk.ac.ebi.intact.core.persistence.dao.entry.IntactEntryFactory;
 import uk.ac.ebi.intact.dataexchange.psimi.xml.exchange.PsiExchange;
+import uk.ac.ebi.intact.dataexchange.psimi.xml.exchange.PsiExchangeFactory;
 import uk.ac.ebi.intact.model.IntactEntry;
-import uk.ac.ebi.intact.persistence.dao.entry.IntactEntryFactory;
 
-import java.io.File;
 import java.util.Collection;
 
 /**
@@ -38,30 +39,28 @@ public class ExportToPsiMiTab {
 
     public static void main(String[] args) throws Exception {
 
-        // Initialize the IntactContext, using the default configuration found in the file h2-hibernate.cfg.xml..
-        // Initialization has to be always the first statement of your application and needs to be invoked only once.
-        File pgConfigFile = new File(ImportPsiData.class.getResource("/h2-hibernate.cfg.xml").getFile());
-        IntactContext.initStandaloneContext(pgConfigFile);
+        // Initialize the IntactContext, using the default configuration found in the file hsql.spring.xml..
+        IntactContext.initContext(new String[] {"/META-INF/hsqldb.spring.xml"});
 
         // Once an IntactContext has been initialized, we can access to it by getting the current instance
         IntactContext intactContext = IntactContext.getCurrentInstance();
 
+        // start a transaction
         DataContext dataContext = intactContext.getDataContext();
+        TransactionStatus transactionStatus = dataContext.beginTransaction();
 
-        // We need to begin a transaction
-        //dataContext.beginTransaction();
 
         // When exporting, we need to create an IntactEntry object, which contains the interactions
         // and all the related information (e.g. interactors, experiments, features...) that we want
         // to export
-        IntactEntry intactEntry = IntactEntryFactory.createIntactEntry(intactContext).addPublicationId("16469705");
+        IntactEntry intactEntry = IntactEntryFactory.createIntactEntry(intactContext).addPublicationId("16469704");
 
         // This is the main method to export data. An EntrySet is the equivalent to the IntactEntry object
         // but is a member of the PSI-MI model (IntactEntry is for the Intact model)
-        EntrySet entrySet = PsiExchange.exportToEntrySet(intactEntry);
+        PsiExchange psiExchange = PsiExchangeFactory.createPsiExchange(intactContext);
+        EntrySet entrySet = psiExchange.exportToEntrySet(intactEntry);
 
-       // And don't forget to commit the transaction
-       // dataContext.commitTransaction();
+        dataContext.commitTransaction(transactionStatus);
 
         // Setup a interaction expansion strategy that is going to transform n-ary interactions into binaries using
         // the spoke expansion algorithm

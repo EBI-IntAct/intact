@@ -15,8 +15,9 @@
  */
 package uk.ac.ebi.intact.kickstart;
 
-import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.dataexchange.psimi.xml.exchange.PsiExchange;
+import uk.ac.ebi.intact.dataexchange.psimi.xml.exchange.PsiExchangeFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,14 +31,17 @@ public class ImportPsiData {
 
     public static void main(String[] args) throws Exception {
 
-        // Initialize the IntactContext, using the default configuration found in the file h2-hibernate.cfg.xml..
-        // Initialization has to be always the first statement of your application and needs to be invoked only once.
-        File pgConfigFile = new File(ImportPsiData.class.getResource("/h2-hibernate.cfg.xml").getFile());
-        IntactContext.initStandaloneContext(pgConfigFile);
+        // Initialize the IntactContext, using the default configuration found in the file hsql.spring.xml..
+        IntactContext.initContext(new String[] {"/META-INF/hsqldb.spring.xml"});
+
+        // Once an IntactContext has been initialized, we can access to it by getting the current instance
+        IntactContext intactContext = IntactContext.getCurrentInstance();
 
         // we get a sample file from the resources folder of the project
         File fileToImport = new File(ImportPsiData.class.getResource("/intact_2006-07-19.xml").getFile());
 
-        PsiExchange.importIntoIntact(new FileInputStream(fileToImport));
+        // we use the PsiExchange to import an XML into the database.
+        PsiExchange psiExchange = PsiExchangeFactory.createPsiExchange(intactContext);
+        psiExchange.importIntoIntact(new FileInputStream(fileToImport));
     }
 }

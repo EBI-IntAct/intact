@@ -15,9 +15,9 @@
  */
 package uk.ac.ebi.intact.kickstart;
 
+import org.hupo.psi.mi.psicquic.wsclient.UniversalPsicquicClient;
 import psidev.psi.mi.search.SearchResult;
-import uk.ac.ebi.intact.psicquic.wsclient.MitabPsicquicClient;
-import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
+import psidev.psi.mi.tab.model.BinaryInteraction;
 
 /**
  * This example does not need the database to work and shows how to access the EBI IntAct database
@@ -29,14 +29,14 @@ public class RemotePsicquicSearch {
      public static void main(String[] args) throws Exception {
 
         // change the enpoint address as needed
-        MitabPsicquicClient client = new MitabPsicquicClient("http://www.ebi.ac.uk/intact/psicquic/webservices/psicquic");
+        UniversalPsicquicClient client = new UniversalPsicquicClient("http://www.ebi.ac.uk/intact/psicquic/webservices/psicquic");
 
-        SearchResult<IntactBinaryInteraction> result = client.getByInteractor("brca2", 0, 50);
+        SearchResult<?> result = client.getByInteractor("brca2", 0, 50);
 
         // Print the results in the console
         System.out.println("Interactions found: "+result.getTotalCount());
 
-        for ( IntactBinaryInteraction binaryInteraction : result.getData()) {
+        for ( BinaryInteraction<?> binaryInteraction : result.getData()) {
             String interactorIdA = binaryInteraction.getInteractorA().getIdentifiers().iterator().next().getIdentifier();
             String interactorIdB = binaryInteraction.getInteractorB().getIdentifiers().iterator().next().getIdentifier();
 

@@ -16,14 +16,12 @@
 package uk.ac.ebi.intact.kickstart;
 
 import org.obo.datamodel.OBOSession;
-import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.dataexchange.cvutils.CvUpdater;
 import uk.ac.ebi.intact.dataexchange.cvutils.CvUpdaterStatistics;
 import uk.ac.ebi.intact.dataexchange.cvutils.OboUtils;
-import uk.ac.ebi.intact.dataexchange.cvutils.model.CvObjectOntologyBuilder;
 import uk.ac.ebi.intact.dataexchange.cvutils.model.AnnotationInfoDataset;
-
-import java.io.File;
+import uk.ac.ebi.intact.dataexchange.cvutils.model.CvObjectOntologyBuilder;
 
 /**
  * Example of how to import or update the controlled vocabularies in the database.
@@ -34,10 +32,11 @@ public class ImportControlledVocabularies {
 
     public static void main(String[] args) throws Exception {
 
-        // Initialize the IntactContext, using the default configuration found in the file h2-hibernate.cfg.xml..
-        // Initialization has to be always the first statement of your application and needs to be invoked only once.
-        File pgConfigFile = new File(ImportPsiData.class.getResource("/h2-hibernate.cfg.xml").getFile());
-        IntactContext.initStandaloneContext(pgConfigFile);
+        // Initialize the IntactContext, using the default configuration found in the file hsql.spring.xml..
+        IntactContext.initContext(new String[] {"/META-INF/hsqldb.spring.xml"});
+
+        // Once an IntactContext has been initialized, we can access to it by getting the current instance
+        IntactContext intactContext = IntactContext.getCurrentInstance();
 
         // load the latest ontology from internet
         OBOSession oboSession = OboUtils.createOBOSessionFromLatestMi();
@@ -46,7 +45,7 @@ public class ImportControlledVocabularies {
         CvObjectOntologyBuilder cvObjectOntologyBuilder = new CvObjectOntologyBuilder(oboSession);
 
         // Import the ontology into the database, using the CvUpdater
-        CvUpdater updater = new CvUpdater();
+        CvUpdater updater = new CvUpdater(intactContext);
 
         // this starts the create/update
         CvUpdaterStatistics stats = updater.createOrUpdateCVs(cvObjectOntologyBuilder.getAllCvs(), annotationInfoDs);
