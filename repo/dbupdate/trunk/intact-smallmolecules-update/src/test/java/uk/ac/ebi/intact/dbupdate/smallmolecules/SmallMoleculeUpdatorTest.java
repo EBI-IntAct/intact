@@ -28,6 +28,7 @@ import uk.ac.ebi.intact.core.config.impl.SmallCvPrimer;
 import org.junit.Test;
 import org.junit.Assert;
 import org.junit.Before;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -40,37 +41,36 @@ import java.util.List;
  */
 public class SmallMoleculeUpdatorTest extends IntactBasicTestCase {
 
+    @Autowired
+    private PersisterHelper persisterHelper;
+    
     @Before
     public void cvSetup() throws Exception {
 
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         CvPrimer primer = new SmallCvPrimer( daoFactory );
-
-        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         primer.createCVs();
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         final CvXrefQualifier secondaryAc = getMockBuilder().createCvObject( CvXrefQualifier.class, CvXrefQualifier.SECONDARY_AC_MI_REF, CvXrefQualifier.SECONDARY_AC );
         final CvTopic inchi = getMockBuilder().createCvObject( CvTopic.class, CvTopic.INCHI_ID_MI_REF, CvTopic.INCHI_ID );
-        PersisterHelper.saveOrUpdate( secondaryAc, inchi );
+        persisterHelper.save( secondaryAc, inchi );
     }
 
     @Test
     public void updateByAcs() throws Exception {
 
         final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
-        dataContext.beginTransaction();
+
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         // create a small molecule with an outdated id
         final SmallMolecule imatinib = getMockBuilder().createSmallMolecule( "CHEBI:38918", "lala" );  // CHEBI:38918
 
         final InteractorDao<SmallMoleculeImpl> smDao = daoFactory.getInteractorDao( SmallMoleculeImpl.class );
-        PersisterHelper.saveOrUpdate( imatinib );
+        persisterHelper.save( imatinib );
         smDao.persist( (SmallMoleculeImpl) imatinib );
 
         Assert.assertEquals( 1, smDao.countAllInteractors() );
         Assert.assertNotNull( smDao.getByXref( "CHEBI:38918" ) );
-        dataContext.commitTransaction();
 
         SmallMoleculeUpdator updator = new SmallMoleculeUpdator(new ChebiProcessor());
         updator.startUpdate();
