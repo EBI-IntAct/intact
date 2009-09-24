@@ -36,6 +36,7 @@ import java.io.*;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.springframework.transaction.TransactionStatus;
 
 /**
  * Implementation class for SmallMoleculeProcessor.
@@ -106,11 +107,7 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
 
                 report.incrementMoleculeCount();
 
-                // Honnor already running transaction
-                final boolean wasTransactionActive = dataContext.isTransactionActive();
-                if ( !wasTransactionActive ) {
-                    dataContext.beginTransaction();
-                }
+                final TransactionStatus transactionStatus = dataContext.beginTransaction();
 
                 final SmallMoleculeImpl sm = daoFactory.getInteractorDao( SmallMoleculeImpl.class ).getByAc( smallMoleculeAc );
                 Collection<InteractorXref> xrefs = XrefUtils.getIdentityXrefs( sm );
@@ -186,9 +183,7 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
                     log.trace( "-------------------------------------------" );
                 }
 
-                if ( !wasTransactionActive ) {
-                    commitTransaction();
-                }
+                dataContext.commitTransaction(transactionStatus);
             } // for
         } finally {
             closeLogFiles();
@@ -412,17 +407,6 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
             xrefDao.persist( newIdentity );
             sm.addXref( newIdentity );
             daoFactory.getInteractorDao( SmallMoleculeImpl.class ).update( sm );
-        }
-    }
-
-    protected void commitTransaction() throws SmallMoleculeUpdatorException {
-        DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
-        if ( dataContext.isTransactionActive() ) {
-            try {
-                dataContext.commitTransaction();
-            } catch ( IntactTransactionException e ) {
-                throw new IntactTestException( e );
-            }
         }
     }
 }
