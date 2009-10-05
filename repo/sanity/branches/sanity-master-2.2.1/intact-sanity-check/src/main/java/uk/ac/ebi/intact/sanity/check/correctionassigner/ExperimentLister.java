@@ -289,24 +289,32 @@ public class ExperimentLister {
             if ( sc.getPercentage() == 0 ) {
                 if ( DEBUG ) {
                     System.out.println( sc.getName() + " has a percentage of assignement of 0% ... remove her from all experiments" );
-                    // TODO what about experiment that are already accepted.
                 }
                 SanityCheckerHelper sch = new SanityCheckerHelper();
 
-                // TODO exclude from this one the experiment that also have accepted.
-                sch.addMapping( ComparableExperimentBean.class, "select e.ac, e.shortlabel, e.created, e.created_user " +
-                                                                "from ia_experiment e, ia_exp2annot e2a , ia_annotation a " +
-                                                                "where e.ac = e2a.experiment_ac " +
-                                                                "and a.ac = e2a.annotation_ac " +
-                                                                "and a.topic_ac = '" + cvHolder.reviewer.getAc() + "' " +
-                                                                "and a.description = ? " );
-                Collection experiments = sch.getBeans( ComparableExperimentBean.class, sc.getName().toLowerCase() );
+                // Selects all experiment having a curator specific annotation 'reviewer' and exclude the experiments
+                //  that also have annotations of type 'accepted' and 'to-be-reviewed'
+                final String sql = "select e.ac, e.shortlabel, e.created, e.created_user " +
+                                   "from ia_experiment e, ia_exp2annot e2a , ia_annotation a " +
+                                   "where e.ac = e2a.experiment_ac " +
+                                   "and a.ac = e2a.annotation_ac " +
+                                   "and a.topic_ac = '" + cvHolder.reviewer.getAc() + "' " +
+                                   "and a.description = ? " +
+                                   "and e.ac not in (  select e.ac " +
+                                   "                   from ia_experiment e, ia_exp2annot e2a, ia_annotation a " +
+                                   "                   where     e.ac = e2a.experiment_ac " +
+                                   "                         and a.ac = e2a.annotation_ac " +
+                                   "                         and a.topic_ac IN ( '" + cvHolder.toBeReviewed.getAc() + "', '" + cvHolder.accepted.getAc() + "' ) " +
+                                   "                 )";
 
-                // TODO what about experiment that are already accepted.
+                sch.addMapping( ComparableExperimentBean.class, sql );
+
+                Collection experiments = sch.getBeans( ComparableExperimentBean.class, sc.getName().toLowerCase() );
 
                 if ( DEBUG ) {
                     System.out.println( "... curator " + sc.getName() + " is away (assignement: 0%) and has " +
-                                        experiments.size() + " experiments to review : " );
+                                        experiments.size() + " experiments to review (none of which has an annotation" +
+                                        " 'accepted' or 'to-be-reviewed') : " );
                 }
                 for ( Iterator iterator1 = experiments.iterator(); iterator1.hasNext(); ) {
                     ComparableExperimentBean comparableExperimentBean = ( ComparableExperimentBean ) iterator1.next();
