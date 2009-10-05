@@ -1,0 +1,24 @@
+<bindings
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://java.sun.com/xml/ns/jaxb"
+    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+    version="1.0">
+
+    <globalBindings >
+           <xjc:simple />
+        </globalBindings>
+
+    <bindings schemaLocation="sanityrules-1.0.xsd" node="/xsd:schema" >
+        <schemaBindings>
+            <package name="uk.ac.ebi.intact.sanity.commons"/>
+        </schemaBindings>
+    </bindings>
+
+    <bindings schemaLocation="sanityreport-1.0.xsd" node="/xsd:schema" >
+        <schemaBindings>
+            <package name="uk.ac.ebi.intact.sanity.commons.report"/>
+        </schemaBindings>
+    </bindings>
+    
+
+</bindings>
