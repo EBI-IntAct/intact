@@ -23,6 +23,14 @@ begin
                          ,'IA_GODENS_GODAGDENORM'
                          ,'IA_GODENS_GOPROT'
                          ,'IA_GODENS_DENSITY'
+                         ,'PROTEIN_TO_DELETE'
+                         ,'VIEW_CV'
+                         ,'VIEW_INTERACTOR_COUNT'
+                         ,'IA_DB_INFO'
+                         ,'PMID_TO_EXCLUDE'
+                         ,'IA_PUBMED'
+                         ,'IA_IMEX_IMPORT_PUTB'
+                         ,'IA_IMEX_IMPORT'
 
                          ,'IA_PAYG'
                          ,'IA_PAYG_CURRENT_EDGE'
@@ -35,9 +43,9 @@ begin
                          ,'IA_BIOSOURCESTATISTICS'
                          ,'IA_DETECTIONMETHODSSTATISTICS'
 
-
                          ,'IA_SEARCH'
                          ,'PLAN_TABLE'
+                         ,'IA_KEY_ASSIGNER_REQUEST'
                         )
    ) loop
       dbms_output.put_line ('PROMPT Creating audit trigger for '||r_tab.table_name);
@@ -54,21 +62,7 @@ begin
       dbms_output.put_line (chr(9)||chr(9)||'l_event := ''D'';');
       dbms_output.put_line (chr(9)||'elsif updating then ');
       dbms_output.put_line (chr(9)||chr(9)||'l_event := ''U'';');
-
-
-      for r_tabcols in (select lower(column_name) col
-                        from   user_tab_columns
-                        where  table_name = upper(r_tab.table_name)
-                        and    lower(column_name) in ('updated', 'userstamp')
-                        order  by column_id)
-      loop
-        if  r_tabcols.col = 'updated' then
-          dbms_output.put_line (chr(9)||chr(9)||':new.updated := sysdate; ');
-        else
-          dbms_output.put_line (chr(9)||chr(9)||':new.userstamp := user;  ');
-        end if;
-      end loop;
-
+     
       dbms_output.put_line (chr(9)||'end if ;  ');
       dbms_output.put_line (chr(9)||'');
       dbms_output.put_line (chr(9)||'');

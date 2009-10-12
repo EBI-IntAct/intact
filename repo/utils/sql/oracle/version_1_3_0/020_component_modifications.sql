@@ -77,6 +77,10 @@ PROMPT Creating table "IA_Component2Annot"
 CREATE TABLE IA_Component2Annot
 (       component_ac            VARCHAR2(30)    NOT NULL CONSTRAINT fk_Component2Annot$feature REFERENCES IA_Component(ac) ON DELETE CASCADE
      ,  annotation_ac           VARCHAR2(30)    NOT NULL CONSTRAINT fk_Component2Annot$annotation REFERENCES IA_Annotation(ac) ON DELETE CASCADE
+     ,  created                 DATE            DEFAULT SYSDATE
+     ,  updated                 DATE            DEFAULT SYSDATE
+     ,  userstamp               VARCHAR2(30)    DEFAULT USER
+     ,  created_user            VARCHAR2(30)    DEFAULT USER NOT NULL ENABLE 
 )
 TABLESPACE &&intactMainTablespace;
 
