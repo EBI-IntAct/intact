@@ -3,13 +3,13 @@
     <parent>
         <artifactId>bridges-master</artifactId>
         <groupId>uk.ac.ebi.intact.bridges</groupId>
-        <version>2.1.1</version>
+        <version>2.1.2-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>intact-ontologies</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.2-SNAPSHOT</version>
 
     <name>IntAct Bridges :: Ontologies</name>
 
