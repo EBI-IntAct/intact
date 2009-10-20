@@ -50,7 +50,7 @@ public class CorePersister implements Persister<AnnotatedObject> {
 
     private static final Log log = LogFactory.getLog( CorePersister.class );
 
-    private BiMap<Key, AnnotatedObject> annotatedObjectsToPersist;
+    private Map<Key, AnnotatedObject> annotatedObjectsToPersist;
     private Map<Key, AnnotatedObject> annotatedObjectsToMerge;
     private Map<Key, AnnotatedObject> synched;
 
@@ -74,7 +74,7 @@ public class CorePersister implements Persister<AnnotatedObject> {
 
     public CorePersister() {
 
-        annotatedObjectsToPersist = new HashBiMap<Key, AnnotatedObject>();
+        annotatedObjectsToPersist = new HashMap<Key, AnnotatedObject>();
         annotatedObjectsToMerge = new HashMap<Key, AnnotatedObject>();
         synched = new HashMap<Key, AnnotatedObject>();
 
@@ -199,7 +199,7 @@ public class CorePersister implements Persister<AnnotatedObject> {
                 if (log.isTraceEnabled()) log.trace("New "+ao.getClass().getSimpleName()+": "+ao.getShortLabel()+" - Decision: PERSIST");
 
                 // doesn't exist in the database, we will persist it
-                annotatedObjectsToPersist.forcePut( key, ao );
+                annotatedObjectsToPersist.put( key, ao );
 
                 synchronizeChildren( ao );
 
@@ -464,7 +464,7 @@ public class CorePersister implements Persister<AnnotatedObject> {
 
         for ( AnnotatedObject ao : thingsToPersist ) {
             if ( log.isDebugEnabled() ) {
-                log.debug( "\tAbout to persist " + DebugUtil.annotatedObjectToString(ao, true) +" - Key: "+annotatedObjectsToPersist.inverse().get(ao));
+                log.debug( "\tAbout to persist " + DebugUtil.annotatedObjectToString(ao, true) +" - Key: "+getKeyForValue( annotatedObjectsToPersist, ao ));
             }
 
             // this may happen if there is a cascade on this object from the parent
@@ -543,6 +543,16 @@ public class CorePersister implements Persister<AnnotatedObject> {
             annotatedObjectsToPersist.clear();
             synched.clear();
         }
+    }
+
+    private Object getKeyForValue( Map map, Object value ) {
+        for ( Object x : map.entrySet() ) {
+            Map.Entry entry = ( Map.Entry ) x;
+            if( entry.getValue() == value ) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 
     private static void logPersistence( AnnotatedObject<?, ?> ao ) {
