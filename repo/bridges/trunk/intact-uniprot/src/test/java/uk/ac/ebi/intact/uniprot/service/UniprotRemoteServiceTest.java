@@ -49,7 +49,7 @@ public class UniprotRemoteServiceTest {
     // Tests
 
     @Test
-    public void Convert_CDC42_CANFA() throws Exception {
+    public void convert_CDC42_CANFA() throws Exception {
         UniProtEntry entry = MockUniProtEntries.build_P60952();
         UniprotRemoteService service = new UniprotRemoteService();
         UniprotProtein protein = service.buildUniprotProtein( entry );
@@ -73,7 +73,7 @@ public class UniprotRemoteServiceTest {
     }
 
     @Test
-    public void RetrieveByUniprotId() throws Exception {
+    public void retrieveByUniprotId() throws Exception {
         Collection<UniprotProtein> prots = getUniprotService().retrieve( "CDC2_HUMAN" );
         final UniprotProtein uniprotProtein = prots.iterator().next();
         assertEquals( "P06493", uniprotProtein.getPrimaryAc() );
@@ -82,7 +82,7 @@ public class UniprotRemoteServiceTest {
     }
 
     @Test
-    public void RetrieveByUniprotId_noGeneNames() throws Exception {
+    public void retrieveByUniprotId_noGeneNames() throws Exception {
         Collection<UniprotProtein> prots = getUniprotService().retrieve( "O58917" );
 
         UniprotProtein uniprotProtein = prots.iterator().next();
@@ -90,13 +90,13 @@ public class UniprotRemoteServiceTest {
     }
 
     @Test
-    public void RetrieveBySpliceVariantId() throws Exception {
+    public void retrieveBySpliceVariantId() throws Exception {
         Collection<UniprotProtein> prots = getUniprotService().retrieve( "Q13535-1" );
         assertEquals( "ATR_HUMAN", prots.iterator().next().getId() );
     }
 
     @Test
-    public void Convert_FAU_DROME() throws Exception {
+    public void convert_FAU_DROME() throws Exception {
 
         UniProtEntry entry = MockUniProtEntries.build_Q9VGX3();
         UniprotRemoteService service = new UniprotRemoteService();
@@ -185,7 +185,7 @@ public class UniprotRemoteServiceTest {
     }
 
     @Test
-    public void Build() throws Exception {
+    public void build() throws Exception {
         UniprotService uniprot = getUniprotService();
 
         Collection<UniprotProtein> proteins = uniprot.retrieve( "P47068" );
@@ -264,7 +264,7 @@ public class UniprotRemoteServiceTest {
         assertEquals( 7, protein.getKeywords().size() );
 
         // cross references
-        assertEquals( 39, protein.getCrossReferences().size() );
+        assertEquals( 40, protein.getCrossReferences().size() );
 
         // splice variants
         assertEquals( 0, protein.getSpliceVariants().size() );
@@ -274,7 +274,7 @@ public class UniprotRemoteServiceTest {
     }
 
     @Test
-    public void SearchBySpliceVariant() throws UniprotServiceException {
+    public void searchBySpliceVariant() throws UniprotServiceException {
 
         // Q8NG31-1 has parent Q8NG31
         UniprotService uniprot = getUniprotService();
@@ -298,7 +298,7 @@ public class UniprotRemoteServiceTest {
     }
 
     @Test
-    public void SearchBySpliceVariantSecondaryId() throws UniprotServiceException {
+    public void searchBySpliceVariantSecondaryId() throws UniprotServiceException {
 
         // Q8NG31-1 has parent Q8NG31
         UniprotService uniprot = getUniprotService();
@@ -326,7 +326,7 @@ public class UniprotRemoteServiceTest {
     }
 
     @Test
-    public void RetreiveProteinWithSpliceVariant() throws UniprotServiceException {
+    public void retrieveProteinWithSpliceVariant() throws UniprotServiceException {
 
         UniprotService uniprot = getUniprotService();
         Collection<UniprotProtein> proteins = uniprot.retrieve( "Q24208" );
@@ -425,7 +425,7 @@ public class UniprotRemoteServiceTest {
     }
 
     @Test
-    public void RetreiveMultipleProteins() throws UniprotServiceException {
+    public void retrieveMultipleProteins() throws UniprotServiceException {
         UniprotService uniprot = getUniprotService();
         Collection<UniprotProtein> proteins = uniprot.retrieve( "P21181" );
 
@@ -475,7 +475,7 @@ public class UniprotRemoteServiceTest {
     }
 
     @Test
-    public void RetreiveSimpleProteinWithCrossReferenceFilter() throws UniprotServiceException {
+    public void retrieveSimpleProteinWithCrossReferenceFilter() throws UniprotServiceException {
         CrossReferenceFilter filter = new CrossReferenceFilter() {
 
             public boolean isSelected(String database) {
