@@ -23,10 +23,7 @@ import uk.ac.ebi.kraken.interfaces.uniprot.genename.GeneNameSynonym;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.ORFName;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.OrderedLocusName;
 import uk.ac.ebi.kraken.util.IndexField;
-import uk.ac.ebi.kraken.uuw.services.remoting.Query;
-import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryBuilder;
-import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryService;
-import uk.ac.ebi.kraken.uuw.services.remoting.UniProtRemoteServiceFactory;
+import uk.ac.ebi.kraken.uuw.services.remoting.*;
 
 import java.util.*;
 
@@ -43,10 +40,12 @@ public class UniprotRemoteService extends AbstractUniprotService {
      * Sets up a logger for that class.
      */
     public static final Log log = LogFactory.getLog( UniprotRemoteService.class );
-    private UniProtRemoteServiceFactory uniprotRemoteServiceFactory;
+
+    private UniProtQueryService uniProtQueryService;
+
 
     public UniprotRemoteService() {
-        uniprotRemoteServiceFactory = new UniProtRemoteServiceFactory();
+        uniProtQueryService = UniProtJAPI.factory.getUniProtQueryService();
     }
 
     public Collection<UniprotProtein> retrieve( String ac ) {
@@ -111,7 +110,6 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
             // we only use this search for splice variants and feature chains
             Query query = UniProtQueryBuilder.buildFullTextSearch( ac );
-            UniProtQueryService uniProtQueryService = uniprotRemoteServiceFactory.getUniProtQueryService();
             iterator = uniProtQueryService.getEntryIterator( query );
 
         } else {
@@ -122,7 +120,6 @@ public class UniprotRemoteService extends AbstractUniprotService {
     }
 
     private Iterator<UniProtEntry> getUniProtEntryForProteinEntry( String ac ) {
-        UniProtQueryService uniProtQueryService = uniprotRemoteServiceFactory.getUniProtQueryService();
         // the Lucene field identifier copes with primary and secondary ACs.
 //        String query = "identifier:" + ac;
 
@@ -132,7 +129,17 @@ public class UniprotRemoteService extends AbstractUniprotService {
                 IndexField.UNIPROT_EXPIRED_IDENTIFIER.getValue() + ":" + ac +
                 " OR " +
                 IndexField.UNIPROT_ID.getValue() + ":" + ac;
+
         return uniProtQueryService.getEntryIterator( UniProtQueryBuilder.buildQuery( query ) );
+    }
+
+    public static void main(String[] args) {
+        final UniProtQueryService uniProtQueryService = UniProtJAPI.factory.getUniProtQueryService();
+        final EntryIterator<UniProtEntry> iterator = uniProtQueryService.getEntryIterator(UniProtQueryBuilder.buildQuery("P43063"));
+
+        for (UniProtEntry protEntry : iterator) {
+            System.out.println(protEntry.getPrimaryUniProtAccession().getValue());
+        }
     }
 
     protected UniprotProtein buildUniprotProtein( UniProtEntry uniProtEntry ) {
