@@ -15,7 +15,7 @@ svn co http://intact.googlecode.com/svn/repo/site/trunk/intact-kickstart
 The goal is two-fold:
 
     * To help you initializing your local !IntAct database with real data.
-    * To take you though examples that highlight how to use the !IntAct API. 
+    * To take you through examples that highlight how to use the !IntAct API. 
 
 The first thing to do is to load !IntAct with controlled vocabularies (CVs). Cvs are a corner stone of the !IntAct data model. They allow to represent unambiguously concept such as database (eg. !UniProt), interaction detection method (eg. yeast two hybrid), participant identification (eg. mass spectrometry) ... 
 
