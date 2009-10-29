@@ -1,4 +1,5 @@
 #summary Guide explaining how to create a custom installation of the database.
+#labels Featured
 
 = Local install =
 
