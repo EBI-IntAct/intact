@@ -128,8 +128,16 @@ IntactContext.initContext(new String[] {"/META-INF/rd.spring.xml"});
 }}}
 
  Now the last step to get your local node setup is to configure the database, this is going to involve writing some more spring configuration and we are going to do it in a separate file in src/META-INF/rd-jpa.spring.xml
-In the example below we are setting properties of bean 'intactCoreDataSource' with the specifics of the database connection and bean 'jpaVendorAdapter' with the database dialect that we aim at using (here Oracle).
+In the example below we are setting properties of bean 'intactCoreDataSource' with the specifics of the database connection :
+  * server: blackhole.rd.com
+  * port: 1531
+  * username: admin
+  * password: adm1n99
 
+ As well as bean 'jpaVendorAdapter' with the [https://www.hibernate.org/hib_docs/v3/api/org/hibernate/dialect/package-summary.html database dialect] that we aim at using:
+  * Oracle: org.hibernate.dialect.Oracle9Dialect
+
+The resulting file is as follow:
 
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
@@ -170,7 +178,7 @@ In the example below we are setting properties of bean 'intactCoreDataSource' wi
 
         <property name="jpaVendorAdapter">
             <bean class="uk.ac.ebi.intact.core.config.hibernate.IntactHibernateJpaVendorAdapter">
-                <property name="databasePlatform" value="org.hibernate.dialect.HSQLDialect"/>
+                <property name="databasePlatform" value="org.hibernate.dialect.Oracle9Dialect"/>
                 <property name="showSql" value="false"/>
                 <property name="generateDdl" value="false"/>
             </bean>
@@ -178,8 +186,8 @@ In the example below we are setting properties of bean 'intactCoreDataSource' wi
     </bean>
 
     <bean id="intactCoreDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value=""/>
-        <property name="url" value=""/>
+        <property name="driverClassName" value="oracle.jdbc.OracleDriver"/>
+        <property name="url" value="oracle:thin:@blackhole.rd.com:1531<"/>
         <property name="username" value="admin"/>
         <property name="password" value="adm1n99"/>
     </bean>
@@ -188,6 +196,4 @@ In the example below we are setting properties of bean 'intactCoreDataSource' wi
 }}}
 
 
-
 == Using !IntactContext in Web Applications ===
-
