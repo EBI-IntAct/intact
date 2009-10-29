@@ -1,4 +1,4 @@
-#summary How to use !IntactContext and more generally configure an !IntAct local installation.
+#summary How to use IntactContext and more generally configure an IntAct local installation.
 #labels Featured,Phase-Implementation,Phase-Deploy
 
 = Introduction =
