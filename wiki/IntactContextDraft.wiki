@@ -1,4 +1,5 @@
-#How to use !IntactContext and more generally configure an !IntAct local installation.
+#summary How to use !IntactContext and more generally configure an !IntAct local installation.
+#labels Featured,Phase-Implementation,Phase-Deploy
 
 = Introduction =
 
@@ -24,6 +25,7 @@ This is an introduction to the core API of !IntAct (aka. intact-core), more spec
  In order to quickly configure the !IntAct API you can rely on its default configuration. It will create a stand-alone in-memory database using [http://www.h2.org H2].
 
  The way to initialize the API is as follow:
+
 {{{
 IntactContext.initStandaloneContext();
 }}}
@@ -33,7 +35,6 @@ IntactContext.initStandaloneContext();
 
 
 == Spring ==
-
 
   === Support ===
 
@@ -50,21 +51,143 @@ IntactContext.initStandaloneContext();
   And whenever using the standalone initialization you will load the following spring configuration:
     * [http://code.google.com/p/intact/source/browse/repo/core/trunk/intact-core/src/main/resources/META-INF/standalone/jpa-standalone.spring.xml jpa-standalone.spring.xml]
   These configuration files consist of beans declaration that are used and relied on by the !IntAct API to access the data in the underlying database.
-  Note that any beans that has been configured using Spring can be accessed using the !IntactContext. In the example below we are retreiving the intactCoreDataSource:
+  Note that any beans that has been configured using Spring can be accessed using the !IntactContext. In the example below we are retrieving the default institution currently configured:
+
 {{{
 IntactConfiguration config = (IntactConfiguration)IntactContext.getCurrentInstance().getSpringContext().getBean( "intactConfig" );
 System.out.println( config.getDefaultInstitution().getShorltabel() );
 }}}
 
-The main beans you should be aware of in these configuration files are the following:
- * IntactCOnfiguration
- * ...
+The main beans you should be aware of in intact.spring.xml are the following:
+ * intactInitializer
+ * userContext
+ * intactConfig
+
+However, unless you want to tweak the way the data is handled when storing it into the database, the default should suffice. Hence, the only thing you would have to set to meet the criteria of the above use case are the following beans:
+
+ * intactConfig
+
+
 
 === Configuring Your Local Intact Node ===
 
  So, now that we know what the IntAct configuration is made of, we can try configure our own. So let's assume we are installing !IntAct following these settings:
- * the institution is called "PharmaTox"
+ * the institution is called "Random Discovery LTD"
  * we are aiming at storing our interaction data in an Oracle database
- * we want our local object identifiers to be prefixed with "PT:"
+ * we want our local object identifiers to be prefixed with "RD:"
+
+ First of all, let's create a new spring configuration file in src/main/resources/META-INF and let's call it rd.spring.xml
+
+ Then, let's create a bean definition for our own institution:
+
+{{{
+    <bean id="randomDiscovery" class="uk.ac.ebi.intact.model.util.InstitutionFactoryBean">
+        <property name="name" value="randomdiscovery"/>
+        <property name="description" value="Cambridge, Discovery road"/>
+        <property name="miAc" value="MI:9999"/>
+        <property name="pubmed" value="123456778"/>
+        <property name="url" value="http://www.random-discovery.com"/>
+    </bean>
+}}}
+
+ Now we can override the default institution configuration by defining the 'defaultInstitution' property of bean 'intactConfig':
+
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+    <bean id="randomDiscovery" class="uk.ac.ebi.intact.model.util.InstitutionFactoryBean">
+        <property name="name" value="randomdiscovery"/>
+        <property name="description" value="Cambridge, Discovery road"/>
+        <property name="miAc" value="MI:9999"/>
+        <property name="pubmed" value="123456778"/>
+        <property name="url" value="http://www.random-discovery.com"/>
+    </bean>
+
+    <bean id="intactConfig" class="uk.ac.ebi.intact.core.config.IntactConfiguration">
+        <property name="acPrefix" value="RD:"/>
+        <property name="defaultInstitution" ref="randomDiscovery"/>
+    </bean>
+
+</beans>
+}}}
+
+ _Note_: the miAc and the publication are set to random value. You can find in the [http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI PSI-MI Ontology] already defined interaction databases.
+
+ Now, in order to start the API using this configuration you only need to use the !IntactContext and give it the above defined spring file:
+
+{{{
+IntactContext.initContext(new String[] {"/META-INF/rd.spring.xml"});
+}}}
+
+ Now the last step to get your local node setup is to configure the database, this is going to involve writing some more spring configuration and we are going to do it in a separate file in src/META-INF/rd-jpa.spring.xml
+In the example below we are setting properties of bean 'intactCoreDataSource' with the specifics of the database connection and bean 'jpaVendorAdapter' with the database dialect that we aim at using (here Oracle).
+
+
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+        <property name="dataSource" ref="intactCoreDataSource"/>
+    </bean>
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="persistenceUnitName" value="intact-core-default"/>
+        <property name="dataSource" ref="intactCoreDataSource"/>
+        
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.generate_statistics">true</prop>
+                <prop key="hibernate.format_sql">false</prop>
+                <prop key="hibernate.hbm2ddl.auto">none</prop>
+            </props>
+        </property>
+
+        <property name="jpaVendorAdapter">
+            <bean class="uk.ac.ebi.intact.core.config.hibernate.IntactHibernateJpaVendorAdapter">
+                <property name="databasePlatform" value="org.hibernate.dialect.HSQLDialect"/>
+                <property name="showSql" value="false"/>
+                <property name="generateDdl" value="false"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="intactCoreDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value=""/>
+        <property name="url" value=""/>
+        <property name="username" value="admin"/>
+        <property name="password" value="adm1n99"/>
+    </bean>
+
+</beans>
+}}}
+
+
 
 == Using !IntactContext in Web Applications ===
+
