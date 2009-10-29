@@ -28,7 +28,7 @@ The way to initialize the API is as follow:
 IntactContext.initStandaloneContext();
 }}}
 
-Now obviously, this is fine when you are toying with !IntAct as whenever you stop the API, the database will simply not be available anymore. 
+You have to bear in mind when running this initialization that IntAct has a set of configuration files (aka. standalone configuration) that takes care of initializing the database and the API with default configuration values. Now obviously, this is fine when you are toying with !IntAct as whenever you stop the API, the database will simply not be available anymore.
 So now what you have to do it to create the !IntAct database schema into a relational database of your choice (so far we support Oracle, !PostgreSQL and H2) and configure !IntAct to use it. The following steps cover this.
 
 
@@ -39,15 +39,30 @@ So now what you have to do it to create the !IntAct database schema into a relat
   * [http://static.springsource.org/spring/docs/2.5.x/reference/aop.html#aop-introductionAspect Oriented Programming]
   * [http://static.springsource.org/spring/docs/2.5.x/reference/orm.html#orm-jpa Abstraction layer over our Object Relational Mapping (JPA/Hibernate)].
 
- 
-
    === Support ===
+
+In order to customize you local installation of !IntAct, you will have to override the default !IntAct configuration with your own settings. The default configuration can be seen below:
+  * [http://code.google.com/p/intact/source/browse/repo/core/trunk/intact-core/src/main/resources/META-INF/intact.spring.xml intact.spring.xml]
+
+Just bear in mind that intact.spring.xml is always loaded irrespectively of the configuration you may set. You can always override this configuration by defining your own bean with the same id.
+
+And whenever using the standalone initialization you will load the following spring configuration:
+
+  * [http://code.google.com/p/intact/source/browse/repo/core/trunk/intact-core/src/main/resources/META-INF/standalone/jpa-standalone.spring.xml jpa-standalone.spring.xml]
+
+These configuration files consist of beans declaration that are used and relied on by the !IntAct API to access the data in the underlying database.
+
+Note that any beans that has been configured using Spring can be accessed using the !IntactContext. In the example below we are retreiving the intactCoreDataSource:
+
+{{{
+IntactConfiguration config = IntactContext.getCurrentInstance().getSpringContext().getBean( "intactConfig" );
+System.out.println( config.getDefaultInstitution().getShorltabel() );
+}}}
+
 
    === Configuration ===
 
 
 == Using !IntactContext in Web Applications ===
-
-
 
 
