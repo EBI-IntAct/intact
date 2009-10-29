@@ -187,7 +187,7 @@ The resulting file is as follow:
 
     <bean id="intactCoreDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="oracle.jdbc.OracleDriver"/>
-        <property name="url" value="oracle:thin:@blackhole.rd.com:1531<"/>
+        <property name="url" value="oracle:thin:@blackhole.rd.com:1531"/>
         <property name="username" value="admin"/>
         <property name="password" value="adm1n99"/>
     </bean>
