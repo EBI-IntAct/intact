@@ -34,7 +34,7 @@ So now what you have to do it to create the !IntAct database schema into a relat
 
 == Spring ==
 
-Spring is a framework that delivers a large amount of functionalities to enterprise Java applications, of which, !IntAct 2.0 is heavily relying on a few such as:
+[http://static.springsource.org/spring/docs/2.5.x/reference/introduction.html#introduction-overview Spring] is a framework that delivers a large amount of functionalities to enterprise Java applications, of which, !IntAct 2.0 is heavily relying on a few such as:
  * [http://static.springsource.org/spring/docs/2.5.x/reference/beans.html#beans-introduction Inversion of control container]
  * [http://static.springsource.org/spring/docs/2.5.x/reference/aop.html#aop-introductionAspect Oriented Programming]
  * [http://static.springsource.org/spring/docs/2.5.x/reference/orm.html#orm-jpa Abstraction layer over our Object Relational Mapping (JPA/Hibernate)].
@@ -47,8 +47,6 @@ Spring is a framework that delivers a large amount of functionalities to enterpr
 
 
 == Using !IntactContext in Web Applications ===
-
-
 
 
 
