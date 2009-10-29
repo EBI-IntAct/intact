@@ -27,7 +27,7 @@ This is an introduction to the core API of !IntAct (aka. intact-core), more spec
  The way to initialize the API is as follow:
 
 {{{
-IntactContext.initStandaloneContext();
+IntactContext.initStandaloneContextInMemory();
 }}}
 
  You have to bear in mind when running this initialization that IntAct has a set of configuration files (aka. standalone configuration) that takes care of initializing the database and the API with default configuration values. Now obviously, this is fine when you are toying with !IntAct as whenever you stop the API, the database will simply not be available anymore.
