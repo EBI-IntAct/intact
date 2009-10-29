@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#How to use !IntactContext and more generally configure an !IntAct local installation.
 
 = Introduction =
 
