@@ -12,12 +12,12 @@ This is an introduction to the core API of !IntAct (aka. intact-core), more spec
 
 == Description ==
 
- If there was only one object you should know about in the !IntAct API, !IntactContext would be the one as everything starts from it. It allows you to:
-   * get access to the !IntAct configuration
-   * initialize the connection to the underlying database, 
-   * get access to the stored data,
-   * create or alter data,
-   * get access to the underlying Spring context.
+If there was only one object you should know about in the !IntAct API, !IntactContext would be the one as everything starts from it. It allows you to:
+  * get access to the !IntAct configuration
+  * initialize the connection to the underlying database, 
+  * get access to the stored data,
+  * create or alter data,
+  * get access to the underlying Spring context.
 
 == Initialization Examples ==
 
@@ -35,9 +35,9 @@ So now what you have to do it to create the !IntAct database schema into a relat
 == Spring ==
 
 [http://static.springsource.org/spring/docs/2.5.x/reference/introduction.html#introduction-overview Spring] is a framework that delivers a large amount of functionalities to enterprise Java applications, of which, !IntAct 2.0 is heavily relying on a few such as:
- * [http://static.springsource.org/spring/docs/2.5.x/reference/beans.html#beans-introduction Inversion of control container]
- * [http://static.springsource.org/spring/docs/2.5.x/reference/aop.html#aop-introductionAspect Oriented Programming]
- * [http://static.springsource.org/spring/docs/2.5.x/reference/orm.html#orm-jpa Abstraction layer over our Object Relational Mapping (JPA/Hibernate)].
+  * [http://static.springsource.org/spring/docs/2.5.x/reference/beans.html#beans-introduction Inversion of control container]
+  * [http://static.springsource.org/spring/docs/2.5.x/reference/aop.html#aop-introductionAspect Oriented Programming]
+  * [http://static.springsource.org/spring/docs/2.5.x/reference/orm.html#orm-jpa Abstraction layer over our Object Relational Mapping (JPA/Hibernate)].
 
  
 
@@ -47,8 +47,6 @@ So now what you have to do it to create the !IntAct database schema into a relat
 
 
 == Using !IntactContext in Web Applications ===
-
-
 
 
 
