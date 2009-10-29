@@ -195,5 +195,10 @@ The resulting file is as follow:
 </beans>
 }}}
 
+Now we only need to include this file when initializing IntactContext, like so:
+
+{{{
+IntactContext.initContext(new String[] {"/META-INF/rd.spring.xml", "/META-INF/rd-jpa.spring.xml"});
+}}}
 
 == Using !IntactContext in Web Applications ===
