@@ -1,0 +1,26 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+This is an introduction to the core API of !IntAct, more specifically introducing users to a central concept: !IntactContext.
+
+= !IntactContext =
+
+== Description ==
+
+    la la
+
+== Initialization Examples ==
+
+{{{
+IntactContext.initialize( "mydb.spring.xml" )
+}}}
+
+
+== Spring ==
+
+   === Support ===
+
+   === Configuration ===
+
+== Using !IntactContext in Web Applications ===
