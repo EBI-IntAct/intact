@@ -1,0 +1,32 @@
+#summary Explains how to set up an instance of the legacy search webapp.
+#labels Phase-Deploy
+
+= Introduction =
+
+Using this web application is a simple way to browse the data you have in your local database. The Legacy Search webapp is one of the original applications and has been used by IntAct until recently.
+
+= Installation = 
+
+The easiest way to install and run this application (and all the applications created by the IntAct team) is to checkout the source code and use Maven to start it.
+
+== Requirements ==
+
+To run your Search web application you will need:
+
+  * Maven 2: to build the application
+  * Subversion client: to checkout the code
+  * Java 5 or higher installed
+
+== Procedure ==
+
+All the steps explained use the command line, so you will need to run this on a terminal. To start, checkout the code using subversion:
+
+{{{
+svn checkout http://intact.googlecode.com/svn/repo/service/trunk/search/legacy/search-app
+}}}
+
+Then, get into the new directory:
+
+{{{
+cd search-app
+}}}
