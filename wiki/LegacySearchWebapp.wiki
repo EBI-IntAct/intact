@@ -3,11 +3,11 @@
 
 = Introduction =
 
-Using this web application is a simple way to browse the data you have in your local database. The Legacy Search webapp is one of the original applications and has been used by IntAct until recently.
+Using this web application is a simple way to browse the data you have in your local database. The Legacy Search webapp is one of the original applications and has been used by !IntAct until recently.
 
 = Installation = 
 
-The easiest way to install and run this application (and all the applications created by the IntAct team) is to checkout the source code and use Maven to start it.
+The easiest way to install and run this application (and all the applications created by the !IntAct team) is to checkout the source code and use Maven to start it.
 
 == Requirements ==
 
@@ -21,7 +21,7 @@ To run your Search web application you will need:
 
 In order to run most of the IntAct web applications, you need to use a Maven profile. You can read more about profiles in the [http://maven.apache.org/guides/introduction/introduction-to-profiles.html Maven site].
 
-Create a profile in the ~/.m2/settings.xml file. Use as template the following example, but you need to change the values to use your database connection. Currently the databases supported out-of-the-box are Oracle, PostgreSQL and HSQLDB.
+Create a profile in the {{{~/.m2/settings.xml}}} file. Use as template the following example, but you need to change the values to use your database connection. Currently the databases supported out-of-the-box are Oracle, PostgreSQL and HSQLDB.
 
 {{{
 <settings>
@@ -87,4 +87,16 @@ The value of the _db_ variable goes like this:
   * If using PostgreSQL, use {{{ -D db=postgres }}}
   * If using HSQL, don't pass the -D variable.
 
-And then, after the {{{-P}}} you have to specify the ID of your profile, as defined in the {{{settings.xml}}} file.
+And then, after the {{{-P}}} you have to specify the ID of your profile, as defined in the {{{~/.m2/settings.xml}}} file.
+
+If the previous command works fine, you should see some logging and fetching of dependencies. The first time is ran, it will probably take much more time. You will now that it has run correctly if at the end of the log messages you see something like this:
+
+{{{
+2009-11-16 13:55:40.823::INFO:  Started SelectChannelConnector@0.0.0.0:8081
+[INFO] Started Jetty Server
+[INFO] Starting scanner at interval of 10 seconds.
+}}}
+
+Now you can test the web application, by opening your browsing and using this URL:
+
+http://localhost:8081/intact/search-app
