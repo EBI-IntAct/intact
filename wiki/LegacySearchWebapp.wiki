@@ -21,11 +21,13 @@ To run your Search web application you will need:
 
 In order to run most of the IntAct web applications, you need to use a Maven profile. You can read more about profiles in the [http://maven.apache.org/guides/introduction/introduction-to-profiles.html Maven site].
 
-Create a profile in the {{{~/.m2/settings.xml}}} file. Use as template the following example, but you need to change the values to use your database connection. Currently the databases supported out-of-the-box are Oracle, PostgreSQL and HSQLDB.
+Create a profile in the {{{~/.m2/settings.xml}}} file. Use as template the following example, but you need to change the values to use your database connection. Currently the databases supported out-of-the-box are PostgreSQL, Oracle and HSQLDB.
 
 {{{
 <settings>
 ...
+ <profiles>
+ ...
    <profile>
         <id>intact-pg</id>
         <properties>
@@ -37,26 +39,29 @@ Create a profile in the {{{~/.m2/settings.xml}}} file. Use as template the follo
             <db.password>change-me</db.password>
         </properties>
    </profile>
+ </profiles>
 ...
 </settings>
 }}}
 
-Or, if you used Oracle, you could have a profile similar to this:
+Or, if using HSQLDB, for example:
 
 {{{
 <settings>
 ...
+ <profiles>
+ ...
    <profile>
-        <id>intact-oracle</id>
+        <id>intact-hsqldb</id>
         <properties>
-            <db>postgres</db>
-            <db.host>localhost</db.host>
-            <db.port>5432</db.port>
-            <db.alias>intact-db</db.alias>
-            <db.user>intact</db.user>
-            <db.password>change-me</db.password>
+            <db>hsqldb</db>
+            <db.host>file</db.host>
+            <db.alias>/tmp/intack-kickstart-db</db.alias>
+            <db.user>sa</db.user>
+            <db.password></db.password>
         </properties>
    </profile>
+ </profiles>
 ...
 </settings>
 }}}
