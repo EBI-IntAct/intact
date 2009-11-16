@@ -127,6 +127,36 @@
                 </dependency>
             </dependencies>
         </profile>
+
+        <profile>
+            <id>hsqldb</id>
+            <activation>
+                <property>
+                    <name>db</name>
+                    <value>hsqldb</value>
+                </property>
+            </activation>
+
+            <build>
+                <finalName>${artifactId}-${db.platform}-${version}</finalName>
+            </build>
+
+            <properties>
+                <db.platform>HSQLDB</db.platform>
+                <db.driver>org.hsqldb.jdbcDriver</db.driver>
+                <db.protocol>jdbc</db.protocol>
+                <db.subprotocol>hsqldb</db.subprotocol>
+                <db.dialect>org.hibernate.dialect.HSQLDialect</db.dialect>
+            </properties>
+
+            <dependencies>
+                <dependency>
+                    <groupId>hsqldb</groupId>
+                    <artifactId>hsqldb</artifactId>
+                    <version>1.8.0.7</version>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 
     <dependencies>
