@@ -19,7 +19,51 @@ To run your Search web application you will need:
 
 == Procedure ==
 
-All the steps explained use the command line, so you will need to run this on a terminal. To start, checkout the code using subversion:
+In order to run most of the IntAct web applications, you need to use a Maven profile. You can read more about profiles in the [http://maven.apache.org/guides/introduction/introduction-to-profiles.html Maven site].
+
+Create a profile in the ~/.m2/settings.xml file. Use as template the following example, but you need to change the values to use your database connection. Currently the databases supported out-of-the-box are Oracle, PostgreSQL and HSQLDB.
+
+{{{
+<settings>
+...
+   <profile>
+        <id>intact-pg</id>
+        <properties>
+            <db>postgres</db>
+            <db.host>localhost</db.host>
+            <db.port>5432</db.port>
+            <db.alias>intact-db</db.alias>
+            <db.user>intact</db.user>
+            <db.password>change-me</db.password>
+        </properties>
+   </profile>
+...
+</settings>
+}}}
+
+Or, if you used Oracle, you could have a profile similar to this:
+
+{{{
+<settings>
+...
+   <profile>
+        <id>intact-oracle</id>
+        <properties>
+            <db>postgres</db>
+            <db.host>localhost</db.host>
+            <db.port>5432</db.port>
+            <db.alias>intact-db</db.alias>
+            <db.user>intact</db.user>
+            <db.password>change-me</db.password>
+        </properties>
+   </profile>
+...
+</settings>
+}}}
+
+The good thing about profiles is that you can have as many as you need in order to have much more flexibility when running the applications (for instance, having a test and a production version of a web application).
+
+Let's now check out the code from the subversion repository:
 
 {{{
 svn checkout http://intact.googlecode.com/svn/repo/service/trunk/search/legacy/search-app
@@ -30,3 +74,17 @@ Then, get into the new directory:
 {{{
 cd search-app
 }}}
+
+And start the application on the fly using jetty. You will need to change the value of the _db_ argument and the profile.
+
+{{{
+mvn clean jetty:run -D db=oracle -P intact-oracle
+}}}
+
+The value of the _db_ variable goes like this:
+
+  * If using oracle, use {{{ -D db=oracle }}}
+  * If using PostgreSQL, use {{{ -D db=postgres }}}
+  * If using HSQL, don't pass the -D variable.
+
+And then, after the {{{-P}}} you have to specify the ID of your profile, as defined in the {{{settings.xml}}} file.
