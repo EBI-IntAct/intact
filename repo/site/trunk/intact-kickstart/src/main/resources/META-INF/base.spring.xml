@@ -18,7 +18,7 @@
     </bean>
 
     <bean name="intactConfig" class="uk.ac.ebi.intact.core.config.IntactConfiguration">
-        <property name="acPrefix" value="EBI"/>
+        <property name="acPrefix" value="KICKSTART"/>
         <property name="defaultInstitution" >
             <bean class="uk.ac.ebi.intact.model.util.InstitutionFactoryBean">
                 <property name="name" value="exampleInstitution"/>
