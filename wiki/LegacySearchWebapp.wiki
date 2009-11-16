@@ -56,7 +56,7 @@ Or, if using HSQLDB, for example:
         <properties>
             <db>hsqldb</db>
             <db.host>file</db.host>
-            <db.alias>/tmp/intack-kickstart-db</db.alias>
+            <db.alias>file:/tmp/intact-kickstart-db</db.alias>
             <db.user>sa</db.user>
             <db.password></db.password>
         </properties>
