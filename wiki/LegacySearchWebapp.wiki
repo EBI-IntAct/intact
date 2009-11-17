@@ -19,7 +19,7 @@ To run your Search web application you will need:
 
 == Procedure ==
 
-In order to run most of the IntAct web applications, you need to use a Maven profile. You can read more about profiles in the [http://maven.apache.org/guides/introduction/introduction-to-profiles.html Maven site].
+In order to run most of the !IntAct web applications, you need to use a Maven profile. You can read more about profiles in the [http://maven.apache.org/guides/introduction/introduction-to-profiles.html Maven site].
 
 Create a profile in the {{{~/.m2/settings.xml}}} file. Use as template the following example, but you need to change the values to use your database connection. Currently the databases supported out-of-the-box are PostgreSQL, Oracle and H2.
 
