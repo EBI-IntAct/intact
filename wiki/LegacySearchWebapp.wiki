@@ -57,7 +57,7 @@ Or, if using H2, for example:
         <id>intact-h2</id>
         <properties>
             <db>h2</db>
-            <db.alias>file:c:/tmp-h2/intact-kickstart-db</db.alias>
+            <db.alias>file:/tmp/intact-kickstart-db</db.alias>
             <db.user>sa</db.user>
             <db.password></db.password>
         </properties>
