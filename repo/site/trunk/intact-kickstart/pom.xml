@@ -81,15 +81,6 @@
             <!--<version>10.2.0.2.0</version>-->
         <!--</dependency>-->
 
-
-        <!-- H2 -->
-        <!--<dependency>-->
-            <!--<groupId>com.h2database</groupId>-->
-            <!--<artifactId>h2</artifactId>-->
-            <!--<version>1.0.20070617</version>-->
-        <!--</dependency>-->
-
-
         <!-- Other -->
         <dependency>
             <groupId>commons-collections</groupId>
