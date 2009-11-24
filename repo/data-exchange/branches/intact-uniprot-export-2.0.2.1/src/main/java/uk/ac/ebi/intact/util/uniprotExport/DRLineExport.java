@@ -9,7 +9,6 @@ import org.apache.commons.cli.*;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.MemoryMonitor;
 
 import java.io.*;
 import java.sql.SQLException;
@@ -94,7 +93,7 @@ public class DRLineExport extends LineExport {
 
         boolean isHighConfidence = false;
 
-        String uniprotID = getUniprotID(protein);
+        String uniprotID = getUniprotPrimaryAc(protein);
         getOut().println("\n\nChecking on Protein: " + uniprotID + "(" + protein.getAc() + ", " + protein.getShortLabel() + ") ...");
 
         // getting all interactions in which that protein plays a role.
@@ -406,11 +405,11 @@ public class DRLineExport extends LineExport {
                                              protein.getAc() + ") having the AC(" + masterAc + ")");
                         } else {
                             // check that the master hasn't been processed already
-                            uniprotId = getUniprotID(master);
+                            uniprotId = getUniprotPrimaryAc(master);
                         }
                     }
                 } else {
-                    uniprotId = getUniprotID(protein);
+                    uniprotId = getUniprotPrimaryAc(protein);
                 }
 
                 if ( uniprotId != null ) {

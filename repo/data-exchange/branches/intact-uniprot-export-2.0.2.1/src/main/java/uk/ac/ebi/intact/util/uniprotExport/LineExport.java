@@ -9,13 +9,11 @@ import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.context.CvContext;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.InteractionUtils;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -512,7 +510,7 @@ public class LineExport {
      *
      * @return the uniprot ID as a String or null if none is found (should not occur)
      */
-    public String getUniprotID(final Protein protein) {
+    public String getUniprotPrimaryAc(final Protein protein) {
 
         if (protAcToUniprotIdCache.containsKey(protein.getAc())) {
             return protAcToUniprotIdCache.get(protein.getAc());
@@ -536,9 +534,9 @@ public class LineExport {
     }
 
     /**
-     * Get the intact master AC from the given Splice variant.
+     * Get the intact master AC from the given Splice variant or protein chain.
      *
-     * @param protein the splice variant (Protein) for which we its intact master AC.
+     * @param protein the splice variant or chain (Protein) for which we want its intact master AC.
      *
      * @return the intact AC
      */
@@ -676,7 +674,7 @@ public class LineExport {
                     Protein protein = (Protein) interactor;
 
                     // check that the protein is a UniProt protein
-                    String uniprotID = getUniprotID(protein);
+                    String uniprotID = getUniprotPrimaryAc(protein);
                     if (uniprotID == null) {
                         isBinaryInteraction = false; // stop the loop, involve a protein without uniprot ID
 
@@ -1078,25 +1076,22 @@ public class LineExport {
     }
 
     /**
-     * Assess if a protein is a aplice variant on the basis of its shortlabel as we use the following format SPID-# and
-     * if it has a isoform-parent cross reference. <br> Thought it doesn't mean we will find a master protein for it.
+     * Assess if a protein is a splice variant or a chain on the basis of its uniprot AC as it uses the following
+     * format SPAC-\d+ if it has a isoform-parent and SPAC-PRO_\d+ if it is a chain.
+     * <br> Thought it doesn't mean we will find a master protein for it.
      *
-     * @param protein the protein we are interrested in knowing if it is a splice variant.
+     * @param protein the protein we are interrested in knowing if it is a splice variant or a chain.
      *
      * @return true if the name complies to the splice variant format.
      */
-    protected boolean isSpliceVariant(Protein protein) {
-
-        // TODO check here is it has a master or not.
-
-        if (protein.getShortLabel().indexOf("-") != -1) {
-            // eg. P12345-2
-
+    protected boolean isSpliceVariantOrChain(Protein protein) {
+        final String ac = getUniprotPrimaryAc( protein );
+        if (ac.indexOf("-") != -1) {
+            // eg. P12345-2, Q62165-PRO_0000021067
             if (getMasterAc(protein) != null) {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -1115,7 +1110,7 @@ public class LineExport {
         // in the case of a splice variant, we should pick the gene name from the master protein.
         Protein queryProtein = null;
 
-        if (isSpliceVariant(protein)) {
+        if ( isSpliceVariantOrChain(protein)) {
 
             // get the master protein.
             queryProtein = getMasterProtein(protein);
