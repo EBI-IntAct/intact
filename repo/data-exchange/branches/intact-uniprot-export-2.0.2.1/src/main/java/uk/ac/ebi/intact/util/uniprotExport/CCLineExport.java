@@ -240,14 +240,14 @@ public class CCLineExport extends LineExport {
 
         // contains the Uniprot ID of protein 1, if protein 1 is a splice variant, we retreive its master's.
         String master1 = null;
-        if (isSpliceVariant(protein1)) {
+        if ( isSpliceVariantOrChain(protein1)) {
 
             Protein proteinMaster1 = getMasterProtein(protein1);
 
             if (proteinMaster1 == null) {
                 getOut().println("ERROR: Could not export a CC line related to the master of " + uniprotID1);
             } else {
-                master1 = getUniprotID(proteinMaster1);
+                master1 = getUniprotPrimaryAc(proteinMaster1);
             }
         } else {
             master1 = uniprotID1;
@@ -255,14 +255,14 @@ public class CCLineExport extends LineExport {
 
         // contains the Uniprot ID of protein 1, if protein 1 is a splice variant, we retreive its master's.
         String master2 = null;
-        if (isSpliceVariant(protein2)) {
+        if ( isSpliceVariantOrChain(protein2)) {
 
             Protein proteinMaster2 = getMasterProtein(protein2);
 
             if (proteinMaster2 == null) {
                 getOut().println("ERROR: Could not export a CC line related to the master of " + uniprotID2);
             } else {
-                master2 = getUniprotID(proteinMaster2);
+                master2 = getUniprotPrimaryAc(proteinMaster2);
             }
         } else {
             master2 = uniprotID2;
@@ -456,7 +456,7 @@ public class CCLineExport extends LineExport {
         // in case a protein is a splice variant, get its master ID
         // we consider an isoform interacting with its parent as self interaction.
         String master1 = null;
-        if (isSpliceVariant(protein1)) {
+        if ( isSpliceVariantOrChain(protein1)) {
 
             Protein proteinMaster1 = getMasterProtein(protein1);
 
@@ -464,7 +464,7 @@ public class CCLineExport extends LineExport {
                 getOut().println("ERROR: Could not export a CC line related to the master of " + uniprotID_1);
                 master1 = uniprotID_1;
             } else {
-                master1 = getUniprotID(proteinMaster1);
+                master1 = getUniprotPrimaryAc(proteinMaster1);
             }
         } else {
             master1 = uniprotID_1;
@@ -472,7 +472,7 @@ public class CCLineExport extends LineExport {
 
         // contains the Uniprot ID of protein 1, if protein 1 is a splice variant, we retreive its master's.
         String master2 = null;
-        if (isSpliceVariant(protein2)) {
+        if ( isSpliceVariantOrChain(protein2)) {
 
             Protein proteinMaster2 = getMasterProtein(protein2);
 
@@ -480,7 +480,7 @@ public class CCLineExport extends LineExport {
                 getOut().println("ERROR: Could not export a CC line related to the master of " + uniprotID_2);
                 master2 = uniprotID_2;
             } else {
-                master2 = getUniprotID(proteinMaster2);
+                master2 = getUniprotPrimaryAc(proteinMaster2);
             }
         } else {
             master2 = uniprotID_2;
@@ -881,7 +881,7 @@ public class CCLineExport extends LineExport {
 
             for (Protein protein1 : proteinSet_1) {
                 // get the protein1 real uniprot_ID.
-                final String uniprotID_1 = getUniprotID(protein1);
+                final String uniprotID_1 = getUniprotPrimaryAc(protein1);
 
                 Collection<Interaction> interactionP1 = getInteractions(protein1);
 
@@ -966,15 +966,15 @@ public class CCLineExport extends LineExport {
                                 protein2 = p1;
                             }
 
-                            uniprotID_2 = getUniprotID(protein2);
+                            uniprotID_2 = getUniprotPrimaryAc(protein2);
 
                             // retreive the UniProt ID of the protein or its master (is splice variant) to check if it
                             // should be exported. Reminder, only protein exported in the DR are exported in the CCs.
                             String uniprotID_2_check = uniprotID_2;
-                            if (isSpliceVariant(protein2)) {
+                            if ( isSpliceVariantOrChain(protein2)) {
                                 Protein master = getMasterProtein(protein2);
                                 if (master != null) {
-                                    uniprotID_2_check = getUniprotID(master);
+                                    uniprotID_2_check = getUniprotPrimaryAc(master);
                                 }
                             }
 

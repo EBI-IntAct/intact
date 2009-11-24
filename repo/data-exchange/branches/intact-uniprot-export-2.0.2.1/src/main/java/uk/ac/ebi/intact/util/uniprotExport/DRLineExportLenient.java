@@ -94,7 +94,7 @@ public class DRLineExportLenient extends LineExport {
 
         boolean involvedWithBinaryInteractions = false;
 
-        String uniprotID = getUniprotID(protein);
+        String uniprotID = getUniprotPrimaryAc(protein);
         getOut().println("\n\nChecking on Protein: " + uniprotID + "(" + protein.getAc() + ", " + protein.getShortLabel() + ") ...");
 
         // getting all interactions in which that protein plays a role.
@@ -228,11 +228,11 @@ public class DRLineExportLenient extends LineExport {
                                              protein.getAc() + ") having the AC(" + masterAc + ")");
                         } else {
                             // check that the master hasn't been processed already
-                            uniprotId = getUniprotID(master);
+                            uniprotId = getUniprotPrimaryAc(master);
                         }
                     }
                 } else {
-                    uniprotId = getUniprotID(protein);
+                    uniprotId = getUniprotPrimaryAc(protein);
                 }
 
                 if ( uniprotId != null ) {
