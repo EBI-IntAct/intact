@@ -128,11 +128,13 @@ public class FastaExporter {
         int firstResult = 0;
         int maxResults = 300;
 
+        List<String> processed = new ArrayList<String>(1024*60);
+
         do {
             IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
             proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
-                    .getProteinDao().getAll( firstResult, maxResults );
+                    .getProteinDao().getAllSorted( firstResult, maxResults, "ac", true );
 
             firstResult += maxResults;
 
@@ -141,6 +143,13 @@ public class FastaExporter {
                 if ( log.isDebugEnabled() ) {
                     log.debug( protein.getAc() );
                 }
+
+                if (processed.contains(protein.getAc())) {
+                    log.warn("Skipping protein already processed: "+protein.getAc());
+                    continue;
+                }
+
+                processed.add(protein.getAc());
 
                 int componentsSize = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
                         .getProteinDao().countComponentsForInteractorWithAc( protein.getAc() );
