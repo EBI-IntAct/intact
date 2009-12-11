@@ -23,13 +23,13 @@ The first thing to do is to load !IntAct with controlled vocabularies (CVs). Cvs
 
 Creating a database can be very simple. Is it a matter of starting the !IntAct context with an specific configuration.
 
-Run the following program: `CreateDatabase`
+Run the following program: [http://code.google.com/p/intact/source/browse/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/CreateDatabase.java CreateDatabase]
 
 === Importing Controlled vocabularies === 
 
 Now you are going to run your first program: [http://code.google.com/p/intact/source/browse/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/ImportControlledVocabularies.java ImportControlledVocabularies]
 
-Note: Once this is completed, you should have over 900 rows inserted in the table `ia_controlledvocab`. Importing Interaction data
+Note: Once this is completed, you should have over 900 rows inserted in the table `ia_controlledvocab`. 
 
 === Importing PSI-MI XML Data ===
 
