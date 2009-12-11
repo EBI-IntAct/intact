@@ -35,7 +35,7 @@ Note: Once this is completed, you should have over 900 rows inserted in the tabl
 
 Now we are going to import some interaction data.
 
-Run the following program: [http://code.google.com/p/intact/source/browse/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/ImportPsiData.java ImportPsiData'
+Run the following program: [http://code.google.com/p/intact/source/browse/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/ImportPsiData.java ImportPsiData]
 
 This program uses a PSI-MI XML 2.5 file that is stored locally in the intact-kickstart. Of course, feel free to alter this program to load your own data file, for instance, found on the intact web site. There are currently over 3000 scientific publication manually annotated on the web site. You can download more data on : [ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25] 
 
