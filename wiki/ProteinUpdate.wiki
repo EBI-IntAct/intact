@@ -3,7 +3,7 @@
 
 = Introduction =
 
-After every UniProt release, it is recommended that the local database is updated to follow any changes in the protein database. That way, we are up to date with UniProt. The following flow explains the process step by step:
+After every !UniProt release, it is recommended that the local database is updated to follow any changes in the protein database. That way, we are up to date with !UniProt. The following flow explains the process step by step:
 
 <a href="http://intact.googlecode.com/svn/wiki/images/protein-update/uniprot-update_hi.jpg">
 <img src="http://intact.googlecode.com/svn/wiki/images/protein-update/uniprot-update.jpg"/>
