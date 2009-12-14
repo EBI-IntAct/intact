@@ -1,0 +1,31 @@
+#summary Explains the procedure used to update all the proteins in the database from UniProt
+#labels Phase-Implementation
+
+= Introduction =
+
+After every UniProt release, it is recommended that the local database is updated to follow any changes in the protein database. That way, we are up to date with UniProt. The following flow explains the process step by step:
+
+<img src="http://intact.googlecode.com/svn/wiki/images/protein-update/uniprot-update.jpg"/>
+
+
+= Programmatically =
+
+To start a protein update, a pice of code like this one can be used:
+
+{{{
+UpdateReportHandler reportHandler = new FileReportHandler(reportsDir);
+ProteinUpdateProcessorConfig configUpdate = new ProteinUpdateProcessorConfig(reportHandler);
+ 
+ProteinUpdateProcessor protUpdateProcessor = new ProteinUpdateProcessor(configUpdate);
+protUpdateProcessor.updateAll();
+}}}
+
+This classes can be found in the [http://code.google.com/p/intact/source/browse/repo#repo/dbupdate/trunk/intact-proteins-update intact-proteins-update] module. It is available to Maven using this dependency:
+
+{{{
+<dependency>
+     <groupId>uk.ac.ebi.intact.dbupdate</groupId>
+     <artifactId>intact-proteins-update</artifactId>
+     <version>2.1.0</version>
+</dependency>
+}}}
