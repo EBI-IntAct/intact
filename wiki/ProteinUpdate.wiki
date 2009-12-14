@@ -12,7 +12,7 @@ After every UniProt release, it is recommended that the local database is update
 
 = Programmatically =
 
-To start a protein update, a pice of code like this one can be used:
+To start a protein update with Java, a pice of code like this one can be used:
 
 {{{
 UpdateReportHandler reportHandler = new FileReportHandler(reportsDir);
@@ -22,7 +22,7 @@ ProteinUpdateProcessor protUpdateProcessor = new ProteinUpdateProcessor(configUp
 protUpdateProcessor.updateAll();
 }}}
 
-This classes can be found in the [http://code.google.com/p/intact/source/browse/repo#repo/dbupdate/trunk/intact-proteins-update intact-proteins-update] module. It is available to Maven using this dependency:
+These classes can be found in the [http://code.google.com/p/intact/source/browse/repo#repo/dbupdate/trunk/intact-proteins-update intact-proteins-update] module. It is available to Maven using this dependency:
 
 {{{
 <dependency>
