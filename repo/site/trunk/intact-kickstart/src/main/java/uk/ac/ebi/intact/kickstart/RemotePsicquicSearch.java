@@ -28,7 +28,7 @@ public class RemotePsicquicSearch {
 
      public static void main(String[] args) throws Exception {
 
-        // change the enpoint address as needed
+        // change the endpoint address as needed
         UniversalPsicquicClient client = new UniversalPsicquicClient("http://www.ebi.ac.uk/intact/psicquic/webservices/psicquic");
 
         SearchResult<?> result = client.getByInteractor("brca2", 0, 50);
