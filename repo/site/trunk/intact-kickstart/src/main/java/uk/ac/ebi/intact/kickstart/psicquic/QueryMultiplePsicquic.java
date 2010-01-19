@@ -42,22 +42,26 @@ public class QueryMultiplePsicquic {
             // change the endpoint address as needed
             UniversalPsicquicClient client = new UniversalPsicquicClient( serviceUrl );
 
-            SearchResult<?> result = client.getByInteractor( "brca2", 0, 50 );
+            try {
+                SearchResult<?> result = client.getByInteractor( "brca2", 0, 50 );
 
-            // Print the results in the console
-            System.out.println( "Interactions found: " + result.getTotalCount() );
+                // Print the results in the console
+                System.out.println( "Interactions found: " + result.getTotalCount() );
 
-            for ( BinaryInteraction binaryInteraction : result.getData() ) {
-                String interactorIdA = binaryInteraction.getInteractorA().getIdentifiers().iterator().next().getIdentifier();
-                String interactorIdB = binaryInteraction.getInteractorB().getIdentifiers().iterator().next().getIdentifier();
+                for ( BinaryInteraction binaryInteraction : result.getData() ) {
+                    String interactorIdA = binaryInteraction.getInteractorA().getIdentifiers().iterator().next().getIdentifier();
+                    String interactorIdB = binaryInteraction.getInteractorB().getIdentifiers().iterator().next().getIdentifier();
 
-                String interactionAc = "-";
-                if( ! binaryInteraction.getInteractionAcs().isEmpty() ) {
-                    CrossReference cr = ( CrossReference ) binaryInteraction.getInteractionAcs().iterator().next();
-                    interactionAc = cr.getIdentifier();
+                    String interactionAc = "-";
+                    if( ! binaryInteraction.getInteractionAcs().isEmpty() ) {
+                        CrossReference cr = ( CrossReference ) binaryInteraction.getInteractionAcs().iterator().next();
+                        interactionAc = cr.getIdentifier();
+                    }
+
+                    System.out.println( "\tInteraction (" + interactionAc + "): " + interactorIdA + " interacts with " + interactorIdB );
                 }
-
-                System.out.println( "\tInteraction (" + interactionAc + "): " + interactorIdA + " interacts with " + interactorIdB );
+            } catch (Throwable e) {
+                System.err.println("Service is down! "+serviceName+ "("+serviceUrl+")");
             }
         }
     }
