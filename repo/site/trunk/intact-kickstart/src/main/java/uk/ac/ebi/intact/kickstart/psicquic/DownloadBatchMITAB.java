@@ -1,4 +1,4 @@
-package uk.ac.ebi.intact.kickstart;
+package uk.ac.ebi.intact.kickstart.psicquic;
 
 import java.io.*;
 import java.net.URL;
