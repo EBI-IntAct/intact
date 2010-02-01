@@ -1,6 +1,5 @@
 package uk.ac.ebi.intact.uniprot.service;
 
-import static junit.framework.Assert.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
@@ -17,6 +16,8 @@ import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static junit.framework.Assert.*;
 
 /**
  * UniprotRemoteServiceAdapter Tester.
@@ -264,7 +265,7 @@ public class UniprotRemoteServiceTest {
         assertEquals( 7, protein.getKeywords().size() );
 
         // cross references
-        assertEquals( 40, protein.getCrossReferences().size() );
+        assertEquals( 42, protein.getCrossReferences().size() );
 
         // splice variants
         assertEquals( 0, protein.getSpliceVariants().size() );
