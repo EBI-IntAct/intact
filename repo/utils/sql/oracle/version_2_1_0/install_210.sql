@@ -52,6 +52,10 @@ PROMPT
 @040_add_index.sql
 
 
+PROMPT *********************************************************************************/
+PROMPT "Extending length of Xref.primaryId..."
+PROMPT
+@050_extend_xref_primaryid.sql
 
 
 
