@@ -34,20 +34,29 @@ public class DownloadBatchMITAB {
 
         BufferedReader in = new BufferedReader( new FileReader( input ) );
         String str;
+        int totalInteractionCount = 0;
+        int matches = 0;
         while ( ( str = in.readLine() ) != null ) {
-            processMIQL( str, output );
+            int count = processMIQL( str, output );
+            if( count > 0 ) {
+                matches++;
+            }
+            totalInteractionCount += count;
         }
         in.close();
+
+        System.out.println( "\n\nTotal interaction(s): " + totalInteractionCount + " from " + matches + " identifier(s)" );
     }
 
-    private static void processMIQL( String miql, File output ) throws IOException {
-
+    private static int processMIQL( String miql, File output ) throws IOException {
+        int interactionCount = 0;
         System.out.print( "\n" + miql + ": " );
 
         final FileWriter writer = new FileWriter( output, true );
 
         int from = 0;
         List<String> lines = null;
+
         do {
 
             URL url = new URL( "http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/current/search/query/" + miql + "?firstResult=" + from + "&maxResults=" + PAGE_SIZE );
@@ -58,6 +67,7 @@ public class DownloadBatchMITAB {
             final InputStream is = con.getInputStream();
 
             lines = readLines( is );
+            interactionCount += lines.size();
             is.close();
             System.out.print( lines.size() + "  "  );
             from += PAGE_SIZE;
@@ -65,6 +75,8 @@ public class DownloadBatchMITAB {
             writeLines( lines, writer );
 
         } while ( lines.size() == PAGE_SIZE );
+
+        return interactionCount;
     }
 
     private static void writeLines( List<String> lines, Writer writer ) throws IOException {
