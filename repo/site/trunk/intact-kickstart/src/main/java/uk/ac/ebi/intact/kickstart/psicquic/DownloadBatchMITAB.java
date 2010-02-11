@@ -2,6 +2,7 @@ package uk.ac.ebi.intact.kickstart.psicquic;
 
 import java.io.*;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +49,14 @@ public class DownloadBatchMITAB {
         int from = 0;
         List<String> lines = null;
         do {
+
             URL url = new URL( "http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/current/search/query/" + miql + "?firstResult=" + from + "&maxResults=" + PAGE_SIZE );
-            final InputStream is = url.openStream();
+
+            final URLConnection con = url.openConnection();
+            con.setConnectTimeout( 5000 );
+
+            final InputStream is = con.getInputStream();
+
             lines = readLines( is );
             is.close();
             System.out.print( lines.size() + "  "  );
