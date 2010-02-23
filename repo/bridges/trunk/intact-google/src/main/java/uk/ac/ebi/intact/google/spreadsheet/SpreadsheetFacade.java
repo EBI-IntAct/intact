@@ -37,7 +37,8 @@ public class SpreadsheetFacade {
         for ( SpreadsheetEntry spreadsheet : spreadsheets ) {
             if ( spreadsheet.getKey().equals( key ) ) {
                 if( log.isInfoEnabled() ) {
-                    log.info( "Found spreadsheet '" + spreadsheet.getTitle() + "', Web URL: " + spreadsheet.getSpreadsheetLink().getHref() );
+                    log.info( "Found spreadsheet '" + spreadsheet.getTitle().getPlainText() + 
+                              "', Web URL: " + spreadsheet.getSpreadsheetLink().getHref() );
                 }
                 return spreadsheet;
             }
