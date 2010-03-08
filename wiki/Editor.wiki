@@ -1,0 +1,15 @@
+#summary Page about the tool used to curate data
+#labels Featured
+
+= The Editor =
+
+This is the tool used to curate IntAct information. A new version is being developed at the moment.
+
+*Current phase:* Gathering requirements and functional spec.
+
+= Issues and use cases =
+
+Please, use the "Issues" section to submit the bugs you find or tell us about your use cases. You can use the following shortcuts:
+
+ * [http://code.google.com/p/intact/issues/entry?template=Editor%20bug%20report Report a bug].
+ * [http://code.google.com/p/intact/issues/entry?template=Curator%20use%20case Submit use case].
