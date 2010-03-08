@@ -10,7 +10,7 @@ This is the tool used to curate !IntAct information. A new version is being deve
 
 = Specification =
 
-We are currently in the specification phase and [Interactive Mockups] are available.
+We are currently in the specification phase and [http://www.ebi.ac.uk/~skerrien/editor/mockups/Editor%20-%20Interactive%20Mockups.ppt interactive mockups] are available.
 
 = Issues and use cases =
 
