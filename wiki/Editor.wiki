@@ -11,6 +11,10 @@ This is the tool used to curate !IntAct information. A new version is being deve
 = Specification =
 
 We are currently in the specification phase and [http://intact.googlecode.com/svn/wiki/presentations/Editor_Interactive_Mockups.ppt interactive mockups] are available.
+How to use this presentation:
+ * Slide 2 presents an overview of the curation workflow, enter the presentation mode and click on the various steps to see the corresponding screen mockup.
+ * Whenever you are viewing a screen mockup, the top-left corner has a button 'back' which once clicked taked you back to the workflow overview.
+ * At the bottom-right corner is a feedback link that (when clicked) will take you to a feedback form, ideal for leaving us your impressions, requests, ...
 
 = Issues and use cases =
 
