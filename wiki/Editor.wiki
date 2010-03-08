@@ -5,7 +5,8 @@
 
 This is the tool used to curate !IntAct information. A new version is being developed at the moment.
 
-*Current phase:* Design.
+ * Current phase: Design.
+ * [http://spreadsheets.google.com/pub?key=tLkHetwRlQlWu0Qxccpw23Q&output=html Check the progress] of the current Sprint.
 
 = Issues and use cases =
 
