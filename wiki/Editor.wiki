@@ -8,6 +8,10 @@ This is the tool used to curate !IntAct information. A new version is being deve
  * Current phase: Design.
  * [http://spreadsheets.google.com/pub?key=tLkHetwRlQlWu0Qxccpw23Q&output=html Check the progress] of the current Sprint.
 
+= Specification =
+
+We are currently in the specification phase and [Interactive Mockups] are available.
+
 = Issues and use cases =
 
 Please, use the "Issues" section to submit the bugs you find or tell us about your use cases. You can use the following shortcuts:
