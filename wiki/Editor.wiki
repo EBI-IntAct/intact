@@ -16,6 +16,12 @@ Please, use the "Issues" section to submit the bugs you find or tell us about yo
  * [http://code.google.com/p/intact/issues/entry?template=Curator%20use%20case Submit use case].
  * [http://code.google.com/p/intact/issues/entry?template=Editor%20mockup%20feedback General feedback]
 
+Or list the existing issues:
+
+ * [http://code.google.com/p/intact/issues/list?can=2&q=label:Component-Editor Open issues]
+ * [http://code.google.com/p/intact/issues/list?can=1&q=label:Component-Editor All issues]
+ * [http://code.google.com/p/intact/issues/list?can=1&q=label:Component-Editor%20reporter:me Reported by me]
+
 = For Developers =
 
  * [http://code.google.com/p/intact/source/browse/repo#repo/service/trunk/editor/editor-app Editor source code]
