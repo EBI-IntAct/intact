@@ -3,7 +3,7 @@
 
 = The Editor =
 
-This is the tool used to curate IntAct information. A new version is being developed at the moment.
+This is the tool used to curate !IntAct information. A new version is being developed at the moment.
 
 *Current phase:* Design.
 
