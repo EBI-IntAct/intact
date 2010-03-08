@@ -20,7 +20,7 @@ Or list the existing issues:
 
  * [http://code.google.com/p/intact/issues/list?can=2&q=label:Component-Editor Open issues]
  * [http://code.google.com/p/intact/issues/list?can=1&q=label:Component-Editor All issues]
- * [http://code.google.com/p/intact/issues/list?can=1&q=label:Component-Editor%20reporter:me Reported by me]
+ * [http://code.google.com/p/intact/issues/list?can=1&q=label:Component-Editor%20reporter:me Reported by me] (you need to be logged in)
 
 = For Developers =
 
