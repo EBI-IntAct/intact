@@ -33,6 +33,7 @@
     <modules>
         <module>intact-biosource-update</module>
         <module>intact-proteins-update</module>
+        <module>intact-smallmolecules-update</module>
         <module>update-db-proteins-maven-plugin</module>
         <!--<module>intact-smallmolecules-update</module>-->
   </modules>
