@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * Utility that allows to convert a specific implementation of a DatabaseCrossReference into the generic UniprotCrossReference.
@@ -27,7 +28,7 @@ public class ReflectionCrossReferenceBuilder {
     /**
      * Cache methods relevant for data retreival.
      */
-    private Map<Class, Method> methodCache = new HashMap<Class, Method>();
+    private Map<String, String> methodCache = new WeakHashMap<String, String>();
 
     /**
      * Sets up a logger for that class.
@@ -75,9 +76,11 @@ public class ReflectionCrossReferenceBuilder {
      */
     private Method findMethod( Class<? extends DatabaseCrossReference> clazz, String db ) {
 
-        Method method = methodCache.get( clazz );
+        String methodName = methodCache.get( clazz.getName() );
 
-        if ( method == null ) {
+        Method method = null;
+
+        if ( methodName == null ) {
             // then search for it
             if ( log.isDebugEnabled() ) {
                 log.debug( "Trying to find the method giving access to " + db + "'s ID via reflection." );
@@ -88,7 +91,7 @@ public class ReflectionCrossReferenceBuilder {
             boolean foundId = false;
             for ( int i = 0; i < methods.length && !foundId; i++ ) {
                 Method candidateMethod = methods[i];
-                String methodName = candidateMethod.getName();
+                methodName = candidateMethod.getName();
 
                 if ( !methodName.equals( "getId" ) && !methodName.equals("getDbAccession") &&
                        methodName.startsWith( "get" ) &&
@@ -103,7 +106,7 @@ public class ReflectionCrossReferenceBuilder {
             if (!foundId) {
                 for (int i = 0; i < methods.length && !foundId; i++) {
                     Method candidateMethod = methods[i];
-                    String methodName = candidateMethod.getName();
+                    methodName = candidateMethod.getName();
 
                     if ((methodName.startsWith("get") && methodName.endsWith("Name"))) {
                         method = candidateMethod;
@@ -113,10 +116,16 @@ public class ReflectionCrossReferenceBuilder {
             }
 
             // cache it
-            methodCache.put( clazz, method );
+            methodCache.put( clazz.getName(), methodName );
         } else {
             if ( log.isDebugEnabled() ) {
                 log.debug( "Method found in cache." );
+            }
+
+            try {
+                method = clazz.getMethod(methodName, new Class<?>[] {});
+            } catch (NoSuchMethodException e) {
+                throw new IllegalStateException("Method '"+methodName+"' was found in cache, but this class does not seem to have it: "+clazz.getName(), e);
             }
         }
 
