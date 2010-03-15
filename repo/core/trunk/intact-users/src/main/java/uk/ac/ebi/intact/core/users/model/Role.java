@@ -1,6 +1,7 @@
 package uk.ac.ebi.intact.core.users.model;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.*;
 
@@ -13,7 +14,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table( name = "ia_role" )
-@javax.persistence.SequenceGenerator( name="SEQ_USER", sequenceName="my_sequence", initialValue = 1 )
+@javax.persistence.SequenceGenerator( name="SEQ_USER", sequenceName="users_seq", initialValue = 1 )
 public class Role {
 
     @Id
@@ -21,6 +22,7 @@ public class Role {
     private long pk;
 
     @Column( unique = true, nullable = false )
+    @Index( name = "idx_role_name" )
     private String name;
 
     //////////////////

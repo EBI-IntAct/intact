@@ -1,6 +1,8 @@
 package uk.ac.ebi.intact.core.users.model;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.*;
 
@@ -13,28 +15,28 @@ import javax.persistence.*;
  */
 @Entity
 @Table( name = "ia_preference" )
-@javax.persistence.SequenceGenerator(
-    name="SEQ_STORE",
-    sequenceName="my_sequence"
-)
+@javax.persistence.SequenceGenerator( name="SEQ_USER", sequenceName="users_seq", initialValue = 1 )
 public class Preference {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_STORE")
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_USER")
     private long pk;
 
-    @Basic
+    @Index( name = "idx_preference_key" )
     private String key;
 
-    @Basic
     private String value;
 
     @ManyToOne( targetEntity = User.class )
     @JoinColumn( name = "user_id" )
+    @ForeignKey(name="FK_USER")
     private User user;
 
     //////////////////
     // Constructors
+
+    protected Preference() {
+    }
 
     public Preference( String key ) {
         if ( StringUtils.isEmpty(key) ) {
@@ -67,6 +69,8 @@ public class Preference {
         this.user = user;
     }
 
+    //////////////////////////
+    // Object's override
     
     @Override
     public boolean equals( Object o ) {
