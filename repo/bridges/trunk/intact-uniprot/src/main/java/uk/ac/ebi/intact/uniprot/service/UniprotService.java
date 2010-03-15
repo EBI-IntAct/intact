@@ -34,6 +34,8 @@ public interface UniprotService {
      */
     public Collection<UniprotProtein> retrieve( String ac );
 
+    public Collection<UniprotProtein> retrieve( String ac, boolean processSpliceVars );
+
     @Deprecated
     public Collection<UniprotProtein> retreive( String ac );
 
@@ -47,6 +49,8 @@ public interface UniprotService {
      * @throws UniprotServiceException
      */
     public Map<String, Collection<UniprotProtein>> retrieve( Collection<String> acs );
+
+    public Map<String, Collection<UniprotProtein>> retrieve( Collection<String> acs, boolean processSpliceVars );
 
     @Deprecated
     public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs );
