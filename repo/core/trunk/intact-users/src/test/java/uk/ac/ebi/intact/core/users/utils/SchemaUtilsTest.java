@@ -12,15 +12,6 @@ import uk.ac.ebi.intact.core.users.unit.UsersBasicTestCase;
  * @since 2.2.1
  */
 public class SchemaUtilsTest extends UsersBasicTestCase {
-    
-    @Test
-    public void generateCreateSchemaDDLForOracle() throws Exception {
-        final String[] ddls = SchemaUtils.generateCreateSchemaDDLForOracle();
-        Assert.assertNotNull( ddls );
-        Assert.assertTrue( ddls.length > 0 );
-
-        printDDLs( ddls );
-    }
 
     private void printDDLs( String[] ddls ) {
         System.out.println( "=========================== START ==============================" );
@@ -32,11 +23,20 @@ public class SchemaUtilsTest extends UsersBasicTestCase {
     }
 
     @Test
+    public void generateCreateSchemaDDLForOracle() throws Exception {
+        final String[] ddls = SchemaUtils.generateCreateSchemaDDLForOracle();
+        Assert.assertNotNull( ddls );
+        Assert.assertTrue( ddls.length > 0 );
+
+//        printDDLs( ddls );
+    }
+
+    @Test
     public void generateCreateSchemaDDLForPostgreSQL() throws Exception {
         final String[] ddls = SchemaUtils.generateCreateSchemaDDLForPostgreSQL();
         Assert.assertNotNull( ddls );
         Assert.assertTrue( ddls.length > 0 );
-        printDDLs( ddls );
+//        printDDLs( ddls );
     }
 
     @Test
@@ -44,7 +44,7 @@ public class SchemaUtilsTest extends UsersBasicTestCase {
         final String[] ddls = SchemaUtils.generateCreateSchemaDDLForHSQL();
         Assert.assertNotNull( ddls );
         Assert.assertTrue( ddls.length > 0 );
-        printDDLs( ddls );
+//        printDDLs( ddls );
     }
 
     @Test
@@ -52,6 +52,6 @@ public class SchemaUtilsTest extends UsersBasicTestCase {
         final String[] ddls = SchemaUtils.generateCreateSchemaDDLForH2();
         Assert.assertNotNull( ddls );
         Assert.assertTrue( ddls.length > 0 );
-        printDDLs( ddls );
+//        printDDLs( ddls );
     }
 }
