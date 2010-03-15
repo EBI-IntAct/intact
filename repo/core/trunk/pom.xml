@@ -28,6 +28,7 @@
         <module>intact-apt</module>
         <module>intact-core</module>
         <module>intact-batch</module>
+        <module>intact-users</module> 
     </modules>
 
     <build>
