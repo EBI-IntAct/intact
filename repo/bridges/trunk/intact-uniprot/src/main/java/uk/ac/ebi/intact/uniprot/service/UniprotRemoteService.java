@@ -458,7 +458,8 @@ public class UniprotRemoteService extends AbstractUniprotService {
                             break;
                         case EXTERNAL:
                             // then we need to load an external protein entry
-                            log.warn("The alternative sequence has to be calculated on the basis of an external entry: " + parentProtein);
+                            log.warn("The alternative sequence "+isoform.getName().getValue()+" for "+uniProtEntry.getPrimaryUniProtAccession().getValue()
+                                    +" has to be calculated on the basis of an external entry: " + parentProtein);
 
                             if (log.isDebugEnabled()) {
                                 log.debug("Loading external parent protein: " + parentProtein);
