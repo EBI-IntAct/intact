@@ -36,6 +36,8 @@ import java.util.*;
  */
 public class UniprotRemoteService extends AbstractUniprotService {
 
+    private Map<String,Collection<UniprotProtein>> retrievalCache;
+
     /**
      * Sets up a logger for that class.
      */
@@ -45,10 +47,25 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
 
     public UniprotRemoteService() {
+        retrievalCache = new WeakHashMap<String,Collection<UniprotProtein>>();
+
         uniProtQueryService = UniProtJAPI.factory.getUniProtQueryService();
     }
 
     public Collection<UniprotProtein> retrieve( String ac ) {
+       return retrieve(ac, true); 
+    }
+
+    public Collection<UniprotProtein> retrieve( String ac, boolean processSpliceVars ) {
+        if (log.isDebugEnabled()) {
+            log.debug("Retrieving from UniProt: "+ac);
+        }
+
+        if (retrievalCache.containsKey(ac)) {
+            if (log.isDebugEnabled()) log.debug("\tFound in cache");
+            return retrievalCache.get(ac);
+        }
+        
         Collection<UniprotProtein> proteins = new ArrayList<UniprotProtein>();
 
         Iterator<UniProtEntry> it = getUniProtEntry( ac );
@@ -60,8 +77,11 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
         while ( it.hasNext() ) {
             UniProtEntry uniProtEntry = it.next();
-            proteins.add( buildUniprotProtein( uniProtEntry ) );
+            proteins.add( buildUniprotProtein( uniProtEntry, processSpliceVars ) );
         }
+
+        retrievalCache.put(ac, proteins);
+
         return proteins;
     }
 
@@ -142,7 +162,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
         }
     }
 
-    protected UniprotProtein buildUniprotProtein( UniProtEntry uniProtEntry ) {
+    protected UniprotProtein buildUniprotProtein( UniProtEntry uniProtEntry, boolean fetchSpliceVariants ) {
 
         // Process OS, OC, OX
         List<NcbiTaxonomyId> taxids = uniProtEntry.getNcbiTaxonomyIds();
@@ -230,7 +250,9 @@ public class UniprotRemoteService extends AbstractUniprotService {
         // TODO molecular weight ?!
 
         // splice variants
-        processSpliceVariants( uniProtEntry, uniprotProtein );
+        if (fetchSpliceVariants) {
+            processSpliceVariants( uniProtEntry, uniprotProtein );
+        }
 
         //I commented this line because we not making any use of uniprot features in IntAct. But in case we use them later,
         // I have let the processFeatureChain method.
@@ -283,8 +305,6 @@ public class UniprotRemoteService extends AbstractUniprotService {
     private void processFeatureChain( UniProtEntry uniProtEntry, UniprotProtein protein ) {
         Collection<ChainFeature> features = uniProtEntry.getFeatures( FeatureType.CHAIN );
 
-        log.debug( "Processing " + features.size() + " feature chain..." );
-
         for ( ChainFeature featureChain : features ) {
 
             String id = featureChain.getFeatureId().getValue();
@@ -312,7 +332,6 @@ public class UniprotRemoteService extends AbstractUniprotService {
     private void processGeneNames( UniProtEntry uniProtEntry, UniprotProtein protein ) {
 
         List<Gene> genes = uniProtEntry.getGenes();
-        log.debug( "Processing " + genes.size() + " gene names..." );
 
         for ( Gene gene : genes ) {
             if (gene.hasGeneName() ) {
@@ -343,8 +362,6 @@ public class UniprotRemoteService extends AbstractUniprotService {
     }
 
     private void processCrossReference( UniProtEntry uniProtEntry, UniprotProtein protein ) {
-        log.debug( "Processing cross references..." );
-
         Collection<DatabaseCrossReference> databaseCrossReferences = uniProtEntry.getDatabaseCrossReferences();
         Collection<UniprotCrossReference> xrefs = convert( databaseCrossReferences );
 
@@ -403,7 +420,11 @@ public class UniprotRemoteService extends AbstractUniprotService {
         protein.getSpliceVariants().addAll( spliceVariants );
     }
 
-    private List<UniprotSpliceVariant> findSpliceVariants(UniProtEntry uniProtEntry, Organism organism, Map<String,String> seqMap) {
+    private List<UniprotSpliceVariant> findSpliceVariants(UniProtEntry uniProtEntry, Organism organism, Map<String, String> seqMap) {
+        if (log.isDebugEnabled()) {
+            log.debug("Finding splice variants for: " + uniProtEntry.getPrimaryUniProtAccession().getValue());
+        }
+
         List<UniprotSpliceVariant> spliceVariants = new ArrayList<UniprotSpliceVariant>();
 
         List<AlternativeProductsComment> comments = uniProtEntry.getComments( CommentType.ALTERNATIVE_PRODUCTS );
@@ -417,15 +438,13 @@ public class UniprotRemoteService extends AbstractUniprotService {
                 List<IsoformId> isoIDs = isoform.getIds();
                 for ( IsoformId isoID : isoIDs ) {
                     //System.out.println("isoID  : " + isoID.getValue());
-                    if ( log.isDebugEnabled() ) {
-                        log.debug( "isoID.getValue() = " + isoID.getValue() );
-                    }
+
 
                     // TODO remove this once the API is fixed, currently when multiple ids are present they are returned as a comma separated value :(
                     for ( int i = 0; i < isoID.getValue().split( "," ).length; i++ ) {
                         String id = isoID.getValue().split( "," )[i].trim();
-                        if ( log.isDebugEnabled() ) {
-                            log.debug( "Found ID " + i + ":" + id );
+                        if ( log.isTraceEnabled() ) {
+                            log.trace( "Found ID " + i + ":" + id );
                         }
                         ids.add( id );
                     }
@@ -445,7 +464,8 @@ public class UniprotRemoteService extends AbstractUniprotService {
                     // check that the sequence is in the current entry
 
                     String status = isoform.getIsoformSequenceStatus().getValue();
-                    log.debug("Sequence status: " + status);
+
+                    if (log.isTraceEnabled()) log.trace("Sequence status: " + status);
 
                     switch (isoform.getIsoformSequenceStatus()) {
                         case NOT_DESCRIBED:
@@ -460,10 +480,6 @@ public class UniprotRemoteService extends AbstractUniprotService {
                             // then we need to load an external protein entry
                             log.warn("The alternative sequence '"+isoform.getName().getValue()+"' for '"+uniProtEntry.getPrimaryUniProtAccession().getValue()
                                     +"' has to be calculated on the basis of an external entry: " + parentProtein);
-
-                            if (log.isDebugEnabled()) {
-                                log.debug("Loading external parent protein: " + parentProtein);
-                            }
 
                             //sequence = uniProtEntry.getSplicedSequence(isoform.getName().getValue());
 
@@ -503,10 +519,6 @@ public class UniprotRemoteService extends AbstractUniprotService {
                     }
                 }
 
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "sequence = " + sequence );
-                }
-
                 // build splice variant
                 UniprotSpliceVariant sv = new UniprotSpliceVariant(spliceVarId,
                         organism,
@@ -531,6 +543,11 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
             } // for isoform
         } // for comments
+
+        if (log.isDebugEnabled()) {
+            log.debug("\tFound "+spliceVariants.size()+" splice variants");
+        }
+
         return spliceVariants;
     }
 
