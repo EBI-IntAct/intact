@@ -2,6 +2,8 @@ package uk.ac.ebi.intact.core.users.model;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.*;
 import java.util.*;
@@ -15,7 +17,7 @@ import java.util.*;
  */
 @Entity
 @Table( name = "ia_user" )
-@javax.persistence.SequenceGenerator( name = "SEQ_USER", sequenceName = "my_sequence", initialValue = 1 )
+@javax.persistence.SequenceGenerator( name = "SEQ_USER", sequenceName = "users_seq", initialValue = 1 )
 public class User {
 
     @Id
@@ -23,6 +25,7 @@ public class User {
     private long pk;
 
     @Column( nullable = false, unique = true )
+    @Index( name = "idx_user_login" )
     private String login;
 
     @Column( nullable = false )
@@ -32,6 +35,7 @@ public class User {
     private String lastName;
 
     @Column( nullable = false, unique = true )
+    @Index( name = "idx_user_email" )
     private String email;
 
     private String openIdUrl;
@@ -46,6 +50,7 @@ public class User {
             joinColumns = {@JoinColumn( name = "user_id" )},
             inverseJoinColumns = {@JoinColumn( name = "role_id" )}
     )
+    @ForeignKey(name = "FK_USER", inverseName = "FK_ROLE")
     private Set<Role> roles;
 
     @OneToMany( mappedBy = "user" )

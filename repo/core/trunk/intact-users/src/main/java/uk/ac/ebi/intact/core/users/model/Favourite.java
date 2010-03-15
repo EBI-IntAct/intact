@@ -18,6 +18,12 @@ public class Favourite {
     private String ac;
     private String label;
 
+    //////////////////
+    // Constructors
+
+    protected Favourite() {
+    }
+
     public Favourite( String type, String ac ) {
         if ( StringUtils.isEmpty(type) ) {
             throw new IllegalArgumentException( "You must give a non null type" );
@@ -33,6 +39,9 @@ public class Favourite {
         this(type, ac);
         this.label = label;
     }
+
+    ///////////////////////////
+    // Getters and Setters
 
     public String getType() {
         return type;
@@ -53,6 +62,9 @@ public class Favourite {
     public void setLabel( String label ) {
         this.label = label;
     }
+
+    //////////////////////////
+    // Object's override
 
     @Override
     public boolean equals( Object o ) {
