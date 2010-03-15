@@ -92,6 +92,10 @@ public class CachedUniprotService implements UniprotService {
         return proteins;
     }
 
+    public Collection<UniprotProtein> retrieve(String ac, boolean processSpliceVars) {
+        return retrieve(ac);
+    }
+
     public Map<String, Collection<UniprotProtein>> retrieve( Collection<String> acs ) {
 
         // TODO, here, we by-pass the underlying service method !!! Might not be what we want !!
@@ -104,6 +108,10 @@ public class CachedUniprotService implements UniprotService {
         }
 
         return resultMap;
+    }
+
+    public Map<String, Collection<UniprotProtein>> retrieve(Collection<String> acs, boolean processSpliceVars) {
+        return retrieve(acs);
     }
 
     public Map<String, UniprotServiceReport> getErrors() {

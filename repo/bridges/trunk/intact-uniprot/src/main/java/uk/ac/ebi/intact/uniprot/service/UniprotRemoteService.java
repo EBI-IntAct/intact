@@ -86,6 +86,10 @@ public class UniprotRemoteService extends AbstractUniprotService {
     }
 
     public Map<String, Collection<UniprotProtein>> retrieve( Collection<String> acs ) {
+        return retrieve(acs, true);
+    }
+
+    public Map<String, Collection<UniprotProtein>> retrieve( Collection<String> acs, boolean processSpliceVars ) {
 
         if ( acs == null ) {
             throw new IllegalArgumentException( "You must give a non null List of UniProt ACs." );
@@ -99,7 +103,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
         // TODO use bulk loading and post sort the Map
         for ( String ac : acs ) {
-            Collection<UniprotProtein> proteins = retrieve( ac );
+            Collection<UniprotProtein> proteins = retrieve( ac, processSpliceVars );
             if ( proteins != null ) {
                 results.put( ac, proteins );
             } else {
