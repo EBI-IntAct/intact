@@ -13,6 +13,10 @@ import uk.ac.ebi.intact.uniprot.model.UniprotXref;
 import uk.ac.ebi.intact.uniprot.service.referenceFilter.CrossReferenceFilter;
 import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
