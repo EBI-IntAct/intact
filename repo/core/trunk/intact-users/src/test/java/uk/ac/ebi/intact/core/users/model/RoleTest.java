@@ -4,7 +4,6 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import uk.ac.ebi.intact.core.users.persistence.dao.RoleDao;
-import uk.ac.ebi.intact.core.users.persistence.dao.UserDao;
 import uk.ac.ebi.intact.core.users.unit.UsersBasicTestCase;
 
 /**

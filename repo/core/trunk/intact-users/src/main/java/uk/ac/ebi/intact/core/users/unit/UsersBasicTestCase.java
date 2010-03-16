@@ -24,7 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.intact.core.users.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.core.users.persistence.dao.UsersDaoFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -46,13 +46,10 @@ import javax.persistence.PersistenceUnit;
 public abstract class UsersBasicTestCase {
 
     @Autowired
-    private DaoFactory daoFactory;
+    private UsersDaoFactory usersDaoFactory;
 
     @PersistenceContext(unitName = "intact-users-default")
     private EntityManager entityManager;
-
-    @PersistenceUnit(unitName = "intact-users-default")
-    private EntityManagerFactory entityManagerFactory;
 
     @Before
     public void prepareBasicTest() throws Exception {
@@ -68,7 +65,7 @@ public abstract class UsersBasicTestCase {
         return entityManager;
     }
 
-    public DaoFactory getDaoFactory() {
-        return daoFactory;
+    public UsersDaoFactory getDaoFactory() {
+        return usersDaoFactory;
     }
 }
