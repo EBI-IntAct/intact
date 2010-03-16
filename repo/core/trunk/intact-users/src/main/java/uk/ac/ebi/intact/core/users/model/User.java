@@ -28,6 +28,8 @@ public class User {
     @Index( name = "idx_user_login" )
     private String login;
 
+    private String password;
+
     @Column( nullable = false )
     private String firstName;
 
@@ -62,7 +64,6 @@ public class User {
     //////////////////
     // Constructors
 
-
     protected User() {
         roles = new HashSet<Role>();
     }
@@ -95,6 +96,14 @@ public class User {
             throw new IllegalArgumentException( "You must give a non null login" );
         }
         this.login = login.trim();
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword( String password ) {
+        this.password = password;
     }
 
     public String getFirstName() {
