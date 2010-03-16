@@ -57,7 +57,7 @@ public class UniprotRemoteServiceTest {
     public void convert_CDC42_CANFA() throws Exception {
         UniProtEntry entry = MockUniProtEntries.build_P60952();
         UniprotRemoteService service = new UniprotRemoteService();
-        UniprotProtein protein = service.buildUniprotProtein( entry );
+        UniprotProtein protein = service.buildUniprotProtein( entry, true );
 
         assertEquals( 2, protein.getSpliceVariants().size() );
 
@@ -105,7 +105,7 @@ public class UniprotRemoteServiceTest {
 
         UniProtEntry entry = MockUniProtEntries.build_Q9VGX3();
         UniprotRemoteService service = new UniprotRemoteService();
-        UniprotProtein protein = service.buildUniprotProtein( entry );
+        UniprotProtein protein = service.buildUniprotProtein( entry, true );
 
         assertTrue(entry.getProteinDescription().hasRecommendedName());
 
