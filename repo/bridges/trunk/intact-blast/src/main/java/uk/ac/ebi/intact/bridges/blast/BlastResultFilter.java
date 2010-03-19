@@ -44,6 +44,11 @@ public class BlastResultFilter {
      */
     private BlastMappingReader bmr;
 
+    public BlastResultFilter(){
+        this.results = null;
+        this.bmr = new BlastMappingReader();
+    }
+
     /**
      *
      * @param results : the results to filter
