@@ -6,11 +6,9 @@
 package uk.ac.ebi.intact.bridges.blast.client;
 
 import org.junit.*;
-//import uk.ac.ebi.intact.bridges.blast.BlastService;
-//import uk.ac.ebi.intact.bridges.blast.EbiWsWUBlast;
-//import uk.ac.ebi.intact.bridges.blast.BlastServiceException;
 import uk.ac.ebi.intact.bridges.blast.model.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -150,7 +148,7 @@ public class BlastClientTest {
     }
 
     @Test
-   @Ignore
+    @Ignore
     public final void testSubmitSplicevariant() throws BlastClientException {
         BlastClient bc = new BlastClient( "iarmean@ebi.ac.uk" );
         String seq = "MFAVMRIDNDDCRSDFRRKMRPKCEFICKYCQRRFTKPYNLMIHERTHKSPEITYSCEVCGKYFKQRDNLRQHRCSQCVWR";
@@ -167,7 +165,8 @@ public class BlastClientTest {
 
             bc.checkStatus( job );
         }
-        bc.getResult( job );
+       // System.out.println(bc.getResultAsInputStream( job ));
+
         BlastOutput result = job.getBlastResult();
         FileWriter fw;
         try {
@@ -206,7 +205,7 @@ public class BlastClientTest {
         Assert.assertTrue( content.equals( "intact:Q9VQS6" ) );
     }
 
-     @Test
+    @Test
     public final void testSpecificContentIsoform() throws BlastClientException {
         String seq = "MFAVMRIDNDDCRSDFRRKMRPKCEFICKYCQRRFTKPYNLMIHERTHKSPEITYSCEVCGKYFKQRDNLRQHRCSQCVWR";
         UniprotAc ac = new UniprotAc( "Q9VQS6-1" );
@@ -226,5 +225,83 @@ public class BlastClientTest {
         Assert.assertTrue( outputDir.getAbsolutePath(), outputDir.isDirectory() );
         Assert.assertEquals( "target", outputDir.getName() );
         return outputDir;
+    }
+
+    @Test
+    public final void testBlastSequenceUniprot() throws BlastClientException {
+        String sequence = "MFAVMRIDNDDCRSDFRRKMRPKCEFICKYCQRRFTKPYNLMIHERTHKSPEITYSCEVCGKYFKQRDNLRQHRCSQCVWR";
+        Job job = bc.blastSequenceInUniprot(sequence);
+
+        while ( !BlastJobStatus.DONE.equals( job.getStatus() ) ) {
+            try {
+                Thread.sleep( 5000 );
+            } catch ( InterruptedException e ) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            bc.checkStatus( job );
+        }
+        ByteArrayInputStream results = bc.getResultAsInputStream(job);
+
+        Assert.assertNotNull(results);
+    }
+
+    @Test
+    @Ignore
+    public final void testBlastSequenceIntact() throws BlastClientException {
+        String sequence = "MFAVMRIDNDDCRSDFRRKMRPKCEFICKYCQRRFTKPYNLMIHERTHKSPEITYSCEVCGKYFKQRDNLRQHRCSQCVWR";
+        Job job = bc.blastSequenceInIntact(sequence);
+
+        while ( !BlastJobStatus.DONE.equals( job.getStatus() ) ) {
+            try {
+                Thread.sleep( 5000 );
+            } catch ( InterruptedException e ) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            bc.checkStatus( job );
+        }
+        ByteArrayInputStream results = bc.getResultAsInputStream(job);
+
+        Assert.assertNotNull(results);
+    }
+
+    @Test
+    @Ignore
+    public final void testBlastSequenceSwissprot() throws BlastClientException {
+        String sequence = "MFAVMRIDNDDCRSDFRRKMRPKCEFICKYCQRRFTKPYNLMIHERTHKSPEITYSCEVCGKYFKQRDNLRQHRCSQCVWR";
+        Job job = bc.blastSequenceInSwissprot(sequence);
+
+        while ( !BlastJobStatus.DONE.equals( job.getStatus() ) ) {
+            try {
+                Thread.sleep( 5000 );
+            } catch ( InterruptedException e ) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            bc.checkStatus( job );
+        }
+        ByteArrayInputStream results = bc.getResultAsInputStream(job);
+
+        Assert.assertNotNull(results);
+    }
+
+    @Test
+    public final void testBlastSequenceUniprot_file() throws BlastClientException {
+        String sequence = "MFAVMRIDNDDCRSDFRRKMRPKCEFICKYCQRRFTKPYNLMIHERTHKSPEITYSCEVCGKYFKQRDNLRQHRCSQCVWR";
+        Job job = bc.blastSequenceInUniprot(sequence);
+
+        while ( !BlastJobStatus.DONE.equals( job.getStatus() ) ) {
+            try {
+                Thread.sleep( 5000 );
+            } catch ( InterruptedException e ) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            bc.checkStatus( job );
+        }
+        File results = bc.getResultInFile(job, "test.xml");
+
+        Assert.assertNotNull(results);
     }
 }
