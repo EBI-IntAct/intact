@@ -30,6 +30,13 @@ public class BlastInput {
 		this.uniprotAc = uniprotAc;
 	}
 
+    public BlastInput(String seq) {
+		if (seq == null) {
+			throw new IllegalArgumentException("The sequence must not be null!");
+		}
+		this.sequence = new Sequence(seq);
+	}
+
 	public BlastInput(UniprotAc uniprotAc, Sequence seq) {
 		if (uniprotAc == null) {
 			throw new IllegalArgumentException("UniprotAc must not be null!");
@@ -80,7 +87,7 @@ public class BlastInput {
 
     @Override
 	public String toString() {
-		return uniprotAc.toString();
+		return uniprotAc != null ? uniprotAc.toString() : "";
 	}
 
     public boolean equals( Object o ) {
@@ -90,14 +97,19 @@ public class BlastInput {
         BlastInput that = ( BlastInput ) o;
 
         if ( sequence != null ? !sequence.equals( that.sequence ) : that.sequence != null ) return false;
-        if ( !uniprotAc.equals( that.uniprotAc ) ) return false;
+        if (uniprotAc != null && that.uniprotAc != null){
+            if ( !uniprotAc.equals( that.uniprotAc ) ) return false;
+        }
+        else if ((uniprotAc == null && that.uniprotAc != null) || (uniprotAc != null && that.uniprotAc == null)){
+            return false;
+        }
 
         return true;
     }
 
     public int hashCode() {
-        int result;
-        result = uniprotAc.hashCode();
+        int result=1;
+        result = 31 * result + ( uniprotAc != null ? uniprotAc.hashCode() : 0 );
         result = 31 * result + ( sequence != null ? sequence.hashCode() : 0 );
         return result;
     }

@@ -28,6 +28,11 @@ public class Job {
 		this.blastInput = blastInput;
 	}
 
+   public Job(String id, String sequence) {
+		this.id = id;
+       this.blastInput = new BlastInput(sequence);
+	}
+
 	/**
 	 * @return the id
 	 */
