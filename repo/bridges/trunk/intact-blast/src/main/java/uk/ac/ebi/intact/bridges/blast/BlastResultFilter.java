@@ -40,6 +40,11 @@ public class BlastResultFilter {
     public static final Log log = LogFactory.getLog( BlastResultFilter.class );
 
     /**
+     * To know if we keep the local alignements in the results
+     */
+    private boolean wantLocalAlignment = false;
+
+    /**
      * The blast reader
      */
     private BlastMappingReader bmr;
@@ -47,6 +52,16 @@ public class BlastResultFilter {
     public BlastResultFilter(){
         this.results = null;
         this.bmr = new BlastMappingReader();
+    }
+
+    /**
+     *
+     * @param keepLocalAlignment
+     */
+    public BlastResultFilter(boolean keepLocalAlignment){
+        this.results = null;
+        this.bmr = new BlastMappingReader();
+        this.wantLocalAlignment = keepLocalAlignment;
     }
 
     /**
@@ -100,11 +115,38 @@ public class BlastResultFilter {
     }
 
     /**
+     *
+     * @param wantLocalAlignment
+     */
+    public void setWantLocalAlignment(boolean wantLocalAlignment) {
+        this.wantLocalAlignment = wantLocalAlignment;
+    }
+
+    /**
      * Get the hits that have been successfully filtered
      * @return a list of BlastProtein objects
      */
     public ArrayList<BlastProtein> getMatchingEntries() {
         return matchingEntries;
+    }
+
+    /**
+     * If we don't want to keep the local alignments, will check the end and start of the matching sequence to know if it is a local alignment
+     * @param hit
+     */
+    private void processHitResult(THit hit){
+
+        if (!wantLocalAlignment){
+            if (!isALocalAlignment(hit)){
+                BlastProtein blastEntry = createBlastProteinFrom(hit);
+                this.matchingEntries.add(blastEntry);
+            }
+        }
+        else {
+            BlastProtein blastEntry = createBlastProteinFrom(hit);
+            this.matchingEntries.add(blastEntry);
+        }
+
     }
 
     /**
@@ -141,6 +183,24 @@ public class BlastResultFilter {
     }
 
     /**
+     * Checks if the hit is a local alignment
+     * @param hit
+     * @return
+     */
+    private boolean isALocalAlignment(THit hit){
+        TAlignment al = hit.getAlignments().getAlignment().iterator().next();
+        int matchStart = al.getMatchSeq().getStart();
+        int matchEnd = al.getMatchSeq().getEnd();
+        int queryStart = al.getQuerySeq().getStart();
+        int queryEnd = al.getQuerySeq().getEnd();
+
+        if (matchStart == queryStart && matchEnd == queryEnd){
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Create a BlastProtein instance for each hit in the results and add them to the list of BlastProtein we want to keep
      */
     public void readResultsWithoutFiltering() {
@@ -149,8 +209,7 @@ public class BlastResultFilter {
 
         if (xmlHits != null){
             for ( THit hit : xmlHits ) {
-                BlastProtein blastEntry = createBlastProteinFrom(hit);
-                this.matchingEntries.add(blastEntry);
+                processHitResult(hit);
             }
         }
     }
@@ -165,8 +224,7 @@ public class BlastResultFilter {
         for ( THit hit : xmlHits ) {
             TAlignment alignment = hit.getAlignments().getAlignment().get(0);
             if (alignment.getIdentity() >= identity){
-                BlastProtein blastEntry = createBlastProteinFrom(hit);
-                this.matchingEntries.add(blastEntry);
+                processHitResult(hit);
             }
         }
     }
@@ -217,7 +275,7 @@ public class BlastResultFilter {
                 organismName = uniprotEntry.getOrganism().getScientificName().getValue();
             }
             else {
-                log.error("There isn't any Uniprot entries with this accession number : "+accession);                
+                log.error("There isn't any Uniprot entries with this accession number : "+accession);
             }
 
         }
@@ -243,8 +301,7 @@ public class BlastResultFilter {
 
             if (organism != null){
                 if (organism.equals(organismName)){
-                    BlastProtein blastEntry = createBlastProteinFrom(hit);
-                    this.matchingEntries.add(blastEntry);
+                    processHitResult(hit);
                 }
             }
             else {
@@ -274,8 +331,7 @@ public class BlastResultFilter {
             if (alignment.getIdentity() >= identity){
                 if (organism != null){
                     if (organism.equals(organismName)){
-                        BlastProtein blastEntry = createBlastProteinFrom(hit);
-                        this.matchingEntries.add(blastEntry);
+                        processHitResult(hit);
                     }
                 }
                 else {

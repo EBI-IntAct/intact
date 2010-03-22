@@ -37,7 +37,7 @@ public class BlastResultFilterTest {
         ArrayList<BlastProtein> filteredResults = filter.getMatchingEntries();
 
         Assert.assertEquals(false, filteredResults.isEmpty());
-        Assert.assertEquals(100, filteredResults.size());
+        Assert.assertEquals(14, filteredResults.size());
     }
 
     @Test
@@ -69,7 +69,7 @@ public class BlastResultFilterTest {
             System.out.println(prot.getAccession());
             System.out.println(prot.getIdentity());
         }
-        Assert.assertEquals(5, filteredResults.size());
+        Assert.assertEquals(1, filteredResults.size());
     }
 
     @Test
@@ -101,7 +101,7 @@ public class BlastResultFilterTest {
         ArrayList<BlastProtein> filteredResultsOnOrganism = filter.filterMappingEntriesWithOrganism("Drosophila melanogaster");
 
         Assert.assertEquals(false, filteredResultsOnOrganism.isEmpty());
-        Assert.assertEquals(5, filteredResultsOnOrganism.size());
+        Assert.assertEquals(1, filteredResultsOnOrganism.size());
 
         ArrayList<BlastProtein> filteredResultsOnOrganismAndIdentity = filter.filterMappingEntriesWithIdentityAndOrganism((float)100, "Drosophila melanogaster");
 
