@@ -57,20 +57,6 @@
                     </execution>
                 </executions>
                 </plugin>
-
-                <plugin>
-                    <groupId>com.sun.tools.xjc.maven2</groupId>
-                    <artifactId>maven-jaxb-plugin</artifactId>
-                    <version>1.0</version>
-
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>generate</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
             </plugins>
         </pluginManagement>
     </build>
