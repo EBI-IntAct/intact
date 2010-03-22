@@ -88,26 +88,5 @@
 			</snapshots>
 		</repository>
 
-		<!-- Sun's repository -->
-		<repository>
-			<id>java.net</id>
-			<name>java.net Maven Repository</name>
-			<url>
-				https://maven-repository.dev.java.net/nonav/repository
-			</url>
-			<layout>legacy</layout>
-		</repository>
 	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>java.net</id>
-			<name>java.net Maven Repository</name>
-			<url>
-				https://maven-repository.dev.java.net/nonav/repository
-			</url>
-			<layout>legacy</layout>
-		</pluginRepository>
-	</pluginRepositories>
-
 </project>
