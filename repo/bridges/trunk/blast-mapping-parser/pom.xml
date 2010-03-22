@@ -16,24 +16,28 @@
 
 	<build>
 		<plugins>
-			<!-- Conversion of XML Schema into Java source code using JAXB-XJC -->
-			<plugin>
-				<groupId>com.sun.tools.xjc.maven2</groupId>
-				<artifactId>maven-jaxb-plugin</artifactId>
-
-				<configuration>
-					<generatePackage>
-						uk.ac.ebi.intact.confidence.blastmapping.jaxb
-					</generatePackage>
-					<includeSchemas>
-						<includeSchema>
-							ApplicationResult.xsd
-						</includeSchema>
-					</includeSchemas>
-					<strict>true</strict>
-					<verbose>true</verbose>
-				</configuration>
-			</plugin>
+            <!-- Conversion of XML Schema into Java source code using JAXB-XJC -->
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.7.2</version>
+                <configuration>
+                    <schemaDirectory>src/main/resources</schemaDirectory>
+                    <schemaIncludes>
+                    <include>ApplicationResults.xsd</include>
+                    </schemaIncludes>
+                    <bindingDirectory>src/main/resources</bindingDirectory>
+                    <generatePackage>uk.ac.ebi.intact.confidence.blastmapping.jaxb</generatePackage>
+                    <extension>true</extension>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 
