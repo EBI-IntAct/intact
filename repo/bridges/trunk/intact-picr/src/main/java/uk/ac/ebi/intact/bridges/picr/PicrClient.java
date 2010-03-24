@@ -67,6 +67,21 @@ public class PicrClient {
     }
 
     /**
+     * Gets the uniparcId matching this accession number
+     * @param accession
+     * @param taxonId
+     * @return the uniparc Id or null if the accession doesn't match any Uniparc sequence
+     */
+    public String getUniparcId(String accession, String taxonId){
+        List<UPEntry> upEntries = getUPEntriesForAccession(accession, taxonId, PicrSearchDatabase.SWISSPROT_VARSPLIC, PicrSearchDatabase.SWISSPROT, PicrSearchDatabase.TREMBL_VARSPLIC, PicrSearchDatabase.TREMBL);
+
+        if (upEntries.isEmpty()){
+           return null;
+        }
+        return upEntries.iterator().next().getUPI();
+    }
+
+    /**
      * get the list of cross references accessions for a provided Id and taxonId from a list of databases
      * @param accession the accession to look for
      * @param taxonId : the organism of the protein
@@ -161,6 +176,22 @@ public class PicrClient {
         ArrayList<String> tremblIdList = getIdsForSequence(sequence, taxonId, PicrSearchDatabase.TREMBL_VARSPLIC, PicrSearchDatabase.TREMBL);
 
         return tremblIdList;
+    }
+
+    /**
+     * Gets the uniparcId matching this sequence
+     * @param sequence
+     * @param taxonId
+     * @return the uniparc Id or null if the sequence doesn't match any Uniparc sequence
+     */
+    public String getUniparcIdFromSequence(String sequence, String taxonId){
+        UPEntry upEntry = getUPEntriesForSequence(sequence, taxonId, PicrSearchDatabase.SWISSPROT_VARSPLIC, PicrSearchDatabase.SWISSPROT, PicrSearchDatabase.TREMBL_VARSPLIC, PicrSearchDatabase.TREMBL);
+
+        if (upEntry == null){
+            return null;
+        }
+
+        return upEntry.getUPI();
     }
 
     /**
