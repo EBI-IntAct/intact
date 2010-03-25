@@ -82,7 +82,7 @@ public class PicrClient {
      * @return the list of uniparc Id or empty list if the accession doesn't match any Uniparc sequence
      * @throws PicrClientException : an exception if the given accession is null
      */
-    public List getUniparcId(String accession, String taxonId) throws PicrClientException{
+    public List<UPEntry> getUniparcEntries(String accession, String taxonId) throws PicrClientException{
         List<UPEntry> upEntries = getUPEntriesForAccession(accession, taxonId, PicrSearchDatabase.SWISSPROT_VARSPLIC, PicrSearchDatabase.SWISSPROT, PicrSearchDatabase.TREMBL_VARSPLIC, PicrSearchDatabase.TREMBL);
 
         return upEntries;
