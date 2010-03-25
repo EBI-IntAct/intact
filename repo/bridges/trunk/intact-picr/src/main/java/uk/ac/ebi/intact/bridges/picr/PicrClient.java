@@ -1,5 +1,9 @@
 package uk.ac.ebi.intact.bridges.picr;
 
+import uk.ac.ebi.intact.bridges.picr.jaxb.GetUPIForAccessionReturn;
+import uk.ac.ebi.intact.bridges.picr.jaxb.IdenticalCrossReferences;
+import uk.ac.ebi.intact.bridges.picr.resultParsing.PicrParsingException;
+import uk.ac.ebi.intact.bridges.picr.resultParsing.PicrRESTResultParser;
 import uk.ac.ebi.kraken.interfaces.uniparc.UniParcEntry;
 import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
 import uk.ac.ebi.kraken.uuw.services.remoting.*;
@@ -25,6 +29,9 @@ import java.util.List;
 public class PicrClient {
 
     private AccessionMapperService accessionMapperService;
+    private PicrRESTResultParser parser = new PicrRESTResultParser();
+
+    private static final String restURLForUniprotBestGuess = "http://tc-test-3.ebi.ac.uk:9910/Tools/picr/rest/getUniProtBestGuess?";
 
     public PicrClient(){
         this("http://www.ebi.ac.uk/Tools/picr/service?wsdl");
@@ -47,8 +54,9 @@ public class PicrClient {
      * @param accession the accession to look for
      * @param taxonId : the organism of the protein
      * @return the swissprotIds if found, empty list otherwise
+     * @throws PicrClientException : an exception if the given accession is null
      */
-    public ArrayList<String> getSwissprotIdsForAccession(String accession, String taxonId) {
+    public ArrayList<String> getSwissprotIdsForAccession(String accession, String taxonId) throws PicrClientException{
         ArrayList<String> swissprotIdList = getIdsForAccession(accession, taxonId, PicrSearchDatabase.SWISSPROT_VARSPLIC, PicrSearchDatabase.SWISSPROT);
 
         return swissprotIdList;
@@ -59,26 +67,25 @@ public class PicrClient {
      * @param accession the accession to look for
      * @param taxonId : the organism of the protein
      * @return the tremblId if found, empty list otherwise
+     * @throws PicrClientException : an exception if the given accession is null
      */
-    public ArrayList<String> getTremblIdsForAccession(String accession, String taxonId) {
+    public ArrayList<String> getTremblIdsForAccession(String accession, String taxonId) throws PicrClientException{
         ArrayList<String> tremblIdList = getIdsForAccession(accession, taxonId, PicrSearchDatabase.TREMBL_VARSPLIC, PicrSearchDatabase.TREMBL);
 
         return tremblIdList;
     }
 
     /**
-     * Gets the uniparcId matching this accession number
+     * Gets the list of uniparcId matching this accession number
      * @param accession
      * @param taxonId
-     * @return the uniparc Id or null if the accession doesn't match any Uniparc sequence
+     * @return the list of uniparc Id or empty list if the accession doesn't match any Uniparc sequence
+     * @throws PicrClientException : an exception if the given accession is null
      */
-    public String getUniparcId(String accession, String taxonId){
+    public List getUniparcId(String accession, String taxonId) throws PicrClientException{
         List<UPEntry> upEntries = getUPEntriesForAccession(accession, taxonId, PicrSearchDatabase.SWISSPROT_VARSPLIC, PicrSearchDatabase.SWISSPROT, PicrSearchDatabase.TREMBL_VARSPLIC, PicrSearchDatabase.TREMBL);
 
-        if (upEntries.isEmpty()){
-           return null;
-        }
-        return upEntries.iterator().next().getUPI();
+        return upEntries;
     }
 
     /**
@@ -87,8 +94,9 @@ public class PicrClient {
      * @param taxonId : the organism of the protein
      * @param databases : the databases to query
      * @return the cross reference IDs if found, empty list otherwise
+     * @throws PicrClientException : an exception if the given accession is null
      */
-    private ArrayList<String> getIdsForAccession(String accession, String taxonId, PicrSearchDatabase ... databases){
+    private ArrayList<String> getIdsForAccession(String accession, String taxonId, PicrSearchDatabase ... databases) throws PicrClientException{
         List<UPEntry> upEntries = getUPEntriesForAccession(accession, taxonId, databases);
         ArrayList<String> idList = new ArrayList<String>();
         for (UPEntry entry : upEntries){
@@ -126,8 +134,13 @@ public class PicrClient {
      * @param taxonId the organism of the protein
      * @param databases the databases to query
      * @return the uniprot ID if found, null otherwise
+     * @throws PicrClientException : an exception if the given accession is null
      */
-    public List<UPEntry> getUPEntriesForAccession(String accession, String taxonId, PicrSearchDatabase ... databases) {
+    public List<UPEntry> getUPEntriesForAccession(String accession, String taxonId, PicrSearchDatabase ... databases) throws PicrClientException{
+        if (accession == null){
+            throw new PicrClientException("The identifier must not be null.");
+        }
+        if (databases == null) databases = PicrSearchDatabase.values();
         return getAccessionMapperPort().getUPIForAccession(accession, null, databaseEnumToList(databases), taxonId, true);
     }
 
@@ -137,8 +150,9 @@ public class PicrClient {
      * @param taxonId : the organism of the protein
      * @param databases : the databases to query
      * @return the list of cross reference IDs if found, empty list otherwise
+     * @throws PicrClientException : an exception if the given sequence is null
      */
-    private ArrayList<String> getIdsForSequence(String sequence, String taxonId, PicrSearchDatabase ... databases){
+    private ArrayList<String> getIdsForSequence(String sequence, String taxonId, PicrSearchDatabase ... databases) throws PicrClientException{
         UPEntry upEntry = getUPEntriesForSequence(sequence, taxonId, databases);
         ArrayList<String> idList = new ArrayList<String>();
 
@@ -159,8 +173,9 @@ public class PicrClient {
      * @param sequence the sequence to look for
      * @param taxonId : the organism of the protein
      * @return the swissprotIds if found, empty list otherwise
+     * @throws PicrClientException : an exception if the given sequence is null
      */
-    public ArrayList<String> getSwissprotIdsForSequence(String sequence, String taxonId) {
+    public ArrayList<String> getSwissprotIdsForSequence(String sequence, String taxonId) throws PicrClientException{
         ArrayList<String> swissprotIdList = getIdsForSequence(sequence, taxonId, PicrSearchDatabase.SWISSPROT_VARSPLIC, PicrSearchDatabase.SWISSPROT);
 
         return swissprotIdList;
@@ -171,8 +186,9 @@ public class PicrClient {
      * @param sequence the sequence to look for
      * @param taxonId : the organism of the protein
      * @return the tremblId if found, empty list otherwise
+     * @throws PicrClientException : an exception if the given sequence is null
      */
-    public ArrayList<String> getTremblIdsForSequence(String sequence, String taxonId) {
+    public ArrayList<String> getTremblIdsForSequence(String sequence, String taxonId) throws PicrClientException{
         ArrayList<String> tremblIdList = getIdsForSequence(sequence, taxonId, PicrSearchDatabase.TREMBL_VARSPLIC, PicrSearchDatabase.TREMBL);
 
         return tremblIdList;
@@ -184,7 +200,7 @@ public class PicrClient {
      * @param taxonId
      * @return the uniparc Id or null if the sequence doesn't match any Uniparc sequence
      */
-    public String getUniparcIdFromSequence(String sequence, String taxonId){
+    public String getUniparcIdFromSequence(String sequence, String taxonId) throws PicrClientException{
         UPEntry upEntry = getUPEntriesForSequence(sequence, taxonId, PicrSearchDatabase.SWISSPROT_VARSPLIC, PicrSearchDatabase.SWISSPROT, PicrSearchDatabase.TREMBL_VARSPLIC, PicrSearchDatabase.TREMBL);
 
         if (upEntry == null){
@@ -200,9 +216,14 @@ public class PicrClient {
      * @param taxonId : organism of the sequence
      * @param databases : the databases to look into
      * @return an UPEntry instance matching the sequence, taxonId in the specific databases
+     * @throws PicrClientException : an exception if the given sequence is null
      */
-    private UPEntry getUPEntriesForSequence(String sequence, String taxonId, PicrSearchDatabase ... databases) {
+    public UPEntry getUPEntriesForSequence(String sequence, String taxonId, PicrSearchDatabase ... databases) throws PicrClientException{
         if (databases == null) databases = PicrSearchDatabase.values();
+
+        if (sequence == null){
+            throw  new PicrClientException("The sequence must not be null.");
+        }
 
         // sequence has to be in fasta format. If not, create a definition
         if (!sequence.startsWith(">")) {
@@ -252,6 +273,60 @@ public class PicrClient {
             uniParcEntries.add(uniParcEntry);
         }
         return uniParcEntries;
+    }
+
+    /**
+     * Get an Unique uniprot Id for this accession
+     * @param accession : the accession to look at
+     * @param taxonId : the organism
+     * @return an Unique uniprot Id
+     * @throws PicrClientException
+     */
+    public String [] getUniprotBestGuessFor(String accession, String taxonId) throws PicrClientException{
+
+        if (accession == null){
+            throw new PicrClientException("The identifier must not be null.");
+        }
+
+        String query = restURLForUniprotBestGuess + "accession=" + accession;
+
+        if (taxonId != null){
+            query += "&taxid=" + taxonId;
+        }
+        URL url = null;
+        try {
+            url = new URL(query);
+
+            uk.ac.ebi.intact.bridges.picr.jaxb.GetUPIForAccessionResponse upiResponse = this.parser.read(url);
+
+            if (upiResponse == null){
+                return null;
+            }
+            else {
+                GetUPIForAccessionReturn upiResponeReturn = upiResponse.getGetUPIForAccessionReturn();
+                if (upiResponeReturn == null){
+                    return null;
+                }
+                else {
+                    IdenticalCrossReferences crossRef = upiResponeReturn.getIdenticalCrossReferences();
+
+                    if (crossRef == null){
+                        return null;
+                    }
+                    else {
+                        String [] result = new String [2];
+
+                        result[0] = crossRef.getDatabaseName();
+                        result[1] = crossRef.getAccession();
+                        return result;
+                    }
+                }
+            }
+        } catch (MalformedURLException e) {
+            throw new PicrClientException("The URL " + query + " is malformed.");
+        } catch (PicrParsingException e) {
+            throw new PicrClientException("Problems while trying to parse the Picr REST xml results at " + query);
+        }
     }
 
 }
