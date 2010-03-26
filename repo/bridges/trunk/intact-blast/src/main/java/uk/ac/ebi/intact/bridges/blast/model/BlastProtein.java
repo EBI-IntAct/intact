@@ -12,6 +12,7 @@ public class BlastProtein {
 
     private String accession;
     private String sequence;
+    private String alignment;
     private int score;
     private float identity;
     private int start;
@@ -72,5 +73,12 @@ public class BlastProtein {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+    public String getAlignment() {
+        return alignment;
+    }
+
+    public void setAlignment(String alignment) {
+        this.alignment = alignment;
     }
 }

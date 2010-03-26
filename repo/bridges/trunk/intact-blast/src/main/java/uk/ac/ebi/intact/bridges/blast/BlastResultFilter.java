@@ -166,6 +166,8 @@ public class BlastResultFilter {
         entry.setStart(alignment.getMatchSeq().getStart());
         entry.setEnd(alignment.getMatchSeq().getEnd());
 
+        entry.setAlignment(alignment.getPattern());
+
         return entry;
     }
 
