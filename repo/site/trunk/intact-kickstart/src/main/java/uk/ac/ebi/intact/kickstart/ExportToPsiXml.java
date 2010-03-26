@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.intact.kickstart;
 
+import org.springframework.transaction.TransactionStatus;
 import uk.ac.ebi.intact.core.context.DataContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
@@ -48,6 +49,8 @@ public class ExportToPsiXml {
 
         DataContext dataContext = intactContext.getDataContext();
 
+        final TransactionStatus transactionStatus = dataContext.beginTransaction();
+
         // The DaoFactory is the central access point to all the DAOs (Data Access Objects)
         DaoFactory daoFactory = dataContext.getDaoFactory();
 
@@ -80,6 +83,8 @@ public class ExportToPsiXml {
         final PsiExchange psiExchange = PsiExchangeFactory.createPsiExchange(intactContext);
         psiExchange.exportToPsiXml(writer, intactEntry);
 
+        dataContext.commitTransaction(transactionStatus);
+        
         // We print what has been writen in the console
         System.out.println("\n\nPSI-XML Formatted output:\n\n");
         System.out.println(writer);
