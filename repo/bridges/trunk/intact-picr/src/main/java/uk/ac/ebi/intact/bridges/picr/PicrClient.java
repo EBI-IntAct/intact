@@ -242,7 +242,7 @@ public class PicrClient {
      */
     public List<UniProtEntry> getUniprotEntryForAccession(String accession) {
 
-        Query query = UniProtQueryBuilder.buildFullTextSearch( accession );
+        Query query = UniProtQueryBuilder.buildExactMatchIdentifierQuery( accession );
         UniProtQueryService uniProtQueryService = UniProtJAPI.factory.getUniProtQueryService();
 
         List<UniProtEntry> uniProtEntries = new ArrayList<UniProtEntry>();
