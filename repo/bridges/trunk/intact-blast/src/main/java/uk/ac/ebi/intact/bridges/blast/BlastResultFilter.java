@@ -236,8 +236,12 @@ public class BlastResultFilter {
      * @param description : the description of a hit as it appears in the blast output
      * @return the scientific name of the organism
      */
-    private String extractOrganismNameFromDescription(String description){
+    private String extractOrganismNameFromDescription(String description, String database){
         String organismName = null;
+
+        if (database != null && database.equals("intact")){
+            return extractOrganismNameFromIntActDescription(description);
+        }
 
         if (description != null){
             if (description.contains("OS=")){
@@ -251,6 +255,32 @@ public class BlastResultFilter {
                 else if (index2 == -1){
                     organismName = temporary;
                 }
+            }
+        }
+
+        return organismName;
+    }
+
+    /**
+     * Extract the organism name from a description of a hit in the results
+     * @param description : the description of a hit as it appears in the blast output
+     * @return the scientific name of the organism
+     */
+    private String extractOrganismNameFromIntActDescription(String description){
+        String organismName = null;
+
+        if (description != null){
+            String shortLabel = description;
+
+            if (description.contains(" ")){
+                String [] des = description.split(" ");
+                shortLabel = des[0];
+            }
+
+            if (shortLabel.contains("_")){
+                String [] org = shortLabel.split("_");
+
+                return org [1];
             }
         }
 
@@ -296,7 +326,8 @@ public class BlastResultFilter {
         List<THit> xmlHits = collectResults();
 
         for ( THit hit : xmlHits ) {
-            String organism = extractOrganismNameFromDescription(hit.getDescription());
+            
+            String organism = extractOrganismNameFromDescription(hit.getDescription(), hit.getDatabase());
             if (organism == null){
                 organism = importOrganismNameFromUniprot(hit.getAc());
             }
@@ -322,7 +353,7 @@ public class BlastResultFilter {
         List<THit> xmlHits = collectResults();
 
         for ( THit hit : xmlHits ) {
-            String organism = extractOrganismNameFromDescription(hit.getDescription());
+            String organism = extractOrganismNameFromDescription(hit.getDescription(), hit.getDatabase());
 
             if (organism == null){
                 organism = importOrganismNameFromUniprot(hit.getAc());
@@ -368,9 +399,13 @@ public class BlastResultFilter {
         ArrayList<BlastProtein> filteredProtein = new ArrayList<BlastProtein>();
 
         for ( BlastProtein protein : this.matchingEntries  ) {
-            String organism = extractOrganismNameFromDescription(protein.getDescription());
+            String organism = extractOrganismNameFromDescription(protein.getDescription(), null);
             if (organism == null){
-                organism = importOrganismNameFromUniprot(protein.getAccession());
+                organism = extractOrganismNameFromIntActDescription(protein.getDescription());
+
+                if (organism == null){
+                    organism = importOrganismNameFromUniprot(protein.getAccession());
+                }
             }
             if (organism != null){
                 if (organism.equals(organismName)){
@@ -395,9 +430,13 @@ public class BlastResultFilter {
         ArrayList<BlastProtein> filteredProtein = new ArrayList<BlastProtein>();
 
         for ( BlastProtein protein : this.matchingEntries ) {
-            String organism = extractOrganismNameFromDescription(protein.getDescription());
+            String organism = extractOrganismNameFromDescription(protein.getDescription(), null);
             if (organism == null){
-                organism = importOrganismNameFromUniprot(protein.getAccession());
+                organism = extractOrganismNameFromIntActDescription(protein.getDescription());
+
+                if (organism == null){
+                    organism = importOrganismNameFromUniprot(protein.getAccession());
+                }
             }
 
             if (protein.getIdentity() >= identity){
