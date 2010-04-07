@@ -333,7 +333,7 @@ public class BlastResultFilter {
             }
 
             if (organism != null){
-                if (organism.equals(organismName)){
+                if (organism.toLowerCase().equals(organismName.toLowerCase())){
                     processHitResult(hit);
                 }
             }
@@ -363,7 +363,7 @@ public class BlastResultFilter {
 
             if (alignment.getIdentity() >= identity){
                 if (organism != null){
-                    if (organism.equals(organismName)){
+                    if (organism.toLowerCase().equals(organismName.toLowerCase())){
                         processHitResult(hit);
                     }
                 }
@@ -408,7 +408,7 @@ public class BlastResultFilter {
                 }
             }
             if (organism != null){
-                if (organism.equals(organismName)){
+                if (organism.toLowerCase().equals(organismName.toLowerCase())){
                     filteredProtein.add(protein);
                 }
             }
@@ -441,7 +441,7 @@ public class BlastResultFilter {
 
             if (protein.getIdentity() >= identity){
                 if (organism != null){
-                    if (organism.equals(organismName)){
+                    if (organism.toLowerCase().equals(organismName.toLowerCase())){
                         filteredProtein.add(protein);
                     }
                 }
