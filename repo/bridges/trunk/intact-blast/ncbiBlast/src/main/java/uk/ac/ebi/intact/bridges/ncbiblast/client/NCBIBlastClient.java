@@ -7,7 +7,6 @@ import uk.ac.ebi.intact.bridges.ncbiblast.model.Job;
 import uk.ac.ebi.jdispatcher.soap.*;
 import uk.ac.ebi.jdispatcher.soap.ObjectFactory;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -17,7 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * TODO comment this
+ * The NCBI blast client
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
