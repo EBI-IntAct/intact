@@ -1,102 +1,36 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <artifactId>bridges-master</artifactId>
         <groupId>uk.ac.ebi.intact.bridges</groupId>
+        <artifactId>bridges-master</artifactId>
         <version>2.1.2-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>intact-blast</artifactId>
+    <packaging>pom</packaging>
+	<name>IntAct Bridges :: Blast</name>
+	<version>2.1.2-SNAPSHOT</version>
 
-    <name>IntAct Bridges :: Blast</name>
-    <version>2.1.2-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <description>Blast Master POM</description>
 
     <properties>
-        <maven.test.failure.ignore>true</maven.test.failure.ignore>
+        <currentVersion>${version}</currentVersion>
     </properties>
 
+    <modules>
+        <module>wuBlast</module>
+        <module>ncbiBlast</module>
+    </modules>
+
     <dependencies>
-
-        <!-- Blast parser and Uniprot-->
         <dependency>
-            <groupId>uk.ac.ebi.intact.bridges</groupId>
-            <artifactId>blast-mapping-parser</artifactId>
-            <version>2.1.2-SNAPSHOT</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
+            <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>${pom.groupId}</groupId>
-            <artifactId>intact-uniprot</artifactId>
-            <version>${pom.version}</version>
-        </dependency>
-
-        <!-- JAX-WS -->
-        <dependency>
-            <groupId>com.sun.xml.ws</groupId>
-            <artifactId>jaxws-tools</artifactId>
-        </dependency>
-
-        <!-- Axis -->
-        <dependency>
-            <groupId>org.apache.axis</groupId>
-            <artifactId>axis</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis</groupId>
-            <artifactId>axis-jaxrpc</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis</groupId>
-            <artifactId>axis-saaj</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <dependency>
-            <groupId>soap</groupId>
-            <artifactId>soap</artifactId>
-            <version>2.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>wsdl4j</groupId>
-            <artifactId>wsdl4j</artifactId>
-            <version>1.6.1</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-discovery</groupId>
-            <artifactId>commons-discovery</artifactId>
-            <version>0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.activation</groupId>
-            <artifactId>activation</artifactId>
-            <version>1.1</version>
-        </dependency>
-
-        <!-- 3rd party -->
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-        </dependency>
-
-        <!-- for the blast h2 db -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.0.20070617</version>
-        </dependency>
-
     </dependencies>
 
     <!-- EBI repositories -->
@@ -124,14 +58,12 @@
             </snapshots>
         </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>java.net</id>
-            <name>java.net Maven Repository</name>
-            <url>
-                https://maven-repository.dev.java.net/nonav/repository
-            </url>
-            <layout>legacy</layout>
-        </pluginRepository>
-    </pluginRepositories>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/bridges</url>
+        </site>
+    </distributionManagement>
 </project>
