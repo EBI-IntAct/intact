@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:tr="http://myfaces.apache.org/trinidad"
+                xmlns:c="http://java.sun.com/jstl/core"
+                xmlns:sf="http://www.ebi.ac.uk/faces/site"
+
+                xmlns:iav="http://intact.ebi.ac.uk/view"
+                xmlns:iax="http://intact.ebi.ac.uk/extlinks"
+
+                template="/WEB-INF/facelets/layout/template.xhtml">
+
+    <!--<ui:define name="additionalHeader">-->
+        <!--<h:panelGroup rendered="#{disclosedTabName == 'molecule'}">-->
+            <!--<iav:dastyHeader/>-->
+        <!--</h:panelGroup>-->
+    <!--</ui:define>-->
+
+    <ui:define name="content">
+
+        <tr:panelGroupLayout>
+
+            <!--<tr:poll id="warningPoll" interval="120000"/>-->
+
+            <tr:panelGroupLayout>
+                <tr:panelBox text="Important notice" background="transparent"
+                             icon="/images/warning.gif"
+                             rendered="#{not empty intactViewConfiguration.warningMessage}">
+                    <tr:outputText value="#{intactViewConfiguration.warningMessage}"/>
+                </tr:panelBox>
+                <tr:spacer height="10"/>
+            </tr:panelGroupLayout>
+
+        </tr:panelGroupLayout>
+
+        <ui:include src="pages/search/search_panel.xhtml"/>
+
+
+        <tr:panelTabbed position="above" id="mainPanels">
+
+            <tr:showDetailItem text="Home"
+                               disclosed="#{disclosedTabName == 'about'}">
+                <tr:messages/>
+                <ui:insert name="aboutTabContent"/>
+            </tr:showDetailItem>
+
+            <tr:showDetailItem text="Search"
+                               disclosed="#{disclosedTabName == 'search'}">
+                <tr:messages/>
+                <ui:insert name="searchTabContent"/>
+            </tr:showDetailItem>
+
+            <tr:showDetailItem text="Interactions (#{searchBean.totalResults})"
+                               disabled="#{searchBean.totalResults == 0}"
+                               disclosed="#{disclosedTabName == 'interactions'}">
+                <tr:messages/>
+                <ui:insert name="interactionsTabContent"/>
+            </tr:showDetailItem>
+
+            <tr:showDetailItem text="Browse"
+                               disabled="#{searchBean.totalResults == 0}"
+                               disclosed="#{disclosedTabName == 'browse'}"
+                               disclosureListener="#{browseBean.createListofIdentifiers}">
+                <tr:messages/>
+                <ui:insert name="browseTabContent"/>
+            </tr:showDetailItem>
+
+            <tr:showDetailItem text="Lists"
+                               disabled="#{searchBean.totalResults == 0}"
+                               disclosed="#{disclosedTabName == 'list'}"
+                               disclosureListener="#{searchBean.onListDisclosureChanged}">
+                <tr:messages/>
+                <ui:insert name="listTabContent"/>
+            </tr:showDetailItem>
+
+            <tr:showDetailItem text="Interaction Details" disabled="#{detailsBean.interaction == null}"
+                               disclosed="#{disclosedTabName == 'details'}">
+                <tr:messages/>
+                <ui:insert name="detailsTabContent"/>
+            </tr:showDetailItem>
+
+            <tr:showDetailItem text="Molecule View" disabled="#{moleculeViewBean.interactor == null}"
+                               disclosed="#{disclosedTabName == 'molecule'}">
+                <tr:messages/>
+                <ui:insert name="moleculeTabContent"/>
+            </tr:showDetailItem>
+
+            <tr:showDetailItem text="Graph"
+                               shortDesc="#{searchBean.totalResults > intactViewConfiguration.graphMaxInteractionCount ? 'Too many interactions selected to display a graphical network' : 'Click this tab to visualize the interaction network' }"
+                               disabled="#{searchBean.totalResults == 0 or searchBean.totalResults > intactViewConfiguration.graphMaxInteractionCount }">
+                <tr:messages/>
+                <ui:insert name="graphTabContent"/>
+            </tr:showDetailItem>
+
+        </tr:panelTabbed>
+
+    </ui:define>
+
+</ui:composition>
