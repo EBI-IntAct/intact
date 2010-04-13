@@ -1,0 +1,182 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:jsp="http://java.sun.com/JSP/Page"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:tr="http://myfaces.apache.org/trinidad"
+                xmlns:c="http://java.sun.com/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+
+                xmlns:iav="http://intact.ebi.ac.uk/view"
+                xmlns:trh="http://myfaces.apache.org/trinidad/html"
+                xmlns:iaf="http://intact.ebi.ac.uk/functions"
+                xmlns:iam="http://intact.ebi.ac.uk/miscel"
+                xmlns:iax="http://intact.ebi.ac.uk/extlinks"
+
+                template="/main.xhtml">
+
+    <ui:param name="disclosedTabName" value="details"/>
+
+    <ui:define name="detailsTabContent">
+
+        <tr:spacer height="5"/>
+
+        <tr:panelHorizontalLayout valign="middle">
+            <tr:image source="/images/back_arrow.gif"/>
+            <tr:commandLink text="Back to Interaction Details" action="details"/>
+        </tr:panelHorizontalLayout>
+
+        <c:set var="matrix" value="#{detailsBean.similarInteractionMatrix}"/>
+        <c:set var="interaction" value="#{detailsBean.interaction}"/>
+
+        <tr:panelHeader text="Similarity search for complex interaction">
+
+            <div style="float:right; z-index:10; position:relative;">
+                <tr:panelBox text="Note:" background="dark">
+                    <tr:outputText
+                            value="This view shows interactions similar to ${interaction.shortLabel}. That is, having at least one participant in common."/>
+                    <br/>
+                    <tr:panelAccordion discloseNone="true">
+                        <tr:showDetailItem text="What does that table mean ?" immediate="true">
+                            <tr:image source="/images/documentation/complex-table-doc.png"/>
+                        </tr:showDetailItem>
+                    </tr:panelAccordion>
+                </tr:panelBox>
+            </div>
+
+
+
+            <tr:panelFormLayout inlineStyle="width:100%">
+
+                <tr:panelLabelAndMessage label="Accession:" labelStyle="font-weight:bold;">
+                    <tr:outputText value="#{interaction.ac}"/>
+                </tr:panelLabelAndMessage>
+
+                <tr:panelLabelAndMessage label="Name:" labelStyle="font-weight:bold;">
+                    <tr:outputText value="#{interaction.shortLabel}"/>
+                </tr:panelLabelAndMessage>
+
+                <tr:panelLabelAndMessage label="Participant count:" labelStyle="font-weight:bold;">
+                    <tr:outputText value="#{fn:length( interaction.components )}"/>
+                </tr:panelLabelAndMessage>
+
+                <tr:panelLabelAndMessage label="Similar interaction count:" labelStyle="font-weight:bold;">
+                    <tr:outputText value="#{fn:length( matrix.similarInteractions )}"/>
+                </tr:panelLabelAndMessage>
+
+
+            <trh:tableLayout borderWidth="0" cellSpacing="0" cellPadding="0">
+
+                <!-- Table Header-->
+                <tr>
+                    <td valign="bottom" style="border-bottom: solid 1px #cdcdcd;font-weight:bold;">
+                        <tr:outputText value="Interactions" />
+                    </td>
+
+                    <td colspan="#{fn:length( matrix.members ) + 1}" style="border-bottom: solid 1px #cdcdcd;">
+                        <!--TODO try color management later (eg. &amp;tc=&#35;000000")-->
+                        <tr:image source="/tableHeader?time=#{iam:currentTimeMillis()}&amp;s=31&amp;fs=12&amp;h=100&amp;st=true&amp;lc=%23cdcdcd" />
+                    </td>
+
+                    <td valign="bottom" style="font-weight:bold; border-bottom: solid 1px #cdcdcd;">Other participants</td>
+                </tr>
+
+                <!-- Table Body-->
+                <tr:iterator value="#{matrix.similarInteractions}" var="si" rows="0" varStatus="status">
+
+                    <tr>
+
+                        <td align="right">
+                            <tr:panelHorizontalLayout>
+                                <tr:commandLink action="details">
+                                    <tr:outputText value="#{si.shortLabel}" shortDesc="#{si.fullName}" />
+                                    <f:setPropertyActionListener value="#{si.ac}" target="#{detailsBean.interactionAc}"/>
+                                </tr:commandLink>
+                                <tr:spacer width="10" />
+                            </tr:panelHorizontalLayout>
+                        </td>
+
+                        <tr:iterator value="#{matrix.members}" var="member" rows="0" varStatus="index">
+
+                            <c:set var="style" value="#{(index.count eq fn:length(matrix.members) ? 'border-left: solid 1px #cdcdcd; border-right: solid 1px #cdcdcd;' : 'border-left: solid 1px #cdcdcd;')}" />
+
+                            <td align="center" width="30" style="#{style}">
+
+                                <c:set var="display" value="#{iam:isMemberPresent( si, member )}" />
+
+                                <tr:outputText value=" " rendered="#{!display}" />
+
+                                <tr:image source="/images/ok.gif" rendered="#{display}"
+                                          shortDesc="#{member.shortLabel} is present in this interaction"/>
+
+                            </td>
+
+                        </tr:iterator>
+
+                        <td align="left">
+                            <!-- Cell necessary to cope with the end of the table header-->
+                            <tr:panelHorizontalLayout>
+                                <tr:spacer width="7"/>
+                                <tr:outputText value="#{si.memberCount}"
+                                               inlineStyle="color:#a7cf9b;font-weight:bold;"
+                                               shortDesc="Count of matching molecules" /> <!-- green -->
+                                <tr:outputText value=" / " />
+                                <tr:outputText value="#{si.totalParticipantCount}"
+                                               inlineStyle="color:#a7cf9b;font-weight:bold;"
+                                               shortDesc="Total count of participants in this interaction" />   <!-- red -->
+                            </tr:panelHorizontalLayout>
+                        </td>
+
+                        <td>
+                            <iam:collapsibleIterator id="mtx_participant_#{status.index}"
+                                                     disclosed="false"
+                                                     value="#{si.others}"
+                                                     maxShown="3">
+
+                                <tr:commandLink action="molecule">
+                                    <f:setPropertyActionListener value="#{item.ac}" target="#{moleculeViewBean.interactorAc}"/>
+                                    <tr:outputText value="#{item.shortLabel}" />
+                                </tr:commandLink>
+
+                            </iam:collapsibleIterator>
+                        </td>
+
+                    </tr>
+
+                </tr:iterator>
+                <tr>
+                    <td colspan="#{fn:length(matrix.members) + 3}" align="right">
+                        &#160;
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="#{fn:length(matrix.members) + 3}" align="right">
+                        <tr:panelHorizontalLayout>
+                            <tr:outputText value="Legend: " inlineStyle="font-weight:bold;"/>
+
+                            <tr:spacer width="30" />
+
+                            <trh:tableLayout cellSpacing="10">
+                                <trh:rowLayout>
+                                    <trh:cellFormat width="10">  <!-- light red cell -->
+                                        <tr:outputText value="x/y" inlineStyle="font-weight:bold; color:#a7cf9b;"/>
+                                    </trh:cellFormat>
+                                    <trh:cellFormat >
+                                        <tr:outputText value="Count of matching molecules / Total count of participants in this interaction"/>
+                                    </trh:cellFormat>
+                                </trh:rowLayout>
+                            </trh:tableLayout>
+                        </tr:panelHorizontalLayout>
+                    </td>
+                </tr>
+
+            </trh:tableLayout>
+
+            </tr:panelFormLayout>
+
+        </tr:panelHeader>
+
+    </ui:define>
+
+</ui:composition>
