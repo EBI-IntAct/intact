@@ -35,19 +35,17 @@ public class BlastJobDaoTest {
 
     @Test
     public final void testDeleteJobs() throws BlastJdbcException {
-        BlastJobEntity blastJob = new BlastJobEntity( "testDeleteJobs", "P89012", "sequence0", BlastJobStatus.DONE,
+        BlastJobEntity blastJob = new BlastJobEntity( "testDeleteJobs", "P89012", "sequence0", BlastJobStatus.FINISHED,
                                                       new File( "test1" ), Timestamp.valueOf( "2007-09-13 10:30:25" ) );
-        BlastJobEntity blastJob1 = new BlastJobEntity( "testDeleteJobs1", "P78901", "sequence1", BlastJobStatus.PENDING, new File(
-                "test1" ), Timestamp.valueOf( "2007-09-13 12:30:25" ) );
-        BlastJobEntity blastJob2 = new BlastJobEntity( "testDeleteJobs2", "P67890", "sequence2", BlastJobStatus.FAILED, new File(
+        BlastJobEntity blastJob2 = new BlastJobEntity( "testDeleteJobs2", "P67890", "sequence2", BlastJobStatus.FAILURE, new File(
                 "test1" ), Timestamp.valueOf( "2007-09-13 11:30:25" ) );
         BlastJobEntity blastJob3 = new BlastJobEntity( "testDeleteJobs3", "P56789", "sequence3", BlastJobStatus.NOT_FOUND, new File(
                 "test1" ), Timestamp.valueOf( "2007-09-13 10:40:25" ) );
-        blastJobDao.saveJobs( Arrays.asList( blastJob, blastJob1, blastJob2, blastJob3 ) );
+        blastJobDao.saveJobs( Arrays.asList( blastJob, blastJob2, blastJob3 ) );
         List<BlastJobEntity> jobs = blastJobDao.selectAllJobs();
         assertNotNull( jobs ); // should never be null
-        assertEquals( 4, jobs.size() );
-        blastJobDao.deleteJobs( Arrays.asList( blastJob, blastJob1, blastJob2, blastJob3 ) );
+        assertEquals( 3, jobs.size() );
+        blastJobDao.deleteJobs( Arrays.asList( blastJob, blastJob2, blastJob3 ) );
         List<BlastJobEntity> empty = blastJobDao.selectAllJobs();
         assertNotNull( empty ); // should never be null
         assertEquals( 0, empty.size() );
@@ -80,7 +78,7 @@ public class BlastJobDaoTest {
 
     @Test
     public final void testSaveJobAndCount() throws BlastJdbcException {
-        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTest1", "P34567", "sequence", BlastJobStatus.DONE, new File(
+        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTest1", "P34567", "sequence", BlastJobStatus.FINISHED, new File(
                 "test1" ), Timestamp.valueOf( "2007-09-13 10:40:25" ) );
         blastJobDao.saveJob( blastJob );
         BlastJobEntity job = blastJobDao.getJobByAc( new UniprotAc( blastJob.getUniprotAc() ) );
@@ -95,9 +93,9 @@ public class BlastJobDaoTest {
 
     @Test
     public final void testSaveJobs() throws BlastJdbcException {
-        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTest2", "P23456", "sequence", BlastJobStatus.DONE, new File(
+        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTest2", "P23456", "sequence", BlastJobStatus.FINISHED, new File(
                 "test2" ), Timestamp.valueOf( "2007-09-13 10:40:25" ) );
-        BlastJobEntity blastJob2 = new BlastJobEntity( "blastJobDaoTest2b", "P12345", "sequence2", BlastJobStatus.DONE, new File(
+        BlastJobEntity blastJob2 = new BlastJobEntity( "blastJobDaoTest2b", "P12345", "sequence2", BlastJobStatus.FINISHED, new File(
                 "test2b" ), Timestamp.valueOf( "2007-10-21 10:40:25" ) );
         blastJobDao.saveJobs( Arrays.asList( blastJob, blastJob2 ) );
         BlastJobEntity job1 = blastJobDao.getJobById( blastJob.getJobid() );
@@ -111,7 +109,7 @@ public class BlastJobDaoTest {
 
     @Test
     public final void testSelectAllJobs() throws BlastJdbcException {
-        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTest3", "P67890", "sequence", BlastJobStatus.DONE, new File(
+        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTest3", "P67890", "sequence", BlastJobStatus.FINISHED, new File(
                 "test3" ), Timestamp.valueOf( "2007-09-13 10:40:25" ) );
         blastJobDao.saveJob( blastJob );
         List<BlastJobEntity> jobs = blastJobDao.selectAllJobs();
@@ -121,7 +119,7 @@ public class BlastJobDaoTest {
 
     @Test
     public final void testGetJobById() throws BlastJdbcException {
-        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTest4", "P56789", "sequence", BlastJobStatus.DONE, new File(
+        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTest4", "P56789", "sequence", BlastJobStatus.FINISHED, new File(
                 "test4" ), Timestamp.valueOf( "2007-09-13 10:40:25" ) );
         blastJobDao.saveJob( blastJob );
         BlastJobEntity job = blastJobDao.getJobById( blastJob.getJobid() );
@@ -131,11 +129,11 @@ public class BlastJobDaoTest {
 
     @Test
     public final void testGetJobsByDate() throws BlastJdbcException {
-        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTest2", "P23456", "sequence", BlastJobStatus.DONE, new File(
+        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTest2", "P23456", "sequence", BlastJobStatus.FINISHED, new File(
                 "test2" ), Timestamp.valueOf( "2007-09-13 10:40:25" ) );
-        BlastJobEntity blastJob1 = new BlastJobEntity( "blastJobDaoTest2a", "P34567", "sequence1", BlastJobStatus.DONE, new File(
+        BlastJobEntity blastJob1 = new BlastJobEntity( "blastJobDaoTest2a", "P34567", "sequence1", BlastJobStatus.FINISHED, new File(
                 "test2a" ), Timestamp.valueOf( "2007-09-13 10:40:25" ) );
-        BlastJobEntity blastJob2 = new BlastJobEntity( "blastJobDaoTest2b", "P45678", "sequence2", BlastJobStatus.DONE, new File(
+        BlastJobEntity blastJob2 = new BlastJobEntity( "blastJobDaoTest2b", "P45678", "sequence2", BlastJobStatus.FINISHED, new File(
                 "test2b" ), Timestamp.valueOf( "2007-10-21 10:40:25" ) );
         blastJobDao.saveJobs( Arrays.asList( blastJob, blastJob1, blastJob2 ) );
         List<BlastJobEntity> jobs = blastJobDao.getJobsByTimestamp( Timestamp.valueOf( "2007-09-13 10:40:25" ) );
@@ -149,11 +147,11 @@ public class BlastJobDaoTest {
 
     @Test
     public final void testGetJobByAc() throws BlastJdbcException {
-        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTest2", "P12345", "sequence0", BlastJobStatus.DONE, new File(
+        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTest2", "P12345", "sequence0", BlastJobStatus.FINISHED, new File(
                 "test2" ), Timestamp.valueOf( "2007-09-13 10:20:25" ) );
-        BlastJobEntity blastJob1 = new BlastJobEntity( "blastJobDaoTest2a", "P23456", "sequence1", BlastJobStatus.DONE, new File(
+        BlastJobEntity blastJob1 = new BlastJobEntity( "blastJobDaoTest2a", "P23456", "sequence1", BlastJobStatus.FINISHED, new File(
                 "test2a" ), Timestamp.valueOf( "2007-09-20 10:20:25" ) );
-        BlastJobEntity blastJob2 = new BlastJobEntity( "blastJobDaoTest2b", "P34567", "sequence2", BlastJobStatus.DONE, new File(
+        BlastJobEntity blastJob2 = new BlastJobEntity( "blastJobDaoTest2b", "P34567", "sequence2", BlastJobStatus.FINISHED, new File(
                 "test2b" ), Timestamp.valueOf( "2007-10-21 10:20:25" ) );
         blastJobDao.saveJobs( Arrays.asList( blastJob, blastJob1, blastJob2 ) );
         UniprotAc ac = new UniprotAc( blastJob.getUniprotAc() );
@@ -164,11 +162,11 @@ public class BlastJobDaoTest {
 
     @Test
     public final void testGetJobByAcAndLatestDate() throws BlastJdbcException {
-        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTest2", "P45678", "sequence", BlastJobStatus.DONE, new File(
+        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTest2", "P45678", "sequence", BlastJobStatus.FINISHED, new File(
                 "test2" ), Timestamp.valueOf( "2007-09-13 10:20:25" ) );
-        BlastJobEntity blastJob1 = new BlastJobEntity( "blastJobDaoTest2a", "P56789", "sequence1", BlastJobStatus.DONE, new File(
+        BlastJobEntity blastJob1 = new BlastJobEntity( "blastJobDaoTest2a", "P56789", "sequence1", BlastJobStatus.FINISHED, new File(
                 "test2a" ), Timestamp.valueOf( "2007-09-20 10:20:25" ) );
-        BlastJobEntity blastJob2 = new BlastJobEntity( "blastJobDaoTest2b", "P67890", "sequence2", BlastJobStatus.DONE, new File(
+        BlastJobEntity blastJob2 = new BlastJobEntity( "blastJobDaoTest2b", "P67890", "sequence2", BlastJobStatus.FINISHED, new File(
                 "test2b" ), Timestamp.valueOf( "2007-10-21 10:20:25" ) );
         blastJobDao.saveJobs( Arrays.asList( blastJob, blastJob1, blastJob2 ) );
         BlastJobEntity job = blastJobDao.getJobByAcAndLatestDate( blastJob.getUniprotAc() );
@@ -182,7 +180,7 @@ public class BlastJobDaoTest {
         BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTest2", "P12345", "sequence", BlastJobStatus.RUNNING, new File(
                 "test2" ), Timestamp.valueOf( "2007-09-13 10:20:25" ) );
         blastJobDao.saveJob( blastJob );
-        blastJob.setStatus( BlastJobStatus.DONE );
+        blastJob.setStatus( BlastJobStatus.FINISHED );
         blastJob.setResult( new File( testDir, "newFile" ) );
         blastJob.setTimestamp( Timestamp.valueOf( "2007-12-31 10:20:25" ) );
         blastJobDao.updateJob( blastJob );
@@ -197,9 +195,9 @@ public class BlastJobDaoTest {
          if (csvFile.exists()){
             csvFile.delete();
         }
-        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTestExport1", "P23456", "sequence1", BlastJobStatus.DONE, new File(
+        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTestExport1", "P23456", "sequence1", BlastJobStatus.FINISHED, new File(
                 "test2" ), Timestamp.valueOf( "2007-09-13 10:40:25" ) );
-        BlastJobEntity blastJob2 = new BlastJobEntity( "blastJobDaoExport2", "P12345", "sequence2", BlastJobStatus.DONE, new File(
+        BlastJobEntity blastJob2 = new BlastJobEntity( "blastJobDaoExport2", "P12345", "sequence2", BlastJobStatus.FINISHED, new File(
                 "test2b" ), Timestamp.valueOf( "2007-10-21 10:40:25" ) );
         blastJobDao.saveJobs( Arrays.asList( blastJob, blastJob2 ) );
         blastJobDao.exportCSV( csvFile );

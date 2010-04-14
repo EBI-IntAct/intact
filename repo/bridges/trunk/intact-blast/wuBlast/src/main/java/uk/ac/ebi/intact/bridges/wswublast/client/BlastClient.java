@@ -249,8 +249,8 @@ public class BlastClient {
             checkStatus(job);
         }
         if (BlastJobStatus.FINISHED.equals(job.getStatus())) {
-            String type = (fileFormatXml ? "toolxml" : "tooloutput");
-            byte[] resultbytes = blast.poll(job.getId(), "toolxml");
+            String type = (fileFormatXml ? "xml" : "out");
+            byte[] resultbytes = blast.poll(job.getId(), "xml");
             job.setBlastResult(new BlastOutput(resultbytes, fileFormatXml));
         }
         return job.getBlastResult();
