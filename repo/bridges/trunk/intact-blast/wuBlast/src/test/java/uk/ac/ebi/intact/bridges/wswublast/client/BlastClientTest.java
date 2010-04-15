@@ -134,14 +134,17 @@ public class BlastClientTest {
         }
 
         BlastOutput result = job.getBlastResult();
-        FileWriter fw;
-        try {
-            fw = new FileWriter( new File( testDir, ac.getAcNr() + ".xml" ) );
-            fw.append( new String( result.getResult() ) );
-            fw.close();
-        } catch ( IOException e ) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+
+        if (result != null){
+            FileWriter fw;
+            try {
+                fw = new FileWriter( new File( testDir, ac.getAcNr() + ".xml" ) );
+                fw.append( new String( result.getResult() ) );
+                fw.close();
+            } catch ( IOException e ) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 
