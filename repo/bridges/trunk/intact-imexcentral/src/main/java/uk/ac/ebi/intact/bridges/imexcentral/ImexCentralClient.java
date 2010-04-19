@@ -93,6 +93,39 @@ public class ImexCentralClient {
         }
     }
 
+    /**
+     *
+     * @param identifier
+     * @return the publication or null if not found.
+     * @throws ImexCentralException
+     */
+    public Publication getPublicationById( String identifier ) throws ImexCentralException {
+        try {
+            final PublicationList list = port.getPublicationById( buildIdentifierList( Arrays.asList( identifier ) ) );
+            if( list != null ) {
+                switch( list.getPublication().size() ) {
+                    case 0:
+                        return null;
+                    case 1:
+                        return list.getPublication().iterator().next();
+                    default:
+                        throw new ImexCentralException( list.getPublication().size() + " publications returned for " +
+                                                        "identifiers '"+identifier+"' when only one at most was " +
+                                                        "expected." );
+                }
+            }
+        } catch ( IcentralFault f ) {
+            switch( f.getFaultInfo().getFaultCode() ) {
+                case 6:
+                    // simply no data found, return null
+                    return null;
+            }
+
+            throw new ImexCentralException( "Error while getting a publication by id: " + identifier, f );
+        }
+        return null;
+    }
+
     public List<Publication> getPublicationByOwner( List<String> owners ) throws ImexCentralException {
         try {
             final PublicationList publicationList = port.getPublicationByOwner( owners );
@@ -124,10 +157,24 @@ public class ImexCentralClient {
         }
     }
 
+    /**
+     *
+     * @param identifier
+     * @param status
+     * @return an updated publication, null if not found.
+     * @throws ImexCentralException
+     */
     public Publication updatePublicationStatus( String identifier, PublicationStatus status ) throws ImexCentralException {
         try {
             return port.updatePublicationStatus( buildIdentifier( identifier ), status.toString() );
         } catch ( IcentralFault f ) {
+
+            switch( f.getFaultInfo().getFaultCode() ) {
+                case 6:
+                    // simply no data found, return null
+                    return null;
+            }
+
             throw new ImexCentralException( "Error while getting a publication status by identifier/status: " +
                                             identifier + "/" + status.toString(), f );
         }
@@ -179,7 +226,7 @@ public class ImexCentralClient {
         String username = args[0];
         String password = args[1];
 
-        String endPoint = IC_BETA;
+        String endPoint = IC_TEST;
 
         ImexCentralClient client = new ImexCentralClient( username, password, endPoint );
 
@@ -187,16 +234,25 @@ public class ImexCentralClient {
 //        System.out.println( "Released publication: " + releasedPublications.size() );
 
         // test 19360080
-        final List<Publication> publications = client.getPublicationById( Arrays.asList( "16980971" ) );
-        for ( Publication p : publications ) {
-            print( p );
+        final List<Publication> publications;
+        try {
+            publications = client.getPublicationById( Arrays.asList( "19249676" ) );
+        } catch ( ImexCentralException e ) {
+            e.printStackTrace(  );
+
+            final int code = ( ( IcentralFault ) e.getCause() ).getFaultInfo().getFaultCode();
+            final String msg = ( ( IcentralFault ) e.getCause() ).getFaultInfo().getMessage();
+            System.out.println( "\n\n" + code + " - " + msg );
+        }
+//        for ( Publication p : publications ) {
+//            print( p );
 
 //            if( p.getImexAccession().equals( "N/A" ) ) {
 //                System.out.println( "\nUpdating publication without IMEx ID ..." );
 //                final Publication publication = client.getPublicationImexAccession( "19360080", true );
 //                print( publication );
 //            }
-        }
+//        }
     }
 
     private static void print( Publication p ) {
