@@ -20,9 +20,9 @@ import java.util.List;
  * @version $Id$
  * @since 2.2.1
  */
-public class ImexCentralClient {
+public class DefaultImexCentralClient implements ImexCentralClient {
 
-    private static final Log log = LogFactory.getLog( ImexCentralClient.class );
+    private static final Log log = LogFactory.getLog( DefaultImexCentralClient.class );
 
     public static final String IC_TEST = "https://imexcentral.org/icentraltest/ws";
     public static final String IC_BETA = "https://imexcentral.org/icentralbeta/ws";
@@ -32,7 +32,7 @@ public class ImexCentralClient {
     private IcentralPort port;
     private String endPoint;
 
-    public ImexCentralClient( String username, String password, String endPoint ) throws ImexCentralException {
+    public DefaultImexCentralClient( String username, String password, String endPoint ) throws ImexCentralException {
 
         this.endPoint = endPoint;
 
@@ -210,7 +210,7 @@ public class ImexCentralClient {
     public static void main( String[] args ) throws ImexCentralException {
 
         if( args.length != 2 ) {
-            System.err.println( "Usage: ImexCentralClient <username> <password>" );
+            System.err.println( "Usage: DefaultImexCentralClient <username> <password>" );
         }
 
         String localTrustStore = System.getProperty( "javax.net.ssl.trustStore" );
@@ -228,7 +228,7 @@ public class ImexCentralClient {
 
         String endPoint = IC_TEST;
 
-        ImexCentralClient client = new ImexCentralClient( username, password, endPoint );
+        DefaultImexCentralClient client = new DefaultImexCentralClient( username, password, endPoint );
 
 //        final List<Publication> releasedPublications = client.getPublicationByStatus( PublicationStatus.RELEASED );
 //        System.out.println( "Released publication: " + releasedPublications.size() );
