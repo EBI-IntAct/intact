@@ -1,4 +1,4 @@
-package uk.ac.ebi.intact.bridges.imexcentral.test;
+package uk.ac.ebi.intact.bridges.imexcentral.mock;
 
 import edu.ucla.mbi.imex.central.ws.Identifier;
 import edu.ucla.mbi.imex.central.ws.Publication;
@@ -16,9 +16,9 @@ import java.util.List;
  * @version $Id$
  * @since 2.1.2
  */
-public class DummyImexCentralClient implements ImexCentralClient {
+public class MockImexCentralClient implements ImexCentralClient {
 
-    public DummyImexCentralClient() {
+    public MockImexCentralClient() {
         allPublications = new ArrayList<Publication>( );
     }
 
