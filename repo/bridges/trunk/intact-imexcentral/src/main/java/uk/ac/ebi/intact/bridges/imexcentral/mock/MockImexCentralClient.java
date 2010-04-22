@@ -42,15 +42,26 @@ public class MockImexCentralClient implements ImexCentralClient {
         this.allPublications = allPublications;
     }
 
-    ///////////////////////
-    // ImexCentralClient
-
     public void addPublication( Publication p ) {
         if ( p == null ) {
             throw new IllegalArgumentException( "You must give a non null publication" );
         }
         allPublications.add( p );
     }
+
+    public void addPublication( String identifier, String imexAccession, String status, String owner ) {
+        Publication p = new Publication();
+        final Identifier id = new Identifier();
+        id.setAc( identifier );
+        p.setIdentifier( id );
+        p.setImexAccession( ( imexAccession == null ? "N/A" : imexAccession ) );
+        p.setStatus( status );
+        p.setOwner( owner );
+        allPublications.add( p );
+    }
+
+    ///////////////////////
+    // ImexCentralClient
 
     public List<Publication> getPublicationById( List<String> identifiers ) throws ImexCentralException {
         List<Publication> publications = new ArrayList<Publication>( );
@@ -120,10 +131,16 @@ public class MockImexCentralClient implements ImexCentralClient {
 
     public Publication getPublicationImexAccession( String identifier, boolean create ) throws ImexCentralException {
         final Publication p = getPublicationById( identifier );
-        if( create && !p.getImexAccession().equals("N/A")) {
+        if( create ) {
+            if( ! p.getImexAccession().equals("N/A")) {
+                throw new IllegalStateException( "Publication already has an IMEx id: " + p.getImexAccession() );
+            }
+
+            // assigning new IMEx ID
             p.setImexAccession( "IM-" + imexIdSequence );
             imexIdSequence++;
         }
+
         return p;
     }
 }
