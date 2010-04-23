@@ -141,3 +141,18 @@ public class Playground {
     }
 }
 }}}
+
+
+=== More goodies ===
+
+If you are planning to write unit test that involve the IMExCentral, you will be please to know that you can do it with that same library, the following class can be used to Mock an ImexCentralClient:
+
+{{{uk.ac.ebi.intact.bridges.imexcentral.mock.MockImexCentralClient}}}
+
+You can use it as follow:
+
+{{{
+       ImexCentralClient client = new MockImexCentralClient();
+       client.addPublication( "123456789", null, "NEW", "SAM" );
+       client.initImexSequence( 999 );
+}}}
