@@ -41,9 +41,14 @@ keytool -import -alias imexcentral -file imexcentral.cer -keystore myKeyStore
 
 In this process you will be asked if you want to setup a password on your keystore.
 
+2. Now that you have created your KeyStore you will be able to run a Java program that can communicate with the server from which the certificate originate by specifying the following arguments when running the following command:
 
-     -Djavax.net.ssl.trustStore=tstore
-     -Djavax.net.ssl.trustStorePassword=<password>
+
+{{{  java   -Djavax.net.ssl.trustStore=myKeyStore <class> }}}
+
+and if you ahve setup a password on your KeyStore, you will need to add the following argument:
+
+{{{ -Djavax.net.ssl.trustStorePassword=<password> }}}
 
 
 == Using the Client ==
