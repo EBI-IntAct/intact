@@ -472,7 +472,7 @@ public class UniprotRemoteServiceTest {
 
         List<UniprotSpliceVariant> uniprotSpliceVariants = new ArrayList<UniprotSpliceVariant>(prot.getSpliceVariants());
 
-        Assert.assertEquals(10, uniprotSpliceVariants.size());
+        Assert.assertEquals(6, uniprotSpliceVariants.size());
 
         for (UniprotSpliceVariant usv : uniprotSpliceVariants) {
             Assert.assertNotNull("Sequence for "+usv.getPrimaryAc()+" must not be null", usv.getSequence());
