@@ -1,0 +1,17 @@
+#This page describes how to setup and use the IMExCentral Web Service Client developped by IntAct
+
+= Introduction =
+
+IMExCentral is a core component of the IMEx collaboration in that it allows tracking of curated literature by the various partners and thus prevent the same publication from being curated multiple times. IMExCentral does provide a secure web service that exposes the main functionalities of the web site. IntAct has implemented a small client that facilitates the use of this web service.
+
+
+= Details =
+
+== Setting up your environment ==
+
+This web service is running over SSL and you will need to setup your machine so that when you run the client it knows that you are trusting the server that is hosting the web service. The way to do that is do download a certificate (available on the server) and install it into a local KeyStore. The screenshots below illustrate how to download the IMExCentral certificate.
+
+1. Open the IMExCentral web site in a web browser (e.g. FireFox): https://imexcentral.org/icentraltest/
+
+2. Right click on the page select the option 'View page info':
+
