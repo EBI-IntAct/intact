@@ -1,4 +1,4 @@
-# This page describes how to setup and use the IMExCentral Web Service Client developped by IntAct
+#summary This page describes how to setup and use the IMExCentral Web Service Client developped by IntAct
 
 = Introduction =
 
