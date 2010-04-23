@@ -28,6 +28,7 @@
     </scm>
 
     <modules>
+       <module>intact-imexcentral</module>
        <module>intact-picr</module>
        <module>intact-citexplore</module>
        <module>intact-taxonomy</module>
@@ -36,6 +37,7 @@
        <module>blast-mapping-parser</module>
        <module>intact-blast</module>
        <module>intact-go</module>
+       <module>intact-google</module>
        <module>coredep</module>
     <module>intact-ontologies</module>
   </modules>
