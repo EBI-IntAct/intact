@@ -15,15 +15,15 @@ This web service is running over SSL and you will need to setup your machine so 
 
 2. Right click on the page select the option 'View page info':
 
-<a href="http://code.google.com/p/support/wiki/images/imex-central/certificate/step1.png"></a>
+<img src="http://intact.googlecode.com/svn/wiki/images/imex-central/certificate/step1.png"/>
 
 3. In the Security tab, click the button 'View certificate':
 
-<a href="http://code.google.com/p/support/wiki/images/imex-central/certificate/step2.png"></a>
+<img src="http://intact.googlecode.com/svn/wiki/images/imex-central/certificate/step2.png"/>
 
 4. In the details tab, click the 'Export' button:
 
-<a href="http://code.google.com/p/support/wiki/images/imex-central/certificate/step3.png"></a>
+<img src="http://intact.googlecode.com/svn/wiki/images/imex-central/certificate/step3.png"/>
 
 
 == Using the Client ==
