@@ -1,4 +1,4 @@
-#This page describes how to setup and use the IMExCentral Web Service Client developped by IntAct
+# This page describes how to setup and use the IMExCentral Web Service Client developped by IntAct
 
 = Introduction =
 
@@ -11,7 +11,19 @@ IMExCentral is a core component of the IMEx collaboration in that it allows trac
 
 This web service is running over SSL and you will need to setup your machine so that when you run the client it knows that you are trusting the server that is hosting the web service. The way to do that is do download a certificate (available on the server) and install it into a local KeyStore. The screenshots below illustrate how to download the IMExCentral certificate.
 
-1. Open the IMExCentral web site in a web browser (e.g. FireFox): https://imexcentral.org/icentraltest/
+1. Open the IMExCentral web site in a web browser (e.g. \FireFox): https://imexcentral.org/icentraltest/
 
 2. Right click on the page select the option 'View page info':
 
+<a href="http://code.google.com/p/support/wiki/images/imex-central/certificate/step1.png"></a>
+
+3. In the Security tab, click the button 'View certificate':
+
+<a href="http://code.google.com/p/support/wiki/images/imex-central/certificate/step2.png"></a>
+
+4. In the details tab, click the 'Export' button:
+
+<a href="http://code.google.com/p/support/wiki/images/imex-central/certificate/step3.png"></a>
+
+
+== Using the Client ==
