@@ -2,7 +2,7 @@
 
 = Introduction =
 
-IMExCentral is a core component of the IMEx collaboration in that it allows tracking of curated literature by the various partners and thus prevent the same publication from being curated multiple times. IMExCentral does provide a secure web service that exposes the main functionalities of the web site. IntAct has implemented a small client that facilitates the use of this web service.
+!IMExCentral is a core component of the IMEx collaboration in that it allows tracking of curated literature by the various partners and thus prevent the same publication from being curated multiple times. !IMExCentral does provide a secure web service that exposes the main functionalities of the web site. IntAct has implemented a small client that facilitates the use of this web service.
 
 
 = Details =
@@ -33,24 +33,66 @@ This web service is running over SSL and you will need to setup your machine so 
 
 Now that we have the certificate (assuming you saved it on your disk and called it imexcentral.cer) you can do the following:
 
-1. Add the certificate into a local KeyStore using the following command line:
+1. Add the certificate into a local !KeyStore using the following command line:
 
 {{{
 keytool -import -alias imexcentral -file imexcentral.cer -keystore myKeyStore
 }}}
 
+Note: keytool is a utility that is part of the JDK, so it should be already available on the command line. If not, you will need to install <a href="http://www.java.com" target="_blank">Java</a>
+<br/>
 In this process you will be asked if you want to setup a password on your keystore.
 
-2. Now that you have created your KeyStore you will be able to run a Java program that can communicate with the server from which the certificate originate by specifying the following arguments when running the following command:
+2. Now that you have created your !KeyStore you will be able to run a Java program that can communicate with the server from which the certificate originate by specifying the following arguments when running the following command:
 
 
 {{{  java   -Djavax.net.ssl.trustStore=myKeyStore <class> }}}
 
-and if you ahve setup a password on your KeyStore, you will need to add the following argument:
+and if you ahve setup a password on your !KeyStore, you will need to add the following argument:
 
 {{{ -Djavax.net.ssl.trustStorePassword=<password> }}}
 
 
 == Using the Client ==
 
-First you will have to tell the client where your KeyStore is located (and if necessary the password).
+=== Maven dependency ===
+
+If you are a maven user, you will need to add the following in the dependency section of your POM file:
+
+{{{
+        <dependency>
+            <groupId>uk.ac.ebi.intact.bridges</groupId>
+            <artifactId>intact-imexcentral</artifactId>
+            <version>2.1.2-SNAPSHOT</version>
+        </dependency>
+}}}
+
+as well as this in your repository section:
+
+{{{
+        <repository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+}}}
+
+
+First you will have to tell the client where your !KeyStore is located (and if necessary the password).
