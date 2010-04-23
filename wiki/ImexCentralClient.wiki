@@ -9,7 +9,11 @@ IMExCentral is a core component of the IMEx collaboration in that it allows trac
 
 == Setting up your environment ==
 
+
+
 This web service is running over SSL and you will need to setup your machine so that when you run the client it knows that you are trusting the server that is hosting the web service. The way to do that is do download a certificate (available on the server) and install it into a local KeyStore. The screenshots below illustrate how to download the IMExCentral certificate.
+
+=== Downloading the SSL certificate from IMExCentral ===
 
 1. Open the IMExCentral web site in a web browser (e.g. \FireFox): https://imexcentral.org/icentraltest/
 
@@ -25,5 +29,23 @@ This web service is running over SSL and you will need to setup your machine so 
 
 <img src="http://intact.googlecode.com/svn/wiki/images/imex-central/certificate/step3.png"/>
 
+=== Installing the certificate locally ===
+
+Now that we have the certificate (assuming you saved it on your disk and called it imexcentral.cer) you can do the following:
+
+1. Add the certificate into a local KeyStore using the following command line:
+
+{{{
+keytool -import -alias imexcentral -file imexcentral.cer -keystore myKeyStore
+}}}
+
+In this process you will be asked if you want to setup a password on your keystore.
+
+
+     -Djavax.net.ssl.trustStore=tstore
+     -Djavax.net.ssl.trustStorePassword=<password>
+
 
 == Using the Client ==
+
+First you will have to tell the client where your KeyStore is located (and if necessary the password).
