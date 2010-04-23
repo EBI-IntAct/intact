@@ -153,7 +153,7 @@ If you are planning to write unit test (why would you not ?!!) that involve the 
 You can use it as follow:
 
 {{{
-       ImexCentralClient client = new MockImexCentralClient();
+       MockImexCentralClient client = new MockImexCentralClient();
        client.addPublication( "123456789", null, "NEW", "SAM" );
        client.initImexSequence( 999 );
 }}}
