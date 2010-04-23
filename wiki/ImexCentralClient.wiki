@@ -1,4 +1,5 @@
 #summary This page describes how to setup and use the IMExCentral Web Service Client developped by IntAct
+#labels Phase-Implementation,IMExCentral
 
 = Introduction =
 
