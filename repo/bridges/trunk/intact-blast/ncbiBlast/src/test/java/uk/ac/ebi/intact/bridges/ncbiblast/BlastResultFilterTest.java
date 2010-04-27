@@ -59,7 +59,7 @@ public class BlastResultFilterTest {
     @Test
     public void getResult_FilterOrganism(){
 
-        filter.filterResultsWithOrganism("Drosophila melanogaster");
+        filter.filterResultsWithOrganism("7227");
 
         ArrayList<BlastProtein> filteredResults = filter.getMatchingEntries();
 
@@ -75,7 +75,7 @@ public class BlastResultFilterTest {
     @Test
     public void getResult_FilterOrganismAndIdentity(){
 
-        filter.filterResultsWithIdentityAndOrganism((float)100, "Drosophila melanogaster");
+        filter.filterResultsWithIdentityAndOrganism((float)100, "7227");
 
         ArrayList<BlastProtein> filteredResults = filter.getMatchingEntries();
 
@@ -98,12 +98,12 @@ public class BlastResultFilterTest {
         Assert.assertEquals(false, filteredResultsOnIdentity.isEmpty());
         Assert.assertEquals(12, filteredResultsOnIdentity.size());
 
-        ArrayList<BlastProtein> filteredResultsOnOrganism = filter.filterMappingEntriesWithOrganism("Drosophila melanogaster");
+        ArrayList<BlastProtein> filteredResultsOnOrganism = filter.filterMappingEntriesWithOrganism("7227");
 
         Assert.assertEquals(false, filteredResultsOnOrganism.isEmpty());
         Assert.assertEquals(1, filteredResultsOnOrganism.size());
 
-        ArrayList<BlastProtein> filteredResultsOnOrganismAndIdentity = filter.filterMappingEntriesWithIdentityAndOrganism((float)100, "Drosophila melanogaster");
+        ArrayList<BlastProtein> filteredResultsOnOrganismAndIdentity = filter.filterMappingEntriesWithIdentityAndOrganism((float)100, "7227");
 
         Assert.assertEquals(false, filteredResultsOnOrganismAndIdentity.isEmpty());
         Assert.assertEquals(1, filteredResultsOnOrganismAndIdentity.size());

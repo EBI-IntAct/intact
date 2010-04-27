@@ -8,11 +8,12 @@ import uk.ac.ebi.intact.confidence.blastmapping.BlastMappingReader;
 import uk.ac.ebi.intact.confidence.blastmapping.jaxb.EBIApplicationResult;
 import uk.ac.ebi.intact.confidence.blastmapping.jaxb.TAlignment;
 import uk.ac.ebi.intact.confidence.blastmapping.jaxb.THit;
-import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
-import uk.ac.ebi.kraken.uuw.services.remoting.*;
+import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.intact.uniprot.service.UniprotRemoteService;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -38,6 +39,11 @@ public class BlastResultFilter {
      * The log of this class
      */
     public static final Log log = LogFactory.getLog( BlastResultFilter.class );
+
+    /**
+     * The intact uniprot service
+     */
+    private static UniprotRemoteService uniprotService = new UniprotRemoteService();
 
     /**
      * To know if we keep the local alignements in the results
@@ -134,17 +140,19 @@ public class BlastResultFilter {
      * If we don't want to keep the local alignments, will check the end and start of the matching sequence to know if it is a local alignment
      * @param hit
      */
-    private void processHitResult(THit hit){
+    private void processHitResult(THit hit, String organism){
 
         if (!wantLocalAlignment){
             if (!isALocalAlignment(hit)){
                 BlastProtein blastEntry = createBlastProteinFrom(hit);
+                blastEntry.setTaxId(organism);
                 this.matchingEntries.add(blastEntry);
             }
         }
         else {
             BlastProtein blastEntry = createBlastProteinFrom(hit);
             this.matchingEntries.add(blastEntry);
+            blastEntry.setTaxId(organism);
         }
 
     }
@@ -211,7 +219,7 @@ public class BlastResultFilter {
 
         if (xmlHits != null){
             for ( THit hit : xmlHits ) {
-                processHitResult(hit);
+                processHitResult(hit, null);
             }
         }
     }
@@ -226,7 +234,7 @@ public class BlastResultFilter {
         for ( THit hit : xmlHits ) {
             TAlignment alignment = hit.getAlignments().getAlignment().get(0);
             if (alignment.getIdentity() >= identity){
-                processHitResult(hit);
+                processHitResult(hit, null);
             }
         }
     }
@@ -236,6 +244,7 @@ public class BlastResultFilter {
      * @param description : the description of a hit as it appears in the wswublast output
      * @return the scientific name of the organism
      */
+    /*
     private String extractOrganismNameFromDescription(String description, String database){
         String organismName = null;
 
@@ -259,13 +268,14 @@ public class BlastResultFilter {
         }
 
         return organismName;
-    }
+    }*/
 
     /**
      * Extract the organism name from a description of a hit in the results
      * @param description : the description of a hit as it appears in the wswublast output
      * @return the scientific name of the organism
      */
+    /*
     private String extractOrganismNameFromIntActDescription(String description){
         String organismName = null;
 
@@ -276,7 +286,7 @@ public class BlastResultFilter {
                 String [] des = description.split(" ");
 
                 if (des.length == 3 || des.length == 2){
-                    shortLabel = des[1];                     
+                    shortLabel = des[1];
                 }
             }
 
@@ -288,56 +298,52 @@ public class BlastResultFilter {
         }
 
         return organismName;
-    }
+    }*/
 
     /**
      * Extract the organism name from an Uniprot entry
      * @param accession : the uniprot accession
      * @return the scientific name of the organism for this protein
      */
-    private String importOrganismNameFromUniprot(String accession){
-        String organismName = null;
+    private String importOrganismTaxIdFromUniprot(String accession){
+        String taxId = null;
 
         if (accession != null){
-            Query query = UniProtQueryBuilder.buildFullTextSearch( accession );
-            UniProtQueryService uniProtQueryService = UniProtJAPI.factory.getUniProtQueryService();
+            Collection<UniprotProtein> entries = uniprotService.retrieve(accession);
+            UniprotProtein protein = entries.iterator().next();
 
-            EntryIterator<UniProtEntry> protEntryIterator = uniProtQueryService.getEntryIterator(query);
+            if (entries.size() != 1){
+                log.error("The uniprot accession " + accession + " is matching several UniprotEntry instances. We will only take into account the first one : " + protein.getPrimaryAc());
+            }
 
-            UniProtEntry uniprotEntry = protEntryIterator.next();
-
-            if (uniprotEntry != null){
-                organismName = uniprotEntry.getOrganism().getScientificName().getValue();
+            if (protein != null){
+                if (protein.getOrganism() != null){
+                    taxId = Integer.toString(protein.getOrganism().getTaxid());
+                }
             }
             else {
                 log.error("There isn't any Uniprot entries with this accession number : "+accession);
             }
 
         }
-        else {
-            log.error("To find the organism name of an uniprot entry, we need to have an Uniprot accession which is not null");
-        }
 
-        return organismName;
+        return taxId;
     }
 
     /**
      * Create a BlastProtein instance for each hit in the results which has a specific organism and add them to the list of BlastProtein we want to keep
-     * @param organismName : the scientific name of an organism
+     * @param taxId : the scientific name of an organism
      */
-    public void filterResultsWithOrganism(String organismName){
+    public void filterResultsWithOrganism(String taxId){
         List<THit> xmlHits = collectResults();
 
         for ( THit hit : xmlHits ) {
-            
-            String organism = extractOrganismNameFromDescription(hit.getDescription(), hit.getDatabase());
-            if (organism == null){
-                organism = importOrganismNameFromUniprot(hit.getAc());
-            }
+
+            String organism = importOrganismTaxIdFromUniprot(hit.getAc());
 
             if (organism != null){
-                if (organism.toLowerCase().equals(organismName.toLowerCase())){
-                    processHitResult(hit);
+                if (organism.equals(taxId)){
+                    processHitResult(hit, organism);
                 }
             }
             else {
@@ -350,24 +356,20 @@ public class BlastResultFilter {
     /**
      * Create a BlastProtein instance for each hit in the results which has an identity percent superior or equal to 'identity' and a specific organism and add them to the list of BlastProtein we want to keep
      * @param identity : the threshold identity
-     * @param organismName : the scientific name of the organism
+     * @param taxId : the scientific name of the organism
      */
-    public void filterResultsWithIdentityAndOrganism(float identity, String organismName){
+    public void filterResultsWithIdentityAndOrganism(float identity, String taxId){
         List<THit> xmlHits = collectResults();
 
         for ( THit hit : xmlHits ) {
-            String organism = extractOrganismNameFromDescription(hit.getDescription(), hit.getDatabase());
-
-            if (organism == null){
-                organism = importOrganismNameFromUniprot(hit.getAc());
-            }
+            String organism = importOrganismTaxIdFromUniprot(hit.getAc());
 
             TAlignment alignment = hit.getAlignments().getAlignment().get(0);
 
             if (alignment.getIdentity() >= identity){
                 if (organism != null){
-                    if (organism.toLowerCase().equals(organismName.toLowerCase())){
-                        processHitResult(hit);
+                    if (organism.equals(taxId)){
+                        processHitResult(hit, organism);
                     }
                 }
                 else {
@@ -395,23 +397,21 @@ public class BlastResultFilter {
 
     /**
      * Get a list of BlastProtein instances which have a specific organism
-     * @param organismName : the scientific name of an organism
+     * @param taxId : the scientific name of an organism
      * @return a list of BlastProteins which have been filtered
      */
-    public ArrayList<BlastProtein> filterMappingEntriesWithOrganism(String organismName){
+    public ArrayList<BlastProtein> filterMappingEntriesWithOrganism(String taxId){
         ArrayList<BlastProtein> filteredProtein = new ArrayList<BlastProtein>();
 
         for ( BlastProtein protein : this.matchingEntries  ) {
-            String organism = extractOrganismNameFromDescription(protein.getDescription(), null);
-            if (organism == null){
-                organism = extractOrganismNameFromIntActDescription(protein.getDescription());
+            String organism = protein.getTaxId();
 
-                if (organism == null){
-                    organism = importOrganismNameFromUniprot(protein.getAccession());
-                }
+            if (organism == null){
+                organism = importOrganismTaxIdFromUniprot(protein.getAccession());
+                protein.setTaxId(organism);
             }
             if (organism != null){
-                if (organism.toLowerCase().equals(organismName.toLowerCase())){
+                if (organism.equals(taxId)){
                     filteredProtein.add(protein);
                 }
             }
@@ -426,25 +426,23 @@ public class BlastResultFilter {
     /**
      * Get a list of BlastProtein instances which have an identity percent superior or equal to 'identity'
      * @param identity : the threshold identity
-     * @param organismName : the scientific name of an organism
+     * @param taxId : the scientific name of an organism
      * @return : a list of BlastProteins which have been filtered
      */
-    public ArrayList<BlastProtein> filterMappingEntriesWithIdentityAndOrganism(float identity, String organismName){
+    public ArrayList<BlastProtein> filterMappingEntriesWithIdentityAndOrganism(float identity, String taxId){
         ArrayList<BlastProtein> filteredProtein = new ArrayList<BlastProtein>();
 
         for ( BlastProtein protein : this.matchingEntries ) {
-            String organism = extractOrganismNameFromDescription(protein.getDescription(), null);
-            if (organism == null){
-                organism = extractOrganismNameFromIntActDescription(protein.getDescription());
+            String organism = protein.getTaxId();
 
-                if (organism == null){
-                    organism = importOrganismNameFromUniprot(protein.getAccession());
-                }
+            if (organism == null){
+                organism = importOrganismTaxIdFromUniprot(protein.getAccession());
+                protein.setTaxId(organism);
             }
 
             if (protein.getIdentity() >= identity){
                 if (organism != null){
-                    if (organism.toLowerCase().equals(organismName.toLowerCase())){
+                    if (organism.equals(taxId)){
                         filteredProtein.add(protein);
                     }
                 }

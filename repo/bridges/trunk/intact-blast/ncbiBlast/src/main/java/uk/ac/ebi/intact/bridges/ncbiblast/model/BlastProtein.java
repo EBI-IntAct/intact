@@ -18,9 +18,18 @@ public class BlastProtein {
     private int start;
     private int end;
     private String description;
+    private String taxId;
 
     public String getAccession() {
         return accession;
+    }
+
+    public String getTaxId() {
+        return taxId;
+    }
+
+    public void setTaxId(String organism) {
+        this.taxId = organism;
     }
 
     public String getSequence() {
