@@ -156,12 +156,14 @@ public class PicrClient {
         UPEntry upEntry = getUPEntriesForSequence(sequence, taxonId, databases);
         ArrayList<String> idList = new ArrayList<String>();
 
-        List<CrossReference> listOfReferences = upEntry.getIdenticalCrossReferences();
-        if (!listOfReferences.isEmpty()) {
-            for (CrossReference c : listOfReferences) {
-                String ac = c.getAccession();
-                if (ac != null){
-                    idList.add(ac);
+        if (upEntry != null){
+            List<CrossReference> listOfReferences = upEntry.getIdenticalCrossReferences();
+            if (!listOfReferences.isEmpty()) {
+                for (CrossReference c : listOfReferences) {
+                    String ac = c.getAccession();
+                    if (ac != null){
+                        idList.add(ac);
+                    }
                 }
             }
         }
