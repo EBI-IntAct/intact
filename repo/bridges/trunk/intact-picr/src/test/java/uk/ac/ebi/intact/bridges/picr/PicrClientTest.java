@@ -5,6 +5,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.kraken.interfaces.uniparc.UniParcEntry;
+import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseCrossReference;
+import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseType;
 import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
 
 import java.util.ArrayList;
@@ -94,6 +96,10 @@ public class PicrClientTest {
 
         for (UniProtEntry upi : uniprotEntries){
             System.out.println(upi.getUniProtId().getValue());
+
+            for (DatabaseCrossReference ref : upi.getDatabaseCrossReferences(DatabaseType.ENSEMBL)){
+                System.out.println(ref.toString());
+            }
         }
         Assert.assertEquals(1, uniprotEntries.size());
     }

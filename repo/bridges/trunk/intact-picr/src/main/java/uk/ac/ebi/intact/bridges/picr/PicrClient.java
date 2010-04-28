@@ -31,7 +31,7 @@ public class PicrClient {
     private AccessionMapperService accessionMapperService;
     private PicrRESTResultParser parser = new PicrRESTResultParser();
 
-    private static final String restURLForUniprotBestGuess = "http://tc-test-3.ebi.ac.uk:9910/Tools/picr/rest/getUniProtBestGuess?";
+    private static final String restURLForUniprotBestGuess = "http://www.ebi.ac.uk/Tools/picr/rest/getUniProtBestGuess?";
 
     public PicrClient(){
         this("http://www.ebi.ac.uk/Tools/picr/service?wsdl");
