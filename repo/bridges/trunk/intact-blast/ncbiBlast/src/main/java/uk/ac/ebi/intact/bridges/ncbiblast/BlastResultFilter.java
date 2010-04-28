@@ -30,6 +30,11 @@ public class BlastResultFilter {
      * The EBIApplicationResult containing the results
      */
     private EBIApplicationResult results;
+
+    /**
+     * The length of the initial sequence
+     */
+    private int sequenceLength;
     /**
      * The list of hits (BlastProtein objects) we want to keep
      */
@@ -139,11 +144,13 @@ public class BlastResultFilter {
     /**
      * If we don't want to keep the local alignments, will check the end and start of the matching sequence to know if it is a local alignment
      * @param hit
+     * @param organism
      */
-    private void processHitResult(THit hit, String organism, int sequenceLength){
+    private void processHitResult(THit hit, String organism){
 
         if (!wantLocalAlignment){
-            if (!isALocalAlignment(hit, sequenceLength)){
+            if (!isALocalAlignment(hit)){
+
                 BlastProtein blastEntry = createBlastProteinFrom(hit);
                 blastEntry.setTaxId(organism);
                 this.matchingEntries.add(blastEntry);
@@ -187,6 +194,8 @@ public class BlastResultFilter {
         if ( this.results != null ) {
             List<THit> xmlHits = this.results.getSequenceSimilaritySearchResult().getHits().getHit();
 
+            this.sequenceLength = this.results.getHeader().getParameters().getSequences().getSequence().iterator().next().getLength();            
+
             return xmlHits;
         }
         return null;
@@ -197,7 +206,7 @@ public class BlastResultFilter {
      * @param hit
      * @return
      */
-    private boolean isALocalAlignment(THit hit, int sequenceLength){
+    private boolean isALocalAlignment(THit hit){
         TAlignment al = hit.getAlignments().getAlignment().iterator().next();
         int matchStart = al.getMatchSeq().getStart();
         int matchEnd = al.getMatchSeq().getEnd();
@@ -215,7 +224,7 @@ public class BlastResultFilter {
      * @param prot
      * @return
      */
-    private static boolean isAGlobalAlignment(BlastProtein prot, int sequenceLength){
+    private static boolean isATotalAlignment(BlastProtein prot, int sequenceLength){
         int matchStart = prot.getStart();
         int matchEnd = prot.getEnd();
         int queryStart = 0;
@@ -233,11 +242,10 @@ public class BlastResultFilter {
     public void readResultsWithoutFiltering() {
 
         List<THit> xmlHits = collectResults();
-        int sequenceLength = this.results.getHeader().getParameters().getSequences().getSequence().iterator().next().getLength();
 
         if (xmlHits != null){
             for ( THit hit : xmlHits ) {
-                processHitResult(hit, null, sequenceLength);
+                processHitResult(hit, null);
             }
         }
     }
@@ -248,12 +256,11 @@ public class BlastResultFilter {
      */
     public void filterResultsWithIdentity(float identity){
         List<THit> xmlHits = collectResults();
-        int sequenceLength = this.results.getHeader().getParameters().getSequences().getSequence().iterator().next().getLength();
 
         for ( THit hit : xmlHits ) {
             TAlignment alignment = hit.getAlignments().getAlignment().get(0);
             if (alignment.getIdentity() >= identity){
-                processHitResult(hit, null, sequenceLength);
+                processHitResult(hit, null);
             }
         }
     }
@@ -355,7 +362,6 @@ public class BlastResultFilter {
      */
     public void filterResultsWithOrganism(String taxId){
         List<THit> xmlHits = collectResults();
-        int sequenceLength = this.results.getHeader().getParameters().getSequences().getSequence().iterator().next().getLength();
 
         for ( THit hit : xmlHits ) {
 
@@ -363,7 +369,7 @@ public class BlastResultFilter {
 
             if (organism != null){
                 if (organism.equals(taxId)){
-                    processHitResult(hit, organism, sequenceLength);
+                    processHitResult(hit, organism);
                 }
             }
             else {
@@ -380,17 +386,16 @@ public class BlastResultFilter {
      */
     public void filterResultsWithIdentityAndOrganism(float identity, String taxId){
         List<THit> xmlHits = collectResults();
-        int sequenceLength = this.results.getHeader().getParameters().getSequences().getSequence().iterator().next().getLength();
 
         for ( THit hit : xmlHits ) {
-            String organism = importOrganismTaxIdFromUniprot(hit.getAc());
-
             TAlignment alignment = hit.getAlignments().getAlignment().get(0);
 
             if (alignment.getIdentity() >= identity){
+                String organism = importOrganismTaxIdFromUniprot(hit.getAc());
+                
                 if (organism != null){
                     if (organism.equals(taxId)){
-                        processHitResult(hit, organism, sequenceLength);
+                        processHitResult(hit, organism);
                     }
                 }
                 else {
@@ -479,7 +484,7 @@ public class BlastResultFilter {
          ArrayList<BlastProtein> proteins = new ArrayList<BlastProtein>();
 
         for (BlastProtein p : proteinToFilter){
-            if (isAGlobalAlignment(p, sequenceLength)){
+            if (isATotalAlignment(p, sequenceLength)){
                 proteins.add(p);
             }
         }

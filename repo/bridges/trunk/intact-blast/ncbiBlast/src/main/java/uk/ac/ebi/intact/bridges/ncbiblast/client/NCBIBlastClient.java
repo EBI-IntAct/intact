@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastJobStatus;
 import uk.ac.ebi.intact.bridges.ncbiblast.model.Job;
 import uk.ac.ebi.jdispatcher.soap.*;
-import uk.ac.ebi.jdispatcher.soap.ObjectFactory;
 
 import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
@@ -144,7 +143,7 @@ public class NCBIBlastClient {
      * @throws NCBIBlastClientException : throws an exception if there is a problem trying to run a wswublast job
      */
     public Job blastSequenceInSwissprot(String email, String sequence) throws NCBIBlastClientException {
-        return blastSequence(email, sequence, "uniprotkb_swissprot");
+        return blastSequence(email, sequence, "uniprotkb_swissprot", "uniprotkb_swissprotsv");
     }
 
     /**
@@ -160,17 +159,19 @@ public class NCBIBlastClient {
     /**
      * Run a wswublast job in a specific database with a sequence
      * @param sequence : the sequence to wswublast
-     * @param database : the database to query
+     * @param databases : the list of databases to query
      * @return the wswublast Job
      * @throws NCBIBlastClientException : throws an exception if there is a problem trying to run a wswublast job
      */
-    public Job blastSequence(String email, String sequence, String database) throws NCBIBlastClientException {
+    public Job blastSequence(String email, String sequence, String ... databases) throws NCBIBlastClientException {
 
         InputParameters params = this.objFactory.createInputParameters();
         params.setProgram("blastp");
 
         ArrayOfString d = this.objFactory.createArrayOfString();
-        d.getString().add(database);
+        for (String db : databases){
+           d.getString().add(db);              
+        }
         params.setDatabase(d);
         params.setAlign(this.objFactory.createInputParametersAlign(0));
         params.setDropoff(this.objFactory.createInputParametersDropoff(0));
@@ -180,7 +181,7 @@ public class NCBIBlastClient {
         params.setGapext(this.objFactory.createInputParametersGapext(1));
         params.setGapopen(this.objFactory.createInputParametersGapopen(11));
         params.setMatrix(this.objFactory.createInputParametersMatrix("BLOSUM62"));
-        params.setScores(this.objFactory.createInputParametersScores(100));
+        params.setScores(this.objFactory.createInputParametersScores(50));
         params.setSequence(this.objFactory.createInputParametersSequence(sequence));
 
         params.setStype("protein");
