@@ -13,12 +13,12 @@ public class BlastProtein {
     private String accession;
     private String sequence;
     private String alignment;
-    private int score;
     private float identity;
     private int start;
     private int end;
     private String description;
     private String taxId;
+    private String database;
 
     public String getAccession() {
         return accession;
@@ -36,8 +36,8 @@ public class BlastProtein {
         return sequence;
     }
 
-    public int getScore() {
-        return score;
+    public String getDatabase() {
+        return database;
     }
 
     public float getIdentity() {
@@ -64,8 +64,8 @@ public class BlastProtein {
         this.identity = identity;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void setDatabase(String database) {
+        this.database = database;
     }
 
     public void setStart(int start) {

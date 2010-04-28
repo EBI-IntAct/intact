@@ -37,7 +37,7 @@ public class BlastResultFilterTest {
         ArrayList<BlastProtein> filteredResults = filter.getMatchingEntries();
 
         Assert.assertEquals(false, filteredResults.isEmpty());
-        Assert.assertEquals(14, filteredResults.size());
+        Assert.assertEquals(13, filteredResults.size());
     }
 
     @Test
