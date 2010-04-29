@@ -107,9 +107,9 @@ public class BlastResultFilterTest {
         ArrayList<BlastProtein> filteredResultsOnOrganismAndIdentity = filter.filterMappingEntriesWithIdentityAndOrganism((float)100, "7227");
 
         Assert.assertEquals(false, filteredResultsOnOrganismAndIdentity.isEmpty());
-        Assert.assertEquals(1, filteredResultsOnOrganismAndIdentity.size());
+        Assert.assertEquals(1, filteredResultsOnOrganismAndIdentity.size()); 
 
         ArrayList<BlastProtein> filteredResultsWithTotalAlignment = BlastResultFilter.collectMappingEntriesWithTotalAlignment(filteredResultsOnIdentity, this.sequence.length());
-        Assert.assertEquals(1, filteredResultsOnOrganismAndIdentity.size());
+        Assert.assertEquals(12, filteredResultsWithTotalAlignment.size());
     }
 }
