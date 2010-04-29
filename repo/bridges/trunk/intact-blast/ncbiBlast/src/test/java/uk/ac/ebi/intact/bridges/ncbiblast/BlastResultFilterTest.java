@@ -20,11 +20,12 @@ public class BlastResultFilterTest {
     InputStream results;
     ProteinNCBIBlastService blastService;
     BlastResultFilter filter;
+    private final String sequence = "MFAVMRIDNDDCRSDFRRKMRPKCEFICKYCQRRFTKPYNLMIHERTHKSPEITYSCEVCGKYFKQRDNLRQHRCSQCVWR";
 
     @Before
     public void setUp() throws BlastServiceException {
         blastService = new ProteinNCBIBlastService("marine@ebi.ac.uk");
-        results = blastService.getResultsOfBlastOnUniprot("MFAVMRIDNDDCRSDFRRKMRPKCEFICKYCQRRFTKPYNLMIHERTHKSPEITYSCEVCGKYFKQRDNLRQHRCSQCVWR");
+        results = blastService.getResultsOfBlastOnUniprot(sequence);
 
         filter = new BlastResultFilter(results);
     }
@@ -37,7 +38,7 @@ public class BlastResultFilterTest {
         ArrayList<BlastProtein> filteredResults = filter.getMatchingEntries();
 
         Assert.assertEquals(false, filteredResults.isEmpty());
-        Assert.assertEquals(13, filteredResults.size());
+        Assert.assertEquals(50, filteredResults.size());
     }
 
     @Test
@@ -69,7 +70,7 @@ public class BlastResultFilterTest {
             System.out.println(prot.getAccession());
             System.out.println(prot.getIdentity());
         }
-        Assert.assertEquals(1, filteredResults.size());
+        Assert.assertEquals(4, filteredResults.size());
     }
 
     @Test
@@ -101,11 +102,14 @@ public class BlastResultFilterTest {
         ArrayList<BlastProtein> filteredResultsOnOrganism = filter.filterMappingEntriesWithOrganism("7227");
 
         Assert.assertEquals(false, filteredResultsOnOrganism.isEmpty());
-        Assert.assertEquals(1, filteredResultsOnOrganism.size());
+        Assert.assertEquals(4, filteredResultsOnOrganism.size());
 
         ArrayList<BlastProtein> filteredResultsOnOrganismAndIdentity = filter.filterMappingEntriesWithIdentityAndOrganism((float)100, "7227");
 
         Assert.assertEquals(false, filteredResultsOnOrganismAndIdentity.isEmpty());
+        Assert.assertEquals(1, filteredResultsOnOrganismAndIdentity.size());
+
+        ArrayList<BlastProtein> filteredResultsWithTotalAlignment = BlastResultFilter.collectMappingEntriesWithTotalAlignment(filteredResultsOnIdentity, this.sequence.length());
         Assert.assertEquals(1, filteredResultsOnOrganismAndIdentity.size());
     }
 }

@@ -32,10 +32,6 @@ public class BlastResultFilter {
     private EBIApplicationResult results;
 
     /**
-     * The length of the initial sequence
-     */
-    private int sequenceLength;
-    /**
      * The list of hits (BlastProtein objects) we want to keep
      */
     private ArrayList<BlastProtein> matchingEntries = new ArrayList<BlastProtein>();
@@ -51,11 +47,6 @@ public class BlastResultFilter {
     private static UniprotRemoteService uniprotService = new UniprotRemoteService();
 
     /**
-     * To know if we keep the local alignements in the results
-     */
-    private boolean wantLocalAlignment = false;
-
-    /**
      * The wswublast reader
      */
     private BlastMappingReader bmr;
@@ -63,16 +54,6 @@ public class BlastResultFilter {
     public BlastResultFilter(){
         this.results = null;
         this.bmr = new BlastMappingReader();
-    }
-
-    /**
-     *
-     * @param keepLocalAlignment
-     */
-    public BlastResultFilter(boolean keepLocalAlignment){
-        this.results = null;
-        this.bmr = new BlastMappingReader();
-        this.wantLocalAlignment = keepLocalAlignment;
     }
 
     /**
@@ -126,14 +107,6 @@ public class BlastResultFilter {
     }
 
     /**
-     *
-     * @param wantLocalAlignment
-     */
-    public void setWantLocalAlignment(boolean wantLocalAlignment) {
-        this.wantLocalAlignment = wantLocalAlignment;
-    }
-
-    /**
      * Get the hits that have been successfully filtered
      * @return a list of BlastProtein objects
      */
@@ -147,21 +120,9 @@ public class BlastResultFilter {
      * @param organism
      */
     private void processHitResult(THit hit, String organism){
-
-        if (!wantLocalAlignment){
-            if (!isALocalAlignment(hit)){
-
-                BlastProtein blastEntry = createBlastProteinFrom(hit);
-                blastEntry.setTaxId(organism);
-                this.matchingEntries.add(blastEntry);
-            }
-        }
-        else {
-            BlastProtein blastEntry = createBlastProteinFrom(hit);
-            this.matchingEntries.add(blastEntry);
-            blastEntry.setTaxId(organism);
-        }
-
+        BlastProtein blastEntry = createBlastProteinFrom(hit);
+        blastEntry.setTaxId(organism);
+        this.matchingEntries.add(blastEntry);
     }
 
     /**
@@ -178,8 +139,10 @@ public class BlastResultFilter {
         TAlignment alignment = hit.getAlignments().getAlignment().get(0); //always one alignment?
         entry.setIdentity(alignment.getIdentity());
         entry.setSequence(alignment.getMatchSeq().getValue());
-        entry.setStart(alignment.getMatchSeq().getStart());
-        entry.setEnd(alignment.getMatchSeq().getEnd());
+        entry.setStartMatch(alignment.getMatchSeq().getStart());
+        entry.setEndMatch(alignment.getMatchSeq().getEnd());
+        entry.setStartQuery(alignment.getQuerySeq().getStart());
+        entry.setEndMatch(alignment.getQuerySeq().getEnd());
 
         entry.setAlignment(alignment.getPattern());
 
@@ -193,44 +156,23 @@ public class BlastResultFilter {
     private List<THit> collectResults() {
         if ( this.results != null ) {
             List<THit> xmlHits = this.results.getSequenceSimilaritySearchResult().getHits().getHit();
-
-            this.sequenceLength = this.results.getHeader().getParameters().getSequences().getSequence().iterator().next().getLength();            
-
             return xmlHits;
         }
         return null;
     }
 
     /**
-     * Checks if the hit is a local alignment
-     * @param hit
-     * @return
-     */
-    private boolean isALocalAlignment(THit hit){
-        TAlignment al = hit.getAlignments().getAlignment().iterator().next();
-        int matchStart = al.getMatchSeq().getStart();
-        int matchEnd = al.getMatchSeq().getEnd();
-        int queryStart = al.getQuerySeq().getStart();
-        int queryEnd = al.getQuerySeq().getEnd();
-
-        if (matchStart == queryStart && matchStart == 1 && matchEnd == queryEnd && matchEnd == sequenceLength){
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Checks if the blastProtein is a global alignment
+     * Checks if the blastProtein is a total alignment
      * @param prot
      * @return
      */
     private static boolean isATotalAlignment(BlastProtein prot, int sequenceLength){
-        int matchStart = prot.getStart();
-        int matchEnd = prot.getEnd();
-        int queryStart = 0;
-        int queryEnd = sequenceLength;
+        int matchStart = prot.getStartMatch();
+        int matchEnd = prot.getEndMatch();
+        int queryStart = prot.getStartQuery();
+        int queryEnd = prot.getEndQuery();
 
-        if (matchStart == queryStart && matchEnd == queryEnd){
+        if (matchStart == queryStart && matchStart == 1 && matchEnd == queryEnd && matchEnd == sequenceLength){
             return true;
         }
         return false;
@@ -392,7 +334,7 @@ public class BlastResultFilter {
 
             if (alignment.getIdentity() >= identity){
                 String organism = importOrganismTaxIdFromUniprot(hit.getAc());
-                
+
                 if (organism != null){
                     if (organism.equals(taxId)){
                         processHitResult(hit, organism);
@@ -480,8 +422,14 @@ public class BlastResultFilter {
 
     }
 
-    public static ArrayList<BlastProtein> collectMappingEntriesWithGlobalAlignment(ArrayList<BlastProtein> proteinToFilter, int sequenceLength){
-         ArrayList<BlastProtein> proteins = new ArrayList<BlastProtein>();
+    /**
+     * Collect all the BlastProtein in the list which have a total alignment with the query sequence
+     * @param proteinToFilter
+     * @param sequenceLength
+     * @return
+     */
+    public static ArrayList<BlastProtein> collectMappingEntriesWithTotalAlignment(ArrayList<BlastProtein> proteinToFilter, int sequenceLength){
+        ArrayList<BlastProtein> proteins = new ArrayList<BlastProtein>();
 
         for (BlastProtein p : proteinToFilter){
             if (isATotalAlignment(p, sequenceLength)){
