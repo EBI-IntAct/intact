@@ -1,5 +1,7 @@
 package uk.ac.ebi.intact.bridges.ncbiblast.model;
 
+import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+
 /**
  * The object containing the wswublast information for one hit of the wswublast results
  *
@@ -17,10 +19,10 @@ public class BlastProtein {
     private int startMatch;
     private int endMatch;
     private String description;
-    private String taxId;
     private String database;
     private int startQuery;
     private int endQuery;
+    private UniprotProtein proteinInUniprot;
 
     public BlastProtein(){
         this.accession = null;
@@ -30,10 +32,10 @@ public class BlastProtein {
         this.startMatch = 0;
         this.endMatch = 0;
         this.description = null;
-        this.taxId = null;
         this.database = null;
         this.startQuery = 0;
         this.endQuery = 0;
+        this.proteinInUniprot = null;
     }
     public String getAccession() {
         return accession;
@@ -55,12 +57,12 @@ public class BlastProtein {
         this.endQuery = endQuery;
     }
 
-    public String getTaxId() {
-        return taxId;
+    public UniprotProtein getUniprotProtein() {
+        return this.proteinInUniprot;
     }
 
-    public void setTaxId(String organism) {
-        this.taxId = organism;
+    public void setUniprotProtein(UniprotProtein prot) {
+        this.proteinInUniprot = prot;
     }
 
     public String getSequence() {
