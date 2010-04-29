@@ -117,11 +117,11 @@ public class BlastResultFilter {
     /**
      * If we don't want to keep the local alignments, will check the end and start of the matching sequence to know if it is a local alignment
      * @param hit
-     * @param organism
+     * @param protein
      */
-    private void processHitResult(THit hit, String organism){
+    private void processHitResult(THit hit, UniprotProtein protein){
         BlastProtein blastEntry = createBlastProteinFrom(hit);
-        blastEntry.setTaxId(organism);
+        blastEntry.setUniprotProtein(protein);
         this.matchingEntries.add(blastEntry);
     }
 
@@ -269,12 +269,12 @@ public class BlastResultFilter {
     }*/
 
     /**
-     * Extract the organism name from an Uniprot entry
+     * Extract the uniprot entry
      * @param accession : the uniprot accession
-     * @return the scientific name of the organism for this protein
+     * @return the uniprotProtein with the matching organism
      */
-    private String importOrganismTaxIdFromUniprot(String accession){
-        String taxId = null;
+    private UniprotProtein importProteinFromUniprot(String accession){
+        UniprotProtein prot = null;
 
         if (accession != null){
             Collection<UniprotProtein> entries = uniprotService.retrieve(accession);
@@ -286,7 +286,7 @@ public class BlastResultFilter {
 
             if (protein != null){
                 if (protein.getOrganism() != null){
-                    taxId = Integer.toString(protein.getOrganism().getTaxid());
+                    prot = protein;
                 }
             }
             else {
@@ -295,7 +295,7 @@ public class BlastResultFilter {
 
         }
 
-        return taxId;
+        return prot;
     }
 
     /**
@@ -306,12 +306,12 @@ public class BlastResultFilter {
         List<THit> xmlHits = collectResults();
 
         for ( THit hit : xmlHits ) {
-
-            String organism = importOrganismTaxIdFromUniprot(hit.getAc());
+            UniprotProtein protFromUniprot = importProteinFromUniprot(hit.getAc());
+            String organism = Integer.toString(protFromUniprot.getOrganism().getTaxid());
 
             if (organism != null){
                 if (organism.equals(taxId)){
-                    processHitResult(hit, organism);
+                    processHitResult(hit, protFromUniprot);
                 }
             }
             else {
@@ -333,11 +333,12 @@ public class BlastResultFilter {
             TAlignment alignment = hit.getAlignments().getAlignment().get(0);
 
             if (alignment.getIdentity() >= identity){
-                String organism = importOrganismTaxIdFromUniprot(hit.getAc());
+                UniprotProtein protFromUniprot = importProteinFromUniprot(hit.getAc());
+                String organism = Integer.toString(protFromUniprot.getOrganism().getTaxid());
 
                 if (organism != null){
                     if (organism.equals(taxId)){
-                        processHitResult(hit, organism);
+                        processHitResult(hit, protFromUniprot);
                     }
                 }
                 else {
@@ -372,12 +373,12 @@ public class BlastResultFilter {
         ArrayList<BlastProtein> filteredProtein = new ArrayList<BlastProtein>();
 
         for ( BlastProtein protein : this.matchingEntries  ) {
-            String organism = protein.getTaxId();
-
-            if (organism == null){
-                organism = importOrganismTaxIdFromUniprot(protein.getAccession());
-                protein.setTaxId(organism);
+            String organism = null;
+            if (protein.getUniprotProtein() == null){
+                protein.setUniprotProtein(importProteinFromUniprot(protein.getAccession()));
             }
+            organism = Integer.toString(protein.getUniprotProtein().getOrganism().getTaxid());
+
             if (organism != null){
                 if (organism.equals(taxId)){
                     filteredProtein.add(protein);
@@ -401,12 +402,12 @@ public class BlastResultFilter {
         ArrayList<BlastProtein> filteredProtein = new ArrayList<BlastProtein>();
 
         for ( BlastProtein protein : this.matchingEntries ) {
-            String organism = protein.getTaxId();
+            String organism = null;
 
-            if (organism == null){
-                organism = importOrganismTaxIdFromUniprot(protein.getAccession());
-                protein.setTaxId(organism);
+            if (protein.getUniprotProtein() == null){
+                protein.setUniprotProtein(importProteinFromUniprot(protein.getAccession()));
             }
+            organism = Integer.toString(protein.getUniprotProtein().getOrganism().getTaxid());
 
             if (protein.getIdentity() >= identity){
                 if (organism != null){
