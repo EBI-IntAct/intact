@@ -142,7 +142,7 @@ public class BlastResultFilter {
         entry.setStartMatch(alignment.getMatchSeq().getStart());
         entry.setEndMatch(alignment.getMatchSeq().getEnd());
         entry.setStartQuery(alignment.getQuerySeq().getStart());
-        entry.setEndMatch(alignment.getQuerySeq().getEnd());
+        entry.setEndQuery(alignment.getQuerySeq().getEnd());
 
         entry.setAlignment(alignment.getPattern());
 
