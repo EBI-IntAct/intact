@@ -61,12 +61,13 @@ public class ProteinNCBIBlastService {
     }
 
     public File getResultsOfBlastOnUniprot(String sequence, String fileName){
-        File results = getResultsOfBlastInFile(sequence, "uniprotkb", fileName);
+        File results = getResultsOfBlastInFile(sequence, "uniprot", fileName);
         return results;
     }
 
     public File getResultsOfBlastOnSwissprot(String sequence, String fileName){
-        File results = getResultsOfBlastInFile(sequence, "uniprotkb_swissprot", fileName);
+        File results = getResultsOfBlastInFile(sequence, "swissprot", fileName);
+        
         return results;
     }
 
