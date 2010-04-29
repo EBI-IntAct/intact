@@ -46,12 +46,12 @@ public class ProteinNCBIBlastService {
     // Public methods
 
     public ByteArrayInputStream getResultsOfBlastOnUniprot(String sequence){
-        ByteArrayInputStream results = getResultsOfBlast(sequence, "uniprotkb");
+        ByteArrayInputStream results = getResultsOfBlast(sequence, "uniprot");
         return results;
     }
 
     public ByteArrayInputStream getResultsOfBlastOnSwissprot(String sequence){
-        ByteArrayInputStream results = getResultsOfBlast(sequence, "uniprotkb_swissprot");
+        ByteArrayInputStream results = getResultsOfBlast(sequence, "swissprot");
         return results;
     }
 
@@ -98,10 +98,10 @@ public class ProteinNCBIBlastService {
 
             if (databaseName != null){
 
-                if (databaseName.toLowerCase().equals("uniprotkb")){
+                if (databaseName.toLowerCase().equals("uniprot")){
                     job = this.bc.blastSequenceInUniprot(this.email, sequence);
                 }
-                else if (databaseName.toLowerCase().equals("uniprotkb_swissprot")){
+                else if (databaseName.toLowerCase().equals("swissprot")){
                     job = this.bc.blastSequenceInSwissprot(this.email, sequence);
                 }
                 else if (databaseName.toLowerCase().equals("intact")){

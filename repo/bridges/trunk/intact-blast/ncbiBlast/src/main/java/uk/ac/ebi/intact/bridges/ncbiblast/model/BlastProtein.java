@@ -14,14 +14,45 @@ public class BlastProtein {
     private String sequence;
     private String alignment;
     private float identity;
-    private int start;
-    private int end;
+    private int startMatch;
+    private int endMatch;
     private String description;
     private String taxId;
     private String database;
+    private int startQuery;
+    private int endQuery;
 
+    public BlastProtein(){
+        this.accession = null;
+        this.sequence = null;
+        this.alignment = null;
+        this.identity = 0;
+        this.startMatch = 0;
+        this.endMatch = 0;
+        this.description = null;
+        this.taxId = null;
+        this.database = null;
+        this.startQuery = 0;
+        this.endQuery = 0;
+    }
     public String getAccession() {
         return accession;
+    }
+
+    public int getStartQuery() {
+        return startQuery;
+    }
+
+    public int getEndQuery() {
+        return endQuery;
+    }
+
+    public void setStartQuery(int startQuery) {
+        this.startQuery = startQuery;
+    }
+
+    public void setEndQuery(int endQuery) {
+        this.endQuery = endQuery;
     }
 
     public String getTaxId() {
@@ -44,12 +75,12 @@ public class BlastProtein {
         return identity;
     }
 
-    public int getStart() {
-        return start;
+    public int getStartMatch() {
+        return startMatch;
     }
 
-    public int getEnd() {
-        return end;
+    public int getEndMatch() {
+        return endMatch;
     }
 
     public void setAccession(String accession) {
@@ -68,12 +99,12 @@ public class BlastProtein {
         this.database = database;
     }
 
-    public void setStart(int start) {
-        this.start = start;
+    public void setStartMatch(int startMatch) {
+        this.startMatch = startMatch;
     }
 
-    public void setEnd(int end) {
-        this.end = end;
+    public void setEndMatch(int endMatch) {
+        this.endMatch = endMatch;
     }
 
     public String getDescription() {

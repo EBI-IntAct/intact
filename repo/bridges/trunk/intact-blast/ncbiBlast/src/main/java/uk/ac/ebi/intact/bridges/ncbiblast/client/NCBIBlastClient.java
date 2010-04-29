@@ -181,7 +181,8 @@ public class NCBIBlastClient {
         params.setGapext(this.objFactory.createInputParametersGapext(1));
         params.setGapopen(this.objFactory.createInputParametersGapopen(11));
         params.setMatrix(this.objFactory.createInputParametersMatrix("BLOSUM62"));
-        params.setScores(this.objFactory.createInputParametersScores(50));
+        params.setScores(this.objFactory.createInputParametersScores(100));
+        params.setAlignments(this.objFactory.createInputParametersAlignments(50));
         params.setSequence(this.objFactory.createInputParametersSequence(sequence));
 
         params.setStype("protein");
