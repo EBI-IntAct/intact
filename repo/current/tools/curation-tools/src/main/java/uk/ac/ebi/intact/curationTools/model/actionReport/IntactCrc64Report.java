@@ -1,6 +1,6 @@
 package uk.ac.ebi.intact.curationTools.model.actionReport;
 
-import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
+import uk.ac.ebi.intact.model.ProteinImpl;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,21 +13,31 @@ import java.util.Set;
  * @since <pre>01-Apr-2010</pre>
  */
 
-public class BlastReport extends ActionReport{
+public class IntactCrc64Report extends ActionReport {
 
-    protected Set<BlastProtein> listOfProteins = new HashSet<BlastProtein>();
+    private String intactid;
+    protected Set<ProteinImpl> listOfProteins = new HashSet<ProteinImpl>();
     protected String querySequence;
 
-    public BlastReport(ActionName name){
-         super(name);
+    public IntactCrc64Report(ActionName name) {
+        super(name);
+        this.intactid = null;
         this.querySequence = null;
     }
 
-    public Set<BlastProtein> getBlastMatchingProteins(){
+    public String getIntactid() {
+        return intactid;
+    }
+
+    public void setIntactid(String intactid) {
+        this.intactid = intactid;
+    }
+
+    public Set<ProteinImpl> getIntactMatchingProteins(){
         return this.listOfProteins;
     }
 
-    public void addBlastMatchingProtein(BlastProtein prot){
+    public void addIntactMatchingProtein(ProteinImpl prot){
         this.listOfProteins.add(prot);
     }
 

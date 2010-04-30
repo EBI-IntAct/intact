@@ -2,14 +2,10 @@ package uk.ac.ebi.intact.curationTools.strategies;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.core.context.DataContext;
-import uk.ac.ebi.intact.core.context.IntactContext;
-import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.curationTools.actions.IdentificationAction;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.curationTools.model.results.IdentificationResults;
 import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 import uk.ac.ebi.intact.uniprot.model.UniprotXref;
 import uk.ac.ebi.intact.uniprot.service.IdentifierChecker;
@@ -28,12 +24,12 @@ import java.util.regex.Pattern;
  * @since <pre>29-Mar-2010</pre>
  */
 
-public abstract class ProteinIdentification implements IdentificationStrategy{
+public abstract class IdentificationStrategyImpl implements IdentificationStrategy{
 
     /**
      * Sets up a logger for that class.
      */
-    public static final Log log = LogFactory.getLog( ProteinIdentification.class );
+    public static final Log log = LogFactory.getLog( IdentificationStrategyImpl.class );
 
     private static UniprotRemoteService uniprotService = new UniprotRemoteService();
 
@@ -43,7 +39,7 @@ public abstract class ProteinIdentification implements IdentificationStrategy{
 
     private boolean enableIsoformId = false;
 
-    public ProteinIdentification(){
+    public IdentificationStrategyImpl(){
         initialiseSetOfActions();
     }
 
@@ -63,7 +59,7 @@ public abstract class ProteinIdentification implements IdentificationStrategy{
 
         for (UniprotXref xRef : crossReferences){
             if (xRef.getDatabase() != null){
-                if (xRef.getDatabase().equals(DatabaseType.ENSEMBL.toString())){
+                if (DatabaseType.ENSEMBL.toString().equalsIgnoreCase(xRef.getDatabase())){
                     String accession = xRef.getAccession();
 
                     if (ensemblGenePattern.matcher(accession).matches()){
@@ -87,6 +83,15 @@ public abstract class ProteinIdentification implements IdentificationStrategy{
         else {
             throw new StrategyException("We couldn't find an Uniprot entry which matches this accession number " + uniprotAccession);
         }
+    }
+
+    public static String extractENSEMBLGeneAccessionFrom(UniprotProtein protein){
+
+        if (protein != null){
+            String ensemblGene = extractENSEMBLGeneAccessionFrom(protein.getCrossReferences());
+            return ensemblGene;
+        }
+        return null;
     }
 
     protected void processIsoforms(String matchingId, IdentificationResults result) {
@@ -134,70 +139,12 @@ public abstract class ProteinIdentification implements IdentificationStrategy{
         return null;
     }
 
-    protected String getTaxonIdOfBiosource(String organism){
-
-        if (organism == null){
-            return null;
-        }
-        else {
-            if (organism.length() == 0){
-                return null;
-            }
-            else if (isATaxId(organism)){
-                return organism;
-            }
-            else{
-                String database = "zpro";
-                IntactContext.initContext(new String[] {"/META-INF/"+database+".spring.xml"});
-                final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
-                final DaoFactory daoFactory = dataContext.getDaoFactory();
-
-                BioSource biosource = daoFactory.getBioSourceDao().getByShortLabel(organism);
-                if (biosource == null){
-                    return null;
-                }
-                return biosource.getTaxId();
-            }
-        }
-    }
-
     protected boolean isATaxId(String organism){
         if (organism != null){
-            if (ProteinIdentification.taxIdExpr.matcher(organism).matches()){
+            if (IdentificationStrategyImpl.taxIdExpr.matcher(organism).matches()){
                 return true;
             }
         }
         return false;
-    }
-
-    protected String getScientificNameOfBiosource(String organism){
-
-        if (organism == null){
-            return null;
-        }
-        else {
-            String database = "zpro";
-            IntactContext.initContext(new String[] {"/META-INF/"+database+".spring.xml"});
-            final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
-            final DaoFactory daoFactory = dataContext.getDaoFactory();
-
-            if (organism.length() == 0){
-                return null;
-            }
-            else if (isATaxId(organism)){
-                BioSource biosource = daoFactory.getBioSourceDao().getByTaxonIdUnique(organism);
-                if (biosource == null){
-                    return null;
-                }
-                return biosource.getFullName();
-            }
-            else{
-                BioSource biosource = daoFactory.getBioSourceDao().getByShortLabel(organism);
-                if (biosource == null){
-                    return null;
-                }
-                return biosource.getFullName();
-            }
-        }
     }
 }

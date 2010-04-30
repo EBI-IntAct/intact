@@ -10,7 +10,6 @@ package uk.ac.ebi.intact.curationTools.model.contexts;
 
 public class BlastContext extends IdentificationContext {
 
-    private String deducedScientificOrganismName;
     private String ensemblGene;
 
     public BlastContext(){
@@ -24,20 +23,11 @@ public class BlastContext extends IdentificationContext {
         setGene_name(context.getGene_name());
         setProtein_name(context.getProtein_name());
 
-        this.deducedScientificOrganismName = null;
         this.ensemblGene = null;
-    }
-
-    public String getDeducedScientificOrganismName() {
-        return deducedScientificOrganismName;
     }
 
     public String getEnsemblGene() {
         return ensemblGene;
-    }
-
-    public void setDeducedScientificOrganismName(String deducedScientificOrganismName) {
-        this.deducedScientificOrganismName = deducedScientificOrganismName;
     }
 
     public void setEnsemblGene(String ensemblGene) {
@@ -47,7 +37,6 @@ public class BlastContext extends IdentificationContext {
     public void clean(){
         super.clean();
 
-        this.deducedScientificOrganismName = null;
         this.ensemblGene = null;
     }
 

@@ -26,7 +26,7 @@ public class PICRReport extends ActionReport{
     }
 
     public void addCrossReference(String databaseName, String accession){
-        if (this.crossReferences.containsKey(databaseName)){
+        if (!this.crossReferences.containsKey(databaseName)){
             Set<String> values = new HashSet<String>();
             values.add(accession);
             crossReferences.put(databaseName, values);

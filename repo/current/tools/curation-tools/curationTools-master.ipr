@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AntConfiguration">
+    <defaultAnt bundledAnt="true" />
+  </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
     <resourceExtensions>
@@ -188,6 +191,17 @@
     <output url="file://$PROJECT_DIR$/classes" />
   </component>
   <component name="SvnBranchConfigurationManager">
+    <option name="myConfigurationMap">
+      <map>
+        <entry key="$PROJECT_DIR$">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://intact.googlecode.com/svn/repo/current/tools/curation-tools" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="mySupportsUserInfoFilter" value="true" />
   </component>
   <component name="VcsDirectoryMappings">
@@ -481,17 +495,6 @@
         <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.4/commons-lang-2.4-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: uk.ac.ebi.uniprot.kraken:uniprotjapi:15.15">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/uniprot/kraken/uniprotjapi/15.15/uniprotjapi-15.15.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/uniprot/kraken/uniprotjapi/15.15/uniprotjapi-15.15-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/uniprot/kraken/uniprotjapi/15.15/uniprotjapi-15.15-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: commons-codec:commons-codec:1.3">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.3/commons-codec-1.3.jar!/" />
@@ -558,17 +561,6 @@
         <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/intact-picr/2.1.2-SNAPSHOT/intact-picr-2.1.2-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: javax.xml.stream:stax-api:1.0-2">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: sun.jdk:tools:1.5.0">
       <CLASSES>
         <root url="jar:///usr/lib/jvm/java-6-sun-1.6.0.15/jre/../lib/tools.jar!/" />
@@ -578,50 +570,6 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar:///usr/lib/jvm/java-6-sun-1.6.0.15/jre/../lib/tools-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: uk.ac.ebi.intact.bridges:intact-blast:2.1.2-SNAPSHOT">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/intact-blast/2.1.2-SNAPSHOT/intact-blast-2.1.2-SNAPSHOT.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/intact-blast/2.1.2-SNAPSHOT/intact-blast-2.1.2-SNAPSHOT-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/intact-blast/2.1.2-SNAPSHOT/intact-blast-2.1.2-SNAPSHOT-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: uk.ac.ebi.intact.bridges:blast-mapping-parser:2.1.2-SNAPSHOT">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/blast-mapping-parser/2.1.2-SNAPSHOT/blast-mapping-parser-2.1.2-SNAPSHOT.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/blast-mapping-parser/2.1.2-SNAPSHOT/blast-mapping-parser-2.1.2-SNAPSHOT-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/blast-mapping-parser/2.1.2-SNAPSHOT/blast-mapping-parser-2.1.2-SNAPSHOT-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: stax:stax:1.2.0">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/stax/stax/1.2.0/stax-1.2.0.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/stax/stax/1.2.0/stax-1.2.0-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/stax/stax/1.2.0/stax-1.2.0-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: stax:stax-api:1.0.1">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/stax/stax-api/1.0.1/stax-api-1.0.1.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/stax/stax-api/1.0.1/stax-api-1.0.1-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/stax/stax-api/1.0.1/stax-api-1.0.1-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.apache.axis:axis:1.4">
@@ -688,17 +636,6 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/commons-discovery/commons-discovery/0.4/commons-discovery-0.4-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: com.h2database:h2:1.0.20070617">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/h2database/h2/1.0.20070617/h2-1.0.20070617.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/com/h2database/h2/1.0.20070617/h2-1.0.20070617-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/h2database/h2/1.0.20070617/h2-1.0.20070617-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: uk.ac.ebi.intact.commons:intact-commons:2.1.7">
@@ -1196,53 +1133,83 @@
         <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/pride/ols-client/1.15/ols-client-1.15-sources.jar!/" />
       </SOURCES>
     </library>
-  </component>
-  <component name="masterDetails">
-    <states>
-      <state key="ArtifactsStructureConfigurable.UI">
-        <UIState>
-          <splitter-proportions>
-            <SplitterProportionsDataImpl />
-          </splitter-proportions>
-          <settings />
-        </UIState>
-      </state>
-      <state key="Copyright.UI">
-        <UIState>
-          <splitter-proportions>
-            <SplitterProportionsDataImpl>
-              <option name="proportions">
-                <list>
-                  <option value="0.2" />
-                </list>
-              </option>
-            </SplitterProportionsDataImpl>
-          </splitter-proportions>
-        </UIState>
-      </state>
-      <state key="ProjectJDKs.UI">
-        <UIState>
-          <splitter-proportions>
-            <SplitterProportionsDataImpl>
-              <option name="proportions">
-                <list>
-                  <option value="0.2" />
-                </list>
-              </option>
-            </SplitterProportionsDataImpl>
-          </splitter-proportions>
-          <last-edited>1.6</last-edited>
-        </UIState>
-      </state>
-      <state key="ScopeChooserConfigurable.UI">
-        <UIState>
-          <splitter-proportions>
-            <SplitterProportionsDataImpl />
-          </splitter-proportions>
-          <settings />
-        </UIState>
-      </state>
-    </states>
+    <library name="Maven: uk.ac.ebi.uniprot.kraken:uniprotjapi:2010.05">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/uniprot/kraken/uniprotjapi/2010.05/uniprotjapi-2010.05.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/uniprot/kraken/uniprotjapi/2010.05/uniprotjapi-2010.05-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/uniprot/kraken/uniprotjapi/2010.05/uniprotjapi-2010.05-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: com.h2database:h2:1.2.121">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/h2database/h2/1.2.121/h2-1.2.121.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/h2database/h2/1.2.121/h2-1.2.121-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/h2database/h2/1.2.121/h2-1.2.121-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: javax.xml.stream:stax-api:1.0-2">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: uk.ac.ebi.intact.bridges:Ncbi-blast:1.0-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/Ncbi-blast/1.0-SNAPSHOT/Ncbi-blast-1.0-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/Ncbi-blast/1.0-SNAPSHOT/Ncbi-blast-1.0-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/Ncbi-blast/1.0-SNAPSHOT/Ncbi-blast-1.0-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: uk.ac.ebi.intact.bridges:blast-mapping-parser:2.1.2-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/blast-mapping-parser/2.1.2-SNAPSHOT/blast-mapping-parser-2.1.2-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/blast-mapping-parser/2.1.2-SNAPSHOT/blast-mapping-parser-2.1.2-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/blast-mapping-parser/2.1.2-SNAPSHOT/blast-mapping-parser-2.1.2-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: stax:stax:1.2.0">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/stax/stax/1.2.0/stax-1.2.0.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/stax/stax/1.2.0/stax-1.2.0-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/stax/stax/1.2.0/stax-1.2.0-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: stax:stax-api:1.0.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/stax/stax-api/1.0.1/stax-api-1.0.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/stax/stax-api/1.0.1/stax-api-1.0.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/stax/stax-api/1.0.1/stax-api-1.0.1-sources.jar!/" />
+      </SOURCES>
+    </library>
   </component>
 </project>
 

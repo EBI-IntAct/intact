@@ -3,7 +3,9 @@ package uk.ac.ebi.intact.curationTools.model.actionReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.Status;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * TODO comment this
@@ -18,7 +20,7 @@ public class ActionReport {
     protected ActionName name;
     protected Status status;
     protected List<String> warnings = new ArrayList<String>();
-    protected List<String> possibleAccessions = new ArrayList<String>();
+    protected Set<String> possibleAccessions = new HashSet<String>();
 
     public ActionReport(ActionName name){
         this.name = name;
@@ -40,7 +42,7 @@ public class ActionReport {
         this.warnings.add(warn);
     }
 
-    public List<String> getPossibleAccessions(){
+    public Set<String> getPossibleAccessions(){
         return this.possibleAccessions;
     }
 
