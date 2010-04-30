@@ -473,5 +473,6 @@ public class BlastResultFilter {
             throw new BlastResultFilterException(" Problem reading the InputStream containing the wswublast results",e);
         }
         this.results = appResult;
+        clearMatchingEntries();
     }
 }
