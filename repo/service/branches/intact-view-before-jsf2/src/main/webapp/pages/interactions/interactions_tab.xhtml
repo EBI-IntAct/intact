@@ -77,14 +77,14 @@
 
 </tr:panelGroupLayout>
 
-<tr:panelGroupLayout inlineStyle="display:#{searchBean.countInOtherDatabases == -1? 'inline' : 'none'}" partialTriggers=":psicquicPoll">
+<tr:panelGroupLayout inlineStyle="display:#{searchBean.countInOtherDatabases == -1? 'inline' : 'none'}">
     <br/>
     <span style="color:gray">
     > [Counting results in other databases...]
     </span>
 </tr:panelGroupLayout>
 
-<tr:panelGroupLayout partialTriggers="psicquicPoll"
+<tr:panelGroupLayout
                      inlineStyle="margin-top:-10px; margin-left: 10px; margin-bottom:30px; display:#{(searchBean.countInOtherDatabases gt 0 and not searchBean.psicquicQueryRunning)? 'inline' : 'none'}"
                      >
     <br/>
@@ -122,7 +122,7 @@
      </tr:panelGroupLayout>
 </tr:panelGroupLayout>
 
-<tr:panelGroupLayout inlineStyle="display:#{(searchBean.countInOtherDatabases == 0 and not searchBean.psicquicQueryRunning)? 'inline' : 'none'}" partialTriggers="psicquicPoll">
+<tr:panelGroupLayout inlineStyle="display:#{(searchBean.countInOtherDatabases == 0 and not searchBean.psicquicQueryRunning)? 'inline' : 'none'}">
 
     <br/>
     > No results in other databases.
@@ -617,12 +617,5 @@
 
 </tr:table>
 
-<!--<trh:script>-->
-    <!--dojo.addOnLoad(document.getElementById('pollPanel').style.display = 'inline');-->
-<!--</trh:script>-->
-
-<!--<div id="pollPanel" style="display:none;">-->
-    <tr:poll id="psicquicPoll" interval="10" pollListener="#{searchBean.doPsicquicQuery}"/>
-<!--</div>-->
 
 </ui:composition>
