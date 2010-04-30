@@ -1,15 +1,14 @@
 package uk.ac.ebi.intact.view.webapp.controller.search;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.apache.myfaces.orchestra.viewController.annotations.PreRenderView;
 import org.apache.myfaces.orchestra.viewController.annotations.ViewController;
 import org.apache.myfaces.trinidad.component.UIXTable;
-import org.apache.myfaces.trinidad.component.core.CorePoll;
 import org.apache.myfaces.trinidad.context.RequestContext;
 import org.apache.myfaces.trinidad.event.DisclosureEvent;
-import org.apache.myfaces.trinidad.event.PollEvent;
 import org.apache.myfaces.trinidad.event.RangeChangeEvent;
 import org.apache.myfaces.trinidad.event.ReturnEvent;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -22,8 +21,6 @@ import org.hupo.psi.mi.psicquic.wsclient.UniversalPsicquicClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import psidev.psi.mi.search.SearchResult;
-import psidev.psi.mi.tab.model.BinaryInteraction;
 import uk.ac.ebi.intact.model.CvInteractorType;
 import uk.ac.ebi.intact.view.webapp.controller.JpaBaseController;
 import uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration;
@@ -36,7 +33,13 @@ import uk.ac.ebi.intact.view.webapp.model.SolrSearchResultDataModel;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Search controller.
@@ -265,27 +268,13 @@ public class SearchController extends JpaBaseController {
             }
         }
 
-        countInOtherDatabases = -1;
-
-    }
-
-    public void doPsicquicQuery(PollEvent pollEvent) {
-        if (psicquicQueryRunning) {
-            return;
-        }
-
-        psicquicQueryRunning = true;
-
         try {
             countResultsInOtherDatabases();
-        } catch (Exception e) {
+        } catch (PsicquicRegistryClientException e) {
             e.printStackTrace();
+            addErrorMessage("Problem calculating results from other databases", "Try again later");
         }
 
-        psicquicQueryRunning = false;
-
-        CorePoll poll = (CorePoll) pollEvent.getComponent();
-        poll.setRendered(false);
     }
 
     private void countResultsInOtherDatabases() throws PsicquicRegistryClientException {
@@ -307,59 +296,75 @@ public class SearchController extends JpaBaseController {
 
         imexServices = new ArrayList<ServiceType>(services.size());
 
+        String query = getUserQuery().getSearchQuery();
 
-        for (ServiceType service : services) {
-            boolean isImexService = false;
+        if (query == null || query.length() == 0) {
+            query = "*";
+        }
+
+        final String psicquicQuery = query;
+
+        final ExecutorService executorService = Executors.newCachedThreadPool();
+
+        for (final ServiceType service : services) {
+            boolean imexTagFound = false;
 
             for (String tag : service.getTags()) {
                 if ("MI:0959".equals(tag)) {
                     imexServices.add(service);
-                    isImexService = true;
+                    imexTagFound = true;
                     break;
                 }
             }
+
+            final boolean isImexService = imexTagFound;
 
             if (intactViewConfiguration.getWebappName().contains(service.getName())) {
                 continue;
             }
 
-            List<String> lines = null;
-            try {
-                String query = getUserQuery().getSearchQuery();
+            Runnable runnable = new Runnable() {
+                public void run() {
+                    try {
 
-                if (query == null || query.length() == 0) {
-                    query = "*";
+                        int psicquicCount = countInPsicquicService(service, psicquicQuery);
+
+                        int imexCount = 0;
+
+
+                        if (isImexService) {
+                            final String imexQuery = createImexQuery(psicquicQuery);
+                            imexCount = countInPsicquicService(service, imexQuery);
+                        }
+
+                        countInOtherDatabases += psicquicCount;
+                        countInOtherImexDatabases += imexCount;
+
+                        if (psicquicCount > 0) {
+                            otherDatabasesWithResults++;
+                        }
+
+                        if (imexCount > 0) {
+                            otherImexDatabasesWithResults++;
+                        }
+
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
                 }
+            };
 
-                int psicquicCount;
-                int imexCount = 0;
-
-                UniversalPsicquicClient client = getPsicquicClientFromCache(service);
-                SearchResult<BinaryInteraction> psicquicResult = client.getByQuery(query, 0, 0);
-                psicquicCount = psicquicResult.getTotalCount();
+            executorService.submit(runnable);
 
 
-                if (isImexService) {
-                    final String imexQuery = createImexQuery(query);
-                    SearchResult<BinaryInteraction> imexResult = client.getByQuery(imexQuery, 0, 0);
-                    imexCount = imexResult.getTotalCount();
-                }
+        }
 
-                countInOtherDatabases += psicquicCount;
-                countInOtherImexDatabases += imexCount;
+        executorService.shutdown();
 
-                if (psicquicCount > 0) {
-                    otherDatabasesWithResults++;
-                }
-
-                if (imexCount > 0) {
-                    otherImexDatabasesWithResults++;
-                }
-
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-
+        try {
+            executorService.awaitTermination(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -373,21 +378,21 @@ public class SearchController extends JpaBaseController {
         }
     }
 
-    private UniversalPsicquicClient getPsicquicClientFromCache(ServiceType service) {
-        if (psicquicClientCache == null) {
-            psicquicClientCache = new HashMap<String, UniversalPsicquicClient>();
-        }
-        
-        UniversalPsicquicClient client;
+    private int countInPsicquicService(ServiceType service, String query) {
+        int psicquicCount = 0;
 
-        if (psicquicClientCache.containsKey(service.getName())) {
-            client = psicquicClientCache.get(service.getName());
-        } else {
-            client = new UniversalPsicquicClient(service.getSoapUrl());
-            psicquicClientCache.put(service.getName(), client);
+        try {
+            String encoded = URLEncoder.encode(query, "UTF-8");
+            encoded = encoded.replaceAll("\\+", "%20");
+
+            String url = service.getRestUrl()+"query/"+ encoded +"?format=count";
+            String strCount = IOUtils.toString(new URL(url).openStream());
+            psicquicCount = Integer.parseInt(strCount);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        return client;
+        return psicquicCount;
     }
 
     private SolrSearchResultDataModel createInteractionDataModel(SolrQuery query) {
