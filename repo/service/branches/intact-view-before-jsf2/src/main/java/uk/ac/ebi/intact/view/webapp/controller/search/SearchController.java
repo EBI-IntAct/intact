@@ -293,6 +293,7 @@ public class SearchController extends JpaBaseController {
         otherDatabasesWithResults = 0;
         countInOtherDatabases = 0;
         otherImexDatabasesWithResults = 0;
+        countInOtherImexDatabases = 0;
 
         imexServices = new ArrayList<ServiceType>(services.size());
 
