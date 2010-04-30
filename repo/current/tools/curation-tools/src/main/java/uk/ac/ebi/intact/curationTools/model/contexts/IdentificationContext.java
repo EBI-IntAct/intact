@@ -1,5 +1,7 @@
 package uk.ac.ebi.intact.curationTools.model.contexts;
 
+import uk.ac.ebi.intact.model.BioSource;
+
 /**
  * TODO comment this
  *
@@ -12,7 +14,7 @@ public class IdentificationContext {
 
     private String sequence;
     private String identifier;
-    private String organism;
+    private BioSource organism;
     private String gene_name;
     private String protein_name;
     private String globalName;
@@ -26,7 +28,7 @@ public class IdentificationContext {
         this.globalName = null;
     }
 
-    public IdentificationContext(String sequence, String identifier, String organism, String gene_name, String protein_name){
+    public IdentificationContext(String sequence, String identifier, BioSource organism, String gene_name, String protein_name){
         this.sequence = sequence;
         this.identifier = identifier;
         this.organism = organism;
@@ -35,7 +37,7 @@ public class IdentificationContext {
         this.globalName = null;
     }
 
-    public IdentificationContext(String sequence, String identifier, String organism, String name){
+    public IdentificationContext(String sequence, String identifier, BioSource organism, String name){
         this.sequence = sequence;
         this.identifier = identifier;
         this.organism = organism;
@@ -59,7 +61,7 @@ public class IdentificationContext {
         return identifier;
     }
 
-    public String getOrganism() {
+    public BioSource getOrganism() {
         return organism;
     }
 
@@ -79,7 +81,7 @@ public class IdentificationContext {
         this.identifier = identifier;
     }
 
-    public void setOrganism(String organism) {
+    public void setOrganism(BioSource organism) {
         this.organism = organism;
     }
 

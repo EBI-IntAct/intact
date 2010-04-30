@@ -2,18 +2,16 @@ package uk.ac.ebi.intact.curationTools.strategies;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.curationTools.actions.IntactBlastProcess;
+import uk.ac.ebi.intact.core.context.IntactContext;
+import uk.ac.ebi.intact.curationTools.actions.BasicBlastProcess;
+import uk.ac.ebi.intact.curationTools.actions.IntactCrc64SearchProcess;
 import uk.ac.ebi.intact.curationTools.actions.PICRSearchProcessWithSequence;
 import uk.ac.ebi.intact.curationTools.actions.exception.ActionProcessingException;
-import uk.ac.ebi.intact.curationTools.actions.exception.IntactBlastprocessException;
-import uk.ac.ebi.intact.curationTools.actions.exception.PicrSearchWithSequenceException;
+import uk.ac.ebi.intact.curationTools.model.actionReport.IntactCrc64Report;
 import uk.ac.ebi.intact.curationTools.model.contexts.BlastContext;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.curationTools.model.contexts.TaxIdContext;
 import uk.ac.ebi.intact.curationTools.model.results.IdentificationResults;
 import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyWithIdentifierException;
-import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyWithSequenceException;
 
 /**
  * TODO comment this
@@ -23,15 +21,32 @@ import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyWithSequence
  * @since <pre>31-Mar-2010</pre>
  */
 
-public class StrategyWithSequence extends ProteinIdentification{
+public class StrategyWithSequence extends IdentificationStrategyImpl {
 
     /**
      * Sets up a logger for that class.
      */
     public static final Log log = LogFactory.getLog( StrategyWithSequence.class );
 
+    private IntactContext intactContext;
+
     public StrategyWithSequence(){
         super();
+        this.intactContext = null;
+    }
+
+    public void setIntactContext(IntactContext context){
+        this.intactContext = context;
+    }
+
+    private String processLastAction(IdentificationContext context, IdentificationResults result) throws ActionProcessingException {
+        BlastContext blastContext = new BlastContext(context);
+
+        String uniprot = this.listOfActions.get(2).runAction(blastContext);
+        result.getListOfActions().addAll(this.listOfActions.get(2).getListOfActionReports());
+        processIsoforms(uniprot, result);
+
+        return uniprot;
     }
 
     @Override
@@ -39,43 +54,37 @@ public class StrategyWithSequence extends ProteinIdentification{
         IdentificationResults result = new IdentificationResults();
 
         if (context.getSequence() == null){
-            throw new StrategyWithSequenceException("The sequence of the protein must be not null.");
+            throw new StrategyException("The sequence of the protein must be not null.");
         }
         else{
 
             try {
-                TaxIdContext taxIdContext = new TaxIdContext(context);
-                String taxId = getTaxonIdOfBiosource(context.getOrganism());
-                taxIdContext.setDeducedTaxId(taxId);
 
-                String uniprot = this.listOfActions.get(0).runAction(taxIdContext);
+                String uniprot = this.listOfActions.get(0).runAction(context);
                 result.getListOfActions().addAll(this.listOfActions.get(0).getListOfActionReports());
                 processIsoforms(uniprot, result);
 
                 if (!result.hasUniqueUniprotId() && !result.getLastAction().getPossibleAccessions().isEmpty()){
-                    BlastContext blastContext = new BlastContext(taxIdContext);
+                    if (this.intactContext != null){
+                        IntactCrc64SearchProcess intactProcess = (IntactCrc64SearchProcess) this.listOfActions.get(1);
+                        intactProcess.setIntactContext(this.intactContext);
 
-                    String scientificNameOfOrganism = getScientificNameOfBiosource(blastContext.getOrganism());
+                        intactProcess.runAction(context);
 
-                    if (scientificNameOfOrganism == null && blastContext.getOrganism() != null){
-                        throw  new StrategyWithIdentifierException(" We couldn't find the scientific name of the organism " + blastContext.getOrganism() + " associated with the sequence " + blastContext.getSequence() + ". Could you check that you gave either a valid TaxId or a Biosource shortlabel.");
+                        IntactCrc64Report lastReport = (IntactCrc64Report) result.getLastAction();
+                        if (lastReport.getIntactid() == null && lastReport.getIntactMatchingProteins().isEmpty()){
+                            processLastAction(context, result);
+                        }
                     }
-                    else if (scientificNameOfOrganism != null){
-                        blastContext.setDeducedScientificOrganismName(scientificNameOfOrganism);
-                        uniprot = this.listOfActions.get(1).runAction(blastContext);
-                        result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
-                        processIsoforms(uniprot, result);
-                    }
+                }
+                else {
+                    processLastAction(context, result);
                 }
 
             } catch (ActionProcessingException e) {
 
-                if (e instanceof PicrSearchWithSequenceException){
-                    throw  new StrategyWithSequenceException("PICR couldn't match an Uniprot entry to the sequence " + context.getSequence() + ". Check your sequence and/or organism.", e);
-                }
-                else if (e instanceof IntactBlastprocessException){
-                    throw  new StrategyWithSequenceException("A problem occured while running a blast on Intact and/or Uniprot.", e);                     
-                }
+                throw  new StrategyException("An error occured while trying to identify the protein using the sequence " + context.getSequence(), e);
+
             }
             return result;
         }
@@ -86,7 +95,11 @@ public class StrategyWithSequence extends ProteinIdentification{
         PICRSearchProcessWithSequence firstAction = new PICRSearchProcessWithSequence();
         this.listOfActions.add(firstAction);
 
-        IntactBlastProcess secondAction = new IntactBlastProcess();
+        IntactCrc64SearchProcess secondAction = new IntactCrc64SearchProcess();
+
         this.listOfActions.add(secondAction);
+
+        BasicBlastProcess thirdAction = new BasicBlastProcess();
+        this.listOfActions.add(thirdAction);
     }
 }

@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.curationTools.strategies.StrategyWithIdentifier;
 import uk.ac.ebi.intact.curationTools.strategies.StrategyWithName;
 import uk.ac.ebi.intact.curationTools.strategies.StrategyWithSequence;
 import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyException;
+import uk.ac.ebi.intact.model.BioSource;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,7 +18,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 /**
- * TODO comment this
+ * TODO try 20174651
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -133,7 +134,7 @@ public class ProteinIdentificationManager {
         this.sheetContent = content;
     }
 
-    private void setContext(String sequence, String identifier, String organism, String geneName, String proteinName){
+    private void setContext(String sequence, String identifier, BioSource organism, String geneName, String proteinName){
         this.identificationContext.setSequence(sequence);
         this.identificationContext.setIdentifier(identifier);
         this.identificationContext.setOrganism(organism);
@@ -172,7 +173,7 @@ public class ProteinIdentificationManager {
     } */
 
 
-    public IdentificationResults processProteinIdentificationUsingIdentifier(String identifier, String organism){
+    public IdentificationResults processProteinIdentificationUsingIdentifier(String identifier, BioSource organism){
         this.identificationContext.clean();
         this.identificationContext.setIdentifier(identifier);
         this.identificationContext.setOrganism(organism);
@@ -189,7 +190,7 @@ public class ProteinIdentificationManager {
         return null;
     }
 
-    public IdentificationResults processProteinIdentificationUsingSequence(String sequence, String organism){
+    public IdentificationResults processProteinIdentificationUsingSequence(String sequence, BioSource organism){
         this.identificationContext.clean();
         this.identificationContext.setSequence(sequence);
         this.identificationContext.setOrganism(organism);
@@ -206,7 +207,7 @@ public class ProteinIdentificationManager {
         return null;
     }
 
-    public IdentificationResults processProteinIdentificationUsingName(String name, String organism, ColumnNames type){
+    public IdentificationResults processProteinIdentificationUsingName(String name, BioSource organism, ColumnNames type){
         this.identificationContext.clean();
 
         switch (type){

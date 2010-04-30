@@ -2,13 +2,13 @@ package uk.ac.ebi.intact.curationTools.strategies;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.curationTools.actions.NameSearchProcess;
+import uk.ac.ebi.intact.core.context.IntactContext;
+import uk.ac.ebi.intact.curationTools.actions.IntactNameSearchProcess;
+import uk.ac.ebi.intact.curationTools.actions.UniprotNameSearchProcess;
 import uk.ac.ebi.intact.curationTools.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.curationTools.model.contexts.TaxIdContext;
 import uk.ac.ebi.intact.curationTools.model.results.IdentificationResults;
 import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyWithNameException;
 
 /**
  * TODO comment this
@@ -18,7 +18,8 @@ import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyWithNameExce
  * @since <pre>19-Mar-2010</pre>
  */
 
-public class StrategyWithName extends ProteinIdentification {
+public class StrategyWithName extends IdentificationStrategyImpl {
+    private IntactContext intactContext;
 
     /**
      * Sets up a logger for that class.
@@ -27,29 +28,40 @@ public class StrategyWithName extends ProteinIdentification {
 
     public StrategyWithName(){
         super();
+        this.intactContext = null;
     }
+
+    public void setIntactContext(IntactContext context){
+        this.intactContext = context;
+    }
+
     @Override
     public IdentificationResults identifyProtein(IdentificationContext context) throws StrategyException {
 
         IdentificationResults result = new IdentificationResults();
 
         if (context.getProtein_name() == null && context.getGene_name() == null){
-            throw new StrategyWithNameException("At least of of these names should be not null : protein or gene name.");
+            throw new StrategyException("At least of of these names should be not null : protein or gene name.");
         }
         else{
-            TaxIdContext taxIdContext = new TaxIdContext(context);
-
-            String taxId = getTaxonIdOfBiosource(taxIdContext.getOrganism());
-            taxIdContext.setDeducedTaxId(taxId);
 
             try {
-                String uniprot = this.listOfActions.get(0).runAction(taxIdContext);
-
-                result.getListOfActions().addAll(this.listOfActions.get(0).getListOfActionReports());
+                String uniprot = this.listOfActions.get(0).runAction(context);
                 processIsoforms(uniprot, result);
+                result.getListOfActions().addAll(this.listOfActions.get(0).getListOfActionReports());
+
+                if (uniprot == null && result.getLastAction().getPossibleAccessions().isEmpty()){
+                    if (this.intactContext != null){
+                        IntactNameSearchProcess intactProcess = (IntactNameSearchProcess) this.listOfActions.get(1);
+                        intactProcess.setIntactContext(this.intactContext);
+
+                        intactProcess.runAction(context);
+                        result.getListOfActions().addAll(this.listOfActions.get(0).getListOfActionReports());
+                    }
+                }
 
             } catch (ActionProcessingException e) {
-                throw new StrategyWithNameException("Problem trying to match a gene name/protein name to an uniprot entry.");
+                throw new StrategyException("Problem trying to match a gene name/protein name to an uniprot entry.");
             }
             processIsoforms(result.getUniprotId(), result);
         }
@@ -58,7 +70,10 @@ public class StrategyWithName extends ProteinIdentification {
 
     @Override
     protected void initialiseSetOfActions() {
-        NameSearchProcess firstAction = new NameSearchProcess();
+        UniprotNameSearchProcess firstAction = new UniprotNameSearchProcess();
         this.listOfActions.add(firstAction);
+
+        IntactNameSearchProcess secondAction = new IntactNameSearchProcess();
+        this.listOfActions.add(secondAction);
     }
 }

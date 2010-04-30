@@ -3,19 +3,18 @@ package uk.ac.ebi.intact.curationTools.actions;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.curationTools.actions.exception.ActionProcessingException;
-import uk.ac.ebi.intact.curationTools.actions.exception.PicrSearchWithSequenceException;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionName;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.Status;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.curationTools.model.contexts.TaxIdContext;
+import uk.ac.ebi.kraken.interfaces.uniprot.Gene;
 import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
+import uk.ac.ebi.kraken.interfaces.uniprot.genename.GeneNameSynonym;
+import uk.ac.ebi.kraken.interfaces.uniprot.genename.ORFName;
+import uk.ac.ebi.kraken.interfaces.uniprot.genename.OrderedLocusName;
 import uk.ac.ebi.kraken.util.IndexField;
 import uk.ac.ebi.kraken.uuw.services.remoting.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * TODO comment this
@@ -25,14 +24,12 @@ import java.util.List;
  * @since <pre>31-Mar-2010</pre>
  */
 
-public class NameSearchProcess implements IdentificationAction{
+public class UniprotNameSearchProcess extends IdentificationActionImpl {
 
     /**
      * Sets up a logger for that class.
      */
-    public static final Log log = LogFactory.getLog( NameSearchProcess.class );
-    private TaxIdContext context;
-    private List<ActionReport> listOfReports = new ArrayList<ActionReport>();
+    public static final Log log = LogFactory.getLog( UniprotNameSearchProcess.class );
 
     private UniProtQueryService uniProtQueryService = UniProtJAPI.factory.getUniProtQueryService();
 
@@ -56,9 +53,7 @@ public class NameSearchProcess implements IdentificationAction{
     }
 
     private String buildProteinNameQuery(String protein_name){
-        String query = IndexField.NAME_ANNOTATION + ":" + protein_name +
-                " OR " +
-                IndexField.PROTEIN_NAME + ":" + protein_name +
+        String query = IndexField.PROTEIN_NAME + ":" + protein_name +
                 " OR " +
                 IndexField.REC_NAME + ":" + protein_name +
                 " OR " +
@@ -66,7 +61,7 @@ public class NameSearchProcess implements IdentificationAction{
         return query ;
     }
 
-    private String buildOrganismQuery(String organismName){
+   /* private String buildOrganismQuery(String organismName){
         String query = IndexField.NCBI_TAXON_ID + ":" + organismName +
                 " OR " +
                 IndexField.ORGANISM_COMMON + ":" + organismName +
@@ -79,7 +74,7 @@ public class NameSearchProcess implements IdentificationAction{
                 " OR " +
                 IndexField.ORGANISM_SYNONYM + ":" + organismName;
         return query ;
-    }
+    }*/
 
     private String buildTaxIdQuery(String organismName){
         String query = IndexField.NCBI_TAXON_ID + ":" + organismName;
@@ -98,14 +93,14 @@ public class NameSearchProcess implements IdentificationAction{
         return query;
     }
 
-    private String addOrganismToQuery(String initialquery, String organism){
-        String query = "(" + initialquery + ")" + " AND " + "(" + buildOrganismQuery(organism) + ")";
+    /*private String addOrganismToQuery(String initialquery, String organism){
+        String query = "(" + initialquery + ")" + " AND " + "(" + buildOrganismdQuery(organism) + ")";
 
         return query;
-    }
+    }*/
 
     private String addTaxIdToQuery(String initialquery, String organism){
-        String query = "(" + initialquery + ")" + " AND " + "(" + buildOrganismQuery(organism) + ")";
+        String query = "(" + initialquery + ")" + " AND " + "(" + buildTaxIdQuery(organism) + ")";
 
         return query;
     }
@@ -120,11 +115,46 @@ public class NameSearchProcess implements IdentificationAction{
         return UniProtQueryBuilder.buildQuery(query);
     }
 
-    private Query getQueryForFullText(String name, String taxId){
+    private Query getQueryFor(String name, String taxId){
         if (taxId != null){
-            return UniProtQueryBuilder.buildFullTextSearch(addTaxIdToQuery(name, taxId));
+            return UniProtQueryBuilder.buildQuery(addTaxIdToQuery(name, taxId));
         }
-        return UniProtQueryBuilder.buildFullTextSearch(name);
+        return UniProtQueryBuilder.buildQuery(name);
+    }
+
+    private boolean hasTheExactGeneName(UniProtEntry protein, String geneName){
+        if (protein.getGenes().isEmpty()){
+            return false;
+        }
+        else {
+            for (Gene gene : protein.getGenes()){
+                if (geneName.equalsIgnoreCase(gene.getGeneName().getValue())){
+                    return true;
+                }
+                if (!gene.getGeneNameSynonyms().isEmpty()){
+                    for (GeneNameSynonym synonym : gene.getGeneNameSynonyms()){
+                        if (geneName.equalsIgnoreCase(synonym.getValue())){
+                            return true;
+                        }
+                    }
+                }
+                if (!gene.getOrderedLocusNames().isEmpty()){
+                    for (OrderedLocusName orderedLocusName : gene.getOrderedLocusNames()){
+                        if (geneName.equalsIgnoreCase(orderedLocusName.getValue())){
+                            return true;
+                        }
+                    }
+                }
+                if (!gene.getORFNames().isEmpty()){
+                    for (ORFName orfName : gene.getORFNames()){
+                        if (geneName.equalsIgnoreCase(orfName.getValue())){
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private String processQuery(EntryIterator<UniProtEntry> iterator, ActionReport report, IdentificationContext context){
@@ -140,6 +170,45 @@ public class NameSearchProcess implements IdentificationAction{
             report.setStatus(status);
             for (UniProtEntry u : iterator){
                 report.addPossibleAccession(u.getPrimaryUniProtAccession().getValue());
+            }
+        }
+        return null;
+    }
+
+    private String processGeneQuery(EntryIterator<UniProtEntry> iterator, ActionReport report, IdentificationContext context){
+        if (iterator.getResultSize() == 1){
+            String id = iterator.next().getPrimaryUniProtAccession().getValue();
+            Status status = new Status(StatusLabel.COMPLETED, "The protein with the gene name " + context.getGene_name() + " has successfully been identified as " + id );
+            report.setStatus(status);
+
+            return id;
+        }
+        else if (iterator.getResultSize() > 1){
+
+            for (UniProtEntry u : iterator){
+                if (hasTheExactGeneName(u, context.getGene_name())){
+                    report.addPossibleAccession(u.getPrimaryUniProtAccession().getValue());
+                }
+            }
+
+            if (report.getPossibleAccessions().isEmpty()){
+                Status status = new Status(StatusLabel.TO_BE_REVIEWED, "The protein with the gene name " + context.getGene_name() + " could match " + iterator.getResultSize() + " Uniprot entries.");
+                report.setStatus(status);
+
+                for (UniProtEntry u : iterator){
+                    report.addPossibleAccession(u.getPrimaryUniProtAccession().getValue());
+                }
+            }
+            else if (report.getPossibleAccessions().size() == 1){
+                String ac = report.getPossibleAccessions().iterator().next();
+                Status status = new Status(StatusLabel.COMPLETED, "The protein with the exact gene name " + context.getGene_name() + " has successfully been identified as " + ac );
+                report.setStatus(status);
+
+                return ac;
+            }
+            else {
+                Status status = new Status(StatusLabel.TO_BE_REVIEWED, "The protein with the gene name " + context.getGene_name() + " could match " + iterator.getResultSize() + " Uniprot entries.");
+                report.setStatus(status);
             }
         }
         return null;
@@ -223,10 +292,7 @@ public class NameSearchProcess implements IdentificationAction{
                 queryString = addTaxIdToQuery(queryString, organsim);
             }
             EntryIterator<UniProtEntry> iterator = uniProtQueryService.getEntryIterator(getQueryFor(queryString));
-            if (proteinName != null && geneName != null && (iterator.getResultSize() == 0) || iterator == null){
 
-                iterator = querySwissprotWithGeneNameOrProteinName(geneName, proteinName, null, organsim);
-            }
             return iterator;
         }
         return null;
@@ -253,15 +319,12 @@ public class NameSearchProcess implements IdentificationAction{
                 queryString = addTaxIdToQuery(queryString, organsim);
             }
             EntryIterator<UniProtEntry> iterator = uniProtQueryService.getEntryIterator(getQueryFor(queryString));
-            if (proteinName != null && geneName != null && (iterator.getResultSize() == 0) || iterator == null){
-                iterator = queryUniprotWithGeneNameOrProteinName(geneName, proteinName, null, organsim);
-            }
             return iterator;
         }
         return null;
     }
 
-    private String processNameSearch(String geneName, String protein_name, String organism, String globalName, ActionReport report){
+    private String processNameSearch(String geneName, String protein_name, String organism, String globalName, ActionReport report, IdentificationContext context){
         if (geneName != null || protein_name != null){
 
             EntryIterator<UniProtEntry> iterator = querySwissprotWith(geneName, protein_name, organism);
@@ -273,9 +336,12 @@ public class NameSearchProcess implements IdentificationAction{
                     Status status = new Status(StatusLabel.FAILED, "We couldn't find any Uniprot entry which matches : gene name = " + geneName + "; protein name = " + protein_name + "; TaxId = " + organism);
                     report.setStatus(status);
                 }
-                else {
+                else{
                     return processQuery(iterator, report, context);
                 }
+            }
+            else if (iterator.getResultSize() > 1 && geneName != null) {
+                return processGeneQuery(iterator, report, context);
             }
             else {
                 return processQuery(iterator, report, context);
@@ -309,7 +375,7 @@ public class NameSearchProcess implements IdentificationAction{
 
     private void processGlobalQuery(ActionReport report, Query query){
         EntryIterator<UniProtEntry> iterator = uniProtQueryService.getEntryIterator(query);
-
+        System.out.println(query.toString());
         if (iterator != null && iterator.getResultSize() != 0){
             for (UniProtEntry e : iterator){
                 report.addPossibleAccession(e.getPrimaryUniProtAccession().getValue());
@@ -319,64 +385,56 @@ public class NameSearchProcess implements IdentificationAction{
 
     public String runAction(IdentificationContext context) throws ActionProcessingException {
         this.listOfReports.clear();
-        
-        if (!(context instanceof TaxIdContext)){
-            log.error("The NameSearchProcess needs a TaxIdContext instance and the current context is a " + context.getClass().getSimpleName());
+
+        String geneName = context.getGene_name();
+        String protein_name = context.getProtein_name();
+        String organism = null;
+        if (context.getOrganism() != null){
+            organism = context.getOrganism().getTaxId();
         }
-        else {
-            this.context = (TaxIdContext) context;
 
-            String geneName = this.context.getGene_name();
-            String protein_name = this.context.getProtein_name();
-            String organism = this.context.getDeducedTaxId();
-            String globalName = this.context.getGlobalName();
+        String globalName = context.getGlobalName();
 
-            ActionReport report = new ActionReport(ActionName.SEARCH_uniprot);
-            this.listOfReports.add(report);
+        ActionReport report = new ActionReport(ActionName.SEARCH_uniprot_name);
+        this.listOfReports.add(report);
 
-            if (organism == null && this.context.getOrganism() != null){
-                if (this.context.getOrganism().length() > 0){
-                    throw  new PicrSearchWithSequenceException("We couldn't find the TaxId of the organism " + this.context.getOrganism() + ". Could you check that you gave either a valid TaxId or a Biosource shortlabel.");
-                }
-                else {
-                    report.addWarning("No organism was given for the protein with : name =  " + this.context.getGlobalName() != null ? this.context.getGlobalName() : (this.context.getGene_name()!= null ? this.context.getGene_name() : (this.context.getProtein_name() != null ? this.context.getProtein_name() : "")) + ". We will process the identification without looking at the organism and choose the entry with the longest sequence.");
-                }
+        if (organism == null){
+
+            report.addWarning("No organism was given for the protein with : name =  " + context.getGlobalName() != null ? context.getGlobalName() : (context.getGene_name()!= null ? context.getGene_name() : (context.getProtein_name() != null ? context.getProtein_name() : "")) + ". We will process the identification without looking at the organism.");
+        }
+
+        String accession = processNameSearch(geneName, protein_name, organism, globalName, report, context);
+
+        if (accession != null){
+            return accession;
+        }
+        else if (accession == null && report.getPossibleAccessions().isEmpty()){
+
+            ActionReport report2 = new ActionReport(ActionName.wide_SEARCH_uniprot);
+            this.listOfReports.add(report2);
+
+            if (geneName != null){
+                Query query = getQueryFor(geneName, organism);
+                processGlobalQuery(report2, query);
+            }
+            if (protein_name != null){
+                Query query2 = getQueryFor(protein_name, organism);
+                processGlobalQuery(report2, query2);
+            }
+            if (globalName != null){
+                Query query3 = getQueryFor(globalName, organism);
+                processGlobalQuery(report2, query3);
             }
 
-            String accession = processNameSearch(geneName, protein_name, organism, globalName, report);
-
-            if (accession != null){
-                return accession;
+            if (report2.getPossibleAccessions().isEmpty()){
+                Status status = new Status(StatusLabel.FAILED, "We couldn't find any Uniprot entry which matches the name even after we had widened the search.");
+                report2.setStatus(status);
             }
-
-            if (accession == null && report.getPossibleAccessions().isEmpty()){
-
-                ActionReport report2 = new ActionReport(ActionName.wide_SEARCH_uniprot);
-                this.listOfReports.add(report2);
-
-                if (geneName != null){
-                    Query query = getQueryForFullText(geneName, organism);
-                    processGlobalQuery(report2, query);
-                }
-                if (protein_name != null){
-                    Query query2 = getQueryForFullText(protein_name, organism);
-                    processGlobalQuery(report2, query2);
-                }
-                if (globalName != null){
-                    Query query3 = getQueryForFullText(globalName, organism);
-                    processGlobalQuery(report2, query3);
-                }
-
-                if (report2.getPossibleAccessions().isEmpty()){
-                    Status status = new Status(StatusLabel.FAILED, "We couldn't find any Uniprot entry which matches the name even after we had widened the search.");
-                    report2.setStatus(status);
-                }
+            else {
+                Status status = new Status(StatusLabel.TO_BE_REVIEWED, "We found "+report2.getPossibleAccessions().size()+" Uniprot entry(ies) which matche(s) the name after we had widened the search.");
+                report2.setStatus(status);
             }
         }
         return null;
-    }
-
-    public List<ActionReport> getListOfActionReports() {
-        return this.listOfReports;
     }
 }
