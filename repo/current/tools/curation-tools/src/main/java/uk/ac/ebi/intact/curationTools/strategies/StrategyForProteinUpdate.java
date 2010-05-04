@@ -31,10 +31,21 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
      */
     public static final Log log = LogFactory.getLog( StrategyForProteinUpdate.class );
 
+    private boolean isBasicBlastProcessRequired = false;
+
     public StrategyForProteinUpdate(){
         super();
     }
 
+     public boolean isBasicBlastProcessRequired() {
+        return isBasicBlastProcessRequired;
+    }
+
+    public void setBasicBlastProcessRequired(boolean basicBlastProcessRequired) {
+        isBasicBlastProcessRequired = basicBlastProcessRequired;
+        StrategyWithSequence firstAction = (StrategyWithSequence) this.listOfActions.get(0);
+        firstAction.setBasicBlastRequired(this.isBasicBlastProcessRequired);
+    }
 
     @Override
     public void enableIsoforms(boolean enableIsoformId){
@@ -100,10 +111,11 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
 
         try {
             if (context.getSequence() == null && context.getIdentifier() == null){
-                throw new StrategyException("Either the sequence of the protein or an identifier must be not null.");
+                ActionReport report = new ActionReport(ActionName.update_Checking);
+                Status status = new Status(StatusLabel.FAILED, "The sequence of the protein is null and there are no cross references with qualifier 'identity'.");
+                report.setStatus(status);
             }
             else if (sequence != null) {
-                result = new IdentificationResults();
 
                 String uniprot = null;
 

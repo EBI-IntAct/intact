@@ -35,11 +35,21 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
 
     private IntactContext intactContext;
 
+    private boolean isBasicBlastRequired = false;
+
     private List<ActionReport> listOfReports = new ArrayList<ActionReport>();
 
     public StrategyWithSequence(){
         super();
         this.intactContext = null;
+    }
+
+     public boolean isBasicBlastRequired() {
+        return isBasicBlastRequired;
+    }
+
+    public void setBasicBlastRequired(boolean basicBlastRequired) {
+        isBasicBlastRequired = basicBlastRequired;
     }
 
     public void setIntactContext(IntactContext context){
@@ -87,11 +97,11 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
                         result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
 
                         IntactCrc64Report lastReport = (IntactCrc64Report) result.getLastAction();
-                        if (lastReport.getIntactid() == null && lastReport.getIntactMatchingProteins().isEmpty()){
+                        if (lastReport.getIntactid() == null && lastReport.getIntactMatchingProteins().isEmpty() && isBasicBlastRequired){
                             processLastAction(context, result);
                         }
                     }
-                    else {
+                    else if (isBasicBlastRequired) {
                         processLastAction(context, result);
                     }
                 }
@@ -152,7 +162,7 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
         this.listOfReports.addAll(this.listOfActions.get(0).getListOfActionReports());
         PICRReport report = (PICRReport) this.listOfReports.get(this.listOfReports.size() - 1);
 
-        if (uniprot != null && !report.getPossibleAccessions().isEmpty()){
+        if (uniprot == null && report.getPossibleAccessions().isEmpty()){
             if (this.intactContext != null){
                 IntactCrc64SearchProcess intactProcess = (IntactCrc64SearchProcess) this.listOfActions.get(1);
                 intactProcess.setIntactContext(this.intactContext);
