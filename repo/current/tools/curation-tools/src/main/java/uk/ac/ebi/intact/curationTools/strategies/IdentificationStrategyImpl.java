@@ -111,10 +111,27 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
                     matchingId = matchingId.substring(0, matchingId.indexOf("-"));
                     result.setUniprotId(matchingId);
                 }
-
+                else {
+                    result.setUniprotId(matchingId);
+                }
+            }
+            else {
+                result.setUniprotId(matchingId);
             }
         }
 
+    }
+
+    protected String processIsoforms(String matchingId) {
+        String id = matchingId;
+        if (matchingId != null){
+            if (!this.enableIsoformId){
+                if (IdentifierChecker.isSpliceVariantId(matchingId)){
+                    id = matchingId.substring(0, matchingId.indexOf("-"));
+                }
+            }
+        }
+       return id;
     }
 
     protected static UniprotProtein getUniprotProteinFor(String accession){
@@ -137,14 +154,5 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
 
         }
         return null;
-    }
-
-    protected boolean isATaxId(String organism){
-        if (organism != null){
-            if (IdentificationStrategyImpl.taxIdExpr.matcher(organism).matches()){
-                return true;
-            }
-        }
-        return false;
     }
 }

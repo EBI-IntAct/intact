@@ -15,11 +15,9 @@ import uk.ac.ebi.intact.curationTools.model.contexts.BlastContext;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.curationTools.strategies.IdentificationStrategyImpl;
 import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.uniprot.service.IdentifierChecker;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -50,27 +48,6 @@ public class SwissprotRemappingProcess extends IdentificationActionImpl {
         } catch (BlastServiceException e) {
             log.error("Problem instantiating the blast client while trying to find an equivalent swissprot entry to the Trembl entry which was found using PICR.",e);
         }
-    }
-
-    private Set<String> mergeIsoforms(ArrayList<BlastProtein> blastProteins){
-        HashSet<String> isoformMerged = new HashSet<String>();
-        for (BlastProtein b : blastProteins){
-            if (b != null){
-
-                if (b.getAccession() != null){
-                    String primaryId;
-                    if (IdentifierChecker.isSpliceVariantId(b.getAccession())){
-                        primaryId = b.getAccession().substring(0, b.getAccession().indexOf("-"));
-                    }
-                    else {
-                        primaryId = b.getAccession();
-                    }
-                    isoformMerged.add(primaryId);
-                }
-            }
-        }
-
-        return isoformMerged;
     }
 
     private boolean checkEnsemblGene(BlastProtein protein, String ensemblGeneFromContext) throws ActionProcessingException {
@@ -169,7 +146,7 @@ public class SwissprotRemappingProcess extends IdentificationActionImpl {
                     }
                 }
 
-                Set<String> accessions = mergeIsoforms(blastProteins);
+                Set<String> accessions = mergeIsoformsFromBlastProteins(blastProteins);
 
                 if (accessions.size() == 1){
                     String ac = accessions.iterator().next();
@@ -258,6 +235,8 @@ public class SwissprotRemappingProcess extends IdentificationActionImpl {
     }
 
     public String runAction(IdentificationContext context) throws ActionProcessingException {
+        this.listOfReports.clear();
+        
         if (!(context instanceof BlastContext)){
             log.error("The SwissprotRemappingProcess needs a BlastContext instance and the current context is a " + context.getClass().getSimpleName());
         }

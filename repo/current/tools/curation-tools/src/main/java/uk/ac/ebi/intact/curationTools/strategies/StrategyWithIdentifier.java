@@ -2,9 +2,13 @@ package uk.ac.ebi.intact.curationTools.strategies;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.curationTools.actions.IdentificationAction;
 import uk.ac.ebi.intact.curationTools.actions.PICRSearchProcessWithAccession;
 import uk.ac.ebi.intact.curationTools.actions.SwissprotRemappingProcess;
 import uk.ac.ebi.intact.curationTools.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
+import uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport;
+import uk.ac.ebi.intact.curationTools.model.actionReport.PICRReport;
 import uk.ac.ebi.intact.curationTools.model.contexts.BlastContext;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.curationTools.model.results.IdentificationResults;
@@ -12,6 +16,7 @@ import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyException;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO comment this
@@ -21,12 +26,14 @@ import java.util.ArrayList;
  * @since <pre>08-Mar-2010</pre>
  */
 
-public class StrategyWithIdentifier extends IdentificationStrategyImpl {
+public class StrategyWithIdentifier extends IdentificationStrategyImpl implements IdentificationAction{
 
     /**
      * Sets up a logger for that class.
      */
     public static final Log log = LogFactory.getLog( StrategyWithIdentifier.class );
+
+    private List<ActionReport> listOfReports = new ArrayList<ActionReport> ();
 
     private static ArrayList<String> organismWithSpecialCase = new ArrayList<String>();
 
@@ -71,10 +78,6 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl {
         else{
 
             try {
-                String taxId = null;
-                if (context.getOrganism() != null){
-                    taxId = context.getOrganism().getTaxId();
-                }
 
                 String uniprot = this.listOfActions.get(0).runAction(context);
 
@@ -82,13 +85,14 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl {
                 processIsoforms(uniprot, result);
 
                 if (result.getUniprotId() != null){
-
-                    if (isASpecialOrganism(taxId) && !result.isASwissprotEntry()){
+                    PICRReport picrReport = (PICRReport) result.getLastAction();
+                    if (!picrReport.isAswissprotEntry()){
 
                         UniprotProtein tremblEntry = getUniprotProteinFor(result.getUniprotId());
                         String sequence = tremblEntry.getSequence();
 
                         BlastContext blastContext = new BlastContext(context);
+                        blastContext.setSequence(sequence);
 
                         if (tremblEntry != null){
                             String ensemblGene = extractENSEMBLGeneAccessionFrom(tremblEntry.getCrossReferences());
@@ -97,22 +101,57 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl {
                         else {
                             throw new StrategyException("We couldn't find any Uniprot entries which match this accession number " + result.getUniprotId());
                         }
-
-                        blastContext.setSequence(sequence);
-
                         uniprot = this.listOfActions.get(1).runAction(blastContext);
                         result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
 
                         processIsoforms(uniprot, result);
+
+                        BlastReport blastReport = (BlastReport) result.getLastAction();
+                        blastReport.addPossibleAccession(tremblEntry.getPrimaryAc());
                     }
                 }
 
             } catch (ActionProcessingException e) {
 
-             throw  new StrategyException("An error occured while trying to identify the protein using the identifier " + context.getIdentifier(), e);
+                throw  new StrategyException("An error occured while trying to identify the protein using the identifier " + context.getIdentifier(), e);
 
             }
             return result;
         }
+    }
+
+    public String runAction(IdentificationContext context) throws ActionProcessingException {
+        this.listOfReports.clear();
+
+        String uniprot = this.listOfActions.get(0).runAction(context);
+        this.listOfReports.addAll(this.listOfActions.get(0).getListOfActionReports());
+        PICRReport report = (PICRReport) this.listOfReports.get(this.listOfReports.size() - 1);
+
+        if (uniprot != null){
+
+            if (!report.isAswissprotEntry()){
+
+                UniprotProtein tremblEntry = getUniprotProteinFor(uniprot);
+                String sequence = tremblEntry.getSequence();
+
+                BlastContext blastContext = new BlastContext(context);
+                blastContext.setSequence(sequence);
+
+                if (tremblEntry != null){
+                    String ensemblGene = extractENSEMBLGeneAccessionFrom(tremblEntry.getCrossReferences());
+                    blastContext.setEnsemblGene(ensemblGene);
+                }
+                else {
+                    throw new ActionProcessingException("We couldn't find any Uniprot entries which match this accession number " + uniprot);
+                }
+                uniprot = this.listOfActions.get(1).runAction(blastContext);
+                this.listOfReports.addAll(this.listOfActions.get(1).getListOfActionReports());
+            }
+        }
+        return uniprot;
+    }
+
+    public List<ActionReport> getListOfActionReports() {
+        return this.listOfReports;
     }
 }

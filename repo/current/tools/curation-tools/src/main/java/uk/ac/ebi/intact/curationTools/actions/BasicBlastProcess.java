@@ -34,6 +34,7 @@ public class BasicBlastProcess extends IdentificationActionImpl{
     private ProteinNCBIBlastService blastService;
     private BlastResultFilter blastFilter;
     private static final int maxNumberOfBlastProteins = 10;
+    private static final float minimumIdentityThreshold = (float) 90;
 
     public BasicBlastProcess(){
         try {
@@ -55,30 +56,31 @@ public class BasicBlastProcess extends IdentificationActionImpl{
         this.blastFilter.setResults(uniprotBlast);
 
         if (context.getOrganism() != null){
-            this.blastFilter.filterResultsWithOrganism(context.getOrganism().getTaxId());
+            this.blastFilter.filterResultsWithIdentityAndOrganism(minimumIdentityThreshold, context.getOrganism().getTaxId());
         }
         else{
             report.addWarning("No organism has been given for the sequence " + context.getSequence() + ". We will process the blast on uniprot without filtering with the organism.");
-            this.blastFilter.readResultsWithoutFiltering();
+            this.blastFilter.filterResultsWithIdentity(minimumIdentityThreshold);
         }
 
         ArrayList<BlastProtein> blastProteins = this.blastFilter.getMatchingEntries();
-
-        for (BlastProtein b : blastProteins){
-
-            if (blastProteins.indexOf(b) > maxNumberOfBlastProteins){
-                break;
-            }
-            else {
-                report.addBlastMatchingProtein(b);
-            }
-        }
 
         if (blastProteins.isEmpty()){
             Status status2 = new Status(StatusLabel.FAILED, "A blast has been done on Uniprot and we didn't find any hits.");
             report.setStatus(status2);
         }
         else {
+            
+            for (BlastProtein b : blastProteins){
+
+                if (blastProteins.indexOf(b) > maxNumberOfBlastProteins){
+                    break;
+                }
+                else {
+                    report.addBlastMatchingProtein(b);
+                }
+            }
+
             Status status2 = new Status(StatusLabel.TO_BE_REVIEWED, "A blast has been done on Uniprot and we found " + blastProteins.size() + " possible proteins");
             report.setStatus(status2);
         }

@@ -57,7 +57,7 @@ public class BasicBlastProcessTest {
     }
 
     @Test
-    public void test_UniprotBlast_successful_withOrganism(){
+    public void test_UniprotBlast_Unsuccessful_withOrganismBecauseOfLowIdentity(){
         String sequence = "GTRASKHVFEKNLRPKALKLKNAEHCSIITKETARTVLTIQSYLQSISNPEWAAAIAHKIAQELPTGPDKIHALKFCLHLAEKWKKNVSSENDAHEKADVFIKKLSVQYQRSATENVLITHKLNTPELLKQIGKPANLIVSLYEHSSVEQRIRHPTGRDYPDIHTAAKQISEVNNLNMSKICTLLLEKWICPPAVPQADKNKDVFGDIHGDEDLRRVIYLLQPYPVDYSSRMLYAIATSATS";
         BioSource bioSource = createBiosource("human", "Homo sapiens", "9606");
 
@@ -69,7 +69,7 @@ public class BasicBlastProcessTest {
 
             Assert.assertNull(id);
             Assert.assertEquals(true, reports.get(0) instanceof BlastReport);
-            Assert.assertEquals(4, ((BlastReport)reports.get(0)).getBlastMatchingProteins().size());
+            Assert.assertEquals(0, ((BlastReport)reports.get(0)).getBlastMatchingProteins().size());
 
             for (String warn : reports.get(0).getWarnings()){
                 System.out.println(warn);

@@ -19,4 +19,5 @@ public interface IdentificationAction {
     public String runAction(IdentificationContext context) throws ActionProcessingException;
 
     public List<ActionReport> getListOfActionReports();
+    
 }
