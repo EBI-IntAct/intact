@@ -157,7 +157,8 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
     }
 
     public String runAction(IdentificationContext context) throws ActionProcessingException {
-
+        this.listOfReports.clear();
+        
         String uniprot = this.listOfActions.get(0).runAction(context);
         this.listOfReports.addAll(this.listOfActions.get(0).getListOfActionReports());
         PICRReport report = (PICRReport) this.listOfReports.get(this.listOfReports.size() - 1);
