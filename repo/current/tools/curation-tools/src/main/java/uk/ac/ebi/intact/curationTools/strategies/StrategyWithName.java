@@ -40,8 +40,8 @@ public class StrategyWithName extends IdentificationStrategyImpl {
 
         IdentificationResults result = new IdentificationResults();
 
-        if (context.getProtein_name() == null && context.getGene_name() == null){
-            throw new StrategyException("At least of of these names should be not null : protein or gene name.");
+        if (context.getProtein_name() == null && context.getGene_name() == null && context.getGlobalName() == null){
+            throw new StrategyException("At least of of these names should be not null : protein name, gene name or a general name.");
         }
         else{
 
@@ -56,7 +56,7 @@ public class StrategyWithName extends IdentificationStrategyImpl {
                         intactProcess.setIntactContext(this.intactContext);
 
                         intactProcess.runAction(context);
-                        result.getListOfActions().addAll(this.listOfActions.get(0).getListOfActionReports());
+                        result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
                     }
                 }
 

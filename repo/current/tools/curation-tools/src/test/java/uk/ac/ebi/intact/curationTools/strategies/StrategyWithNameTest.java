@@ -1,5 +1,17 @@
 package uk.ac.ebi.intact.curationTools.strategies;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
+import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
+import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.curationTools.model.results.IdentificationResults;
+import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyException;
+import uk.ac.ebi.intact.model.BioSource;
+
+import java.util.List;
+
 /**
  * TODO comment this
  *
@@ -9,4 +21,204 @@ package uk.ac.ebi.intact.curationTools.strategies;
  */
 
 public class StrategyWithNameTest {
+
+    private StrategyWithName strategy;
+
+    @Before
+    public void createStrategy(){
+        this.strategy = new StrategyWithName();
+        this.strategy.enableIsoforms(false);
+    }
+
+    private BioSource createBiosource(String shortLabel, String fullName, String taxId){
+        BioSource bioSource = new BioSource();
+        bioSource.setFullName(fullName);
+        bioSource.setShortLabel(shortLabel);
+        bioSource.setTaxId(taxId);
+
+        return bioSource;
+    }
+
+    @Test
+    public void test_GeneSearch_Successfull(){
+        String geneName = "crk";
+        BioSource organism = createBiosource("human", "Homo sapiens", "9606");
+
+        IdentificationContext context = new IdentificationContext();
+        context.setGene_name(geneName);
+        context.setOrganism(organism);
+
+        try {
+            IdentificationResults result = this.strategy.identifyProtein(context);
+            List<ActionReport> reports = result.getListOfActions();
+
+            Assert.assertEquals(1, reports.size());
+            for (String warn : reports.get(0).getWarnings()){
+                System.out.println(warn);
+            }
+
+            System.out.println(reports.get(0).getStatus().getLabel() + " " + reports.get(0).getStatus().getDescription());
+
+            Assert.assertNotNull(result);
+            Assert.assertNotNull(result.getUniprotId());
+            Assert.assertEquals("P46108", result.getUniprotId());
+
+        } catch (StrategyException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    @Test
+    public void test_ProteinSearch_Successfull(){
+        String proteinName = "crk";
+        BioSource organism = createBiosource("human", "Homo sapiens", "9606");
+
+        IdentificationContext context = new IdentificationContext();
+
+        context.setProtein_name(proteinName);
+        context.setOrganism(organism);
+
+        try {
+            IdentificationResults result = this.strategy.identifyProtein(context);
+            List<ActionReport> reports = result.getListOfActions();
+
+            Assert.assertEquals(1, reports.size());
+            for (String warn : reports.get(0).getWarnings()){
+                System.out.println(warn);
+            }
+
+            System.out.println(reports.get(0).getStatus().getLabel() + " " + reports.get(0).getStatus().getDescription());
+
+            Assert.assertNotNull(result);
+            Assert.assertNull(result.getUniprotId());
+            Assert.assertEquals(StatusLabel.TO_BE_REVIEWED, reports.get(0).getStatus().getLabel());
+            Assert.assertEquals(true, reports.get(0).getPossibleAccessions().size() > 0);
+
+            for (String p : reports.get(0).getPossibleAccessions()){
+                 System.out.println("protein : " + p);
+            }
+
+        } catch (StrategyException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    @Test
+    public void test_ProteinAndGeneNameSearch_Successfull(){
+        String proteinName = "crk";
+        String geneName = "crk";
+        BioSource organism = createBiosource("human", "Homo sapiens", "9606");
+        IdentificationContext context = new IdentificationContext();
+
+        context.setProtein_name(proteinName);
+        context.setGene_name(geneName);
+        context.setOrganism(organism);
+
+        try {
+            IdentificationResults result = this.strategy.identifyProtein(context);
+            List<ActionReport> reports = result.getListOfActions();
+            Assert.assertEquals(1, reports.size());
+            for (String warn : reports.get(0).getWarnings()){
+                System.out.println(warn);
+            }
+
+            System.out.println(reports.get(0).getStatus().getLabel() + " " + reports.get(0).getStatus().getDescription());
+
+            Assert.assertNotNull(result);
+            Assert.assertNotNull(result.getUniprotId());
+            Assert.assertEquals("P46108", result.getUniprotId());
+
+        } catch (StrategyException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    @Test
+    public void test_ProteinAndGeneNameSearch_Unsuccessfull(){
+        String proteinName = "cls";
+        String geneName = "crk";
+        BioSource organism = createBiosource("human", "Homo sapiens", "9606");
+        IdentificationContext context = new IdentificationContext();
+
+       context.setProtein_name(proteinName);
+        context.setGene_name(geneName);
+        context.setOrganism(organism);
+
+        try {
+            IdentificationResults result = this.strategy.identifyProtein(context);
+            List<ActionReport> reports = result.getListOfActions();
+            Assert.assertEquals(2, reports.size());
+            for (String warn : reports.get(1).getWarnings()){
+                System.out.println(warn);
+            }
+
+            System.out.println(reports.get(1).getStatus().getLabel() + " " + reports.get(1).getStatus().getDescription());
+
+            Assert.assertNotNull(result);            
+            Assert.assertNull(result.getUniprotId());
+            Assert.assertEquals(StatusLabel.TO_BE_REVIEWED, reports.get(1).getStatus().getLabel());
+            Assert.assertEquals(true, reports.get(1).getPossibleAccessions().size() > 0);
+
+        } catch (StrategyException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    @Test
+    public void test_GlobalSearch_Unsuccessfull(){
+        String globalName = "IPI0000340";
+        BioSource organism = createBiosource("human", "Homo sapiens", "9606");
+        IdentificationContext context = new IdentificationContext();
+
+        context.setGlobalName(globalName);
+        context.setOrganism(organism);
+
+        try {
+            IdentificationResults result = this.strategy.identifyProtein(context);
+            List<ActionReport> reports = result.getListOfActions();
+            Assert.assertEquals(2, reports.size());
+            for (String warn : reports.get(1).getWarnings()){
+                System.out.println(warn);
+            }
+
+            System.out.println(reports.get(1).getStatus().getLabel() + " " + reports.get(1).getStatus().getDescription());
+
+            Assert.assertNotNull(result);
+            Assert.assertNull(result.getUniprotId());
+            Assert.assertEquals(StatusLabel.FAILED, reports.get(1).getStatus().getLabel());
+            Assert.assertEquals(true, reports.get(1).getPossibleAccessions().isEmpty());
+
+        } catch (StrategyException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    @Test
+    public void test_GlobalSearch_Successful(){
+        String globalName = "cls";
+        BioSource organism = createBiosource("human", "Homo sapiens", "9606");
+        IdentificationContext context = new IdentificationContext();
+
+        context.setGlobalName(globalName);
+        context.setOrganism(organism);
+
+        try {
+            IdentificationResults result = this.strategy.identifyProtein(context);
+            List<ActionReport> reports = result.getListOfActions();
+            Assert.assertEquals(1, reports.size());
+            for (String warn : reports.get(0).getWarnings()){
+                System.out.println(warn);
+            }
+
+            System.out.println(reports.get(0).getStatus().getLabel() + " " + reports.get(0).getStatus().getDescription());
+
+            Assert.assertNotNull(result);
+            Assert.assertNotNull(result.getUniprotId());
+            Assert.assertEquals(StatusLabel.COMPLETED, reports.get(0).getStatus().getLabel());
+            Assert.assertEquals("Q9UJA2", result.getUniprotId());
+
+        } catch (StrategyException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
 }

@@ -330,11 +330,16 @@ public class UniprotNameSearchProcess extends IdentificationActionImpl {
             EntryIterator<UniProtEntry> iterator = querySwissprotWith(geneName, protein_name, organism);
 
             if (iterator == null || iterator.getResultSize() == 0){
+                Status status = new Status(StatusLabel.FAILED, "We couldn't find any Swissprot entry which matches : name = " + globalName + "; TaxId = " + organism + ". We will look in Trembl.");
+                report.setStatus(status);
+
                 iterator = queryUniprotWith(geneName, protein_name, organism);
+                ActionReport report2 = new ActionReport(ActionName.SEARCH_uniprot_name);
+                this.listOfReports.add(report2);
 
                 if (iterator == null || iterator.getResultSize() == 0){
-                    Status status = new Status(StatusLabel.FAILED, "We couldn't find any Uniprot entry which matches : gene name = " + geneName + "; protein name = " + protein_name + "; TaxId = " + organism);
-                    report.setStatus(status);
+                    Status status2 = new Status(StatusLabel.FAILED, "We couldn't find any Uniprot entry which matches : gene name = " + geneName + "; protein name = " + protein_name + "; TaxId = " + organism);
+                    report2.setStatus(status2);
                 }
                 else{
                     return processQuery(iterator, report, context);
@@ -351,13 +356,17 @@ public class UniprotNameSearchProcess extends IdentificationActionImpl {
             EntryIterator<UniProtEntry> iterator = querySwissprotWithGeneNameOrProteinName(null, null, globalName, organism);
 
             if (iterator == null || iterator.getResultSize() == 0){
-                report.addWarning("We couldn't find any Swissprot entry which matches : name = " + globalName + "; TaxId = " + organism + ". We will look in Trembl.");
+                Status status = new Status(StatusLabel.FAILED, "We couldn't find any Swissprot entry which matches : name = " + globalName + "; TaxId = " + organism + ". We will look in Trembl.");
+                report.setStatus(status);
 
                 iterator = queryUniprotWithGeneNameOrProteinName(null, null, globalName, organism);
 
+                ActionReport report2 = new ActionReport(ActionName.SEARCH_uniprot_name);
+                this.listOfReports.add(report2);
+
                 if (iterator == null || iterator.getResultSize() == 0){
-                    Status status = new Status(StatusLabel.FAILED, "We couldn't find any Uniprot entry which matches : name = " + globalName + "; TaxId = " + organism);
-                    report.setStatus(status);
+                    Status status2 = new Status(StatusLabel.FAILED, "We couldn't find any Uniprot entry which matches : name = " + globalName + "; TaxId = " + organism);
+                    report2.setStatus(status2);
                 }
                 else {
                     return processQuery(iterator, report, context);
@@ -375,7 +384,6 @@ public class UniprotNameSearchProcess extends IdentificationActionImpl {
 
     private void processGlobalQuery(ActionReport report, Query query){
         EntryIterator<UniProtEntry> iterator = uniProtQueryService.getEntryIterator(query);
-        System.out.println(query.toString());
         if (iterator != null && iterator.getResultSize() != 0){
             for (UniProtEntry e : iterator){
                 report.addPossibleAccession(e.getPrimaryUniProtAccession().getValue());
