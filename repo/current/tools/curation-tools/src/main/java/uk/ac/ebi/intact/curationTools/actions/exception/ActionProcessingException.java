@@ -1,7 +1,7 @@
 package uk.ac.ebi.intact.curationTools.actions.exception;
 
 /**
- * TODO comment this
+ * The exception thrown by an IdentificationAction
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$

@@ -17,7 +17,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
- * TODO comment this
+ * This class is doing a Blast on Uniprot to collect matching proteins with a minimum identity percent. It can filter the results on the identity
+ * and also the organism if an organism is given.
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -31,11 +32,26 @@ public class BasicBlastProcess extends IdentificationActionImpl{
      */
     public static final Log log = LogFactory.getLog( BasicBlastProcess.class );
 
+    /**
+     * The NCBI blast service
+     */
     private ProteinNCBIBlastService blastService;
+    /**
+     * The BLAST filter
+     */
     private BlastResultFilter blastFilter;
+    /**
+     * The maximum number of BlastProtein instances we allow to keep in memory
+     */
     private static final int maxNumberOfBlastProteins = 10;
+    /**
+     * The minimum identity : below this identity percent, we don't look at the BLAST results
+     */
     private static final float minimumIdentityThreshold = (float) 90;
 
+    /**
+     * Create the process
+     */
     public BasicBlastProcess(){
         try {
             this.blastService = new ProteinNCBIBlastService("marine@ebi.ac.uk");
