@@ -45,6 +45,9 @@ public class UpdateContext extends IdentificationContext{
 
     @Override
     public String getIdentifier() {
+        if (this.identifiers.isEmpty()){
+            return null;
+        }
         return this.identifiers.iterator().next();
     }
 

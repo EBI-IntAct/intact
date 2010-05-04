@@ -66,7 +66,7 @@ public class BasicBlastProcess extends IdentificationActionImpl{
         ArrayList<BlastProtein> blastProteins = this.blastFilter.getMatchingEntries();
 
         if (blastProteins.isEmpty()){
-            Status status2 = new Status(StatusLabel.FAILED, "A blast has been done on Uniprot and we didn't find any hits.");
+            Status status2 = new Status(StatusLabel.FAILED, "A blast has been done on Uniprot and we didn't find any hits with more than "+minimumIdentityThreshold+"% identity.");
             report.setStatus(status2);
         }
         else {
@@ -81,7 +81,7 @@ public class BasicBlastProcess extends IdentificationActionImpl{
                 }
             }
 
-            Status status2 = new Status(StatusLabel.TO_BE_REVIEWED, "A blast has been done on Uniprot and we found " + blastProteins.size() + " possible proteins");
+            Status status2 = new Status(StatusLabel.TO_BE_REVIEWED, "A blast has been done on Uniprot and we found " + blastProteins.size() + " possible proteins with an identity superior or equal to " + minimumIdentityThreshold + "%.");
             report.setStatus(status2);
         }
 
