@@ -37,6 +37,15 @@ public class IdentificationContext {
         this.globalName = null;
     }
 
+    public IdentificationContext(IdentificationContext context){
+        this.sequence = context.getSequence();
+        this.identifier = context.getIdentifier();
+        this.organism = context.getOrganism();
+        this.gene_name = context.getGene_name();
+        this.protein_name = context.getProtein_name();
+        this.globalName = context.getGlobalName();
+    }
+
     public IdentificationContext(String sequence, String identifier, BioSource organism, String name){
         this.sequence = sequence;
         this.identifier = identifier;

@@ -187,7 +187,7 @@
       <module fileurl="file://$PROJECT_DIR$/curationTools-master.iml" filepath="$PROJECT_DIR$/curationTools-master.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.6 (1)" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/classes" />
   </component>
   <component name="SvnBranchConfigurationManager">
@@ -209,6 +209,182 @@
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="libraryTable">
+    <library name="Maven: uk.ac.ebi.intact.bridges:intact-uniprot:2.1.2-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/intact-uniprot/2.1.2-SNAPSHOT/intact-uniprot-2.1.2-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/intact-uniprot/2.1.2-SNAPSHOT/intact-uniprot-2.1.2-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/intact-uniprot/2.1.2-SNAPSHOT/intact-uniprot-2.1.2-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: log4j:log4j:1.2.15">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.15/log4j-1.2.15.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.15/log4j-1.2.15-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.15/log4j-1.2.15-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: javax.mail:mail:1.4">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/mail/mail/1.4/mail-1.4.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/mail/mail/1.4/mail-1.4-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/mail/mail/1.4/mail-1.4-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: javax.activation:activation:1.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/activation/activation/1.1/activation-1.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/activation/activation/1.1/activation-1.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/activation/activation/1.1/activation-1.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: com.sun.jdmk:jmxtools:1.2.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/sun/jdmk/jmxtools/1.2.1/jmxtools-1.2.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/sun/jdmk/jmxtools/1.2.1/jmxtools-1.2.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/sun/jdmk/jmxtools/1.2.1/jmxtools-1.2.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: com.sun.jmx:jmxri:1.2.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/sun/jmx/jmxri/1.2.1/jmxri-1.2.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/sun/jmx/jmxri/1.2.1/jmxri-1.2.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/sun/jmx/jmxri/1.2.1/jmxri-1.2.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: commons-logging:commons-logging:1.1.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: commons-lang:commons-lang:2.4">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.4/commons-lang-2.4.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.4/commons-lang-2.4-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.4/commons-lang-2.4-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: uk.ac.ebi.uniprot.kraken:uniprotjapi:2010.05">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/uniprot/kraken/uniprotjapi/2010.05/uniprotjapi-2010.05.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/uniprot/kraken/uniprotjapi/2010.05/uniprotjapi-2010.05-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/uniprot/kraken/uniprotjapi/2010.05/uniprotjapi-2010.05-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: commons-codec:commons-codec:1.3">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.3/commons-codec-1.3.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.3/commons-codec-1.3-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.3/commons-codec-1.3-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: commons-httpclient:commons-httpclient:3.0.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-httpclient/commons-httpclient/3.0.1/commons-httpclient-3.0.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-httpclient/commons-httpclient/3.0.1/commons-httpclient-3.0.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-httpclient/commons-httpclient/3.0.1/commons-httpclient-3.0.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: junit:junit:4.3.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.3.1/junit-4.3.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.3.1/junit-4.3.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.3.1/junit-4.3.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: aopalliance:aopalliance:1.0">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/aopalliance/aopalliance/1.0/aopalliance-1.0.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/aopalliance/aopalliance/1.0/aopalliance-1.0-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/aopalliance/aopalliance/1.0/aopalliance-1.0-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.springframework:spring:2.5">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring/2.5/spring-2.5.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring/2.5/spring-2.5-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring/2.5/spring-2.5-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: net.sf.ehcache:ehcache:1.2.4RC">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/net/sf/ehcache/ehcache/1.2.4RC/ehcache-1.2.4RC.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/net/sf/ehcache/ehcache/1.2.4RC/ehcache-1.2.4RC-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/net/sf/ehcache/ehcache/1.2.4RC/ehcache-1.2.4RC-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: uk.ac.ebi.intact.bridges:intact-picr:2.1.2-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/intact-picr/2.1.2-SNAPSHOT/intact-picr-2.1.2-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/intact-picr/2.1.2-SNAPSHOT/intact-picr-2.1.2-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/intact-picr/2.1.2-SNAPSHOT/intact-picr-2.1.2-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: com.sun.xml.ws:jaxws-tools:2.1.4">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/com/sun/xml/ws/jaxws-tools/2.1.4/jaxws-tools-2.1.4.jar!/" />
@@ -253,15 +429,15 @@
         <root url="jar://$MAVEN_REPOSITORY$/javax/xml/bind/jaxb-api/2.1/jaxb-api-2.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: javax.activation:activation:1.1">
+    <library name="Maven: javax.xml.stream:stax-api:1.0-2">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/javax/activation/activation/1.1/activation-1.1.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/javax/activation/activation/1.1/activation-1.1-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/javax/activation/activation/1.1/activation-1.1-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: javax.xml.soap:saaj-api:1.3">
@@ -385,257 +561,66 @@
         <root url="jar://$MAVEN_REPOSITORY$/com/sun/xml/bind/jaxb-xjc/2.1.7/jaxb-xjc-2.1.7-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: log4j:log4j:1.2.15">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.15/log4j-1.2.15.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.15/log4j-1.2.15-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.15/log4j-1.2.15-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: javax.mail:mail:1.4">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/javax/mail/mail/1.4/mail-1.4.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/javax/mail/mail/1.4/mail-1.4-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/javax/mail/mail/1.4/mail-1.4-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: com.sun.jdmk:jmxtools:1.2.1">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/sun/jdmk/jmxtools/1.2.1/jmxtools-1.2.1.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/com/sun/jdmk/jmxtools/1.2.1/jmxtools-1.2.1-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/sun/jdmk/jmxtools/1.2.1/jmxtools-1.2.1-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: com.sun.jmx:jmxri:1.2.1">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/sun/jmx/jmxri/1.2.1/jmxri-1.2.1.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/com/sun/jmx/jmxri/1.2.1/jmxri-1.2.1-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/sun/jmx/jmxri/1.2.1/jmxri-1.2.1-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: commons-logging:commons-logging:1.1.1">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: junit:junit:4.3.1">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.3.1/junit-4.3.1.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.3.1/junit-4.3.1-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.3.1/junit-4.3.1-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: org.easymock:easymockclassextension:2.2.2">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/easymock/easymockclassextension/2.2.2/easymockclassextension-2.2.2.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/easymock/easymockclassextension/2.2.2/easymockclassextension-2.2.2-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/easymock/easymockclassextension/2.2.2/easymockclassextension-2.2.2-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: org.easymock:easymock:2.2">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/easymock/easymock/2.2/easymock-2.2.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/easymock/easymock/2.2/easymock-2.2-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/easymock/easymock/2.2/easymock-2.2-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: uk.ac.ebi.intact.bridges:intact-uniprot:2.1.2-SNAPSHOT">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/intact-uniprot/2.1.2-SNAPSHOT/intact-uniprot-2.1.2-SNAPSHOT.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/intact-uniprot/2.1.2-SNAPSHOT/intact-uniprot-2.1.2-SNAPSHOT-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/intact-uniprot/2.1.2-SNAPSHOT/intact-uniprot-2.1.2-SNAPSHOT-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: commons-lang:commons-lang:2.4">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.4/commons-lang-2.4.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.4/commons-lang-2.4-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.4/commons-lang-2.4-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: commons-codec:commons-codec:1.3">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.3/commons-codec-1.3.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.3/commons-codec-1.3-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.3/commons-codec-1.3-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: commons-httpclient:commons-httpclient:3.0.1">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-httpclient/commons-httpclient/3.0.1/commons-httpclient-3.0.1.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-httpclient/commons-httpclient/3.0.1/commons-httpclient-3.0.1-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-httpclient/commons-httpclient/3.0.1/commons-httpclient-3.0.1-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: aopalliance:aopalliance:1.0">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/aopalliance/aopalliance/1.0/aopalliance-1.0.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/aopalliance/aopalliance/1.0/aopalliance-1.0-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/aopalliance/aopalliance/1.0/aopalliance-1.0-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: org.springframework:spring:2.5">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring/2.5/spring-2.5.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring/2.5/spring-2.5-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring/2.5/spring-2.5-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: net.sf.ehcache:ehcache:1.2.4RC">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/net/sf/ehcache/ehcache/1.2.4RC/ehcache-1.2.4RC.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/net/sf/ehcache/ehcache/1.2.4RC/ehcache-1.2.4RC-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/net/sf/ehcache/ehcache/1.2.4RC/ehcache-1.2.4RC-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: uk.ac.ebi.intact.bridges:intact-picr:2.1.2-SNAPSHOT">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/intact-picr/2.1.2-SNAPSHOT/intact-picr-2.1.2-SNAPSHOT.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/intact-picr/2.1.2-SNAPSHOT/intact-picr-2.1.2-SNAPSHOT-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/intact-picr/2.1.2-SNAPSHOT/intact-picr-2.1.2-SNAPSHOT-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: sun.jdk:tools:1.5.0">
       <CLASSES>
-        <root url="jar:///usr/lib/jvm/java-6-sun-1.6.0.15/jre/../lib/tools.jar!/" />
+        <root url="jar:///usr/lib/jvm/java-6-sun-1.6.0.20/jre/../lib/tools.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="Maven: uk.ac.ebi.intact.bridges:Ncbi-blast:1.0-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/Ncbi-blast/1.0-SNAPSHOT/Ncbi-blast-1.0-SNAPSHOT.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar:///usr/lib/jvm/java-6-sun-1.6.0.15/jre/../lib/tools-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/Ncbi-blast/1.0-SNAPSHOT/Ncbi-blast-1.0-SNAPSHOT-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar:///usr/lib/jvm/java-6-sun-1.6.0.15/jre/../lib/tools-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/Ncbi-blast/1.0-SNAPSHOT/Ncbi-blast-1.0-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.apache.axis:axis:1.4">
+    <library name="Maven: uk.ac.ebi.intact.bridges:blast-mapping-parser:2.1.2-SNAPSHOT">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis/1.4/axis-1.4.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/blast-mapping-parser/2.1.2-SNAPSHOT/blast-mapping-parser-2.1.2-SNAPSHOT.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis/1.4/axis-1.4-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/blast-mapping-parser/2.1.2-SNAPSHOT/blast-mapping-parser-2.1.2-SNAPSHOT-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis/1.4/axis-1.4-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/blast-mapping-parser/2.1.2-SNAPSHOT/blast-mapping-parser-2.1.2-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.apache.axis:axis-jaxrpc:1.4">
+    <library name="Maven: stax:stax:1.2.0">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis-jaxrpc/1.4/axis-jaxrpc-1.4.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/stax/stax/1.2.0/stax-1.2.0.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis-jaxrpc/1.4/axis-jaxrpc-1.4-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/stax/stax/1.2.0/stax-1.2.0-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis-jaxrpc/1.4/axis-jaxrpc-1.4-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/stax/stax/1.2.0/stax-1.2.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.apache.axis:axis-saaj:1.4">
+    <library name="Maven: stax:stax-api:1.0.1">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis-saaj/1.4/axis-saaj-1.4.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/stax/stax-api/1.0.1/stax-api-1.0.1.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis-saaj/1.4/axis-saaj-1.4-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/stax/stax-api/1.0.1/stax-api-1.0.1-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis-saaj/1.4/axis-saaj-1.4-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/stax/stax-api/1.0.1/stax-api-1.0.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: soap:soap:2.3.1">
+    <library name="Maven: uk.ac.ebi.intact.core:intact-core:2.2.1-SNAPSHOT">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/soap/soap/2.3.1/soap-2.3.1.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-core/2.2.1-SNAPSHOT/intact-core-2.2.1-SNAPSHOT.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/soap/soap/2.3.1/soap-2.3.1-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-core/2.2.1-SNAPSHOT/intact-core-2.2.1-SNAPSHOT-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/soap/soap/2.3.1/soap-2.3.1-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: wsdl4j:wsdl4j:1.6.1">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/wsdl4j/wsdl4j/1.6.1/wsdl4j-1.6.1.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/wsdl4j/wsdl4j/1.6.1/wsdl4j-1.6.1-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/wsdl4j/wsdl4j/1.6.1/wsdl4j-1.6.1-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: commons-discovery:commons-discovery:0.4">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-discovery/commons-discovery/0.4/commons-discovery-0.4.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-discovery/commons-discovery/0.4/commons-discovery-0.4-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-discovery/commons-discovery/0.4/commons-discovery-0.4-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-core/2.2.1-SNAPSHOT/intact-core-2.2.1-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: uk.ac.ebi.intact.commons:intact-commons:2.1.7">
@@ -702,6 +687,17 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/apache/geronimo/specs/geronimo-javamail_1.4_spec/1.1/geronimo-javamail_1.4_spec-1.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: uk.ac.ebi.intact.core:intact-annotations:2.2.1-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-annotations/2.2.1-SNAPSHOT/intact-annotations-2.2.1-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-annotations/2.2.1-SNAPSHOT/intact-annotations-2.2.1-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-annotations/2.2.1-SNAPSHOT/intact-annotations-2.2.1-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.hibernate:hibernate:3.2.6.ga">
@@ -858,6 +854,17 @@
         <root url="jar://$MAVEN_REPOSITORY$/c3p0/c3p0/0.9.1.2/c3p0-0.9.1.2-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: uk.ac.ebi.intact.core:intact-apt:2.2.1-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-apt/2.2.1-SNAPSHOT/intact-apt-2.2.1-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-apt/2.2.1-SNAPSHOT/intact-apt-2.2.1-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-apt/2.2.1-SNAPSHOT/intact-apt-2.2.1-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: velocity:velocity-dep:1.4">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/velocity/velocity-dep/1.4/velocity-dep-1.4.jar!/" />
@@ -946,6 +953,17 @@
         <root url="jar://$MAVEN_REPOSITORY$/commons-pool/commons-pool/1.3/commons-pool-1.3-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: com.h2database:h2:1.2.121">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/h2database/h2/1.2.121/h2-1.2.121.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/h2database/h2/1.2.121/h2-1.2.121-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/h2database/h2/1.2.121/h2-1.2.121-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: joda-time:joda-time:1.5">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/joda-time/joda-time/1.5/joda-time-1.5.jar!/" />
@@ -977,6 +995,17 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging-api/1.0.4/commons-logging-api-1.0.4-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: hsqldb:hsqldb:1.7.3.3">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/hsqldb/hsqldb/1.7.3.3/hsqldb-1.7.3.3.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/hsqldb/hsqldb/1.7.3.3/hsqldb-1.7.3.3-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/hsqldb/hsqldb/1.7.3.3/hsqldb-1.7.3.3-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: xml-apis:xml-apis:1.0.b2">
@@ -1067,50 +1096,6 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-agent/2.5.6/spring-agent-2.5.6-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: uk.ac.ebi.intact.core:intact-core:2.2.1-SNAPSHOT">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-core/2.2.1-SNAPSHOT/intact-core-2.2.1-SNAPSHOT.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-core/2.2.1-SNAPSHOT/intact-core-2.2.1-SNAPSHOT-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-core/2.2.1-SNAPSHOT/intact-core-2.2.1-SNAPSHOT-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: uk.ac.ebi.intact.core:intact-annotations:2.2.1-SNAPSHOT">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-annotations/2.2.1-SNAPSHOT/intact-annotations-2.2.1-SNAPSHOT.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-annotations/2.2.1-SNAPSHOT/intact-annotations-2.2.1-SNAPSHOT-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-annotations/2.2.1-SNAPSHOT/intact-annotations-2.2.1-SNAPSHOT-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: uk.ac.ebi.intact.core:intact-apt:2.2.1-SNAPSHOT">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-apt/2.2.1-SNAPSHOT/intact-apt-2.2.1-SNAPSHOT.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-apt/2.2.1-SNAPSHOT/intact-apt-2.2.1-SNAPSHOT-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-apt/2.2.1-SNAPSHOT/intact-apt-2.2.1-SNAPSHOT-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: hsqldb:hsqldb:1.7.3.3">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/hsqldb/hsqldb/1.7.3.3/hsqldb-1.7.3.3.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/hsqldb/hsqldb/1.7.3.3/hsqldb-1.7.3.3-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/hsqldb/hsqldb/1.7.3.3/hsqldb-1.7.3.3-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: uk.ac.ebi.intact.bridges:intact-taxonomy:2.1.2-SNAPSHOT">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/intact-taxonomy/2.1.2-SNAPSHOT/intact-taxonomy-2.1.2-SNAPSHOT.jar!/" />
@@ -1133,81 +1118,92 @@
         <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/pride/ols-client/1.15/ols-client-1.15-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: uk.ac.ebi.uniprot.kraken:uniprotjapi:2010.05">
+    <library name="Maven: org.apache.axis:axis:1.4">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/uniprot/kraken/uniprotjapi/2010.05/uniprotjapi-2010.05.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis/1.4/axis-1.4.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/uniprot/kraken/uniprotjapi/2010.05/uniprotjapi-2010.05-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis/1.4/axis-1.4-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/uniprot/kraken/uniprotjapi/2010.05/uniprotjapi-2010.05-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis/1.4/axis-1.4-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: com.h2database:h2:1.2.121">
+    <library name="Maven: org.apache.axis:axis-jaxrpc:1.4">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/h2database/h2/1.2.121/h2-1.2.121.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis-jaxrpc/1.4/axis-jaxrpc-1.4.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/com/h2database/h2/1.2.121/h2-1.2.121-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis-jaxrpc/1.4/axis-jaxrpc-1.4-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/h2database/h2/1.2.121/h2-1.2.121-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis-jaxrpc/1.4/axis-jaxrpc-1.4-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: javax.xml.stream:stax-api:1.0-2">
+    <library name="Maven: org.apache.axis:axis-saaj:1.4">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis-saaj/1.4/axis-saaj-1.4.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis-saaj/1.4/axis-saaj-1.4-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/axis/axis-saaj/1.4/axis-saaj-1.4-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: uk.ac.ebi.intact.bridges:Ncbi-blast:1.0-SNAPSHOT">
+    <library name="Maven: soap:soap:2.3.1">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/Ncbi-blast/1.0-SNAPSHOT/Ncbi-blast-1.0-SNAPSHOT.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/soap/soap/2.3.1/soap-2.3.1.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/Ncbi-blast/1.0-SNAPSHOT/Ncbi-blast-1.0-SNAPSHOT-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/soap/soap/2.3.1/soap-2.3.1-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/Ncbi-blast/1.0-SNAPSHOT/Ncbi-blast-1.0-SNAPSHOT-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/soap/soap/2.3.1/soap-2.3.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: uk.ac.ebi.intact.bridges:blast-mapping-parser:2.1.2-SNAPSHOT">
+    <library name="Maven: wsdl4j:wsdl4j:1.6.1">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/blast-mapping-parser/2.1.2-SNAPSHOT/blast-mapping-parser-2.1.2-SNAPSHOT.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/wsdl4j/wsdl4j/1.6.1/wsdl4j-1.6.1.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/blast-mapping-parser/2.1.2-SNAPSHOT/blast-mapping-parser-2.1.2-SNAPSHOT-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/wsdl4j/wsdl4j/1.6.1/wsdl4j-1.6.1-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/bridges/blast-mapping-parser/2.1.2-SNAPSHOT/blast-mapping-parser-2.1.2-SNAPSHOT-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/wsdl4j/wsdl4j/1.6.1/wsdl4j-1.6.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: stax:stax:1.2.0">
+    <library name="Maven: commons-discovery:commons-discovery:0.4">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/stax/stax/1.2.0/stax-1.2.0.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/commons-discovery/commons-discovery/0.4/commons-discovery-0.4.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/stax/stax/1.2.0/stax-1.2.0-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/commons-discovery/commons-discovery/0.4/commons-discovery-0.4-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/stax/stax/1.2.0/stax-1.2.0-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/commons-discovery/commons-discovery/0.4/commons-discovery-0.4-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: stax:stax-api:1.0.1">
+    <library name="Maven: org.easymock:easymockclassextension:2.2.2">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/stax/stax-api/1.0.1/stax-api-1.0.1.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/easymock/easymockclassextension/2.2.2/easymockclassextension-2.2.2.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/stax/stax-api/1.0.1/stax-api-1.0.1-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/easymock/easymockclassextension/2.2.2/easymockclassextension-2.2.2-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/stax/stax-api/1.0.1/stax-api-1.0.1-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/easymock/easymockclassextension/2.2.2/easymockclassextension-2.2.2-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.easymock:easymock:2.2">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/easymock/easymock/2.2/easymock-2.2.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/easymock/easymock/2.2/easymock-2.2-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/easymock/easymock/2.2/easymock-2.2-sources.jar!/" />
       </SOURCES>
     </library>
   </component>

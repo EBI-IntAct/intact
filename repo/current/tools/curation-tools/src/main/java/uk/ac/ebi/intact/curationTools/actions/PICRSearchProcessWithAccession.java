@@ -72,7 +72,7 @@ public class PICRSearchProcessWithAccession extends IdentificationActionImpl {
                     Status status = new Status(StatusLabel.COMPLETED, "PICR successfully matched the identifier " + context.getIdentifier() + " to this Trembl accession " + uniprotId);
                     report.setStatus(status);
 
-                    report.setIsASwissprotEntry(true);
+                    report.setIsASwissprotEntry(false);
                     return uniprotId;
                 }
                 else {

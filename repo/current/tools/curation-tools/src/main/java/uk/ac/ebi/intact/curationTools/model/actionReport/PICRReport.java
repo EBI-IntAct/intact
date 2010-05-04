@@ -41,6 +41,6 @@ public class PICRReport extends ActionReport{
     }
 
     public void setIsASwissprotEntry(boolean isSwissprot){
-        this.isASwissprotEntry = isASwissprotEntry;
+        this.isASwissprotEntry = isSwissprot;
     }
 }
