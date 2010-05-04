@@ -30,16 +30,19 @@ public class PicrClient {
 
     private AccessionMapperService accessionMapperService;
     private PicrRESTResultParser parser = new PicrRESTResultParser();
+    private static final String wsdlFile = "http://www.ebi.ac.uk/Tools/picr/service?wsdl";
 
     private static final String restURLForUniprotBestGuess = "http://www.ebi.ac.uk/Tools/picr/rest/getUniProtBestGuess?";
+    private static final String accessionMappingURL = "http://www.ebi.ac.uk/picr/AccessionMappingService";
+    private static final String accessionMappingName = "AccessionMapperService";
 
     public PicrClient(){
-        this("http://www.ebi.ac.uk/Tools/picr/service?wsdl");
+        this(wsdlFile);
     }
 
     public PicrClient(String wsdlUrl){
         try {
-            accessionMapperService = new AccessionMapperService(new URL(wsdlUrl), new QName("http://www.ebi.ac.uk/picr/AccessionMappingService", "AccessionMapperService"));
+            accessionMapperService = new AccessionMapperService(new URL(wsdlUrl), new QName(accessionMappingURL, accessionMappingName));
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
