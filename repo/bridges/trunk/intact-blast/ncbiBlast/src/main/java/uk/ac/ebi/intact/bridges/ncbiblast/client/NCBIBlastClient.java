@@ -30,8 +30,32 @@ public class NCBIBlastClient {
     public static final Log log = LogFactory.getLog( NCBIBlastClient.class );
     private JDispatcherService service;
     private uk.ac.ebi.jdispatcher.soap.ObjectFactory objFactory;
+
+    private final static String wsdlFile = "http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl";
+    private final static String jDispatcherURL = "http://soap.jdispatcher.ebi.ac.uk";
+    private final static String jDispatcherName = "JDispatcherService";
+    private final static String jobName = "NCBI Blast";
+    private final static String resultFormat = "xml";
+    private final static String uniprot = "uniprotkb";
+    private final static String swissprot = "uniprotkb_swissprot";
+    private final static String swissprot_sv = "uniprotkb_swissprotsv";
+    private final static String intact = "intact";
+
+    private final static String program = "blastp";
+    private final static int align = 0;
+    private final static int dropOff = 0;
+    private final static String exp = "10";
+    private final static String filter = "F";
+    private final static boolean gapAlign = true;
+    private final static int gapExt = 1;
+    private final static int gapOpen = 11;
+    private final static String matrix = "BLOSUM62";
+    private final static int scores = 100;
+    private final static int alignments = 50;
+    private final static String sType = "protein";
+
     public NCBIBlastClient(){
-        this("http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl");
+        this(wsdlFile);
     }
 
     public NCBIBlastClient(String wsdlUrl){
@@ -44,10 +68,10 @@ public class NCBIBlastClient {
         }
         else {
             try{
-                service_service = new JDispatcherService_Service(new URL(wsdlUrl), new QName("http://soap.jdispatcher.ebi.ac.uk", "JDispatcherService"));
+                service_service = new JDispatcherService_Service(new URL(wsdlUrl), new QName(jDispatcherURL, jDispatcherName));
             } catch (MalformedURLException e) {
-                System.err.println(e.getMessage());
-                System.err.println("Warning: problem with specified endpoint URL. Default endpoint used.");
+                log.error(e.getMessage());
+                log.error("Warning: problem with specified endpoint URL. Default endpoint used.");
                 service_service = new JDispatcherService_Service();
             }
         }
@@ -56,7 +80,7 @@ public class NCBIBlastClient {
     }
 
     public String runWUBlast(String email, InputParameters params){
-        return this.service.run(email, "NCBI Blast", params);
+        return this.service.run(email, jobName, params);
     }
 
     public String checkStatus(String jobId){
@@ -87,7 +111,7 @@ public class NCBIBlastClient {
 
         for(int i = 0; i < resultTypes.length; i++) {
             // Get the results
-            if(resultTypes[i].getIdentifier().equals("xml")) {
+            if(resultTypes[i].getIdentifier().equals(resultFormat)) {
                 byte[] resultbytes = this.service.getResult(jobid, resultTypes[i].getIdentifier(), null);
 
                 if(resultbytes == null) {
@@ -133,7 +157,7 @@ public class NCBIBlastClient {
      * @throws NCBIBlastClientException : throws an exception if there is a problem trying to run a wswublast job
      */
     public Job blastSequenceInUniprot(String email, String sequence) throws NCBIBlastClientException {
-        return blastSequence(email, sequence, "uniprotkb");
+        return blastSequence(email, sequence, uniprot);
     }
 
     /**
@@ -143,7 +167,7 @@ public class NCBIBlastClient {
      * @throws NCBIBlastClientException : throws an exception if there is a problem trying to run a wswublast job
      */
     public Job blastSequenceInSwissprot(String email, String sequence) throws NCBIBlastClientException {
-        return blastSequence(email, sequence, "uniprotkb_swissprot", "uniprotkb_swissprotsv");
+        return blastSequence(email, sequence, swissprot, swissprot_sv);
     }
 
     /**
@@ -153,7 +177,7 @@ public class NCBIBlastClient {
      * @throws NCBIBlastClientException : throws an exception if there is a problem trying to run a wswublast job
      */
     public Job blastSequenceInIntact(String email, String sequence) throws NCBIBlastClientException {
-        return blastSequence(email, sequence, "intact");
+        return blastSequence(email, sequence, intact);
     }
 
     /**
@@ -166,26 +190,26 @@ public class NCBIBlastClient {
     public Job blastSequence(String email, String sequence, String ... databases) throws NCBIBlastClientException {
 
         InputParameters params = this.objFactory.createInputParameters();
-        params.setProgram("blastp");
+        params.setProgram(program);
 
         ArrayOfString d = this.objFactory.createArrayOfString();
         for (String db : databases){
            d.getString().add(db);              
         }
         params.setDatabase(d);
-        params.setAlign(this.objFactory.createInputParametersAlign(0));
-        params.setDropoff(this.objFactory.createInputParametersDropoff(0));
-        params.setExp(this.objFactory.createInputParametersExp("10"));
-        params.setFilter(this.objFactory.createInputParametersFilter("F"));
-        params.setGapalign(this.objFactory.createInputParametersGapalign(true));
-        params.setGapext(this.objFactory.createInputParametersGapext(1));
-        params.setGapopen(this.objFactory.createInputParametersGapopen(11));
-        params.setMatrix(this.objFactory.createInputParametersMatrix("BLOSUM62"));
-        params.setScores(this.objFactory.createInputParametersScores(100));
-        params.setAlignments(this.objFactory.createInputParametersAlignments(50));
+        params.setAlign(this.objFactory.createInputParametersAlign(align));
+        params.setDropoff(this.objFactory.createInputParametersDropoff(dropOff));
+        params.setExp(this.objFactory.createInputParametersExp(exp));
+        params.setFilter(this.objFactory.createInputParametersFilter(filter));
+        params.setGapalign(this.objFactory.createInputParametersGapalign(gapAlign));
+        params.setGapext(this.objFactory.createInputParametersGapext(gapExt));
+        params.setGapopen(this.objFactory.createInputParametersGapopen(gapOpen));
+        params.setMatrix(this.objFactory.createInputParametersMatrix(matrix));
+        params.setScores(this.objFactory.createInputParametersScores(scores));
+        params.setAlignments(this.objFactory.createInputParametersAlignments(alignments));
         params.setSequence(this.objFactory.createInputParametersSequence(sequence));
 
-        params.setStype("protein");
+        params.setStype(sType);
 
         Job job = null;
         job = new Job(runWUBlast(email, params), sequence);
