@@ -23,6 +23,9 @@ public class ProteinNCBIBlastService {
      * Sets up a logger for that class.
      */
     public static final Log log = LogFactory.getLog( ProteinNCBIBlastService.class );
+    private static String uniprot = "uniprot";
+    private static final String swissprot = "swissprot";
+    private static final String intact = "intact";
 
     /**
      * the wswublast client
@@ -46,33 +49,33 @@ public class ProteinNCBIBlastService {
     // Public methods
 
     public ByteArrayInputStream getResultsOfBlastOnUniprot(String sequence){
-        ByteArrayInputStream results = getResultsOfBlast(sequence, "uniprot");
+        ByteArrayInputStream results = getResultsOfBlast(sequence, uniprot);
         return results;
     }
 
     public ByteArrayInputStream getResultsOfBlastOnSwissprot(String sequence){
-        ByteArrayInputStream results = getResultsOfBlast(sequence, "swissprot");
+        ByteArrayInputStream results = getResultsOfBlast(sequence, swissprot);
         return results;
     }
 
     public ByteArrayInputStream getResultsOfBlastOnIntact(String sequence){
-        ByteArrayInputStream results = getResultsOfBlast(sequence, "intact");
+        ByteArrayInputStream results = getResultsOfBlast(sequence, intact);
         return results;
     }
 
     public File getResultsOfBlastOnUniprot(String sequence, String fileName){
-        File results = getResultsOfBlastInFile(sequence, "uniprot", fileName);
+        File results = getResultsOfBlastInFile(sequence, uniprot, fileName);
         return results;
     }
 
     public File getResultsOfBlastOnSwissprot(String sequence, String fileName){
-        File results = getResultsOfBlastInFile(sequence, "swissprot", fileName);
+        File results = getResultsOfBlastInFile(sequence, swissprot, fileName);
         
         return results;
     }
 
     public File getResultsOfBlastOnIntact(String sequence, String fileName){
-        File results = getResultsOfBlastInFile(sequence, "intact", fileName);
+        File results = getResultsOfBlastInFile(sequence, intact, fileName);
         return results;
     }
 
@@ -99,13 +102,13 @@ public class ProteinNCBIBlastService {
 
             if (databaseName != null){
 
-                if (databaseName.toLowerCase().equals("uniprot")){
+                if (databaseName.toLowerCase().equals(uniprot)){
                     job = this.bc.blastSequenceInUniprot(this.email, sequence);
                 }
-                else if (databaseName.toLowerCase().equals("swissprot")){
+                else if (databaseName.toLowerCase().equals(swissprot)){
                     job = this.bc.blastSequenceInSwissprot(this.email, sequence);
                 }
-                else if (databaseName.toLowerCase().equals("intact")){
+                else if (databaseName.toLowerCase().equals(intact)){
                     job = this.bc.blastSequenceInIntact(this.email, sequence);
                 }
                 else{
