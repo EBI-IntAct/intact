@@ -1,7 +1,5 @@
 package uk.ac.ebi.intact.curationTools.model.actionReport;
 
-import uk.ac.ebi.intact.model.ProteinImpl;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,7 +14,7 @@ import java.util.Set;
 public class IntactCrc64Report extends ActionReport {
 
     private String intactid;
-    protected Set<ProteinImpl> listOfProteins = new HashSet<ProteinImpl>();
+    protected Set<String> listOfProteins = new HashSet<String>();
     protected String querySequence;
 
     public IntactCrc64Report(ActionName name) {
@@ -33,11 +31,11 @@ public class IntactCrc64Report extends ActionReport {
         this.intactid = intactid;
     }
 
-    public Set<ProteinImpl> getIntactMatchingProteins(){
+    public Set<String> getIntactMatchingProteins(){
         return this.listOfProteins;
     }
 
-    public void addIntactMatchingProtein(ProteinImpl prot){
+    public void addIntactMatchingProtein(String prot){
         this.listOfProteins.add(prot);
     }
 

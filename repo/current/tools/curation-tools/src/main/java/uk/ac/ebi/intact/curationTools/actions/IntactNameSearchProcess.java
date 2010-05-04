@@ -94,7 +94,7 @@ public class IntactNameSearchProcess extends IdentificationActionImpl {
         Collection <String> interactorsAc = checkOrganism(interactors, organism, report, name);
 
         if (interactors.isEmpty() && interactorsAc.isEmpty()){
-            Status status = new Status(StatusLabel.FAILED, "No IntAct entries are matching the exact shortlabel " + name + "with the organism " + organism);
+            Status status = new Status(StatusLabel.FAILED, "No IntAct entries are matching the exact shortlabel " + name + " with the organism " + organism);
             report.setStatus(status);
 
             IntactReport report2 = new IntactReport(ActionName.SEARCH_intact_shortLabel);

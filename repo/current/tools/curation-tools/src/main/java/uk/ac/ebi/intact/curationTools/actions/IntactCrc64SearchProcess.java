@@ -92,7 +92,6 @@ public class IntactCrc64SearchProcess extends IdentificationActionImpl {
         }
         else if (proteins.size() == 1){
             if (proteins.get(0) != null){
-                report.addIntactMatchingProtein(proteins.get(0));
                 report.setIntactid(proteins.get(0).getAc());
 
                 Status status = new Status(StatusLabel.COMPLETED, "The Crc64 search on Intact successfully returned the IntAct entry " + report.getIntactid()  + (taxId != null ? " with organism " + taxId : ""));
@@ -101,7 +100,7 @@ public class IntactCrc64SearchProcess extends IdentificationActionImpl {
         }
         else {
             for (ProteinImpl p : proteins){
-                report.addIntactMatchingProtein(p);
+                report.addIntactMatchingProtein(p.getAc());
             }
             Status status = new Status(StatusLabel.TO_BE_REVIEWED, "The Crc64 search on IntAct returned " + proteins.size() + " matching IntAct entries."  + (taxId != null ? " with organism " + taxId : ""));
             report.setStatus(status);
