@@ -172,11 +172,11 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
                 this.listOfReports.addAll(this.listOfActions.get(1).getListOfActionReports());
                 IntactCrc64Report report2 = (IntactCrc64Report) this.listOfReports.get(this.listOfReports.size() - 1);
 
-                if (report2.getIntactid() == null && report2.getIntactMatchingProteins().isEmpty()){
+                if (report2.getIntactid() == null && report2.getIntactMatchingProteins().isEmpty() && isBasicBlastRequired){
                     processLastAction(context, null);
                 }
             }
-            else {
+            else if (isBasicBlastRequired) {
                 processLastAction(context, null);
             }
         }
@@ -198,6 +198,9 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
 
                 uniprot = this.listOfActions.get(2).runAction(blastContext);
                 this.listOfReports.addAll(this.listOfActions.get(2).getListOfActionReports());
+
+                BlastReport blastReport = (BlastReport) this.listOfReports.get(this.listOfReports.size() - 1);
+                blastReport.addPossibleAccession(tremblEntry.getPrimaryAc());
             }
         }
         return uniprot;
