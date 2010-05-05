@@ -146,6 +146,9 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
                 }
                 uniprot = this.listOfActions.get(1).runAction(blastContext);
                 this.listOfReports.addAll(this.listOfActions.get(1).getListOfActionReports());
+
+                BlastReport blastReport = (BlastReport) this.listOfReports.get(this.listOfReports.size() - 1);
+                blastReport.addPossibleAccession(tremblEntry.getPrimaryAc());
             }
         }
         return uniprot;
