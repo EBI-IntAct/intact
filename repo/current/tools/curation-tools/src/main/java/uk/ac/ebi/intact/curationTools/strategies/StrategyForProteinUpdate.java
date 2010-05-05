@@ -114,6 +114,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
                 ActionReport report = new ActionReport(ActionName.update_Checking);
                 Status status = new Status(StatusLabel.FAILED, "The sequence of the protein is null and there are no cross references with qualifier 'identity'.");
                 report.setStatus(status);
+                result.addActionReport(report);
             }
             else if (sequence != null) {
 
