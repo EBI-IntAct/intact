@@ -236,7 +236,7 @@ public class SwissprotRemappingProcess extends IdentificationActionImpl {
 
     public String runAction(IdentificationContext context) throws ActionProcessingException {
         this.listOfReports.clear();
-        
+
         if (!(context instanceof BlastContext)){
             log.error("The SwissprotRemappingProcess needs a BlastContext instance and the current context is a " + context.getClass().getSimpleName());
         }
@@ -280,8 +280,10 @@ public class SwissprotRemappingProcess extends IdentificationActionImpl {
 
             BlastReport lastReport = (BlastReport) this.listOfReports.get(this.listOfReports.size() - 1);
             if (lastReport.getBlastMatchingProteins().size() == 0){
-                Status status = new Status(StatusLabel.FAILED, "The blast on Swissprot didn't return any proteins matching the sequence with " + i + "% identity.");
-                lastReport.setStatus(status);
+                if (lastReport.getStatus() == null){
+                    Status status = new Status(StatusLabel.FAILED, "The blast on Swissprot didn't return any proteins matching the sequence with " + i + "% identity.");
+                    lastReport.setStatus(status);
+                }
 
                 BlastReport report = new BlastReport(ActionName.BLAST_swissprot);
                 this.listOfReports.add(report);
@@ -290,6 +292,11 @@ public class SwissprotRemappingProcess extends IdentificationActionImpl {
                 blastProteins = this.blastFilter.getMatchingEntries();
 
                 processBlast(blastProteins, report, false);
+
+                if (report.getBlastMatchingProteins().isEmpty() && report.getStatus() == null){
+                    Status status = new Status(StatusLabel.FAILED, "The blast on Swissprot didn't return any proteins matching the sequence with more than " + minimumIdentityThreshold + "% identity.");
+                    report.setStatus(status);
+                }
             }
         }
         return null;
