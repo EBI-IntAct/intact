@@ -96,4 +96,31 @@ public class StrategyForProteinUpdateTest {
         }
     }
 
+    @Test
+    public void test_Sequence_Drome_WithIdentifier(){
+        String sequence = "MSGERRRTTTHSIEVPSQLTAQHNSRKRPPSDHQDYGNYLETCRAAEILSSMKLQSPHGSMADKCSSPGSSSSASWSSGSPSPPLSDDGHAHHSPHNIMSPHDADNARTRTASVSTSDEGIVIDYKEERKKKSKKFRCVYRGCVGVVDDLNGVVRHIRKTHLGKDSHRSADDDGNEEDFYLEDADDDVEQVKPTLASEPTLSHRDMARPPHEDPEYQKQIVGNFKQGRGGSHYNHLAQSHGRTISGSNIPSTHQQQLQNNNTSCIPTSHLAHHNYTCPAATATVGSYSSTGTGSVAASSSASPIGKHARSSSSRPTHSVAPYPSPTYVQQQQHHQHTHHHNYAGSSGSSNSSSSSSPVIHSNSSANNMLQQLSQQNVTVTAHHSQQQQQLQQQQHHQQQQQHSHQQQQQHLLSSVTITPNFHPAQQQHHHQPMRGHQQQHPQTTAGNMVAQNNSNNHSNGSNPLQQQQHMAQQVAVKHTPHSPGKRTRGENKKCRKVYGMEKRDQWCTQCRWKKACSRFGD";
+        BioSource organism = createBiosource("drome", "Drosophila melanogaster", "7227");
+
+        UpdateContext context = new UpdateContext();
+        context.setSequence(sequence);
+        context.setOrganism(organism);
+
+        this.strategy.setBasicBlastProcessRequired(false);
+
+        IdentificationResults result = null;
+        try {
+            result = this.strategy.identifyProtein(context);
+
+            Assert.assertNotNull(result);
+
+            for (ActionReport r : result.getListOfActions()){
+                System.out.println("name " + r.getName().toString() + "Label : " + r.getStatus().getLabel().toString() + ": Description : " + r.getStatus().getDescription());
+            }
+
+            Assert.assertNull(result.getUniprotId());
+        } catch (StrategyException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
 }

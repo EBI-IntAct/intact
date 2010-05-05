@@ -3,9 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="58dbb829-798e-40a5-8b3f-fb73ea218b93" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdateTest.java" afterPath="$PROJECT_DIR$/src/test/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdateTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithSequence.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithSequence.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/SwissprotRemappingProcess.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/SwissprotRemappingProcess.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/curationTools-master.iws" afterPath="$PROJECT_DIR$/curationTools-master.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithIdentifier.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithIdentifier.java" />
     </list>
     <ignored path="curationTools-master.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -26,6 +25,21 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
+    <line_breakpoints>
+      <breakpoint url="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java" line="121" class="uk.ac.ebi.intact.curationTools.strategies.StrategyForProteinUpdate" package="uk.ac.ebi.intact.curationTools.strategies">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="false" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+    </line_breakpoints>
     <breakpoint_any>
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -88,7 +102,16 @@
       <file leaf-file-name="StrategyWithSequence.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithSequence.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="52" column="0" selection-start="1860" selection-end="1860" vertical-scroll-proportion="0.0">
+            <state line="198" column="0" selection-start="8508" selection-end="8508" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SwissprotRemappingProcess.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/SwissprotRemappingProcess.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="297" column="26" selection-start="15419" selection-end="15419" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -97,7 +120,7 @@
       <file leaf-file-name="StrategyForProteinUpdateTest.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdateTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="80" column="56" selection-start="10195" selection-end="10195" vertical-scroll-proportion="0.53333336">
+            <state line="99" column="6" selection-start="10849" selection-end="10849" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -106,7 +129,7 @@
       <file leaf-file-name="StrategyForProteinUpdate.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="47" column="0" selection-start="1855" selection-end="1855" vertical-scroll-proportion="0.0">
+            <state line="121" column="0" selection-start="5224" selection-end="5224" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -122,7 +145,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/IdentificationActionImpl.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/PICRSearchProcessWithSequence.java" />
         <option value="$PROJECT_DIR$/src/test/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithSequenceTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/IntactCrc64Report.java" />
@@ -137,6 +159,7 @@
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/BasicBlastProcess.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithIdentifier.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithSequence.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/SwissprotRemappingProcess.java" />
         <option value="$PROJECT_DIR$/src/test/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdateTest.java" />
       </list>
     </option>
@@ -396,35 +419,7 @@
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
   </component>
-  <component name="RunManager" selected="JUnit.StrategyForProteinUpdateTest.test_Sequence_Human_WithIdentifier">
-    <configuration default="false" name="StrategyWithNameTest.test_ProteinSearch_Successfull" type="JUnit" factoryName="JUnit" temporary="true">
-      <extension name="coverage" enabled="false" merge="false">
-        <pattern>
-          <option name="PATTERN" value="uk.ac.ebi.intact.curationTools.strategies.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <extension name="snapshooter" />
-      <module name="curationTools-master" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="uk.ac.ebi.intact.curationTools.strategies" />
-      <option name="MAIN_CLASS_NAME" value="uk.ac.ebi.intact.curationTools.strategies.StrategyWithNameTest" />
-      <option name="METHOD_NAME" value="test_ProteinSearch_Successfull" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
+  <component name="RunManager" selected="JUnit.StrategyForProteinUpdateTest.test_Sequence_Drome_WithIdentifier">
     <configuration default="false" name="StrategyForProteinUpdateTest.test_Sequence_Mouse" type="JUnit" factoryName="JUnit" temporary="true">
       <extension name="coverage" enabled="false" merge="false">
         <pattern>
@@ -541,6 +536,40 @@
       <envs />
       <RunnerSettings RunnerId="Debug">
         <option name="DEBUG_PORT" value="54188" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="StrategyForProteinUpdateTest.test_Sequence_Drome_WithIdentifier" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false">
+        <pattern>
+          <option name="PATTERN" value="uk.ac.ebi.intact.curationTools.strategies.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <extension name="snapshooter" />
+      <module name="curationTools-master" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="uk.ac.ebi.intact.curationTools.strategies" />
+      <option name="MAIN_CLASS_NAME" value="uk.ac.ebi.intact.curationTools.strategies.StrategyForProteinUpdateTest" />
+      <option name="METHOD_NAME" value="test_Sequence_Drome_WithIdentifier" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="35895" />
         <option name="TRANSPORT" value="0" />
         <option name="LOCAL" value="true" />
       </RunnerSettings>
@@ -676,11 +705,11 @@
       </method>
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="JUnit.StrategyWithNameTest.test_ProteinSearch_Successfull" />
-      <item index="1" class="java.lang.String" itemvalue="JUnit.StrategyForProteinUpdateTest.test_Sequence_Mouse" />
-      <item index="2" class="java.lang.String" itemvalue="JUnit.StrategyWithSequenceTest" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.StrategyForProteinUpdateTest.test_Sequence_Mouse_BasicBlastProcessSuccessful" />
-      <item index="4" class="java.lang.String" itemvalue="JUnit.StrategyForProteinUpdateTest.test_Sequence_Human_WithIdentifier" />
+      <item index="0" class="java.lang.String" itemvalue="JUnit.StrategyForProteinUpdateTest.test_Sequence_Mouse" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.StrategyWithSequenceTest" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.StrategyForProteinUpdateTest.test_Sequence_Mouse_BasicBlastProcessSuccessful" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.StrategyForProteinUpdateTest.test_Sequence_Human_WithIdentifier" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.StrategyForProteinUpdateTest.test_Sequence_Drome_WithIdentifier" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -789,7 +818,7 @@
     <option name="ENABLE_BACKGROUND_PROCESSES" value="false" />
     <option name="CHANGED_ON_SERVER_INTERVAL" value="60" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed some bugs in the StrategyWithSequence" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed some bugs in the StrategyWithSequence and StrategyWithIdentifier&#10;&#10;Added a test in StrategyForProteinUpdateTest" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -807,6 +836,7 @@
     <MESSAGE value="Tested the classes StrategyWithName&#10;&#10;Fixed some bugs" />
     <MESSAGE value="Tested the classes StrategyForProteinUpdate&#10;&#10;Fixed some bugs" />
     <MESSAGE value="Fixed some bugs in the StrategyWithSequence" />
+    <MESSAGE value="Fixed some bugs in the StrategyWithSequence and StrategyWithIdentifier&#10;&#10;Added a test in StrategyForProteinUpdateTest" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -888,30 +918,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/SwissprotRemappingProcess.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="13" selection-start="1283" selection-end="1283" vertical-scroll-proportion="-4.323615">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithIdentifier.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="149" column="16" selection-start="6186" selection-end="6358" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithSequence.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="0" selection-start="1860" selection-end="1860" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="0" selection-start="1855" selection-end="1855" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -923,9 +932,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="121" column="0" selection-start="5224" selection-end="5224" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithSequence.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="198" column="0" selection-start="8508" selection-end="8508" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/SwissprotRemappingProcess.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="297" column="26" selection-start="15419" selection-end="15419" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdateTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="56" selection-start="10195" selection-end="10195" vertical-scroll-proportion="0.53333336">
+        <state line="99" column="6" selection-start="10849" selection-end="10849" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
