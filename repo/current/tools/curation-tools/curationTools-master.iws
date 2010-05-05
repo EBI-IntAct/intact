@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="58dbb829-798e-40a5-8b3f-fb73ea218b93" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdateTest.java" afterPath="$PROJECT_DIR$/src/test/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdateTest.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/SwissprotRemappingProcess.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/SwissprotRemappingProcess.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/curationTools-master.iws" afterPath="$PROJECT_DIR$/curationTools-master.iws" />
     </list>
@@ -25,21 +24,6 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <line_breakpoints>
-      <breakpoint url="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java" line="121" class="uk.ac.ebi.intact.curationTools.strategies.StrategyForProteinUpdate" package="uk.ac.ebi.intact.curationTools.strategies">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="false" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-    </line_breakpoints>
     <breakpoint_any>
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -81,43 +65,7 @@
   <component name="FileColors" enabled="true" enabledForTabs="true" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="BasicBlastProcess.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/BasicBlastProcess.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="13" selection-start="1213" selection-end="1213" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="StrategyWithIdentifier.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithIdentifier.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="149" column="16" selection-start="6186" selection-end="6358" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="StrategyWithSequence.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithSequence.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="198" column="0" selection-start="8508" selection-end="8508" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SwissprotRemappingProcess.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/SwissprotRemappingProcess.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="297" column="26" selection-start="15419" selection-end="15419" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="StrategyForProteinUpdateTest.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="StrategyForProteinUpdateTest.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdateTest.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="99" column="6" selection-start="10849" selection-end="10849" vertical-scroll-proportion="0.0">
@@ -126,10 +74,28 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="StrategyForProteinUpdate.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="StrategyForProteinUpdate.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="121" column="0" selection-start="5224" selection-end="5224" vertical-scroll-proportion="0.0">
+            <state line="116" column="45" selection-start="5173" selection-end="5173" vertical-scroll-proportion="2.9066148">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="updateReportTest.txt" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../../updateReportTest.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="725" column="54" selection-start="95041" selection-end="95041" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SwissprotRemappingProcess.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/SwissprotRemappingProcess.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="287" column="89" selection-start="14851" selection-end="14851" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -154,13 +120,13 @@
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/UniprotNameSearchProcess.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/IntactNameSearchProcess.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/UpdateContext.java" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/exception/ActionProcessingException.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/BasicBlastProcess.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithIdentifier.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithSequence.java" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/SwissprotRemappingProcess.java" />
         <option value="$PROJECT_DIR$/src/test/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdateTest.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/SwissprotRemappingProcess.java" />
       </list>
     </option>
   </component>
@@ -409,6 +375,7 @@
     <property name="MemberChooser.sorted" value="false" />
     <property name="options.lastSelected" value="preferences.sourceCode.General" />
     <property name="recentsLimit" value="5" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../.." />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
@@ -818,7 +785,7 @@
     <option name="ENABLE_BACKGROUND_PROCESSES" value="false" />
     <option name="CHANGED_ON_SERVER_INTERVAL" value="60" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed some bugs in the StrategyWithSequence and StrategyWithIdentifier&#10;&#10;Added a test in StrategyForProteinUpdateTest" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed some bugs in the StrategyForProteinUpdate" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -837,6 +804,8 @@
     <MESSAGE value="Tested the classes StrategyForProteinUpdate&#10;&#10;Fixed some bugs" />
     <MESSAGE value="Fixed some bugs in the StrategyWithSequence" />
     <MESSAGE value="Fixed some bugs in the StrategyWithSequence and StrategyWithIdentifier&#10;&#10;Added a test in StrategyForProteinUpdateTest" />
+    <MESSAGE value="Fixed some bugs in the SwissprotRemappingProcess&#10;&#10;Added a test in StrategyForProteinUpdateTest" />
+    <MESSAGE value="Fixed some bugs in the StrategyForProteinUpdate" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -846,13 +815,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/ActionReport.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="13" selection-start="377" selection-end="377" vertical-scroll-proportion="0.021994134">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/IntactCrc64Report.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="13" column="13" selection-start="253" selection-end="253" vertical-scroll-proportion="0.10128388">
@@ -932,13 +894,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="121" column="0" selection-start="5224" selection-end="5224" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithSequence.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="198" column="0" selection-start="8508" selection-end="8508" vertical-scroll-proportion="0.0">
@@ -946,16 +901,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/SwissprotRemappingProcess.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdateTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="297" column="26" selection-start="15419" selection-end="15419" vertical-scroll-proportion="0.0">
+        <state line="99" column="6" selection-start="10849" selection-end="10849" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdateTest.java">
+    <entry file="file://$PROJECT_DIR$/../../../updateReportTest.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="99" column="6" selection-start="10849" selection-end="10849" vertical-scroll-proportion="0.0">
+        <state line="725" column="54" selection-start="95041" selection-end="95041" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/SwissprotRemappingProcess.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="287" column="89" selection-start="14851" selection-end="14851" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="116" column="45" selection-start="5173" selection-end="5173" vertical-scroll-proportion="2.9066148">
           <folding />
         </state>
       </provider>

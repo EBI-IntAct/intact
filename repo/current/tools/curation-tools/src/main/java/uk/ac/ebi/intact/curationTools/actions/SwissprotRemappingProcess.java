@@ -285,7 +285,7 @@ public class SwissprotRemappingProcess extends IdentificationActionImpl {
                     lastReport.setStatus(status);
                 }
 
-                BlastReport report = new BlastReport(ActionName.BLAST_swissprot);
+                BlastReport report = new BlastReport(ActionName.BLAST_Swissprot_Remapping);
                 this.listOfReports.add(report);
                 report.setQuerySequence(this.context.getSequence());
 
