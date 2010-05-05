@@ -63,7 +63,7 @@
     <orderEntry type="library" exported="" name="Maven: dom4j:dom4j:1.6" level="project" />
     <orderEntry type="library" exported="" name="Maven: antlr:antlr:2.7.2" level="project" />
     <orderEntry type="library" exported="" name="Maven: cglib:cglib:2.1_3" level="project" />
-    <orderEntry type="library" exported="" name="Maven: asm:asm:1.5.3" level="project" />
+    <orderEntry type="library" exported="" name="Maven: asm:asm:2.2.3" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.hibernate:hibernate-entitymanager:3.3.2.GA" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.hibernate:hibernate-annotations:3.3.1.GA" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.hibernate:hibernate-commons-annotations:3.0.0.ga" level="project" />
@@ -101,6 +101,11 @@
     <orderEntry type="library" exported="" name="Maven: soap:soap:2.3.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: wsdl4j:wsdl4j:1.6.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: commons-discovery:commons-discovery:0.4" level="project" />
+    <orderEntry type="library" exported="" name="Maven: uk.ac.ebi.intact.dbupdate:intact-proteins-update:2.1.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" name="Maven: uk.ac.ebi.intact.dbupdate:intact-biosource-update:2.1.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.biojava:biojava:1.5" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.biojava.utils:bytecode:1.5" level="project" />
+    <orderEntry type="library" exported="" name="Maven: commons-cli:commons-cli:1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.easymock:easymockclassextension:2.2.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.easymock:easymock:2.2" level="project" />
   </component>
