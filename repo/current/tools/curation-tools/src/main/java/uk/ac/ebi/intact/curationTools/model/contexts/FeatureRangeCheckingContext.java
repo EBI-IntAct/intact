@@ -18,9 +18,10 @@ public class FeatureRangeCheckingContext extends UpdateContext {
     private Set<BlastProtein> resultsOfSwissprotRemapping = new HashSet<BlastProtein> ();
     private String tremblAccession;
 
-    public FeatureRangeCheckingContext(IdentificationContext context) {
+    public FeatureRangeCheckingContext(UpdateContext context) {
         super(context);
         this.tremblAccession = null;
+        setIntactAccession(context.getIntactAccession());
     }
 
     public Set<BlastProtein> getResultsOfSwissprotRemapping() {

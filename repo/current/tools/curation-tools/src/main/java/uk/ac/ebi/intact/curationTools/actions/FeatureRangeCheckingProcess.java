@@ -129,27 +129,48 @@ public class FeatureRangeCheckingProcess extends IdentificationActionImpl{
             DaoFactory factory = this.intactContext.getDaoFactory();
             List<Component> components = factory.getComponentDao().getByInteractorAc(processContext.getIntactAccession());
 
-            for (Component component : components){
-                Collection<Feature> features = component.getBindingDomains();
+            if (components.isEmpty()){
+                report.getBlastMatchingProteins().addAll(processContext.getResultsOfSwissprotRemapping());
+            }
+            else {
+                boolean hasAtLeastOneFeature = false;
+                boolean hasRangeConflict = false;
+                for (Component component : components){
+                    Collection<Feature> features = component.getBindingDomains();
 
-                for (Feature feature : features){
-                    Collection<Range> ranges = feature.getRanges();
+                    if (!features.isEmpty()){
+                        hasAtLeastOneFeature = true;
 
-                    for (Range range : ranges){
-                        if (range.getToCvFuzzyType() != null && !range.getToCvFuzzyType().isCTerminal() && !range.getToCvFuzzyType().isNTerminal()
-                                && !range.getToCvFuzzyType().isUndetermined()) {
-                            for (BlastProtein protein : processContext.getResultsOfSwissprotRemapping()){
-                                if (!checkIfBlastProteinIsTremblEntry(protein, processContext.getTremblAccession())){
-                                    if (!checkRangeValidWithNewSequence(range, protein)){
-                                        report.addWarning("One of the ranges of the feature "+feature.getAc()+" is in conflict with the sequence of the Swissprot entry "+protein.getAccession()+". We will remove this protein from the matching Swissprot entries.");
+                        for (Feature feature : features){
+                            Collection<Range> ranges = feature.getRanges();
+
+                            for (Range range : ranges){
+                                if (range.getToCvFuzzyType() != null && !range.getToCvFuzzyType().isCTerminal() && !range.getToCvFuzzyType().isNTerminal()
+                                        && !range.getToCvFuzzyType().isUndetermined()) {
+                                    for (BlastProtein protein : processContext.getResultsOfSwissprotRemapping()){
+                                        if (!checkIfBlastProteinIsTremblEntry(protein, processContext.getTremblAccession())){
+                                            if (!checkRangeValidWithNewSequence(range, protein)){
+                                                hasRangeConflict = true;
+                                                report.addWarning("One of the ranges of the feature "+feature.getAc()+" is in conflict with the sequence of the Swissprot entry "+protein.getAccession()+". We will remove this protein from the matching Swissprot entries.");
+                                            }
+                                            else{
+                                                report.addBlastMatchingProtein(protein);
+                                            }
+                                        }
                                     }
-                                    else{
-                                        report.addBlastMatchingProtein(protein);
-                                    }
+
                                 }
                             }
-
                         }
+                    }
+                }
+
+                if (!hasAtLeastOneFeature){
+                    report.getBlastMatchingProteins().addAll(processContext.getResultsOfSwissprotRemapping());
+                }
+                else {
+                    if (!hasRangeConflict){
+                        report.getBlastMatchingProteins().addAll(processContext.getResultsOfSwissprotRemapping());
                     }
                 }
             }
@@ -169,7 +190,7 @@ public class FeatureRangeCheckingProcess extends IdentificationActionImpl{
             else {
                 if (report.getBlastMatchingProteins().size() == 1){
                     BlastProtein swissprot = report.getBlastMatchingProteins().iterator().next();
-                    Status status = new Status(StatusLabel.COMPLETED, "We don't have any conflicts between the sequence of the Swissprot entry " + swissprot.getAccession() + " possible Swissprot proteins and the feature ranges of the protein " + processContext.getIntactAccession());
+                    Status status = new Status(StatusLabel.COMPLETED, "We don't have any conflicts between the sequence of the Swissprot entry " + swissprot.getAccession() + " and the feature ranges of the protein " + processContext.getIntactAccession());
                     report.setStatus(status);
                     return swissprot.getAccession();
                 }
