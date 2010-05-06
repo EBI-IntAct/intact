@@ -112,16 +112,14 @@ public class ProteinUpdateManager {
 
     private boolean isIdentityCrossReference(CvXrefQualifier qualifier){
         if (qualifier.getIdentifier() != null){
-            if (qualifier.getAc() != null){
-                if (qualifier.getAc().equals(CvXrefQualifier.IDENTITY_MI_REF)){
-                    return true;
-                }
-
+            if (qualifier.getIdentifier().equals(CvXrefQualifier.IDENTITY_MI_REF)){
+                return true;
             }
-            else {
-                if (qualifier.getShortLabel().equals(CvXrefQualifier.IDENTITY)){
-                    return true;
-                }
+
+        }
+        else {
+            if (qualifier.getShortLabel().equals(CvXrefQualifier.IDENTITY)){
+                return true;
             }
         }
         return false;
@@ -129,11 +127,13 @@ public class ProteinUpdateManager {
 
     private void addIdentityCrossreferencesToContext(Collection<InteractorXref> refs, UpdateContext context){
         for (InteractorXref ref : refs){
-            if (ref.getCvXrefQualifier() != null){
-                CvXrefQualifier qualifier = ref.getCvXrefQualifier();
+            if (ref.getPrimaryId() != null){
+                if (ref.getCvXrefQualifier() != null){
+                    CvXrefQualifier qualifier = ref.getCvXrefQualifier();
 
-                if (isIdentityCrossReference(qualifier)){
-                    context.addIdentifier(qualifier.getIdentifier());
+                    if (isIdentityCrossReference(qualifier)){
+                        context.addIdentifier(ref.getPrimaryId());
+                    }
                 }
             }
         }

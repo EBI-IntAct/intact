@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="58dbb829-798e-40a5-8b3f-fb73ea218b93" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/FeatureRangeCheckingContext.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/FeatureRangeCheckingContext.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/FeatureRangeCheckingProcess.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/FeatureRangeCheckingProcess.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/curationTools-master.iws" afterPath="$PROJECT_DIR$/curationTools-master.iws" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java" />
     </list>
     <ignored path="curationTools-master.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -66,15 +66,6 @@
   <component name="FileColors" enabled="true" enabledForTabs="true" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="updateReportTest.txt" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../updateReportTest.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="1445" column="93" selection-start="180261" selection-end="180267" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="UpdateContext.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/UpdateContext.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -84,28 +75,37 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="updateReportTest.txt" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../../updateReportTest.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="1393" column="24" selection-start="146001" selection-end="146001" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="StrategyForProteinUpdate.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="59" column="20" selection-start="2401" selection-end="2401" vertical-scroll-proportion="0.0">
+            <state line="206" column="13" selection-start="8093" selection-end="10031" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FeatureRangeCheckingProcess.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="FeatureRangeCheckingProcess.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/FeatureRangeCheckingProcess.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="192" column="176" selection-start="9480" selection-end="9480" vertical-scroll-proportion="0.6911544">
+            <state line="192" column="176" selection-start="9480" selection-end="9480" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ProteinUpdateManager.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="ProteinUpdateManager.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="64" column="55" selection-start="2532" selection-end="2532" vertical-scroll-proportion="0.0">
+            <state line="114" column="41" selection-start="4751" selection-end="4751" vertical-scroll-proportion="0.43628186">
               <folding />
             </state>
           </provider>
@@ -130,13 +130,13 @@
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/ActionName.java" />
         <option value="$PROJECT_DIR$/src/test/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdateTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/UpdateContext.java" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java" />
-        <option value="$PROJECT_DIR$/../../../updateReportTest.txt" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithSequence.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithIdentifier.java" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/FeatureRangeCheckingContext.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/FeatureRangeCheckingProcess.java" />
+        <option value="$PROJECT_DIR$/../../../updateReportTest.txt" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java" />
       </list>
     </option>
   </component>
@@ -824,6 +824,9 @@
     </configuration>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="StructuralSearchPlugin">
+    <searchConfiguration name="user defined" text="BLAST_Swissprot_Remapping : TO_BE_REVIEWED" recursive="true" caseInsensitive="true" history="1" />
+  </component>
   <component name="SvnConfiguration" maxAnnotateRevisions="500">
     <option name="USER" value="" />
     <option name="PASSWORD" value="" />
@@ -890,24 +893,24 @@
     <frame x="0" y="25" width="1440" height="850" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32921812" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3287483" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.35665295" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32784638" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965517" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24115524" sideWeight="0.66255146" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24115524" sideWeight="0.6611797" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22633745" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3287483" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32784638" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -925,7 +928,7 @@
     <option name="ENABLE_BACKGROUND_PROCESSES" value="false" />
     <option name="CHANGED_ON_SERVER_INTERVAL" value="60" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added a new action FeatureRangeChackingProcess as well as a new Context to be able to check that a swissprot remapping process is not in conflict with a feature range.&#10;&#10;Implemented the ProteinUpdateManager" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed a bug in FeatureRangeCheckingProcess and FeatureRangeContext" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -949,6 +952,7 @@
     <MESSAGE value="Fixed some bugs in the SwissprotRemappingProcess" />
     <MESSAGE value="Added a new Exception ProteinUpdateException.&#10;&#10;Implemented the ProteinUpdateManager" />
     <MESSAGE value="Added a new action FeatureRangeChackingProcess as well as a new Context to be able to check that a swissprot remapping process is not in conflict with a feature range.&#10;&#10;Implemented the ProteinUpdateManager" />
+    <MESSAGE value="Fixed a bug in FeatureRangeCheckingProcess and FeatureRangeContext" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -958,11 +962,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/IdentificationStrategyImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="120" column="9" selection-start="4561" selection-end="4561" vertical-scroll-proportion="0.8181818" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/SwissprotRemappingProcess.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="262" column="16" selection-start="13605" selection-end="13657" vertical-scroll-proportion="-0.24646464" />
@@ -1008,9 +1007,18 @@
         <state line="151" column="0" selection-start="6180" selection-end="6180" vertical-scroll-proportion="0.925" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/FeatureRangeCheckingContext.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="64" column="55" selection-start="2532" selection-end="2532" vertical-scroll-proportion="0.0" />
+        <state line="23" column="55" selection-start="672" selection-end="672" vertical-scroll-proportion="0.4398827">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/FeatureRangeCheckingProcess.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="192" column="176" selection-start="9480" selection-end="9480" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/UpdateContext.java">
@@ -1020,30 +1028,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/FeatureRangeCheckingContext.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-core/2.2.1-SNAPSHOT/intact-core-2.2.1-SNAPSHOT-sources.jar!/uk/ac/ebi/intact/model/IntactObjectImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="55" selection-start="672" selection-end="672" vertical-scroll-proportion="0.4398827">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../updateReportTest.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1445" column="93" selection-start="180261" selection-end="180267" vertical-scroll-proportion="0.0">
+        <state line="43" column="18" selection-start="1353" selection-end="1353" vertical-scroll-proportion="0.3328446">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="59" column="20" selection-start="2401" selection-end="2401" vertical-scroll-proportion="0.0">
+        <state line="206" column="13" selection-start="8093" selection-end="10031" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/FeatureRangeCheckingProcess.java">
+    <entry file="file://$PROJECT_DIR$/../../../updateReportTest.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="192" column="176" selection-start="9480" selection-end="9480" vertical-scroll-proportion="0.6911544">
+        <state line="1393" column="24" selection-start="146001" selection-end="146001" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="114" column="41" selection-start="4751" selection-end="4751" vertical-scroll-proportion="0.43628186">
           <folding />
         </state>
       </provider>

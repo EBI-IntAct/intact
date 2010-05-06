@@ -209,6 +209,8 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
                 String uniprot = this.listOfActions.get(1).runAction(context);
                 result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
                 processIsoforms(uniprot, result);
+
+                runThirdAction((UpdateContext) context, result);
             }
         } catch (ActionProcessingException e) {
             throw  new StrategyException("An error occured while trying to update the protein using the sequence " + context.getSequence(), e);
