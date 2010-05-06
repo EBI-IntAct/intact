@@ -144,8 +144,8 @@ public class ProteinUpdateManager {
             if (a.getCvTopic() != null){
                 CvTopic topic = a.getCvTopic();
 
-                if (topic.getAc() != null){
-                    if (topic.getAc().equals("IA:0280")){
+                if (topic.getIdentifier() != null){
+                    if (topic.getIdentifier().equals("IA:0280")){
                         return a;
                     }
                 }
