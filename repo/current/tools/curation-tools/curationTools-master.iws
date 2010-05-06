@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="58dbb829-798e-40a5-8b3f-fb73ea218b93" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/curationTools-master.iws" afterPath="$PROJECT_DIR$/curationTools-master.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java" />
     </list>
     <ignored path="curationTools-master.iws" />
@@ -87,7 +86,7 @@
       <file leaf-file-name="StrategyForProteinUpdate.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="206" column="13" selection-start="8093" selection-end="10031" vertical-scroll-proportion="0.0">
+            <state line="207" column="30" selection-start="10049" selection-end="10049" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -105,7 +104,7 @@
       <file leaf-file-name="ProteinUpdateManager.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="114" column="41" selection-start="4751" selection-end="4751" vertical-scroll-proportion="0.43628186">
+            <state line="147" column="45" selection-start="5872" selection-end="5872" vertical-scroll-proportion="0.15442279">
               <folding />
             </state>
           </provider>
@@ -135,8 +134,8 @@
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/FeatureRangeCheckingContext.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/FeatureRangeCheckingProcess.java" />
         <option value="$PROJECT_DIR$/../../../updateReportTest.txt" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java" />
       </list>
     </option>
   </component>
@@ -928,7 +927,7 @@
     <option name="ENABLE_BACKGROUND_PROCESSES" value="false" />
     <option name="CHANGED_ON_SERVER_INTERVAL" value="60" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed a bug in FeatureRangeCheckingProcess and FeatureRangeContext" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed a bug in StrategyForProteinUpdate and ProteinUpdateManager" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -953,6 +952,7 @@
     <MESSAGE value="Added a new Exception ProteinUpdateException.&#10;&#10;Implemented the ProteinUpdateManager" />
     <MESSAGE value="Added a new action FeatureRangeChackingProcess as well as a new Context to be able to check that a swissprot remapping process is not in conflict with a feature range.&#10;&#10;Implemented the ProteinUpdateManager" />
     <MESSAGE value="Fixed a bug in FeatureRangeCheckingProcess and FeatureRangeContext" />
+    <MESSAGE value="Fixed a bug in StrategyForProteinUpdate and ProteinUpdateManager" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -1035,13 +1035,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="206" column="13" selection-start="8093" selection-end="10031" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../../updateReportTest.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1393" column="24" selection-start="146001" selection-end="146001" vertical-scroll-proportion="0.0">
@@ -1049,9 +1042,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="207" column="30" selection-start="10049" selection-end="10049" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="114" column="41" selection-start="4751" selection-end="4751" vertical-scroll-proportion="0.43628186">
+        <state line="147" column="45" selection-start="5872" selection-end="5872" vertical-scroll-proportion="0.15442279">
           <folding />
         </state>
       </provider>
