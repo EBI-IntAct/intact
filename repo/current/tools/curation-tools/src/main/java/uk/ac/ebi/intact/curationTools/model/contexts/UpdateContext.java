@@ -16,25 +16,42 @@ import java.util.Set;
 public class UpdateContext extends IdentificationContext{
 
     private Set<String> identifiers = new HashSet<String>();
+    private String intactAccession;
 
     public UpdateContext(){
         super();
+        this.intactAccession = null;
+    }
+
+    public UpdateContext(IdentificationContext context){
+        super(context);
+        this.intactAccession = null;
     }
 
     public Set<String> getIdentifiers() {
         return identifiers;
     }
 
+    public String getIntactAccession() {
+        return intactAccession;
+    }
+
+    public void setIntactAccession(String intactAccession) {
+        this.intactAccession = intactAccession;
+    }
+
     public UpdateContext(String sequence, String identifier, BioSource organism, String gene_name, String protein_name) {
         super(sequence, identifier, organism, gene_name, protein_name);
         setIdentifier(null);
         this.identifiers.add(identifier);
+        this.intactAccession = null;
     }
 
     public UpdateContext(String sequence, String identifier, BioSource organism, String name) {
         super(sequence, identifier, organism, name);
         setIdentifier(null);
         this.identifiers.add(identifier);
+        this.intactAccession = null;
     }
 
     @Override

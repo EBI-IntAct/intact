@@ -195,8 +195,11 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
                 else {
                     throw new ActionProcessingException("We couldn't find any Uniprot entries which match this accession number " + uniprot);
                 }
+                String uniprot2 = this.listOfActions.get(2).runAction(blastContext);
 
-                uniprot = this.listOfActions.get(2).runAction(blastContext);
+                if (uniprot2 != null){
+                    uniprot = uniprot2;
+                }
                 this.listOfReports.addAll(this.listOfActions.get(2).getListOfActionReports());
 
                 BlastReport blastReport = (BlastReport) this.listOfReports.get(this.listOfReports.size() - 1);

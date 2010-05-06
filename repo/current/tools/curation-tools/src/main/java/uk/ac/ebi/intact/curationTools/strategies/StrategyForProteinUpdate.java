@@ -3,12 +3,15 @@ package uk.ac.ebi.intact.curationTools.strategies;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
+import uk.ac.ebi.intact.core.context.IntactContext;
+import uk.ac.ebi.intact.curationTools.actions.FeatureRangeCheckingProcess;
 import uk.ac.ebi.intact.curationTools.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionName;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.Status;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
+import uk.ac.ebi.intact.curationTools.model.contexts.FeatureRangeCheckingContext;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.curationTools.model.contexts.UpdateContext;
 import uk.ac.ebi.intact.curationTools.model.results.IdentificationResults;
@@ -37,7 +40,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
         super();
     }
 
-     public boolean isBasicBlastProcessRequired() {
+    public boolean isBasicBlastProcessRequired() {
         return isBasicBlastProcessRequired;
     }
 
@@ -98,6 +101,54 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
         return false;
     }
 
+    public void setIntactContextForFeatureRangeChecking(IntactContext context){
+        FeatureRangeCheckingProcess process = (FeatureRangeCheckingProcess) this.listOfActions.get(2);
+        process.setIntactContext(context);
+    }
+
+    private void runThirdAction(UpdateContext context, IdentificationResults results) throws StrategyException, ActionProcessingException {
+        FeatureRangeCheckingProcess process = (FeatureRangeCheckingProcess) this.listOfActions.get(2);
+        ActionReport lastReport = results.getLastAction();
+
+        if (process.getIntactContext() != null){
+            if (context.getIntactAccession() == null){
+                lastReport.addWarning("We can't check the feature ranges of the protein as the Intact accession is null in the context.");
+            }
+            else {
+                if (lastReport instanceof BlastReport && results.getUniprotId() != null){
+                    BlastReport report = (BlastReport) lastReport;
+                    context.setSequence(report.getQuerySequence());
+
+                    FeatureRangeCheckingContext featureCheckingContext = new FeatureRangeCheckingContext(context);
+
+                    if (report.getPossibleAccessions().isEmpty()){
+                        throw new StrategyException("We can't check the feature ranges of the protein if the Trembl accession used for the swissprot remapping Blast is null in the context.");
+                    }
+                    else {
+                        if (report.getName().equals(ActionName.BLAST_Swissprot_Remapping) && report.getStatus().getLabel().equals(StatusLabel.COMPLETED)){
+                            featureCheckingContext.setTremblAccession(report.getPossibleAccessions().iterator().next());
+                            featureCheckingContext.setResultsOfSwissprotRemapping(report.getBlastMatchingProteins());
+
+                            String accession = process.runAction(featureCheckingContext);
+                            results.getListOfActions().addAll(process.getListOfActionReports());
+
+                            if (accession == null){
+                                results.setUniprotId(null);
+                            }
+                            else {
+                                processIsoforms(accession, results);
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+        else {
+            lastReport.addWarning("As the IntactContext is null, we can't check if there are some conflicts between the sequence of the Swissprot entry and the range of some features attached to this protein.");
+        }
+    }
+
     @Override
     public IdentificationResults identifyProtein(IdentificationContext context) throws StrategyException {
 
@@ -123,6 +174,8 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
                 uniprot = this.listOfActions.get(0).runAction(context);
                 result.getListOfActions().addAll(this.listOfActions.get(0).getListOfActionReports());
                 processIsoforms(uniprot, result);
+
+                runThirdAction((UpdateContext) context, result);
 
                 if (!identifiers.isEmpty()){
                     ActionReport report = new ActionReport(ActionName.update_Checking);
@@ -172,5 +225,8 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
         StrategyWithIdentifier secondAction = new StrategyWithIdentifier();
         secondAction.enableIsoforms(this.isIsoformEnabled());
         this.listOfActions.add(secondAction);
+
+        FeatureRangeCheckingProcess thirdAction = new FeatureRangeCheckingProcess();
+        this.listOfActions.add(thirdAction);
     }
 }
