@@ -1,5 +1,6 @@
 package uk.ac.ebi.intact.curationTools.model.results;
 
+import uk.ac.ebi.intact.curationTools.model.actionReport.ActionName;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
 
 import java.util.ArrayList;
@@ -57,5 +58,16 @@ public class IdentificationResults {
             return null;
         }
         return this.listOfActions.get(this.listOfActions.size() - 1);
+    }
+
+    public List<ActionReport> getActionsByName(ActionName name){
+        ArrayList<ActionReport> reports = new ArrayList<ActionReport>();        
+
+        for (ActionReport action : this.listOfActions){
+            if (action.getName() != null && action.getName().equals(name)){
+                reports.add(action);
+            }
+        }
+        return reports;
     }
 }

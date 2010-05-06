@@ -144,7 +144,11 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
                 else {
                     throw new ActionProcessingException("We couldn't find any Uniprot entries which match this accession number " + uniprot);
                 }
-                uniprot = this.listOfActions.get(1).runAction(blastContext);
+                String uniprot2 = this.listOfActions.get(1).runAction(blastContext);
+
+                if (uniprot2 != null){
+                    uniprot = uniprot2;
+                }
                 this.listOfReports.addAll(this.listOfActions.get(1).getListOfActionReports());
 
                 BlastReport blastReport = (BlastReport) this.listOfReports.get(this.listOfReports.size() - 1);

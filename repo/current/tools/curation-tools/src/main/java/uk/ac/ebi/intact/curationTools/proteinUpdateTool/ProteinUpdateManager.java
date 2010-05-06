@@ -45,22 +45,27 @@ public class ProteinUpdateManager {
 
     public ProteinUpdateManager(){
         this.strategy = new StrategyForProteinUpdate();
-        this.strategy.enableIsoforms(true);
+        this.strategy.enableIsoforms(false);
         this.strategy.setBasicBlastProcessRequired(false);
     }
 
     public ProteinUpdateManager(IntactContext context){
         this.strategy = new StrategyForProteinUpdate();
-        this.strategy.enableIsoforms(true);
+        this.strategy.enableIsoforms(false);
         this.strategy.setBasicBlastProcessRequired(false);
-        this.intactContext = context;
+        setIntactContext(context);
     }
 
     public void setIntactContext(IntactContext intactContext) {
         this.intactContext = intactContext;
+        this.strategy.setIntactContextForFeatureRangeChecking(intactContext);
     }
 
-    private HashMap<String, UpdateContext> getListOfContextsForProteinToUpdate() throws ProteinUpdateException {
+    private HashMap<String, UpdateContext> getListOfContextsForProteinToUpdate() throws ProteinUpdateException, StrategyException {
+
+        if (this.intactContext == null){
+            throw new StrategyException("We can't update the proteins without any IntactContext instance. please set the intactContext of the ProteinUpdateManager.");
+        }
 
         final DataContext dataContext = this.intactContext.getDataContext();
         TransactionStatus transactionStatus = dataContext.beginTransaction();
@@ -93,6 +98,7 @@ public class ProteinUpdateManager {
 
             context.setSequence(sequence);
             context.setOrganism(organism);
+            context.setIntactAccession(accession);
             addIdentityCrossreferencesToContext(refs, context);
         }
 
@@ -249,6 +255,7 @@ public class ProteinUpdateManager {
                 UpdateContext context = new UpdateContext();
                 context.setSequence(sequence);
                 context.setOrganism(organism);
+                context.setIntactAccession(accession);
                 addIdentityCrossreferencesToContext(refs, context);
 
                 // result
@@ -286,7 +293,7 @@ public class ProteinUpdateManager {
         }
     }
 
-    public void writeResultsOfProteinUpdate() throws ProteinUpdateException {
+    public void writeResultsOfProteinUpdate() throws ProteinUpdateException, StrategyException {
 
         HashMap<String, UpdateContext> contexts= getListOfContextsForProteinToUpdate();
         File file = new File("/home/marine/Desktop/updateReportTest.txt");
