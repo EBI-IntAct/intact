@@ -2,9 +2,6 @@ package uk.ac.ebi.intact.curationTools.actions;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.bridges.ncbiblast.BlastResultFilter;
-import uk.ac.ebi.intact.bridges.ncbiblast.BlastServiceException;
-import uk.ac.ebi.intact.bridges.ncbiblast.ProteinNCBIBlastService;
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
 import uk.ac.ebi.intact.curationTools.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionName;
@@ -25,7 +22,7 @@ import java.util.ArrayList;
  * @since <pre>31-Mar-2010</pre>
  */
 
-public class BasicBlastProcess extends IdentificationActionImpl{
+public class BasicBlastProcess extends ActionNeedingBlastService{
 
     /**
      * Sets up a logger for that class.
@@ -33,52 +30,43 @@ public class BasicBlastProcess extends IdentificationActionImpl{
     public static final Log log = LogFactory.getLog( BasicBlastProcess.class );
 
     /**
-     * The NCBI blast service
-     */
-    private ProteinNCBIBlastService blastService;
-    /**
-     * The BLAST filter
-     */
-    private BlastResultFilter blastFilter;
-    /**
-     * The maximum number of BlastProtein instances we allow to keep in memory
-     */
-    private static final int maxNumberOfBlastProteins = 10;
-    /**
-     * The minimum identity : below this identity percent, we don't look at the BLAST results
-     */
-    private static final float minimumIdentityThreshold = (float) 90;
-
-    /**
      * Create the process
      */
     public BasicBlastProcess(){
-        try {
-            this.blastService = new ProteinNCBIBlastService("marine@ebi.ac.uk");
-            this.blastFilter = new BlastResultFilter();
-
-        } catch (BlastServiceException e) {
-            log.error("Problem instantiating the blast client.",e);
-        }
+        super();
     }
 
+    /**
+     * Run a Blast on uniprot and keep less than 'maxNumberOfBlastProteins' BlastProtein instances in memory with an identity percent superior or equal to 'minimumIdentityThreshold'
+     * Generate several Blast reports where the Blast results are stored in.
+     * @param context : the context of the protein
+     * @return Always null as this action is not aimed at analyzing the BLAST results to identify the protein but is aimed at storing the BLAST results in an ActionReport added to its list of ActionReports
+     * @throws ActionProcessingException
+     */
     public String runAction(IdentificationContext context) throws ActionProcessingException {
+
+        // always clear the list of reports from previous actions
         this.listOfReports.clear();
 
+        // Create a BlastReport
         BlastReport report = new BlastReport(ActionName.BLAST_uniprot);
         this.listOfReports.add(report);
 
+        // Run the blast on Uniprot and save the results in the BLAST filter
         InputStream uniprotBlast = this.blastService.getResultsOfBlastOnUniprot(context.getSequence());
         this.blastFilter.setResults(uniprotBlast);
 
         if (context.getOrganism() != null){
+            // Filter the results on the organism and the minimum identity threshold
             this.blastFilter.filterResultsWithIdentityAndOrganism(minimumIdentityThreshold, context.getOrganism().getTaxId());
         }
         else{
+            // Filter only on the minimum identity threshold
             report.addWarning("No organism has been given for the sequence " + context.getSequence() + ". We will process the blast on uniprot without filtering with the organism.");
             this.blastFilter.filterResultsWithIdentity(minimumIdentityThreshold);
         }
 
+        // Get the results of the Blast filter after we have filtered the results
         ArrayList<BlastProtein> blastProteins = this.blastFilter.getMatchingEntries();
 
         if (blastProteins.isEmpty()){
@@ -86,7 +74,7 @@ public class BasicBlastProcess extends IdentificationActionImpl{
             report.setStatus(status2);
         }
         else {
-            
+            // Add the results of the blast but not more than the maximum number of BlastProtein we want to keep in memory
             for (BlastProtein b : blastProteins){
 
                 if (blastProteins.indexOf(b) > maxNumberOfBlastProteins){

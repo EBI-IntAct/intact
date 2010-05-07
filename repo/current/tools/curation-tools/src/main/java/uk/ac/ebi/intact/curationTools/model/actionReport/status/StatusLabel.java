@@ -1,7 +1,7 @@
 package uk.ac.ebi.intact.curationTools.model.actionReport.status;
 
 /**
- * TODO comment this
+ * The possible status of an action
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -9,5 +9,5 @@ package uk.ac.ebi.intact.curationTools.model.actionReport.status;
  */
 
 public enum StatusLabel {
-    FAILED, COMPLETED, TO_BE_REVIEWED, NONE
+    FAILED, COMPLETED, TO_BE_REVIEWED
 }
