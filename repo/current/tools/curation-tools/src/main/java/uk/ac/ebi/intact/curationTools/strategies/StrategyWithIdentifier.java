@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO comment this
+ * This strategy aims at identifying a protein using its identifier and organism. It can be also a complex IdentificationAction
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -33,22 +33,40 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
      */
     public static final Log log = LogFactory.getLog( StrategyWithIdentifier.class );
 
+    /**
+     * The list of reports of this action
+     */
     private List<ActionReport> listOfReports = new ArrayList<ActionReport> ();
 
+    /**
+     * the list of special organisms entirely sequenced
+     */
     private static ArrayList<String> organismWithSpecialCase = new ArrayList<String>();
 
+    /**
+     * Create a new strategy with identifier
+     */
     public StrategyWithIdentifier(){
         super();
     }
 
+    /**
+     * Initialise the set of actions for this strategy
+     */
     protected void initialiseSetOfActions(){
+
+        // first action = PICRSearchProcessWithAccession
         PICRSearchProcessWithAccession firstAction = new PICRSearchProcessWithAccession();
         this.listOfActions.add(firstAction);
 
+        // second action = SwissprotRemappingProcess
         SwissprotRemappingProcess secondAction = new SwissprotRemappingProcess();
         this.listOfActions.add(secondAction);
     }
 
+    /**
+     * initialises the list of special organisms
+     */
     public static final void initialiseOrganismWithSpecialCase(){
         organismWithSpecialCase.add("9606");
         organismWithSpecialCase.add("4932");
@@ -57,6 +75,11 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
         organismWithSpecialCase.add("1423");
     }
 
+    /**
+     *
+     * @param taxId : the taxId to check
+     * @return  true if it is a special organism entirely sequenced
+     */
     private boolean isASpecialOrganism(String taxId){
 
         if (organismWithSpecialCase.isEmpty()){
@@ -69,9 +92,18 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
         return false;
     }
 
+    /**
+     * This strategy is using PICR to map the identifier to an unique uniprot AC. If an unique Trembl is found,
+     * the strategy will use the SwissprotRemappingProcess to remap the trembl entry to a Swissprot entry.
+     * @param context : the context of the protein to identify
+     * @return the results
+     * @throws StrategyException
+     */
     public IdentificationResults identifyProtein(IdentificationContext context) throws StrategyException {
+        // new result
         IdentificationResults result = new IdentificationResults();
 
+        // the strategy is based on the identifier
         if (context.getIdentifier() == null){
             throw new StrategyException("The identifier of the protein must be not null.");
         }
@@ -79,11 +111,14 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
 
             try {
 
+                // result of PICR
                 String uniprot = this.listOfActions.get(0).runAction(context);
-
+                // get the reports of the first action
                 result.getListOfActions().addAll(this.listOfActions.get(0).getListOfActionReports());
+                // process the isoforms and set the uniprot id of the result
                 processIsoforms(uniprot, result);
 
+                // PICR could map the identifier to a Swissprot accession
                 if (result.getUniprotId() != null){
                     PICRReport picrReport = (PICRReport) result.getLastAction();
                     if (!picrReport.isAswissprotEntry()){

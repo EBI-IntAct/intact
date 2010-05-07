@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * TODO comment this
+ * This report aims at storing the information and results of a query on PICR
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -14,17 +14,37 @@ import java.util.Set;
 
 public class PICRReport extends ActionReport{
 
+    /**
+     * the list of cross references that PICR could collect
+     */
     private HashMap<String, Set<String>> crossReferences = new HashMap<String, Set<String>>();
+
+    /**
+     * boolean value to know if the unique uniprot id that PICR retrieved is a swissprot entry
+     */
     private boolean isASwissprotEntry = false;
 
+    /**
+     * Create a new PICRReport
+     * @param name : name of the action
+     */
     public PICRReport(ActionName name) {
         super(name);
     }
 
+    /**
+     *
+     * @return the map containing the cross references
+     */
     public HashMap<String, Set<String>> getCrossReferences(){
         return this.crossReferences;
     }
 
+    /**
+     * add a new cross reference
+     * @param databaseName : database name
+     * @param accession : accession in the database
+     */
     public void addCrossReference(String databaseName, String accession){
         if (!this.crossReferences.containsKey(databaseName)){
             Set<String> values = new HashSet<String>();
@@ -36,10 +56,18 @@ public class PICRReport extends ActionReport{
         }
     }
 
+    /**
+     *
+     * @return the isAswissprotEntry boolean
+     */
     public boolean isAswissprotEntry(){
         return this.isASwissprotEntry;
     }
 
+    /**
+     * set the isAswissprotEntry value
+     * @param isSwissprot : boolean value
+     */
     public void setIsASwissprotEntry(boolean isSwissprot){
         this.isASwissprotEntry = isSwissprot;
     }

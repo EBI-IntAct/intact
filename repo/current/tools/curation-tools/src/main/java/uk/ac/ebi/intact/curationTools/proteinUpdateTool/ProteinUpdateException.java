@@ -1,7 +1,7 @@
 package uk.ac.ebi.intact.curationTools.proteinUpdateTool;
 
 /**
- * TODO comment this
+ * The exception thrown by a ProetinUpdateManager
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$

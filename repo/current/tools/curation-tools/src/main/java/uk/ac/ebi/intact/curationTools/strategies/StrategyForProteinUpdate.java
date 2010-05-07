@@ -57,12 +57,12 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
         ((StrategyWithIdentifier) this.listOfActions.get(1)).enableIsoforms(enableIsoformId);
     }
 
-    private boolean checkIdentifierResults(IdentificationResults result, IdentificationContext context, ActionReport updateReport) throws ActionProcessingException {
+    private boolean checkIdentifierResults(IdentificationResults result, IdentificationContext context, ActionReport updateReport) throws ActionProcessingException, StrategyException {
         if (result.getUniprotId() != null){
             String otherResultFromIdentifier = this.listOfActions.get(1).runAction(context);
             otherResultFromIdentifier = processIsoforms(otherResultFromIdentifier);
             result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
-
+            
             String uniprot1 = result.getUniprotId();
 
             if (otherResultFromIdentifier != null){
@@ -71,6 +71,11 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
                 }
                 return uniprot1.equals(otherResultFromIdentifier);
             }
+            else {
+                updateReport.addWarning("We found a unique uniprot AC when we tried to identify the protein using the sequence but we didn't find any uniprot AC" +
+                        " when we tried to identify this protein using its identifiers with qualifier set to 'identity'.");
+                return true;
+            }
         }
         else {
             String otherResultFromIdentifier = this.listOfActions.get(1).runAction(context);
@@ -78,20 +83,44 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
             result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
 
             if (otherResultFromIdentifier != null){
-                Set<BlastProtein> blastProteins = ((BlastReport) result.getLastAction()).getBlastMatchingProteins();
+                updateReport.addWarning("We didn't find a unique uniprot AC when we tried to identify the protein using the sequence but we found a uniprot AC" +
+                        " when we tried to identify this protein using its identifiers with qualifier set to 'identity'. We kept this uniprot AC.");
+                
+                if (result.getLastAction() instanceof BlastReport){
+                    Set<BlastProtein> blastProteins = ((BlastReport) result.getLastAction()).getBlastMatchingProteins();
 
-                if (blastProteins.isEmpty()){
-                    result.setUniprotId(otherResultFromIdentifier);
-                    return true;
+                    if (blastProteins.isEmpty()){
+                        result.setUniprotId(otherResultFromIdentifier);
+                        return true;
+                    }
+                    else {
+                        for (BlastProtein p : blastProteins){
+                            if (p.getAccession().equals(otherResultFromIdentifier)){
+                                result.setUniprotId(otherResultFromIdentifier);
+                                runThirdAction((UpdateContext) context, result);
+                                return true;
+                            }
+                        }
+                        updateReport.addPossibleAccession(otherResultFromIdentifier);
+                    }
                 }
                 else {
-                    for (BlastProtein p : blastProteins){
-                        if (p.getAccession().equals(otherResultFromIdentifier)){
-                            result.setUniprotId(otherResultFromIdentifier);
-                            return true;
-                        }
+                    Set<String> possibleProteins = result.getLastAction().getPossibleAccessions();
+
+                    if (possibleProteins.isEmpty()){
+                        result.setUniprotId(otherResultFromIdentifier);
+                        return true;
                     }
-                    updateReport.addPossibleAccession(otherResultFromIdentifier);
+                    else {
+                        for (String p : possibleProteins){
+                            if (p.equals(otherResultFromIdentifier)){
+                                result.setUniprotId(otherResultFromIdentifier);
+                                runThirdAction((UpdateContext) context, result);
+                                return true;
+                            }
+                        }
+                        updateReport.addPossibleAccession(otherResultFromIdentifier);
+                    }
                 }
             }
             else {
@@ -195,6 +224,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
                         result.addActionReport(report);
                     }
                     else {
+                        
                         Status status = new Status(StatusLabel.TO_BE_REVIEWED, "There is a conflict in the results when we tried to identify the protein using the sequence then using the identifiers " + identifiers);
                         report.setStatus(status);
                         if (result.getUniprotId() != null){

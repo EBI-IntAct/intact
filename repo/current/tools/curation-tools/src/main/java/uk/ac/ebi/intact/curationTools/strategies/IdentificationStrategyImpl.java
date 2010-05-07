@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.regex.Pattern;
 
 /**
- * TODO comment this
+ * The abstract implementation of an IdentificationStrategy
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -31,30 +31,73 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
      */
     public static final Log log = LogFactory.getLog( IdentificationStrategyImpl.class );
 
+    /**
+     * The uniprot service
+     */
     private static UniprotRemoteService uniprotService = new UniprotRemoteService();
 
+    /**
+     * The list of actions used by the strategy to identify a protein
+     */
     protected ArrayList<IdentificationAction> listOfActions = new ArrayList<IdentificationAction>();
+
+    /**
+     * The taxId pattern
+     */
     private static final Pattern taxIdExpr = Pattern.compile("[0-9]+");
+
+    /**
+     * the ensembl gene pattern
+     */
     private static Pattern ensemblGenePattern = Pattern.compile("ENS[A-Z]*G[0-9]+");
 
+    /**
+     * the boolean value to know if we keep the isoform accessions
+     */
     private boolean enableIsoformId = false;
 
+    /**
+     * Create a new IdentificationStrategyImpl
+     */
     public IdentificationStrategyImpl(){
+        // initialise the set of actions for this strategy
         initialiseSetOfActions();
     }
 
+    /**
+     *
+     * @param context : the context of the protein to identify
+     * @return
+     * @throws StrategyException
+     */
     public abstract IdentificationResults identifyProtein(IdentificationContext context) throws StrategyException;
 
+    /**
+     *
+     * @param enableIsoformId : the boolean value
+     */
     public void enableIsoforms(boolean enableIsoformId) {
         this.enableIsoformId = enableIsoformId;
     }
 
+    /**
+     *
+     * @return the boolean enableIsoformId of this strategy
+     */
     public boolean isIsoformEnabled(){
         return enableIsoformId;
     }
 
+    /**
+     * initialise the set of actions used by this strategy
+     */
     protected abstract void initialiseSetOfActions();
 
+    /**
+     * Extract the ensembl gene accession (if any) among the list of uniprot cross references
+     * @param crossReferences : the Uniprot cross references
+     * @return the ensembl gene accession (if any) among the list of uniprot cross references, null otherwise
+     */
     protected static String extractENSEMBLGeneAccessionFrom(Collection<UniprotXref> crossReferences){
 
         for (UniprotXref xRef : crossReferences){
@@ -73,6 +116,12 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
         return null;
     }
 
+    /**
+     * Get the uniprot cross references of the uniprot entry matching this accession and extract the ensembl gene accession if any
+     * @param uniprotAccession : the uniprot accession
+     * @return the ensembl gene accession (if any) of this protein, null otherwise
+     * @throws StrategyException
+     */
     public static String extractENSEMBLGeneAccessionFrom(String uniprotAccession) throws StrategyException{
         UniprotProtein entry = getUniprotProteinFor(uniprotAccession);
 
@@ -85,6 +134,11 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
         }
     }
 
+    /**
+     * Extract the ensembl gene accession from this uniprotProtein
+     * @param protein : the protein
+     * @return the ensembl gene accession (if any) of this protein, null otherwise
+     */
     public static String extractENSEMBLGeneAccessionFrom(UniprotProtein protein){
 
         if (protein != null){
@@ -94,6 +148,11 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
         return null;
     }
 
+    /**
+     * process the isoforms accessions and set the uniprot id of the result to 'matchingId'
+     * @param matchingId : the uniprot accession returned by one of the actions of this strategy
+     * @param result : the result
+     */
     protected void processIsoforms(String matchingId, IdentificationResults result) {
         if (matchingId != null){
             if (!this.enableIsoformId){
@@ -122,6 +181,11 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
 
     }
 
+    /**
+     * process the isoforms accessions
+     * @param matchingId
+     * @return the matching id after we have remapped or not the isoform to its canonical sequence
+     */
     protected String processIsoforms(String matchingId) {
         String id = matchingId;
         if (matchingId != null){
@@ -134,6 +198,11 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
        return id;
     }
 
+    /**
+     * Get the uniprotProtein with this accession in Uniprot
+     * @param accession : the uniprot accession
+     * @return the uniprotProtein with this accession in Uniprot
+     */
     protected static UniprotProtein getUniprotProteinFor(String accession){
         if (accession == null){
             log.error("You must give a non null Uniprot accession");

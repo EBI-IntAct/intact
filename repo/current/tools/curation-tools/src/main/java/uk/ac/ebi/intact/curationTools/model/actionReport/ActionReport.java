@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO comment this
+ * This class contains all the information/ results that an action can store
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -17,43 +17,94 @@ import java.util.Set;
 
 public class ActionReport {
 
+    /**
+     * the name of the action
+      */
     protected ActionName name;
+
+    /**
+     * the status of the action
+     */
     protected Status status;
+
+    /**
+     * a list of warnings
+     */
     protected List<String> warnings = new ArrayList<String>();
+
+    /**
+     * the list of possible uniprot proteins which need to be reviewed by a curator
+     */
     protected Set<String> possibleAccessions = new HashSet<String>();
 
+    /**
+     * Create a new report for an action with a specific name
+     * @param name the naem of the action
+     */
     public ActionReport(ActionName name){
         this.name = name;
     }
 
+    /**
+     * 
+     * @return the name of the action
+     */
     public ActionName getName(){
         return this.name;
     }
 
+    /**
+     * set a new name for this report
+     * @param name : new name
+     */
     public void setName(ActionName name){
         this.name = name;
     }
 
+    /**
+     *
+     * @return the warnings
+     */
     public List<String> getWarnings(){
         return this.warnings;
     }
 
+    /**
+     * add a warning to the list of warnings
+     * @param warn : new warning
+     */
     public void addWarning(String warn){
         this.warnings.add(warn);
     }
 
+    /**
+     *
+     * @return the list of possible uniprot accessions
+     */
     public Set<String> getPossibleAccessions(){
         return this.possibleAccessions;
     }
 
+    /**
+     * add a new possible uniprot accession
+     * @param ac : new uniprot accession
+     */
     public void addPossibleAccession(String ac){
         this.possibleAccessions.add(ac);
     }
 
+    /**
+     *
+     * @return the status of this action
+     */
     public Status getStatus() {
         return status;
     }
 
+    /**
+     * set the status of this action
+     * @param status : the status
+     */
     public void setStatus(Status status) {
         this.status = status;
     }

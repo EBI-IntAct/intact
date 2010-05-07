@@ -1,7 +1,7 @@
 package uk.ac.ebi.intact.curationTools.strategies.exceptions;
 
 /**
- * TODO comment this
+ * The exception thrown by a Strategy
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$

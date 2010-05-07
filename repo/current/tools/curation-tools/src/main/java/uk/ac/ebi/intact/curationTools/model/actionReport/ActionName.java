@@ -1,7 +1,7 @@
 package uk.ac.ebi.intact.curationTools.model.actionReport;
 
 /**
- * TODO comment this
+ * The possible names of an action
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
