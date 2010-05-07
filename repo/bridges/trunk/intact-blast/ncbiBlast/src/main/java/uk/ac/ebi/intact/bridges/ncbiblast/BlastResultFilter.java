@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * This class allows to read the wswublast results as xml file and filter with the identity percent and/or the organism.
@@ -132,7 +133,13 @@ public class BlastResultFilter {
      */
     private BlastProtein createBlastProteinFrom(THit hit){
         BlastProtein entry = new BlastProtein();
-        entry.setAccession(hit.getAc());
+
+        if (Pattern.matches(hit.getAc()+"-[1-9]",hit.getId())){
+           entry.setAccession(hit.getId());
+        }
+        else {
+           entry.setAccession(hit.getAc()); 
+        }
         entry.setDescription(hit.getDescription());
         entry.setDatabase(hit.getDatabase());
 
