@@ -114,7 +114,7 @@ public class IntactCrc64SearchProcess extends ActionNeedingIntactContext {
         }
         else {
             for (ProteinImpl p : proteins){
-                report.addIntactMatchingProtein(p.getAc());
+                report.addPossibleIntactid(p.getAc());
             }
             Status status = new Status(StatusLabel.TO_BE_REVIEWED, "The Crc64 search on IntAct returned " + proteins.size() + " matching IntAct entries."  + (taxId != null ? " with organism " + taxId : ""));
             report.setStatus(status);
