@@ -121,26 +121,37 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
                 // PICR could map the identifier to a Swissprot accession
                 if (result.getUniprotId() != null){
                     PICRReport picrReport = (PICRReport) result.getLastAction();
+
+                    // PICR could map to a Trembl entry
                     if (!picrReport.isAswissprotEntry()){
 
+                        // get the uniprot protein
                         UniprotProtein tremblEntry = getUniprotProteinFor(result.getUniprotId());
                         String sequence = tremblEntry.getSequence();
 
+                        // create a blast context for the swissprotRemapping process
                         BlastContext blastContext = new BlastContext(context);
                         blastContext.setSequence(sequence);
 
+                        // the Trembl entry should not be null
                         if (tremblEntry != null){
+
+                            // we extract its ensembl gene accession
                             String ensemblGene = extractENSEMBLGeneAccessionFrom(tremblEntry.getCrossReferences());
                             blastContext.setEnsemblGene(ensemblGene);
                         }
                         else {
                             throw new StrategyException("We couldn't find any Uniprot entries which match this accession number " + result.getUniprotId());
                         }
-                        uniprot = this.listOfActions.get(1).runAction(blastContext);
-                        result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
 
+                        // run the swissprotRemappingProcess
+                        uniprot = this.listOfActions.get(1).runAction(blastContext);
+                        // add the reports of the second action
+                        result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
+                        // process the isoforms and set the uniprot id of the result
                         processIsoforms(uniprot, result);
 
+                        // add the trembl accession to the blast report, so we can keep a trace of this entry
                         BlastReport blastReport = (BlastReport) result.getLastAction();
                         blastReport.addPossibleAccession(tremblEntry.getPrimaryAc());
                     }
@@ -155,37 +166,61 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
         }
     }
 
+    /**
+     *
+     * @param context  : the context of the protein
+     * @return an unique uniprot Accession if possible, null otherwise
+     * @throws ActionProcessingException
+     */
     public String runAction(IdentificationContext context) throws ActionProcessingException {
+        // Always clear the previous reports
         this.listOfReports.clear();
 
+        // Call PICR to mapp the identifier to a Uniprot accession
         String uniprot = this.listOfActions.get(0).runAction(context);
+        // process the isoforms
+        uniprot = processIsoforms(uniprot);
+        // Add the reports of this action to the list of reports for this object
         this.listOfReports.addAll(this.listOfActions.get(0).getListOfActionReports());
+        // Get the PICR report
         PICRReport report = (PICRReport) this.listOfReports.get(this.listOfReports.size() - 1);
 
+        // If PICR could mapp the identifier to an unique Uniprot accession
         if (uniprot != null){
 
+            // if the accession is a Trembl accession
             if (!report.isAswissprotEntry()){
 
+                // Get the Uniprot protein for this Trembl entry
                 UniprotProtein tremblEntry = getUniprotProteinFor(uniprot);
                 String sequence = tremblEntry.getSequence();
 
+                // Create a new blast context containing the ensembl gane of the Trembl entry
                 BlastContext blastContext = new BlastContext(context);
                 blastContext.setSequence(sequence);
 
                 if (tremblEntry != null){
+                    // extract the ensembl gene of the Trembl entry
                     String ensemblGene = extractENSEMBLGeneAccessionFrom(tremblEntry.getCrossReferences());
                     blastContext.setEnsemblGene(ensemblGene);
                 }
                 else {
                     throw new ActionProcessingException("We couldn't find any Uniprot entries which match this accession number " + uniprot);
                 }
-                String uniprot2 = this.listOfActions.get(1).runAction(blastContext);
 
+                // Try to do a Swissprot-remapping process
+                String uniprot2 = this.listOfActions.get(1).runAction(blastContext);
+                // process the isoforms
+                uniprot2 = processIsoforms(uniprot2);
+
+                // If the swissprot remapping process is successful, this action return the swissprot accession  instead of the Trembl accession
                 if (uniprot2 != null){
                     uniprot = uniprot2;
                 }
+                // add the reports
                 this.listOfReports.addAll(this.listOfActions.get(1).getListOfActionReports());
 
+                // Get the last Blast report from the last action and store the trembl accession here
                 BlastReport blastReport = (BlastReport) this.listOfReports.get(this.listOfReports.size() - 1);
                 blastReport.addPossibleAccession(tremblEntry.getPrimaryAc());
             }
@@ -193,6 +228,10 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
         return uniprot;
     }
 
+    /**
+     *
+     * @return the list of reports of this object
+     */
     public List<ActionReport> getListOfActionReports() {
         return this.listOfReports;
     }
