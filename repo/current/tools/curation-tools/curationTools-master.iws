@@ -2,45 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="58dbb829-798e-40a5-8b3f-fb73ea218b93" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/SwissprotRemappingProcess.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/SwissprotRemappingProcess.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/IdentificationActionImpl.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/IdentificationActionImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithIdentifier.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithIdentifier.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyForProteinUpdate.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/BlastReport.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/BlastReport.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/ActionName.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/ActionName.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/UniprotNameSearchProcess.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/UniprotNameSearchProcess.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/IntactNameSearchProcess.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/IntactNameSearchProcess.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/ActionReport.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/ActionReport.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/results/IdentificationResults.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/results/IdentificationResults.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/ActionNeedingIntactContext.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithName.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithName.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithSequence.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithSequence.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/curationTools-master.iws" afterPath="$PROJECT_DIR$/curationTools-master.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/IntactCrc64Report.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/IntactCrc64Report.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/IdentificationStrategyImpl.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/IdentificationStrategyImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/ActionNeedingBlastService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/FeatureRangeCheckingContext.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/FeatureRangeCheckingContext.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateException.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/FeatureRangeCheckingProcess.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/FeatureRangeCheckingProcess.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/PICRSearchProcessWithSequence.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/PICRSearchProcessWithSequence.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/IntactReport.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/IntactReport.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/IdentificationAction.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/IdentificationAction.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/IntactCrc64SearchProcess.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/IntactCrc64SearchProcess.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/PICRSearchProcessWithAccession.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/PICRSearchProcessWithAccession.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/UniprotIdentityBlastProcess.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/UniprotIdentityBlastProcess.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/status/StatusLabel.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/status/StatusLabel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/status/Status.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/status/Status.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/BlastContext.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/BlastContext.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/UpdateContext.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/UpdateContext.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/exceptions/StrategyException.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/exceptions/StrategyException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/IdentificationStrategy.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/IdentificationStrategy.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/IdentificationContext.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/IdentificationContext.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/PICRReport.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/PICRReport.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/BasicBlastProcess.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/BasicBlastProcess.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithIdentifier.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithIdentifier.java" />
     </list>
-    <ignored path="$USER_HOME_GRAILS$/" />
-    <ignored path=".idea/workspace.xml" />
     <ignored path="$USER_HOME_GRIFFON$/" />
     <ignored path="curationTools-master.iws" />
+    <ignored path="$USER_HOME_GRAILS$/" />
+    <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,10 +68,10 @@
   <component name="FileColors" enabled="true" enabledForTabs="true" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="StrategyWithIdentifier.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithIdentifier.java">
+      <file leaf-file-name="StrategyWithSequence.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithSequence.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="120" column="73" selection-start="4493" selection-end="4493" vertical-scroll-proportion="0.4173387">
+            <state line="286" column="124" selection-start="13876" selection-end="13876" vertical-scroll-proportion="2.8276644">
               <folding />
             </state>
           </provider>
@@ -116,8 +87,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/ActionReport.java" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/IntactCrc64Report.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/BlastReport.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/IntactReport.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/actionReport/PICRReport.java" />
@@ -127,11 +96,13 @@
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/UpdateContext.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/results/IdentificationResults.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateException.java" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/exceptions/StrategyException.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/IdentificationStrategy.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/IdentificationStrategyImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithName.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithIdentifier.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithSequence.java" />
       </list>
     </option>
   </component>
@@ -180,9 +151,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane">
-        <subPane />
-      </pane>
       <pane id="Favorites" />
       <pane id="ProjectPane">
         <subPane>
@@ -245,38 +213,11 @@
               <option name="myItemId" value="curationTools" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="strategies" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="curationTools-master" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="curation-tools" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="curationTools" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
         </subPane>
+      </pane>
+      <pane id="PackagesPane">
+        <subPane />
       </pane>
       <pane id="Scope" />
     </panes>
@@ -297,9 +238,9 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.searchVisible" value="true" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="dynamic.classpath" value="false" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RunManager" selected="JUnit.SwissprotRemappingProcessTest.test_SwissprotRemapping_Successful">
     <configuration default="false" name="StrategyForProteinUpdateTest.test_Sequence_Human_WithIdentifier" type="JUnit" factoryName="JUnit" temporary="true">
@@ -659,27 +600,27 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="94" y="148" width="1244" height="750" extended-state="0" />
-    <editor active="true" />
+    <frame x="-3" y="25" width="1446" height="852" extended-state="6" />
+    <editor active="false" />
     <layout>
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32921812" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32831737" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13195549" sideWeight="0.9957948" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.35665295" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32784638" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965517" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28090832" sideWeight="0.8569157" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28037384" sideWeight="0.6621067" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22908093" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.13195549" sideWeight="0.9957948" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32784638" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -734,116 +675,94 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/FeatureRangeCheckingContext.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="64" column="31" selection-start="1985" selection-end="1985" vertical-scroll-proportion="0.7363281">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/IdentificationContext.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="201" column="42" selection-start="4491" selection-end="4491" vertical-scroll-proportion="0.943074">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/contexts/UpdateContext.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="102" column="4" selection-start="2586" selection-end="2586" vertical-scroll-proportion="0.28842506">
-          <folding />
-        </state>
+        <state line="102" column="4" selection-start="2586" selection-end="2586" vertical-scroll-proportion="0.28842506" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/model/results/IdentificationResults.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="90" column="103" selection-start="2230" selection-end="2230" vertical-scroll-proportion="0.45920303">
-          <folding />
-        </state>
+        <state line="90" column="103" selection-start="2230" selection-end="2230" vertical-scroll-proportion="0.45920303" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateException.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="49" selection-start="112" selection-end="112" vertical-scroll-proportion="0.085388996">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/BasicBlastProcess.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="0" selection-start="1267" selection-end="1402" vertical-scroll-proportion="0.390625">
-          <folding />
-        </state>
+        <state line="3" column="49" selection-start="112" selection-end="112" vertical-scroll-proportion="0.085388996" />
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-core/2.2.1-SNAPSHOT/intact-core-2.2.1-SNAPSHOT-sources.jar!/uk/ac/ebi/intact/model/Xref.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="79" column="43" selection-start="2091" selection-end="2106" vertical-scroll-proportion="0.21174005">
-          <folding />
-        </state>
+        <state line="79" column="43" selection-start="2091" selection-end="2106" vertical-scroll-proportion="0.21174005" />
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-core/2.2.1-SNAPSHOT/intact-core-2.2.1-SNAPSHOT-sources.jar!/uk/ac/ebi/intact/model/AnnotatedObjectImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="55" selection-start="732" selection-end="732" vertical-scroll-proportion="0.26008064">
-          <folding />
-        </state>
+        <state line="24" column="55" selection-start="732" selection-end="732" vertical-scroll-proportion="0.26008064" />
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-core/2.2.1-SNAPSHOT/intact-core-2.2.1-SNAPSHOT-sources.jar!/uk/ac/ebi/intact/model/InteractorImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="42" selection-start="864" selection-end="864" vertical-scroll-proportion="0.3326613">
-          <folding />
-        </state>
+        <state line="27" column="42" selection-start="864" selection-end="864" vertical-scroll-proportion="0.3326613" />
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-core/2.2.1-SNAPSHOT/intact-core-2.2.1-SNAPSHOT-sources.jar!/uk/ac/ebi/intact/model/InteractionImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="43" selection-start="1381" selection-end="1381" vertical-scroll-proportion="0.3326613">
-          <folding />
-        </state>
+        <state line="38" column="43" selection-start="1381" selection-end="1381" vertical-scroll-proportion="0.3326613" />
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/uk/ac/ebi/intact/core/intact-core/2.2.1-SNAPSHOT/intact-core-2.2.1-SNAPSHOT-sources.jar!/uk/ac/ebi/intact/model/CvTopic.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="82" column="31" selection-start="2860" selection-end="2860" vertical-scroll-proportion="0.3326613">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="301" column="108" selection-start="12485" selection-end="12485" vertical-scroll-proportion="5.15121">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
+        <state line="82" column="31" selection-start="2860" selection-end="2860" vertical-scroll-proportion="0.3326613" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/exceptions/StrategyException.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="37" selection-start="104" selection-end="104" vertical-scroll-proportion="0.08806262">
-          <folding />
-        </state>
+        <state line="3" column="37" selection-start="104" selection-end="104" vertical-scroll-proportion="0.08806262" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/IdentificationStrategy.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="29" selection-start="1133" selection-end="1133" vertical-scroll-proportion="0.7258065">
+        <state line="26" column="29" selection-start="1133" selection-end="1133" vertical-scroll-proportion="0.7258065" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/proteinUpdateTool/ProteinUpdateManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="524" column="89" selection-start="23254" selection-end="23254" vertical-scroll-proportion="0.7505669">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithName.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="52" column="26" selection-start="1873" selection-end="1873" vertical-scroll-proportion="0.24716553">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/IdentificationStrategyImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="203" column="64" selection-start="7174" selection-end="7174" vertical-scroll-proportion="0.24395162">
+        <state line="188" column="21" selection-start="6639" selection-end="6639" vertical-scroll-proportion="0.39229023">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/actions/BasicBlastProcess.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="13" selection-start="1020" selection-end="1020" vertical-scroll-proportion="-0.56462586">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithIdentifier.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="120" column="73" selection-start="4493" selection-end="4493" vertical-scroll-proportion="0.4173387">
+        <state line="28" column="13" selection-start="1304" selection-end="1304" vertical-scroll-proportion="-4.5600905">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/ebi/intact/curationTools/strategies/StrategyWithSequence.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="286" column="124" selection-start="13876" selection-end="13876" vertical-scroll-proportion="2.8276644">
           <folding />
         </state>
       </provider>

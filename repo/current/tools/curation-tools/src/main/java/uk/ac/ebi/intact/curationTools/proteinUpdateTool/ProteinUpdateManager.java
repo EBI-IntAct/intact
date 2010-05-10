@@ -519,6 +519,8 @@ public class ProteinUpdateManager {
 
                     for (BlastProtein prot : blast.getBlastMatchingProteins()){
                         writer.write("BLAST Protein " + prot.getAccession() + " : identity = " + prot.getIdentity() + "\n");
+                        writer.write("Query start = " + prot.getStartQuery() + ", end = " + prot.getEndQuery() + "\n");
+                        writer.write("Match start = " + prot.getStartMatch() + ", end = " + prot.getEndMatch() + "\n");
                     }
                 }
             }
