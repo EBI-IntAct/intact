@@ -25,10 +25,8 @@ import javax.persistence.Query;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.io.Writer;
+import java.util.*;
 
 /**
  * TODO comment this
@@ -93,24 +91,29 @@ public class ProteinUpdateManager {
 
     /**
      * This method query IntAct to get the list of protein to update and for each one create an updateContext
+     * Write the results of the protein update process
      * @return the list of UpdateContext created from the protein to update
      * @throws ProteinUpdateException
      * @throws StrategyException
      */
-    private HashMap<String, UpdateContext> getListOfContextsForProteinToUpdate() throws ProteinUpdateException, StrategyException {
+    public void writeResultsOfProteinUpdate() throws ProteinUpdateException, StrategyException {
 
-        // can't query Intact without any intact context
-        if (this.intactContext == null){
-            throw new StrategyException("We can't update the proteins without any IntactContext instance. please set the intactContext of the ProteinUpdateManager.");
-        }
+        try {
+            File file = new File("updateReport_"+ Calendar.getInstance() +".txt");
+            Writer writer = new FileWriter(file);
 
-        // set the intact data context
-        final DataContext dataContext = this.intactContext.getDataContext();
-        TransactionStatus transactionStatus = dataContext.beginTransaction();
+            // can't query Intact without any intact context
+            if (this.intactContext == null){
+                throw new StrategyException("We can't update the proteins without any IntactContext instance. please set the intactContext of the ProteinUpdateManager.");
+            }
 
-        // get all the intact entries without any uniprot cross reference or with uniprot cross reference with a qualifier different from 'identity' and which can only be uniprot-removed-ac
-        final DaoFactory daoFactory = dataContext.getDaoFactory();
-        final Query query = daoFactory.getEntityManager().createQuery("select distinct p from InteractorImpl p "+
+            // set the intact data context
+            final DataContext dataContext = this.intactContext.getDataContext();
+            TransactionStatus transactionStatus = dataContext.beginTransaction();
+
+            // get all the intact entries without any uniprot cross reference or with uniprot cross reference with a qualifier different from 'identity' and which can only be uniprot-removed-ac
+            final DaoFactory daoFactory = dataContext.getDaoFactory();
+            final Query query = daoFactory.getEntityManager().createQuery("select distinct p from InteractorImpl p "+
                     "left join p.sequenceChunks as seq " +
                     "left join p.xrefs as xrefs " +
                     "left join p.annotations as annotations " +
@@ -122,32 +125,37 @@ public class ProteinUpdateManager {
                     "and xrefs.cvDatabase.ac = 'EBI-31' " +
                     "and xrefs.cvXrefQualifier.shortLabel <> 'uniprot-removed-ac' )");
 
-        HashMap<String, UpdateContext> contexts = new HashMap<String, UpdateContext>();
+            HashMap<String, UpdateContext> contexts = new HashMap<String, UpdateContext>();
 
-        proteinToUpdate = query.getResultList();
-        log.info(proteinToUpdate.size());
+            proteinToUpdate = query.getResultList();
+            log.info(proteinToUpdate.size());
 
-        for (ProteinImpl prot : proteinToUpdate){
-            String accession = prot.getAc();
-            Collection<InteractorXref> refs = prot.getXrefs();
-            String sequence = prot.getSequence();
-            BioSource organism = prot.getBioSource();
+            for (ProteinImpl prot : proteinToUpdate){
+                String accession = prot.getAc();
+                Collection<InteractorXref> refs = prot.getXrefs();
+                String sequence = prot.getSequence();
+                BioSource organism = prot.getBioSource();
 
-            UpdateContext context = new UpdateContext();
-            contexts.put(accession, context);
+                UpdateContext context = new UpdateContext();
+                contexts.put(accession, context);
 
-            context.setSequence(sequence);
-            context.setOrganism(organism);
-            context.setIntactAccession(accession);
-            addIdentityCrossreferencesToContext(refs, context);
-        }
+                context.setSequence(sequence);
+                context.setOrganism(organism);
+                context.setIntactAccession(accession);
+                addIdentityCrossreferencesToContext(refs, context);
 
-        try {
+                log.info("protAc = " + accession);
+                IdentificationResults result = this.strategy.identifyProtein(context);
+                writeResultReports(accession, result, writer);
+
+            }
             dataContext.commitTransaction(transactionStatus);
+            writer.close();
         } catch (IntactTransactionException e) {
             throw new ProteinUpdateException(e);
+        } catch (IOException e) {
+            throw new ProteinUpdateException(e);
         }
-        return contexts;
     }
 
     /**
@@ -294,8 +302,9 @@ public class ProteinUpdateManager {
         try {
 
             // create a new file where the results are stored in
-            File file = new File("updateReportTest.txt");
-            FileWriter writer = new FileWriter(file);
+            File file = new File("updateReport_"+ Calendar.getInstance() +".txt");
+
+            Writer writer = new FileWriter(file);
 
             final DaoFactory daoFactory = dataContext.getDaoFactory();
             final Query query = daoFactory.getEntityManager().createQuery("select distinct p from InteractorImpl p "+
@@ -388,8 +397,8 @@ public class ProteinUpdateManager {
         try {
 
             // create the file where to write the report
-            File file = new File("updateReportForProteinWithUniprotCrossReferences.txt");
-            FileWriter writer = new FileWriter(file);
+            File file = new File("updateReportForProteinWithUniprotCrossReferences_"+Calendar.getInstance()+".txt");
+            Writer writer = new FileWriter(file);
 
             final DaoFactory daoFactory = dataContext.getDaoFactory();
             final Query query = daoFactory.getEntityManager().createQuery("select distinct p from InteractorImpl p "+
@@ -457,40 +466,13 @@ public class ProteinUpdateManager {
     }
 
     /**
-     * Write the results of the protein update process
-     * @throws ProteinUpdateException
-     * @throws StrategyException
-     */
-    public void writeResultsOfProteinUpdate() throws ProteinUpdateException, StrategyException {
-
-        HashMap<String, UpdateContext> contexts= getListOfContextsForProteinToUpdate();
-        File file = new File("updateReport.txt");
-
-        try {
-            FileWriter writer = new FileWriter(file);
-            for (String protAc : contexts.keySet()){
-                log.info("protAc = " + protAc);
-                UpdateContext context = contexts.get(protAc);
-                IdentificationResults result = this.strategy.identifyProtein(context);
-
-                writeResultReports(protAc, result, writer);
-            }
-            writer.close();
-        } catch (IOException e) {
-            throw new ProteinUpdateException("We can't write the results in a file.", e);
-        } catch (StrategyException e) {
-            throw new ProteinUpdateException("There is a problem when executing the protein update strategy. Check the protein contexts.", e);
-        }
-    }
-
-    /**
      * write the results in a file
      * @param protAc : the intact accession
      * @param result : the result
      * @param writer : the file writer
      * @throws ProteinUpdateException
      */
-    private void writeResultReports(String protAc, IdentificationResults result, FileWriter writer) throws ProteinUpdateException {
+    private void writeResultReports(String protAc, IdentificationResults result, Writer writer) throws ProteinUpdateException {
         try {
             writer.write("************************" + protAc + "************************************ \n");
 
@@ -524,6 +506,7 @@ public class ProteinUpdateManager {
                     }
                 }
             }
+            writer.flush();
         } catch (IOException e) {
             throw new ProteinUpdateException("We can't write the results of the protein " + protAc, e);
         }
