@@ -200,7 +200,7 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
                         }
                         else {
                             Status status = new Status(StatusLabel.FAILED, "The matching Swissprot entries are not matching the Ensembl gene " + context.getEnsemblGene());
-
+                            report.getBlastMatchingProteins().remove(blastProteins.get(0));
                             report.setStatus(status);
                         }
                     }
@@ -230,6 +230,19 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
                         for (String s : accessions){
                             if (checkEnsemblGene(s, this.context.getEnsemblGene())){
                                 matchingAcs.add(s);
+                            }
+                            else {
+                                // remove the results with another ensembl gene
+                                BlastProtein proteinToRemove = null;
+                                for (BlastProtein p : report.getBlastMatchingProteins()){
+                                    if (p.getAccession().equals(s)){
+                                        proteinToRemove = p;
+                                        break;
+                                    }
+                                }
+                                if (proteinToRemove != null){
+                                    report.getBlastMatchingProteins().remove(proteinToRemove);
+                                }
                             }
                         }
 

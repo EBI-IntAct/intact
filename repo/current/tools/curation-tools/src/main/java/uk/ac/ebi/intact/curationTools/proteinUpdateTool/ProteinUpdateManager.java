@@ -99,7 +99,7 @@ public class ProteinUpdateManager {
     public void writeResultsOfProteinUpdate() throws ProteinUpdateException, StrategyException {
 
         try {
-            File file = new File("updateReport_"+ Calendar.getInstance() +".txt");
+            File file = new File("updateReport_"+ Calendar.getInstance().getTime().getTime() +".txt");
             Writer writer = new FileWriter(file);
 
             // can't query Intact without any intact context
@@ -302,7 +302,7 @@ public class ProteinUpdateManager {
         try {
 
             // create a new file where the results are stored in
-            File file = new File("updateReport_"+ Calendar.getInstance() +".txt");
+            File file = new File("updateReport_"+ Calendar.getInstance().getTime().getTime() +".txt");
 
             Writer writer = new FileWriter(file);
 
@@ -390,14 +390,14 @@ public class ProteinUpdateManager {
      * Write a report for the identification of the proteins without any uniprot cross references set to identity but another uniprot cross reference
      * @throws ProteinUpdateException
      */
-    public void witeUpdateReportForProteinsWithUniprotCrossReferences() throws ProteinUpdateException {
+    public void writeUpdateReportForProteinsWithUniprotCrossReferences() throws ProteinUpdateException {
         // create the data context
         final DataContext dataContext = this.intactContext.getDataContext();
         TransactionStatus transactionStatus = dataContext.beginTransaction();
         try {
 
             // create the file where to write the report
-            File file = new File("updateReportForProteinWithUniprotCrossReferences_"+Calendar.getInstance()+".txt");
+            File file = new File("updateReportForProteinWithUniprotCrossReferences_"+Calendar.getInstance().getTime().getTime()+".txt");
             Writer writer = new FileWriter(file);
 
             final DaoFactory daoFactory = dataContext.getDaoFactory();

@@ -16,8 +16,10 @@ import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.Range;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class is checking that the new sequences found during a Blast process (usually a Blast remapping process) are not in conflict with the
@@ -220,6 +222,15 @@ public class FeatureRangeCheckingProcess extends ActionNeedingIntactContext{
                 else {
                     Status status = new Status(StatusLabel.COMPLETED, "We don't have any conflicts between the sequence(s) of the " + report.getBlastMatchingProteins().size() + " possible Swissprot proteins and the feature ranges of the protein " + processContext.getIntactAccession());
                     report.setStatus(status);
+                    ArrayList<BlastProtein> proteins = new ArrayList<BlastProtein> ();
+
+                    // merge the isoforms
+                    proteins.addAll(report.getBlastMatchingProteins());
+                    Set<String> accessions = mergeIsoformsFromBlastProteins(proteins);
+
+                    if (accessions.size() == 1){
+                        return accessions.iterator().next();
+                    }
                 }
             }
         }
