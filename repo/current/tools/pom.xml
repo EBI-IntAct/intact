@@ -26,7 +26,7 @@
 
     <modules>
         <!--<module>intact-psi-validator</module>-->
-        <module>intact-curation-tools</module>
+        <module>curation-tools</module>
     </modules>
 
     <distributionManagement>
