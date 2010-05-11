@@ -40,9 +40,9 @@
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/tools/intact-psi-validator/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/tools/intact-psi-validator/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/tools/intact-psi-validator/trunk/</url>
+        <connection>scm:svn:https://intact.googlecode.com/svn/repo/current/tools</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/current/tools</developerConnection>
+        <url>https://intact.googlecode.com/svn/repo/current/tools</url>
     </scm>
 
     <dependencies>

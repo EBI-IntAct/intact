@@ -19,13 +19,14 @@
     <description>Set of tools that do not depend on intact-core</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/current/plugins</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/current/plugins</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/current/plugins</url>
+        <connection>scm:svn:https://intact.googlecode.com/svn/repo/current/tools</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/current/tools</developerConnection>
+        <url>https://intact.googlecode.com/svn/repo/current/tools</url>
     </scm>
 
     <modules>
-        <module>intact-psi-validator</module>
+        <!--<module>intact-psi-validator</module>-->
+        <module>intact-curation-tools</module>
     </modules>
 
     <distributionManagement>
