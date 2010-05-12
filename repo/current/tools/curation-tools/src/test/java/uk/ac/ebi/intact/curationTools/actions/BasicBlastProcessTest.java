@@ -3,7 +3,6 @@ package uk.ac.ebi.intact.curationTools.actions;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
 import uk.ac.ebi.intact.curationTools.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport;
@@ -39,14 +38,10 @@ public class BasicBlastProcessTest {
 
             Assert.assertNull(id);
             Assert.assertEquals(true, reports.get(0) instanceof BlastReport);
-            Assert.assertEquals(false, ((BlastReport)reports.get(0)).getBlastMatchingProteins().isEmpty());
+            Assert.assertEquals(true, ((BlastReport)reports.get(0)).getBlastMatchingProteins().isEmpty());
             System.out.println(((BlastReport)reports.get(0)).getBlastMatchingProteins().size());
             for (String warn : reports.get(0).getWarnings()){
                 System.out.println(warn);
-            }
-
-            for (BlastProtein prot : ((BlastReport)reports.get(0)).getBlastMatchingProteins()){
-                System.out.println(prot.getDescription() + "\n");
             }
 
             System.out.println(reports.get(0).getStatus().getLabel() + " " + reports.get(0).getStatus().getDescription());
