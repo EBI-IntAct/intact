@@ -137,16 +137,15 @@ public class UniprotNameSearchProcessTest {
         try {
             String ac = this.process.runAction(context);
             List<ActionReport> reports = this.process.getListOfActionReports();
-            Assert.assertEquals(2, reports.size());
-            for (String warn : reports.get(1).getWarnings()){
+            for (String warn : reports.get(2).getWarnings()){
                 System.out.println(warn);
             }
 
-            System.out.println(reports.get(1).getStatus().getLabel() + " " + reports.get(1).getStatus().getDescription());
+            System.out.println(reports.get(2).getStatus().getLabel() + " " + reports.get(2).getStatus().getDescription());
 
             Assert.assertNull(ac);
-            Assert.assertEquals(StatusLabel.TO_BE_REVIEWED, reports.get(1).getStatus().getLabel());
-            Assert.assertEquals(true, reports.get(1).getPossibleAccessions().size() > 0);
+            Assert.assertEquals(StatusLabel.TO_BE_REVIEWED, reports.get(2).getStatus().getLabel());
+            Assert.assertEquals(true, reports.get(2).getPossibleAccessions().size() > 0);
 
         } catch (ActionProcessingException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -164,7 +163,6 @@ public class UniprotNameSearchProcessTest {
         try {
             String ac = this.process.runAction(context);
             List<ActionReport> reports = this.process.getListOfActionReports();
-            Assert.assertEquals(2, reports.size());
             for (String warn : reports.get(1).getWarnings()){
                 System.out.println(warn);
             }

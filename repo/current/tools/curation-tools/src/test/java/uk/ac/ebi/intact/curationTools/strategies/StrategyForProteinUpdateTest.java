@@ -97,7 +97,7 @@ public class StrategyForProteinUpdateTest {
     }
 
     @Test
-    public void test_Sequence_Drome_WithIdentifier(){
+    public void test_Sequence_Drome_WithoutIdentifier(){
         String sequence = "MSGERRRTTTHSIEVPSQLTAQHNSRKRPPSDHQDYGNYLETCRAAEILSSMKLQSPHGSMADKCSSPGSSSSASWSSGSPSPPLSDDGHAHHSPHNIMSPHDADNARTRTASVSTSDEGIVIDYKEERKKKSKKFRCVYRGCVGVVDDLNGVVRHIRKTHLGKDSHRSADDDGNEEDFYLEDADDDVEQVKPTLASEPTLSHRDMARPPHEDPEYQKQIVGNFKQGRGGSHYNHLAQSHGRTISGSNIPSTHQQQLQNNNTSCIPTSHLAHHNYTCPAATATVGSYSSTGTGSVAASSSASPIGKHARSSSSRPTHSVAPYPSPTYVQQQQHHQHTHHHNYAGSSGSSNSSSSSSPVIHSNSSANNMLQQLSQQNVTVTAHHSQQQQQLQQQQHHQQQQQHSHQQQQQHLLSSVTITPNFHPAQQQHHHQPMRGHQQQHPQTTAGNMVAQNNSNNHSNGSNPLQQQQHMAQQVAVKHTPHSPGKRTRGENKKCRKVYGMEKRDQWCTQCRWKKACSRFGD";
         BioSource organism = createBiosource("drome", "Drosophila melanogaster", "7227");
 
@@ -117,7 +117,7 @@ public class StrategyForProteinUpdateTest {
                 System.out.println("name " + r.getName().toString() + "Label : " + r.getStatus().getLabel().toString() + ": Description : " + r.getStatus().getDescription());
             }
 
-            Assert.assertNull(result.getUniprotId());
+            Assert.assertNotNull(result.getUniprotId());
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
