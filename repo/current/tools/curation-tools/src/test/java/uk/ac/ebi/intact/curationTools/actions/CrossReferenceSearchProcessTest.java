@@ -9,21 +9,21 @@ import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.model.BioSource;
 
 /**
- * Unit test for UniprotCrossReferenceSearchProcess
+ * Unit test for CrossReferenceSearchProcess
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
  * @since <pre>12-May-2010</pre>
  */
 
-public class UniprotCrossReferenceSearchProcessTest {
+public class CrossReferenceSearchProcessTest {
 
-    private UniprotCrossReferenceSearchProcess process;
+    private CrossReferenceSearchProcess process;
     private IdentificationContext context;
 
     @Before
     public void createBlastProcess(){
-        this.process = new UniprotCrossReferenceSearchProcess();
+        this.process = new CrossReferenceSearchProcess();
         this.context = new IdentificationContext();
     }
 
@@ -96,6 +96,33 @@ public class UniprotCrossReferenceSearchProcessTest {
 
         this.context.setIdentifier(identifier);
         this.context.setOrganism(null);
+
+        try {
+            String ac = this.process.runAction(context);
+
+            ActionReport lastReport = process.getListOfActionReports().get(process.getListOfActionReports().size() - 1);
+            for (String warn : lastReport.getWarnings()){
+                System.out.println(warn);
+            }
+
+            System.out.println(lastReport.getStatus().getLabel() + " " + lastReport.getStatus().getDescription());
+
+            Assert.assertNull(ac);
+
+        } catch (ActionProcessingException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    @Test
+    public void test_GISearch_UnSuccessfull_WithOrganism(){
+        String identifier = "UPI0000D61C21";
+        //String acToFind = "P35244";
+        BioSource organism = createBiosource("human", "Homo Sapiens", "9606");
+
+
+        this.context.setIdentifier(identifier);
+        this.context.setOrganism(organism);
 
         try {
             String ac = this.process.runAction(context);

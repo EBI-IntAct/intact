@@ -2,10 +2,10 @@ package uk.ac.ebi.intact.curationTools.strategies;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.curationTools.actions.CrossReferenceSearchProcess;
 import uk.ac.ebi.intact.curationTools.actions.IdentificationAction;
 import uk.ac.ebi.intact.curationTools.actions.PICRSearchProcessWithAccession;
 import uk.ac.ebi.intact.curationTools.actions.SwissprotRemappingProcess;
-import uk.ac.ebi.intact.curationTools.actions.UniprotCrossReferenceSearchProcess;
 import uk.ac.ebi.intact.curationTools.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.SwissprotRemappingReport;
@@ -143,8 +143,8 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
         PICRSearchProcessWithAccession firstAction = new PICRSearchProcessWithAccession();
         this.listOfActions.add(firstAction);
 
-        // second action = UniprotCrossReferenceSearchProcess (optional)
-        UniprotCrossReferenceSearchProcess secondAction = new UniprotCrossReferenceSearchProcess();
+        // second action = CrossReferenceSearchProcess (optional)
+        CrossReferenceSearchProcess secondAction = new CrossReferenceSearchProcess();
         this.listOfActions.add(secondAction);
 
         // third action = SwissprotRemappingProcess

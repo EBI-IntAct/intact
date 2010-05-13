@@ -186,7 +186,7 @@ public class ProteinUpdateManager {
     }
 
     /**
-     * Add all the cross references with qualifier 'identity' to the list of identifiers of the protein
+     * Add all the cross references with qualifier 'identity' to the list of identifiers of the protein (intact cross references are ignored)
      * @param refs : the refs of the protein
      * @param context : the context of the protein
      */
@@ -197,12 +197,14 @@ public class ProteinUpdateManager {
                     CvXrefQualifier qualifier = ref.getCvXrefQualifier();
 
                     if (isIdentityCrossReference(qualifier)){
-                        
-                        if (ref.getCvDatabase().getIdentifier() != null){
-                             context.addIdentifier(ref.getCvDatabase().getIdentifier(), ref.getPrimaryId());
-                        }
-                        else {
-                            context.addIdentifier(ref.getCvDatabase().getShortLabel(), ref.getPrimaryId());
+                        CvDatabase database = ref.getCvDatabase();
+                        if (database != null){
+                            if (database.getIdentifier() != null && !CvDatabase.INTACT_MI_REF.equals(database.getIdentifier())){
+                                context.addIdentifier(database.getIdentifier(), ref.getPrimaryId());
+                            }
+                            else if (database.getShortLabel() != null && !CvDatabase.INTACT.equals(database.getShortLabel())) {
+                                context.addIdentifier(database.getShortLabel(), ref.getPrimaryId());
+                            }
                         }
                     }
                 }
