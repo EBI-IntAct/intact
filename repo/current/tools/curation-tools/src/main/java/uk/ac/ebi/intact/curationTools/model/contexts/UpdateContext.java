@@ -101,26 +101,6 @@ public class UpdateContext extends IdentificationContext{
         this.intactAccession = null;
     }
 
-    @Override
-    public String getIdentifier() {
-        return null;
-    }
-
-    @Override
-    public String getDatabaseForIdentifier() {
-        return null;
-    }
-
-    @Override
-    public void setDatabaseForIdentifier(String databaseForIdentifier) {
-        System.err.println("An updateContext doesn't have an unique databaseMI number as we keep a list of identifiers. Use the method addIdentifier(databaseMI, identifier)");
-    }
-
-    @Override
-    public void setIdentifier(String identifier) {
-        System.err.println("An updateContext doesn't have an unique identifier as we keep a list of identifiers. Use the method addIdentifier(databaseMI, identifier)");
-    }
-
     public void addIdentifier(String databaseMi, String identifier){
         this.identifiers.put(databaseMi, identifier);
     }
