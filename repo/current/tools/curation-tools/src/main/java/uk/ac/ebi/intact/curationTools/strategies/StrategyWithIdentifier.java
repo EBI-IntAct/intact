@@ -9,8 +9,6 @@ import uk.ac.ebi.intact.curationTools.actions.SwissprotRemappingProcess;
 import uk.ac.ebi.intact.curationTools.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.SwissprotRemappingReport;
-import uk.ac.ebi.intact.curationTools.model.actionReport.status.Status;
-import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.curationTools.model.contexts.BlastContext;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.curationTools.model.results.IdentificationResults;
@@ -199,6 +197,26 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
         return false;
     }
 
+    private void runCrossReferenceProcess(IdentificationContext context, IdentificationResults result) throws ActionProcessingException {
+        String uniprotResult = this.listOfActions.get(1).runAction(context);
+        // get the reports of the second action
+        result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
+
+        ActionReport lastReport = result.getLastAction();
+
+        processIsoforms(uniprotResult, result);
+    }
+
+    private String runCrossReferenceProcess(IdentificationContext context) throws ActionProcessingException {
+        String uniprot = this.listOfActions.get(1).runAction(context);
+        // get the reports of the second action
+        this.listOfReports.addAll(this.listOfActions.get(1).getListOfActionReports());
+        // process the isoforms and set the uniprot id of the result
+        uniprot = processIsoforms(uniprot);
+
+        return uniprot;
+    }
+
     /**
      * This strategy is using PICR and/or uniprot cross reference search to map the identifier to an unique uniprot AC. If an unique Trembl is found,
      * the strategy will use the SwissprotRemappingProcess to remap the trembl entry to a Swissprot entry.
@@ -231,18 +249,18 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
                     result.getListOfActions().addAll(this.listOfActions.get(0).getListOfActionReports());
 
                     if (uniprot == null && result.getLastAction().getPossibleAccessions().isEmpty()){
+                        String taxId = null;
+                        if (context.getOrganism() != null){
+                            taxId = context.getOrganism().getTaxId();
+                        }
 
-                        String uniprotResult = this.listOfActions.get(1).runAction(context);
-                        // get the reports of the second action
-                        result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
-
-                        ActionReport lastReport = result.getLastAction();
-
-                        if (uniprotResult != null){
-                            lastReport.addPossibleAccession(uniprotResult);
-                            Status status = new Status(StatusLabel.TO_BE_REVIEWED, "The uniprot cross reference search was successful and could map the identifier "+context.getIdentifier()+" to "+uniprotResult+". However, as PICR couldn't retrieve" +
-                                    " the cross reference, it should be reviewed by a curator. The current problems are when ENTREZ GeneID can match a GI number and vice versa.");
-                            lastReport.setStatus(status);
+                        if (taxId != null){
+                            if (!taxId.startsWith("-")){
+                                runCrossReferenceProcess(context, result);
+                            }
+                        }
+                        else {
+                            runCrossReferenceProcess(context, result);
                         }
                     }
 
@@ -250,11 +268,7 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
                     processIsoforms(uniprot, result);
                 }
                 else {
-                    uniprot = this.listOfActions.get(1).runAction(context);
-                    // get the reports of the second action
-                    result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
-                    // process the isoforms and set the uniprot id of the result
-                    processIsoforms(uniprot, result);
+                    runCrossReferenceProcess(context, result);
                 }
 
                 // PICR and uniprot could map the identifier to a Swissprot accession
@@ -333,17 +347,18 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
             ActionReport lastReport =  this.listOfReports.get(this.listOfReports.size() - 1);
 
             if (uniprot == null && lastReport.getPossibleAccessions().isEmpty()){
-                String uniprotResult = this.listOfActions.get(1).runAction(context);
-                // get the reports of the second action
-                this.listOfReports.addAll(this.listOfActions.get(1).getListOfActionReports());
+                String taxId = null;
+                if (context.getOrganism() != null){
+                    taxId = context.getOrganism().getTaxId();
+                }
 
-                lastReport =  this.listOfReports.get(this.listOfReports.size() - 1);
-
-                if (uniprotResult != null){
-                    lastReport.addPossibleAccession(uniprotResult);
-                    Status status = new Status(StatusLabel.TO_BE_REVIEWED, "The uniprot cross reference search was successful and could map the identifier "+context.getIdentifier()+" to "+uniprotResult+". However, as PICR couldn't retrieve" +
-                            " the cross reference, it should be reviewed by a curator. The current problems are when ENTREZ GeneID can match a GI number and vice versa.");
-                    lastReport.setStatus(status);
+                if (taxId != null){
+                    if (!taxId.startsWith("-")){
+                        uniprot = runCrossReferenceProcess(context);
+                    }
+                }
+                else {
+                    uniprot = runCrossReferenceProcess(context);
                 }
             }
 
@@ -351,11 +366,7 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
             uniprot = processIsoforms(uniprot);
         }
         else {
-            uniprot = this.listOfActions.get(1).runAction(context);
-            // get the reports of the second action
-            this.listOfReports.addAll(this.listOfActions.get(1).getListOfActionReports());
-            // process the isoforms and set the uniprot id of the result
-            uniprot = processIsoforms(uniprot);
+            uniprot = runCrossReferenceProcess(context);
         }
 
         // Get the last report
