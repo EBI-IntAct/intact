@@ -20,11 +20,6 @@ public class PICRReport extends ActionReport{
     private HashMap<String, Set<String>> crossReferences = new HashMap<String, Set<String>>();
 
     /**
-     * boolean value to know if the unique uniprot id that PICR retrieved is a swissprot entry
-     */
-    private boolean isASwissprotEntry = false;
-
-    /**
      * Create a new PICRReport
      * @param name : name of the action
      */
@@ -54,21 +49,5 @@ public class PICRReport extends ActionReport{
         else {
             this.crossReferences.get(databaseName).add(accession);
         }
-    }
-
-    /**
-     *
-     * @return the isAswissprotEntry boolean
-     */
-    public boolean isAswissprotEntry(){
-        return this.isASwissprotEntry;
-    }
-
-    /**
-     * set the isAswissprotEntry value
-     * @param isSwissprot : boolean value
-     */
-    public void setIsASwissprotEntry(boolean isSwissprot){
-        this.isASwissprotEntry = isSwissprot;
     }
 }

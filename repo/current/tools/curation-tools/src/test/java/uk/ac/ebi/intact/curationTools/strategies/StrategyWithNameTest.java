@@ -13,7 +13,7 @@ import uk.ac.ebi.intact.model.BioSource;
 import java.util.List;
 
 /**
- * TODO comment this
+ * Unit test for StrategyWithName
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$

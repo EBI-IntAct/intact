@@ -18,7 +18,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 /**
- * TODO comment this
+ * Unit test for StrategyWithIdentifier
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -63,6 +63,7 @@ public class StrategyWithIdentifierTest {
 
                 IdentificationContext context = new IdentificationContext();
                 context.setIdentifier(identifier);
+                context.setDatabaseForIdentifier("ipi");
                 context.setOrganism(organism);
 
                 IdentificationResults result = this.strategy.identifyProtein(context);
@@ -72,7 +73,7 @@ public class StrategyWithIdentifierTest {
                 Assert.assertEquals(ac_toFind, result.getUniprotId());
                 Assert.assertEquals(true, result.getLastAction() instanceof PICRReport);
                 Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
-                Assert.assertEquals(true, ((PICRReport) result.getLastAction()).isAswissprotEntry());
+                Assert.assertEquals(true, result.getLastAction().isAswissprotEntry());
 
                 line = reader.readLine();
             }
@@ -106,6 +107,7 @@ public class StrategyWithIdentifierTest {
 
                 IdentificationContext context = new IdentificationContext();
                 context.setIdentifier(identifier);
+                context.setDatabaseForIdentifier("ipi");
                 context.setOrganism(organism);
 
                 IdentificationResults result = this.strategy.identifyProtein(context);
@@ -156,6 +158,7 @@ public class StrategyWithIdentifierTest {
 
         IdentificationContext context = new IdentificationContext();
         context.setIdentifier(identifier);
+        context.setDatabaseForIdentifier("ipi");
         context.setOrganism(organism);
 
         IdentificationResults result = null;
@@ -167,7 +170,40 @@ public class StrategyWithIdentifierTest {
             Assert.assertEquals(ac_to_find, result.getUniprotId());
             Assert.assertEquals(true, result.getLastAction() instanceof PICRReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
-            Assert.assertEquals(true, ((PICRReport) result.getLastAction()).isAswissprotEntry());
+            Assert.assertEquals(true, result.getLastAction().isAswissprotEntry());
+        } catch (StrategyException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+    }
+
+    @Test
+    public void test_GeneIDIdentifier_UniprotCrossReference(){
+        BioSource organism = createBiosource("mouse", "Mus Musculus", "10090");
+        String identifier = "212483";
+        String ac_to_find = "Q3U2K0";
+
+        this.strategy.enableIsoforms(true);
+
+        IdentificationContext context = new IdentificationContext();
+        context.setIdentifier(identifier);
+        context.setOrganism(organism);
+        context.setDatabaseForIdentifier("MI:0477"); // database = ENTREZ
+
+        IdentificationResults result = null;
+        try {
+            result = this.strategy.identifyProtein(context);
+
+            for (ActionReport r : result.getListOfActions()){
+                System.out.println("name " + r.getName().toString() + " Label : " + r.getStatus().getLabel().toString() + ": Description : " + r.getStatus().getDescription());
+            }
+
+            Assert.assertNotNull(result);
+            Assert.assertNotNull(result.getUniprotId());
+            Assert.assertEquals(ac_to_find, result.getUniprotId());
+            Assert.assertEquals(false, result.getLastAction() instanceof PICRReport);
+            Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
+            Assert.assertEquals(true, result.getLastAction().isAswissprotEntry());
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -186,6 +222,7 @@ public class StrategyWithIdentifierTest {
         IdentificationContext context = new IdentificationContext();
         context.setIdentifier(identifier);
         context.setOrganism(organism);
+        context.setDatabaseForIdentifier("ipi");
 
         IdentificationResults result = null;
         try {
@@ -196,7 +233,7 @@ public class StrategyWithIdentifierTest {
             Assert.assertEquals(ac_to_find, result.getUniprotId());
             Assert.assertEquals(true, result.getLastAction() instanceof PICRReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
-            Assert.assertEquals(true, ((PICRReport) result.getLastAction()).isAswissprotEntry());
+            Assert.assertEquals(true, result.getLastAction().isAswissprotEntry());
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
