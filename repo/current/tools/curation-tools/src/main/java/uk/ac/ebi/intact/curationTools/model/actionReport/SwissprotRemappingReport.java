@@ -30,7 +30,7 @@ public class SwissprotRemappingReport extends BlastReport {
      * @param tremblAccession : the accession of the trembl entry
      */
     public void setTremblAccession(String tremblAccession) {
-        tremblAccession = tremblAccession;
+        this.tremblAccession = tremblAccession;
     }
 
     /**

@@ -103,7 +103,7 @@ public class StrategyWithSequenceTest {
             Assert.assertEquals(ac_to_find, result.getUniprotId());
             Assert.assertEquals(true, result.getLastAction() instanceof PICRReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
-            Assert.assertEquals(true, ((PICRReport) result.getLastAction()).isAswissprotEntry());
+            Assert.assertEquals(true, result.getLastAction().isAswissprotEntry());
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
