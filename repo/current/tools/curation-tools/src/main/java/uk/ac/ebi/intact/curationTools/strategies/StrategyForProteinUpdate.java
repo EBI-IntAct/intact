@@ -323,14 +323,12 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
                     boolean isMatchingIdentifierResults = false;
 
                     for (Map.Entry<String, String> entry : identifiers.entrySet()){
-                        // for each identifier, we create a new context
-                        IdentificationContext c = new IdentificationContext(context);
                         // set the identifier
-                        c.setIdentifier(entry.getValue());
+                        context.setIdentifier(entry.getValue());
                         // set the database
-                        c.setDatabaseForIdentifier(entry.getKey());
+                        context.setDatabaseForIdentifier(entry.getKey());
                         // check the possible conflicts with the previous results
-                        isMatchingIdentifierResults = checkIdentifierResults(result, c, report);
+                        isMatchingIdentifierResults = checkIdentifierResults(result, context, report);
                     }
 
                     // We don't have any conflicts with the previous results
