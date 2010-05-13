@@ -23,6 +23,11 @@ public class IdentificationContext {
     private String identifier;
 
     /**
+     * the database mi number or name of the identifier
+     */
+    private String databaseForIdentifier;
+
+    /**
      * the organism of the protein
      */
     private BioSource organism;
@@ -52,23 +57,25 @@ public class IdentificationContext {
         this.gene_name = null;
         this.protein_name = null;
         this.globalName = null;
+        this.databaseForIdentifier = null;
     }
 
     /**
-     * Create a new identification context with sequence, identifier, organism, gene name and protein name
+     * Create a new identification context with sequence, identifier and its database MI number, organism, gene name and protein name
      * @param sequence
      * @param identifier
      * @param organism
      * @param gene_name
      * @param protein_name
      */
-    public IdentificationContext(String sequence, String identifier, BioSource organism, String gene_name, String protein_name){
+    public IdentificationContext(String sequence, String identifier, String databaseMINumber, BioSource organism, String gene_name, String protein_name){
         this.sequence = sequence;
         this.identifier = identifier;
         this.organism = organism;
         this.gene_name = gene_name;
         this.protein_name = protein_name;
         this.globalName = null;
+        this.databaseForIdentifier = databaseMINumber;
     }
 
     /**
@@ -82,6 +89,7 @@ public class IdentificationContext {
         this.gene_name = context.getGene_name();
         this.protein_name = context.getProtein_name();
         this.globalName = context.getGlobalName();
+        this.databaseForIdentifier = context.getDatabaseForIdentifier();
     }
 
     /**
@@ -91,11 +99,28 @@ public class IdentificationContext {
      * @param organism
      * @param name
      */
-    public IdentificationContext(String sequence, String identifier, BioSource organism, String name){
+    public IdentificationContext(String sequence, String identifier, String databaseMi, BioSource organism, String name){
         this.sequence = sequence;
         this.identifier = identifier;
         this.organism = organism;
         this.globalName = name;
+        this.databaseForIdentifier = databaseMi;
+    }
+
+    /**
+     *
+     * @return the database MI number or name for the identifier of the protein
+     */
+    public String getDatabaseForIdentifier() {
+        return databaseForIdentifier;
+    }
+
+    /**
+     * set the database MI number
+     * @param databaseForIdentifier : the database MI number
+     */
+    public void setDatabaseForIdentifier(String databaseForIdentifier) {
+        this.databaseForIdentifier = databaseForIdentifier;
     }
 
     /**
@@ -108,6 +133,7 @@ public class IdentificationContext {
         this.gene_name = null;
         this.protein_name = null;
         this.globalName = null;
+        this.databaseForIdentifier = null;
     }
 
     /**

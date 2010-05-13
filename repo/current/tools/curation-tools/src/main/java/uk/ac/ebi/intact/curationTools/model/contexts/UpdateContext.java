@@ -2,8 +2,7 @@ package uk.ac.ebi.intact.curationTools.model.contexts;
 
 import uk.ac.ebi.intact.model.BioSource;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
 
 /**
  * This specific context is used for the update of the Intact proteins without any uniprot cross references.
@@ -18,7 +17,7 @@ public class UpdateContext extends IdentificationContext{
     /**
      * list of identifiers for the Intact protein
      */
-    private Set<String> identifiers = new HashSet<String>();
+    private HashMap<String, String> identifiers = new HashMap<String, String>();
 
     /**
      * the Intact accession of the protein
@@ -46,7 +45,7 @@ public class UpdateContext extends IdentificationContext{
      *
      * @return the list of identifiers
      */
-    public Set<String> getIdentifiers() {
+    public HashMap<String, String> getIdentifiers() {
         return identifiers;
     }
 
@@ -74,10 +73,10 @@ public class UpdateContext extends IdentificationContext{
      * @param gene_name
      * @param protein_name
      */
-    public UpdateContext(String sequence, String identifier, BioSource organism, String gene_name, String protein_name) {
-        super(sequence, identifier, organism, gene_name, protein_name);
+    public UpdateContext(String sequence, String identifier, String databaseMi, BioSource organism, String gene_name, String protein_name) {
+        super(sequence, identifier, databaseMi, organism, gene_name, protein_name);
         setIdentifier(null);
-        this.identifiers.add(identifier);
+        this.identifiers.put(databaseMi, identifier);
         this.intactAccession = null;
     }
 
@@ -88,10 +87,10 @@ public class UpdateContext extends IdentificationContext{
      * @param organism
      * @param name
      */
-    public UpdateContext(String sequence, String identifier, BioSource organism, String name) {
-        super(sequence, identifier, organism, name);
+    public UpdateContext(String sequence, String identifier, String databaseMi, BioSource organism, String name) {
+        super(sequence, identifier, databaseMi, organism, name);
         setIdentifier(null);
-        this.identifiers.add(identifier);
+         this.identifiers.put(databaseMi, identifier);
         this.intactAccession = null;
     }
 
@@ -99,23 +98,30 @@ public class UpdateContext extends IdentificationContext{
     public void clean() {
         super.clean();
         this.identifiers.clear();
+        this.intactAccession = null;
     }
 
     @Override
     public String getIdentifier() {
-        if (this.identifiers.isEmpty()){
-            return null;
-        }
-        return this.identifiers.iterator().next();
+        return null;
+    }
+
+    @Override
+    public String getDatabaseForIdentifier() {
+        return null;
+    }
+
+    @Override
+    public void setDatabaseForIdentifier(String databaseForIdentifier) {
+        System.err.println("An updateContext doesn't have an unique databaseMI number as we keep a list of identifiers. Use the method addIdentifier(databaseMI, identifier)");
     }
 
     @Override
     public void setIdentifier(String identifier) {
-        this.identifiers.clear();
-        this.identifiers.add(identifier);
+        System.err.println("An updateContext doesn't have an unique identifier as we keep a list of identifiers. Use the method addIdentifier(databaseMI, identifier)");
     }
 
-    public void addIdentifier(String identifier){
-        this.identifiers.add(identifier);
+    public void addIdentifier(String databaseMi, String identifier){
+        this.identifiers.put(databaseMi, identifier);
     }
 }

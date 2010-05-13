@@ -3,6 +3,8 @@ package uk.ac.ebi.intact.curationTools.strategies;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.curationTools.actions.IdentificationAction;
+import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
+import uk.ac.ebi.intact.curationTools.model.actionReport.SwissprotRemappingReport;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.curationTools.model.results.IdentificationResults;
 import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyException;
@@ -14,6 +16,7 @@ import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseType;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -223,5 +226,21 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
 
         }
         return null;
+    }
+
+   /**
+     *
+     * @param listOfActions : the list of actions to look into
+     * @return the list of swissprot remapping reports which have been done to identify the protein
+     */
+    protected List<SwissprotRemappingReport> getSwissprotRemappingReports(List<ActionReport> listOfActions){
+        ArrayList<SwissprotRemappingReport> reports = new ArrayList<SwissprotRemappingReport>();
+
+        for (ActionReport action : listOfActions){
+            if (action instanceof SwissprotRemappingReport){
+                reports.add( (SwissprotRemappingReport) action);
+            }
+        }
+        return reports;
     }
 }

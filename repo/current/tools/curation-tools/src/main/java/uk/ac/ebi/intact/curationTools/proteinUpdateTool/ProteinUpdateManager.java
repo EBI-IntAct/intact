@@ -26,7 +26,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * TODO comment this
@@ -59,6 +62,11 @@ public class ProteinUpdateManager {
     private IntactContext intactContext;
 
     /**
+     * the context of the protein to update
+     */
+    private UpdateContext context;
+
+    /**
      * create a new ProteinUpdate manager. The intact context is null and
      * should be set later. The strategy for update doesn't take into account the isoforms and keep the canonical sequence.
      */
@@ -66,6 +74,7 @@ public class ProteinUpdateManager {
         this.strategy = new StrategyForProteinUpdate();
         this.strategy.enableIsoforms(false);
         this.strategy.setBasicBlastProcessRequired(false);
+        this.context = new UpdateContext();
     }
 
     /**
@@ -78,6 +87,7 @@ public class ProteinUpdateManager {
         this.strategy.enableIsoforms(false);
         this.strategy.setBasicBlastProcessRequired(false);
         setIntactContext(context);
+        this.context = new UpdateContext();
     }
 
     /**
@@ -125,19 +135,16 @@ public class ProteinUpdateManager {
                     "and xrefs.cvDatabase.ac = 'EBI-31' " +
                     "and xrefs.cvXrefQualifier.shortLabel <> 'uniprot-removed-ac' )");
 
-            HashMap<String, UpdateContext> contexts = new HashMap<String, UpdateContext>();
-
             proteinToUpdate = query.getResultList();
             log.info(proteinToUpdate.size());
 
             for (ProteinImpl prot : proteinToUpdate){
+                this.context.clean();
+
                 String accession = prot.getAc();
                 Collection<InteractorXref> refs = prot.getXrefs();
                 String sequence = prot.getSequence();
                 BioSource organism = prot.getBioSource();
-
-                UpdateContext context = new UpdateContext();
-                contexts.put(accession, context);
 
                 context.setSequence(sequence);
                 context.setOrganism(organism);
@@ -190,7 +197,13 @@ public class ProteinUpdateManager {
                     CvXrefQualifier qualifier = ref.getCvXrefQualifier();
 
                     if (isIdentityCrossReference(qualifier)){
-                        context.addIdentifier(ref.getPrimaryId());
+                        
+                        if (ref.getCvDatabase().getIdentifier() != null){
+                             context.addIdentifier(ref.getCvDatabase().getIdentifier(), ref.getPrimaryId());
+                        }
+                        else {
+                            context.addIdentifier(ref.getCvDatabase().getShortLabel(), ref.getPrimaryId());
+                        }
                     }
                 }
             }
@@ -326,6 +339,7 @@ public class ProteinUpdateManager {
 
             for (ProteinImpl prot : proteinToUpdate){
 
+                this.context.clean();
                 String accession = prot.getAc();
                 String shortLabel = prot.getShortLabel();
                 log.info("Protein AC = " + accession + " shortLabel = " + shortLabel);
@@ -336,7 +350,6 @@ public class ProteinUpdateManager {
                 BioSource organism = prot.getBioSource();
 
                 // context
-                UpdateContext context = new UpdateContext();
                 context.setSequence(sequence);
                 context.setOrganism(organism);
                 context.setIntactAccession(accession);
@@ -425,7 +438,7 @@ public class ProteinUpdateManager {
             ArrayList<String> accessionsToUpdate = new ArrayList<String>();
 
             for (ProteinImpl prot : proteinToUpdate){
-
+                this.context.clean();
                 String accession = prot.getAc();
                 String shortLabel = prot.getShortLabel();
                 log.info("Protein AC = " + accession + " shortLabel = " + shortLabel);
@@ -435,7 +448,6 @@ public class ProteinUpdateManager {
                 BioSource organism = prot.getBioSource();
 
                 // context
-                UpdateContext context = new UpdateContext();
                 context.setSequence(sequence);
                 context.setOrganism(organism);
                 context.setIntactAccession(accession);

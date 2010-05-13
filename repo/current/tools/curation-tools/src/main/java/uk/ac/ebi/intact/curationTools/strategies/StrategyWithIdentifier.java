@@ -5,18 +5,21 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.curationTools.actions.IdentificationAction;
 import uk.ac.ebi.intact.curationTools.actions.PICRSearchProcessWithAccession;
 import uk.ac.ebi.intact.curationTools.actions.SwissprotRemappingProcess;
+import uk.ac.ebi.intact.curationTools.actions.UniprotCrossReferenceSearchProcess;
 import uk.ac.ebi.intact.curationTools.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
-import uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport;
-import uk.ac.ebi.intact.curationTools.model.actionReport.PICRReport;
+import uk.ac.ebi.intact.curationTools.model.actionReport.SwissprotRemappingReport;
 import uk.ac.ebi.intact.curationTools.model.contexts.BlastContext;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.curationTools.model.results.IdentificationResults;
 import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyException;
+import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This strategy aims at identifying a protein using its identifier and organism. It can be also a complex IdentificationAction
@@ -44,10 +47,91 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
     private static ArrayList<String> organismWithSpecialCase = new ArrayList<String>();
 
     /**
+     * List of database MI numbers that PICR can manage
+     */
+    public static Set<String> listOfDatabaseNamesManagedByPICR = new HashSet<String>();
+
+    /**
+     * List of database MI numbers that PICR can manage
+     */
+    public static Set<String> listOfMIDatabasesManagedByPICR = new HashSet<String>();
+
+    /**
      * Create a new strategy with identifier
      */
     public StrategyWithIdentifier(){
         super();
+        if (listOfMIDatabasesManagedByPICR.isEmpty()){
+            initialiseListOfMIDatabasesManagedByPICR();
+            initialiseListOfDatabaseNamesManagedByPICR();
+        }
+    }
+
+    private void initialiseListOfMIDatabasesManagedByPICR(){
+        listOfMIDatabasesManagedByPICR.add(CvDatabase.UNIPROT_MI_REF);
+        listOfMIDatabasesManagedByPICR.add(CvDatabase.FLYBASE_MI_REF);
+        listOfMIDatabasesManagedByPICR.add(CvDatabase.DDBG_MI_REF);
+        listOfMIDatabasesManagedByPICR.add(CvDatabase.REFSEQ_MI_REF);
+        // genbank
+        listOfMIDatabasesManagedByPICR.add("MI:0860");
+        // genbank protein
+        listOfMIDatabasesManagedByPICR.add("MI:0851");
+        // genbank nucl
+        listOfMIDatabasesManagedByPICR.add("MI:0852");
+        // wormbase
+        listOfMIDatabasesManagedByPICR.add("MI:0487");
+        // ipi
+        listOfMIDatabasesManagedByPICR.add("MI:0675");
+        listOfMIDatabasesManagedByPICR.add(CvDatabase.ENSEMBL_MI_REF);
+        listOfMIDatabasesManagedByPICR.add(CvDatabase.WWPDB_MI_REF);
+        listOfMIDatabasesManagedByPICR.add(CvDatabase.RCSB_PDB_MI_REF);
+        // het
+        listOfMIDatabasesManagedByPICR.add("MI:2017");
+        // pdbe
+        listOfMIDatabasesManagedByPICR.add("MI:0472");
+        // emdb
+        listOfMIDatabasesManagedByPICR.add("MI:0936");
+        // pdbj
+        listOfMIDatabasesManagedByPICR.add("MI:0806");
+        listOfMIDatabasesManagedByPICR.add(CvDatabase.SGD_MI_REF);
+        listOfMIDatabasesManagedByPICR.add(CvDatabase.UNIPARC_MI_REF);
+    }
+
+    private void initialiseListOfDatabaseNamesManagedByPICR(){
+        listOfDatabaseNamesManagedByPICR.add(CvDatabase.UNIPROT);
+        listOfDatabaseNamesManagedByPICR.add("SwissProt");
+        listOfDatabaseNamesManagedByPICR.add("TrEMBL");
+        listOfDatabaseNamesManagedByPICR.add(CvDatabase.FLYBASE);
+        listOfDatabaseNamesManagedByPICR.add(CvDatabase.DDBG);
+        listOfDatabaseNamesManagedByPICR.add("EMBL");
+        listOfDatabaseNamesManagedByPICR.add(CvDatabase.REFSEQ);
+        listOfDatabaseNamesManagedByPICR.add("genbank indentifier");
+        listOfDatabaseNamesManagedByPICR.add("genbank_protein_gi");
+        listOfDatabaseNamesManagedByPICR.add("genbank_nucl_gi");
+        listOfDatabaseNamesManagedByPICR.add("JPO");
+        listOfDatabaseNamesManagedByPICR.add("PIR");
+        listOfDatabaseNamesManagedByPICR.add("TAIR");
+        listOfDatabaseNamesManagedByPICR.add("UniMES");
+        listOfDatabaseNamesManagedByPICR.add("USPTO");
+        listOfDatabaseNamesManagedByPICR.add("wormbase");
+        listOfDatabaseNamesManagedByPICR.add("SEGUID");
+        listOfDatabaseNamesManagedByPICR.add("ipi");
+        listOfDatabaseNamesManagedByPICR.add(CvDatabase.ENSEMBL);
+        listOfDatabaseNamesManagedByPICR.add("EPO");
+        listOfDatabaseNamesManagedByPICR.add("H Inv");
+        listOfDatabaseNamesManagedByPICR.add("PDB");
+        listOfDatabaseNamesManagedByPICR.add(CvDatabase.WWPDB);
+        listOfDatabaseNamesManagedByPICR.add(CvDatabase.RCSB_PDB);
+        listOfDatabaseNamesManagedByPICR.add("het");
+        listOfDatabaseNamesManagedByPICR.add("pdbe");
+        listOfDatabaseNamesManagedByPICR.add("eMDB");
+        listOfDatabaseNamesManagedByPICR.add("pdbj");
+        listOfDatabaseNamesManagedByPICR.add("PRF");
+        listOfDatabaseNamesManagedByPICR.add(CvDatabase.SGD);
+        listOfDatabaseNamesManagedByPICR.add("TROME");
+        listOfDatabaseNamesManagedByPICR.add(CvDatabase.UNIPARC);
+        listOfDatabaseNamesManagedByPICR.add("VEGA");
+        listOfDatabaseNamesManagedByPICR.add("KIPO");
     }
 
     /**
@@ -59,9 +143,13 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
         PICRSearchProcessWithAccession firstAction = new PICRSearchProcessWithAccession();
         this.listOfActions.add(firstAction);
 
-        // second action = SwissprotRemappingProcess
-        SwissprotRemappingProcess secondAction = new SwissprotRemappingProcess();
+        // second action = UniprotCrossReferenceSearchProcess (optional)
+        UniprotCrossReferenceSearchProcess secondAction = new UniprotCrossReferenceSearchProcess();
         this.listOfActions.add(secondAction);
+
+        // third action = SwissprotRemappingProcess
+        SwissprotRemappingProcess thirdAction = new SwissprotRemappingProcess();
+        this.listOfActions.add(thirdAction);
     }
 
     /**
@@ -92,8 +180,25 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
         return false;
     }
 
+    private boolean isADatabaseManagedByPICR(String database){
+
+        if (database != null){
+            if (listOfMIDatabasesManagedByPICR.contains(database)){
+                return true;
+            }
+            else {
+                for (String name : listOfDatabaseNamesManagedByPICR){
+                    if (name.equalsIgnoreCase(database)){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     /**
-     * This strategy is using PICR to map the identifier to an unique uniprot AC. If an unique Trembl is found,
+     * This strategy is using PICR and/or uniprot cross reference search to map the identifier to an unique uniprot AC. If an unique Trembl is found,
      * the strategy will use the SwissprotRemappingProcess to remap the trembl entry to a Swissprot entry.
      * @param context : the context of the protein to identify
      * @return the results
@@ -110,20 +215,42 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
         else{
 
             try {
+                String uniprot = null;
 
-                // result of PICR
-                String uniprot = this.listOfActions.get(0).runAction(context);
-                // get the reports of the first action
-                result.getListOfActions().addAll(this.listOfActions.get(0).getListOfActionReports());
-                // process the isoforms and set the uniprot id of the result
-                processIsoforms(uniprot, result);
+                if (context.getDatabaseForIdentifier() == null){
+                    log.warn("The identifier " + context.getIdentifier() + " is not associated to a database name or MI, so we will not use PICR" +
+                            " to map this identifier to an uniprot entry.");
+                }
 
-                // PICR could map the identifier to a Swissprot accession
+                if (isADatabaseManagedByPICR(context.getDatabaseForIdentifier())){
+                    // result of PICR
+                    uniprot = this.listOfActions.get(0).runAction(context);
+                    // get the reports of the first action
+                    result.getListOfActions().addAll(this.listOfActions.get(0).getListOfActionReports());
+
+                    if (uniprot == null && result.getLastAction().getPossibleAccessions().isEmpty()){
+                        uniprot = this.listOfActions.get(1).runAction(context);
+                        // get the reports of the second action
+                        result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
+                    }
+
+                    // process the isoforms and set the uniprot id of the result
+                    processIsoforms(uniprot, result);
+                }
+                else {
+                    uniprot = this.listOfActions.get(1).runAction(context);
+                    // get the reports of the second action
+                    result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
+                    // process the isoforms and set the uniprot id of the result
+                    processIsoforms(uniprot, result);
+                }
+
+                // PICR and uniprot could map the identifier to a Swissprot accession
                 if (result.getUniprotId() != null){
-                    PICRReport picrReport = (PICRReport) result.getLastAction();
+                    ActionReport report = result.getLastAction();
 
-                    // PICR could map to a Trembl entry
-                    if (!picrReport.isAswissprotEntry()){
+                    // PICR or uniprot could map to a Trembl entry
+                    if (!report.isAswissprotEntry()){
 
                         // get the uniprot protein
                         UniprotProtein tremblEntry = getUniprotProteinFor(result.getUniprotId());
@@ -145,15 +272,17 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
                         }
 
                         // run the swissprotRemappingProcess
-                        uniprot = this.listOfActions.get(1).runAction(blastContext);
+                        uniprot = this.listOfActions.get(2).runAction(blastContext);
                         // add the reports of the second action
-                        result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
+                        result.getListOfActions().addAll(this.listOfActions.get(2).getListOfActionReports());
                         // process the isoforms and set the uniprot id of the result
                         processIsoforms(uniprot, result);
 
-                        // add the trembl accession to the blast report, so we can keep a trace of this entry
-                        BlastReport blastReport = (BlastReport) result.getLastAction();
-                        blastReport.addPossibleAccession(tremblEntry.getPrimaryAc());
+                        List<SwissprotRemappingReport> listOfSwissprotRemappingReports = getSwissprotRemappingReports(result.getListOfActions());
+
+                        for (SwissprotRemappingReport sr : listOfSwissprotRemappingReports){
+                            sr.setTremblAccession(tremblEntry.getPrimaryAc());
+                        }
                     }
                 }
 
@@ -167,7 +296,8 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
     }
 
     /**
-     *
+     * This action is using PICR and/or uniprot cross reference search to map the identifier to an unique uniprot AC. If an unique Trembl is found,
+     * the strategy will use the SwissprotRemappingProcess to remap the trembl entry to a Swissprot entry.
      * @param context  : the context of the protein
      * @return an unique uniprot Accession if possible, null otherwise
      * @throws ActionProcessingException
@@ -175,17 +305,42 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
     public String runAction(IdentificationContext context) throws ActionProcessingException {
         // Always clear the previous reports
         this.listOfReports.clear();
+        String uniprot = null;
 
-        // Call PICR to mapp the identifier to a Uniprot accession
-        String uniprot = this.listOfActions.get(0).runAction(context);
-        // process the isoforms
-        uniprot = processIsoforms(uniprot);
-        // Add the reports of this action to the list of reports for this object
-        this.listOfReports.addAll(this.listOfActions.get(0).getListOfActionReports());
-        // Get the PICR report
-        PICRReport report = (PICRReport) this.listOfReports.get(this.listOfReports.size() - 1);
+        if (context.getDatabaseForIdentifier() == null){
+            log.warn("The identifier " + context.getIdentifier() + " is not associated to a database name or MI, so we will not use PICR" +
+                    " to map this identifier to an uniprot entry.");
+        }
 
-        // If PICR could mapp the identifier to an unique Uniprot accession
+        if (isADatabaseManagedByPICR(context.getDatabaseForIdentifier())){
+            // result of PICR
+            uniprot = this.listOfActions.get(0).runAction(context);
+            // get the reports of the first action
+            this.listOfReports.addAll(this.listOfActions.get(0).getListOfActionReports());
+
+            ActionReport lastReport =  this.listOfActions.get(0).getListOfActionReports().get(this.listOfActions.get(0).getListOfActionReports().size() - 1);
+
+            if (uniprot == null && lastReport.getPossibleAccessions().isEmpty()){
+                uniprot = this.listOfActions.get(1).runAction(context);
+                // get the reports of the second action
+                this.listOfReports.addAll(this.listOfActions.get(1).getListOfActionReports());
+            }
+
+            // process the isoforms
+            uniprot = processIsoforms(uniprot);
+        }
+        else {
+            uniprot = this.listOfActions.get(1).runAction(context);
+            // get the reports of the second action
+            this.listOfReports.addAll(this.listOfActions.get(1).getListOfActionReports());
+            // process the isoforms and set the uniprot id of the result
+            uniprot = processIsoforms(uniprot);
+        }
+
+        // Get the last report
+        ActionReport report = this.listOfReports.get(this.listOfReports.size() - 1);
+
+        // If PICR and Uniprot could mapp the identifier to an unique Uniprot accession
         if (uniprot != null){
 
             // if the accession is a Trembl accession
@@ -209,7 +364,7 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
                 }
 
                 // Try to do a Swissprot-remapping process
-                String uniprot2 = this.listOfActions.get(1).runAction(blastContext);
+                String uniprot2 = this.listOfActions.get(2).runAction(blastContext);
                 // process the isoforms
                 uniprot2 = processIsoforms(uniprot2);
 
@@ -218,11 +373,13 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
                     uniprot = uniprot2;
                 }
                 // add the reports
-                this.listOfReports.addAll(this.listOfActions.get(1).getListOfActionReports());
+                this.listOfReports.addAll(this.listOfActions.get(2).getListOfActionReports());
 
-                // Get the last Blast report from the last action and store the trembl accession here
-                BlastReport blastReport = (BlastReport) this.listOfReports.get(this.listOfReports.size() - 1);
-                blastReport.addPossibleAccession(tremblEntry.getPrimaryAc());
+                List<SwissprotRemappingReport> listOfSwissprotRemappingReports = getSwissprotRemappingReports(this.listOfReports);
+
+                for (SwissprotRemappingReport sr : listOfSwissprotRemappingReports){
+                    sr.setTremblAccession(tremblEntry.getPrimaryAc());
+                }
             }
         }
         return uniprot;

@@ -14,7 +14,9 @@ import uk.ac.ebi.kraken.interfaces.uniprot.genename.GeneNameSynonym;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.ORFName;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.OrderedLocusName;
 import uk.ac.ebi.kraken.util.IndexField;
-import uk.ac.ebi.kraken.uuw.services.remoting.*;
+import uk.ac.ebi.kraken.uuw.services.remoting.EntryIterator;
+import uk.ac.ebi.kraken.uuw.services.remoting.Query;
+import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryBuilder;
 
 /**
  * This class is querying Uniprot for a gene name and/or protein name which is matching the name of the protein to identify
@@ -24,17 +26,12 @@ import uk.ac.ebi.kraken.uuw.services.remoting.*;
  * @since <pre>31-Mar-2010</pre>
  */
 
-public class UniprotNameSearchProcess extends IdentificationActionImpl {
+public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
 
     /**
      * Sets up a logger for that class.
      */
     public static final Log log = LogFactory.getLog( UniprotNameSearchProcess.class );
-
-    /**
-     * The uniprot service
-     */
-    private UniProtQueryService uniProtQueryService = UniProtJAPI.factory.getUniProtQueryService();
 
     /**
      * Create a query to get the Uniprot entries with this gene name
@@ -90,16 +87,6 @@ public class UniprotNameSearchProcess extends IdentificationActionImpl {
     }*/
 
     /**
-     * Create a query to get the uniprot entries with this organism taxId
-     * @param organismName : the organism of the protein to identify
-     * @return the query as a String
-     */
-    private String buildTaxIdQuery(String organismName){
-        String query = IndexField.NCBI_TAXON_ID + ":" + organismName;
-        return query ;
-    }
-
-    /**
      * Create a query to get the uniprot entries with this gene name AND this protein name
      * @param gene_name : the gene name of the protein
      * @param protein_name : the protein name of the protein
@@ -128,38 +115,6 @@ public class UniprotNameSearchProcess extends IdentificationActionImpl {
 
         return query;
     }*/
-
-    /**
-     * Add a filter on the Taxid in the initial query
-     * @param initialquery : the initial query
-     * @param organism  : the organism of the protein
-     * @return the query as a String
-     */
-    private String addTaxIdToQuery(String initialquery, String organism){
-        String query = "(" + initialquery + ")" + " AND " + "(" + buildTaxIdQuery(organism) + ")";
-
-        return query;
-    }
-
-    /**
-     * Add a filter on the swissprot database in the initial query
-     * @param initialquery : the initial query
-     * @return the query as a String
-     */
-    private String addFilterOnSwissprot(String initialquery){
-        String query = "(" + initialquery + ")" + " AND " + "(" + IndexField.REVIEWED + ")";
-
-        return query;
-    }
-
-    /**
-     * Create the query instance
-     * @param query : the query as a String
-     * @return the query instance
-     */
-    private Query getQueryFor(String query){
-        return UniProtQueryBuilder.buildQuery(query);
-    }
 
     /**
      * Create the query instance with no specific filter on gene name or protein name but with a filter on the organism
@@ -240,6 +195,7 @@ public class UniprotNameSearchProcess extends IdentificationActionImpl {
         else if (iterator.getResultSize() > 1){
             Status status = new Status(StatusLabel.TO_BE_REVIEWED, "The protein " + (context.getGene_name() != null ? "with the gene name " + context.getGene_name() : (context.getProtein_name() != null ? "with the protein name " + context.getProtein_name() : "")) + " could match " + iterator.getResultSize() + " Uniprot entries.");
             report.setStatus(status);
+            report.setIsASwissprotEntry(false);
             for (UniProtEntry u : iterator){
                 report.addPossibleAccession(u.getPrimaryUniProtAccession().getValue());
             }
@@ -471,6 +427,7 @@ public class UniprotNameSearchProcess extends IdentificationActionImpl {
 
             // if we don't have any results, we look into trembl
             if (iterator == null || iterator.getResultSize() == 0){
+                report.setIsASwissprotEntry(false);
                 Status status = new Status(StatusLabel.FAILED, "We couldn't find any Swissprot entry which matches : name = " + globalName + "; TaxId = " + organism + ". We will look in Trembl.");
                 report.setStatus(status);
 
@@ -576,6 +533,7 @@ public class UniprotNameSearchProcess extends IdentificationActionImpl {
 
             report.addWarning("No organism was given for the protein with : name =  " + context.getGlobalName() != null ? context.getGlobalName() : (context.getGene_name()!= null ? context.getGene_name() : (context.getProtein_name() != null ? context.getProtein_name() : "")) + ". We will process the identification without looking at the organism.");
         }
+        report.setIsASwissprotEntry(true);
 
         // process a name search using gene name, protein name and/or glocal name
         String accession = processNameSearch(geneName, protein_name, organism, globalName, report, context);

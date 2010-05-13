@@ -12,7 +12,7 @@ import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyException;
 import uk.ac.ebi.intact.model.BioSource;
 
 /**
- * TODO comment this
+ * Unit test for StrategyForProteinUpdate
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -76,7 +76,7 @@ public class StrategyForProteinUpdateTest {
         UpdateContext context = new UpdateContext();
         context.setSequence(sequence);
         context.setOrganism(organism);
-        context.addIdentifier(identifier);
+        context.addIdentifier("MI:0860", identifier);
 
         this.strategy.setBasicBlastProcessRequired(false);
 
@@ -117,7 +117,7 @@ public class StrategyForProteinUpdateTest {
                 System.out.println("name " + r.getName().toString() + "Label : " + r.getStatus().getLabel().toString() + ": Description : " + r.getStatus().getDescription());
             }
 
-            Assert.assertNotNull(result.getUniprotId());
+            Assert.assertNull( result.getUniprotId());
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

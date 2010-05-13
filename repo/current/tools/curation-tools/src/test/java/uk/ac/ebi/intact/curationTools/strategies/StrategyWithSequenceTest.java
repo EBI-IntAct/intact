@@ -4,8 +4,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
-import uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.PICRReport;
+import uk.ac.ebi.intact.curationTools.model.actionReport.SwissprotRemappingReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.curationTools.model.results.IdentificationResults;
@@ -13,7 +13,7 @@ import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyException;
 import uk.ac.ebi.intact.model.BioSource;
 
 /**
- * TODO comment this
+ * Unit test for StrategyWithSequence
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -136,9 +136,9 @@ public class StrategyWithSequenceTest {
             Assert.assertNotNull(result.getUniprotId());
             Assert.assertEquals(3, result.getListOfActions().size());
             Assert.assertEquals(ac_to_find, result.getUniprotId());
-            Assert.assertEquals(true, result.getLastAction() instanceof BlastReport);
+            Assert.assertEquals(true, result.getLastAction() instanceof SwissprotRemappingReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
-            Assert.assertEquals(true, result.getLastAction().getPossibleAccessions().size() > 0);
+            Assert.assertEquals(true, ((SwissprotRemappingReport) result.getLastAction()).getTremblAccession() != null);
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -179,7 +179,7 @@ public class StrategyWithSequenceTest {
             Assert.assertEquals(ac_to_find, result.getUniprotId());
             Assert.assertEquals(true, result.getLastAction() instanceof PICRReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
-            Assert.assertEquals(true, ((PICRReport) result.getLastAction()).isAswissprotEntry());
+            Assert.assertEquals(true, result.getLastAction().isAswissprotEntry());
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -222,7 +222,7 @@ public class StrategyWithSequenceTest {
             Assert.assertEquals(ac_to_find, result.getUniprotId());
             Assert.assertEquals(true, result.getLastAction() instanceof PICRReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
-            Assert.assertEquals(true, ((PICRReport) result.getLastAction()).isAswissprotEntry());
+            Assert.assertEquals(true, result.getLastAction().isAswissprotEntry());
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

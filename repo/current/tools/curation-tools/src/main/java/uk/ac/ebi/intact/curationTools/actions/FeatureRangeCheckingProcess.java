@@ -231,10 +231,11 @@ public class FeatureRangeCheckingProcess extends ActionNeedingIntactContext{
                     if (accessions.size() == 1){
                         return accessions.iterator().next();
                     }
+                    else {
+                        return processContext.getTremblAccession();
+                    }
                 }
             }
         }
-
-        return null;
     }
 }

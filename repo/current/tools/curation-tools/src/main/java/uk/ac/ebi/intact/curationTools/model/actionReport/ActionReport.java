@@ -19,7 +19,7 @@ public class ActionReport {
 
     /**
      * the name of the action
-      */
+     */
     protected ActionName name;
 
     /**
@@ -38,6 +38,11 @@ public class ActionReport {
     protected Set<String> possibleAccessions = new HashSet<String>();
 
     /**
+     * boolean value to know if the unique uniprot id that this action retrieved is a swissprot entry
+     */
+    private boolean isASwissprotEntry = false;
+
+    /**
      * Create a new report for an action with a specific name
      * @param name the naem of the action
      */
@@ -46,7 +51,7 @@ public class ActionReport {
     }
 
     /**
-     * 
+     *
      * @return the name of the action
      */
     public ActionName getName(){
@@ -107,5 +112,21 @@ public class ActionReport {
      */
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    /**
+     *
+     * @return the isAswissprotEntry boolean
+     */
+    public boolean isAswissprotEntry(){
+        return this.isASwissprotEntry;
+    }
+
+    /**
+     * set the isAswissprotEntry value
+     * @param isSwissprot : boolean value
+     */
+    public void setIsASwissprotEntry(boolean isSwissprot){
+        this.isASwissprotEntry = isSwissprot;
     }
 }

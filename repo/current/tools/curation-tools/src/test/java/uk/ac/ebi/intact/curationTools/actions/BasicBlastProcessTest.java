@@ -13,7 +13,7 @@ import uk.ac.ebi.intact.model.BioSource;
 import java.util.List;
 
 /**
- * Unit test for simple App.
+ * Unit test for BasicBlastProcess.
  */
 public class BasicBlastProcessTest {
 
