@@ -9,6 +9,8 @@ import uk.ac.ebi.intact.curationTools.actions.SwissprotRemappingProcess;
 import uk.ac.ebi.intact.curationTools.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.SwissprotRemappingReport;
+import uk.ac.ebi.intact.curationTools.model.actionReport.status.Status;
+import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.curationTools.model.contexts.BlastContext;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.curationTools.model.results.IdentificationResults;
@@ -229,9 +231,19 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
                     result.getListOfActions().addAll(this.listOfActions.get(0).getListOfActionReports());
 
                     if (uniprot == null && result.getLastAction().getPossibleAccessions().isEmpty()){
-                        uniprot = this.listOfActions.get(1).runAction(context);
+
+                        String uniprotResult = this.listOfActions.get(1).runAction(context);
                         // get the reports of the second action
                         result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
+
+                        ActionReport lastReport = result.getLastAction();
+
+                        if (uniprotResult != null){
+                            lastReport.addPossibleAccession(uniprotResult);
+                            Status status = new Status(StatusLabel.TO_BE_REVIEWED, "The uniprot cross reference search was successful and could map the identifier "+context.getIdentifier()+" to "+uniprotResult+". However, as PICR couldn't retrieve" +
+                                    " the cross reference, it should be reviewed by a curator. The current problems are when ENTREZ GeneID can match a GI number and vice versa.");
+                            lastReport.setStatus(status);
+                        }
                     }
 
                     // process the isoforms and set the uniprot id of the result
@@ -318,12 +330,21 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
             // get the reports of the first action
             this.listOfReports.addAll(this.listOfActions.get(0).getListOfActionReports());
 
-            ActionReport lastReport =  this.listOfActions.get(0).getListOfActionReports().get(this.listOfActions.get(0).getListOfActionReports().size() - 1);
+            ActionReport lastReport =  this.listOfReports.get(this.listOfReports.size() - 1);
 
             if (uniprot == null && lastReport.getPossibleAccessions().isEmpty()){
-                uniprot = this.listOfActions.get(1).runAction(context);
+                String uniprotResult = this.listOfActions.get(1).runAction(context);
                 // get the reports of the second action
                 this.listOfReports.addAll(this.listOfActions.get(1).getListOfActionReports());
+
+                lastReport =  this.listOfReports.get(this.listOfReports.size() - 1);
+
+                if (uniprotResult != null){
+                    lastReport.addPossibleAccession(uniprotResult);
+                    Status status = new Status(StatusLabel.TO_BE_REVIEWED, "The uniprot cross reference search was successful and could map the identifier "+context.getIdentifier()+" to "+uniprotResult+". However, as PICR couldn't retrieve" +
+                            " the cross reference, it should be reviewed by a curator. The current problems are when ENTREZ GeneID can match a GI number and vice versa.");
+                    lastReport.setStatus(status);
+                }
             }
 
             // process the isoforms
