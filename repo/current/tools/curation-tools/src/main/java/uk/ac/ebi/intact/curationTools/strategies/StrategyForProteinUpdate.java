@@ -93,7 +93,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
      * @throws ActionProcessingException
      * @throws StrategyException
      */
-    private boolean checkIdentifierResults(IdentificationResults result, IdentificationContext context, ActionReport updateReport) throws ActionProcessingException, StrategyException {
+    private boolean checkIdentifierResults(IdentificationResults result, UpdateContext context, ActionReport updateReport) throws ActionProcessingException, StrategyException {
         // The strategy using the sequence found a unique Uniprot accession
         if (result.getUniprotId() != null){
             // Get the uniprot accession using the strategy with identifier
@@ -281,6 +281,8 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
         if (! (context instanceof UpdateContext)){
             throw new StrategyException("The context of a StrategyForProteinUpdate should be an instance of UpdateContext and not " + context.getClass().getSimpleName());
         }
+        UpdateContext updateContext = (UpdateContext) context;
+
         String sequence = context.getSequence();
         HashMap<String, String> identifiers = ((UpdateContext) context).getIdentifiers();
 
@@ -324,11 +326,11 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
 
                     for (Map.Entry<String, String> entry : identifiers.entrySet()){
                         // set the identifier
-                        context.setIdentifier(entry.getValue());
+                        updateContext.setIdentifier(entry.getValue());
                         // set the database
-                        context.setDatabaseForIdentifier(entry.getKey());
+                        updateContext.setDatabaseForIdentifier(entry.getKey());
                         // check the possible conflicts with the previous results
-                        isMatchingIdentifierResults = checkIdentifierResults(result, context, report);
+                        isMatchingIdentifierResults = checkIdentifierResults(result, updateContext, report);
                     }
 
                     // We don't have any conflicts with the previous results
