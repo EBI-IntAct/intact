@@ -8,6 +8,8 @@ import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.Status;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.intact.uniprot.service.UniprotRemoteService;
 import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.ReflectionCrossReferenceBuilder;
 import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.UniprotCrossReference;
 import uk.ac.ebi.kraken.interfaces.uniparc.UniParcEntry;
@@ -44,6 +46,11 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
      */
     private UniParcQueryService uniParcQueryService = UniProtJAPI.factory.getUniParcQueryService();
 
+    /**
+     * The uniprot remote service
+     */
+    private static UniprotRemoteService uniprotRemoteService = new UniprotRemoteService();
+
     private static final String swissprot = "UniProtKB/Swiss-Prot";
 
     /**
@@ -56,19 +63,6 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
                 " OR " + IndexField.UNIPROT_ID+":"+identifier +
                 " OR " + IndexField.UNIPROT_IDENTIFIER+":"+identifier +
                 " OR " + IndexField.PRIMARY_ACCESSION+":"+identifier;
-        return query ;
-    }
-
-    /**
-     * Build the query in uniparc to get the uniprot entries with this identifier in their cross references
-     * @param identifier : the identifier of the protein we want to identify
-     * @return the query as a String
-     */
-    private String buildUniparcDatabaseCrossReferenceQuery(String identifier){
-        String query = IndexField.DATABASE_CROSSREFERENCES+ ":" + identifier +
-                " OR " + IndexField.UNIPARC_ACCESSION+":"+identifier +
-                " OR " + IndexField.UNIPARC_ACTIVE_CROSSREFERENCES+":"+identifier +
-                " OR " + IndexField.UNIPARC_UNIPROT_CROSSREFERENCES+":"+identifier ;
         return query ;
     }
 
@@ -128,6 +122,42 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
             if (ref.getAccession().equals(identifier)){
                 return true;
             }
+        }
+
+        return false;
+    }
+
+    /**
+     *
+     * @param uniprot : the uniprot accession
+     * @param taxId : the taxId
+     * @return  true if the uniprot entry with this accession matches the taxId
+     * @throws ActionProcessingException
+     */
+    private boolean hasTheAppropriateOrganism(String uniprot, String taxId) throws ActionProcessingException {
+
+        if (taxId != null){
+            Collection<UniprotProtein> proteins = uniprotRemoteService.retrieve(uniprot);
+
+            if (proteins.size() != 1){
+                throw new ActionProcessingException("The uniprot accession " + uniprot + " could match several uniprot entries.");
+            }
+            else if (proteins.isEmpty()){
+                throw new ActionProcessingException("The uniprot accession " + uniprot + " couldn't match any uniprot entries.");
+            }
+            else {
+                UniprotProtein prot = proteins.iterator().next();
+
+                if (prot.getOrganism() != null){
+                    String tax = Integer.toString(prot.getOrganism().getTaxid());
+                    if (taxId.equalsIgnoreCase(tax)){
+                        return true;
+                    }
+                }
+            }
+        }
+        else {
+            return true;
         }
 
         return false;
@@ -257,8 +287,6 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
             }
         }
 
-        ActionReport lastReport = this.listOfReports.get(this.listOfReports.size() - 1);
-
         // we couldn't find a result in uniprot
         if ( report.getPossibleAccessions().isEmpty()){
 
@@ -267,41 +295,54 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
             this.listOfReports.add(reportUniparc);
 
             // build query for uniparc
-            queryString = buildUniparcDatabaseCrossReferenceQuery(identifier);
+            queryString = identifier;
             if (taxId != null){
                 queryString = addTaxIdToQuery(queryString, taxId);
             }
             // get the results of the query on uniparc
-            EntryIterator<UniParcEntry> iteratorUniparc = uniParcQueryService.getEntryIterator(UniParcQueryBuilder.buildFullTextSearch(context.getIdentifier()));
+            EntryIterator<UniParcEntry> iteratorUniparc = uniParcQueryService.getEntryIterator(UniParcQueryBuilder.buildFullTextSearch(queryString));
 
+            // We don't have any results in Uniparc
             if (iteratorUniparc == null || iteratorUniparc.getResultSize() == 0){
                 Status statusUniparc = new Status(StatusLabel.FAILED, "There is no cross reference in Uniparc matching the identifier " + identifier);
                 reportUniparc.setStatus(statusUniparc);
             }
             else {
+                // list of Trembl entries in the uniparc entry
                 HashSet<String> setOfUniprotAccessions = new HashSet<String>();
+                 // list of Swissprot entries in the uniparc entry
                 HashSet<String> setOfSwissprotAccessions = new HashSet<String>();
 
                 for (UniParcEntry entry : iteratorUniparc){
+
+                    // If the identifier can exactly match a uniparc cross reference
                     if (hasTheExactIdentifierInUniparc(entry, context.getIdentifier())){
+                        // get the uniprot cross references
                         Set<uk.ac.ebi.kraken.interfaces.uniparc.DatabaseCrossReference> uniprotRefs = entry.getUniProtDatabaseCrossReferences();
                         if (!uniprotRefs.isEmpty()){
                             for (uk.ac.ebi.kraken.interfaces.uniparc.DatabaseCrossReference uniprotRef : uniprotRefs){
-                                if (uniprotRef.getDatabase().getName().equalsIgnoreCase(swissprot)){
-                                    setOfSwissprotAccessions.add(uniprotRef.getAccession());
-                                }
-                                else {
-                                    setOfUniprotAccessions.add(uniprotRef.getAccession());
+                                // if the taxId is matching the uniprot cross references
+                                if (hasTheAppropriateOrganism(uniprotRef.getAccession(), taxId)){
+                                    // we have a swissprot entry
+                                    if (uniprotRef.getDatabase().getName().equalsIgnoreCase(swissprot)){
+                                        setOfSwissprotAccessions.add(uniprotRef.getAccession());
+                                    }
+                                    // we have a trembl entry
+                                    else {
+                                        setOfUniprotAccessions.add(uniprotRef.getAccession());
+                                    }
                                 }
                             }
                         }
                     }
                 }
 
+                // No results
                 if (setOfUniprotAccessions.isEmpty() && setOfSwissprotAccessions.isEmpty()){
                     Status statusUniparc = new Status(StatusLabel.FAILED, "There is no uniprot entry we could find in Uniparc associated with the identifier " + identifier);
                     reportUniparc.setStatus(statusUniparc);
                 }
+                // one swissprot entry
                 else if (setOfSwissprotAccessions.size() == 1){
                     String id = setOfSwissprotAccessions.iterator().next();
                     Status statusUniparc = new Status(StatusLabel.COMPLETED, "The protein with the identifier " + context.getIdentifier() + " has successfully been identified as " + id + " in Uniparc.");
@@ -310,11 +351,13 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
 
                     return id;
                 }
+                // several swissprot entries
                 else if (setOfSwissprotAccessions.size() > 1){
                     Status statusUniparc = new Status(StatusLabel.TO_BE_REVIEWED, "The protein with the identifier " + context.getIdentifier() + " could match " + setOfSwissprotAccessions.size() + " Swissprot entries.");
                     reportUniparc.setStatus(statusUniparc);
-                    reportUniparc.getPossibleAccessions().addAll(setOfUniprotAccessions);
+                    reportUniparc.getPossibleAccessions().addAll(setOfSwissprotAccessions);
                 }
+                // one trembl entry
                 else if (setOfUniprotAccessions.size() == 1){
                     String id = setOfUniprotAccessions.iterator().next();
                     Status statusUniparc = new Status(StatusLabel.COMPLETED, "The protein with the identifier " + context.getIdentifier() + " has successfully been identified as " + id + " in Uniparc.");
@@ -323,8 +366,9 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
 
                     return id;
                 }
+                // several trembl entries
                 else {
-                    Status statusUniparc = new Status(StatusLabel.TO_BE_REVIEWED, "The protein with the identifier " + context.getIdentifier() + " could match " + setOfSwissprotAccessions.size() + " Uniprot entries.");
+                    Status statusUniparc = new Status(StatusLabel.TO_BE_REVIEWED, "The protein with the identifier " + context.getIdentifier() + " could match " + setOfUniprotAccessions.size() + " Uniprot entries.");
                     reportUniparc.setStatus(statusUniparc);
                     reportUniparc.getPossibleAccessions().addAll(setOfUniprotAccessions);
                 }
