@@ -365,6 +365,7 @@ public class LineExport {
     }
 
     private CvXrefQualifier identity;
+    private CvXrefQualifier chainParent;
     private CvXrefQualifier isoformParent;
     private CvXrefQualifier primaryReference;
     private CvDatabase uniprot;
@@ -397,12 +398,12 @@ public class LineExport {
     }
 
     protected CvXrefQualifier getChainParent() {
-        if( isoformParent == null ) {
-            isoformParent = (CvXrefQualifier) getCvObject( CvXrefQualifier.class,
-                                                           "MI:0951",
-                                                           "chain-parent" );
+        if( chainParent == null ) {
+            chainParent = (CvXrefQualifier) getCvObject( CvXrefQualifier.class,
+                                                         "MI:0951",
+                                                         "chain-parent" );
         }
-        return isoformParent;
+        return chainParent;
     }
 
     protected CvXrefQualifier getPrimaryReference() {

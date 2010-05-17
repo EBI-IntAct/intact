@@ -141,6 +141,65 @@ public class DRLineExportLenientTest extends UniprotExportTestCase {
     }
 
     @Test
+    public void getEligibleProteins_protein_and_chains() throws Exception {
+        // build data:
+        //             1 protein, and other protein with its chain
+        //             1 interactions involving a uniprot protein and a chain
+
+        getIntactContext().getDataContext().beginTransaction();
+        final BioSource rat = getMockBuilder().createBioSource( 10116, "rat" );
+        final BioSource human = getMockBuilder().createBioSource( 9606, "human" );
+        final Protein p97887 = getMockBuilder().createProtein( "P97887", "PSN1_RAT", rat );
+        final Protein p12345 = getMockBuilder().createProtein( "P12345", "P12345_HUMAN", human );
+        PersisterHelper.saveOrUpdate( p12345, p97887 );
+
+        final Protein p97887Chain1 = createProteinChain( p97887, "P97887-PRO_0000025599", "P97887-PRO_0000025599" );
+        PersisterHelper.saveOrUpdate( p97887Chain1 );
+
+        final Interaction interaction = getMockBuilder().createInteraction( p12345, p97887Chain1 );
+        final Experiment exp = getMockBuilder().createDeterministicExperiment();
+        final CvTopic uniprotDrExport = getMockBuilder().createCvObject( CvTopic.class, null, CvTopic.UNIPROT_DR_EXPORT );
+        final Annotation annotation = new Annotation( getMockBuilder().getInstitution(), uniprotDrExport, "yes" );
+        exp.addAnnotation( annotation );
+        interaction.addExperiment( exp );
+        PersisterHelper.saveOrUpdate( interaction );
+        getIntactContext().getDataContext().commitTransaction();
+
+
+        DRLineExportLenient exporter = new DRLineExportLenient( );
+
+        final List<ProteinImpl> allProteins = getDaoFactory().getProteinDao().getAll();
+        Assert.assertEquals( 3, allProteins.size() );
+
+        final Set<String> identifiers = exporter.getEligibleProteins( allProteins );
+
+        Assert.assertNotNull( identifiers );
+        Assert.assertEquals( "Identifiers exported: " + identifiers.toString(), 2, identifiers.size() );
+
+        Assert.assertTrue( identifiers.contains( "P97887" ));
+        Assert.assertTrue( identifiers.contains( "P12345" ));
+
+        Assert.assertFalse( identifiers.contains( "P97887-PRO_0000025599" )); // we should have remapped to the parent entry
+    }
+
+    private Protein createProteinChain( Protein masterProt, String uniprotId, String shortLabel ) {
+
+        Protein chain = getMockBuilder().createProtein(uniprotId, shortLabel);
+
+        if (masterProt.getAc() == null) {
+            throw new IllegalArgumentException("Cannot create an chain if the master protein does not have an AC: "+masterProt.getShortLabel());
+        }
+
+        CvXrefQualifier isoformParent = getMockBuilder().createCvObject(CvXrefQualifier.class, "MI:0951", "chain-parent" );
+        CvDatabase intact = getMockBuilder().createCvObject(CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT);
+
+        InteractorXref isoformXref = getMockBuilder().createXref(chain, masterProt.getAc(), isoformParent, intact);
+        chain.addXref(isoformXref);
+
+        return chain;
+    }
+
+    @Test
     public void getEligibleProteins_uniprot_and_nucleicacid() throws Exception {
 
         // build data:
