@@ -155,23 +155,23 @@ public class WorksheetFacade {
     }
 
     public int getColUsedInRow( int row ) {
-        int lastEmptyCell = 1;
+        int lastNonEmptyCell = 1;
         for ( int i = 1; i < cellEntries[row].length; i++ ) {
-            if ( isEmptyCell( row, i ) ) {
-                lastEmptyCell = i;
+            if ( ! isEmptyCell( row, i ) ) {
+                lastNonEmptyCell = i;
             }
         }
-        return lastEmptyCell;
+        return lastNonEmptyCell;
     }
 
     public int getRowUsedInCol( int col ) {
-        int lastEmptyCell = 1;
+        int lastNonEmptyCell = 1;
         for ( int i = 1; i < cellEntries.length; i++ ) {
-            if ( isEmptyCell( i, col ) ) {
-                lastEmptyCell = i;
+            if ( ! isEmptyCell( i, col ) ) {
+                lastNonEmptyCell = i;
             }
         }
-        return lastEmptyCell;
+        return lastNonEmptyCell;
     }
 
     public boolean isRowEmpty( int row ) {
@@ -371,7 +371,7 @@ public class WorksheetFacade {
     public Map<String, Integer> getColumnNameIndex() {
         Map<String, Integer> map = Maps.newHashMap();
         int maxCol = getColUsedInRow( 1 );
-        for ( int i = 1; i < maxCol; i++ ) {
+        for ( int i = 1; i <= maxCol; i++ ) {
             String name = getCell( 1, i ).getCell().getValue();
             map.put( name, i );
         }
