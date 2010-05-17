@@ -167,9 +167,8 @@ public class FeatureRangeCheckingProcess extends ActionNeedingIntactContext{
                             Collection<Range> ranges = feature.getRanges();
 
                             for (Range range : ranges){
-                                // the CTerminal, NTerminal and undetermined ranges are not affected by the new sequence
-                                if (range.getToCvFuzzyType() != null && !range.getToCvFuzzyType().isCTerminal() && !range.getToCvFuzzyType().isNTerminal()
-                                        && !range.getToCvFuzzyType().isUndetermined()) {
+                                // undetermined ranges are not affected by the new sequence
+                                if (!range.isUndetermined()) {
                                     for (BlastProtein protein : processContext.getResultsOfSwissprotRemapping()){
 
                                         if (!checkRangeValidWithNewSequence(range, protein)){
