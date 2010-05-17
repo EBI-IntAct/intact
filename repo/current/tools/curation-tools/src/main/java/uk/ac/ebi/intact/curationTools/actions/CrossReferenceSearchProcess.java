@@ -354,7 +354,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
                         }
 
                         // The database in the context was not matching the database of the matching identifier in the cross references of the protein, we need a curator
-                        Status status = new Status(StatusLabel.TO_BE_REVIEWED, "The protein with the identifier " + context.getIdentifier() + " can match the cross references of the protein "+ id +" : "+databaseInUniprot+"="+id+". However, the database name of the identifier " +
+                        Status status = new Status(StatusLabel.TO_BE_REVIEWED, "The protein with the identifier " + context.getIdentifier() + " can match the cross references of the protein "+ id +" : "+databaseInUniprot+"="+context.getIdentifier()+". However, the database name of the identifier " +
                                 " in the context is "+context.getDatabaseForIdentifier()+", we can't be sure that we could match the proper cross reference in uniprot." );
                         report.setStatus(status);
                         report.addPossibleAccession(id);
@@ -372,7 +372,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
             }
 
             if (report.getPossibleAccessions().isEmpty()){
-                Status status = new Status(StatusLabel.FAILED, "The identifier " + context.getIdentifier() + " couldn't exactly match a uniprot/uniparc cross reference." );
+                Status status = new Status(StatusLabel.FAILED, "The identifier " + context.getIdentifier() + " couldn't exactly match any uniprot cross references." );
                 report.setIsASwissprotEntry(false);
                 report.setStatus(status);
             }
@@ -454,7 +454,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
 
         // if the query on Swissprot was not successful
         if (iterator == null || iterator.getResultSize() == 0){
-            Status status = new Status(StatusLabel.FAILED, "There is no Swissprot entry matching the identifier " + identifier);
+            Status status = new Status(StatusLabel.FAILED, "There is no Swissprot entry matching the identifier " + identifier  + (taxId != null ? " and the taxId " + taxId : ""));
             report.setStatus(status);
 
             // new query, new report
@@ -472,7 +472,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
 
             // If the query was not successful in Uniprot, we had a status FAILED to the report
             if (iterator == null || iterator.getResultSize() == 0){
-                Status status2 = new Status(StatusLabel.FAILED, "There is no Uniprot entry matching the identifier " + identifier);
+                Status status2 = new Status(StatusLabel.FAILED, "There is no Uniprot entry matching the identifier " + identifier + (taxId != null ? " and the taxId " + taxId : ""));
                 report2.setStatus(status2);
             }
             // query successful : process the results
@@ -509,7 +509,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
 
             // We don't have any results in Uniparc
             if (iteratorUniparc == null || iteratorUniparc.getResultSize() == 0){
-                Status statusUniparc = new Status(StatusLabel.FAILED, "There is no cross reference in Uniparc matching the identifier " + identifier);
+                Status statusUniparc = new Status(StatusLabel.FAILED, "There is no cross reference in Uniparc matching the identifier " + identifier + (taxId != null ? " and the taxId " + taxId : ""));
                 reportUniparc.setStatus(statusUniparc);
             }
             else {
@@ -547,7 +547,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
 
                 // No results
                 if (setOfUniprotAccessions.isEmpty() && setOfSwissprotAccessions.isEmpty()){
-                    Status statusUniparc = new Status(StatusLabel.FAILED, "There is no uniprot entry we could find in Uniparc associated with the identifier " + identifier);
+                    Status statusUniparc = new Status(StatusLabel.FAILED, "There is no uniprot entry we could find in Uniparc associated with the identifier " + identifier + (taxId != null ? " and the taxId " + taxId : ""));
                     reportUniparc.setStatus(statusUniparc);
                 }
                 // one swissprot entry
