@@ -182,23 +182,6 @@ public class DRLineExportLenientTest extends UniprotExportTestCase {
         Assert.assertFalse( identifiers.contains( "P97887-PRO_0000025599" )); // we should have remapped to the parent entry
     }
 
-    private Protein createProteinChain( Protein masterProt, String uniprotId, String shortLabel ) {
-
-        Protein chain = getMockBuilder().createProtein(uniprotId, shortLabel);
-
-        if (masterProt.getAc() == null) {
-            throw new IllegalArgumentException("Cannot create an chain if the master protein does not have an AC: "+masterProt.getShortLabel());
-        }
-
-        CvXrefQualifier isoformParent = getMockBuilder().createCvObject(CvXrefQualifier.class, "MI:0951", "chain-parent" );
-        CvDatabase intact = getMockBuilder().createCvObject(CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT);
-
-        InteractorXref isoformXref = getMockBuilder().createXref(chain, masterProt.getAc(), isoformParent, intact);
-        chain.addXref(isoformXref);
-
-        return chain;
-    }
-
     @Test
     public void getEligibleProteins_uniprot_and_nucleicacid() throws Exception {
 

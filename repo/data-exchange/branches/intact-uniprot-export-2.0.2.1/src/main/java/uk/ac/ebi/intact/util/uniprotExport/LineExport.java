@@ -577,26 +577,15 @@ public class LineExport {
 
         Protein master = null;
 
-        String ac = getMasterAc(protein);
+        String ac = getMasterAc( protein );
 
         if (ac != null) {
             // search for that Protein
-            Collection<ProteinImpl> proteins = null;
-            try {
-                proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByAcLike(ac, false);
-            } catch (IntactException e) {
-                e.printStackTrace();
-            }
+            master = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByAc( ac );
 
-            if (proteins != null) {
-                if (!proteins.isEmpty()) {
-                    master = proteins.iterator().next();
-                } else {
-                    out.println("ERROR: Could not find the master protein (AC: " + ac +
-                                " ) of the splice variant AC: " + protein.getAc());
-                }
-            } else {
-                out.println("ERROR: An error occured when searching the IntAct database for Protein having the AC: " + ac);
+            if (master == null) {
+                out.println("ERROR: Could not find the master protein (AC: " + ac +
+                            " ) of the splice variant/chain AC: " + protein.getAc());
             }
         } else {
             out.println("ERROR: Could not find a master protein AC in the Xrefs of the protein: " +
@@ -630,9 +619,6 @@ public class LineExport {
         }
 
         return interactions;
-
-//        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionDao().getInteractionsByInteractorAc(protein.getAc());
-
     }
 
     /**

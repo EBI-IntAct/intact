@@ -22,12 +22,9 @@ import uk.ac.ebi.intact.core.util.SchemaUtils;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.config.impl.EssentialCvPrimer;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.CvAliasType;
 
 /**
  * Abstract test that sets up the database for the uniprot export tests.
@@ -66,5 +63,22 @@ public abstract class UniprotExportTestCase extends IntactBasicTestCase {
             }
         };
         cvPrimer.createCVs();
+    }
+
+    protected Protein createProteinChain( Protein masterProt, String uniprotId, String shortLabel ) {
+
+        Protein chain = getMockBuilder().createProtein(uniprotId, shortLabel);
+
+        if (masterProt.getAc() == null) {
+            throw new IllegalArgumentException("Cannot create an chain if the master protein does not have an AC: "+masterProt.getShortLabel());
+        }
+
+        CvXrefQualifier isoformParent = getMockBuilder().createCvObject(CvXrefQualifier.class, "MI:0951", "chain-parent" );
+        CvDatabase intact = getMockBuilder().createCvObject(CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT);
+
+        InteractorXref isoformXref = getMockBuilder().createXref(chain, masterProt.getAc(), isoformParent, intact);
+        chain.addXref(isoformXref);
+
+        return chain;
     }
 }

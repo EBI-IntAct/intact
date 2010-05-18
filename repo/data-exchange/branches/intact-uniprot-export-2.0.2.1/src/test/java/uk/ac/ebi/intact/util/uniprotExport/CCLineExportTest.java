@@ -21,7 +21,6 @@ public class CCLineExportTest {
 
     private static final Log log = LogFactory.getLog(CCLineExportTest.class);
 
-
     /////////////////////////////////////////
     // Check on the ordering of the CC lines
     @Test
@@ -66,7 +65,6 @@ public class CCLineExportTest {
         Assert.assertEquals( "fedcba", ( ccLines.get( 5 ) ).getGeneName() );
 
     }
-
 
     @Test
     public void testCCLinesOrdering_2() {
@@ -164,7 +162,6 @@ public class CCLineExportTest {
         Assert.assertEquals( "V-MAF", ( ccLines.get( 6 ) ).getGeneName() );
     }
 
-
     @Test
     public void regexTestForDrLine() {
         String drLine1 = "DR   IntAct;  Q9SWI1; -.";
@@ -191,8 +188,5 @@ public class CCLineExportTest {
         }
 
         Assert.assertEquals(3,proteins.size());
-
     }
-
-
 }
