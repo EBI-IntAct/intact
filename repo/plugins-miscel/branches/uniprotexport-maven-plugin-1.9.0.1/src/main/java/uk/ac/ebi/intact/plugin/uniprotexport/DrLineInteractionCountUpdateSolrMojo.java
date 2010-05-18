@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
  * @phase process-resources
  * @since 1.9.0.1
  */
-public class DrLineInteractionCountUpdatetSolrMojo extends UniprotExportAbstractMojo {
+public class DrLineInteractionCountUpdateSolrMojo extends UniprotExportAbstractMojo {
 
     /**
      * Project instance
