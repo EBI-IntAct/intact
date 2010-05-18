@@ -1,0 +1,17 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>uniprotexport-maven-plugin</artifactId>
+
+                <configuration>
+                    <uniprotLinksFilename>target/uniprotlinks.dat</uniprotLinksFilename>
+                    <updatedUniprotLinksFilename>target/uniprotlinks.updated.dat</updatedUniprotLinksFilename>
+                    <hibernateConfig>src/test/resources/test-hibernate.cfg.xml</hibernateConfig>
+                    <overwrite>true</overwrite>
+                    <solrIndexUrl></solrIndexUrl>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
