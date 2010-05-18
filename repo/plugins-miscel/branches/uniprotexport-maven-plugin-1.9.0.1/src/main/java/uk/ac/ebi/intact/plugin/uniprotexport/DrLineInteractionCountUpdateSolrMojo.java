@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
 public class DrLineInteractionCountUpdateSolrMojo extends UniprotExportAbstractMojo {
 
     /**
-     * Project instance
+     * Project instance.
      *
      * @parameter default-value="${project}"
      * @readonly
@@ -55,7 +55,7 @@ public class DrLineInteractionCountUpdateSolrMojo extends UniprotExportAbstractM
     protected MavenProject project;
 
     /**
-     * File containing the species
+     * Directory in which we will write the resulting DR line file.
      *
      * @parameter default-value=""
      * @required
@@ -88,10 +88,6 @@ public class DrLineInteractionCountUpdateSolrMojo extends UniprotExportAbstractM
      */
     private boolean overwrite;
     private static final Pattern DRPATTERN = Pattern.compile("DR\\s+IntAct;\\s+(.*?);.*");
-
-//    public String getTargetPath() {
-//        return targetPath;
-//    }
 
     public void setTargetPath( String targetPath ) {
         this.targetPath = targetPath;
@@ -352,5 +348,12 @@ public class DrLineInteractionCountUpdateSolrMojo extends UniprotExportAbstractM
         if ( !uniprotLinks.canRead() ) {
             throw new IllegalArgumentException( "You must give a readable uniprotLinks" + uniprotLinksFilename );
         }
+    }
+
+    public static void main( String[] args ) {
+
+
+
+
     }
 }
