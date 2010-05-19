@@ -20,7 +20,7 @@
 
     <properties>
         <currentVersion>${version}</currentVersion>
-        <bridges.version>2.1.0</bridges.version>
+        <bridges.version>2.1.2-SNAPSHOT</bridges.version>
         <core.version>2.2.0</core.version>
     </properties>
 
@@ -34,7 +34,7 @@
         <module>intact-biosource-update</module>
         <module>intact-proteins-update</module>
         <module>update-db-proteins-maven-plugin</module>
-        <!--<module>intact-smallmolecules-update</module>-->
+        <module>intact-smallmolecules-update</module>
   </modules>
 
     <dependencyManagement>
