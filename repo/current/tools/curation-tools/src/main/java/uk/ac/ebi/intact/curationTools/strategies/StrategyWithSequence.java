@@ -152,9 +152,9 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
                 // PICR was successful
                 else {
                     // PICR could map the sequence to a Trembl entry
-                    if (result.hasUniqueUniprotId() && !lastAction.isAswissprotEntry()){
+                    if (result.hasUniqueUniprotId() && !lastAction.isASwissprotEntry()){
                         // get the uniprot protein for the Trembl entry
-                        UniprotProtein tremblEntry = getUniprotProteinFor(result.getUniprotId());
+                        UniprotProtein tremblEntry = getUniprotProteinFor(result.getFinalUniprotId());
                         String sequence = tremblEntry.getSequence();
 
                         // create a blast context
@@ -167,7 +167,7 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
                             blastContext.setEnsemblGene(ensemblGene);
                         }
                         else {
-                            throw new StrategyException("We couldn't find any Uniprot entries which match this accession number " + result.getUniprotId());
+                            throw new StrategyException("We couldn't find any Uniprot entries which match this accession number " + result.getFinalUniprotId());
                         }
 
                         // run a swissprot remapping process
@@ -264,7 +264,7 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
         // PICR was successful
         else {
             // PICR could map the sequence to a Trembl entry
-            if (uniprot != null && !report.isAswissprotEntry()){
+            if (uniprot != null && !report.isASwissprotEntry()){
                 // get the uniprot protein for the Trembl entry
                 UniprotProtein tremblEntry = getUniprotProteinFor(uniprot);
                 String sequence = tremblEntry.getSequence();

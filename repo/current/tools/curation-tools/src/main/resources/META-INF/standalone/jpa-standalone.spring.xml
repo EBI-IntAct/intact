@@ -19,9 +19,9 @@
 
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
 
-    <bean id="usersEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+    <bean id="curationToolsEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceUnitName" value="intact-curationTools-default"/>
-        <property name="dataSource" ref="intactUsersDataSource"/>
+        <property name="dataSource" ref="intactCurationToolsDataSource"/>
 
         <property name="jpaProperties">
             <props>
@@ -40,16 +40,16 @@
         </property>
     </bean>
 
-    <bean id="intactUsersDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <bean id="intactCurationToolsDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.h2.Driver"/>
-        <property name="url" value="jdbc:h2:mem:intactusers;DB_CLOSE_DELAY=-1;LOCK_MODE=0"/>
+        <property name="url" value="jdbc:h2:mem:intactcuration;DB_CLOSE_DELAY=-1;LOCK_MODE=0"/>
         <property name="username" value="ma"/>
         <property name="password" value=""/>
     </bean>
 
-    <bean id="usersTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="usersEntityManagerFactory"/>
-        <property name="dataSource" ref="intactUsersDataSource"/>
+    <bean id="curationToolsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="curationToolsEntityManagerFactory"/>
+        <property name="dataSource" ref="intactCurationToolsDataSource"/>
 
         <qualifier value="curationTools"/>
     </bean>

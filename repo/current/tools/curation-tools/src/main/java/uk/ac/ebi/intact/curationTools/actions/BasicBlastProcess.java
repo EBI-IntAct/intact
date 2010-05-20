@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.Status;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.curationTools.model.results.BlastResults;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -81,7 +82,7 @@ public class BasicBlastProcess extends ActionNeedingBlastService{
                     break;
                 }
                 else {
-                    report.addBlastMatchingProtein(b);
+                    report.addBlastMatchingProtein(new BlastResults(b));
                 }
             }
 

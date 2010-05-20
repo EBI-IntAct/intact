@@ -168,17 +168,17 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
                         result.getLastAction().addWarning("The identified Uniprot Id is the isoform "+ matchingId +". However, the canonical sequence has been kept.");                        
                     }
                     else {
-                        log.error("A uniprot id has been set : " + result.getUniprotId() + ", but no action have been reported.");
+                        log.error("A uniprot id has been set : " + result.getFinalUniprotId() + ", but no action have been reported.");
                     }
                     matchingId = matchingId.substring(0, matchingId.indexOf("-"));
-                    result.setUniprotId(matchingId);
+                    result.setFinalUniprotId(matchingId);
                 }
                 else {
-                    result.setUniprotId(matchingId);
+                    result.setFinalUniprotId(matchingId);
                 }
             }
             else {
-                result.setUniprotId(matchingId);
+                result.setFinalUniprotId(matchingId);
             }
         }
 

@@ -1,6 +1,6 @@
 package uk.ac.ebi.intact.curationTools.model.contexts;
 
-import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
+import uk.ac.ebi.intact.curationTools.model.results.BlastResults;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,7 +20,7 @@ public class FeatureRangeCheckingContext extends UpdateContext {
     /**
      * The list of results from the blast on swissprot
      */
-    private Set<BlastProtein> resultsOfSwissprotRemapping = new HashSet<BlastProtein> ();
+    private Set<BlastResults> resultsOfSwissprotRemapping = new HashSet<BlastResults> ();
 
     /**
      * the Trembl accession : its sequence has been used for the blast on swissprot
@@ -41,7 +41,7 @@ public class FeatureRangeCheckingContext extends UpdateContext {
      *
      * @return the list of results from swissprot
      */
-    public Set<BlastProtein> getResultsOfSwissprotRemapping() {
+    public Set<BlastResults> getResultsOfSwissprotRemapping() {
         return resultsOfSwissprotRemapping;
     }
 
@@ -57,7 +57,7 @@ public class FeatureRangeCheckingContext extends UpdateContext {
      * add a new result from swissprot
      * @param resultsOfSwissprotRemapping : other result from swissprot
      */
-    public void setResultsOfSwissprotRemapping(Set<BlastProtein> resultsOfSwissprotRemapping) {
+    public void setResultsOfSwissprotRemapping(Set<BlastResults> resultsOfSwissprotRemapping) {
         this.resultsOfSwissprotRemapping = resultsOfSwissprotRemapping;
     }
 

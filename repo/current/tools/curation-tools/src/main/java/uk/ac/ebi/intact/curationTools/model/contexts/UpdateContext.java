@@ -3,6 +3,7 @@ package uk.ac.ebi.intact.curationTools.model.contexts;
 import uk.ac.ebi.intact.model.BioSource;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This specific context is used for the update of the Intact proteins without any uniprot cross references.
@@ -17,7 +18,7 @@ public class UpdateContext extends IdentificationContext{
     /**
      * list of identifiers for the Intact protein
      */
-    private HashMap<String, String> identifiers = new HashMap<String, String>();
+    private Map<String, String> identifiers = new HashMap<String, String>();
 
     /**
      * the Intact accession of the protein
@@ -45,7 +46,7 @@ public class UpdateContext extends IdentificationContext{
      *
      * @return the list of identifiers
      */
-    public HashMap<String, String> getIdentifiers() {
+    public Map<String, String> getIdentifiers() {
         return identifiers;
     }
 

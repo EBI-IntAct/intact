@@ -9,5 +9,5 @@ package uk.ac.ebi.intact.curationTools.model.actionReport.status;
  */
 
 public enum StatusLabel {
-    FAILED, COMPLETED, TO_BE_REVIEWED
+    FAILED, COMPLETED, TO_BE_REVIEWED, NONE
 }

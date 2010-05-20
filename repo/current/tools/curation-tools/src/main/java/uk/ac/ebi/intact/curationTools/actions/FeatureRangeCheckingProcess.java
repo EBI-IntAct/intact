@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.curationTools.model.actionReport.status.Status;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.curationTools.model.contexts.FeatureRangeCheckingContext;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.curationTools.model.results.BlastResults;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.Range;
@@ -76,11 +77,11 @@ public class FeatureRangeCheckingProcess extends ActionNeedingIntactContext{
             return false;
         }
         // No ranges should be before the new start positions
-        else if (startTo < protein.getStartMatch() || range.getToIntervalStart() < protein.getStartQuery()){
+        else if (startTo > protein.getEndMatch() || range.getToIntervalStart() > protein.getEndQuery()){
             return false;
         }
         // No ranges should be after the new end positions
-        else if (endFrom > protein.getEndMatch() || range.getFromIntervalEnd() > protein.getEndQuery()){
+        else if (endFrom < protein.getStartMatch() || range.getFromIntervalEnd() < protein.getStartQuery()){
             return false;
         }
         // No ranges should be after the new end positions
@@ -89,14 +90,14 @@ public class FeatureRangeCheckingProcess extends ActionNeedingIntactContext{
         }
         else {
             // Check that the amino acids involved in the feature ranges are identical
-            if (startFrom > 0 && endFrom > 0){
-                String rangeNewSequence = protein.getSequence().substring(startFrom - 1, endFrom);
+            if (startFrom > 0 && startTo > 0){
+                String rangeNewSequence = protein.getSequence().substring(startFrom - 1, startTo);
                 if (!range.getSequence().equals(rangeNewSequence)){
                     return false;
                 }
             }
-            if (startTo > 0 && endTo > 0){
-                String rangeNewSequence = protein.getSequence().substring(startTo - 1, endTo);
+            if (endFrom> 0 && endTo > 0){
+                String rangeNewSequence = protein.getSequence().substring(endFrom - 1, endTo);
                 if (!range.getSequence().equals(rangeNewSequence)){
                     return false;
                 }
@@ -169,7 +170,7 @@ public class FeatureRangeCheckingProcess extends ActionNeedingIntactContext{
                             for (Range range : ranges){
                                 // undetermined ranges are not affected by the new sequence
                                 if (!range.isUndetermined()) {
-                                    for (BlastProtein protein : processContext.getResultsOfSwissprotRemapping()){
+                                    for (BlastResults protein : processContext.getResultsOfSwissprotRemapping()){
 
                                         if (!checkRangeValidWithNewSequence(range, protein)){
                                             hasRangeConflict = true;

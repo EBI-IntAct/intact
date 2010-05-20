@@ -1,5 +1,9 @@
 package uk.ac.ebi.intact.curationTools.model.actionReport;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 /**
  * This report contains the results of a swissprot remapping process
  *
@@ -7,7 +11,8 @@ package uk.ac.ebi.intact.curationTools.model.actionReport;
  * @version $Id$
  * @since <pre>13-May-2010</pre>
  */
-
+@Entity
+@Table( name = "ia_swissprot_remapping" )
 public class SwissprotRemappingReport extends BlastReport {
 
     /**
@@ -37,6 +42,7 @@ public class SwissprotRemappingReport extends BlastReport {
      *
      * @return
      */
+    @Column(name = "trembl_ac", nullable = false, length = 20)
     public String getTremblAccession() {
         return tremblAccession;
     }

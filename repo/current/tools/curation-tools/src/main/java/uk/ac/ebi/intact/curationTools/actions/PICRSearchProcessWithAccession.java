@@ -85,7 +85,7 @@ public class PICRSearchProcessWithAccession extends IdentificationActionImpl {
                     Status status = new Status(StatusLabel.COMPLETED, "PICR successfully matched the identifier " + context.getIdentifier() + " to this Swissprot accession " + uniprotId);
                     report.setStatus(status);
 
-                    report.setIsASwissprotEntry(true);
+                    report.setASwissprotEntry(true);
                     return uniprotId;
                 }
                 // we have a Trembl entry
@@ -93,7 +93,7 @@ public class PICRSearchProcessWithAccession extends IdentificationActionImpl {
                     Status status = new Status(StatusLabel.COMPLETED, "PICR successfully matched the identifier " + context.getIdentifier() + " to this Trembl accession " + uniprotId);
                     report.setStatus(status);
 
-                    report.setIsASwissprotEntry(false);
+                    report.setASwissprotEntry(false);
                     return uniprotId;
                 }
                 else {

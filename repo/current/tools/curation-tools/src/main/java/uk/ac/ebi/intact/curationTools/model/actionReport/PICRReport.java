@@ -1,6 +1,9 @@
 package uk.ac.ebi.intact.curationTools.model.actionReport;
 
-import java.util.HashMap;
+import org.hibernate.annotations.CollectionOfElements;
+import uk.ac.ebi.intact.curationTools.model.results.PICRCrossReferences;
+
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,13 +14,14 @@ import java.util.Set;
  * @version $Id$
  * @since <pre>01-Apr-2010</pre>
  */
-
+@Entity
+@Table( name = "ia_picr_report" )
 public class PICRReport extends ActionReport{
 
     /**
      * the list of cross references that PICR could collect
      */
-    private HashMap<String, Set<String>> crossReferences = new HashMap<String, Set<String>>();
+    private Set<PICRCrossReferences> crossReferences = new HashSet<PICRCrossReferences>();
 
     /**
      * Create a new PICRReport
@@ -31,23 +35,39 @@ public class PICRReport extends ActionReport{
      *
      * @return the map containing the cross references
      */
-    public HashMap<String, Set<String>> getCrossReferences(){
+    @CollectionOfElements
+    @JoinTable( name="ia_picr2xrefs", joinColumns = @JoinColumn(name="picr_id"))
+    @org.hibernate.annotations.MapKey( columns = { @Column( name="xref_database" ) } )
+    @Column( name="picr_xref_accessions", nullable = false)
+    public Set<PICRCrossReferences> getCrossReferences(){
         return this.crossReferences;
     }
 
     /**
      * add a new cross reference
      * @param databaseName : database name
-     * @param accession : accession in the database
+     * @param accession : accessions in the database
      */
     public void addCrossReference(String databaseName, String accession){
-        if (!this.crossReferences.containsKey(databaseName)){
-            Set<String> values = new HashSet<String>();
-            values.add(accession);
-            crossReferences.put(databaseName, values);
+        boolean isADatabaseNamePresent = false;
+
+        for (PICRCrossReferences c : this.crossReferences){
+            if (c.getDatabase() != null){
+                if (c.getDatabase().equalsIgnoreCase(databaseName)){
+                    isADatabaseNamePresent = true;
+                    c.addAccession(accession);
+                }
+            }
         }
-        else {
-            this.crossReferences.get(databaseName).add(accession);
+
+        if (!isADatabaseNamePresent){
+            PICRCrossReferences picrRefs = new PICRCrossReferences();
+            picrRefs.setDatabase(databaseName);
+            picrRefs.addAccession(accession);
         }
+    }
+
+    public void setCrossReferences(Set<PICRCrossReferences> crossReferences) {
+        this.crossReferences = crossReferences;
     }
 }
