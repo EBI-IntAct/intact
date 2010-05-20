@@ -16,29 +16,6 @@
 
     <name>IntAct Database Update :: Plugins :: Proteins Update Plugin</name>
 
-    <!--<build>-->
-        <!--<defaultGoal>install</defaultGoal>-->
-        <!--<plugins>-->
-            <!--<plugin>-->
-                <!--<groupId>uk.ac.ebi.intact.dbupdate.plugins</groupId>-->
-                <!--<artifactId>update-db-proteins-maven-plugin</artifactId>-->
-                <!--<version>2.1.2-SNAPSHOT</version>-->
-
-                <!--<configuration>-->
-                    <!--<springConfig>/META-INF/dev.jpa.spring.xml</springConfig>-->
-                    <!--<reportsDir>target/protein-update</reportsDir>-->
-                    <!--<fixDuplicates>true</fixDuplicates>-->
-                    <!--<deleteSpliceVarsWithoutInteractions>false</deleteSpliceVarsWithoutInteractions>-->
-                    <!--<batchSize>100</batchSize>-->
-                    <!--<stepSize>90</stepSize>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
-
-        <!--</plugins>-->
-
-    <!--</build>-->
-
-
     <dependencies>
         <dependency>
             <groupId>uk.ac.ebi.intact.plugins</groupId>
