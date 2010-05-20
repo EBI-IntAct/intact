@@ -71,8 +71,12 @@ public abstract class IntactJpaMojo extends IntactAbstractMojo {
 
         if( ! IntactContext.currentInstanceExists() ) {
             if(getSpringConfig() != null ) {
-                getLog().info( "Initializing JPA using user provided configuration file: " + getSpringConfig() );
-                IntactContext.initContext( new String[]{ getSpringConfig() } );
+                final File springConfigFile = new File( getSpringConfig() );
+                if( ! springConfigFile.exists() ) {
+                    throw new  MojoExecutionException( "Could not find spring config file: " + springConfigFile.getAbsolutePath() );
+                }
+                getLog().info( "Initializing JPA using user provided configuration file: " + springConfigFile.toURI().toString() );
+                IntactContext.initContext( new String[]{ springConfigFile.toURI().toString() } );
             } else {
                 getLog().info( "Initializing IntactContext in memory (stand alone database)" );
                 IntactContext.initStandaloneContextInMemory();
