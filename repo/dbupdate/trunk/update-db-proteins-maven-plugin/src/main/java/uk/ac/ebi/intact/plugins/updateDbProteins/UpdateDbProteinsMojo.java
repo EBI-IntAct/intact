@@ -47,6 +47,13 @@ public class UpdateDbProteinsMojo extends IntactJpaMojo {
      */
     private MavenProject project;
 
+     /**
+     * A spring config file (JPA, ...).
+     * @parameter
+     * @required
+     */
+    private String springConfig;
+
     /**
      * @parameter expression="${project.build.directory}/protein-update"
      * @required
@@ -84,6 +91,12 @@ public class UpdateDbProteinsMojo extends IntactJpaMojo {
 
         System.out.println( "Protein Update in Action..." );
 
+        System.out.println( "springConfig:"+getSpringConfig() );
+        System.out.println( "fixDuplicates:"+fixDuplicates );
+        System.out.println( "deleteSpliceVarsWithoutInteractions:"+deleteSpliceVarsWithoutInteractions );
+        System.out.println( "batchSize:"+getBatchSize() );
+        System.out.println( "stepSize:"+stepSize );
+
         UpdateReportHandler reportHandler = new FileReportHandler(reportsDir);
         ProteinUpdateProcessorConfig configUpdate = new ProteinUpdateProcessorConfig(reportHandler);
         configUpdate.setFixDuplicates(fixDuplicates);
@@ -105,6 +118,14 @@ public class UpdateDbProteinsMojo extends IntactJpaMojo {
         ps.println("---------------------");
         DebugUtil.printDatabaseCounts(ps);
         ps.flush();
+    }
+
+    public String getSpringConfig() {
+        return springConfig;
+    }
+
+    public void setSpringConfig( String springConfig ) {
+        this.springConfig = springConfig;
     }
 
     public MavenProject getProject() {
