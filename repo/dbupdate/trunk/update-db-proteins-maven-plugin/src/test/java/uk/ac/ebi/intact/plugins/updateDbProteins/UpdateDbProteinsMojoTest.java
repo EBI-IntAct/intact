@@ -31,18 +31,18 @@ public class UpdateDbProteinsMojoTest  {         // extends IntactBasicTestCase
     }
 
     @Test
-    public void executeIntactMojo() throws Exception {
+    public void executeIntactMojo_dbInMemoryy() throws Exception {
 
         File mojoConfig = new File( UpdateDbProteinsMojoTest.class.getResource( "/plugin-configs/updateDbProteins-config.xml" ).getFile() );
         UpdateDbProteinsMojo mojo = (UpdateDbProteinsMojo) new MojoHelper().lookupMojo( "update-proteins", mojoConfig );
 
-        mojo.setSpringConfig( "/META-INF/dev.jpa.spring.xml" );
+//        mojo.setSpringConfig( "/META-INF/dev.jpa.spring.xml" );
         mojo.setReportsDir( new File("target/protein-update") );
         mojo.setFixDuplicates( true );
         mojo.setDeleteSpliceVarsWithoutInteractions( false );
         mojo.setBatchSize( 100 );
 
-        mojo.executeIntactMojo();
+        mojo.execute();
     }
 
     @Test
