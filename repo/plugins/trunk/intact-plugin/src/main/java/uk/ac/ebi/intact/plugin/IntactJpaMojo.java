@@ -17,24 +17,26 @@ package uk.ac.ebi.intact.plugin;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
-import uk.ac.ebi.intact.config.impl.InMemoryDataConfig;
-import uk.ac.ebi.intact.config.DataConfig;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.context.impl.StandaloneSession;
-import uk.ac.ebi.intact.business.IntactTransactionException;
+import uk.ac.ebi.intact.core.context.IntactContext;
 
 import java.io.File;
 import java.io.IOException;
 
 /**
- * Base class for plugins that require JPA - It does not start a transaction
+ * Base class for plugins that require JPA (It does not start a transaction).
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
 public abstract class IntactJpaMojo extends IntactAbstractMojo {
+
+    /**
+     * A spring config file (JPA, ...).
+     * @parameter
+     * @required
+     */
+    private String springConfig;
 
     /**
      * @parameter
@@ -61,56 +63,29 @@ public abstract class IntactJpaMojo extends IntactAbstractMojo {
         catch ( IOException e ) {                                
             throw new MojoExecutionException( "Problems executing Mojo", e );
         }
-
-
-        if ( isCloseSessionFactory() ) {
-            getLog().info("Closing session factory");
-            IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getEntityManagerFactory().close();
-        }
     }
 
     protected abstract void executeIntactMojo() throws MojoExecutionException, MojoFailureException, IOException;
 
-    protected void initializeJpa() throws MojoExecutionException {
+    protected synchronized void initializeJpa() throws MojoExecutionException {
         if ( initialized ) {
             return;
         }
 
-        File hibernateConfig = getHibernateConfig();
-
-        IntactSession session = new StandaloneSession();
-        DataConfig dataConfig = getDataConfig();
-
-        if (dataConfig == null) {
-            if ( hibernateConfig == null ) {
-                if ( getProject() != null ) {
-                    hibernateConfig = new File( getDirectory(), "hibernate/config/hibernate.cfg.xml" );
-                } else {
-                    hibernateConfig = new File( "target/hibernate/config/hibernate.cfg.xml" );
-                }
-
-                if (hibernateConfig.exists()) {
-                    getLog().info( "Using hibernate cfg file: " + hibernateConfig );
-                    dataConfig = new CustomCoreDataConfig( "PluginHibernateConfig", hibernateConfig, session );
-                } else {
-                    getLog().info( "Using hibernate with the default (no hibernate.cfg.xml file provided)" );
-                    dataConfig = IntactContext.calculateDefaultDataConfig(session);
-                }
+        if( ! IntactContext.currentInstanceExists() ) {
+            if(springConfig != null ) {
+                getLog().info( "Initializing JPA using user provided configuration file: " + springConfig );
+                IntactContext.initContext( new String[]{ springConfig } );
             } else {
-                getLog().info( "Using hibernate cfg file: " + hibernateConfig );
-                dataConfig = new CustomCoreDataConfig( "PluginHibernateConfig", hibernateConfig, session );
+                getLog().info( "Initializing IntactContext in memory (stand alone database)" );
+                IntactContext.initStandaloneContextInMemory();
             }
+        } else {
+            getLog().info( "IntactContext was already initialized." );
         }
 
-        getLog().info( "Initializing data config: "+dataConfig.getName() );
-
-        dataConfig.initialize();
-        IntactContext.initContext( dataConfig, session );
-
         try {
-
             getLog().info( "Database instance: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
-
         }
         catch ( Exception e ) {
             throw new MojoExecutionException( "Error loading database name", e );
@@ -121,12 +96,12 @@ public abstract class IntactJpaMojo extends IntactAbstractMojo {
         initialized = true;
     }
 
-    public DataConfig getDataConfig() {
-        return null;
+    public String getSpringConfig() {
+        return springConfig;
     }
 
-    public File getHibernateConfig() {
-        return null;
+    public void setSpringConfig( String springConfig ) {
+        this.springConfig = springConfig;
     }
 
     public boolean isDryRun() {
@@ -140,5 +115,4 @@ public abstract class IntactJpaMojo extends IntactAbstractMojo {
     public boolean isCloseSessionFactory() {
         return closeSessionFactory;
     }
-
 }
