@@ -1,0 +1,90 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:p="http://primefaces.prime.com.tr/ui"
+                xmlns:ia="http://java.sun.com/jsf/composite/components/intact"
+                xmlns:composite="http://java.sun.com/jsf/composite">
+
+    <!-- INTERFACE -->
+  <composite:interface componentType="uk.ac.ebi.intact.editor.InputCvObject">
+      <composite:attribute name="value" type="uk.ac.ebi.intact.model.CvObject" required="true" />
+      <composite:attribute name="cvIdentifier" required="true" shortDescription="Identifier of the CvObject"/>
+      <composite:attribute name="size" default="30"/>
+      <composite:attribute name="required" default="false"/>
+      <composite:attribute name="selectItems" required="true"/>
+      <composite:attribute name="valueChangeRender"/>
+      <composite:attribute name="valueChangeAwareObject" type="uk.ac.ebi.intact.editor.controller.curate.ValueChangeAware"/>
+  </composite:interface>
+
+    <!-- IMPLEMENTATION -->
+    <composite:implementation>
+
+         <h:outputScript name="intact.js" library="javascript" target="head"/>
+
+        <ui:param name="dialogWidgetId" value="#{intactComponentUtils.toJavascriptFriendlyVar(cc.clientId)}_cvDlg"/>
+
+         <h:panelGrid columns="2" id="inputPanel" onmouseover="document.getElementById('#{cc.clientId}:selectBtn_submit').style.visibility = 'visible'"
+                 onmouseout="document.getElementById('#{cc.clientId}:selectBtn_submit').style.visibility = 'hidden'">
+
+                <h:selectOneMenu id="selectObject" value="#{cc.attrs.value}" size="#{cc.attrs.size}" converter="cvObjectConverter" required="#{cc.attrs.required}">
+                    <f:selectItems value="#{cc.attrs.selectItems}"/>
+                    <f:ajax event="valueChange" render="#{cc.attrs.valueChangeRender}" execute="@this"
+                        disabled="#{cc.attrs.valueChangeAwareObject == null}"
+                        listener="#{cc.attrs.valueChangeAwareObject.changed}"/>
+                </h:selectOneMenu>
+
+                <p:commandButton id="selectBtn" value="Browse" style="visibility: hidden" immediate="true"
+                                 onclick="#{dialogWidgetId}_load.show()"
+                        oncomplete="#{dialogWidgetId}_load.hide(); #{dialogWidgetId}.show();" process="#{cc.clientId}"
+                        actionListener="#{cc.load(cc.attrs.value.class.name, cc.attrs.cvIdentifier)}"
+                        update="cvObjectBrowserDialog,growl"/>
+
+       <!--<h:commandButton id="selectBtn" value="Browse" onclick="#{dialogWidgetId}.show();">-->
+            <!--<f:ajax event="click"-->
+                    <!--actionListener="#{cc.load(cc.attrs.value.class.name, cc.attrs.cvIdentifier)}"-->
+                    <!--execute="@this" render="#{cc.clientId}:cvObjectBrowserDialog"/>-->
+        <!--</h:commandButton>-->
+        </h:panelGrid>
+
+        <p:dialog header="Please wait" widgetVar="#{dialogWidgetId}_load" modal="true" fixedCenter="true">
+            <h:graphicImage alt="Loading" name="wait_black_indicator.gif" library="images"/>
+            Loading controlled vocabulary...
+        </p:dialog>
+
+        <p:outputPanel id="javascriptPanel">
+
+            <h:outputScript rendered="#{cc.selected != null}">
+                document.getElementById('#{cc.clientId}:selectObject').value = '#{cc.selected.ac}';
+            </h:outputScript>
+        </p:outputPanel>
+        
+        <p:dialog header="#{cc.attrs.value.class.simpleName} selection" resizable="true" fixedCenter="true"
+                  widgetVar="#{dialogWidgetId}" modal="true">
+            <p:outputPanel id="cvObjectBrowserDialog">
+            <h:panelGrid columns="1">
+                <h:panelGroup>
+                    <h:inputText value="Not implemented" disabled="true"/>
+                    <h:commandButton type="button" value="Search" disabled="true"/>
+                    <h:commandButton type="button" value="New..." disabled="true"/>
+                </h:panelGroup>
+                
+                <p:tree id="tree" var="cvObject" 
+                        widgetVar="#{cc.clientId}__tree"
+                        dynamic="true" cache="true"
+                        nodeSelectListener="#{cc.onNodeSelect}"
+                        onselectComplete="#{dialogWidgetId}.hide(); "
+                        update="cvObject,javascriptPanel">
+                    <p:treeNode>
+                        <h:outputText value="#{cvObject.shortLabel}"/>
+                    </p:treeNode>
+                </p:tree>
+            </h:panelGrid>
+        </p:outputPanel>
+    </p:dialog>
+
+    </composite:implementation>
+
+</ui:composition>

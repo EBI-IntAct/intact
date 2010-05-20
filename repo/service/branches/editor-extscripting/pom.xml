@@ -1,0 +1,691 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.maven</groupId>
+        <artifactId>intact-hibernate-master</artifactId>
+        <version>32</version>
+    </parent>
+
+    <groupId>uk.ac.ebi.intact.service</groupId>
+    <artifactId>editor</artifactId>
+    <packaging>war</packaging>
+
+    <version>2.0-SNAPSHOT</version>
+
+    <name>Service :: IntAct Editor</name>
+
+    <scm>
+        <connection>scm:svn:http://intact.googlecode.com/svn/repo/service/trunk/editor</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/service/trunk/editor</developerConnection>
+        <url>http://code.google.com/p/intact/wiki/Editor</url>
+    </scm>
+
+    <properties>
+        <core.version>2.2.1-SNAPSHOT</core.version>
+        <spring.version>3.0.2.RELEASE</spring.version>
+
+        <!-- configurable bits -->
+        <jetty.port>9192</jetty.port>
+
+        <!-- database defaults -->
+        <db.jndi>jdbc/IntactEditorDS</db.jndi>
+        
+        <!--<db.url>jdbc:h2:editordb;DB_CLOSE_DELAY=-1;LOCK_MODE=0</db.url>-->
+        <db.url>${db.protocol}:${db.subprotocol}${db.separator}${db.alias}</db.url>
+
+        <db.hbm2ddl>none</db.hbm2ddl>
+
+        <!-- other property defaults -->
+        <webapp.logo.url>http://www.ebi.ac.uk/~intact/images/intact_logo.png</webapp.logo.url>
+        <intact.instance.name>Not Set</intact.instance.name>
+
+    </properties>
+
+    <build>
+        <finalName>${artifactId}-${version}</finalName>
+
+         <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>7.0.1.v20091125</version>
+                <configuration>
+                    <connectors>
+                        <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+                            <port>${jetty.port}</port>
+                        </connector>
+                    </connectors>
+                    <scanIntervalSeconds>10</scanIntervalSeconds>
+                    <webAppConfig>
+                        <contextPath>/${pom.artifactId}</contextPath>
+                        <jettyEnvXml>${build.outputDirectory}/META-INF/jetty-env.xml</jettyEnvXml>
+                    </webAppConfig>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>javax.servlet.jsp</groupId>
+                        <artifactId>jsp-api</artifactId>
+                        <version>2.2</version>
+                        <scope>provided</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>javax.el</groupId>
+                        <artifactId>el-api</artifactId>
+                        <version>2.2.1-b01</version>
+                        <scope>provided</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.glassfish.web</groupId>
+                        <artifactId>el-impl</artifactId>
+                        <version>2.2.1-b01</version>
+                        <scope>provided</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.mortbay.jetty</groupId>
+                        <artifactId>jsp-2.1-glassfish</artifactId>
+                        <version>9.1.1.B60.25.p2</version>
+                        <scope>provided</scope>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>org.mortbay.jetty</groupId>
+                                <artifactId>jsp-api-2.1</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>org.mortbay.jetty</groupId>
+                                <artifactId>start</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>org.mortbay.jetty</groupId>
+                                <artifactId>jetty-annotations</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>h2</id>
+            <properties>
+                <db.url>jdbc:h2:editordb;DB_CLOSE_DELAY=-1;LOCK_MODE=0</db.url>
+                <db.driver>org.h2.Driver</db.driver>
+                <db.dialect>org.hibernate.dialect.H2Dialect</db.dialect>
+                <db.user>sa</db.user>
+                <db.password></db.password>
+                <db.hbm2ddl>update</db.hbm2ddl>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                    <version>1.2.121</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <!-- IntAct -->
+        <dependency>
+            <groupId>uk.ac.ebi.intact.core</groupId>
+            <artifactId>intact-core</artifactId>
+            <version>${core.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.core</groupId>
+            <artifactId>intact-users</artifactId>
+            <version>${core.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.core</groupId>
+            <artifactId>intact-batch</artifactId>
+            <version>${core.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>-->
+            <!--<artifactId>intact-solr</artifactId>-->
+            <!--<version>2.1.1</version>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>
+            <artifactId>intact-psixml-exchange</artifactId>
+            <version>2.1.2-SNAPSHOT</version>
+        </dependency>
+
+        <!-- Bridges -->
+        <dependency>
+            <groupId>uk.ac.ebi.intact.bridges</groupId>
+            <artifactId>intact-citexplore</artifactId>
+            <version>2.0.12</version>
+        </dependency>
+        
+        <!-- PSIMI -->
+        <dependency>
+            <groupId>psidev.psi.mi</groupId>
+            <artifactId>psimitab-search</artifactId>
+            <version>1.7.7</version>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.5.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.5.6</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Intact -->
+        <dependency>
+            <groupId>uk.ac.ebi.intact.bridges</groupId>
+            <artifactId>intact-ontologies</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.intact.commons</groupId>
+            <artifactId>intact-commons</artifactId>
+            <version>2.1.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>
+            <artifactId>intact-psixml-exchange</artifactId>
+            <version>2.1.2-SNAPSHOT</version>
+             <exclusions>
+                 <exclusion>
+                     <groupId>cpdetector</groupId>
+                     <artifactId>cpdetector</artifactId>
+                 </exclusion>
+             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>
+            <artifactId>intact-solr</artifactId>
+            <version>2.1.2-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.lucene</groupId>
+                    <artifactId>com.springsource.org.apache.lucene</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.solr</groupId>
+                    <artifactId>solr-lucene-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.solr</groupId>
+                    <artifactId>solr-lucene-highlighter</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.intact.util</groupId>
+            <artifactId>intact-ols</artifactId>
+            <version>2.0-beta-8</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.axis</groupId>
+                    <artifactId>axis-saaj</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- psidev -->
+         <dependency>
+            <groupId>psidev.psi.mi</groupId>
+            <artifactId>psi25-xml</artifactId>
+            <version>1.7.6</version>
+         </dependency>
+         <dependency>
+            <groupId>psidev.psi.mi</groupId>
+            <artifactId>psimitab</artifactId>
+            <version>1.7.6</version>
+        </dependency>
+
+        <!-- PSICQUIC -->
+        <dependency>
+            <groupId>org.hupo.psi.mi.psicquic</groupId>
+            <artifactId>psicquic-client</artifactId>
+            <version>1.3-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hupo.psi.mi.psicquic</groupId>
+            <artifactId>psicquic-registry-client</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- other -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-highlighter</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.8.1</version>
+        </dependency>
+        <dependency>
+            <groupId>concurrent</groupId>
+            <artifactId>concurrent</artifactId>
+            <version>1.3.4</version>
+        </dependency>
+
+           <!-- JSF (Mojarra) -->
+        <!--<dependency>-->
+            <!--<groupId>javax.faces</groupId>-->
+            <!--<artifactId>jsf-api</artifactId>-->
+            <!--<version>2.0.2-FCS</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>javax.faces</groupId>-->
+            <!--<artifactId>jsf-impl</artifactId>-->
+            <!--<version>2.0.2-FCS</version>-->
+        <!--</dependency>-->
+
+        <!-- JSF (Mojarra) LATEST -->
+<!--        
+        <dependency>
+            <groupId>com.sun.faces</groupId>
+            <artifactId>jsf-api</artifactId>
+            <version>2.0.3-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.faces</groupId>
+            <artifactId>jsf-impl</artifactId>
+            <version>2.0.3-SNAPSHOT</version>
+        </dependency>
+        -->
+
+        <!-- JSF (MyFaces) -->
+        <dependency>
+            <groupId>org.apache.myfaces.core</groupId>
+            <artifactId>myfaces-api</artifactId>
+            <version>2.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.myfaces.core</groupId>
+            <artifactId>myfaces-impl</artifactId>
+            <version>2.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <!-- JSP 2.2 support (methods etc). May not be needed in recent J2EE 6 app containers -->
+        <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>el-api</artifactId>
+            <version>2.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>el-impl</artifactId>
+            <version>2.2</version>
+            <scope>runtime</scope>
+        </dependency>
+
+         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- MyFaces Orchestra -->
+        <dependency>
+            <groupId>org.apache.myfaces.orchestra</groupId>
+            <artifactId>myfaces-orchestra-core20</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-el</groupId>
+            <artifactId>commons-el</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <!-- MyFaces Ext-scripting -->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.myfaces.extensions.scripting</groupId>-->
+            <!--<artifactId>extscript-myfaces20-bundle</artifactId>-->
+            <!--<version>1.0-SNAPSHOT</version>-->
+        <!--</dependency>-->
+        
+
+        <!-- MyFaces ExtVal (validation) -->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.myfaces.extensions.validator.validation-modules</groupId>-->
+            <!--<artifactId>myfaces-extval-bean-validation</artifactId>-->
+            <!--<version>2.0.3</version>-->
+        <!--</dependency>-->
+
+        <!-- MyFaces ExtVal - Optional PrimeFaces Support -->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.myfaces.extensions.validator.component-support-modules</groupId>-->
+            <!--<artifactId>myfaces-extval-primefaces-support</artifactId>-->
+            <!--<version>1.2.2-SNAPSHOT</version>-->
+        <!--</dependency>-->
+
+        <!-- JSR 303 -->
+        <!--<dependency>-->
+            <!--<groupId>org.hibernate</groupId>-->
+            <!--<artifactId>hibernate-validator</artifactId>-->
+            <!--<version>4.0.0.GA</version>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>slf4j-api</artifactId>-->
+            <!--<version>1.4.2</version>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>slf4j-log4j12</artifactId>-->
+            <!--<version>1.4.2</version>-->
+        <!--</dependency>-->
+
+        <!-- Primefaces -->
+        <dependency>
+            <groupId>org.primefaces</groupId>
+            <artifactId>primefaces</artifactId>
+            <version>2.0.2-intact-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+
+        <!-- Atmosphere (Comet) -->
+        <dependency>
+            <groupId>org.atmosphere</groupId>
+            <artifactId>atmosphere-runtime</artifactId>
+            <version>0.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>antlr</groupId>
+            <artifactId>antlr</artifactId>
+            <version>2.7.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.6.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.6.8</version>
+        </dependency>
+
+        <!-- Spring -->
+         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>2.0.5.RELEASE</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.springframework</groupId>
+            		<artifactId>spring-context</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.springframework</groupId>
+            		<artifactId>spring-support</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.springframework</groupId>
+            		<artifactId>spring-core</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.springframework</groupId>
+            		<artifactId>spring-beans</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.springframework</groupId>
+            		<artifactId>spring-aop</artifactId>
+            	</exclusion>
+                <exclusion>
+            		<groupId>org.springframework</groupId>
+            		<artifactId>spring-web</artifactId>
+            	</exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- H2 for user management -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.2.121</version>
+        </dependency>
+
+        <!-- Tests -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <!-- EBI repository -->
+        <repository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>apache.snapshots</id>
+            <name>Apache Snapshots Repository</name>
+            <url>http://repository.apache.org/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>com.springsource.repository.bundles.release</id>
+            <name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
+            <url>http://repository.springsource.com/maven/bundles/release</url>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+            <id>com.springsource.repository.bundles.external</id>
+            <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+            <url>http://repository.springsource.com/maven/bundles/external</url>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+
+        <!-- Primefaces -->
+        <repository>
+            <id>prime-repo</id>
+            <name>Prime Technology Maven Repository</name>
+            <url>http://repository.prime.com.tr/</url>
+            <layout>default</layout>
+        </repository>
+
+        <!-- Mojarra... -->
+        <repository>
+            <id>java.net 2</id>
+            <url>http://download.java.net/maven/2</url>
+        </repository>
+
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+   	        <id>maven2-repository.dev.java.net</id>
+            <name>Java.net Repository for Maven</name>
+	        <url>http://download.java.net/maven/2/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>apache.snapshots</id>
+            <name>Apache Snapshots Repository</name>
+            <url>http://repository.apache.org/snapshots</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>jboss-plugins</id>
+            <url>http://repository.jboss.com/maven2</url>
+        </pluginRepository>
+
+        
+   </pluginRepositories>
+
+   <distributionManagement>
+        <repository>
+            <id>ebi-repo</id>
+            <name>EBI Repository</name>
+            <url>scp://localhost/homes/maven/public_html/m2repo_snapshots</url>
+        </repository>
+
+        <snapshotRepository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>ebi-repo-snapshots</id>
+            <name>EBI Snapshots Repository</name>
+            <url>scp://localhost/homes/maven/public_html/m2repo_snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+
+</project>

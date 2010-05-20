@@ -1,0 +1,184 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:p="http://primefaces.prime.com.tr/ui"
+                xmlns:ia="http://java.sun.com/jsf/composite/components/intact"
+
+                template="/curate/curate_template.xhtml">
+
+    <ui:param name="annotatedObjectController" value="#{participantController}"/>
+
+    <ui:param name="participant" value="#{participantController.participant}" />
+    <ui:param name="interaction" value="#{interactionController.interaction}" />
+    <ui:param name="experiment" value="#{experimentController.experiment}" />
+    <ui:param name="publication" value="#{publicationController.publication}" />
+
+    <ui:define name="curateContent">
+        <f:metadata>
+            <f:viewParam name="ac" value="#{participantController.ac}"/>
+            <f:event type="preRenderView" listener="#{participantController.loadData}"/>
+        </f:metadata>
+
+        <h:panelGroup rendered="#{participant == null}">
+            No participant loaded!
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{participant != null}">
+            <div id="auditInfo" class="intact-auditPanel">
+                <ia:creatorUpdator annotatedObject="#{participant}" />
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup id="info" rendered="#{participant != null}">
+
+            <h:link outcome="/curate/publication"
+                    value="#{publicationController.publication.shortLabel}"
+                    title="#{publicationController.publication.fullName}"
+                    includeViewParams="true" rendered="#{publicationController.publication != null}"/>
+            <h:outputText value="&#160;>&#160;" rendered="#{publicationController.publication != null}"/>
+            <h:link outcome="/curate/experiment" value="#{experiment.shortLabel}" includeViewParams="true"
+                    rendered="#{experimentController.experiment != null}"/>
+            <h:outputText value="&#160;>&#160;" rendered="#{experimentController.experiment != null}"/>
+            <h:link outcome="/curate/interaction" value="#{interaction.shortLabel}" includeViewParams="true"/>
+            &#160;>&#160;
+            #{participant.interactor.shortLabel}
+
+            <h2>Participant</h2>
+
+            <p:outputPanel id="basic">
+
+                <table class="intact-tableBasicForm">
+                    <tr>
+                        <td class="firstCell">
+                            <h:outputLabel value="Shortlabel: " for="shortlabelTxt"/>
+                        </td>
+                        <td>
+                            <h:inputText id="shortlabelTxt" value="#{participant.shortLabel}" size="30"/>
+                        </td>
+                        <td style="padding-left: 50px;">
+                            <h:outputLabel value="AC: " for="acTxt" class="intact-disabled"/>
+                            <h:inputText id="acTxt" value="#{participant.ac}"
+                                         size="10" disabled="true" class="intact-disabled"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="firstCell">
+                            <h:outputLabel value="#{participant.interactor.cvInteractorType.shortLabel}: " for="interactorTxt"/>
+                        </td>
+                        <td colspan="2">
+                            <h:inputText id="interactorTxt" value="#{participant.interactor.shortLabel}"
+                                    disabled="true"/>
+                            <ia:inputInteractor value="#{participant.interactor}" />
+                            <!--<h:commandButton value="Change" action="TODO"/> -->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="firstCell">
+                            <h:outputLabel value="Author given name: " for="authorGivenNameTxt"/>
+                        </td>
+                        <td colspan="2">
+                            <h:inputText id="authorGivenNameTxt" value="#{participantController.participantWrapper.authorGivenName}" size="10" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="firstCell">
+                            <h:outputLabel value="Expressed in: " for="expressedInTxt"/>
+                        </td>
+                        <td colspan="2">
+                            <ia:inputBioSource id="expressedInTxt" value="#{participant.expressedIn}"
+                                               selectItems="#{bioSourceService.bioSourceSelectItems}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="firstCell">
+                            <h:outputLabel value="Biological role: " for="bioRoleTxt"/>
+                        </td>
+                        <td colspan="2">
+                            <ia:inputCvObject id="bioRoleTxt" cvIdentifier="MI:0500"
+                                              value="#{participant.cvBiologicalRole}"
+                                              selectItems="#{cvObjectService.biologicalRoleSelectItems}" />
+                            <!--<h:inputText id="bioRoleTxt" value="#{participant.cvBiologicalRole.shortLabel}"   />-->
+                        </td>
+                    </tr>
+                 <tr>
+                     <td class="firstCell">
+                         <h:outputLabel value="Experimental role(s): " for="expRoleTxt"/>
+                     </td>
+                     <td >
+                         <!-- TODO handle the multiple experimental role -->
+                         <ia:inputCvObject id="expRoleTxt" cvIdentifier="MI:0495"
+                                           value="#{participantController.participantWrapper.firstExperimentalRole}"
+                                           selectItems="#{cvObjectService.experimentalRoleSelectItems}"/>
+                     </td>
+                     <td style="padding-left: 150px;">
+                         <h:outputLabel value="Stoichiometry: " for="stoichiometryTxt"/>
+                         <p:spinner id="stoichiometryTxt" value="#{participant.stoichiometry}" stepFactor="1" maxlength="3"/>
+                     </td>
+                 </tr>
+                 <tr>
+                     <td class="firstCell">
+                         <h:outputLabel value="Delivery method(s): " for="deliveryTxt"/>
+                     </td>
+                     <td colspan="2">
+                         <!-- TODO handle the multiple delivery methods -->
+                         <ia:inputCvObject id="deliveryTxt" cvIdentifier="MI:0346"
+                                           selectItems="#{cvObjectService.participantExperimentalPreparationsSelectItems}"
+                                           value="#{participantController.participantWrapper.firstExperimentalPreparation}" />
+                         <h:outputText value="#{fn:length(participant.experimentalPreparations) - 1} more..."
+                                       rendered="#{fn:length(participant.experimentalPreparations) > 1}" />
+                     </td>
+                 </tr>
+
+                </table>
+
+            </p:outputPanel>
+
+            <h3>Participant properties</h3>
+
+            <p:outputPanel id="xrefsPanel">
+                <ia:collapsiblePanel  open="false" title="Xrefs (#{participant.xrefs.size()})">
+                    <ia:xrefsTable annotatedObjectController="#{participantController}"
+                                   databaseSelectItems="#{cvObjectService.databaseSelectItems}"
+                                   qualifierSelectItems="#{cvObjectService.qualifierSelectItems}"
+                                   update="xrefsPanel changesPanel"
+                                   valueChangeRender=":editorForm:basic :editorForm:changesPanel"
+                                   valueChangeAwareObject="#{annotatedObjectController}"
+                                   style="margin-top: -20px;"/>
+                </ia:collapsiblePanel>
+            </p:outputPanel>
+
+            <p:outputPanel id="annotationsPanel">
+                <ia:collapsiblePanel open="false" title="Annotations (#{participant.annotations.size()})">
+                    <ia:annotationsTable annotatedObjectController="#{participantController}"
+                                         topicSelectItems="#{cvObjectService.experimentTopicSelectItems}"
+                                         update="annotationsPanel changesPanel"
+                                         valueChangeRender=":editorForm:basic :editorForm:changesPanel"
+                                         valueChangeAwareObject="#{annotatedObjectController}"
+                                         style="margin-top: -20px;"/>
+                </ia:collapsiblePanel>
+            </p:outputPanel>
+
+            <p:outputPanel id="aliasesPanel">
+                <ia:collapsiblePanel open="false" title="Aliases (#{participant.aliases.size()})">
+                    <ia:aliasTable annotatedObjectController="#{participantController}"
+                                   aliasTypeSelectItems="#{cvObjectService.aliasTypeSelectItems}"
+                                   update="aliasesPanel changesPanel"
+                                   valueChangeRender=":editorForm:changesPanel"
+                                   valueChangeAwareObject="#{annotatedObjectController}"
+                                   style="margin-top: -20px;"/>
+                </ia:collapsiblePanel>
+            </p:outputPanel>
+
+            <h3>Features (#{participant.bindingDomains.size()})</h3>
+
+            <ia:featureTable value="#{participant.bindingDomains}"
+                             render="#{not participant.bindingDomains.isEmpty()}" />
+            
+        </h:panelGroup>
+
+    </ui:define>
+
+</ui:composition>

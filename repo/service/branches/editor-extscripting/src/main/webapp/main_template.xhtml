@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.prime.com.tr/ui"
+      xmlns:ia="http://java.sun.com/jsf/composite/components/intact">
+
+<f:view contentType="text/html">
+
+    <h:head>
+        <title>Editor: #{generalAppController.database}</title>
+        <link rel="stylesheet" type="text/css" href="#{facesContext.externalContext.request.contextPath}/resources/css/intact.css"></link>
+    </h:head>
+
+    <h:body style="margin: 0 0 0 0;">
+
+        <h:form id="editorForm" prependId="false" enctype="multipart/form-data">
+
+            <ui:debug rendered="#{facesContext.application.projectStage == 'Development'}"/>
+
+            <p:growl id="growl" showDetail="true"/>
+
+            <!--<p:layout fullPage="true">-->
+
+                <!--<p:layoutUnit position="top" resizable="false" height="80" style="position: fixed; width: 99%;">-->
+
+            <div style="z-index:9; width:100%; position:fixed; background: white; -moz-box-shadow: 0px 5px 5px #999; height:95px; background-image: url('#{facesContext.externalContext.request.contextPath}/resources/images/top_background.jpg'); background-repeat: repeat-x">
+
+                    <div id="topImage" style="float: left; padding-right: 30px;">
+                        <h:graphicImage alt="logoImg" url="#{editorConfig.logoUrl}" rendered="#{editorConfig.logoUrl != null}"/>
+                    </div>
+
+                    <div id="topNavigation" style="float: left;">
+                        <table>
+                            <tr>
+                                <td style="vertical-align:top">
+                                    <ui:insert name="topNavigation">
+                                        <ui:include src="/shared/top_navigation_bar.xhtml"/>
+                                    </ui:insert>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="vertical-align:top">
+                                    <ui:insert name="topTitle" />
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div id="userInfo" class="intact-userPanel">
+                        <table border="0" cellspacing="0" cellpadding="0" width="100%">
+                            <tr>
+                                <td class="verticalTop" style="padding-bottom: 10px;">
+                                    <h:graphicImage url="/resources/images/user.jpg" alt="User:"/>
+                                </td>
+                                <td class="verticalTop" style="padding-bottom: 10px; padding-left: 5px;">
+                                    <h:outputText value="#{userSessionController.currentUser.firstName == null ? userSessionController.currentUser.login : userSessionController.currentUser.firstName}"/>
+                                </td>
+                                <td class="verticalTop" style="padding-left: 20px;">
+                                    <h:graphicImage url="/resources/images/users.png" alt="Curators:"/>
+                                </td>
+                                <td class="verticalTop" style="padding-left: 5px;">
+                                    <h:outputLink onclick="loggedUsersDlg.show(); return false;" >
+                                        <h:outputText value="#{appController.loggedInUserCount}"/>
+                                    </h:outputLink>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="verticalTop">
+                                    <h:graphicImage url="/resources/images/database.png" alt="Database: "/>
+                                </td>
+                                <td class="verticalTop" style="padding-left: 5px;">
+                                    <h:outputText value="#{editorConfig.instanceName}" title="Database: #{editorConfig.databaseUrl}"/>
+                                </td>
+                                <td class="verticalTop" style="padding-left: 20px;">
+                                    <h:outputLink value="/editor/j_spring_security_logout" title="Logout">
+                                        <h:graphicImage border="0" url="/resources/images/logout.jpg" alt="Logout"/>
+                                    </h:outputLink>
+                                </td>
+                                <td class="verticalTop" style="padding-left: 5px;">
+                                    <h:outputLink value="/editor/j_spring_security_logout" title="Logout">
+                                        <h:outputText value="logout"/>
+                                    </h:outputLink>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div id="topSection" style="float: right; margin-right: 100px; ">
+                        <table>
+                            <tr style="vertical-align: middle;">
+
+                                <td class="verticalTop">
+                                    <h:panelGrid columns="4">
+                                        <h:graphicImage url="/resources/images/search.png" alt="Search:"/>
+                                        <p:watermark for="queryTxt" value="search query"/>
+                                        <h:inputText id="queryTxt" value="#{searchController.query}"/>
+                                        <h:commandButton value="Search" action="#{searchController.doSearch}" />
+                                    </h:panelGrid>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left: 15px">
+                                    <ui:insert name="top"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left: 15px">
+                                    <ui:insert name="topRight"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                <div id="menuSection" style="width:100%; position:fixed; margin-top: 70px;">
+                    <ui:insert name="menuBar"/>
+                    </div>
+            </div>
+
+                <!--</p:layoutUnit>-->
+
+                <!--<p:layoutUnit position="center" scrollable="true">-->
+            <div style="width:100%; padding-top:60px; margin-left:5px; margin-right:5px">
+
+                    <div id="feedback" class="intact-feedback">
+                        <a href="http://code.google.com/p/intact/issues/entry?template=Editor%20mockup%20feedback"
+                           target="_blank"> 
+                            <h:graphicImage alt="feedbackIcon" url="/resources/images/feedback.png"/>
+                        </a>
+                    </div>
+
+                    <p:outputPanel id="centralUnit">
+                        <div id="contentSection" style="width:100%">
+                            <ui:insert name="content"/>
+                        </div>
+
+                        <div id="footerSection" style="width:100%">
+                            <ui:insert name="footer"/>
+                        </div>
+                    </p:outputPanel>
+
+            </div>
+
+                <!--</p:layoutUnit>-->
+
+                <!--<p:layoutUnit id="southUnit" position="bottom"-->
+                              <!--rendered="#{facesContext.application.projectStage == 'Development'}"-->
+                              <!--minSize="30" closable="false"-->
+                              <!--style="background-color:#FFFACD">-->
+                     <!--<b>DEVELOPMENT MODE</b>-->
+                <!--</p:layoutUnit>-->
+
+            <!--</p:layout>-->
+
+        </h:form>
+
+        <ui:insert name="dialogs"/>
+
+        <ui:include src="main_dialogs.xhtml"/>
+
+    </h:body>
+
+</f:view>
+</html>

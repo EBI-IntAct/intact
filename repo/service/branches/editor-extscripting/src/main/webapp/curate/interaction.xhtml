@@ -1,0 +1,153 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:p="http://primefaces.prime.com.tr/ui"
+                xmlns:ia="http://java.sun.com/jsf/composite/components/intact"
+
+                template="/curate/curate_template.xhtml">
+
+    <ui:param name="annotatedObjectController" value="#{interactionController}"/>
+
+    <ui:param name="interaction" value="#{interactionController.interaction}" />
+    <ui:param name="experiment" value="#{experimentController.experiment}" />
+    <ui:param name="publication" value="#{publicationController.publication}" />
+
+    <ui:define name="curateContent">
+        <f:metadata>
+            <f:viewParam name="ac" value="#{interactionController.ac}"/>
+            <f:event type="preRenderView" listener="#{interactionController.loadData}"/>
+        </f:metadata>
+
+        <h:panelGroup rendered="#{interaction == null}">
+            No interaction loaded!
+        </h:panelGroup>
+
+        <h:panelGroup id="info" rendered="#{interaction != null}">
+
+            <h:link outcome="/curate/publication"
+                    onclick="loadDialog.show()"
+                    value="#{publication.shortLabel}"
+                    title="#{publication.fullName}"
+                    includeViewParams="true"/>
+            &#160;>&#160;
+            <h:link outcome="/curate/experiment"
+                    onclick="loadDialog.show()"
+                    value="#{experiment.shortLabel}"
+                    includeViewParams="true"/>
+            &#160;>&#160;
+            #{interaction.shortLabel}
+
+            <br/><br/>
+
+            <ia:loadingDialog widgetVar="loadDialog"/>
+
+            <p:panel id="basic" header="Interaction Details">
+                <h:panelGroup rendered="#{interaction != null}">
+                    <div id="auditInfo" class="intact-auditPanel">
+                        <ia:creatorUpdator annotatedObject="#{interaction}" />
+                    </div>
+                </h:panelGroup>
+
+                <table class="intact-tableBasicForm">
+                    <tr>
+                        <td class="firstCell">
+                            <h:outputLabel value="Shortlabel: " for="shortlabelTxt"/>
+                        </td>
+                        <td>
+                            <h:inputText id="shortlabelTxt" value="#{interaction.shortLabel}" size="30"/>
+                        </td>
+                        <td style="padding-left: 50px;">
+                            <h:outputLabel value="AC: " for="acTxt" class="intact-disabled"/>
+                            <h:inputText id="acTxt" value="#{interaction.ac}"
+                                         size="10" disabled="true" class="intact-disabled"/>
+                        </td>
+                        <td style="padding-left: 50px;">
+                             <h:outputLabel value="IMEx ID: " for="imexIdTxt" class="intact-disabled"/>
+                                <h:inputText id="imexIdTxt" value="IM-X" size="10" disabled="true" class="intact-disabled"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="firstCell">
+                            <h:outputLabel value="Interaction type: " for="interactionTypeTxt"/>
+                        </td>
+                        <td colspan="3">
+                            <ia:inputCvObject id="interactionTypeTxt" cvIdentifier="MI:0190"
+                                              value="#{interaction.cvInteractionType}"
+                                              selectItems="#{cvObjectService.interactionTypeSelectItems}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="firstCell">
+                            <h:outputLabel value="Experiment: " for="experimentLists"/>
+                        </td>
+                        <td colspan="3" >
+                            <p:pickList id="experimentLists" 
+                                        value="#{interactionController.experimentLists}"
+                                        var="exp" itemLabel="#{exp}" itemValue="#{exp}" />
+                        </td>
+                    </tr>
+                </table>
+
+                <!--</ia:panelFormLayout>-->
+            </p:panel>
+
+            <br/>
+
+            <p:tabView id="interactionTabs">
+                <p:tab title="Participants (#{interactionController.countParticipantsByInteractionAc(interactionController.ac)})">
+
+                    <p:commandButton value="Import participants" type="button" onclick="importParticipantDialog.show()"/>
+                    <ia:spacer height="10" />
+
+                    <ui:include src="dialog_import_participant.xhtml"/>
+
+                    <ia:participantsTable id="participantTable" value="#{interactionController.participants}"/>
+                </p:tab>
+
+
+                <p:tab title="Interaction properties">
+
+                    <p:outputPanel id="xrefsPanel">
+                        <ia:collapsiblePanel  open="true" title="Xrefs (#{interaction.xrefs.size()})">
+                            <ia:xrefsTable annotatedObjectController="#{interactionController}"
+                                           databaseSelectItems="#{cvObjectService.databaseSelectItems}"
+                                           qualifierSelectItems="#{cvObjectService.qualifierSelectItems}"
+                                           update="xrefsPanel changesPanel"
+                                           valueChangeRender=":editorForm:basic :editorForm:changesPanel"
+                                           valueChangeAwareObject="#{annotatedObjectController}"
+                                           style="margin-top: -20px;"/>
+                        </ia:collapsiblePanel>
+                    </p:outputPanel>
+
+                    <p:outputPanel id="annotationsPanel">
+                        <ia:collapsiblePanel open="true" title="Annotations (#{interaction.annotations.size()})">
+                            <ia:annotationsTable annotatedObjectController="#{interactionController}"
+                                                 topicSelectItems="#{cvObjectService.experimentTopicSelectItems}"
+                                                 update="annotationsPanel changesPanel"
+                                                 valueChangeRender=":editorForm:basic :editorForm:changesPanel"
+                                                 valueChangeAwareObject="#{annotatedObjectController}"
+                                                 style="margin-top: -20px;"/>
+                        </ia:collapsiblePanel>
+                    </p:outputPanel>
+
+                    <p:outputPanel id="aliasesPanel">
+                        <ia:collapsiblePanel open="true" title="Aliases (#{interaction.aliases.size()})">
+                            <ia:aliasTable annotatedObjectController="#{interactionController}"
+                                           aliasTypeSelectItems="#{cvObjectService.aliasTypeSelectItems}"
+                                           update="aliasesPanel changesPanel"
+                                           valueChangeRender=":editorForm:changesPanel"
+                                           valueChangeAwareObject="#{annotatedObjectController}"
+                                           style="margin-top: -20px;"/>
+                        </ia:collapsiblePanel>
+                    </p:outputPanel>
+                </p:tab>
+            </p:tabView>
+
+        </h:panelGroup>
+
+    </ui:define>
+
+</ui:composition>

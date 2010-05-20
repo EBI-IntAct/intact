@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         metadata-complete="true" version="2.5">
+
+     <context-param>
+        <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+        <param-value>server</param-value>
+    </context-param>
+
+    <!-- The project stage is configured using JNDI -->
+    <!--<context-param>-->
+        <!--<param-name>javax.faces.PROJECT_STAGE</param-name>-->
+        <!--<param-value>Development</param-value>-->
+    <!--</context-param>-->
+
+    <context-param>
+        <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+        <param-value>.xhtml</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>facelets.SKIP_COMMENTS</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>javax.faces.FACELETS_VIEW_MAPPINGS</param-name>
+        <param-value>*.xhtml;*.jspx;*.jsff</param-value>
+    </context-param>
+
+    <!-- MyFaces -->
+    <context-param>
+        <param-name>org.apache.myfaces.annotation.SCAN_PACKAGES</param-name>
+        <param-value>uk.ac.ebi.intact.editor</param-value>
+    </context-param>
+
+    <context-param>
+        <description>
+            If true, a javascript function will be rendered that is able
+            to restore the former vertical scroll on every request.
+            Convenient feature if you have pages with long lists and you
+            do not want the browser page to always jump to the top if
+            you trigger a link or button action that stays on the same
+            page. Default: "false"
+        </description>
+        <param-name>org.apache.myfaces.AUTO_SCROLL</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+    <context-param>
+        <description>
+            Validate managed beans, navigation rules and ensure that
+            forms are not nested.
+        </description>
+        <param-name>org.apache.myfaces.VALIDATE</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+    <!-- MyFaces Ext-scripting -->
+    <!--<context-param>-->
+        <!--<description>-->
+            <!--Enables our scripting engine support plugins-->
+        <!--</description>-->
+        <!--<param-name>org.apache.myfaces.FACES_INIT_PLUGINS</param-name>-->
+        <!--<param-value>org.apache.myfaces.extensions.scripting.servlet.StartupServletContextPluginChainLoader</param-value>-->
+    <!--</context-param>-->
+
+    <!--<context-param>-->
+        <!--<description>Additional comma separated loader paths to allow direct editing on the sources directory instead-->
+            <!--of the deployment dir-->
+        <!--</description>-->
+        <!--<param-name>org.apache.myfaces.extensions.scripting.java.LOADER_PATHS</param-name>-->
+        <!--<param-value>-->
+            <!--/homes/baranda/projects/intact-current/service/editor/src/main/java-->
+        <!--</param-value>-->
+    <!--</context-param>-->
+
+    <listener>
+        <listener-class>uk.ac.ebi.intact.editor.security.AppSessionListener</listener-class> 
+    </listener>
+
+    <!-- Spring resources -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath*:/META-INF/*.spring.xml,
+            classpath*:/META-INF/jobs/*.spring.xml,
+            classpath:/META-INF/intact-editor.spring.xml
+        </param-value>
+    </context-param>
+
+    <!-- Spring Framework -->
+    <listener>
+        <listener-class>
+            org.springframework.web.context.ContextLoaderListener
+        </listener-class>
+    </listener>
+    <listener>
+		<listener-class>
+			org.springframework.web.context.request.RequestContextListener
+		</listener-class>
+	</listener>
+    <listener>
+      <listener-class>org.springframework.security.ui.session.HttpSessionEventPublisher</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    </listener>
+
+    <!-- Spring security -->
+    <filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+
+    <!-- Orchestra -->
+    <listener>
+        <listener-class>org.apache.myfaces.orchestra.conversation.servlet.ConversationManagerSessionListener
+        </listener-class>
+    </listener>
+
+
+
+    <!-- JSF -->
+
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.jsf</url-pattern>
+    </servlet-mapping>
+
+    <!-- Primefaces fileupload filter -->
+    <filter>
+		<filter-name>PrimeFaces FileUpload Filter</filter-name>
+		<filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>PrimeFaces FileUpload Filter</filter-name>
+		<servlet-name>Faces Servlet</servlet-name>
+	</filter-mapping>
+
+    <!-- Orchestra Filter -->
+    <filter>
+        <filter-name>orchestraFilter</filter-name>
+        <filter-class>org.apache.myfaces.orchestra.conversation.jsf.filter.OrchestraServletFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>orchestraFilter</filter-name>
+        <servlet-name>Faces Servlet</servlet-name>
+    </filter-mapping>
+
+    <!--<servlet>-->
+        <!--<servlet-name>Comet Servlet</servlet-name>-->
+        <!--<servlet-class>org.primefaces.comet.PrimeFacesCometServlet</servlet-class>-->
+        <!--<load-on-startup>0</load-on-startup>-->
+    <!--</servlet>-->
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>Comet Servlet</servlet-name>-->
+        <!--<url-pattern>/primefaces_comet/*</url-pattern>-->
+    <!--</servlet-mapping>-->
+
+    <!-- MyFaces scripting -->
+    <!--<filter>-->
+        <!--<filter-name>scriptingFilter</filter-name>-->
+        <!--<filter-class>org.apache.myfaces.scripting.servlet.ScriptingServletFilter</filter-class>-->
+
+    <!--</filter>-->
+
+    <!-- MyFaces Ext-Scripting filter -->
+    <!--<filter>-->
+       <!--<filter-name>scriptingFilter</filter-name>-->
+       <!--<filter-class>org.apache.myfaces.extensions.scripting.servlet.ScriptingServletFilter</filter-class>-->
+    <!--</filter>-->
+    <!--<filter-mapping>-->
+       <!--<filter-name>scriptingFilter</filter-name>-->
+       <!--<servlet-name>Faces Servlet</servlet-name>-->
+    <!--</filter-mapping>-->
+
+	<servlet>
+		<servlet-name>Resource Servlet</servlet-name>
+		<servlet-class>org.primefaces.resource.ResourceServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Resource Servlet</servlet-name>
+		<url-pattern>/primefaces_resource/*</url-pattern>
+	</servlet-mapping>
+
+    <welcome-file-list>
+        <welcome-file>/index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <session-config>
+        <session-timeout>300</session-timeout>
+    </session-config>
+
+</web-app>

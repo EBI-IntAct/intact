@@ -1,0 +1,17 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jstl/core"
+                xmlns:p="http://primefaces.prime.com.tr/ui">
+
+    <h:link value="Dashboard" outcome="/dashboard/dashboard" disabled="#{selected == 'dashboard'}"/>
+    &#160;|&#160;
+    <h:link value="Search" outcome="/search/search" disabled="#{selected == 'search'}"/>
+    &#160;|&#160;
+    <h:link value="Curate" outcome="/curate/publication" includeViewParams="true"
+            disabled="#{selected == 'curate'}"/>
+    &#160;|&#160;
+    <h:link value="Admin" outcome="/admin/dashboard" disabled="#{selected == 'admin'}"/>
+
+</ui:composition>
