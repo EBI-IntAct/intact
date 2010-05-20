@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.curationTools.model.actionReport.status.Status;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.curationTools.model.contexts.BlastContext;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.curationTools.model.results.BlastResults;
 import uk.ac.ebi.intact.curationTools.strategies.IdentificationStrategyImpl;
 import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyException;
 
@@ -135,16 +136,16 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
                     if (checkEnsemblGene(blastProteins.get(0), context.getEnsemblGene())){
                         if (keepBlastResult){
                             Status status = new Status(StatusLabel.COMPLETED, "We replaced the Trembl entry with the Swissprot entry " + ac + " : Trembl sequence matches the swissprot sequence with " + blastProteins.get(0).getIdentity() + " % identity and matches the Ensembl gene " + context.getEnsemblGene());
-                            report.setIsASwissprotEntry(true);
+                            report.setASwissprotEntry(true);
                             report.setStatus(status);
-                            report.addBlastMatchingProtein(blastProteins.get(0));
+                            report.addBlastMatchingProtein(new BlastResults(blastProteins.get(0)));
                             return ac;
                         }
                         else {
                             Status status = new Status(StatusLabel.TO_BE_REVIEWED, "Could we replace the Trembl entry with this Swissprot entry " + ac + "? The Swissprot entry has been found with " + blastProteins.get(0).getIdentity() + " % identity and matches the Ensembl gene " + context.getEnsemblGene());
 
                             report.setStatus(status);
-                            report.addBlastMatchingProtein(blastProteins.get(0));
+                            report.addBlastMatchingProtein(new BlastResults(blastProteins.get(0)));
                         }
                     }
                     else {
@@ -160,7 +161,7 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
                     Status status = new Status(StatusLabel.TO_BE_REVIEWED, "Could we replace the Trembl entry with this Swissprot entry " + ac + "? The Swissprot entry has been found with " + blastProteins.get(0).getIdentity() + " % identity.");
 
                     report.setStatus(status);
-                    report.addBlastMatchingProtein(blastProteins.get(0));
+                    report.addBlastMatchingProtein(new BlastResults(blastProteins.get(0)));
                 }
             }
             // We have several Swissprot entries in the BLAST results
@@ -173,7 +174,7 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
                         break;
                     }
                     else {
-                        report.addBlastMatchingProtein(b);
+                        report.addBlastMatchingProtein(new BlastResults(b));
                     }
                 }
 
@@ -189,7 +190,7 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
                         if (checkEnsemblGene(blastProteins.get(0), context.getEnsemblGene())){
                             if (keepBlastResult){
                                 Status status = new Status(StatusLabel.COMPLETED, "We replaced the Trembl entry with the Swissprot entry " + ac + " : the Trembl sequence matches several swissprot splice variant sequences of the same protein which matches the Ensembl gene " + context.getEnsemblGene());
-                                report.setIsASwissprotEntry(true);
+                                report.setASwissprotEntry(true);
                                 report.setStatus(status);
                                 return blastProteins.get(0).getAccession();
                             }
@@ -259,7 +260,7 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
 
                             if (keepBlastResult){
                                 Status status = new Status(StatusLabel.COMPLETED, "We replaced the Trembl entry with the Swissprot entry " + newUniprotId + " : the Trembl sequence matches several swissprot splice variant sequences of this protein and has the same ensembl gene accession : " + this.context.getEnsemblGene());
-                                 report.setIsASwissprotEntry(true);
+                                 report.setASwissprotEntry(true);
                                 report.setStatus(status);
                                 return newUniprotId;
                             }

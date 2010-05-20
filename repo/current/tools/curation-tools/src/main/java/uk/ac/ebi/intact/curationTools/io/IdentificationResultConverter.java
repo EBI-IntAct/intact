@@ -26,7 +26,7 @@ import java.util.List;*/
     private Results convertsResultIntoJAXB (String intActId, IdentificationResults result, IdentificationContext context){
         Results r = this.objectFactory.createResults();
         r.setProtein(intActId);
-        r.setUniprotAccession(result.getUniprotId());
+        r.setUniprotAccession(result.getFinalUniprotId());
 
         Context c = convertsContextIntoJAXB(context);
         r.setContext(c);

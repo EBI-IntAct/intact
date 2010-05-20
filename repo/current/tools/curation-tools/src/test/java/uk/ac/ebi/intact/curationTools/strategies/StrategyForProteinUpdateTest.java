@@ -59,7 +59,7 @@ public class StrategyForProteinUpdateTest {
                 System.out.println("Label : " + r.getStatus().getLabel().toString() + ": Description : " + r.getStatus().getDescription());
             }
 
-            Assert.assertNull(result.getUniprotId());
+            Assert.assertNull(result.getFinalUniprotId());
             Assert.assertEquals(true, result.getLastAction() instanceof BlastReport);
             Assert.assertEquals(StatusLabel.TO_BE_REVIEWED, result.getLastAction().getStatus().getLabel());
         } catch (StrategyException e) {
@@ -90,7 +90,7 @@ public class StrategyForProteinUpdateTest {
                 System.out.println("name" + r.getName().toString() + "Label : " + r.getStatus().getLabel().toString() + ": Description : " + r.getStatus().getDescription());
             }
 
-            Assert.assertNull(result.getUniprotId());
+            Assert.assertNull(result.getFinalUniprotId());
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -117,7 +117,7 @@ public class StrategyForProteinUpdateTest {
                 System.out.println("name " + r.getName().toString() + "Label : " + r.getStatus().getLabel().toString() + ": Description : " + r.getStatus().getDescription());
             }
 
-            Assert.assertNull( result.getUniprotId());
+            Assert.assertNull( result.getFinalUniprotId());
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

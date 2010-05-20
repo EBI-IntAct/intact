@@ -60,8 +60,8 @@ public class StrategyWithNameTest {
             System.out.println(reports.get(0).getStatus().getLabel() + " " + reports.get(0).getStatus().getDescription());
 
             Assert.assertNotNull(result);
-            Assert.assertNotNull(result.getUniprotId());
-            Assert.assertEquals("P46108", result.getUniprotId());
+            Assert.assertNotNull(result.getFinalUniprotId());
+            Assert.assertEquals("P46108", result.getFinalUniprotId());
 
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -90,7 +90,7 @@ public class StrategyWithNameTest {
             System.out.println(reports.get(0).getStatus().getLabel() + " " + reports.get(0).getStatus().getDescription());
 
             Assert.assertNotNull(result);
-            Assert.assertNull(result.getUniprotId());
+            Assert.assertNull(result.getFinalUniprotId());
             Assert.assertEquals(StatusLabel.TO_BE_REVIEWED, reports.get(0).getStatus().getLabel());
             Assert.assertEquals(true, reports.get(0).getPossibleAccessions().size() > 0);
 
@@ -125,8 +125,8 @@ public class StrategyWithNameTest {
             System.out.println(reports.get(0).getStatus().getLabel() + " " + reports.get(0).getStatus().getDescription());
 
             Assert.assertNotNull(result);
-            Assert.assertNotNull(result.getUniprotId());
-            Assert.assertEquals("P46108", result.getUniprotId());
+            Assert.assertNotNull(result.getFinalUniprotId());
+            Assert.assertEquals("P46108", result.getFinalUniprotId());
 
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -154,7 +154,7 @@ public class StrategyWithNameTest {
             System.out.println(reports.get(2).getStatus().getLabel() + " " + reports.get(2).getStatus().getDescription());
 
             Assert.assertNotNull(result);            
-            Assert.assertNull(result.getUniprotId());
+            Assert.assertNull(result.getFinalUniprotId());
             Assert.assertEquals(StatusLabel.TO_BE_REVIEWED, reports.get(2).getStatus().getLabel());
             Assert.assertEquals(true, reports.get(2).getPossibleAccessions().size() > 0);
 
@@ -182,7 +182,7 @@ public class StrategyWithNameTest {
             System.out.println(reports.get(1).getStatus().getLabel() + " " + reports.get(1).getStatus().getDescription());
 
             Assert.assertNotNull(result);
-            Assert.assertNull(result.getUniprotId());
+            Assert.assertNull(result.getFinalUniprotId());
             Assert.assertEquals(StatusLabel.FAILED, reports.get(1).getStatus().getLabel());
             Assert.assertEquals(true, reports.get(1).getPossibleAccessions().isEmpty());
 
@@ -211,9 +211,9 @@ public class StrategyWithNameTest {
             System.out.println(reports.get(0).getStatus().getLabel() + " " + reports.get(0).getStatus().getDescription());
 
             Assert.assertNotNull(result);
-            Assert.assertNotNull(result.getUniprotId());
+            Assert.assertNotNull(result.getFinalUniprotId());
             Assert.assertEquals(StatusLabel.COMPLETED, reports.get(0).getStatus().getLabel());
-            Assert.assertEquals("Q9UJA2", result.getUniprotId());
+            Assert.assertEquals("Q9UJA2", result.getFinalUniprotId());
 
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

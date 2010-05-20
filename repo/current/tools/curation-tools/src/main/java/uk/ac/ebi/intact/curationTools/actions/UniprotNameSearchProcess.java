@@ -195,7 +195,7 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
         else if (iterator.getResultSize() > 1){
             Status status = new Status(StatusLabel.TO_BE_REVIEWED, "The protein " + (context.getGene_name() != null ? "with the gene name " + context.getGene_name() : (context.getProtein_name() != null ? "with the protein name " + context.getProtein_name() : "")) + " could match " + iterator.getResultSize() + " Uniprot entries.");
             report.setStatus(status);
-            report.setIsASwissprotEntry(false);
+            report.setASwissprotEntry(false);
             for (UniProtEntry u : iterator){
                 report.addPossibleAccession(u.getPrimaryUniProtAccession().getValue());
             }
@@ -427,7 +427,7 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
 
             // if we don't have any results, we look into trembl
             if (iterator == null || iterator.getResultSize() == 0){
-                report.setIsASwissprotEntry(false);
+                report.setASwissprotEntry(false);
                 Status status = new Status(StatusLabel.FAILED, "We couldn't find any Swissprot entry which matches : name = " + globalName + "; TaxId = " + organism + ". We will look in Trembl.");
                 report.setStatus(status);
 
@@ -533,7 +533,7 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
 
             report.addWarning("No organism was given for the protein with : name =  " + context.getGlobalName() != null ? context.getGlobalName() : (context.getGene_name()!= null ? context.getGene_name() : (context.getProtein_name() != null ? context.getProtein_name() : "")) + ". We will process the identification without looking at the organism.");
         }
-        report.setIsASwissprotEntry(true);
+        report.setASwissprotEntry(true);
 
         // process a name search using gene name, protein name and/or glocal name
         String accession = processNameSearch(geneName, protein_name, organism, globalName, report, context);

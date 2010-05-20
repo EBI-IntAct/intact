@@ -99,11 +99,11 @@ public class StrategyWithSequenceTest {
                 System.out.println("Label : " + r.getStatus().getLabel().toString() + ": Description : " + r.getStatus().getDescription());
             }
 
-            Assert.assertNotNull(result.getUniprotId());
-            Assert.assertEquals(ac_to_find, result.getUniprotId());
+            Assert.assertNotNull(result.getFinalUniprotId());
+            Assert.assertEquals(ac_to_find, result.getFinalUniprotId());
             Assert.assertEquals(true, result.getLastAction() instanceof PICRReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
-            Assert.assertEquals(true, result.getLastAction().isAswissprotEntry());
+            Assert.assertEquals(true, result.getLastAction().isASwissprotEntry());
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -133,9 +133,9 @@ public class StrategyWithSequenceTest {
                 System.out.println("Label : " + r.getStatus().getLabel().toString() + ": Description : " + r.getStatus().getDescription());
             }
 
-            Assert.assertNotNull(result.getUniprotId());
+            Assert.assertNotNull(result.getFinalUniprotId());
             Assert.assertEquals(3, result.getListOfActions().size());
-            Assert.assertEquals(ac_to_find, result.getUniprotId());
+            Assert.assertEquals(ac_to_find, result.getFinalUniprotId());
             Assert.assertEquals(true, result.getLastAction() instanceof SwissprotRemappingReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
             Assert.assertEquals(true, ((SwissprotRemappingReport) result.getLastAction()).getTremblAccession() != null);
@@ -175,11 +175,11 @@ public class StrategyWithSequenceTest {
             result = this.strategy.identifyProtein(context);
 
             Assert.assertNotNull(result);
-            Assert.assertNotNull(result.getUniprotId());
-            Assert.assertEquals(ac_to_find, result.getUniprotId());
+            Assert.assertNotNull(result.getFinalUniprotId());
+            Assert.assertEquals(ac_to_find, result.getFinalUniprotId());
             Assert.assertEquals(true, result.getLastAction() instanceof PICRReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
-            Assert.assertEquals(true, result.getLastAction().isAswissprotEntry());
+            Assert.assertEquals(true, result.getLastAction().isASwissprotEntry());
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -218,11 +218,11 @@ public class StrategyWithSequenceTest {
             result = this.strategy.identifyProtein(context);
 
             Assert.assertNotNull(result);
-            Assert.assertNotNull(result.getUniprotId());
-            Assert.assertEquals(ac_to_find, result.getUniprotId());
+            Assert.assertNotNull(result.getFinalUniprotId());
+            Assert.assertEquals(ac_to_find, result.getFinalUniprotId());
             Assert.assertEquals(true, result.getLastAction() instanceof PICRReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
-            Assert.assertEquals(true, result.getLastAction().isAswissprotEntry());
+            Assert.assertEquals(true, result.getLastAction().isASwissprotEntry());
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

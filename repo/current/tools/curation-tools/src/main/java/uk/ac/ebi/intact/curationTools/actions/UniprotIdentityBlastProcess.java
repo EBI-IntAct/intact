@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.Status;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.curationTools.model.results.BlastResults;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -134,7 +135,7 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
                         break;
                     }
                     else {
-                        report2.addBlastMatchingProtein(p);
+                        report2.addBlastMatchingProtein(new BlastResults(p));
                     }
                 }
             }
@@ -143,10 +144,10 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
         else if (blastProteinsGlobalAlignment.size() == 1){
             Status status = new Status(StatusLabel.COMPLETED, "The blast on Uniprot successfully returned an unique uniprot Id " + blastProteinsGlobalAlignment.get(0).getAccession() + "(100% identity on the all sequence)");
             report.setStatus(status);
-            report.addBlastMatchingProtein(blastProteinsGlobalAlignment.get(0));
+            report.addBlastMatchingProtein(new BlastResults(blastProteinsGlobalAlignment.get(0)));
 
             if (blastProteinsGlobalAlignment.get(0).getDatabase().equalsIgnoreCase(swissprot) ){
-                report.setIsASwissprotEntry(true);
+                report.setASwissprotEntry(true);
             }
 
             return blastProteinsGlobalAlignment.get(0).getAccession();
@@ -162,7 +163,7 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
                     break;
                 }
                 else {
-                    report.addBlastMatchingProtein(p);
+                    report.addBlastMatchingProtein(new BlastResults(p));
                 }
             }
 
@@ -183,7 +184,7 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
                         break;
                     }
                     else {
-                        report2.addBlastMatchingProtein(p);
+                        report2.addBlastMatchingProtein(new BlastResults(p));
                     }
                 }
             }
@@ -191,8 +192,8 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
             else if (swissprotProteins.size() == 1){
                 Status status2 = new Status(StatusLabel.COMPLETED, "The blast on Uniprot successfully returned an unique swissprot entry" + blastProteinsGlobalAlignment.get(0).getAccession() + " (100% identity on the all sequence)");
                 report2.setStatus(status2);
-                report.setIsASwissprotEntry(true);
-                report2.addBlastMatchingProtein(blastProteinsGlobalAlignment.get(0));
+                report.setASwissprotEntry(true);
+                report2.addBlastMatchingProtein(new BlastResults(blastProteinsGlobalAlignment.get(0)));
 
                 return blastProteinsGlobalAlignment.get(0).getAccession();
             }
@@ -206,7 +207,7 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
                         break;
                     }
                     else {
-                        report2.addBlastMatchingProtein(p);
+                        report2.addBlastMatchingProtein(new BlastResults(p));
                     }
                 }
             }

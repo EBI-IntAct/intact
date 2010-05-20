@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.PICRReport;
 import uk.ac.ebi.intact.curationTools.model.contexts.UpdateContext;
 import uk.ac.ebi.intact.curationTools.model.results.IdentificationResults;
+import uk.ac.ebi.intact.curationTools.model.results.PICRCrossReferences;
 import uk.ac.ebi.intact.curationTools.strategies.StrategyForProteinUpdate;
 import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyException;
 import uk.ac.ebi.intact.dbupdate.prot.ProteinUpdateProcessor;
@@ -362,7 +363,7 @@ public class ProteinUpdateManager {
                 writeResultReports(accession, result, writer);
 
                 // update
-                if (result != null && result.getUniprotId() != null){
+                if (result != null && result.getFinalUniprotId() != null){
                     Annotation a = collectNo_Uniprot_UpdateAnnotation(annotations);
 
                     if (a != null){
@@ -370,7 +371,7 @@ public class ProteinUpdateManager {
                         prot.removeAnnotation(a);
                         //daoFactory.getAnnotationDao().delete(a);
                     }
-                    addUniprotCrossReferenceTo(prot, result.getUniprotId(), daoFactory);
+                    addUniprotCrossReferenceTo(prot, result.getFinalUniprotId(), daoFactory);
                     //daoFactory.getProteinDao().update( prot );
                     accessionsToUpdate.add(accession);
                 }
@@ -460,7 +461,7 @@ public class ProteinUpdateManager {
                 writeResultReports(accession, result, writer);
 
                 // update
-                if (result != null && result.getUniprotId() != null){
+                if (result != null && result.getFinalUniprotId() != null){
                     accessionsToUpdate.add(accession);
                 }
             }
@@ -490,7 +491,7 @@ public class ProteinUpdateManager {
         try {
             writer.write("************************" + protAc + "************************************ \n");
 
-            writer.write("Uniprot accession found : " + result.getUniprotId() + "\n");
+            writer.write("Uniprot accession found : " + result.getFinalUniprotId() + "\n");
             for (ActionReport report : result.getListOfActions()){
                 writer.write(report.getName().toString() + " : " + report.getStatus().getLabel() + ", " + report.getStatus().getDescription() + "\n");
 
@@ -504,10 +505,10 @@ public class ProteinUpdateManager {
 
                 if (report instanceof PICRReport){
                     PICRReport picr = (PICRReport) report;
-                    writer.write("Is a Swissprot entry : " + picr.isAswissprotEntry() + "\n");
+                    writer.write("Is a Swissprot entry : " + picr.isASwissprotEntry() + "\n");
 
-                    for (String database : picr.getCrossReferences().keySet()){
-                        writer.write(database + " cross reference : " + picr.getCrossReferences().get(database) + "\n");
+                    for (PICRCrossReferences xrefs : picr.getCrossReferences()){
+                        writer.write(xrefs.getDatabase() + " cross reference : " + xrefs.getAccessions() + "\n");
                     }
                 }
                 else if (report instanceof BlastReport){

@@ -15,11 +15,11 @@ import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.curationTools.model.contexts.FeatureRangeCheckingContext;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.curationTools.model.contexts.UpdateContext;
+import uk.ac.ebi.intact.curationTools.model.results.BlastResults;
 import uk.ac.ebi.intact.curationTools.model.results.IdentificationResults;
 import uk.ac.ebi.intact.curationTools.model.results.UpdateResults;
 import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyException;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -95,7 +95,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
      */
     private boolean checkIdentifierResults(IdentificationResults result, UpdateContext context, ActionReport updateReport) throws ActionProcessingException, StrategyException {
         // The strategy using the sequence found a unique Uniprot accession
-        if (result.getUniprotId() != null){
+        if (result.getFinalUniprotId() != null){
             // Get the uniprot accession using the strategy with identifier
             String otherResultFromIdentifier = this.listOfActions.get(1).runAction(context);
             // process the isoforms
@@ -104,7 +104,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
             result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
 
             // the uniprot accession returned by the strategy with the sequence
-            String uniprot1 = result.getUniprotId();
+            String uniprot1 = result.getFinalUniprotId();
 
             // the uniprot accession returned by the strategy using the identifier is successful
             if (otherResultFromIdentifier != null){
@@ -138,24 +138,24 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
 
                 // In case of blast, we can check if the previous strategy returned null because of the featureRangeCheckingProcess
                 if (result.getLastAction() instanceof BlastReport){
-                    Set<BlastProtein> blastProteins = ((BlastReport) result.getLastAction()).getBlastMatchingProteins();
+                    Set<BlastResults> blastProteins = ((BlastReport) result.getLastAction()).getBlastMatchingProteins();
 
                     if (!blastProteins.isEmpty()){
                         for (BlastProtein p : blastProteins){
                             // one result is matching the result of the second strategy, we will process the featureRangeChecking
                             if (p.getAccession().equals(otherResultFromIdentifier)){
                                 // set the uniprot id of the result
-                                result.setUniprotId(otherResultFromIdentifier);
+                                result.setFinalUniprotId(otherResultFromIdentifier);
                                 // run the feture range checking process
                                 runThirdAction((UpdateContext) context, result);
 
                                 // the uniprot accession of the result is now null, we didn't have any conflict with the previous strategy
-                                if (result.getUniprotId() == null){
+                                if (result.getFinalUniprotId() == null){
                                     return true;
                                 }
                                 // the uniprot accession of the result is still not null, we definitely have a conflict with the previous strategy
                                 else {
-                                    result.setUniprotId(null);
+                                    result.setFinalUniprotId(null);
                                 }
                             }
                         }
@@ -221,7 +221,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
             // the intact accession of the protein to update is null, we can't check the feature ranges
             if (context.getIntactAccession() == null){
                 lastReport.addWarning("We can't check the feature ranges of the protein as the Intact accession is null in the context.");
-                results.setUniprotId(null);
+                results.setFinalUniprotId(null);
             }
             else {
                 // Get the list of SwissprotRemapping actions from the result
@@ -231,7 +231,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
 
                 // If we processed a Swissprot remapping and could successfully replace the trembl entry with the swissprot entry, we need to check the
                 // possible conflicts with existing feature ranges
-                if (sr != null && results.getUniprotId() != null){
+                if (sr != null && results.getFinalUniprotId() != null){
 
                     context.setSequence(sr.getQuerySequence());
 
@@ -255,7 +255,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
         // We don't have any intact context, we can't process the feature range checking process
         else {
             lastReport.addWarning("As the IntactContext is null, we can't check if there are some conflicts between the sequence of the Swissprot entry and the range of some features attached to this protein.");
-            results.setUniprotId(null);
+            results.setFinalUniprotId(null);
         }
     }
 
@@ -284,7 +284,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
         UpdateContext updateContext = (UpdateContext) context;
 
         String sequence = context.getSequence();
-        HashMap<String, String> identifiers = ((UpdateContext) context).getIdentifiers();
+        Map<String, String> identifiers = ((UpdateContext) context).getIdentifiers();
 
         // create a new result instance
         UpdateResults result = new UpdateResults();
@@ -319,7 +319,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
                 if (!identifiers.isEmpty()){
                     // we create a new update report which will be added to the results
                     ActionReport report = new ActionReport(ActionName.update_Checking);
-                    report.addPossibleAccession(result.getUniprotId());
+                    report.addPossibleAccession(result.getFinalUniprotId());
 
                     // boolean value to know if there is a conflict with the previous results
                     boolean isMatchingIdentifierResults = false;
@@ -344,11 +344,11 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
 
                         Status status = new Status(StatusLabel.TO_BE_REVIEWED, "There is a conflict in the results when we tried to identify the protein using the sequence then using the identifiers " + identifiers);
                         report.setStatus(status);
-                        if (result.getUniprotId() != null){
-                            report.addPossibleAccession(result.getUniprotId());
+                        if (result.getFinalUniprotId() != null){
+                            report.addPossibleAccession(result.getFinalUniprotId());
                         }
                         result.addActionReport(report);
-                        result.setUniprotId(null);
+                        result.setFinalUniprotId(null);
                     }
                 }
             }

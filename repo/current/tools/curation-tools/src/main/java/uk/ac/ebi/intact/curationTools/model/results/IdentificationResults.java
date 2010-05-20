@@ -3,6 +3,7 @@ package uk.ac.ebi.intact.curationTools.model.results;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionName;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>24-Mar-2010</pre>
  */
-
+@MappedSuperclass
 public class IdentificationResults {
 
     /**
@@ -34,11 +35,15 @@ public class IdentificationResults {
         this.finalUniprotId = null;
     }
 
+    public void setListOfActions(List<ActionReport> listOfActions) {
+        this.listOfActions = listOfActions;
+    }
+
     /**
      * set the final uniprot accession identifying the protein
      * @param id : uniprot accession
      */
-    public void setUniprotId(String id){
+    public void setFinalUniprotId(String id){
         this.finalUniprotId = id;
     }
 
@@ -46,12 +51,13 @@ public class IdentificationResults {
      *
      * @return the final uniprot accession identifying the protein
      */
-    public String getUniprotId(){
+    @Column(name="uniprot_ac", length = 10)
+    public String getFinalUniprotId(){
         return this.finalUniprotId;
     }
 
     /**
-     * 
+     *
      * @return true if the unique uniprot id is not null
      */
     public boolean hasUniqueUniprotId(){
@@ -62,6 +68,8 @@ public class IdentificationResults {
      *
      * @return the list of actions done to identify the protein
      */
+    @OneToMany
+    @JoinColumn(name="action_ac")
     public List<ActionReport> getListOfActions(){
         return this.listOfActions;
     }
@@ -78,6 +86,7 @@ public class IdentificationResults {
      *
      * @return the last action report added to this result
      */
+    @Transient
     public ActionReport getLastAction(){
         if (listOfActions.isEmpty()){
             return null;
@@ -90,8 +99,9 @@ public class IdentificationResults {
      * @param name : name of a specific action
      * @return the list of actions with this specific name which have been done to identify the protein
      */
+    @Transient
     public List<ActionReport> getActionsByName(ActionName name){
-        ArrayList<ActionReport> reports = new ArrayList<ActionReport>();        
+        ArrayList<ActionReport> reports = new ArrayList<ActionReport>();
 
         for (ActionReport action : this.listOfActions){
             if (action.getName() != null && action.getName().equals(name)){

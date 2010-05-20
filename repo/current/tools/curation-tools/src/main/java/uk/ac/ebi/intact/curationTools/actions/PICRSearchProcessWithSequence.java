@@ -79,7 +79,7 @@ public class PICRSearchProcessWithSequence extends IdentificationActionImpl {
                     Status status = new Status(StatusLabel.COMPLETED, "PICR successfully returned an unique Swissprot accession " + swissprotIds.get(0));
                     report.setStatus(status);
 
-                    report.setIsASwissprotEntry(true);
+                    report.setASwissprotEntry(true);
                     return swissprotIds.get(0);
                 }
                 else {
@@ -99,7 +99,7 @@ public class PICRSearchProcessWithSequence extends IdentificationActionImpl {
                 // The different matching swissprot entries were in fact several isoforms of the same protein so we keep the canonical sequence
                 if (accessions.size() == 1){
                     String ac = accessions.iterator().next();
-                    report.setIsASwissprotEntry(true);
+                    report.setASwissprotEntry(true);
                     Status status = new Status(StatusLabel.COMPLETED, "We found a Unique Swissprot entry " + ac + " : the sequence matches several swissprot splice variant sequences of the same protein and we kept the canonical sequence.");
 
                     report.setStatus(status);
@@ -134,7 +134,7 @@ public class PICRSearchProcessWithSequence extends IdentificationActionImpl {
                     Status status2 = new Status(StatusLabel.COMPLETED, "PICR successfully returned an unique Trembl accession " + tremblIds.get(0));
                     report2.setStatus(status2);
 
-                    report.setIsASwissprotEntry(false);
+                    report.setASwissprotEntry(false);
                     return tremblIds.get(0);
                 }
                 // Several trembl entries, we can't choose and we can't merge as we don't have trembl splice variants sequences

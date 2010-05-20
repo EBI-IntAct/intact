@@ -1,7 +1,8 @@
 package uk.ac.ebi.intact.curationTools.model.actionReport;
 
-import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
+import uk.ac.ebi.intact.curationTools.model.results.BlastResults;
 
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,13 +13,15 @@ import java.util.Set;
  * @version $Id$
  * @since <pre>01-Apr-2010</pre>
  */
-
+@Entity
+@MappedSuperclass
+@Table( name = "ia_blast_report" )
 public class BlastReport extends ActionReport{
 
     /**
      * The list of BLASTProteins
      */
-    protected Set<BlastProtein> listOfProteins = new HashSet<BlastProtein>();
+    protected Set<BlastResults> listOfProteins = new HashSet<BlastResults>();
 
     /**
      * The sequence used for the blast
@@ -38,15 +41,21 @@ public class BlastReport extends ActionReport{
      *
      * @return the list of Blast results
      */
-    public Set<BlastProtein> getBlastMatchingProteins(){
+    @OneToMany
+    @JoinColumn(name="blast_results_ac")
+    public Set<BlastResults> getBlastMatchingProteins(){
         return this.listOfProteins;
+    }
+
+    public void setBlastMatchingProteins(Set<BlastResults> blastResults){
+        this.listOfProteins = blastResults;
     }
 
     /**
      *  add a blast protein
      * @param prot : new blast result
      */
-    public void addBlastMatchingProtein(BlastProtein prot){
+    public void addBlastMatchingProtein(BlastResults prot){
         this.listOfProteins.add(prot);
     }
 
@@ -54,6 +63,7 @@ public class BlastReport extends ActionReport{
      *
      * @return the sequence used for the blast
      */
+    @Transient
     public String getQuerySequence() {
         return querySequence;
     }

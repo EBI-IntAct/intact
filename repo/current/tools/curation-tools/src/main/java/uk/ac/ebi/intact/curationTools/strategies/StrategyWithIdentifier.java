@@ -272,14 +272,14 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
                 }
 
                 // PICR and uniprot could map the identifier to a Swissprot accession
-                if (result.getUniprotId() != null){
+                if (result.getFinalUniprotId() != null){
                     ActionReport report = result.getLastAction();
 
                     // PICR or uniprot could map to a Trembl entry
-                    if (!report.isAswissprotEntry()){
+                    if (!report.isASwissprotEntry()){
 
                         // get the uniprot protein
-                        UniprotProtein tremblEntry = getUniprotProteinFor(result.getUniprotId());
+                        UniprotProtein tremblEntry = getUniprotProteinFor(result.getFinalUniprotId());
                         String sequence = tremblEntry.getSequence();
 
                         // create a blast context for the swissprotRemapping process
@@ -294,7 +294,7 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
                             blastContext.setEnsemblGene(ensemblGene);
                         }
                         else {
-                            throw new StrategyException("We couldn't find any Uniprot entries which match this accession number " + result.getUniprotId());
+                            throw new StrategyException("We couldn't find any Uniprot entries which match this accession number " + result.getFinalUniprotId());
                         }
 
                         // run the swissprotRemappingProcess
@@ -376,7 +376,7 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
         if (uniprot != null){
 
             // if the accession is a Trembl accession
-            if (!report.isAswissprotEntry()){
+            if (!report.isASwissprotEntry()){
 
                 // Get the Uniprot protein for this Trembl entry
                 UniprotProtein tremblEntry = getUniprotProteinFor(uniprot);
