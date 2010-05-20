@@ -31,12 +31,7 @@ import java.io.IOException;
  */
 public abstract class IntactJpaMojo extends IntactAbstractMojo {
 
-    /**
-     * A spring config file (JPA, ...).
-     * @parameter
-     * @required
-     */
-    private String springConfig;
+   
 
     /**
      * @parameter
@@ -72,10 +67,12 @@ public abstract class IntactJpaMojo extends IntactAbstractMojo {
             return;
         }
 
+        System.out.println( "springConfig = " + getSpringConfig() );
+
         if( ! IntactContext.currentInstanceExists() ) {
-            if(springConfig != null ) {
-                getLog().info( "Initializing JPA using user provided configuration file: " + springConfig );
-                IntactContext.initContext( new String[]{ springConfig } );
+            if(getSpringConfig() != null ) {
+                getLog().info( "Initializing JPA using user provided configuration file: " + getSpringConfig() );
+                IntactContext.initContext( new String[]{ getSpringConfig() } );
             } else {
                 getLog().info( "Initializing IntactContext in memory (stand alone database)" );
                 IntactContext.initStandaloneContextInMemory();
@@ -96,13 +93,9 @@ public abstract class IntactJpaMojo extends IntactAbstractMojo {
         initialized = true;
     }
 
-    public String getSpringConfig() {
-        return springConfig;
-    }
+    abstract public String getSpringConfig();
 
-    public void setSpringConfig( String springConfig ) {
-        this.springConfig = springConfig;
-    }
+    abstract public void setSpringConfig( String springConfig );
 
     public boolean isDryRun() {
         return dryRun;
