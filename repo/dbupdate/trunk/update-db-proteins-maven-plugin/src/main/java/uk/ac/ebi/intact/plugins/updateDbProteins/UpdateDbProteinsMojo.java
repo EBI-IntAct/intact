@@ -23,30 +23,20 @@ import uk.ac.ebi.intact.dbupdate.prot.ProteinUpdateProcessor;
 import uk.ac.ebi.intact.dbupdate.prot.ProteinUpdateProcessorConfig;
 import uk.ac.ebi.intact.dbupdate.prot.report.FileReportHandler;
 import uk.ac.ebi.intact.dbupdate.prot.report.UpdateReportHandler;
-import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
+import uk.ac.ebi.intact.plugin.IntactJpaMojo;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
 /**
- * Example mojo. This mojo is executed when the goal "mygoal" is called.
- * Change this comments and the goal name accordingly
+ * Mojo that execute a global protein update on a given intact database.
  *
  * @goal update-proteins
  *
  * @phase process-resources
  */
-public class UpdateDbProteinsMojo
-        extends IntactHibernateMojo
-{
-
-
-    /**
-     * @parameter expression="${project.build.directory}/hibernate/config/hibernate.cfg.xml"
-     * @required
-     */
-    private File hibernateConfig;
+public class UpdateDbProteinsMojo extends IntactJpaMojo {
 
     /**
      * Project instance
@@ -83,13 +73,17 @@ public class UpdateDbProteinsMojo
      */
     public int stepSize = 50;
 
+    public UpdateDbProteinsMojo() {
+        super();
+    }
 
     /**
      * Main execution method, which is called after hibernate has been initialized
      */
-    public void executeIntactMojo()
-            throws MojoExecutionException, MojoFailureException, IOException
-    {
+    public void executeIntactMojo() throws MojoExecutionException, MojoFailureException, IOException {
+
+        System.out.println( "Protein Update in Action..." );
+
         UpdateReportHandler reportHandler = new FileReportHandler(reportsDir);
         ProteinUpdateProcessorConfig configUpdate = new ProteinUpdateProcessorConfig(reportHandler);
         configUpdate.setFixDuplicates(fixDuplicates);
@@ -115,14 +109,6 @@ public class UpdateDbProteinsMojo
 
     public MavenProject getProject() {
         return project;
-    }
-
-    public File getHibernateConfig() {
-        return hibernateConfig;
-    }
-
-    public void setHibernateConfig(File hibernateConfig) {
-        this.hibernateConfig = hibernateConfig;
     }
 
     public File getReportsDir() {
@@ -156,6 +142,4 @@ public class UpdateDbProteinsMojo
     public void setBatchSize(int batchSize) {
         this.batchSize = batchSize;
     }
-    
 }
-
