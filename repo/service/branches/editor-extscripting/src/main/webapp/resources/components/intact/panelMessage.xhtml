@@ -1,0 +1,34 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:p="http://primefaces.prime.com.tr/ui"
+                xmlns:composite="http://java.sun.com/jsf/composite">
+
+    <!-- INTERFACE -->
+  <composite:interface>
+    <composite:attribute name="level" default="info"/>
+  </composite:interface>
+
+  <!-- IMPLEMENTATION -->
+    <composite:implementation>
+
+        <h:outputStylesheet name="intact.css" library="css" target="body"/>
+
+        <h:panelGroup>
+            <ui:param name="levelColor" value="#{cc.attrs.level == 'info'? 'intact-infoPanel' : cc.attrs.level == 'warn'? 'intact-warnPanel' : cc.attrs.level == 'error'? 'intact-errorPanel' : ''}"/>
+
+            <div class="#{levelColor}" style="padding: 5px">
+                <composite:insertChildren/>
+            </div>
+            <br/>
+        </h:panelGroup>
+
+    </composite:implementation>
+
+
+
+
+</ui:composition>

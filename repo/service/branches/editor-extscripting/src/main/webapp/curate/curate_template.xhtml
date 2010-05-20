@@ -1,0 +1,99 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jstl/core"
+                xmlns:p="http://primefaces.prime.com.tr/ui"
+
+                template="/main_template.xhtml">
+
+    <ui:define name="topNavigation">
+        <ui:include src="/shared/top_navigation_bar.xhtml">
+            <ui:param name="selected" value="curate"/>
+        </ui:include>
+    </ui:define>
+
+    <ui:define name="topTitle">
+        <h:panelGroup rendered="#{publicationController.publication != null}">
+            <h:link outcome="/curate/publication" value="#{publicationController.firstAuthor} et al (#{publicationController.year})" rendered="#{publicationController.firstAuthor != null}"/>
+
+            <h:panelGroup rendered="#{publicationController.publication.shortLabel != null}">
+                (&#160;<h:outputText value="#{publicationController.publication.shortLabel}"/> )
+            </h:panelGroup>
+        </h:panelGroup>
+    </ui:define>
+
+    <ui:define name="top">
+        <h:panelGroup rendered="#{annotatedObjectController.annotatedObject != null}">
+            <h:panelGroup id="topSavePanel" style="float: right">
+                <p:commandButton type="button" id="topSaveButton" value="Save" onclick="save(); return false" />
+
+                <h:panelGroup rendered="#{annotatedObjectController.lastSaved != null}" style="color: #AAAAAA">
+                    <h:outputText value=" Last Saved: " />
+                    <h:outputText value="#{annotatedObjectController.lastSaved}">
+                        <f:convertDateTime pattern="HH:mm (z)"/>
+                    </h:outputText>
+                </h:panelGroup>
+            </h:panelGroup>
+        </h:panelGroup>
+    </ui:define>
+
+    <ui:define name="menuBar">
+        <p:menubar>
+            <p:submenu label="Publication">
+                <p:menuitem label="New" onclick="newPublicationDlg.show(); "/>
+                <p:menuitem label="Open by PMID" onclick="openByPmidDlg.show(); "/>
+                <p:menuitem label="Save" actionListener="#{publicationController.doSave}" ajax="false"
+                            rendered="#{publicationController.publication != null}"/>
+                <p:menuitem label="Save &amp; Close" actionListener="#{publicationController.doSaveAndClose}" ajax="false"
+                            rendered="#{publicationController.publication != null}"/>
+            </p:submenu>
+            <p:submenu label="Experiments" rendered="#{publicationController.publication != null}"/>
+            <p:submenu label="Interactions" rendered="#{publicationController.publication != null}"/>
+        </p:menubar>
+    </ui:define>
+
+    <ui:define name="content">
+        <p:hotkey bind="alt+n" oncomplete="newPublicationDlg.show()"/>
+        <p:hotkey bind="alt+o" oncomplete="openByPmidDlg.show()"/>
+        <p:hotkey bind="alt+s" oncomplete="save(); return false"/>
+
+        
+        <br />
+
+        <p:messages />
+
+        <div style="width:100%; padding-top:30px">
+            <ui:insert name="curateContent"/>
+
+             <p>&#160;</p>
+
+            <p:outputPanel id="changesPanel">
+            <h:panelGroup rendered="#{annotatedObjectController.unsavedChanges}">
+
+            <div class="intact-notSavedPanel">
+                    Changes not yet saved &#160;
+                <p:commandButton type="button" id="unsavedSaveButton" value="Save" onclick="save(); return false"/>
+            </div>
+
+            </h:panelGroup>
+        </p:outputPanel>
+        </div>
+
+        <p:remoteCommand name="save" actionListener="#{annotatedObjectController.doSave}"
+                        update="editorForm" onstart="saveDialog.show(); var input = document.getElementById('topSaveButton_submit'); input.disabled = true; input.value = 'Saving...'"
+                        oncomplete="saveDialog.hide(); var input = document.getElementById('topSaveButton_submit'); input.disabled = false; input.value = 'Save'"/>
+
+    </ui:define>
+
+    <ui:define name="dialogs">
+        <ui:include src="menu_dialogs.xhtml"/>
+
+        <p:dialog header="Please wait" width="200px" widgetVar="saveDialog" visible="false" draggable="false"
+              modal="true" fixedCenter="true" close="false">
+            <h:graphicImage alt="loading" library="images" name="wait_black_indicator.gif"/>
+            Saving #{annotatedObjectController.annotatedObject.class.simpleName}...
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

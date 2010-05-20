@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jstl/core"
+                xmlns:p="http://primefaces.prime.com.tr/ui"
+                xmlns:ot="http://myfaces.apache.org/orchestra"
+
+                template="/admin/admin_template.xhtml">
+
+    <ui:define name="adminContent">
+
+        <f:metadata>
+          <f:event type="preRenderView" listener="#{userAdminController.loadData}"/>
+        </f:metadata>
+
+        <h3>Users (#{userAdminController.allUsers.rowCount})</h3>
+
+        <!-- TODO: if the user is disabled, show the line red. -->
+        <p:dataTable id="usersTable" var="user" value="#{userAdminController.allUsers}"
+                     paginator="#{userAdminController.allUsers.rowCount > 10}" rows="10" dynamic="true" lazy="true">
+            <p:column>
+                <f:facet name="header">
+                    <h:outputText value="Login"/>
+                </f:facet>
+                <ot:separateConversationContext>
+                    <h:link outcome="/admin/users/edit" value="#{user.login}" includeViewParams="true">
+                        <f:param name="login" value="#{user.login}"/>
+                    </h:link>
+                </ot:separateConversationContext>
+            </p:column>
+            <p:column>
+                <f:facet name="header">
+                    <h:outputText value="First Name"/>
+                </f:facet>
+                <h:outputText value="#{user.firstName}"/>
+            </p:column>
+            <p:column>
+                <f:facet name="header">
+                    <h:outputText value="Last Name"/>
+                </f:facet>
+                <h:outputText value="#{user.lastName}"/>
+            </p:column>
+            <p:column>
+                <f:facet name="header">
+                    <h:outputText value="Status"/>
+                </f:facet>
+                <h:graphicImage url="/resources/images/green-ball.png" width="12" alt="Active" title="Active" rendered="#{not user.disabled}"/>
+                <h:graphicImage url="/resources/images/red-ball.png" width="12" alt="Disabled" title="Disabled" rendered="#{user.disabled}" />
+            </p:column>
+            <!--<p:column>-->
+                <!--<f:facet name="header">-->
+                    <!--<h:outputText value="Password"/>-->
+                <!--</f:facet>-->
+                <!--<h:outputText value="#{user.password}"/>-->
+            <!--</p:column>-->
+            <p:column>
+                <f:facet name="header">
+                    <h:outputText value="Roles"/>
+                </f:facet>
+                <ui:repeat value="#{userAdminController.createRoleList( user )}" var="role" varStatus="status">
+                      <h:outputText value="#{role.name}"/>
+                      <h:outputText value=", " rendered="#{not status.last}"/>
+                </ui:repeat>
+
+            </p:column>
+        </p:dataTable>
+
+    </ui:define>
+
+</ui:composition>
