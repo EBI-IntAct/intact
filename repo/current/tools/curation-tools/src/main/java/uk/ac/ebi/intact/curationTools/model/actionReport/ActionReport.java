@@ -1,8 +1,10 @@
 package uk.ac.ebi.intact.curationTools.model.actionReport;
 
 import org.hibernate.annotations.CollectionOfElements;
+import uk.ac.ebi.intact.curationTools.model.HibernatePersistent;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.Status;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
+import uk.ac.ebi.intact.curationTools.model.results.UpdateResults;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,9 +20,11 @@ import java.util.Set;
  * @since <pre>01-Apr-2010</pre>
  */
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="objclass", discriminatorType=DiscriminatorType.STRING, length = 100)
+@DiscriminatorValue("uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport")
 @Table( name = "ia_protein_action" )
-public class ActionReport {
+public class ActionReport implements HibernatePersistent{
 
     private Long idAction;
 
@@ -49,6 +53,8 @@ public class ActionReport {
      */
     private boolean isASwissprotEntry = false;
 
+    protected UpdateResults updateResult;
+
     /**
      * Create a new report for an action with a specific name
      * @param name the naem of the action
@@ -60,11 +66,11 @@ public class ActionReport {
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_STORE")
     @SequenceGenerator(name="SEQ_STORE", sequenceName="my_sequence" )
-    public Long getIdAction() {
+    public Long getId() {
         return idAction;
     }
 
-    public void setIdAction(Long idAction) {
+    public void setId(Long idAction) {
         this.idAction = idAction;
     }
 
@@ -109,11 +115,45 @@ public class ActionReport {
      *
      * @return the list of possible uniprot accessions
      */
-    @CollectionOfElements
-    @JoinTable(name = "ia_action2possUniprot", joinColumns = @JoinColumn(name="action_id"))
-    @Column(name = "possible_uniprot", nullable = false)
+    @Transient
     public Set<String> getPossibleAccessions(){
         return this.possibleAccessions;
+    }
+
+    @Column(name = "possible_uniprot", nullable = true, length = 500)
+    public String getListOfPossibleAccessions(){
+
+        if (this.possibleAccessions.isEmpty()){
+            return null;
+        }
+        StringBuffer concatenedList = new StringBuffer( 1064 );
+
+        for (String prot : this.possibleAccessions){
+            concatenedList.append(prot+";");
+        }
+
+        if (concatenedList.length() > 0){
+            concatenedList.deleteCharAt(concatenedList.length() - 1);
+        }
+
+        return concatenedList.toString();
+    }
+
+    public void setListOfPossibleAccessions(String possibleAccessions){
+        this.possibleAccessions.clear();
+
+        if (possibleAccessions != null){
+            if (possibleAccessions.contains(";")){
+                String [] list = possibleAccessions.split(";");
+
+                for (String s : list){
+                    this.possibleAccessions.add(s);
+                }
+            }
+            else {
+                this.possibleAccessions.add(possibleAccessions);
+            }
+        }
     }
 
     public void setWarnings(List<String> warnings) {
@@ -147,26 +187,46 @@ public class ActionReport {
      * is null and/or its label is null, this method return NONE
      */
     @Column(name = "status", length = 15, nullable = false)
-    public StatusLabel getStatusLabel() {
+    public String getStatusLabel() {
         if (this.status == null){
-            return StatusLabel.NONE;
+            return StatusLabel.NONE.toString();
         }
         else {
             if (this.status.getLabel() == null){
-                return StatusLabel.NONE;
+                return StatusLabel.NONE.toString();
             }
             else {
-                return this.status.getLabel();
+                return this.status.getLabel().toString();
             }
         }
     }
 
-    public void setStatusLabel(StatusLabel label){
+    public void setStatusLabel(String label){
+        StatusLabel l = null;
+
+        if (label != null){
+            if (label.equalsIgnoreCase("failed")){
+                l = StatusLabel.FAILED;
+            }
+            else if (label.equalsIgnoreCase("completed")){
+                l = StatusLabel.COMPLETED;
+            }
+            else if (label.equalsIgnoreCase("to_be_reviewed")){
+                l = StatusLabel.TO_BE_REVIEWED;
+            }
+            else if (label.equalsIgnoreCase("none")){
+                l =StatusLabel.NONE;
+            }
+            else {
+                throw new IllegalArgumentException("The status label " + label + " is not valid and can only be either completed, failed, to_be_reviewed or none.");
+            }
+        }
+
         if (this.status == null){
-            status = new Status(label, null);
+            status = new Status(l, null);
         }
         else {
-            status.setLabel(label);
+            status.setLabel(l);
         }
     }
 
@@ -184,7 +244,7 @@ public class ActionReport {
      *
      * @return the status description of this action.
      */
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = true)
     public String getStatusDescription() {
         if (this.status == null){
             return null;
@@ -217,5 +277,15 @@ public class ActionReport {
      */
     public void setASwissprotEntry(boolean isSwissprot){
         this.isASwissprotEntry = isSwissprot;
+    }
+
+    @ManyToOne
+    @JoinColumn(name="result_id")
+    public UpdateResults getUpdateResult() {
+        return updateResult;
+    }
+
+    public void setUpdateResult(UpdateResults result) {
+        this.updateResult = result;
     }
 }

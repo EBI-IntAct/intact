@@ -1,6 +1,7 @@
 package uk.ac.ebi.intact.curationTools.persistence.dao;
 
 import org.hibernate.Session;
+import uk.ac.ebi.intact.annotation.Mockable;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -12,24 +13,26 @@ import java.util.List;
  * @version $Id$
  * @since <pre>19-May-2010</pre>
  */
-
+@Mockable
 public interface UpdateBaseDao<T> {
 
-    int countAll();
+    public int countAll();
 
-    List<T> getAll();
+    public List<T> getAll();
 
-    void persist( T entity );
+    public void persist( T entity );
 
-    void delete( T entity );
+    public void delete( T entity );
 
-    void update( T entity );
+    public void update( T entity );
 
-    void saveOrUpdate( T entity );
+    public void saveOrUpdate( T entity );
 
-    void flush();
+    public void flush();
 
-    EntityManager getEntityManager();
+    public EntityManager getEntityManager();
 
-    Session getSession();
+    public Session getSession();
+
+    public void setEntityClass(Class<T> entityClass);
 }

@@ -1,5 +1,6 @@
 package uk.ac.ebi.intact.curationTools.model.actionReport;
 
+import org.hibernate.annotations.Cascade;
 import uk.ac.ebi.intact.curationTools.model.results.BlastResults;
 
 import javax.persistence.*;
@@ -14,8 +15,7 @@ import java.util.Set;
  * @since <pre>01-Apr-2010</pre>
  */
 @Entity
-@MappedSuperclass
-@Table( name = "ia_blast_report" )
+@DiscriminatorValue("uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport")
 public class BlastReport extends ActionReport{
 
     /**
@@ -41,8 +41,8 @@ public class BlastReport extends ActionReport{
      *
      * @return the list of Blast results
      */
-    @OneToMany
-    @JoinColumn(name="blast_results_ac")
+    @OneToMany(mappedBy = "blastReport", cascade = CascadeType.ALL)
+    @Cascade( value = org.hibernate.annotations.CascadeType.SAVE_UPDATE )
     public Set<BlastResults> getBlastMatchingProteins(){
         return this.listOfProteins;
     }
@@ -56,6 +56,7 @@ public class BlastReport extends ActionReport{
      * @param prot : new blast result
      */
     public void addBlastMatchingProtein(BlastResults prot){
+        prot.setBlastReport(this);
         this.listOfProteins.add(prot);
     }
 

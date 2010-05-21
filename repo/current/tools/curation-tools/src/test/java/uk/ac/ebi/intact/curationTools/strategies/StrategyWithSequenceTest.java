@@ -4,8 +4,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
+import uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.PICRReport;
-import uk.ac.ebi.intact.curationTools.model.actionReport.SwissprotRemappingReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.curationTools.model.results.IdentificationResults;
@@ -136,9 +136,10 @@ public class StrategyWithSequenceTest {
             Assert.assertNotNull(result.getFinalUniprotId());
             Assert.assertEquals(3, result.getListOfActions().size());
             Assert.assertEquals(ac_to_find, result.getFinalUniprotId());
-            Assert.assertEquals(true, result.getLastAction() instanceof SwissprotRemappingReport);
+            Assert.assertEquals(true, result.getLastAction() instanceof BlastReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
-            Assert.assertEquals(true, ((SwissprotRemappingReport) result.getLastAction()).getTremblAccession() != null);
+            Assert.assertEquals(true, ((BlastReport) result.getLastAction()).getBlastMatchingProteins().size() > 0);
+            Assert.assertEquals(true, ((BlastReport) result.getLastAction()).getBlastMatchingProteins().iterator().next().getTremblAccession() != null);
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

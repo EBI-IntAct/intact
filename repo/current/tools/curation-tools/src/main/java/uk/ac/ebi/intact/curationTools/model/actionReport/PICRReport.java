@@ -1,9 +1,12 @@
 package uk.ac.ebi.intact.curationTools.model.actionReport;
 
-import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Cascade;
 import uk.ac.ebi.intact.curationTools.model.results.PICRCrossReferences;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +18,7 @@ import java.util.Set;
  * @since <pre>01-Apr-2010</pre>
  */
 @Entity
-@Table( name = "ia_picr_report" )
+@DiscriminatorValue("uk.ac.ebi.intact.curationTools.model.actionReport.PICRReport")
 public class PICRReport extends ActionReport{
 
     /**
@@ -35,10 +38,8 @@ public class PICRReport extends ActionReport{
      *
      * @return the map containing the cross references
      */
-    @CollectionOfElements
-    @JoinTable( name="ia_picr2xrefs", joinColumns = @JoinColumn(name="picr_id"))
-    @org.hibernate.annotations.MapKey( columns = { @Column( name="xref_database" ) } )
-    @Column( name="picr_xref_accessions", nullable = false)
+    @OneToMany(mappedBy = "picrReport", cascade = CascadeType.ALL)
+    @Cascade( value = org.hibernate.annotations.CascadeType.SAVE_UPDATE )
     public Set<PICRCrossReferences> getCrossReferences(){
         return this.crossReferences;
     }
@@ -62,9 +63,17 @@ public class PICRReport extends ActionReport{
 
         if (!isADatabaseNamePresent){
             PICRCrossReferences picrRefs = new PICRCrossReferences();
+            picrRefs.setPicrReport(this);
             picrRefs.setDatabase(databaseName);
             picrRefs.addAccession(accession);
         }
+    }
+
+    public void addPICRCrossReference(PICRCrossReferences refs){
+         if (refs != null){
+             refs.setPicrReport(this);
+            this.crossReferences.add(refs);   
+         }
     }
 
     public void setCrossReferences(Set<PICRCrossReferences> crossReferences) {

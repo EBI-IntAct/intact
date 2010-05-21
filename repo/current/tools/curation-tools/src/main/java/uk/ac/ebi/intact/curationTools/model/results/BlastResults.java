@@ -1,6 +1,8 @@
 package uk.ac.ebi.intact.curationTools.model.results;
 
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
+import uk.ac.ebi.intact.curationTools.model.HibernatePersistent;
+import uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 
 import javax.persistence.*;
@@ -14,14 +16,19 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "ia_blast_results")
-public class BlastResults extends BlastProtein {
+public class BlastResults extends BlastProtein implements HibernatePersistent{
 
     private Long idBlast;
 
     private int taxId;
 
+    private String tremblAccession;
+
+    private BlastReport blastReport;
+
     public BlastResults() {
         taxId = 0;
+        this.tremblAccession = null;
     }
 
     public BlastResults(BlastProtein protein) {
@@ -29,16 +36,26 @@ public class BlastResults extends BlastProtein {
             throw new IllegalArgumentException( "You must give a non null protein" );
         }
         setVariablesFrom(protein);
+        this.tremblAccession = null;
     }
 
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_STORE")
     @SequenceGenerator(name="SEQ_STORE", sequenceName="my_sequence" )    
-    public Long getIdBlast() {
+    public Long getId() {
         return idBlast;
     }
 
-    public void setIdBlast(Long idBlast) {
+    @Column(name = "trembl_accession_remapping", nullable = true, length = 20)
+    public String getTremblAccession() {
+        return tremblAccession;
+    }
+
+    public void setTremblAccession(String tremblAccession) {
+        this.tremblAccession = tremblAccession;
+    }
+
+    public void setId(Long idBlast) {
         this.idBlast = idBlast;
     }
 
@@ -176,5 +193,15 @@ public class BlastResults extends BlastProtein {
 
     public void setAlignment(String alignment) {
         super.setAlignment(alignment);
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "blast_report_id")
+    public BlastReport getBlastReport() {
+        return blastReport;
+    }
+
+    public void setBlastReport(BlastReport blastReport) {
+        this.blastReport = blastReport;
     }
 }

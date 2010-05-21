@@ -1,5 +1,6 @@
 package uk.ac.ebi.intact.curationTools.model.results;
 
+import org.hibernate.annotations.Cascade;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionName;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
 
@@ -68,8 +69,8 @@ public class IdentificationResults {
      *
      * @return the list of actions done to identify the protein
      */
-    @OneToMany
-    @JoinColumn(name="action_ac")
+    @OneToMany(mappedBy = "updateResult", cascade = CascadeType.ALL)
+    @Cascade( value = org.hibernate.annotations.CascadeType.SAVE_UPDATE )
     public List<ActionReport> getListOfActions(){
         return this.listOfActions;
     }

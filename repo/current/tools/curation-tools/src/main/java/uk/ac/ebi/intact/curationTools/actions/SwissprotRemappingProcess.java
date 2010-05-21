@@ -6,7 +6,6 @@ import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
 import uk.ac.ebi.intact.curationTools.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionName;
 import uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport;
-import uk.ac.ebi.intact.curationTools.model.actionReport.SwissprotRemappingReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.Status;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.curationTools.model.contexts.BlastContext;
@@ -329,7 +328,7 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
             while (blastProteins.size() == 0 && i >= maximumIdentityThreshold){
 
                 // Create a blast report each time we decrease the identity percent
-                SwissprotRemappingReport report = new SwissprotRemappingReport(ActionName.BLAST_Swissprot_Remapping);
+                BlastReport report = new BlastReport(ActionName.BLAST_Swissprot_Remapping);
                 this.listOfReports.add(report);
                 report.setQuerySequence(this.context.getSequence());
 
@@ -366,7 +365,7 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
                 }
 
                 // Create a new Blast report where we can stores the Blast results not filtered with the maximum identity threshold
-                SwissprotRemappingReport report = new SwissprotRemappingReport(ActionName.BLAST_Swissprot_Remapping);
+                BlastReport report = new BlastReport(ActionName.BLAST_Swissprot_Remapping);
                 this.listOfReports.add(report);
                 report.setQuerySequence(this.context.getSequence());
 

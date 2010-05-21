@@ -1,5 +1,8 @@
 package uk.ac.ebi.intact.curationTools.model.results;
 
+import uk.ac.ebi.intact.curationTools.model.HibernatePersistent;
+import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
+
 import javax.persistence.*;
 
 /**
@@ -11,7 +14,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table( name = "ia_update_result" )
-public class UpdateResults extends IdentificationResults {
+public class UpdateResults extends IdentificationResults implements HibernatePersistent{
 
     private Long idResult;
 
@@ -31,11 +34,11 @@ public class UpdateResults extends IdentificationResults {
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_STORE")
     @SequenceGenerator(name="SEQ_STORE", sequenceName="my_sequence" )
-    public Long getIdResult() {
+    public Long getId() {
         return idResult;
     }
 
-    public void setIdResult(Long idResult) {
+    public void setId(Long idResult) {
         this.idResult = idResult;
     }
 
@@ -56,4 +59,8 @@ public class UpdateResults extends IdentificationResults {
         this.intactAccession = intactAccession;
     }
 
+     public void addActionReport(ActionReport report){
+         report.setUpdateResult(this);
+        super.addActionReport(report);
+    }
 }

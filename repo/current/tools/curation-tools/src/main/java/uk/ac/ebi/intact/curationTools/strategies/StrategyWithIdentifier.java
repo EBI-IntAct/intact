@@ -8,9 +8,10 @@ import uk.ac.ebi.intact.curationTools.actions.PICRSearchProcessWithAccession;
 import uk.ac.ebi.intact.curationTools.actions.SwissprotRemappingProcess;
 import uk.ac.ebi.intact.curationTools.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
-import uk.ac.ebi.intact.curationTools.model.actionReport.SwissprotRemappingReport;
+import uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.curationTools.model.contexts.BlastContext;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.curationTools.model.results.BlastResults;
 import uk.ac.ebi.intact.curationTools.model.results.IdentificationResults;
 import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyException;
 import uk.ac.ebi.intact.model.CvDatabase;
@@ -304,10 +305,12 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
                         // process the isoforms and set the uniprot id of the result
                         processIsoforms(uniprot, result);
 
-                        List<SwissprotRemappingReport> listOfSwissprotRemappingReports = getSwissprotRemappingReports(result.getListOfActions());
+                        List<BlastReport> listOfSwissprotRemappingReports = getSwissprotRemappingReports(result.getListOfActions());
 
-                        for (SwissprotRemappingReport sr : listOfSwissprotRemappingReports){
-                            sr.setTremblAccession(tremblEntry.getPrimaryAc());
+                        for (BlastReport sr : listOfSwissprotRemappingReports){
+                            for (BlastResults r : sr.getBlastMatchingProteins()){
+                                r.setTremblAccession(tremblEntry.getPrimaryAc());
+                            }
                         }
                     }
                 }
@@ -407,10 +410,12 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
                 // add the reports
                 this.listOfReports.addAll(this.listOfActions.get(2).getListOfActionReports());
 
-                List<SwissprotRemappingReport> listOfSwissprotRemappingReports = getSwissprotRemappingReports(this.listOfReports);
+                List<BlastReport> listOfSwissprotRemappingReports = getSwissprotRemappingReports(this.listOfReports);
 
-                for (SwissprotRemappingReport sr : listOfSwissprotRemappingReports){
-                    sr.setTremblAccession(tremblEntry.getPrimaryAc());
+                for (BlastReport sr : listOfSwissprotRemappingReports){
+                    for (BlastResults r : sr.getBlastMatchingProteins()){
+                        r.setTremblAccession(tremblEntry.getPrimaryAc());
+                    }
                 }
             }
         }

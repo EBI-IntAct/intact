@@ -95,6 +95,14 @@
             <artifactId>intact-proteins-update</artifactId>
             <version>2.1.1-SNAPSHOT</version>
         </dependency>
+
+        <!--spring-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>2.5.6</version>
+            <optional>true</optional>
+        </dependency>
         
         <!-- third party deps -->
         <dependency>
@@ -138,6 +146,12 @@
             <artifactId>h2</artifactId>
             <version>1.0.20070429</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
+            <optional>true</optional>
         </dependency>
         <!-- We have dbunit and junit in the compile classpath because they are
  used for the creation/drop of the schema and test base classes, that need to be

@@ -9,7 +9,6 @@ import uk.ac.ebi.intact.curationTools.actions.exception.ActionProcessingExceptio
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionName;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport;
-import uk.ac.ebi.intact.curationTools.model.actionReport.SwissprotRemappingReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.Status;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.curationTools.model.contexts.FeatureRangeCheckingContext;
@@ -188,10 +187,10 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
      * @param listOfReports : the list of SWissprotRemappingReports
      * @return the last SwissprotRemappingReport with a status COMPLETED, null otherwise
      */
-    private SwissprotRemappingReport getTheSuccessfulSwissprotRemappingReport(List<SwissprotRemappingReport> listOfReports){
-        SwissprotRemappingReport finalSR = null;
+    private BlastReport getTheSuccessfulSwissprotRemappingReport(List<BlastReport> listOfReports){
+        BlastReport finalSR = null;
 
-        for (SwissprotRemappingReport sr : listOfReports){
+        for (BlastReport sr : listOfReports){
             if (sr.getStatus() != null){
                 if (sr.getStatus().getLabel() != null){
                     if (sr.getStatus().getLabel().equals(StatusLabel.COMPLETED)){
@@ -225,9 +224,9 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
             }
             else {
                 // Get the list of SwissprotRemapping actions from the result
-                List<SwissprotRemappingReport> listOfSwissprotRemappingProcess = getSwissprotRemappingReports(results.getListOfActions());
+                List<BlastReport> listOfSwissprotRemappingProcess = getSwissprotRemappingReports(results.getListOfActions());
                 // extract the successful Swissprot remapping report
-                SwissprotRemappingReport sr = getTheSuccessfulSwissprotRemappingReport(listOfSwissprotRemappingProcess);
+                BlastReport sr = getTheSuccessfulSwissprotRemappingReport(listOfSwissprotRemappingProcess);
 
                 // If we processed a Swissprot remapping and could successfully replace the trembl entry with the swissprot entry, we need to check the
                 // possible conflicts with existing feature ranges
@@ -239,7 +238,6 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
                     FeatureRangeCheckingContext featureCheckingContext = new FeatureRangeCheckingContext(context);
 
                     // add the Trembl accession and the results of the swissprot remapping process in the new context
-                    featureCheckingContext.setTremblAccession(sr.getTremblAccession());
                     featureCheckingContext.setResultsOfSwissprotRemapping(sr.getBlastMatchingProteins());
 
                     // run the featureRangeChecking process
