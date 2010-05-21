@@ -1,5 +1,7 @@
 package uk.ac.ebi.intact.curationTools.model.contexts;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.curationTools.model.results.BlastResults;
 
 import java.util.HashSet;
@@ -16,6 +18,11 @@ import java.util.Set;
  */
 
 public class FeatureRangeCheckingContext extends UpdateContext {
+
+    /**
+     * Sets up a logger for that class.
+     */
+    public static final Log log = LogFactory.getLog( FeatureRangeCheckingContext.class );
 
     /**
      * The list of results from the blast on swissprot
@@ -59,6 +66,19 @@ public class FeatureRangeCheckingContext extends UpdateContext {
      */
     public void setResultsOfSwissprotRemapping(Set<BlastResults> resultsOfSwissprotRemapping) {
         this.resultsOfSwissprotRemapping = resultsOfSwissprotRemapping;
+
+        this.tremblAccession = null;
+
+        for (BlastResults results : resultsOfSwissprotRemapping){
+            if (this.tremblAccession == null){
+                this.tremblAccession = results.getTremblAccession();
+            }
+            else if (!this.tremblAccession.equalsIgnoreCase(results.getTremblAccession())){
+                log.error("Several blast results for the swissprot remapping have a different trembl accession : " + results.getTremblAccession() + " but we expected " + this.tremblAccession);
+            }
+        }
+        // all the trembl accesions must be the same for all the blastproteins
+        this.tremblAccession = resultsOfSwissprotRemapping.iterator().next().getTremblAccession();
     }
 
     /**
