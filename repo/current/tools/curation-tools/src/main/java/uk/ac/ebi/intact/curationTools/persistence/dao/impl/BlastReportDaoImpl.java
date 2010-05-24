@@ -11,7 +11,7 @@ import javax.persistence.Query;
 import java.util.List;
 
 /**
- * TODO comment this
+ * Basic implementation of BlastReportDao
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -21,14 +21,26 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class BlastReportDaoImpl extends ActionReportDaoImpl<BlastReport> implements BlastReportDao{
 
+    /**
+     * create a new BlastReportDaoImpl
+     */
     public BlastReportDaoImpl() {
         super(BlastReport.class, null);
     }
 
+    /**
+     * Create BlastReportDaoImpl with entity manager
+     * @param entityManager
+     */
     public BlastReportDaoImpl(EntityManager entityManager) {
         super(BlastReport.class, entityManager);
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     public List<BlastReport> getBlastReportsByResultsId(long id) {
         final Query query = getEntityManager().createQuery( "select ar from BlastReport as ar join ar.updateResult as res where res.id = :id" );
         query.setParameter( "id", id);
@@ -36,6 +48,11 @@ public class BlastReportDaoImpl extends ActionReportDaoImpl<BlastReport> impleme
         return query.getResultList();
     }
 
+    /**
+     *
+     * @param protAc
+     * @return
+     */
     public List<BlastReport> getActionReportsWithBlastResultsByProteinAc(String protAc) {
         final Query query = getEntityManager().createQuery( "select a from BlastReport as a join a.updateResult as res where res.intactAccession = :protAc" );
         query.setParameter( "protAc", protAc);
@@ -43,6 +60,11 @@ public class BlastReportDaoImpl extends ActionReportDaoImpl<BlastReport> impleme
         return query.getResultList();
     }
 
+    /**
+     *
+     * @param protAc
+     * @return
+     */
     public List<BlastReport> getActionReportsWithSwissprotRemappingResultsByProteinAc(String protAc) {
         final Query query = getEntityManager().createQuery( "select a from BlastReport as a join a.updateResult as res where res.intactAccession = :protAc and a.name = :name" );
         query.setParameter( "protAc", protAc);
@@ -51,13 +73,11 @@ public class BlastReportDaoImpl extends ActionReportDaoImpl<BlastReport> impleme
         return query.getResultList();
     }
 
-    public List<BlastReport> getActionReportsWithBlastResultsByResultsId(long id) {
-        final Query query = getEntityManager().createQuery( "select a from BlastReport as a join a.updateResult as res where res.id = :id" );
-        query.setParameter( "id", id);
-
-        return query.getResultList();
-    }
-
+    /**
+     *
+     * @param id
+     * @return
+     */
     public List<BlastReport> getActionReportsWithSwissprotRemappingResultsByResultsId(long id) {
         final Query query = getEntityManager().createQuery( "select a from BlastReport as a join a.updateResult as res where res.id = :id and a.name = :name" );
         query.setParameter( "id", id);

@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * TODO comment this
+ * This class contains the cross references that returns PICR for an identifier/sequence
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -18,28 +18,55 @@ import java.util.Set;
 @Table(name = "ia_picr_xrefs")
 public class PICRCrossReferences implements HibernatePersistent{
 
+    /**
+     * The unique identifier
+     */
     private long idXrefs;
 
+    /**
+     * The database name returned by PICR
+     */
     private String database;
 
+    /**
+     * The list of accessions from this database PICR returned
+     */
     private Set<String> accessions = new HashSet<String>();
 
+    /**
+     * The parent report
+     */
     private PICRReport picrReport;
 
+    /**
+     * Create a new PICRCrossReferences instance
+     */
     public PICRCrossReferences() {
         database = null;
     }
 
+    /**
+     *
+     * @return the database name
+     */
     @Column(name = "database", nullable = false)
     public String getDatabase() {
         return database;
     }
 
+    /**
+     *
+     * @return the list of accessions
+     */
     @Transient
     public Set<String> getAccessions() {
         return accessions;
     }
 
+    /**
+     *
+     * @return the list of accessions as a String, separated by a semi-colon
+     */
     @Column(name = "accessions", nullable = false, length = 500)
     public String getListOfAccessions(){
 
@@ -59,6 +86,10 @@ public class PICRCrossReferences implements HibernatePersistent{
         return concatenedList.toString();
     }
 
+    /**
+     * set the list of accessions
+     * @param possibleAccessions : the list of accessions as a String, separated by a semi colon
+     */
     public void setListOfAccessions(String possibleAccessions){
         this.accessions.clear();
 
@@ -76,18 +107,34 @@ public class PICRCrossReferences implements HibernatePersistent{
         }
     }
 
+    /**
+     * Set the database name
+     * @param database
+     */
     public void setDatabase(String database) {
         this.database = database;
     }
 
+    /**
+     * Set the list of accessions
+     * @param accessions
+     */
     public void setAccessions(Set<String> accessions) {
         this.accessions = accessions;
     }
 
+    /**
+     * Add a new accession
+     * @param accession
+     */
     public void addAccession(String accession){
         this.accessions.add(accession);
     }
 
+    /**
+     *
+     * @return  the unique id of this object
+     */
     @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQ_STORE")
     @SequenceGenerator(name="SEQ_STORE", sequenceName="my_sequence" )
@@ -95,16 +142,28 @@ public class PICRCrossReferences implements HibernatePersistent{
         return idXrefs;
     }
 
+    /**
+     * Set the unique id
+     * @param idXrefs
+     */
     public void setId(Long idXrefs) {
         this.idXrefs = idXrefs;
     }
 
+    /**
+     *
+     * @return the parent report
+     */
     @ManyToOne
     @JoinColumn(name="picr_report_id")
     public PICRReport getPicrReport() {
         return picrReport;
     }
 
+    /**
+     * Set the parent report
+     * @param picrReport
+     */
     public void setPicrReport(PICRReport picrReport) {
         this.picrReport = picrReport;
     }

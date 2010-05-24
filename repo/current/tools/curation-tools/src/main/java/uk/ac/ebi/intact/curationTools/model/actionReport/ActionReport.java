@@ -1,7 +1,6 @@
 package uk.ac.ebi.intact.curationTools.model.actionReport;
 
 import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.DiscriminatorFormula;
 import uk.ac.ebi.intact.curationTools.model.HibernatePersistent;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.Status;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
@@ -22,20 +21,20 @@ import java.util.Set;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-//@DiscriminatorColumn(name="objclass", discriminatorType=DiscriminatorType.STRING, length = 100)
-@DiscriminatorFormula("objclass")
+@DiscriminatorColumn(name="objclass", discriminatorType=DiscriminatorType.STRING, length = 100)
 @DiscriminatorValue("uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport")
 @Table( name = "ia_protein_action" )
 public class ActionReport implements HibernatePersistent{
 
+    /**
+     * The unique id of this action
+     */
     private Long idAction;
 
     /**
      * the name of the action
      */
     protected ActionName name;
-
-    private String objClass;
 
     /**
      * the status of the action
@@ -57,6 +56,9 @@ public class ActionReport implements HibernatePersistent{
      */
     private boolean isASwissprotEntry = false;
 
+    /**
+     * The parent object of this report. We store the parent of this object only if it is an instance of UpdateResults
+     */
     protected UpdateResults updateResult;
 
     /**
@@ -67,6 +69,10 @@ public class ActionReport implements HibernatePersistent{
         this.name = name;
     }
 
+    /**
+     *
+     * @return an automatically generated unique id for this object
+     */
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_STORE")
     @SequenceGenerator(name="SEQ_STORE", sequenceName="my_sequence" )
@@ -74,6 +80,10 @@ public class ActionReport implements HibernatePersistent{
         return idAction;
     }
 
+    /**
+     * Set the unique id of this object
+     * @param idAction : unique id
+     */
     public void setId(Long idAction) {
         this.idAction = idAction;
     }
@@ -124,6 +134,10 @@ public class ActionReport implements HibernatePersistent{
         return this.possibleAccessions;
     }
 
+    /**
+     *
+     * @return  the list of possible Uniprot accession separated by a semi-colon in a String.
+     */
     @Column(name = "possible_uniprot", nullable = true, length = 500)
     public String getListOfPossibleAccessions(){
 
@@ -143,6 +157,10 @@ public class ActionReport implements HibernatePersistent{
         return concatenedList.toString();
     }
 
+    /**
+     * Set the list of possible Uniprot accessions
+     * @param possibleAccessions : the list of possible accessions separated by a semi-colon
+     */
     public void setListOfPossibleAccessions(String possibleAccessions){
         this.possibleAccessions.clear();
 
@@ -160,10 +178,18 @@ public class ActionReport implements HibernatePersistent{
         }
     }
 
+    /**
+     * Set the warnings
+     * @param warnings
+     */
     public void setWarnings(List<String> warnings) {
         this.warnings = warnings;
     }
 
+    /**
+     * set the possible accessions
+     * @param possibleAccessions
+     */
     public void setPossibleAccessions(Set<String> possibleAccessions) {
         this.possibleAccessions = possibleAccessions;
     }
@@ -205,6 +231,10 @@ public class ActionReport implements HibernatePersistent{
         }
     }
 
+    /**
+     * Set the status label of this action
+     * @param label : the label as a String. (COMPLETED, TO_BE_REVIEWED or FAILED)
+     */
     public void setStatusLabel(String label){
         StatusLabel l = null;
 
@@ -234,6 +264,10 @@ public class ActionReport implements HibernatePersistent{
         }
     }
 
+    /**
+     * Set the description of this action
+     * @param description : the status description
+     */
     public void setStatusDescription(String description){
         if (this.status == null){
             status = new Status(StatusLabel.NONE, description);
@@ -283,34 +317,21 @@ public class ActionReport implements HibernatePersistent{
         this.isASwissprotEntry = isSwissprot;
     }
 
+    /**
+     *
+     * @return  the parent object of this action. If the parent is not an instance of UpdateResults, the parent returned is null
+     */
     @ManyToOne
     @JoinColumn(name="result_id")
     public UpdateResults getUpdateResult() {
         return updateResult;
     }
 
+    /**
+     * Set the parent of this object only if it is an instance of UpdateResults
+     * @param result
+     */
     public void setUpdateResult(UpdateResults result) {
         this.updateResult = result;
-    }
-
-    public String getObjClass() {
-        return objClass;
-    }
-
-    protected void setObjClass(String objClass) {
-        this.objClass = objClass;
-    }
-
-    @PrePersist
-    @PreUpdate
-    protected void correctObjClass() {
-
-        if (this instanceof BlastReport) {
-            setObjClass(BlastReport.class.getName());
-        } else if (this instanceof PICRReport) {
-            setObjClass(PICRReport.class.getName());
-        } else {
-            setObjClass(ActionReport.class.getName());
-        }
     }
 }

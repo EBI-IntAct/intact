@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Properties;
 
 /**
- * TODO comment this
+ * This class contains methods to generate database schemas for the annotated elements in this project
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$

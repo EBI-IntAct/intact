@@ -2,7 +2,6 @@ package uk.ac.ebi.intact.curationTools.persistence.dao.impl;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.intact.curationTools.model.actionReport.ActionName;
 import uk.ac.ebi.intact.curationTools.model.actionReport.PICRReport;
 import uk.ac.ebi.intact.curationTools.persistence.dao.PICRReportDao;
 
@@ -11,7 +10,7 @@ import javax.persistence.Query;
 import java.util.List;
 
 /**
- * TODO comment this
+ * The basic implementation of PICRReportDao
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -21,14 +20,26 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class PICRReportDaoImpl extends ActionReportDaoImpl<PICRReport> implements PICRReportDao{
 
+    /**
+     * create a new PICRReportDaoImpl
+     */
     public PICRReportDaoImpl() {
         super(PICRReport.class, null);
     }
 
+    /**
+     * create a new PICRReportDaoImpl with entity manager
+     * @param entityManager
+     */
     public PICRReportDaoImpl(EntityManager entityManager) {
         super(PICRReport.class, entityManager);
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     public List<PICRReport> getPICRReportsByResultsId(long id) {
         final Query query = getEntityManager().createQuery( "select ar from PICRReport as ar join ar.updateResult as res where res.id = :id" );
         query.setParameter( "id", id);
@@ -36,23 +47,14 @@ public class PICRReportDaoImpl extends ActionReportDaoImpl<PICRReport> implement
         return query.getResultList();
     }
 
-    public List<PICRReport> getPICRReportsByActionName(ActionName name) {
-        final Query query = getEntityManager().createQuery( "select ar from PICRReport as ar where ar.name = :name" );
-        query.setParameter( "name", name);
-
-        return query.getResultList();
-    }
-
+    /**
+     * 
+     * @param protAc
+     * @return
+     */
     public List<PICRReport> getActionReportsWithPICRCrossReferencesByProteinAc(String protAc) {
         final Query query = getEntityManager().createQuery( "select a from PICRReport as a join a.updateResult as u where u.intactAccession = :protAc" );
         query.setParameter( "protAc", protAc);
-
-        return query.getResultList();
-    }
-
-    public List<PICRReport> getActionReportsWithPICRCrossReferencesByResultsId(long id) {
-        final Query query = getEntityManager().createQuery( "select a from PICRReport as a join a.updateResult as u where u.id = :id" );
-        query.setParameter( "id", id);
 
         return query.getResultList();
     }

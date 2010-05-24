@@ -7,7 +7,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 /**
- * TODO comment this
+ * This interface contains basic methods for database management
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -16,23 +16,62 @@ import java.util.List;
 @Mockable
 public interface UpdateBaseDao<T> {
 
+    /**
+     *
+     * @return the total number of entries in the database
+     */
     public int countAll();
 
+    /**
+     *
+     * @return all the entries in the database
+     */
     public List<T> getAll();
 
+    /**
+     * Persist an object in the database
+     * @param entity
+     */
     public void persist( T entity );
 
+    /**
+     * Delete an object in the database
+     * @param entity
+     */
     public void delete( T entity );
 
+    /**
+     * Update an object in the database
+     * @param entity
+     */
     public void update( T entity );
 
+    /**
+     * Save or update an object in the database
+     * @param entity
+     */
     public void saveOrUpdate( T entity );
 
+    /**
+     * Flush
+     */
     public void flush();
 
+    /**
+     *
+     * @return the entity manager
+     */
     public EntityManager getEntityManager();
 
+    /**
+     * The session
+     * @return
+     */
     public Session getSession();
 
+    /**
+     * Set the entity class
+     * @param entityClass
+     */
     public void setEntityClass(Class<T> entityClass);
 }

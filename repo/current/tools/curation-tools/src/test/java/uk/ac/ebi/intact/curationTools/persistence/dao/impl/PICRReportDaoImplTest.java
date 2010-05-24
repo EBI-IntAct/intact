@@ -12,7 +12,7 @@ import uk.ac.ebi.intact.curationTools.persistence.dao.UpdateResultsDao;
 import java.util.List;
 
 /**
- * TODO comment this
+ * Unit test for PICRReportDaoImpl
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -26,7 +26,7 @@ public class PICRReportDaoImplTest extends UpdateBasicTestCase{
         final PICRReportDao picrReportDao = getDaoFactory().getPICRReportDao();
         Assert.assertEquals( 0, picrReportDao.countAll() );
 
-        PICRReport report = getMockBuilder().createAutomaticPICRReport();
+        PICRReport report = getMockBuilder().createPICRReport();
 
         picrReportDao.persist( report );
         picrReportDao.flush();
@@ -40,8 +40,8 @@ public class PICRReportDaoImplTest extends UpdateBasicTestCase{
         Assert.assertEquals( 0, picrReportDao.countAll() );
         Assert.assertEquals( 0, updateResultsDao.countAll() );
 
-        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
-        PICRReport report = getMockBuilder().createAutomaticPICRReport();
+        UpdateResults results = getMockBuilder().createUpdateResult();
+        PICRReport report = getMockBuilder().createPICRReport();
         results.addActionReport(report);
 
         updateResultsDao.persist( results );
@@ -63,8 +63,8 @@ public class PICRReportDaoImplTest extends UpdateBasicTestCase{
         Assert.assertEquals( 0, picrReportDao.countAll() );
         Assert.assertEquals( 0, updateResultsDao.countAll() );
 
-        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
-        ActionReport report = getMockBuilder().createAutomaticPICRReport();
+        UpdateResults results = getMockBuilder().createUpdateResult();
+        ActionReport report = getMockBuilder().createPICRReport();
         results.addActionReport(report);
 
         updateResultsDao.persist( results );
@@ -83,8 +83,8 @@ public class PICRReportDaoImplTest extends UpdateBasicTestCase{
         Assert.assertEquals( 0, updateResultDao.countAll() );
         final PICRReportDao picrReportDao = getDaoFactory().getPICRReportDao();
 
-        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
-        ActionReport report = getMockBuilder().createAutomaticPICRReport();
+        UpdateResults results = getMockBuilder().createUpdateResult();
+        ActionReport report = getMockBuilder().createPICRReport();
         results.addActionReport(report);
 
         updateResultDao.persist( results );
@@ -102,53 +102,14 @@ public class PICRReportDaoImplTest extends UpdateBasicTestCase{
         Assert.assertEquals( 0, updateResultDao.countAll() );
         final PICRReportDao picrReportDao = getDaoFactory().getPICRReportDao();
 
-        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
-        ActionReport report = getMockBuilder().createAutomaticPICRReport();
+        UpdateResults results = getMockBuilder().createUpdateResult();
+        ActionReport report = getMockBuilder().createPICRReport();
         results.addActionReport(report);
 
         updateResultDao.persist( results );
         updateResultDao.flush();
 
         List<PICRReport> list = picrReportDao.getActionReportsWithPICRCrossReferencesByProteinAc("EBI-01234");
-
-        Assert.assertTrue(list.isEmpty());
-    }
-
-    @Test
-    public void test_GetPICRReportByResultId_successful() throws Exception {
-        final UpdateResultsDao updateResultDao = getDaoFactory().getUpdateResultsDao();
-        Assert.assertEquals( 0, updateResultDao.countAll() );
-        final PICRReportDao picrReportDao = getDaoFactory().getPICRReportDao();
-
-        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
-        ActionReport report = getMockBuilder().createAutomaticPICRReport();
-        results.addActionReport(report);
-
-        updateResultDao.persist( results );
-        updateResultDao.flush();
-
-        long id = results.getId();
-
-        List<PICRReport> list = picrReportDao.getActionReportsWithPICRCrossReferencesByResultsId(id);
-
-        Assert.assertTrue(!list.isEmpty());
-        Assert.assertTrue(list.get(0).getUpdateResult().getId() == id);
-    }
-
-    @Test
-    public void test_GetPICRReportByResultId_unsuccessful() throws Exception {
-        final UpdateResultsDao updateResultDao = getDaoFactory().getUpdateResultsDao();
-        Assert.assertEquals( 0, updateResultDao.countAll() );
-        final PICRReportDao picrReportDao = getDaoFactory().getPICRReportDao();
-
-        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
-        ActionReport report = getMockBuilder().createAutomaticPICRReport();
-        results.addActionReport(report);
-
-        updateResultDao.persist( results );
-        updateResultDao.flush();
-
-        List<PICRReport> list = picrReportDao.getActionReportsWithPICRCrossReferencesByResultsId(1);
 
         Assert.assertTrue(list.isEmpty());
     }
