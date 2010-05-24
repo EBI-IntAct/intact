@@ -414,4 +414,166 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
 
         Assert.assertTrue(r.isEmpty());
     }
+
+    @Test
+    public void test_GetActionReportByNameAndProteinAc_successful() throws Exception {
+        final ActionReportDao<ActionReport> actionReportDao = getDaoFactory().getActionReportDao(ActionReport.class);
+        Assert.assertEquals( 0, actionReportDao.countAll() );
+        final UpdateResultsDao updateResultsdao = getDaoFactory().getUpdateResultsDao();
+        Assert.assertEquals( 0, updateResultsdao.countAll() );
+
+        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
+        ActionReport report = getMockBuilder().createAutomaticPICRReport();
+        results.addActionReport(report);
+
+        updateResultsdao.persist( results );
+        updateResultsdao.flush();
+
+        List<ActionReport> list = actionReportDao.getActionReportsByNameAndProteinAc(ActionName.PICR_accession, "EBI-0001001");
+
+        Assert.assertTrue(!list.isEmpty());
+        Assert.assertEquals(ActionName.PICR_accession, list.get(0).getName());
+    }
+
+    @Test
+    public void test_GetActionReportsByNameAndProteinAc_unsuccessful() throws Exception {
+        final ActionReportDao<ActionReport> actionReportDao = getDaoFactory().getActionReportDao(ActionReport.class);
+        Assert.assertEquals( 0, actionReportDao.countAll() );
+        final UpdateResultsDao updateResultsdao = getDaoFactory().getUpdateResultsDao();
+        Assert.assertEquals( 0, updateResultsdao.countAll() );
+
+        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
+        ActionReport report = getMockBuilder().createAutomaticPICRReport();
+        results.addActionReport(report);
+
+        updateResultsdao.persist( results );
+        updateResultsdao.flush();
+
+        List<ActionReport> list = actionReportDao.getActionReportsByNameAndProteinAc(ActionName.PICR_sequence_Swissprot, "EBI-0001001");
+
+        Assert.assertTrue(list.isEmpty());
+    }
+
+    @Test
+    public void test_GetActionReportByNameAndResultId_successful() throws Exception {
+        final ActionReportDao<ActionReport> actionReportDao = getDaoFactory().getActionReportDao(ActionReport.class);
+        Assert.assertEquals( 0, actionReportDao.countAll() );
+        final UpdateResultsDao updateResultsdao = getDaoFactory().getUpdateResultsDao();
+        Assert.assertEquals( 0, updateResultsdao.countAll() );
+
+        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
+        ActionReport report = getMockBuilder().createAutomaticPICRReport();
+        results.addActionReport(report);
+
+        updateResultsdao.persist( results );
+        updateResultsdao.flush();
+
+        long id = results.getId();
+
+        List<ActionReport> list = actionReportDao.getActionReportsByNameAndResultId(ActionName.PICR_accession, id);
+
+        Assert.assertTrue(!list.isEmpty());
+        Assert.assertNotNull(list.get(0).getUpdateResult());
+        Assert.assertTrue(list.get(0).getUpdateResult().getId() == id);
+    }
+
+    @Test
+    public void test_GetUActionReportsByNameAndResultId_unsuccessful() throws Exception {
+        final ActionReportDao<ActionReport> actionReportDao = getDaoFactory().getActionReportDao(ActionReport.class);
+        Assert.assertEquals( 0, actionReportDao.countAll() );
+        final UpdateResultsDao updateResultsdao = getDaoFactory().getUpdateResultsDao();
+        Assert.assertEquals( 0, updateResultsdao.countAll() );
+
+        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
+        ActionReport report = getMockBuilder().createAutomaticPICRReport();
+        results.addActionReport(report);
+
+        updateResultsdao.persist( results );
+        updateResultsdao.flush();
+
+        List<ActionReport> list = actionReportDao.getActionReportsByNameAndResultId(ActionName.PICR_accession, 1);
+
+        Assert.assertTrue(list.isEmpty());
+    }
+
+    @Test
+    public void test_GetActionReportByStatusAndProteinAc_successful() throws Exception {
+        final ActionReportDao<ActionReport> actionReportDao = getDaoFactory().getActionReportDao(ActionReport.class);
+        Assert.assertEquals( 0, actionReportDao.countAll() );
+        final UpdateResultsDao updateResultsdao = getDaoFactory().getUpdateResultsDao();
+        Assert.assertEquals( 0, updateResultsdao.countAll() );
+
+        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
+        ActionReport report = getMockBuilder().createAutomaticPICRReport();
+        results.addActionReport(report);
+
+        updateResultsdao.persist( results );
+        updateResultsdao.flush();
+
+        List<ActionReport> list = actionReportDao.getActionReportsByStatusAndProteinAc(StatusLabel.COMPLETED, "EBI-0001001");
+
+        Assert.assertTrue(!list.isEmpty());
+        Assert.assertEquals(StatusLabel.COMPLETED.toString(), list.get(0).getStatusLabel());
+    }
+
+    @Test
+    public void test_GetUActionReportsByStatusAndProteinAc_unsuccessful() throws Exception {
+        final ActionReportDao<ActionReport> actionReportDao = getDaoFactory().getActionReportDao(ActionReport.class);
+        Assert.assertEquals( 0, actionReportDao.countAll() );
+        final UpdateResultsDao updateResultsdao = getDaoFactory().getUpdateResultsDao();
+        Assert.assertEquals( 0, updateResultsdao.countAll() );
+
+        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
+        ActionReport report = getMockBuilder().createAutomaticPICRReport();
+        results.addActionReport(report);
+
+        updateResultsdao.persist( results );
+        updateResultsdao.flush();
+
+        List<ActionReport> list = actionReportDao.getActionReportsByStatusAndProteinAc(StatusLabel.TO_BE_REVIEWED, "EBI-0001001");
+
+        Assert.assertTrue(list.isEmpty());
+    }
+
+    @Test
+    public void test_GetActionReportByStatusAndResultId_successful() throws Exception {
+        final ActionReportDao<ActionReport> actionReportDao = getDaoFactory().getActionReportDao(ActionReport.class);
+        Assert.assertEquals( 0, actionReportDao.countAll() );
+        final UpdateResultsDao updateResultsdao = getDaoFactory().getUpdateResultsDao();
+        Assert.assertEquals( 0, updateResultsdao.countAll() );
+
+        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
+        ActionReport report = getMockBuilder().createAutomaticPICRReport();
+        results.addActionReport(report);
+
+        updateResultsdao.persist( results );
+        updateResultsdao.flush();
+
+        long id = results.getId();
+
+        List<ActionReport> list = actionReportDao.getActionReportsByStatusAndResultId(StatusLabel.COMPLETED, id);
+
+        Assert.assertTrue(!list.isEmpty());
+        Assert.assertNotNull(list.get(0).getUpdateResult());
+        Assert.assertTrue(list.get(0).getUpdateResult().getId() == id);
+    }
+
+    @Test
+    public void test_GetUActionReportsByStatusAndResultId_unsuccessful() throws Exception {
+        final ActionReportDao<ActionReport> actionReportDao = getDaoFactory().getActionReportDao(ActionReport.class);
+        Assert.assertEquals( 0, actionReportDao.countAll() );
+        final UpdateResultsDao updateResultsdao = getDaoFactory().getUpdateResultsDao();
+        Assert.assertEquals( 0, updateResultsdao.countAll() );
+
+        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
+        ActionReport report = getMockBuilder().createAutomaticPICRReport();
+        results.addActionReport(report);
+
+        updateResultsdao.persist( results );
+        updateResultsdao.flush();
+
+        List<ActionReport> list = actionReportDao.getActionReportsByStatusAndResultId(StatusLabel.COMPLETED, 1);
+
+        Assert.assertTrue(list.isEmpty());
+    }
 }

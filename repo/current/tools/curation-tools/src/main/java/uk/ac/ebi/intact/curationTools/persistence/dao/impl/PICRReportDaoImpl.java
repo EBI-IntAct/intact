@@ -42,4 +42,18 @@ public class PICRReportDaoImpl extends ActionReportDaoImpl<PICRReport> implement
 
         return query.getResultList();
     }
+
+    public List<PICRReport> getActionReportsWithPICRCrossReferencesByProteinAc(String protAc) {
+        final Query query = getEntityManager().createQuery( "select a from PICRReport as a join a.updateResult as u where u.intactAccession = :protAc" );
+        query.setParameter( "protAc", protAc);
+
+        return query.getResultList();
+    }
+
+    public List<PICRReport> getActionReportsWithPICRCrossReferencesByResultsId(long id) {
+        final Query query = getEntityManager().createQuery( "select a from PICRReport as a join a.updateResult as u where u.id = :id" );
+        query.setParameter( "id", id);
+
+        return query.getResultList();
+    }
 }

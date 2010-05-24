@@ -42,4 +42,12 @@ public interface ActionReportDao<T extends ActionReport> extends UpdateBaseDao<T
 
     public List<ActionReport> getReportsWithSeveralPossibleUniprotByResultId(long id);
 
+    public List<ActionReport> getActionReportsByNameAndProteinAc(ActionName name, String proteinAc);
+
+    public List<ActionReport> getActionReportsByNameAndResultId(ActionName name, long resultId);
+
+    public List<ActionReport> getActionReportsByStatusAndProteinAc(StatusLabel status, String proteinAc);
+
+    public List<ActionReport> getActionReportsByStatusAndResultId(StatusLabel label, long resultId);
+
 }

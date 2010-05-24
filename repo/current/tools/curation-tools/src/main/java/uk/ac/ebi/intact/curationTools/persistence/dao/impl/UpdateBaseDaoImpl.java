@@ -74,4 +74,8 @@ public class UpdateBaseDaoImpl<T extends HibernatePersistent> implements UpdateB
     public void setEntityClass(Class<T> entityClass) {
         this.entityClass = entityClass;
     }
+
+    public Class<T> getEntityClass() {
+        return entityClass;
+    }
 }

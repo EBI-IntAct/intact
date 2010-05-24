@@ -6,7 +6,6 @@ import uk.ac.ebi.intact.curationTools.model.HibernatePersistent;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.Status;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.curationTools.model.results.UpdateResults;
-import uk.ac.ebi.intact.model.InteractorImpl;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -298,7 +297,7 @@ public class ActionReport implements HibernatePersistent{
         return objClass;
     }
 
-    public void setObjClass(String objClass) {
+    protected void setObjClass(String objClass) {
         this.objClass = objClass;
     }
 
@@ -311,7 +310,7 @@ public class ActionReport implements HibernatePersistent{
         } else if (this instanceof PICRReport) {
             setObjClass(PICRReport.class.getName());
         } else {
-            setObjClass(InteractorImpl.class.getName());
+            setObjClass(ActionReport.class.getName());
         }
     }
 }

@@ -38,6 +38,13 @@ public class PICRCrossReferencesDAOImpl extends UpdateBaseDaoImpl<PICRCrossRefer
         return query.getResultList();
     }
 
+    public List<PICRCrossReferences> getCrossReferencesByProteinAc(String protAc) {
+        final Query query = getEntityManager().createQuery( "select pcr from PICRCrossReferences pcr join pcr.picrReport as picr join picr.updateResult as ur where ur.intactAccession = :ac" );
+        query.setParameter( "ac", protAc);
+
+        return query.getResultList();
+    }
+
     public PICRCrossReferences getCrossReferenceWithId(long id) {
         final Query query = getEntityManager().createQuery( "select pcr from PICRCrossReferences as pcr where pcr.id = :id" );
         query.setParameter( "id", id);

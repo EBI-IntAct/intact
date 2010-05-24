@@ -16,4 +16,8 @@ import java.util.List;
 public interface PICRReportDao extends ActionReportDao<PICRReport>{
 
     public List<PICRReport> getPICRReportsByResultsId(long actionId);
+
+    public List<PICRReport> getActionReportsWithPICRCrossReferencesByProteinAc(String protAc);
+
+    public List<PICRReport> getActionReportsWithPICRCrossReferencesByResultsId(long id);
 }
