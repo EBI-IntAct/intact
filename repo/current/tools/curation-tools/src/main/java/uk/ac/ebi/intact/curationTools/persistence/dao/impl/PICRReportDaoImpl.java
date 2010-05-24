@@ -2,12 +2,12 @@ package uk.ac.ebi.intact.curationTools.persistence.dao.impl;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
+import uk.ac.ebi.intact.curationTools.model.actionReport.ActionName;
 import uk.ac.ebi.intact.curationTools.model.actionReport.PICRReport;
-import uk.ac.ebi.intact.curationTools.model.results.PICRCrossReferences;
 import uk.ac.ebi.intact.curationTools.persistence.dao.PICRReportDao;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.List;
 
 /**
@@ -29,11 +29,17 @@ public class PICRReportDaoImpl extends ActionReportDaoImpl<PICRReport> implement
         super(PICRReport.class, entityManager);
     }
 
-    public List<ActionReport> getAllActionReportsWithPICRCrossReferences() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public List<PICRReport> getPICRReportsByResultsId(long id) {
+        final Query query = getEntityManager().createQuery( "select ar from PICRReport as ar join ar.updateResult as res where res.id = :id" );
+        query.setParameter( "id", id);
+
+        return query.getResultList();
     }
 
-    public List<PICRCrossReferences> getCrossReferencesByActionId(long actionId) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public List<PICRReport> getPICRReportsByActionName(ActionName name) {
+        final Query query = getEntityManager().createQuery( "select ar from PICRReport as ar where ar.name = :name" );
+        query.setParameter( "name", name);
+
+        return query.getResultList();
     }
 }

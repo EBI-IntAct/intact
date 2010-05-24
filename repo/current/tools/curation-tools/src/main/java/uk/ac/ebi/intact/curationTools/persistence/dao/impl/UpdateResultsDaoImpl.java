@@ -5,11 +5,10 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionName;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
-import uk.ac.ebi.intact.curationTools.model.results.BlastResults;
-import uk.ac.ebi.intact.curationTools.model.results.PICRCrossReferences;
 import uk.ac.ebi.intact.curationTools.model.results.UpdateResults;
 import uk.ac.ebi.intact.curationTools.persistence.dao.UpdateResultsDao;
 
+import javax.persistence.Query;
 import java.util.List;
 
 /**
@@ -27,78 +26,110 @@ public class UpdateResultsDaoImpl extends UpdateBaseDaoImpl<UpdateResults> imple
     }
 
     public UpdateResults getUpdateResultsWithId(long id) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        final Query query = getEntityManager().createQuery( "select u from UpdateResults as u where u.id = :id" );
+        query.setParameter( "id", id);
+
+        if (query.getResultList().isEmpty()){
+            return null;
+        }
+        return (UpdateResults) query.getResultList().iterator().next();
     }
 
     public UpdateResults getUpdateResultsForProteinAc(String proteinAc) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        final Query query = getEntityManager().createQuery( "select u from UpdateResults as u where u.intactAccession = :proteinAc" );
+        query.setParameter( "proteinAc", proteinAc);
+
+        if (query.getResultList().isEmpty()){
+            return null;
+        }
+        return (UpdateResults) query.getResultList().iterator().next();
     }
 
     public List<ActionReport> getActionReportsByNameAndProteinAc(ActionName name, String proteinAc) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        final Query query = getEntityManager().createQuery( "select a from UpdateResults as u join u.listOfActions as a where u.intactAccession = :proteinAc and a.name = :name" );
+        query.setParameter( "proteinAc", proteinAc);
+        query.setParameter( "name", name);
+
+        return query.getResultList();
     }
 
     public List<ActionReport> getActionReportsByNameAndResultId(ActionName name, long resultId) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        final Query query = getEntityManager().createQuery( "select a from UpdateResults as u join u.listOfActions as a where u.id = :id and a.name = :name" );
+        query.setParameter( "id", resultId);
+        query.setParameter( "name", name);
+
+        return query.getResultList();
     }
 
     public List<ActionReport> getActionReportsByStatusAndProteinAc(StatusLabel status, String proteinAc) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        final Query query = getEntityManager().createQuery( "select a from UpdateResults as u join u.listOfActions as a where u.intactAccession = :proteinAc and a.statusLabel = :status" );
+        query.setParameter( "proteinAc", proteinAc);
+        query.setParameter( "status", status.toString());
+
+        return query.getResultList();
     }
 
-    public List<ActionReport> getActionReportsByStatusAndResultId(ActionName name, long resultId) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public List<ActionReport> getActionReportsByStatusAndResultId(StatusLabel label, long resultId) {
+        final Query query = getEntityManager().createQuery( "select a from UpdateResults as u join u.listOfActions as a where u.id = :id and a.statusLabel = :label" );
+        query.setParameter( "id", resultId);
+        query.setParameter( "label", label.toString() );
+
+        return query.getResultList();
     }
 
     public List<ActionReport> getActionReportsWithBlastResultsByProteinAc(String protAc) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        final Query query = getEntityManager().createQuery( "select a from UpdateResults as u join u.listOfActions as a where u.intactAccession = :protAc and a.objClass = :class" );
+        query.setParameter( "protAc", protAc);
+        query.setParameter( "class", "uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport" );
+
+        return query.getResultList();
     }
 
     public List<ActionReport> getActionReportsWithSwissprotRemappingResultsByProteinAc(String protAc) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        final Query query = getEntityManager().createQuery( "select a from UpdateResults as u join u.listOfActions as a where u.intactAccession = :protAc and a.objClass = :class and a.name = :name" );
+        query.setParameter( "protAc", protAc);
+        query.setParameter("name", ActionName.BLAST_Swissprot_Remapping);
+        query.setParameter( "class", "uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport" );
+
+        return query.getResultList();
     }
 
     public List<ActionReport> getActionReportsWithPICRCrossReferencesByProteinAc(String protAc) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        final Query query = getEntityManager().createQuery( "select a from UpdateResults as u join u.listOfActions as a where u.intactAccession = :protAc and a.objClass = :class" );
+        query.setParameter( "protAc", protAc);
+        query.setParameter( "class", "uk.ac.ebi.intact.curationTools.model.actionReport.PICRReport" );
+
+        return query.getResultList();
     }
 
     public List<ActionReport> getActionReportsWithBlastResultsByResultsId(long id) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        final Query query = getEntityManager().createQuery( "select a from UpdateResults as u join u.listOfActions as a where u.id = :id" );
+        query.setParameter( "id", id);
+
+        return query.getResultList();
     }
 
     public List<ActionReport> getActionReportsWithSwissprotRemappingResultsByResultsId(long id) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        final Query query = getEntityManager().createQuery( "select a from UpdateResults as u join u.listOfActions as a where u.id = :id and a.objClass = :class and a.name = :name" );
+        query.setParameter( "id", id);
+        query.setParameter("name", ActionName.BLAST_Swissprot_Remapping);
+        query.setParameter( "class", "uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport" );
+
+        return query.getResultList();
     }
 
     public List<ActionReport> getActionReportsWithPICRCrossReferencesByResultsId(long id) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
+        final Query query = getEntityManager().createQuery( "select a from UpdateResults as u join u.listOfActions as a where u.id = :id and a.objClass = :class" );
+        query.setParameter( "id", id);
+        query.setParameter( "class", "uk.ac.ebi.intact.curationTools.model.actionReport.PICRReport" );
 
-    public List<BlastResults> getBlastResultsByProteinAc(String ac) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public List<BlastResults> getBlastResultsByProteinShortLabel(String ac) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public List<PICRCrossReferences> getCrossReferencesByProteinAc(String proteinAc) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return query.getResultList();
     }
 
     public List<ActionReport> getActionReportsWithWarningsByProteinAc(String proteinAc) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
+        final Query query = getEntityManager().createQuery( "select a from UpdateResults as u join u.listOfActions as a join a.warnings as warn where u.intactAccession = :protac" );
+        query.setParameter( "protac", proteinAc);
 
-    public List<BlastResults> getBlastResultsByProteinAcAndIdentitySuperior(float identity, String proteinAc) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public List<BlastResults> getAllSwissprotRemappingResultsFor(String proteinAc) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public List<PICRCrossReferences> getCrossReferencesByDatabaseNameAndProteinAc(String databaseName, String proteinAc) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return query.getResultList();
     }
 }

@@ -1,10 +1,7 @@
 package uk.ac.ebi.intact.curationTools.persistence.dao;
 
 import uk.ac.ebi.intact.annotation.Mockable;
-import uk.ac.ebi.intact.curationTools.model.actionReport.ActionName;
-import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport;
-import uk.ac.ebi.intact.curationTools.model.results.BlastResults;
 
 import java.util.List;
 
@@ -18,11 +15,6 @@ import java.util.List;
 @Mockable
 public interface BlastReportDao extends ActionReportDao<BlastReport>{
 
-    List<ActionReport> getAllActionReportsWithBlastResults();
+    public List<BlastReport> getBlastReportsByResultsId(long id);
 
-    List<ActionReport> getAllActionReportsWithSwissprotRemappingResults();
-
-    public List<BlastResults> getBlastResultsByActionId(long id);
-
-    public List<BlastResults> getBlastResultsByActionName(ActionName name);
 }

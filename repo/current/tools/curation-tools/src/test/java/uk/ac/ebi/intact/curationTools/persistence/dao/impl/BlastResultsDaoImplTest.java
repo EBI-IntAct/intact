@@ -42,7 +42,7 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
         blastResultDao.persist( blastResults );
         blastResultDao.flush();
 
-        List<BlastResults> r = blastResultDao.getBlastResultsByIdentitySuperior((float)98);
+        List<BlastResults> r = blastResultDao.getResultsByIdentitySuperior((float)98);
 
         Assert.assertEquals(1, r.size());
         Assert.assertTrue(r.get(0).getIdentity() >= 98);
@@ -58,7 +58,7 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
         blastResultDao.persist( blastResults );
         blastResultDao.flush();
 
-        List<BlastResults> r = blastResultDao.getBlastResultsByIdentitySuperior((float)98);
+        List<BlastResults> r = blastResultDao.getResultsByIdentitySuperior((float)98);
 
         Assert.assertTrue(r.isEmpty());
     }
@@ -79,7 +79,7 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
 
         Long id = r.getId();
 
-        List<BlastResults> results = blastResultDao.getBlastResultsByActionIdAndIdentitySuperior((float)98, id);
+        List<BlastResults> results = blastResultDao.getResultsByActionIdAndIdentitySuperior((float)98, id);
 
         Assert.assertEquals(1, results.size());
         Assert.assertTrue(results.get(0).getIdentity() >= 98);
@@ -103,7 +103,7 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
 
         Long id = r.getId();
 
-        List<BlastResults> results = blastResultDao.getBlastResultsByActionIdAndIdentitySuperior((float)98, 1);
+        List<BlastResults> results = blastResultDao.getResultsByActionIdAndIdentitySuperior((float)98, 1);
 
         Assert.assertEquals(0, results.size());
     }
@@ -227,7 +227,7 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
 
         long id = blastResults.getId();
 
-        BlastResults results = blastResultDao.getBlastResultById(id);
+        BlastResults results = blastResultDao.getResultsById(id);
 
         Assert.assertNotNull(results);
         Assert.assertTrue(results.getId() == id);
@@ -243,7 +243,7 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
         blastResultDao.persist( blastResults );
         blastResultDao.flush();
 
-        BlastResults results = blastResultDao.getBlastResultById(1);
+        BlastResults results = blastResultDao.getResultsById(1);
 
         Assert.assertNull(results);
     }

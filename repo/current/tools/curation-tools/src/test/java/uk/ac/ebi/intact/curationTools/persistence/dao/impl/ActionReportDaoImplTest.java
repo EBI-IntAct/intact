@@ -48,7 +48,7 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
 
         long id = report.getId();
 
-        ActionReport r = actionReportDao.getActionReportWithId(id);
+        ActionReport r = actionReportDao.getByReportId(id);
 
         Assert.assertNotNull(r);
         Assert.assertTrue(r.getId() == id);
@@ -64,7 +64,7 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
         actionReportDao.persist( report );
         actionReportDao.flush();
 
-        ActionReport r = actionReportDao.getActionReportWithId(1);
+        ActionReport r = actionReportDao.getByReportId(1);
 
         Assert.assertNull(r);
     }
@@ -79,7 +79,7 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
         actionReportDao.persist( report );
         actionReportDao.flush();
 
-        List<ActionReport> r = actionReportDao.getActionReportsByName(ActionName.BLAST_uniprot);
+        List<ActionReport> r = actionReportDao.getByActionName(ActionName.BLAST_uniprot);
 
         Assert.assertTrue(!r.isEmpty());
         Assert.assertTrue(r.get(0).getName().equals(ActionName.BLAST_uniprot));
@@ -95,7 +95,7 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
         actionReportDao.persist( report );
         actionReportDao.flush();
 
-        List<ActionReport> r = actionReportDao.getActionReportsByName(ActionName.SEARCH_uniprot_name);
+        List<ActionReport> r = actionReportDao.getByActionName(ActionName.SEARCH_uniprot_name);
 
         Assert.assertTrue(r.isEmpty());
     }
@@ -110,7 +110,7 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
         actionReportDao.persist( report );
         actionReportDao.flush();
 
-        List<ActionReport> r = actionReportDao.getActionReportsByStatus(StatusLabel.TO_BE_REVIEWED);
+        List<ActionReport> r = actionReportDao.getByReportStatus(StatusLabel.TO_BE_REVIEWED);
 
         Assert.assertTrue(!r.isEmpty());
         Assert.assertTrue(r.get(0).getStatusLabel().equalsIgnoreCase(StatusLabel.TO_BE_REVIEWED.toString()));
@@ -126,7 +126,7 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
         actionReportDao.persist( report );
         actionReportDao.flush();
 
-        List<ActionReport> r = actionReportDao.getActionReportsByStatus(StatusLabel.COMPLETED);
+        List<ActionReport> r = actionReportDao.getByReportStatus(StatusLabel.COMPLETED);
 
         Assert.assertTrue(r.isEmpty());
     }
@@ -141,7 +141,7 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
         actionReportDao.persist( report );
         actionReportDao.flush();
 
-        List<ActionReport> r = actionReportDao.getAllActionReportsWithWarnings();
+        List<ActionReport> r = actionReportDao.getAllReportsWithWarnings();
 
         Assert.assertTrue(!r.isEmpty());
         Assert.assertTrue(!r.get(0).getWarnings().isEmpty());
@@ -157,7 +157,7 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
         actionReportDao.persist( report );
         actionReportDao.flush();
 
-        List<ActionReport> r = actionReportDao.getAllActionReportsWithWarnings();
+        List<ActionReport> r = actionReportDao.getAllReportsWithWarnings();
 
         Assert.assertTrue(r.isEmpty());
     }
@@ -172,7 +172,7 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
         actionReportDao.persist( report );
         actionReportDao.flush();
 
-        List<ActionReport> r = actionReportDao.getAllActionReportsWithSeveralPossibleUniprot();
+        List<ActionReport> r = actionReportDao.getAllReportsWithSeveralPossibleUniprot();
 
         Assert.assertTrue(!r.isEmpty());
         Assert.assertTrue(!r.get(0).getPossibleAccessions().isEmpty());
@@ -188,7 +188,7 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
         actionReportDao.persist( report );
         actionReportDao.flush();
 
-        List<ActionReport> r = actionReportDao.getAllActionReportsWithSeveralPossibleUniprot();
+        List<ActionReport> r = actionReportDao.getAllReportsWithSeveralPossibleUniprot();
 
         Assert.assertTrue(r.isEmpty());
     }
@@ -284,94 +284,6 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
     }
 
     @Test
-    public void search_BlastReport_ByResultId_successful() throws Exception {
-        final ActionReportDao<ActionReport> actionReportDao = getDaoFactory().getActionReportDao(ActionReport.class);
-        final UpdateResultsDao updateResultsDao = getDaoFactory().getUpdateResultsDao();
-        Assert.assertEquals( 0, actionReportDao.countAll() );
-        Assert.assertEquals( 0, updateResultsDao.countAll() );
-
-        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
-        ActionReport report = getMockBuilder().createAutomaticBlastReport();
-        results.addActionReport(report);
-
-        updateResultsDao.persist( results );
-        updateResultsDao.flush();
-
-        long id = results.getId();
-
-        List<BlastReport> r = actionReportDao.getBlastReportsByResultsId(id);
-
-        Assert.assertTrue(!r.isEmpty());
-        Assert.assertTrue(r.get(0).getUpdateResult() != null);
-        Assert.assertTrue(r.get(0).getUpdateResult().getId() == id);
-    }
-
-    @Test
-    public void search_BlastReport_ByResultId_Unsuccessful() throws Exception {
-        final ActionReportDao<ActionReport> actionReportDao = getDaoFactory().getActionReportDao(ActionReport.class);
-        final UpdateResultsDao updateResultsDao = getDaoFactory().getUpdateResultsDao();
-        Assert.assertEquals( 0, actionReportDao.countAll() );
-        Assert.assertEquals( 0, updateResultsDao.countAll() );
-
-        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
-        ActionReport report = getMockBuilder().createAutomaticBlastReport();
-        results.addActionReport(report);
-
-        updateResultsDao.persist( results );
-        updateResultsDao.flush();
-
-        long id = results.getId();
-
-        List<BlastReport> r = actionReportDao.getBlastReportsByResultsId(1);
-
-        Assert.assertTrue(r.isEmpty());
-    }
-
-    @Test
-    public void search_PICRReport_ByResultId_successful() throws Exception {
-        final ActionReportDao<ActionReport> actionReportDao = getDaoFactory().getActionReportDao(ActionReport.class);
-        final UpdateResultsDao updateResultsDao = getDaoFactory().getUpdateResultsDao();
-        Assert.assertEquals( 0, actionReportDao.countAll() );
-        Assert.assertEquals( 0, updateResultsDao.countAll() );
-
-        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
-        ActionReport report = getMockBuilder().createAutomaticPICRReport();
-        results.addActionReport(report);
-
-        updateResultsDao.persist( results );
-        updateResultsDao.flush();
-
-        long id = results.getId();
-
-        List<PICRReport> r = actionReportDao.getPICRReportsByResultsId(id);
-
-        Assert.assertTrue(!r.isEmpty());
-        Assert.assertTrue(r.get(0).getUpdateResult() != null);
-        Assert.assertTrue(r.get(0).getUpdateResult().getId() == id);
-    }
-
-    @Test
-    public void search_PICRReport_ByResultId_Unsuccessful() throws Exception {
-        final ActionReportDao<ActionReport> actionReportDao = getDaoFactory().getActionReportDao(ActionReport.class);
-        final UpdateResultsDao updateResultsDao = getDaoFactory().getUpdateResultsDao();
-        Assert.assertEquals( 0, actionReportDao.countAll() );
-        Assert.assertEquals( 0, updateResultsDao.countAll() );
-
-        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
-        ActionReport report = getMockBuilder().createAutomaticPICRReport();
-        results.addActionReport(report);
-
-        updateResultsDao.persist( results );
-        updateResultsDao.flush();
-
-        long id = results.getId();
-
-        List<PICRReport> r = actionReportDao.getPICRReportsByResultsId(1);
-
-        Assert.assertTrue(r.isEmpty());
-    }
-
-    @Test
     public void search_ActionReport_WithWarnings_successful() throws Exception {
         final ActionReportDao<ActionReport> actionReportDao = getDaoFactory().getActionReportDao(ActionReport.class);
         final UpdateResultsDao updateResultsDao = getDaoFactory().getUpdateResultsDao();
@@ -387,7 +299,7 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
 
         long id = results.getId();
 
-        List<ActionReport> r = actionReportDao.getActionReportsWithWarningsByResultsId(id);
+        List<ActionReport> r = actionReportDao.getReportsWithWarningsByResultsId(id);
 
         Assert.assertTrue(!r.isEmpty());
         Assert.assertTrue(r.get(0).getUpdateResult() != null);
@@ -410,7 +322,7 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
 
         long id = results.getId();
 
-        List<ActionReport> r = actionReportDao.getActionReportsWithWarningsByResultsId(1);
+        List<ActionReport> r = actionReportDao.getReportsWithWarningsByResultsId(1);
 
         Assert.assertTrue(r.isEmpty());
     }
@@ -431,7 +343,7 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
 
         long id = results.getId();
 
-        List<ActionReport> r = actionReportDao.getActionReportsWithSeveralPossibleUniprotByResultId(id);
+        List<ActionReport> r = actionReportDao.getReportsWithSeveralPossibleUniprotByResultId(id);
 
         Assert.assertTrue(!r.isEmpty());
         Assert.assertTrue(r.get(0).getUpdateResult() != null);
@@ -454,7 +366,7 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
 
         long id = results.getId();
 
-        List<ActionReport> r = actionReportDao.getActionReportsWithSeveralPossibleUniprotByResultId(1);
+        List<ActionReport> r = actionReportDao.getReportsWithSeveralPossibleUniprotByResultId(1);
 
         Assert.assertTrue(r.isEmpty());
     }
@@ -475,7 +387,7 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
 
         long id = results.getId();
 
-        List<ActionReport> r = actionReportDao.getAllActionReportsByResultsId(id);
+        List<ActionReport> r = actionReportDao.getAllReportsByResultsId(id);
 
         Assert.assertTrue(!r.isEmpty());
         Assert.assertTrue(r.get(0).getUpdateResult() != null);
@@ -498,7 +410,7 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
 
         long id = results.getId();
 
-        List<ActionReport> r = actionReportDao.getAllActionReportsByResultsId(1);
+        List<ActionReport> r = actionReportDao.getAllReportsByResultsId(1);
 
         Assert.assertTrue(r.isEmpty());
     }

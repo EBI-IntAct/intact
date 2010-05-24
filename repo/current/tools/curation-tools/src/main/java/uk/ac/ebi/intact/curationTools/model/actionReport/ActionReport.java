@@ -1,10 +1,12 @@
 package uk.ac.ebi.intact.curationTools.model.actionReport;
 
 import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.DiscriminatorFormula;
 import uk.ac.ebi.intact.curationTools.model.HibernatePersistent;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.Status;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.curationTools.model.results.UpdateResults;
+import uk.ac.ebi.intact.model.InteractorImpl;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -21,7 +23,8 @@ import java.util.Set;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="objclass", discriminatorType=DiscriminatorType.STRING, length = 100)
+//@DiscriminatorColumn(name="objclass", discriminatorType=DiscriminatorType.STRING, length = 100)
+@DiscriminatorFormula("objclass")
 @DiscriminatorValue("uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport")
 @Table( name = "ia_protein_action" )
 public class ActionReport implements HibernatePersistent{
@@ -32,6 +35,8 @@ public class ActionReport implements HibernatePersistent{
      * the name of the action
      */
     protected ActionName name;
+
+    private String objClass;
 
     /**
      * the status of the action
@@ -287,5 +292,26 @@ public class ActionReport implements HibernatePersistent{
 
     public void setUpdateResult(UpdateResults result) {
         this.updateResult = result;
+    }
+
+    public String getObjClass() {
+        return objClass;
+    }
+
+    public void setObjClass(String objClass) {
+        this.objClass = objClass;
+    }
+
+    @PrePersist
+    @PreUpdate
+    protected void correctObjClass() {
+
+        if (this instanceof BlastReport) {
+            setObjClass(BlastReport.class.getName());
+        } else if (this instanceof PICRReport) {
+            setObjClass(PICRReport.class.getName());
+        } else {
+            setObjClass(InteractorImpl.class.getName());
+        }
     }
 }
