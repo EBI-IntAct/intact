@@ -22,25 +22,23 @@ public interface UpdateResultsDao extends UpdateBaseDao<UpdateResults> {
 
     public UpdateResults getUpdateResultsForProteinAc(String proteinAc);
 
-    public List<ActionReport> getActionReportsByNameAndProteinAc(ActionName name, String proteinAc);
-
-    public List<ActionReport> getActionReportsByNameAndResultId(ActionName name, long resultId);
-
-    public List<ActionReport> getActionReportsByStatusAndProteinAc(StatusLabel status, String proteinAc);
-
-    public List<ActionReport> getActionReportsByStatusAndResultId(StatusLabel label, long resultId);
-
-    public List<ActionReport> getActionReportsWithBlastResultsByProteinAc(String protAc);
-
-    public List<ActionReport> getActionReportsWithSwissprotRemappingResultsByProteinAc(String protAc);
-
-    public List<ActionReport> getActionReportsWithPICRCrossReferencesByProteinAc(String protAc);
-
-    public List<ActionReport> getActionReportsWithBlastResultsByResultsId(long id);
-
-    public List<ActionReport> getActionReportsWithSwissprotRemappingResultsByResultsId(long id);
-
-    public List<ActionReport> getActionReportsWithPICRCrossReferencesByResultsId(long id);
-
     public List<ActionReport> getActionReportsWithWarningsByProteinAc(String proteinAc);
+
+    public List<UpdateResults> getResultsContainingAction(ActionName name);
+
+    public List<UpdateResults> getResultsContainingActionWithLabel(StatusLabel label);
+
+    public List<UpdateResults> getUpdateResultsWithSwissprotRemapping();
+
+    public List<UpdateResults> getSuccessfulUpdateResults();
+
+    public List<UpdateResults> getUpdateResultsToBeReviewedByACurator();
+
+    public List<UpdateResults> getProteinNotUpdatedBecauseNoSequenceAndNoIdentityXrefs();
+
+    public List<UpdateResults> getUnsuccessfulUpdateResults();
+
+    public List<UpdateResults> getUpdateResultsWithConflictBetweenSequenceAndIdentityXRefs();
+
+    public List<UpdateResults> getUpdateResultsWithConflictBetweenSwissprotSequenceAndFeatureRanges();
 }

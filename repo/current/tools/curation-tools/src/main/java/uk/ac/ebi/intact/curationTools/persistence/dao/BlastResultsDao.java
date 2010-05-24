@@ -25,5 +25,7 @@ public interface BlastResultsDao extends UpdateBaseDao<BlastResults>{
 
     public List<BlastResults> getSwissprotRemappingResultsByTremblAc(String tremblAc);
 
+    public List<BlastResults> getBlastResultsByProteinAc(String proteinAc);
+
     public BlastResults getResultsById(long id);
 }

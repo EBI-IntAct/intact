@@ -4,9 +4,11 @@ import junit.framework.Assert;
 import org.junit.Test;
 import uk.ac.ebi.intact.curationTools.model.actionReport.PICRReport;
 import uk.ac.ebi.intact.curationTools.model.results.PICRCrossReferences;
+import uk.ac.ebi.intact.curationTools.model.results.UpdateResults;
 import uk.ac.ebi.intact.curationTools.model.unit.UpdateBasicTestCase;
 import uk.ac.ebi.intact.curationTools.persistence.dao.PICRCrossReferencesDAO;
 import uk.ac.ebi.intact.curationTools.persistence.dao.PICRReportDao;
+import uk.ac.ebi.intact.curationTools.persistence.dao.UpdateResultsDao;
 
 import java.util.List;
 
@@ -137,11 +139,50 @@ public class PICRCrossReferenceDaoImplTest extends UpdateBasicTestCase{
         picrCrossReferenceDoa.persist( picrRefs );
         picrCrossReferenceDoa.flush();
 
-        long id = picrRefs.getId();
-
         PICRCrossReferences picrResults = picrCrossReferenceDoa.getCrossReferenceWithId(1);
 
         Assert.assertNull(picrResults);
     }
 
+    @Test
+    public void search_Picr_references_By_ProteinAc_successful() throws Exception {
+        final UpdateResultsDao updateResultsDao = getDaoFactory().getUpdateResultsDao();
+        Assert.assertEquals( 0, updateResultsDao.countAll() );
+        final PICRCrossReferencesDAO picrCrossReferencesDao = getDaoFactory().getPicrCrossReferencesDao();
+        Assert.assertEquals( 0, picrCrossReferencesDao.countAll() );
+
+        UpdateResults update = getMockBuilder().createAutomaticUpdateResult();
+        PICRReport report = getMockBuilder().createAutomaticPICRReport();
+        PICRCrossReferences picrRefs = getMockBuilder().createAutomaticPICRCrossReferences();
+        report.addPICRCrossReference(picrRefs);
+        update.addActionReport(report);
+
+        updateResultsDao.persist( update );
+        updateResultsDao.flush();
+
+        List<PICRCrossReferences> results = picrCrossReferencesDao.getCrossReferencesByProteinAc("EBI-0001001");
+
+        Assert.assertTrue(!results.isEmpty());
+    }
+
+    @Test
+    public void search_Picr_references_By_ProteinAc_Unsuccessful() throws Exception {
+        final UpdateResultsDao updateResultsDao = getDaoFactory().getUpdateResultsDao();
+        Assert.assertEquals( 0, updateResultsDao.countAll() );
+        final PICRCrossReferencesDAO picrCrossReferencesDao = getDaoFactory().getPicrCrossReferencesDao();
+        Assert.assertEquals( 0, picrCrossReferencesDao.countAll() );
+
+        UpdateResults update = getMockBuilder().createAutomaticUpdateResult();
+        PICRReport report = getMockBuilder().createAutomaticPICRReport();
+        PICRCrossReferences picrRefs = getMockBuilder().createAutomaticPICRCrossReferences();
+        report.addPICRCrossReference(picrRefs);
+        update.addActionReport(report);
+
+        updateResultsDao.persist( update );
+        updateResultsDao.flush();
+
+        List<PICRCrossReferences> results = picrCrossReferencesDao.getCrossReferencesByProteinAc("EBI-01234");
+
+        Assert.assertTrue(results.isEmpty());
+    }
 }

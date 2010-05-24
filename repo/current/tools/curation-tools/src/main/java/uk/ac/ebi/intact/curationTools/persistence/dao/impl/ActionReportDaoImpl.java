@@ -110,4 +110,36 @@ public class ActionReportDaoImpl<T extends ActionReport> extends UpdateBaseDaoIm
 
         return query.getResultList();
     }
+
+    public List<ActionReport> getActionReportsByNameAndProteinAc(ActionName name, String proteinAc) {
+        final Query query = getEntityManager().createQuery( "select a from ActionReport as a join a.updateResult as u where u.intactAccession = :proteinAc and a.name = :name" );
+        query.setParameter( "proteinAc", proteinAc);
+        query.setParameter( "name", name);
+
+        return query.getResultList();
+    }
+
+    public List<ActionReport> getActionReportsByNameAndResultId(ActionName name, long resultId) {
+        final Query query = getEntityManager().createQuery( "select a from ActionReport as a join a.updateResult as u where u.id = :id and a.name = :name" );
+        query.setParameter( "id", resultId);
+        query.setParameter( "name", name);
+
+        return query.getResultList();
+    }
+
+    public List<ActionReport> getActionReportsByStatusAndProteinAc(StatusLabel status, String proteinAc) {
+        final Query query = getEntityManager().createQuery( "select a from ActionReport as a join a.updateResult as u where u.intactAccession = :proteinAc and a.statusLabel = :status" );
+        query.setParameter( "proteinAc", proteinAc);
+        query.setParameter( "status", status.toString());
+
+        return query.getResultList();
+    }
+
+    public List<ActionReport> getActionReportsByStatusAndResultId(StatusLabel label, long resultId) {
+        final Query query = getEntityManager().createQuery( "select a from ActionReport as a join a.updateResult as u where u.id = :id and a.statusLabel = :label" );
+        query.setParameter( "id", resultId);
+        query.setParameter( "label", label.toString() );
+
+        return query.getResultList();
+    }
 }

@@ -17,4 +17,12 @@ public interface BlastReportDao extends ActionReportDao<BlastReport>{
 
     public List<BlastReport> getBlastReportsByResultsId(long id);
 
+    public List<BlastReport> getActionReportsWithBlastResultsByProteinAc(String protAc);
+
+    public List<BlastReport> getActionReportsWithSwissprotRemappingResultsByProteinAc(String protAc);
+
+    public List<BlastReport> getActionReportsWithBlastResultsByResultsId(long id);
+
+    public List<BlastReport> getActionReportsWithSwissprotRemappingResultsByResultsId(long id);
+
 }

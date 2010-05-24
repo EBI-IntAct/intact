@@ -19,5 +19,7 @@ public interface PICRCrossReferencesDAO extends UpdateBaseDao<PICRCrossReference
 
     public List<PICRCrossReferences> getCrossReferencesByDatabaseNameAndActionId(String databaseName, long actionId);
 
+    public List<PICRCrossReferences> getCrossReferencesByProteinAc(String protAc);    
+
     public PICRCrossReferences getCrossReferenceWithId(long id);
 }

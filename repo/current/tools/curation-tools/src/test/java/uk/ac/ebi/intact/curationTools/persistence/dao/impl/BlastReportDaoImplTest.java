@@ -70,10 +70,170 @@ public class BlastReportDaoImplTest extends UpdateBasicTestCase{
         updateResultsDao.persist( results );
         updateResultsDao.flush();
 
-        long id = results.getId();
-
         List<BlastReport> r = blastReportDao.getBlastReportsByResultsId(1);
 
         Assert.assertTrue(r.isEmpty());
+    }
+
+    @Test
+    public void test_GetBlastReportByProteinAc_successful() throws Exception {
+        final UpdateResultsDao updateResultDao = getDaoFactory().getUpdateResultsDao();
+        Assert.assertEquals( 0, updateResultDao.countAll() );
+
+        final BlastReportDao blastReportDao = getDaoFactory().getBlastReportDao();
+        Assert.assertEquals( 0, blastReportDao.countAll() );
+
+        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
+        BlastReport report = getMockBuilder().createAutomaticBlastReport();
+        results.addActionReport(report);
+
+        updateResultDao.persist( results );
+        updateResultDao.flush();
+
+        List<BlastReport> list = blastReportDao.getActionReportsWithBlastResultsByProteinAc("EBI-0001001");
+
+        Assert.assertTrue(!list.isEmpty());
+        Assert.assertEquals("EBI-0001001", list.get(0).getUpdateResult().getIntactAccession());
+    }
+
+    @Test
+    public void test_GetBlastReportByProteinAc_unsuccessful() throws Exception {
+        final UpdateResultsDao updateResultDao = getDaoFactory().getUpdateResultsDao();
+        Assert.assertEquals( 0, updateResultDao.countAll() );
+
+        final BlastReportDao blastReportDao = getDaoFactory().getBlastReportDao();
+        Assert.assertEquals( 0, blastReportDao.countAll() );
+
+        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
+        BlastReport report = getMockBuilder().createAutomaticBlastReport();
+        results.addActionReport(report);
+
+        updateResultDao.persist( results );
+        updateResultDao.flush();
+
+        List<BlastReport> list = blastReportDao.getActionReportsWithBlastResultsByProteinAc("EBI-11212");
+
+        Assert.assertTrue(list.isEmpty());
+    }
+
+    @Test
+    public void test_GetSwissprotRemappingReportByProteinAc_successful() throws Exception {
+        final UpdateResultsDao updateResultDao = getDaoFactory().getUpdateResultsDao();
+        Assert.assertEquals( 0, updateResultDao.countAll() );
+        final BlastReportDao blastReportDao = getDaoFactory().getBlastReportDao();
+        Assert.assertEquals( 0, blastReportDao.countAll() );
+
+        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
+        BlastReport report = getMockBuilder().createAutomaticSwissprotRemappingReport();
+        results.addActionReport(report);
+
+        updateResultDao.persist( results );
+        updateResultDao.flush();
+
+        List<BlastReport> list = blastReportDao.getActionReportsWithSwissprotRemappingResultsByProteinAc("EBI-0001001");
+
+        Assert.assertTrue(!list.isEmpty());
+        Assert.assertEquals("EBI-0001001", list.get(0).getUpdateResult().getIntactAccession());
+    }
+
+    @Test
+    public void test_GetSwissprotRemappingReportByProteinAc_unsuccessful() throws Exception {
+        final UpdateResultsDao updateResultDao = getDaoFactory().getUpdateResultsDao();
+        Assert.assertEquals( 0, updateResultDao.countAll() );
+        final BlastReportDao blastReportDao = getDaoFactory().getBlastReportDao();
+        Assert.assertEquals( 0, blastReportDao.countAll() );
+
+        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
+        BlastReport report = getMockBuilder().createAutomaticSwissprotRemappingReport();
+        results.addActionReport(report);
+
+        updateResultDao.persist( results );
+        updateResultDao.flush();
+
+        List<BlastReport> list = blastReportDao.getActionReportsWithSwissprotRemappingResultsByProteinAc("EBI-01234");
+
+        Assert.assertTrue(list.isEmpty());
+    }
+
+    @Test
+    public void test_GetBlastReportByResultId_successful() throws Exception {
+        final UpdateResultsDao updateResultDao = getDaoFactory().getUpdateResultsDao();
+        Assert.assertEquals( 0, updateResultDao.countAll() );
+        final BlastReportDao blastReportDao = getDaoFactory().getBlastReportDao();
+        Assert.assertEquals( 0, blastReportDao.countAll() );
+
+        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
+        BlastReport report = getMockBuilder().createAutomaticBlastReport();
+        results.addActionReport(report);
+
+        updateResultDao.persist( results );
+        updateResultDao.flush();
+
+        long id = results.getId();
+
+        List<BlastReport> list = blastReportDao.getActionReportsWithBlastResultsByResultsId(id);
+
+        Assert.assertTrue(!list.isEmpty());
+        Assert.assertTrue(list.get(0).getUpdateResult().getId() == id);
+    }
+
+    @Test
+    public void test_GetBlastReportByByResultId_unsuccessful() throws Exception {
+        final UpdateResultsDao updateResultDao = getDaoFactory().getUpdateResultsDao();
+        Assert.assertEquals( 0, updateResultDao.countAll() );
+        final BlastReportDao blastReportDao = getDaoFactory().getBlastReportDao();
+        Assert.assertEquals( 0, blastReportDao.countAll() );
+
+        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
+        BlastReport report = getMockBuilder().createAutomaticBlastReport();
+        results.addActionReport(report);
+
+        updateResultDao.persist( results );
+        updateResultDao.flush();
+
+        List<BlastReport> list = blastReportDao.getActionReportsWithBlastResultsByResultsId(1);
+
+        Assert.assertTrue(list.isEmpty());
+    }
+
+    @Test
+    public void test_GetSwissprotRemappingReportByResultId_successful() throws Exception {
+        final UpdateResultsDao updateResultDao = getDaoFactory().getUpdateResultsDao();
+        Assert.assertEquals( 0, updateResultDao.countAll() );
+        final BlastReportDao blastReportDao = getDaoFactory().getBlastReportDao();
+        Assert.assertEquals( 0, blastReportDao.countAll() );
+
+        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
+        BlastReport report = getMockBuilder().createAutomaticSwissprotRemappingReport();
+        results.addActionReport(report);
+
+        updateResultDao.persist( results );
+        updateResultDao.flush();
+
+        long id = results.getId();
+
+        List<BlastReport> list = blastReportDao.getActionReportsWithSwissprotRemappingResultsByResultsId(id);
+
+        Assert.assertTrue(!list.isEmpty());
+        Assert.assertTrue(list.get(0).getUpdateResult().getId() == id);
+    }
+
+    @Test
+    public void test_GetSwissprotRemappingReportByResultId_unsuccessful() throws Exception {
+        final UpdateResultsDao updateResultDao = getDaoFactory().getUpdateResultsDao();
+        Assert.assertEquals( 0, updateResultDao.countAll() );
+        final BlastReportDao blastReportDao = getDaoFactory().getBlastReportDao();
+        Assert.assertEquals( 0, blastReportDao.countAll() );
+
+        UpdateResults results = getMockBuilder().createAutomaticUpdateResult();
+        BlastReport report = getMockBuilder().createAutomaticSwissprotRemappingReport();
+        results.addActionReport(report);
+
+        updateResultDao.persist( results );
+        updateResultDao.flush();
+
+        List<BlastReport> list = blastReportDao.getActionReportsWithSwissprotRemappingResultsByResultsId(1);
+
+        Assert.assertTrue(list.isEmpty());
     }
 }

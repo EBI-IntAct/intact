@@ -58,6 +58,13 @@ public class BlastResultsDaoImpl extends UpdateBaseDaoImpl<BlastResults> impleme
         return query.getResultList();
     }
 
+    public List<BlastResults> getBlastResultsByProteinAc(String proteinAc) {
+        final Query query = getEntityManager().createQuery( "select br from BlastResults br join br.blastReport as blast join blast.updateResult as ur where ur.intactAccession = :ac" );
+        query.setParameter( "ac", proteinAc);
+
+        return query.getResultList();
+    }
+
     public BlastResults getResultsById(long id) {
         final Query query = getEntityManager().createQuery( "select br from BlastResults br where br.id = :id" );
         query.setParameter( "id", id);

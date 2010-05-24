@@ -138,4 +138,27 @@ public class CurationMockBuilder {
         results.setFinalUniprotId("P01234");
         return results;
     }
+
+    public UpdateResults createAutomaticUnsuccessfulUpdateResult(){
+         UpdateResults results = new UpdateResults();
+
+        results.setIntactAccession("EBI-0001002");
+        return results;
+    }
+
+    public ActionReport createAutomaticUpdateReportWithNoSequenceNoIdentityXRef(){
+         ActionReport report = new ActionReport(ActionName.update_Checking);
+
+        report.setASwissprotEntry(false);
+        report.setStatus(new Status(StatusLabel.FAILED, "There is neither a sequence nor an identity xref"));
+        return report;
+    }
+
+    public ActionReport createAutomaticReportWithStatusFailed(){
+         ActionReport report = new ActionReport(ActionName.PICR_accession);
+
+        report.setASwissprotEntry(false);
+        report.setStatus(new Status(StatusLabel.FAILED, "PICR couldn't match the accession to any Uniprot entries"));
+        return report;
+    }
 }
