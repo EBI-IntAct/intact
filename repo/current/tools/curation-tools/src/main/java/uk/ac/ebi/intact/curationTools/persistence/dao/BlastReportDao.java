@@ -6,7 +6,7 @@ import uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport;
 import java.util.List;
 
 /**
- * TODO comment this
+ * This class contains methods to query the database and get specific BlastReports
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -15,14 +15,32 @@ import java.util.List;
 @Mockable
 public interface BlastReportDao extends ActionReportDao<BlastReport>{
 
+    /**
+     *
+     * @param id
+     * @return The list of BlastReports attached to a specific result
+     */
     public List<BlastReport> getBlastReportsByResultsId(long id);
 
+    /**
+     *
+     * @param protAc
+     * @return the list of BlastReports for a specific protein
+     */
     public List<BlastReport> getActionReportsWithBlastResultsByProteinAc(String protAc);
 
+    /**
+     *
+     * @param protAc
+     * @return the list of blastReports containing swissprot remapping information for a specific protein
+     */
     public List<BlastReport> getActionReportsWithSwissprotRemappingResultsByProteinAc(String protAc);
 
-    public List<BlastReport> getActionReportsWithBlastResultsByResultsId(long id);
-
+    /**
+     *
+     * @param id
+     * @return the list of BlastReports containing swissprot remapping information for a specific update result
+     */
     public List<BlastReport> getActionReportsWithSwissprotRemappingResultsByResultsId(long id);
 
 }

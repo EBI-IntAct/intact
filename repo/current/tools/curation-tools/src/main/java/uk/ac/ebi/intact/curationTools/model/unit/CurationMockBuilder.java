@@ -11,16 +11,19 @@ import uk.ac.ebi.intact.curationTools.model.results.PICRCrossReferences;
 import uk.ac.ebi.intact.curationTools.model.results.UpdateResults;
 
 /**
- * TODO comment this
+ * This class contains a set of methods to create objects for testing
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
  * @since <pre>20-May-2010</pre>
  */
-
 public class CurationMockBuilder {
 
-    public BlastResults createAutomaticSwissprotRemappingResults(){
+    /**
+     *
+     * @return auto-generated Swissprot remapping results
+     */
+    public BlastResults createSwissprotRemappingResults(){
         BlastResults results = new BlastResults();
 
         results.setTremblAccession("Q8R3H6");
@@ -36,7 +39,11 @@ public class CurationMockBuilder {
         return results;
     }
 
-    public BlastResults createAutomaticBlastResults(){
+    /**
+     *
+     * @return auto-generated blast results
+     */
+    public BlastResults createBlastResults(){
         BlastResults results = new BlastResults();
 
         results.setAccession("Q8R3H6");
@@ -50,6 +57,17 @@ public class CurationMockBuilder {
         return results;
     }
 
+    /**
+     *
+     * @param trembl
+     * @param swissprotAc
+     * @param sartQuery
+     * @param endQuery
+     * @param startMatch
+     * @param endMatch
+     * @param identity
+     * @return a Blast results instance with trembl. swissprotAc. start and end query, start and end match, identity
+     */
     public BlastResults createSwissprotRemappingResults(String trembl, String swissprotAc, int sartQuery, int endQuery, int startMatch, int endMatch, float identity){
         BlastResults results = new BlastResults();
 
@@ -65,7 +83,11 @@ public class CurationMockBuilder {
         return results;
     }
 
-    public BlastReport createAutomaticSwissprotRemappingReport(){
+    /**
+     *
+     * @return An auto-generated BlastReport for swissprot remapping
+     */
+    public BlastReport createSwissprotRemappingReport(){
         BlastReport report = new BlastReport(ActionName.BLAST_Swissprot_Remapping);
 
         report.setASwissprotEntry(true);
@@ -73,7 +95,11 @@ public class CurationMockBuilder {
         return report;
     }
 
-    public PICRCrossReferences createAutomaticPICRCrossReferences(){
+    /**
+     *
+     * @return an auto-generated PICRCrossReference instance
+     */
+    public PICRCrossReferences createPICRCrossReferences(){
         PICRCrossReferences pc = new PICRCrossReferences();
 
         pc.setDatabase("Ensembl");
@@ -82,7 +108,11 @@ public class CurationMockBuilder {
         return pc;
     }
 
-    public PICRReport createAutomaticPICRReport(){
+    /**
+     *
+     * @return auto-generated PICRReport
+     */
+    public PICRReport createPICRReport(){
         PICRReport report = new PICRReport(ActionName.PICR_accession);
 
         report.setASwissprotEntry(false);
@@ -90,7 +120,11 @@ public class CurationMockBuilder {
         return report;
     }
 
-    public ActionReport createAutomaticActionReportWithWarning(){
+    /**
+     *
+     * @return auto-generated ActionReport containing warnings
+     */
+    public ActionReport createActionReportWithWarning(){
         ActionReport report = new ActionReport(ActionName.BLAST_uniprot);
 
         report.setStatus(new Status(StatusLabel.TO_BE_REVIEWED, null));
@@ -102,7 +136,11 @@ public class CurationMockBuilder {
         return report;
     }
 
-    public ActionReport createAutomaticActionReportWithoutWarning(){
+    /**
+     *
+     * @return auto-generated ActionReport without any warnings
+     */
+    public ActionReport createActionReportWithoutWarning(){
         ActionReport report = new ActionReport(ActionName.BLAST_uniprot);
 
         report.setStatus(new Status(StatusLabel.TO_BE_REVIEWED, null));
@@ -113,7 +151,11 @@ public class CurationMockBuilder {
         return report;
     }
 
-    public ActionReport createAutomaticActionReportWithoutPossibleUniprot(){
+    /**
+     *
+     * @return auto-generated ActionReport without any possible uniprot ac
+     */
+    public ActionReport createActionReportWithoutPossibleUniprot(){
         ActionReport report = new ActionReport(ActionName.BLAST_uniprot);
 
         report.setStatus(new Status(StatusLabel.TO_BE_REVIEWED, null));
@@ -123,7 +165,11 @@ public class CurationMockBuilder {
         return report;
     }
 
-    public BlastReport createAutomaticBlastReport(){
+    /**
+     *
+     * @return auto-generated BlastReport
+     */
+    public BlastReport createBlastReport(){
          BlastReport report = new BlastReport(ActionName.BLAST_uniprot);
 
         report.setASwissprotEntry(true);
@@ -131,7 +177,11 @@ public class CurationMockBuilder {
         return report;
     }
 
-    public UpdateResults createAutomaticUpdateResult(){
+    /**
+     *
+     * @return auto-generated updateResult
+     */
+    public UpdateResults createUpdateResult(){
          UpdateResults results = new UpdateResults();
 
         results.setIntactAccession("EBI-0001001");
@@ -139,14 +189,22 @@ public class CurationMockBuilder {
         return results;
     }
 
-    public UpdateResults createAutomaticUnsuccessfulUpdateResult(){
+    /**
+     *
+     * @return auto-generated update result without a final uniprot ac
+     */
+    public UpdateResults createUnsuccessfulUpdateResult(){
          UpdateResults results = new UpdateResults();
 
         results.setIntactAccession("EBI-0001002");
         return results;
     }
 
-    public ActionReport createAutomaticUpdateReportWithNoSequenceNoIdentityXRef(){
+    /**
+     *
+     * @return auto-generated action report for a protein without any sequences and without any identity cross references
+     */
+    public ActionReport createUpdateReportWithNoSequenceNoIdentityXRef(){
          ActionReport report = new ActionReport(ActionName.update_Checking);
 
         report.setASwissprotEntry(false);
@@ -154,7 +212,35 @@ public class CurationMockBuilder {
         return report;
     }
 
-    public ActionReport createAutomaticReportWithStatusFailed(){
+    /**
+     *
+     * @return auto-generated action report with a conflict during the update
+     */
+    public ActionReport createUpdateReportWithConflict(){
+         ActionReport report = new ActionReport(ActionName.update_Checking);
+
+        report.setASwissprotEntry(false);
+        report.setStatus(new Status(StatusLabel.TO_BE_REVIEWED, "There is a conflict"));
+        return report;
+    }
+
+    /**
+     *
+     * @return auto-generated ActionReport containing feature range conflicts
+     */
+    public ActionReport createFeatureRangeCheckingReportWithConflict(){
+         ActionReport report = new ActionReport(ActionName.feature_range_checking);
+
+        report.setASwissprotEntry(false);
+        report.setStatus(new Status(StatusLabel.TO_BE_REVIEWED, "There is a conflict"));
+        return report;
+    }
+
+    /**
+     *
+     * @return auto-generated ActionReport with a status FAILED
+     */
+    public ActionReport createReportWithStatusFailed(){
          ActionReport report = new ActionReport(ActionName.PICR_accession);
 
         report.setASwissprotEntry(false);

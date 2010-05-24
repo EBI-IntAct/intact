@@ -6,7 +6,7 @@ import uk.ac.ebi.intact.curationTools.model.actionReport.PICRReport;
 import java.util.List;
 
 /**
- * TODO comment this
+ * This interface contains methods to query the database and get specific PICRReport
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -15,9 +15,17 @@ import java.util.List;
 @Mockable
 public interface PICRReportDao extends ActionReportDao<PICRReport>{
 
+    /**
+     *
+     * @param actionId
+     * @return the list of PICRReports attached to a specific result
+     */
     public List<PICRReport> getPICRReportsByResultsId(long actionId);
 
+    /**
+     *
+     * @param protAc
+     * @return the list of PICRReports for a protein
+     */
     public List<PICRReport> getActionReportsWithPICRCrossReferencesByProteinAc(String protAc);
-
-    public List<PICRReport> getActionReportsWithPICRCrossReferencesByResultsId(long id);
 }

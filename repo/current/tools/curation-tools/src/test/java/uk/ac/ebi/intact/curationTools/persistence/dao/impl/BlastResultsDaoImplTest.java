@@ -13,7 +13,7 @@ import uk.ac.ebi.intact.curationTools.persistence.dao.UpdateResultsDao;
 import java.util.List;
 
 /**
- * TODO comment this
+ * Unit test for BlastResultsDaoImpl
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -27,7 +27,7 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
         final BlastResultsDao blastResultDao = getDaoFactory().getBlastResultsDao();
         Assert.assertEquals( 0, blastResultDao.countAll() );
 
-        BlastResults blastResults = getMockBuilder().createAutomaticSwissprotRemappingResults();
+        BlastResults blastResults = getMockBuilder().createSwissprotRemappingResults();
 
         blastResultDao.persist( blastResults );
         blastResultDao.flush();
@@ -39,7 +39,7 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
         final BlastResultsDao blastResultDao = getDaoFactory().getBlastResultsDao();
         Assert.assertEquals( 0, blastResultDao.countAll() );
 
-        BlastResults blastResults = getMockBuilder().createAutomaticSwissprotRemappingResults();
+        BlastResults blastResults = getMockBuilder().createSwissprotRemappingResults();
 
         blastResultDao.persist( blastResults );
         blastResultDao.flush();
@@ -72,8 +72,8 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
         Assert.assertEquals( 0, blastResultDao.countAll() );
         Assert.assertEquals( 0, blastReportDao.countAll() );
 
-        BlastReport r = getMockBuilder().createAutomaticSwissprotRemappingReport();
-        BlastResults blastResults = getMockBuilder().createAutomaticSwissprotRemappingResults();
+        BlastReport r = getMockBuilder().createSwissprotRemappingReport();
+        BlastResults blastResults = getMockBuilder().createSwissprotRemappingResults();
         r.addBlastMatchingProtein(blastResults);
 
         blastReportDao.persist( r );
@@ -96,8 +96,8 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
         Assert.assertEquals( 0, blastResultDao.countAll() );
         Assert.assertEquals( 0, blastReportDao.countAll() );
 
-        BlastReport r = getMockBuilder().createAutomaticSwissprotRemappingReport();
-        BlastResults blastResults = getMockBuilder().createAutomaticSwissprotRemappingResults();
+        BlastReport r = getMockBuilder().createSwissprotRemappingReport();
+        BlastResults blastResults = getMockBuilder().createSwissprotRemappingResults();
         r.addBlastMatchingProtein(blastResults);
 
         blastReportDao.persist( r );
@@ -115,7 +115,7 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
         final BlastResultsDao blastResultDao = getDaoFactory().getBlastResultsDao();
         Assert.assertEquals( 0, blastResultDao.countAll() );
 
-        BlastResults blastResults = getMockBuilder().createAutomaticSwissprotRemappingResults();
+        BlastResults blastResults = getMockBuilder().createSwissprotRemappingResults();
 
         blastResultDao.persist( blastResults );
         blastResultDao.flush();
@@ -131,7 +131,7 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
         final BlastResultsDao blastResultDao = getDaoFactory().getBlastResultsDao();
         Assert.assertEquals( 0, blastResultDao.countAll() );
 
-        BlastResults blastResults = getMockBuilder().createAutomaticBlastResults();
+        BlastResults blastResults = getMockBuilder().createBlastResults();
 
         blastResultDao.persist( blastResults );
         blastResultDao.flush();
@@ -148,8 +148,8 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
         Assert.assertEquals( 0, blastResultDao.countAll() );
         Assert.assertEquals( 0, blastReportDao.countAll() );
 
-        BlastReport r = getMockBuilder().createAutomaticSwissprotRemappingReport();
-        BlastResults blastResults = getMockBuilder().createAutomaticSwissprotRemappingResults();
+        BlastReport r = getMockBuilder().createSwissprotRemappingReport();
+        BlastResults blastResults = getMockBuilder().createSwissprotRemappingResults();
         r.addBlastMatchingProtein(blastResults);
 
         blastReportDao.persist( r );
@@ -172,8 +172,8 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
         Assert.assertEquals( 0, blastResultDao.countAll() );
         Assert.assertEquals( 0, blastReportDao.countAll() );
 
-        BlastReport r = getMockBuilder().createAutomaticSwissprotRemappingReport();
-        BlastResults blastResults = getMockBuilder().createAutomaticSwissprotRemappingResults();
+        BlastReport r = getMockBuilder().createSwissprotRemappingReport();
+        BlastResults blastResults = getMockBuilder().createSwissprotRemappingResults();
         r.addBlastMatchingProtein(blastResults);
 
         blastReportDao.persist( r );
@@ -191,7 +191,7 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
         final BlastResultsDao blastResultDao = getDaoFactory().getBlastResultsDao();
         Assert.assertEquals( 0, blastResultDao.countAll() );
 
-        BlastResults blastResults = getMockBuilder().createAutomaticSwissprotRemappingResults();
+        BlastResults blastResults = getMockBuilder().createSwissprotRemappingResults();
 
         blastResultDao.persist( blastResults );
         blastResultDao.flush();
@@ -207,7 +207,7 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
         final BlastResultsDao blastResultDao = getDaoFactory().getBlastResultsDao();
         Assert.assertEquals( 0, blastResultDao.countAll() );
 
-        BlastResults blastResults = getMockBuilder().createAutomaticSwissprotRemappingResults();
+        BlastResults blastResults = getMockBuilder().createSwissprotRemappingResults();
 
         blastResultDao.persist( blastResults );
         blastResultDao.flush();
@@ -222,7 +222,7 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
         final BlastResultsDao blastResultDao = getDaoFactory().getBlastResultsDao();
         Assert.assertEquals( 0, blastResultDao.countAll() );
 
-        BlastResults blastResults = getMockBuilder().createAutomaticSwissprotRemappingResults();
+        BlastResults blastResults = getMockBuilder().createSwissprotRemappingResults();
 
         blastResultDao.persist( blastResults );
         blastResultDao.flush();
@@ -240,7 +240,7 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
         final BlastResultsDao blastResultDao = getDaoFactory().getBlastResultsDao();
         Assert.assertEquals( 0, blastResultDao.countAll() );
 
-        BlastResults blastResults = getMockBuilder().createAutomaticSwissprotRemappingResults();
+        BlastResults blastResults = getMockBuilder().createSwissprotRemappingResults();
 
         blastResultDao.persist( blastResults );
         blastResultDao.flush();
@@ -257,9 +257,9 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
         final BlastResultsDao blastResultsDao = getDaoFactory().getBlastResultsDao();
         Assert.assertEquals( 0, updateResultsDao.countAll() );
 
-        UpdateResults update = getMockBuilder().createAutomaticUpdateResult();
-        BlastReport report = getMockBuilder().createAutomaticBlastReport();
-        BlastResults blastResults = getMockBuilder().createAutomaticSwissprotRemappingResults();
+        UpdateResults update = getMockBuilder().createUpdateResult();
+        BlastReport report = getMockBuilder().createBlastReport();
+        BlastResults blastResults = getMockBuilder().createSwissprotRemappingResults();
         report.addBlastMatchingProtein(blastResults);
         update.addActionReport(report);
 
@@ -278,9 +278,9 @@ public class BlastResultsDaoImplTest extends UpdateBasicTestCase{
         final BlastResultsDao blastResultsDao = getDaoFactory().getBlastResultsDao();
         Assert.assertEquals( 0, updateResultsDao.countAll() );
 
-        UpdateResults update = getMockBuilder().createAutomaticUpdateResult();
-        BlastReport report = getMockBuilder().createAutomaticBlastReport();
-        BlastResults blastResults = getMockBuilder().createAutomaticSwissprotRemappingResults();
+        UpdateResults update = getMockBuilder().createUpdateResult();
+        BlastReport report = getMockBuilder().createBlastReport();
+        BlastResults blastResults = getMockBuilder().createSwissprotRemappingResults();
         report.addBlastMatchingProtein(blastResults);
         update.addActionReport(report);
 

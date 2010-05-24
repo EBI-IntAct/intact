@@ -1,7 +1,7 @@
 package uk.ac.ebi.intact.curationTools.model;
 
 /**
- * TODO comment this
+ * The interface to implement for the classes we want to persist
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -10,7 +10,15 @@ package uk.ac.ebi.intact.curationTools.model;
 
 public interface HibernatePersistent {
 
+    /**
+     *
+     * @return an unique identifier for this object in the database
+     */
     public Long getId();
 
+    /**
+     * Set the unique identifier
+     * @param id
+     */
     public void setId(Long id);
 }

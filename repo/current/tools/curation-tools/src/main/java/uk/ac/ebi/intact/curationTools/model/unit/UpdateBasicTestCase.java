@@ -14,7 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 /**
- * TODO comment this
+ * The class to extend for testing the Hibernate annotated classes
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -27,32 +27,61 @@ import javax.persistence.PersistenceContext;
 @Transactional
 public class UpdateBasicTestCase {
 
+    /**
+     * the daoFactory instance
+     */
     @Autowired
     private CurationToolsDaoFactory daoFactory;
 
+    /**
+     * The entity manager
+     */
     @PersistenceContext(unitName = "intact-curationTools-default")    
     private EntityManager entityManager;
 
+    /**
+     * The CurationMockBuilder
+     */
     private CurationMockBuilder mockBuilder;
 
+    /**
+     * Create a new MockBuilder before testing
+     * @throws Exception
+     */
     @Before
     public void prepareBasicTest() throws Exception {
         mockBuilder = new CurationMockBuilder();
     }
 
+    /**
+     * Unset the MockBuilder after testing
+     * @throws Exception
+     */
     @After
     public void afterBasicTest() throws Exception {
         mockBuilder = null;
     }
 
+    /**
+     * 
+     * @return the entity manager
+     */
     public EntityManager getEntityManager() {
         return entityManager;
     }
 
+    /**
+     *
+     * @return the DaoFactory
+     */
     public CurationToolsDaoFactory getDaoFactory() {
         return daoFactory;
     }
 
+    /**
+     *
+     * @return The mockBuilder
+     */
     public CurationMockBuilder getMockBuilder() {
         return mockBuilder;
     }

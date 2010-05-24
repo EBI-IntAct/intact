@@ -36,7 +36,7 @@ public class PICRReport extends ActionReport{
 
     /**
      *
-     * @return the map containing the cross references
+     * @return the cross references
      */
     @OneToMany(mappedBy = "picrReport", cascade = CascadeType.ALL)
     @Cascade( value = org.hibernate.annotations.CascadeType.SAVE_UPDATE )
@@ -69,6 +69,10 @@ public class PICRReport extends ActionReport{
         }
     }
 
+    /**
+     * Add a new PICRCrossReference instance to the list of references
+     * @param refs : the PICRCrossReference instance to add
+     */
     public void addPICRCrossReference(PICRCrossReferences refs){
          if (refs != null){
              refs.setPicrReport(this);
@@ -76,6 +80,10 @@ public class PICRReport extends ActionReport{
          }
     }
 
+    /**
+     * Set the PICR cross references
+     * @param crossReferences : set containing the PICR cross references
+     */
     public void setCrossReferences(Set<PICRCrossReferences> crossReferences) {
         this.crossReferences = crossReferences;
     }

@@ -16,6 +16,9 @@ import javax.persistence.*;
 @Table( name = "ia_update_result" )
 public class UpdateResults extends IdentificationResults implements HibernatePersistent{
 
+    /**
+     * The unique id of this object
+     */
     private Long idResult;
 
     /**
@@ -31,6 +34,10 @@ public class UpdateResults extends IdentificationResults implements HibernatePer
         this.intactAccession = null;
     }
 
+    /**
+     *
+     * @return the unique id
+     */
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_STORE")
     @SequenceGenerator(name="SEQ_STORE", sequenceName="my_sequence" )
@@ -38,6 +45,10 @@ public class UpdateResults extends IdentificationResults implements HibernatePer
         return idResult;
     }
 
+    /**
+     * Set an unique id
+     * @param idResult
+     */
     public void setId(Long idResult) {
         this.idResult = idResult;
     }
@@ -59,6 +70,10 @@ public class UpdateResults extends IdentificationResults implements HibernatePer
         this.intactAccession = intactAccession;
     }
 
+    /**
+     * Add an actionReport and set this object as parent
+     * @param report : action report
+     */
      public void addActionReport(ActionReport report){
          report.setUpdateResult(this);
         super.addActionReport(report);

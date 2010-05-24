@@ -4,7 +4,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 /**
- * TODO comment this
+ * Unit test for SchemaUtils
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
