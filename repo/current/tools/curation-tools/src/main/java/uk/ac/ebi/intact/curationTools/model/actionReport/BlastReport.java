@@ -1,6 +1,7 @@
 package uk.ac.ebi.intact.curationTools.model.actionReport;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.DiscriminatorFormula;
 import uk.ac.ebi.intact.curationTools.model.results.BlastResults;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ import java.util.Set;
  * @since <pre>01-Apr-2010</pre>
  */
 @Entity
+@DiscriminatorFormula("objclass")
 @DiscriminatorValue("uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport")
 public class BlastReport extends ActionReport{
 

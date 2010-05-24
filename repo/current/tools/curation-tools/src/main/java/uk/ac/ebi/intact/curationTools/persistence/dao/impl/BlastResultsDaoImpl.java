@@ -23,14 +23,14 @@ public class BlastResultsDaoImpl extends UpdateBaseDaoImpl<BlastResults> impleme
         super(BlastResults.class);
     }
 
-    public List<BlastResults> getBlastResultsByIdentitySuperior(float identity) {
+    public List<BlastResults> getResultsByIdentitySuperior(float identity) {
         final Query query = getEntityManager().createQuery( "select br from BlastResults as br where br.identity >= :identity" );
         query.setParameter( "identity", identity);
 
         return query.getResultList();
     }
 
-    public List<BlastResults> getBlastResultsByActionIdAndIdentitySuperior(float identity, long actionId) {
+    public List<BlastResults> getResultsByActionIdAndIdentitySuperior(float identity, long actionId) {
         final Query query = getEntityManager().createQuery( "select br from BlastResults br join br.blastReport as res where br.identity >= :identity and res.id = :id" );
         query.setParameter( "identity", identity);
         query.setParameter( "id", actionId);
@@ -58,7 +58,7 @@ public class BlastResultsDaoImpl extends UpdateBaseDaoImpl<BlastResults> impleme
         return query.getResultList();
     }
 
-    public BlastResults getBlastResultById(long id) {
+    public BlastResults getResultsById(long id) {
         final Query query = getEntityManager().createQuery( "select br from BlastResults br where br.id = :id" );
         query.setParameter( "id", id);
 

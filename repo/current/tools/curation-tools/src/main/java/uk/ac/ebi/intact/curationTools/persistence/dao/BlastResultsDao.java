@@ -15,9 +15,9 @@ import java.util.List;
 @Mockable
 public interface BlastResultsDao extends UpdateBaseDao<BlastResults>{
 
-    public List<BlastResults> getBlastResultsByIdentitySuperior(float identity);
+    public List<BlastResults> getResultsByIdentitySuperior(float identity);
 
-    public List<BlastResults> getBlastResultsByActionIdAndIdentitySuperior(float identity, long actionId);
+    public List<BlastResults> getResultsByActionIdAndIdentitySuperior(float identity, long actionId);
 
     public List<BlastResults> getAllSwissprotRemappingResults();
 
@@ -25,5 +25,5 @@ public interface BlastResultsDao extends UpdateBaseDao<BlastResults>{
 
     public List<BlastResults> getSwissprotRemappingResultsByTremblAc(String tremblAc);
 
-    public BlastResults getBlastResultById(long id);
+    public BlastResults getResultsById(long id);
 }

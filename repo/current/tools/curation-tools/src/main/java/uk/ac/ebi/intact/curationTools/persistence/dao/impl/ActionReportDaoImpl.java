@@ -34,7 +34,7 @@ public class ActionReportDaoImpl<T extends ActionReport> extends UpdateBaseDaoIm
         super( entityClass, entityManager);
     }
 
-    public ActionReport getActionReportWithId(long id) {
+    public ActionReport getByReportId(long id) {
         final Query query = getEntityManager().createQuery( "select ar from ActionReport as ar where ar.id = :id" );
         query.setParameter( "id", id);
 
@@ -45,27 +45,27 @@ public class ActionReportDaoImpl<T extends ActionReport> extends UpdateBaseDaoIm
         return (ActionReport) query.getResultList().iterator().next();
     }
 
-    public List<ActionReport> getActionReportsByName(ActionName name) {
+    public List<ActionReport> getByActionName(ActionName name) {
         final Query query = getEntityManager().createQuery( "select ar from ActionReport as ar where ar.name = :name" );
         query.setParameter( "name", name);
 
         return query.getResultList();
     }
 
-    public List<ActionReport> getActionReportsByStatus(StatusLabel status) {
+    public List<ActionReport> getByReportStatus(StatusLabel status) {
         final Query query = getEntityManager().createQuery( "select ar from ActionReport as ar where ar.statusLabel = :label" );
         query.setParameter( "label", status.toString());
 
         return query.getResultList();
     }
 
-    public List<ActionReport> getAllActionReportsWithWarnings() {
+    public List<ActionReport> getAllReportsWithWarnings() {
         final Query query = getEntityManager().createQuery( "select ar from ActionReport as ar join ar.warnings as warn" );
 
         return query.getResultList();
     }
 
-    public List<ActionReport> getAllActionReportsWithSeveralPossibleUniprot() {
+    public List<ActionReport> getAllReportsWithSeveralPossibleUniprot() {
          final Query query = getEntityManager().createQuery( "select ar from ActionReport as ar where ar.listOfPossibleAccessions <> null" );
 
         return query.getResultList();
@@ -90,35 +90,21 @@ public class ActionReportDaoImpl<T extends ActionReport> extends UpdateBaseDaoIm
         return query.getResultList();
     }
 
-    public List<BlastReport> getBlastReportsByResultsId(long id) {
-        final Query query = getEntityManager().createQuery( "select ar from BlastReport as ar join ar.updateResult as res where res.id = :id" );
-        query.setParameter( "id", id);
-
-        return query.getResultList();
-    }
-
-    public List<PICRReport> getPICRReportsByResultsId(long id) {
-        final Query query = getEntityManager().createQuery( "select ar from PICRReport as ar join ar.updateResult as res where res.id = :id" );
-        query.setParameter( "id", id);
-
-        return query.getResultList();
-    }
-
-    public List<ActionReport> getActionReportsWithWarningsByResultsId(long id) {
+    public List<ActionReport> getReportsWithWarningsByResultsId(long id) {
         final Query query = getEntityManager().createQuery( "select ar from ActionReport as ar join ar.updateResult as res join ar.warnings as warn where res.id = :id" );
         query.setParameter( "id", id);
 
         return query.getResultList();
     }
 
-    public List<ActionReport> getAllActionReportsByResultsId(long id) {
+    public List<ActionReport> getAllReportsByResultsId(long id) {
         final Query query = getEntityManager().createQuery( "select ar from ActionReport as ar join ar.updateResult as res where res.id = :id" );
         query.setParameter( "id", id);
 
         return query.getResultList();
     }
 
-    public List<ActionReport> getActionReportsWithSeveralPossibleUniprotByResultId(long id) {
+    public List<ActionReport> getReportsWithSeveralPossibleUniprotByResultId(long id) {
         final Query query = getEntityManager().createQuery( "select ar from ActionReport as ar join ar.updateResult as res where ar.listOfPossibleAccessions <> null and res.id = :id" );
         query.setParameter("id", id);
 

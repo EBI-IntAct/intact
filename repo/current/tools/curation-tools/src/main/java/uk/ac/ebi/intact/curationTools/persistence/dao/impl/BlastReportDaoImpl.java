@@ -2,13 +2,11 @@ package uk.ac.ebi.intact.curationTools.persistence.dao.impl;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.intact.curationTools.model.actionReport.ActionName;
-import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport;
-import uk.ac.ebi.intact.curationTools.model.results.BlastResults;
 import uk.ac.ebi.intact.curationTools.persistence.dao.BlastReportDao;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.List;
 
 /**
@@ -30,19 +28,10 @@ public class BlastReportDaoImpl extends ActionReportDaoImpl<BlastReport> impleme
         super(BlastReport.class, entityManager);
     }
 
-    public List<ActionReport> getAllActionReportsWithBlastResults() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
+    public List<BlastReport> getBlastReportsByResultsId(long id) {
+        final Query query = getEntityManager().createQuery( "select ar from BlastReport as ar join ar.updateResult as res where res.id = :id" );
+        query.setParameter( "id", id);
 
-    public List<ActionReport> getAllActionReportsWithSwissprotRemappingResults() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public List<BlastResults> getBlastResultsByActionId(long id) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public List<BlastResults> getBlastResultsByActionName(ActionName name) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return query.getResultList();
     }
 }

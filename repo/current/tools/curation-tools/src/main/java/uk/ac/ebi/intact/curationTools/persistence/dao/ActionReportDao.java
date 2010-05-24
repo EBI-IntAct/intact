@@ -20,15 +20,15 @@ import java.util.List;
 @Mockable
 public interface ActionReportDao<T extends ActionReport> extends UpdateBaseDao<T>, Serializable{
 
-    public ActionReport getActionReportWithId(long id);
+    public ActionReport getByReportId(long id);
 
-    public List<ActionReport> getActionReportsByName(ActionName name);
+    public List<ActionReport> getByActionName(ActionName name);
 
-    public List<ActionReport> getActionReportsByStatus(StatusLabel status);
+    public List<ActionReport> getByReportStatus(StatusLabel status);
 
-    public List<ActionReport> getAllActionReportsWithWarnings();
+    public List<ActionReport> getAllReportsWithWarnings();
 
-    public List<ActionReport> getAllActionReportsWithSeveralPossibleUniprot();
+    public List<ActionReport> getAllReportsWithSeveralPossibleUniprot();
 
     public List<PICRReport> getAllPICRReports();
 
@@ -36,14 +36,10 @@ public interface ActionReportDao<T extends ActionReport> extends UpdateBaseDao<T
 
     public List<BlastReport> getAllSwissprotRemappingReports();
 
-    public List<BlastReport> getBlastReportsByResultsId(long id);
+    public List<ActionReport> getReportsWithWarningsByResultsId(long id);
 
-    public List<PICRReport> getPICRReportsByResultsId(long id);
+    public List<ActionReport> getAllReportsByResultsId(long id);
 
-    public List<ActionReport> getActionReportsWithWarningsByResultsId(long id);
-
-    public List<ActionReport> getAllActionReportsByResultsId(long id);
-
-    public List<ActionReport> getActionReportsWithSeveralPossibleUniprotByResultId(long id);
+    public List<ActionReport> getReportsWithSeveralPossibleUniprotByResultId(long id);
 
 }

@@ -4,8 +4,6 @@ import uk.ac.ebi.intact.annotation.Mockable;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionName;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
-import uk.ac.ebi.intact.curationTools.model.results.BlastResults;
-import uk.ac.ebi.intact.curationTools.model.results.PICRCrossReferences;
 import uk.ac.ebi.intact.curationTools.model.results.UpdateResults;
 
 import java.util.List;
@@ -30,7 +28,7 @@ public interface UpdateResultsDao extends UpdateBaseDao<UpdateResults> {
 
     public List<ActionReport> getActionReportsByStatusAndProteinAc(StatusLabel status, String proteinAc);
 
-    public List<ActionReport> getActionReportsByStatusAndResultId(ActionName name, long resultId);
+    public List<ActionReport> getActionReportsByStatusAndResultId(StatusLabel label, long resultId);
 
     public List<ActionReport> getActionReportsWithBlastResultsByProteinAc(String protAc);
 
@@ -44,17 +42,5 @@ public interface UpdateResultsDao extends UpdateBaseDao<UpdateResults> {
 
     public List<ActionReport> getActionReportsWithPICRCrossReferencesByResultsId(long id);
 
-    public List<BlastResults> getBlastResultsByProteinAc(String ac);
-
-    public List<BlastResults> getBlastResultsByProteinShortLabel(String ac);
-
-    public List<PICRCrossReferences> getCrossReferencesByProteinAc(String proteinAc);
-
     public List<ActionReport> getActionReportsWithWarningsByProteinAc(String proteinAc);
-
-    public List<BlastResults> getBlastResultsByProteinAcAndIdentitySuperior(float identity, String proteinAc);
-
-    public List<BlastResults> getAllSwissprotRemappingResultsFor(String proteinAc);
-
-    public List<PICRCrossReferences> getCrossReferencesByDatabaseNameAndProteinAc(String databaseName, String proteinAc);
 }
