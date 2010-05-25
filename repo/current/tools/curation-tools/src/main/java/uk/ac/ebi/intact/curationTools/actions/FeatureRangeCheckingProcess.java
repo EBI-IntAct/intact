@@ -60,7 +60,7 @@ public class FeatureRangeCheckingProcess extends ActionNeedingIntactContext{
      * @param protein : the protein hit which could replace the old protein in Intact
      * @return true if there is no conflict between the sequence of this BlastProtein and the range
      */
-    private boolean checkRangeValidWithNewSequence(Range range, BlastProtein protein){
+    private boolean checkRangeValidWithNewSequence(Range range, BlastProtein protein, BlastReport report){
         // The difference between the previous start position and the new one in the new sequence
         int diffStart = protein.getStartQuery() - protein.getStartMatch();
         // The difference between the previous end position and the new one in the new sequence
@@ -69,23 +69,27 @@ public class FeatureRangeCheckingProcess extends ActionNeedingIntactContext{
         // Shift the ranges in consequence
         int startFrom = range.getFromIntervalStart() - diffStart;
         int startTo = range.getToIntervalStart() - diffStart;
-        int endFrom = range.getFromIntervalEnd() - diffEnd;
-        int endTo = range.getToIntervalEnd() - diffEnd;
+        int endFrom = range.getFromIntervalEnd() - diffStart;
+        int endTo = range.getToIntervalEnd() - diffStart;
 
         // No ranges should be before the new start positions
         if (startFrom < protein.getStartMatch() || range.getFromIntervalStart() < protein.getStartQuery()){
+            report.addWarning("The feature range is " + range.getFromIntervalStart() + "-" + range.getToIntervalStart() + " and the alignment with the Swissprot sequence starts after " + range.getFromIntervalStart() + ". We can't change the previous sequence with the sequence of the Swissprot entry because it will be incoherent with the current feature(s) of the protein.");
             return false;
         }
         // No ranges should be before the new start positions
         else if (startTo > protein.getEndMatch() || range.getToIntervalStart() > protein.getEndQuery()){
+            report.addWarning("The feature range is " + range.getFromIntervalStart() + "-" + range.getToIntervalStart() + " and the alignment with the Swissprot sequence finishes before " + range.getToIntervalStart() + ". We can't change the previous sequence with the sequence of the Swissprot entry because it will be incoherent with the current feature(s) of the protein.");
             return false;
         }
         // No ranges should be after the new end positions
         else if (endFrom < protein.getStartMatch() || range.getFromIntervalEnd() < protein.getStartQuery()){
+            report.addWarning("The feature range is " + range.getFromIntervalEnd() + "-" + range.getToIntervalEnd() + " and the alignment with the Swissprot sequence starts after " + range.getFromIntervalStart() + ". We can't change the previous sequence with the sequence of the Swissprot entry because it will be incoherent with the current feature(s) of the protein.");
             return false;
         }
         // No ranges should be after the new end positions
         else if (endTo > protein.getEndMatch() || range.getToIntervalEnd() > protein.getEndQuery()){
+            report.addWarning("The feature range is " + range.getFromIntervalEnd() + "-" + range.getToIntervalEnd() + " and the alignment with the Swissprot sequence finishes before " + range.getToIntervalStart() + ". We can't change the previous sequence with the sequence of the Swissprot entry because it will be incoherent with the current feature(s) of the protein.");            
             return false;
         }
         else {
@@ -93,12 +97,14 @@ public class FeatureRangeCheckingProcess extends ActionNeedingIntactContext{
             if (startFrom > 0 && startTo > 0){
                 String rangeNewSequence = protein.getSequence().substring(startFrom - 1, startTo);
                 if (!range.getSequence().equals(rangeNewSequence)){
+                    report.addWarning("The sequence of the Swissprot entry from " + range.getFromIntervalStart() + " to " + range.getToIntervalStart() + " is different from the previous feature sequence, we can't replace the previous sequence with the sequence of the Swissprot entry." );
                     return false;
                 }
             }
             if (endFrom> 0 && endTo > 0){
                 String rangeNewSequence = protein.getSequence().substring(endFrom - 1, endTo);
                 if (!range.getSequence().equals(rangeNewSequence)){
+                    report.addWarning("The sequence of the Swissprot entry from " + range.getFromIntervalEnd() + " to " + range.getToIntervalEnd() + " is different from the previous feature sequence, we can't replace the previous sequence with the sequence of the Swissprot entry." );                    
                     return false;
                 }
             }
@@ -172,9 +178,8 @@ public class FeatureRangeCheckingProcess extends ActionNeedingIntactContext{
                                 if (!range.isUndetermined()) {
                                     for (BlastResults protein : processContext.getResultsOfSwissprotRemapping()){
 
-                                        if (!checkRangeValidWithNewSequence(range, protein)){
+                                        if (!checkRangeValidWithNewSequence(range, protein, report)){
                                             hasRangeConflict = true;
-                                            report.addWarning("One of the ranges of the feature "+feature.getAc()+" is in conflict with the sequence of the Swissprot entry "+protein.getAccession()+". We will remove this protein from the matching Swissprot entries.");
                                         }
                                         else{
                                             // The sequence of this Blast protein is not in conflict with the range, we can keep it among the Blast results in the report

@@ -19,6 +19,7 @@ import uk.ac.ebi.intact.curationTools.model.results.IdentificationResults;
 import uk.ac.ebi.intact.curationTools.model.results.UpdateResults;
 import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyException;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -352,12 +353,54 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
             }
             // we don't have a sequence but the protein has identifier(s)
             else{
-                // we run the strategy with identifier
-                String uniprot = this.listOfActions.get(1).runAction(context);
-                // we add teh reports to the result
-                result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
-                // we process the isoforms and set the uniprot accession of the result
-                processIsoforms(uniprot, result);
+                // we create a new update report which will be added to the results
+                ActionReport report = new ActionReport(ActionName.update_Checking);
+                report.addPossibleAccession(result.getFinalUniprotId());
+
+                // boolean value to know if there is a conflict with the previous results
+                boolean isMatchingIdentifierResults = true;
+
+                Set<String> uniprots = new HashSet<String>();
+
+                for (Map.Entry<String, String> entry : identifiers.entrySet()){
+                    // set the identifier
+                    updateContext.setIdentifier(entry.getValue());
+                    // set the database
+                    updateContext.setDatabaseForIdentifier(entry.getKey());
+
+                    // we run the strategy with identifier
+                    String newUniprot = this.listOfActions.get(1).runAction(updateContext);
+                    // we add teh reports to the result
+                    result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
+                    // we process the isoforms
+                    newUniprot = processIsoforms(newUniprot);
+
+                    if (newUniprot == null){
+                        if (!uniprots.isEmpty()){
+                            isMatchingIdentifierResults = false;
+                        }
+                    }
+                    else {
+                        uniprots.add(newUniprot);
+                    }
+                }
+
+                // We don't have any conflicts with the previous results
+                if (uniprots.isEmpty() || (uniprots.size() == 1 && isMatchingIdentifierResults)){
+                    Status status = new Status(StatusLabel.COMPLETED, "There is no conflicts in the results when we tried to identify the protein using the identifiers " + identifiers);
+                    report.setStatus(status);
+                    result.addActionReport(report);
+                    result.setFinalUniprotId(uniprots.iterator().next());
+                }
+                // We have a conflict with the previous results, we set the uniprot id of the result to null and ask a curator to review this entry
+                else {
+                    Status status = new Status(StatusLabel.TO_BE_REVIEWED, "There is a conflict in the results when we tried to identify using the identifiers one by one " + identifiers);
+                    report.setStatus(status);
+                    for (String uniprot : uniprots){
+                        report.addPossibleAccession(uniprot);
+                    }
+                    result.addActionReport(report);
+                }
 
                 // we run the feature range checking process
                 runThirdAction((UpdateContext) context, result);
