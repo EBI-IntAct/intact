@@ -113,7 +113,7 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
         List<ActionReport> r = actionReportDao.getByReportStatus(StatusLabel.TO_BE_REVIEWED);
 
         Assert.assertTrue(!r.isEmpty());
-        Assert.assertTrue(r.get(0).getStatusLabel().equalsIgnoreCase(StatusLabel.TO_BE_REVIEWED.toString()));
+        Assert.assertTrue(r.get(0).getStatusLabel().equals(StatusLabel.TO_BE_REVIEWED));
     }
 
     @Test
@@ -513,7 +513,7 @@ public class ActionReportDaoImplTest extends UpdateBasicTestCase{
         List<ActionReport> list = actionReportDao.getActionReportsByStatusAndProteinAc(StatusLabel.COMPLETED, "EBI-0001001");
 
         Assert.assertTrue(!list.isEmpty());
-        Assert.assertEquals(StatusLabel.COMPLETED.toString(), list.get(0).getStatusLabel());
+        Assert.assertEquals(StatusLabel.COMPLETED, list.get(0).getStatusLabel());
     }
 
     @Test

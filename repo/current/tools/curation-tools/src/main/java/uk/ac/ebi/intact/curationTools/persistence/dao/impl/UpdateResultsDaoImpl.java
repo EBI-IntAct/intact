@@ -76,7 +76,7 @@ public class UpdateResultsDaoImpl extends UpdateBaseDaoImpl<UpdateResults> imple
      */
     public List<UpdateResults> getResultsContainingActionWithLabel(StatusLabel label) {
         final Query query = getEntityManager().createQuery( "select u from UpdateResults as u join u.listOfActions as a where a.statusLabel = :status" );
-        query.setParameter( "status", label.toString());
+        query.setParameter( "status", label);
 
         return query.getResultList();
     }
@@ -108,7 +108,7 @@ public class UpdateResultsDaoImpl extends UpdateBaseDaoImpl<UpdateResults> imple
      */
     public List<UpdateResults> getUpdateResultsToBeReviewedByACurator() {
         final Query query = getEntityManager().createQuery( "select u from UpdateResults as u join u.listOfActions as a where a.statusLabel = :status" );
-        query.setParameter( "status", StatusLabel.TO_BE_REVIEWED.toString());
+        query.setParameter( "status", StatusLabel.TO_BE_REVIEWED);
 
         return query.getResultList();
     }
@@ -119,7 +119,7 @@ public class UpdateResultsDaoImpl extends UpdateBaseDaoImpl<UpdateResults> imple
      */
     public List<UpdateResults> getProteinNotUpdatedBecauseNoSequenceAndNoIdentityXrefs() {
         final Query query = getEntityManager().createQuery( "select u from UpdateResults as u join u.listOfActions as a where a.statusLabel = :status and a.name = :name" );
-        query.setParameter( "status", StatusLabel.FAILED.toString());
+        query.setParameter( "status", StatusLabel.FAILED);
         query.setParameter( "name", ActionName.update_Checking);
 
         return query.getResultList();
@@ -131,7 +131,7 @@ public class UpdateResultsDaoImpl extends UpdateBaseDaoImpl<UpdateResults> imple
      */
     public List<UpdateResults> getUnsuccessfulUpdateResults() {
         final Query query = getEntityManager().createQuery( "select u from UpdateResults as u join u.listOfActions as a where u.finalUniprotId = null and a.statusLabel = :status and a.name <> :name" );
-        query.setParameter( "status", StatusLabel.FAILED.toString());
+        query.setParameter( "status", StatusLabel.FAILED);
         query.setParameter( "name", ActionName.update_Checking);
 
         return query.getResultList();
@@ -143,7 +143,7 @@ public class UpdateResultsDaoImpl extends UpdateBaseDaoImpl<UpdateResults> imple
      */
     public List<UpdateResults> getUpdateResultsWithConflictBetweenSequenceAndIdentityXRefs() {
         final Query query = getEntityManager().createQuery( "select u from UpdateResults as u join u.listOfActions as a where a.statusLabel = :status and a.name = :name" );
-        query.setParameter( "status", StatusLabel.TO_BE_REVIEWED.toString());
+        query.setParameter( "status", StatusLabel.TO_BE_REVIEWED);
         query.setParameter( "name", ActionName.update_Checking);
 
         return query.getResultList();
@@ -155,7 +155,7 @@ public class UpdateResultsDaoImpl extends UpdateBaseDaoImpl<UpdateResults> imple
      */
     public List<UpdateResults> getUpdateResultsWithConflictBetweenSwissprotSequenceAndFeatureRanges() {
         final Query query = getEntityManager().createQuery( "select u from UpdateResults as u join u.listOfActions as a where a.statusLabel = :status and a.name = :name" );
-        query.setParameter( "status", StatusLabel.TO_BE_REVIEWED.toString());
+        query.setParameter( "status", StatusLabel.TO_BE_REVIEWED);
         query.setParameter( "name", ActionName.feature_range_checking);
 
         return query.getResultList();

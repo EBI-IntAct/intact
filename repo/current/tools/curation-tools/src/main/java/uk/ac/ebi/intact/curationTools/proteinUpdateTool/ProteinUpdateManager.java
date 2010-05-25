@@ -33,7 +33,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * TODO comment this
+ * This class can update the Intact proteins following a specific update strategy
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
