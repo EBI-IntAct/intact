@@ -66,7 +66,8 @@ public class BlastReport extends ActionReport{
      *
      * @return the sequence used for the blast
      */
-    @Transient
+    @Lob
+    @Column(name = "query_sequence")
     public String getQuerySequence() {
         return querySequence;
     }

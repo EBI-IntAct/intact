@@ -208,7 +208,8 @@ public class BlastResults extends BlastProtein implements HibernatePersistent{
      *
      * @return The sequence
      */
-    @Transient
+    @Lob
+    @Column(name = "match_sequence")
     public String getSequence() {
         return super.getSequence();
     }
@@ -244,7 +245,7 @@ public class BlastResults extends BlastProtein implements HibernatePersistent{
      *
      * @return  the end match
      */
-    @Column(name = "start_end", nullable = false)
+    @Column(name = "end_match", nullable = false)
     public int getEndMatch() {
         return super.getEndMatch();
     }
@@ -318,7 +319,8 @@ public class BlastResults extends BlastProtein implements HibernatePersistent{
      *
      * @return the alignment
      */
-    @Transient
+    @Lob
+    @Column(name = "alignment")
     public String getAlignment() {
         return super.getAlignment();
     }

@@ -93,6 +93,7 @@ public class ActionReport implements HibernatePersistent{
      * @return the name of the action
      */
     @Column(name = "name", nullable = false)
+    @Enumerated(EnumType.STRING)
     public ActionName getName(){
         return this.name;
     }
@@ -217,50 +218,34 @@ public class ActionReport implements HibernatePersistent{
      * is null and/or its label is null, this method return NONE
      */
     @Column(name = "status", length = 15, nullable = false)
-    public String getStatusLabel() {
+    @Enumerated(EnumType.STRING)
+    public StatusLabel getStatusLabel() {
         if (this.status == null){
-            return StatusLabel.NONE.toString();
+            return StatusLabel.NONE;
         }
         else {
             if (this.status.getLabel() == null){
-                return StatusLabel.NONE.toString();
+                return StatusLabel.NONE;
             }
             else {
-                return this.status.getLabel().toString();
+                return this.status.getLabel();
             }
         }
     }
 
     /**
      * Set the status label of this action
-     * @param label : the label as a String. (COMPLETED, TO_BE_REVIEWED or FAILED)
+     * @param label : the label. (COMPLETED, TO_BE_REVIEWED or FAILED)
      */
-    public void setStatusLabel(String label){
-        StatusLabel l = null;
+    public void setStatusLabel(StatusLabel label){
 
         if (label != null){
-            if (label.equalsIgnoreCase("failed")){
-                l = StatusLabel.FAILED;
-            }
-            else if (label.equalsIgnoreCase("completed")){
-                l = StatusLabel.COMPLETED;
-            }
-            else if (label.equalsIgnoreCase("to_be_reviewed")){
-                l = StatusLabel.TO_BE_REVIEWED;
-            }
-            else if (label.equalsIgnoreCase("none")){
-                l =StatusLabel.NONE;
+            if (this.status == null){
+                status = new Status(label, null);
             }
             else {
-                throw new IllegalArgumentException("The status label " + label + " is not valid and can only be either completed, failed, to_be_reviewed or none.");
+                status.setLabel(label);
             }
-        }
-
-        if (this.status == null){
-            status = new Status(l, null);
-        }
-        else {
-            status.setLabel(l);
         }
     }
 

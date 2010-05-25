@@ -77,7 +77,7 @@ public class ActionReportDaoImpl<T extends ActionReport> extends UpdateBaseDaoIm
      */
     public List<ActionReport> getByReportStatus(StatusLabel status) {
         final Query query = getEntityManager().createQuery( "select ar from ActionReport as ar where ar.statusLabel = :label" );
-        query.setParameter( "label", status.toString());
+        query.setParameter( "label", status);
 
         return query.getResultList();
     }
@@ -206,7 +206,7 @@ public class ActionReportDaoImpl<T extends ActionReport> extends UpdateBaseDaoIm
     public List<ActionReport> getActionReportsByStatusAndProteinAc(StatusLabel status, String proteinAc) {
         final Query query = getEntityManager().createQuery( "select a from ActionReport as a join a.updateResult as u where u.intactAccession = :proteinAc and a.statusLabel = :status" );
         query.setParameter( "proteinAc", proteinAc);
-        query.setParameter( "status", status.toString());
+        query.setParameter( "status", status);
 
         return query.getResultList();
     }
@@ -220,7 +220,7 @@ public class ActionReportDaoImpl<T extends ActionReport> extends UpdateBaseDaoIm
     public List<ActionReport> getActionReportsByStatusAndResultId(StatusLabel label, long resultId) {
         final Query query = getEntityManager().createQuery( "select a from ActionReport as a join a.updateResult as u where u.id = :id and a.statusLabel = :label" );
         query.setParameter( "id", resultId);
-        query.setParameter( "label", label.toString() );
+        query.setParameter( "label", label );
 
         return query.getResultList();
     }

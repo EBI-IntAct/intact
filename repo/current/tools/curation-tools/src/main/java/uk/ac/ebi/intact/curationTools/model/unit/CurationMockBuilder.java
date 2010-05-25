@@ -92,6 +92,7 @@ public class CurationMockBuilder {
 
         report.setASwissprotEntry(true);
         report.setStatus(new Status(StatusLabel.COMPLETED, "mapping successful"));
+        report.setQuerySequence("GCAGGT");
         return report;
     }
 
@@ -173,6 +174,7 @@ public class CurationMockBuilder {
          BlastReport report = new BlastReport(ActionName.BLAST_uniprot);
 
         report.setASwissprotEntry(true);
+        report.setQuerySequence("GCAGGT");        
         report.setStatus(new Status(StatusLabel.COMPLETED, "mapping successful"));
         return report;
     }
