@@ -10,7 +10,7 @@
 
     <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
 
-    <tx:annotation-driven />
+    <tx:annotation-driven transaction-manager="curationTransactionManager"/>
 
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
 

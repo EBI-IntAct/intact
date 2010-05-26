@@ -2,6 +2,8 @@ package uk.ac.ebi.intact.curationTools.model.contexts;
 
 import uk.ac.ebi.intact.model.BioSource;
 
+import javax.persistence.MappedSuperclass;
+
 /**
  * An Identification context is the context of the protein to identify with the information about the protein
  *
@@ -9,7 +11,7 @@ import uk.ac.ebi.intact.model.BioSource;
  * @version $Id$
  * @since <pre>29-Mar-2010</pre>
  */
-
+@MappedSuperclass
 public class IdentificationContext {
 
     /**

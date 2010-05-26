@@ -207,7 +207,7 @@ public class CurationMockBuilder {
      * @return auto-generated action report for a protein without any sequences and without any identity cross references
      */
     public ActionReport createUpdateReportWithNoSequenceNoIdentityXRef(){
-         ActionReport report = new ActionReport(ActionName.update_Checking);
+         ActionReport report = new ActionReport(ActionName.update_checking);
 
         report.setASwissprotEntry(false);
         report.setStatus(new Status(StatusLabel.FAILED, "There is neither a sequence nor an identity xref"));
@@ -219,7 +219,7 @@ public class CurationMockBuilder {
      * @return auto-generated action report with a conflict during the update
      */
     public ActionReport createUpdateReportWithConflict(){
-         ActionReport report = new ActionReport(ActionName.update_Checking);
+         ActionReport report = new ActionReport(ActionName.update_checking);
 
         report.setASwissprotEntry(false);
         report.setStatus(new Status(StatusLabel.TO_BE_REVIEWED, "There is a conflict"));
