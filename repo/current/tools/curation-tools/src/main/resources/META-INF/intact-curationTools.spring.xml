@@ -9,7 +9,6 @@
            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
     <context:component-scan base-package="uk.ac.ebi.intact.curationTools"/>
-
     <!-- Spring specific -->
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
 

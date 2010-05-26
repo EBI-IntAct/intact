@@ -23,7 +23,7 @@ import javax.persistence.PersistenceContext;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath*:/META-INF/intact-curationTools.spring.xml",
         "classpath*:/META-INF/standalone/*-standalone.spring.xml"})
-@TransactionConfiguration( transactionManager = "curationToolsTransactionManager" )
+@TransactionConfiguration( transactionManager = "curationTransactionManager" )
 @Transactional
 public class UpdateBasicTestCase {
 
@@ -36,7 +36,7 @@ public class UpdateBasicTestCase {
     /**
      * The entity manager
      */
-    @PersistenceContext(unitName = "intact-curationTools-default")    
+    @PersistenceContext(unitName = "intact-curation-default")    
     private EntityManager entityManager;
 
     /**
