@@ -44,10 +44,16 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
     private boolean isBasicBlastProcessRequired = false;
 
     /**
+     * boolean value to know if the update is enabled or not
+     */
+    private boolean updateEnabled;
+
+    /**
      * Create a Strategy for protein update
      */
     public StrategyForProteinUpdate(){
         super();
+        updateEnabled = true;
     }
 
     /**
@@ -267,7 +273,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
             // we don't have neither a sequence nor an identifier for this protein
             if (context.getSequence() == null && context.getIdentifier() == null){
                 // create a new report which will be added to the results
-                ActionReport report = new ActionReport(ActionName.update_Checking);
+                ActionReport report = new ActionReport(ActionName.update_checking);
                 Status status = new Status(StatusLabel.FAILED, "The sequence of the protein is null and there are no cross references with qualifier 'identity'.");
                 report.setStatus(status);
                 result.addActionReport(report);
@@ -287,7 +293,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
                 // The protein also has identifiers
                 if (!identifiers.isEmpty()){
                     // we create a new update report which will be added to the results
-                    ActionReport report = new ActionReport(ActionName.update_Checking);
+                    ActionReport report = new ActionReport(ActionName.update_checking);
                     report.addPossibleAccession(result.getFinalUniprotId());
 
                     // boolean value to know if there is a conflict with the previous results
@@ -327,7 +333,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
             // we don't have a sequence but the protein has identifier(s)
             else{
                 // we create a new update report which will be added to the results
-                ActionReport report = new ActionReport(ActionName.update_Checking);
+                ActionReport report = new ActionReport(ActionName.update_checking);
                 report.addPossibleAccession(result.getFinalUniprotId());
 
                 // boolean value to know if there is a conflict with the previous results
@@ -378,6 +384,20 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
                 // we run the feature range checking process
                 runThirdAction((UpdateContext) context, result);
             }
+
+            if (!updateEnabled){
+
+                if (result.getFinalUniprotId() != null){
+                    // we create a new update report which will be added to the results
+                    ActionReport report = new ActionReport(ActionName.update_checking);
+
+                    report.addPossibleAccession(result.getFinalUniprotId());
+                    Status updateStatus = new Status(StatusLabel.PENDING, "The protein " + updateContext.getIntactAccession() + " could successfully be mapped to " + result.getFinalUniprotId() + " but was not updated because uniprot cross references already exist and a curator should check first that the protein can be updated.");
+                    result.setFinalUniprotId(null);                    
+                    report.setStatus(updateStatus);
+                    result.addActionReport(report);
+                }
+            }
         } catch (ActionProcessingException e) {
             throw  new StrategyException("An error occured while trying to update the protein using the sequence " + context.getSequence(), e);
         }
@@ -403,5 +423,21 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
         // The last action is a feature range checking process
         FeatureRangeCheckingProcess thirdAction = new FeatureRangeCheckingProcess();
         this.listOfActions.add(thirdAction);
+    }
+
+    /**
+     *
+     * @return true if the update is enabled
+     */
+    public boolean isUpdateEnabled() {
+        return updateEnabled;
+    }
+
+    /**
+     * set the updateEnabled boolean
+     * @param updateEnabled
+     */
+    public void setUpdateEnabled(boolean updateEnabled) {
+        this.updateEnabled = updateEnabled;
     }
 }

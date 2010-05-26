@@ -100,6 +100,48 @@ public class ProteinUpdateManager {
         this.strategy.setIntactContextForFeatureRangeChecking(intactContext);
     }
 
+    protected Query getProteinsWithoutUniprotXrefs(DataContext dataContext){
+        // get all the intact entries without any uniprot cross reference or with uniprot cross reference with a qualifier different from 'identity' and which can only be uniprot-removed-ac
+        final DaoFactory daoFactory = dataContext.getDaoFactory();
+        final Query query = daoFactory.getEntityManager().createQuery("select distinct p from InteractorImpl p "+
+                "left join p.sequenceChunks as seq " +
+                "left join p.xrefs as xrefs " +
+                "left join p.annotations as annotations " +
+                "where p.objClass = 'uk.ac.ebi.intact.model.ProteinImpl' "+
+                "and p not in ( "+
+                "select p2 "+
+                "from InteractorImpl p2 join p2.xrefs as xrefs "+
+                "where p2.objClass = 'uk.ac.ebi.intact.model.ProteinImpl' "+
+                "and xrefs.cvDatabase.ac = 'EBI-31' " +
+                "and xrefs.cvXrefQualifier.shortLabel <> 'uniprot-removed-ac' )");
+
+        return query;
+    }
+
+    protected Query getProteinsWithUniprotXrefsWithoutIdentity(DataContext dataContext){
+        // get all the intact entries without any uniprot cross reference or with uniprot cross reference with a qualifier different from 'identity' and which can only be uniprot-removed-ac
+        final DaoFactory daoFactory = dataContext.getDaoFactory();
+        final Query query = daoFactory.getEntityManager().createQuery("select distinct p from InteractorImpl p "+
+                    "left join p.sequenceChunks as seq " +
+                    "left join p.xrefs as xrefs " +
+                    "left join p.annotations as annotations " +
+                    "where p.objClass = 'uk.ac.ebi.intact.model.ProteinImpl' "+
+                    "and p not in ( "+
+                    "select p2 "+
+                    "from InteractorImpl p2 join p2.xrefs as xrefs "+
+                    "where p2.objClass = 'uk.ac.ebi.intact.model.ProteinImpl' "+
+                    "and xrefs.cvDatabase.ac = 'EBI-31' " +
+                    "and xrefs.cvXrefQualifier.shortLabel = 'identity') " +
+                    "and p in ( " +
+                    "select p2 " +
+                    "from InteractorImpl p2 join p2.xrefs as xrefs " +
+                    "where p2.objClass = 'uk.ac.ebi.intact.model.ProteinImpl' " +
+                    "and xrefs.cvDatabase.ac = 'EBI-31' " +
+                    "and xrefs.cvXrefQualifier.shortLabel <> 'uniprot-removed-ac')");
+
+        return query;
+    }
+
     /**
      * This method query IntAct to get the list of protein to update and for each one create an updateContext
      * Write the results of the protein update process
@@ -108,7 +150,9 @@ public class ProteinUpdateManager {
      * @throws StrategyException
      */
     public void writeResultsOfProteinUpdate() throws ProteinUpdateException, StrategyException {
-
+        // disable the update
+        this.strategy.setUpdateEnabled(false);
+        
         try {
             File file = new File("updateReport_"+ Calendar.getInstance().getTime().getTime() +".txt");
             Writer writer = new FileWriter(file);
@@ -123,18 +167,7 @@ public class ProteinUpdateManager {
             TransactionStatus transactionStatus = dataContext.beginTransaction();
 
             // get all the intact entries without any uniprot cross reference or with uniprot cross reference with a qualifier different from 'identity' and which can only be uniprot-removed-ac
-            final DaoFactory daoFactory = dataContext.getDaoFactory();
-            final Query query = daoFactory.getEntityManager().createQuery("select distinct p from InteractorImpl p "+
-                    "left join p.sequenceChunks as seq " +
-                    "left join p.xrefs as xrefs " +
-                    "left join p.annotations as annotations " +
-                    "where p.objClass = 'uk.ac.ebi.intact.model.ProteinImpl' "+
-                    "and p not in ( "+
-                    "select p2 "+
-                    "from InteractorImpl p2 join p2.xrefs as xrefs "+
-                    "where p2.objClass = 'uk.ac.ebi.intact.model.ProteinImpl' "+
-                    "and xrefs.cvDatabase.ac = 'EBI-31' " +
-                    "and xrefs.cvXrefQualifier.shortLabel <> 'uniprot-removed-ac' )");
+            final Query query = getProteinsWithoutUniprotXrefs(dataContext);
 
             proteinToUpdate = query.getResultList();
             log.info(proteinToUpdate.size());
@@ -312,6 +345,9 @@ public class ProteinUpdateManager {
      * @throws ProteinUpdateException
      */
     public void updateProteins() throws ProteinUpdateException {
+        // enable the update
+        this.strategy.setUpdateEnabled(true);
+
         // get the data context
         final DataContext dataContext = this.intactContext.getDataContext();
         TransactionStatus transactionStatus = dataContext.beginTransaction();
@@ -323,17 +359,7 @@ public class ProteinUpdateManager {
             Writer writer = new FileWriter(file);
 
             final DaoFactory daoFactory = dataContext.getDaoFactory();
-            final Query query = daoFactory.getEntityManager().createQuery("select distinct p from InteractorImpl p "+
-                    "left join p.sequenceChunks as seq " +
-                    "left join p.xrefs as xrefs " +
-                    "left join p.annotations as annotations " +
-                    "where p.objClass = 'uk.ac.ebi.intact.model.ProteinImpl' "+
-                    "and p not in ( "+
-                    "select p2 "+
-                    "from InteractorImpl p2 join p2.xrefs as xrefs "+
-                    "where p2.objClass = 'uk.ac.ebi.intact.model.ProteinImpl' "+
-                    "and xrefs.cvDatabase.ac = 'EBI-31' " +
-                    "and xrefs.cvXrefQualifier.shortLabel <> 'uniprot-removed-ac' )");
+            final Query query = getProteinsWithoutUniprotXrefs(dataContext);
 
             proteinToUpdate = query.getResultList();
             log.info(proteinToUpdate.size());
@@ -407,6 +433,9 @@ public class ProteinUpdateManager {
      * @throws ProteinUpdateException
      */
     public void writeUpdateReportForProteinsWithUniprotCrossReferences() throws ProteinUpdateException {
+        // disable the update
+        this.strategy.setUpdateEnabled(false);
+
         // create the data context
         final DataContext dataContext = this.intactContext.getDataContext();
         TransactionStatus transactionStatus = dataContext.beginTransaction();
@@ -416,24 +445,7 @@ public class ProteinUpdateManager {
             File file = new File("updateReportForProteinWithUniprotCrossReferences_"+Calendar.getInstance().getTime().getTime()+".txt");
             Writer writer = new FileWriter(file);
 
-            final DaoFactory daoFactory = dataContext.getDaoFactory();
-            final Query query = daoFactory.getEntityManager().createQuery("select distinct p from InteractorImpl p "+
-                    "left join p.sequenceChunks as seq " +
-                    "left join p.xrefs as xrefs " +
-                    "left join p.annotations as annotations " +
-                    "where p.objClass = 'uk.ac.ebi.intact.model.ProteinImpl' "+
-                    "and p not in ( "+
-                    "select p2 "+
-                    "from InteractorImpl p2 join p2.xrefs as xrefs "+
-                    "where p2.objClass = 'uk.ac.ebi.intact.model.ProteinImpl' "+
-                    "and xrefs.cvDatabase.ac = 'EBI-31' " +
-                    "and xrefs.cvXrefQualifier.shortLabel = 'identity') " +
-                    "and p in ( " +
-                    "select p2 " +
-                    "from InteractorImpl p2 join p2.xrefs as xrefs " +
-                    "where p2.objClass = 'uk.ac.ebi.intact.model.ProteinImpl' " +
-                    "and xrefs.cvDatabase.ac = 'EBI-31' " +
-                    "and xrefs.cvXrefQualifier.shortLabel <> 'uniprot-removed-ac')");
+            final Query query = getProteinsWithUniprotXrefsWithoutIdentity(dataContext);
 
             proteinToUpdate = query.getResultList();
             log.info(proteinToUpdate.size());

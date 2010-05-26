@@ -368,7 +368,7 @@ public class UpdateResultsDaoImplTest extends UpdateBasicTestCase{
         updateResultDao.persist( results );
         updateResultDao.flush();
 
-        List<UpdateResults> list = updateResultDao.getUpdateResultsWithConflictBetweenSequenceAndIdentityXRefs();
+        List<UpdateResults> list = updateResultDao.getUpdateResultsWithConflictsBetweenActions();
 
         Assert.assertTrue(!list.isEmpty());
     }
@@ -385,7 +385,7 @@ public class UpdateResultsDaoImplTest extends UpdateBasicTestCase{
         results.addActionReport(remapping);
         results.addActionReport(picr);
 
-        List<UpdateResults> list = updateResultDao.getUpdateResultsWithConflictBetweenSequenceAndIdentityXRefs();
+        List<UpdateResults> list = updateResultDao.getUpdateResultsWithConflictsBetweenActions();
 
         Assert.assertTrue(list.isEmpty());
     }
