@@ -24,7 +24,7 @@ public class UpdateBaseDaoImpl<T extends HibernatePersistent> implements UpdateB
     /**
      * The entity maneger
      */
-    @PersistenceContext( unitName = "intact-curationTools-default" )
+    @PersistenceContext( unitName = "intact-curation-default" )
     private EntityManager entityManager;
 
     /**

@@ -51,7 +51,7 @@ public class SchemaUtils {
 
     private static Configuration getBasicConfiguration(Properties props) {
         final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-        factoryBean.setPersistenceUnitName("intact-curationTools-default");
+        factoryBean.setPersistenceUnitName("intact-curation-default");
 
         final HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
         jpaVendorAdapter.setDatabasePlatform(Dialect.getDialect(props).getClass().getName());

@@ -3,7 +3,7 @@
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
              version="1.0">
 
-    <persistence-unit name="intact-curationTools-default" >
+    <persistence-unit name="intact-curation-default" >
       <properties>
          <property name="hibernate.max_fetch_depth" value="3"/>
       </properties>

@@ -23,7 +23,7 @@ public class CurationToolsDaoFactory implements Serializable{
     /**
      * The entuty manager
      */
-    @PersistenceContext( unitName = "intact-curationTools-default" )
+    @PersistenceContext( unitName = "intact-curation-default" )
     private EntityManager currentEntityManager;
 
     /**
