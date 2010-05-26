@@ -79,7 +79,7 @@ public interface UpdateResultsDao extends UpdateBaseDao<UpdateResults> {
      *
      * @return the list of UpdateResults with a conflict between the results of the strategy with sequence and those of the strategy with identifier
      */
-    public List<UpdateResults> getUpdateResultsWithConflictBetweenSequenceAndIdentityXRefs();
+    public List<UpdateResults> getUpdateResultsWithConflictsBetweenActions();
 
     /**
      *

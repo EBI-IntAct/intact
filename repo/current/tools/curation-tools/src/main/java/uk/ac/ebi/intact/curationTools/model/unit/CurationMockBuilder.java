@@ -234,7 +234,7 @@ public class CurationMockBuilder {
          ActionReport report = new ActionReport(ActionName.feature_range_checking);
 
         report.setASwissprotEntry(false);
-        report.setStatus(new Status(StatusLabel.TO_BE_REVIEWED, "There is a conflict"));
+        report.setStatus(new Status(StatusLabel.FAILED, "There is a conflict"));
         return report;
     }
 
