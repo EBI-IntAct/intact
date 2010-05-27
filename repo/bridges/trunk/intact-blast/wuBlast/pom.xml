@@ -10,7 +10,7 @@
 
 	<artifactId>WuWs-blast</artifactId>
 
-	<name>Blast :: WuWsBlast</name>
+	<name>IntAct Bridges :: Blast :: WuWsBlast</name>
 	<version>2.1.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
