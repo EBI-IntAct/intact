@@ -42,6 +42,10 @@ public class MockImexCentralClient implements ImexCentralClient {
         this.allPublications = allPublications;
     }
 
+    public int getNextSequenceValue() {
+        return imexIdSequence;
+    }
+
     public void addPublication( Publication p ) {
         if ( p == null ) {
             throw new IllegalArgumentException( "You must give a non null publication" );
