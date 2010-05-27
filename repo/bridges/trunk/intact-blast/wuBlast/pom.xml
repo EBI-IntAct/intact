@@ -3,7 +3,7 @@
     <parent>
 		<artifactId>intact-blast</artifactId>
 		<groupId>uk.ac.ebi.intact.bridges</groupId>
-		<version>2.1.2-SNAPSHOT</version>
+		<version>2.1.2</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -11,7 +11,7 @@
 	<artifactId>WuWs-blast</artifactId>
 
 	<name>Blast :: WuWsBlast</name>
-	<version>1.0-SNAPSHOT</version>
+	<version>2.1.2</version>
 	<packaging>jar</packaging>
 
 	<properties>
@@ -33,12 +33,12 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.bridges</groupId>
             <artifactId>blast-mapping-parser</artifactId>
-            <version>2.1.2-SNAPSHOT</version>
+            <version>2.1.2</version>
         </dependency>
         <dependency>
             <groupId>${pom.groupId}</groupId>
             <artifactId>intact-uniprot</artifactId>
-            <version>2.1.2-SNAPSHOT</version>
+            <version>2.1.2</version>
         </dependency>
 
         <!-- JAX-WS -->
