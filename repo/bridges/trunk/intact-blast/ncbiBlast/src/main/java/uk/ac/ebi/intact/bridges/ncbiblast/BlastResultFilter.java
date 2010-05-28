@@ -35,7 +35,7 @@ public class BlastResultFilter {
     /**
      * The list of hits (BlastProtein objects) we want to keep
      */
-    private ArrayList<BlastProtein> matchingEntries = new ArrayList<BlastProtein>();
+    private List<BlastProtein> matchingEntries = new ArrayList<BlastProtein>();
 
     /**
      * The log of this class
@@ -111,7 +111,7 @@ public class BlastResultFilter {
      * Get the hits that have been successfully filtered
      * @return a list of BlastProtein objects
      */
-    public ArrayList<BlastProtein> getMatchingEntries() {
+    public List<BlastProtein> getMatchingEntries() {
         return matchingEntries;
     }
 
@@ -360,8 +360,8 @@ public class BlastResultFilter {
      * @param identity : the threshold identity
      * @return a list of BlastProteins which have been filtered
      */
-    public ArrayList<BlastProtein> filterMappingEntriesWithIdentity(float identity){
-        ArrayList<BlastProtein> filteredProtein = new ArrayList<BlastProtein>();
+    public List<BlastProtein> filterMappingEntriesWithIdentity(float identity){
+        List<BlastProtein> filteredProtein = new ArrayList<BlastProtein>();
         for ( BlastProtein protein : this.matchingEntries ) {
             if (protein.getIdentity() >= identity){
                 filteredProtein.add(protein);
@@ -376,8 +376,8 @@ public class BlastResultFilter {
      * @param taxId : the scientific name of an organism
      * @return a list of BlastProteins which have been filtered
      */
-    public ArrayList<BlastProtein> filterMappingEntriesWithOrganism(String taxId){
-        ArrayList<BlastProtein> filteredProtein = new ArrayList<BlastProtein>();
+    public List<BlastProtein> filterMappingEntriesWithOrganism(String taxId){
+        List<BlastProtein> filteredProtein = new ArrayList<BlastProtein>();
 
         for ( BlastProtein protein : this.matchingEntries  ) {
             String organism = null;
@@ -405,8 +405,8 @@ public class BlastResultFilter {
      * @param taxId : the scientific name of an organism
      * @return : a list of BlastProteins which have been filtered
      */
-    public ArrayList<BlastProtein> filterMappingEntriesWithIdentityAndOrganism(float identity, String taxId){
-        ArrayList<BlastProtein> filteredProtein = new ArrayList<BlastProtein>();
+    public List<BlastProtein> filterMappingEntriesWithIdentityAndOrganism(float identity, String taxId){
+        List<BlastProtein> filteredProtein = new ArrayList<BlastProtein>();
 
         for ( BlastProtein protein : this.matchingEntries ) {
             String organism = null;
@@ -436,8 +436,8 @@ public class BlastResultFilter {
      * @param sequenceLength
      * @return
      */
-    public static ArrayList<BlastProtein> collectMappingEntriesWithTotalAlignment(ArrayList<BlastProtein> proteinToFilter, int sequenceLength){
-        ArrayList<BlastProtein> proteins = new ArrayList<BlastProtein>();
+    public static List<BlastProtein> collectMappingEntriesWithTotalAlignment(List<BlastProtein> proteinToFilter, int sequenceLength){
+        List<BlastProtein> proteins = new ArrayList<BlastProtein>();
 
         for (BlastProtein p : proteinToFilter){
             if (isATotalAlignment(p, sequenceLength)){

@@ -6,7 +6,7 @@ import org.junit.Test;
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
 
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * BlastResultFilter tester
@@ -35,7 +35,7 @@ public class BlastResultFilterTest {
 
         filter.readResultsWithoutFiltering();
 
-        ArrayList<BlastProtein> filteredResults = filter.getMatchingEntries();
+        List<BlastProtein> filteredResults = filter.getMatchingEntries();
 
         Assert.assertEquals(false, filteredResults.isEmpty());
         Assert.assertEquals(50, filteredResults.size());
@@ -46,7 +46,7 @@ public class BlastResultFilterTest {
 
         filter.filterResultsWithIdentity((float) 100);
 
-        ArrayList<BlastProtein> filteredResults = filter.getMatchingEntries();
+        List<BlastProtein> filteredResults = filter.getMatchingEntries();
 
         Assert.assertEquals(false, filteredResults.isEmpty());
         System.out.println(filteredResults.size());
@@ -62,7 +62,7 @@ public class BlastResultFilterTest {
 
         filter.filterResultsWithOrganism("7227");
 
-        ArrayList<BlastProtein> filteredResults = filter.getMatchingEntries();
+        List<BlastProtein> filteredResults = filter.getMatchingEntries();
 
         Assert.assertEquals(false, filteredResults.isEmpty());
         System.out.println(filteredResults.size());
@@ -78,7 +78,7 @@ public class BlastResultFilterTest {
 
         filter.filterResultsWithIdentityAndOrganism((float)100, "7227");
 
-        ArrayList<BlastProtein> filteredResults = filter.getMatchingEntries();
+        List<BlastProtein> filteredResults = filter.getMatchingEntries();
 
         Assert.assertEquals(false, filteredResults.isEmpty());
         System.out.println(filteredResults.size());
@@ -94,22 +94,22 @@ public class BlastResultFilterTest {
 
         filter.readResultsWithoutFiltering();
 
-        ArrayList<BlastProtein> filteredResultsOnIdentity = filter.filterMappingEntriesWithIdentity((float)100);
+        List<BlastProtein> filteredResultsOnIdentity = filter.filterMappingEntriesWithIdentity((float)100);
 
         Assert.assertEquals(false, filteredResultsOnIdentity.isEmpty());
         Assert.assertEquals(12, filteredResultsOnIdentity.size());
 
-        ArrayList<BlastProtein> filteredResultsOnOrganism = filter.filterMappingEntriesWithOrganism("7227");
+        List<BlastProtein> filteredResultsOnOrganism = filter.filterMappingEntriesWithOrganism("7227");
 
         Assert.assertEquals(false, filteredResultsOnOrganism.isEmpty());
         Assert.assertEquals(4, filteredResultsOnOrganism.size());
 
-        ArrayList<BlastProtein> filteredResultsOnOrganismAndIdentity = filter.filterMappingEntriesWithIdentityAndOrganism((float)100, "7227");
+        List<BlastProtein> filteredResultsOnOrganismAndIdentity = filter.filterMappingEntriesWithIdentityAndOrganism((float)100, "7227");
 
         Assert.assertEquals(false, filteredResultsOnOrganismAndIdentity.isEmpty());
         Assert.assertEquals(1, filteredResultsOnOrganismAndIdentity.size()); 
 
-        ArrayList<BlastProtein> filteredResultsWithTotalAlignment = BlastResultFilter.collectMappingEntriesWithTotalAlignment(filteredResultsOnIdentity, this.sequence.length());
+        List<BlastProtein> filteredResultsWithTotalAlignment = BlastResultFilter.collectMappingEntriesWithTotalAlignment(filteredResultsOnIdentity, this.sequence.length());
         Assert.assertEquals(12, filteredResultsWithTotalAlignment.size());
     }
 }
