@@ -8,9 +8,7 @@ set serveroutput on
 DECLARE
 
   -- Defines the version of the database we are expecting to find.
-  c_expected_schema_version1 VARCHAR2(15) DEFAULT '1.9.0';
-  c_expected_schema_version2 VARCHAR2(15) DEFAULT '2.0.0';
-  c_expected_schema_version3 VARCHAR2(15) DEFAULT '2.1.0';
+  c_expected_schema_version VARCHAR2(15) DEFAULT '2.1.0';
 
   v_db_version ia_db_info.value%TYPE;
 
@@ -20,7 +18,7 @@ BEGIN
   FROM ia_db_info
   WHERE dbi_key = 'schema_version';
 
-  IF( v_db_version <> c_expected_schema_version1 AND  v_db_version <> c_expected_schema_version2 AND v_db_version <> c_expected_schema_version3) THEN
+  IF( v_db_version <> c_expected_schema_version THEN
 
     RAISE_APPLICATION_ERROR( -20010, 'Aborting database schema update, schema version expected is '||
                                      c_expected_schema_version1 ||' or '|| c_expected_schema_version2 ||' or '|| c_expected_schema_version2 ||
