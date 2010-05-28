@@ -37,8 +37,8 @@ public abstract class IdentificationActionImpl implements IdentificationAction {
      * @param blastProteins : the results of a BLAST
      * @return the list of accessions of the merged proteins
      */
-    protected Set<String> mergeIsoformsFromBlastProteins(ArrayList<BlastProtein> blastProteins){
-        HashSet<String> isoformMerged = new HashSet<String>();
+    protected Set<String> mergeIsoformsFromBlastProteins(List<BlastProtein> blastProteins){
+        Set<String> isoformMerged = new HashSet<String>();
         for (BlastProtein b : blastProteins){
             if (b != null){
 
@@ -63,8 +63,8 @@ public abstract class IdentificationActionImpl implements IdentificationAction {
      * @param accessions : the proteins to merge
      * @return the list of accessions of the merged proteins
      */
-    protected Set<String> mergeIsoforms(ArrayList<String> accessions){
-        HashSet<String> isoformMerged = new HashSet<String>();
+    protected Set<String> mergeIsoforms(List<String> accessions){
+        Set<String> isoformMerged = new HashSet<String>();
         for (String b : accessions){
             if (b != null){
 

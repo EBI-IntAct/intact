@@ -93,18 +93,22 @@ public class FeatureRangeCheckingProcess extends ActionNeedingIntactContext{
             return false;
         }
         else {
+            String rangeSequence = range.getFullSequence();
+
+            if (rangeSequence == null){
+                rangeSequence = range.getSequence();
+            }
+
             // Check that the amino acids involved in the feature ranges are identical
-            if (startFrom > 0 && startTo > 0){
-                String rangeNewSequence = protein.getSequence().substring(startFrom - 1, startTo);
-                if (!range.getSequence().equals(rangeNewSequence)){
-                    report.addWarning("The sequence of the Swissprot entry from " + range.getFromIntervalStart() + " to " + range.getToIntervalStart() + " is different from the previous feature sequence, we can't replace the previous sequence with the sequence of the Swissprot entry." );
+            if (startFrom > 0 && endTo > 0){
+                String rangeNewSequence = protein.getSequence().substring(startFrom - 1, endTo);
+
+                if (rangeSequence == null){
+                    report.addWarning("The feature " + range.getFeature().getAc() + " doesn't contain any sequence or full sequence but has range positions. This entry needs to ce checked by a curator");
                     return false;
                 }
-            }
-            if (endFrom> 0 && endTo > 0){
-                String rangeNewSequence = protein.getSequence().substring(endFrom - 1, endTo);
-                if (!range.getSequence().equals(rangeNewSequence)){
-                    report.addWarning("The sequence of the Swissprot entry from " + range.getFromIntervalEnd() + " to " + range.getToIntervalEnd() + " is different from the previous feature sequence, we can't replace the previous sequence with the sequence of the Swissprot entry." );                    
+                if (!rangeSequence.equals(rangeNewSequence)){
+                    report.addWarning("The sequence of the Swissprot entry from " + range.getFromIntervalStart() + " to " + range.getToIntervalStart() + " is different from the previous feature sequence, we can't replace the previous sequence with the sequence of the Swissprot entry." );
                     return false;
                 }
             }

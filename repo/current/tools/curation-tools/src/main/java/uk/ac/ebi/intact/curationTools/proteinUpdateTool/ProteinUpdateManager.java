@@ -86,7 +86,7 @@ public class ProteinUpdateManager {
     public ProteinUpdateManager(IntactContext context){
         this.strategy = new StrategyForProteinUpdate();
         this.strategy.enableIsoforms(false);
-        this.strategy.setBasicBlastProcessRequired(false);
+        this.strategy.setBasicBlastProcessRequired(true);
         setIntactContext(context);
         this.context = new UpdateContext();
     }

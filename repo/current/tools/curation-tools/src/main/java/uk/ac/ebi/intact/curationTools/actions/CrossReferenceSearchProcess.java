@@ -22,10 +22,7 @@ import uk.ac.ebi.kraken.uuw.services.remoting.UniParcQueryBuilder;
 import uk.ac.ebi.kraken.uuw.services.remoting.UniParcQueryService;
 import uk.ac.ebi.kraken.uuw.services.remoting.UniProtJAPI;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class is querying uniprot to retrieve cross references and identifiers of an uniprot entry.
@@ -50,7 +47,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
     /**
      * The map allowing to convert a sequence database MI to a Uniprot database name
      */
-    private HashMap<String, Set<String>> psiMIDatabaseToUniprot = new HashMap<String, Set<String>>();
+    private Map<String, Set<String>> psiMIDatabaseToUniprot = new HashMap<String, Set<String>>();
 
     /**
      * The uniprot remote service
@@ -157,8 +154,8 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
      * @param database : the database
      * @return the appropriate name(s) in uniprot if database is a MI number of a sequence database existing in Uniprot, the database name as it was otherwise
      */
-    private HashSet<String> convertMINumberInUniprot(String database){
-        HashSet<String> name = new HashSet<String>();
+    private Set<String> convertMINumberInUniprot(String database){
+        Set<String> name = new HashSet<String>();
 
         if (database == null){
             return name;
@@ -314,7 +311,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
         // we have only one entry
         if (iterator.getResultSize() == 1){
             UniProtEntry protein = iterator.next();
-            HashSet<String> databaseNames = convertMINumberInUniprot(context.getDatabaseForIdentifier());
+            Set<String> databaseNames = convertMINumberInUniprot(context.getDatabaseForIdentifier());
             String id = protein.getPrimaryUniProtAccession().getValue();
 
             // The identifier matches an uniprot accession of identifier
@@ -528,7 +525,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
                     else {
                         // get the database name in uniparc for what the identifier is matching
                         String databaseInUniparc = getTheDatabaseOfExactIdentifierInUniparcCrossReferences(entry, context.getIdentifier(), context.getDatabaseForIdentifier());
-                        HashSet<String> databaseNames = convertMINumberInUniprot(context.getDatabaseForIdentifier());
+                        Set<String> databaseNames = convertMINumberInUniprot(context.getDatabaseForIdentifier());
 
                         // if the exact identifier is in the cross references of the uniparc entry
                         if (databaseInUniparc != null){
