@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.curationTools.model.results.BlastResults;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is doing a Blast on uniprot and process the blast results as following :
@@ -56,9 +57,9 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
      * @param database : the database we want to look into
      * @return a list of BlastProteins which are from this database
      */
-    private ArrayList<BlastProtein> getEntriesWithDatabase(ArrayList<BlastProtein> proteins, String database){
+    private List<BlastProtein> getEntriesWithDatabase(List<BlastProtein> proteins, String database){
 
-        ArrayList<BlastProtein> entriesWithDatabase = new ArrayList<BlastProtein>();
+        List<BlastProtein> entriesWithDatabase = new ArrayList<BlastProtein>();
 
         for (BlastProtein p : proteins){
             if (p.getDatabase() != null){
@@ -103,10 +104,10 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
         }
 
         // Filter the results stored in the BlastFilter on 100% identity
-        ArrayList<BlastProtein> blastProteinsWith100Identity = this.blastFilter.filterMappingEntriesWithIdentity((float) 100);
+        List<BlastProtein> blastProteinsWith100Identity = this.blastFilter.filterMappingEntriesWithIdentity((float) 100);
 
         // Filter the results stored in the BlastFilter on 100% identity on the all sequence
-        ArrayList<BlastProtein> blastProteinsGlobalAlignment = BlastResultFilter.collectMappingEntriesWithTotalAlignment(blastProteinsWith100Identity, context.getSequence().length());
+        List<BlastProtein> blastProteinsGlobalAlignment = BlastResultFilter.collectMappingEntriesWithTotalAlignment(blastProteinsWith100Identity, context.getSequence().length());
 
         // We don't have any proteins matching the all sequence with 100% identity
         if (blastProteinsGlobalAlignment.size() == 0){
@@ -118,7 +119,7 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
             BlastReport report2 = new BlastReport(ActionName.BLAST_uniprot);
             this.listOfReports.add(report2);
 
-            ArrayList<BlastProtein> globalResults = this.blastFilter.getMatchingEntries();
+            List<BlastProtein> globalResults = this.blastFilter.getMatchingEntries();
 
             // We don't have any results
             if (globalResults.isEmpty()){
@@ -172,7 +173,7 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
             this.listOfReports.add(report2);
 
             // Get the results from Swissprot
-            ArrayList<BlastProtein> swissprotProteins = getEntriesWithDatabase(blastProteinsGlobalAlignment, swissprot);
+            List<BlastProtein> swissprotProteins = getEntriesWithDatabase(blastProteinsGlobalAlignment, swissprot);
 
             // We don't have any Swissprot results and several Trembl entries
             if (swissprotProteins.size() == 0){

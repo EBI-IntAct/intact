@@ -12,7 +12,7 @@ import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.curationTools.model.results.BlastResults;
 
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is doing a Blast on Uniprot to collect matching proteins with a minimum identity percent. It can filter the results on the identity
@@ -68,7 +68,7 @@ public class BasicBlastProcess extends ActionNeedingBlastService{
         }
 
         // Get the results of the Blast filter after we have filtered the results
-        ArrayList<BlastProtein> blastProteins = this.blastFilter.getMatchingEntries();
+        List<BlastProtein> blastProteins = this.blastFilter.getMatchingEntries();
 
         if (blastProteins.isEmpty()){
             Status status2 = new Status(StatusLabel.FAILED, "A blast has been done on Uniprot and we didn't find any hits with more than "+minimumIdentityThreshold+"% identity.");

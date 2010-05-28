@@ -67,9 +67,9 @@ public class SwissprotRemappingProcessTest {
 
             System.out.println(reports.get(1).getStatus().getLabel() + " " + reports.get(1).getStatus().getDescription());
 
-            Assert.assertNotNull(ac);
+            Assert.assertNull(ac);
             Assert.assertEquals(true, reports.get(1) instanceof BlastReport);
-            Assert.assertEquals("P41240", ac);
+            Assert.assertEquals(StatusLabel.TO_BE_REVIEWED, reports.get(1).getStatusLabel());
 
         } catch (ActionProcessingException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -103,9 +103,9 @@ public class SwissprotRemappingProcessTest {
 
             System.out.println(reports.get(1).getStatus().getLabel() + " " + reports.get(1).getStatus().getDescription());
 
-            Assert.assertNotNull(ac);
+            Assert.assertNull(ac);
             Assert.assertEquals(true, reports.get(1) instanceof BlastReport);
-            Assert.assertEquals("P41240", ac);
+            Assert.assertEquals(StatusLabel.TO_BE_REVIEWED, reports.get(1).getStatusLabel());
 
         } catch (ActionProcessingException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
