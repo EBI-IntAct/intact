@@ -1,6 +1,6 @@
 set serveroutput on size 1000000
 
-spool install_210.log
+spool install_230.log
 
 select to_char(sysdate,'dd-mon-yyyy hh24:mi:ss')  start_date from dual;
 
@@ -35,6 +35,10 @@ PROMPT "Create audit triggers for the range tables..."
 PROMPT
 @030_create_audit_trigger.sql
 
+PROMPT *********************************************************************************/
+PROMPT "Deleting owner constraint for the objects that do not have an institution anymore..."
+PROMPT
+@040_delete_owner_constraints.sql
 
 PROMPT *********************************************************************************/
 PROMPT "Update schema version to 2.3.0"
