@@ -41,6 +41,11 @@ PROMPT
 @040_delete_owner_constraints.sql
 
 PROMPT *********************************************************************************/
+PROMPT "Creating owner triggers so we do not have empty institution fields"
+PROMPT
+@050_create_owner_triggers.sql
+
+PROMPT *********************************************************************************/
 PROMPT "Update schema version to 2.3.0"
 PROMPT
 UPDATE ia_db_info
