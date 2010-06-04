@@ -18,7 +18,7 @@ BEGIN
   FROM ia_db_info
   WHERE dbi_key = 'schema_version';
 
-  IF( v_db_version <> c_expected_schema_version THEN
+  IF( v_db_version <> c_expected_schema_version) THEN
 
     RAISE_APPLICATION_ERROR( -20010, 'Aborting database schema update, schema version expected is '||
                                      c_expected_schema_version1 ||' or '|| c_expected_schema_version2 ||' or '|| c_expected_schema_version2 ||
