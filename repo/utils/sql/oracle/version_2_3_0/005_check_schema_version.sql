@@ -21,8 +21,8 @@ BEGIN
   IF( v_db_version <> c_expected_schema_version) THEN
 
     RAISE_APPLICATION_ERROR( -20010, 'Aborting database schema update, schema version expected is '||
-                                     c_expected_schema_version1 ||' or '|| c_expected_schema_version2 ||' or '|| c_expected_schema_version2 ||
-                                     'but was ' || v_db_version );
+                                     c_expected_schema_version ||
+                                     ' but was ' || v_db_version );
 
   ELSE
 
