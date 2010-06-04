@@ -28,7 +28,7 @@ begin
 		, link
 		, feature_ac
 		, owner_ac
-		, fromintervalestart
+		, fromintervalstart
 		, fromintervalend
 		, fromfuzzytype_ac
 		, tointervalstart
@@ -51,7 +51,7 @@ begin
 		, :old.link
 		, :old.feature_ac
 		, :old.owner_ac
-		, :old.fromintervalestart
+		, :old.fromintervalstart
 		, :old.fromintervalend
 		, :old.fromfuzzytype_ac
 		, :old.tointervalstart
