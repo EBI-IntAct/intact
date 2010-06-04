@@ -59,13 +59,14 @@ public class CitexploreClient {
     }
 
     private ResultListBean searchCitationsByExternalId(String id) {
+        final String query = "EXT_ID:" + id + " SRC:med";
         try {
             // SRC:med is needed as the external ids are not unique.
             // ex : extId1 coresponds to 2 publication in citexplore one from medline, one from CiteSeer.
             // Putting : core allow to get a lighter object just with the title, authors name...
-            return getPort().searchCitations("EXT_ID:"+id+" SRC:med", "core", 0, null); //"core"
+            return getPort().searchCitations(query, "core", 0, null); //"core"
         } catch (QueryException_Exception e) {
-            throw new CitexploreClientException(e);
+            throw new CitexploreClientException("Problem fetching query: "+query, e);
         }
     }
 
