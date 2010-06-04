@@ -133,7 +133,7 @@ public class IntactCitationFactory {
             }
 
             // otherwise throw the original exception
-            throw new UnexpectedException( "An unexpected error occured (ie. " + msg + ").", e );
+            throw new UnexpectedException( "An unexpected error occured while trying to fetch: "+pubmedId, e );
         }
 
         // retreive information
