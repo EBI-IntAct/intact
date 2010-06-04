@@ -44,7 +44,7 @@ public class ExperimentAutoFillTest extends IntactBasicTestCase {
 
         Experiment exp = getMockBuilder().createExperimentEmpty("butkevich-2004-2");
         exp.getPublication().setShortLabel("15084279");
-        PersisterHelper.saveOrUpdate(exp);
+        getCorePersister().saveOrUpdate(exp);
 
         ExperimentAutoFill eaf = new ExperimentAutoFill("15084279");
 
@@ -82,7 +82,7 @@ public class ExperimentAutoFillTest extends IntactBasicTestCase {
         ExperimentAutoFill eaf = new ExperimentAutoFill(pubId);
         exp.setShortLabel(eaf.getShortlabel(true));
 
-        PersisterHelper.saveOrUpdate(exp);
+        getCorePersister().saveOrUpdate(exp);
     }
 
     @Test (expected = InvalidPubmedException.class)
