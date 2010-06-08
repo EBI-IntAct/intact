@@ -135,10 +135,10 @@ public class BlastResultFilter {
         BlastProtein entry = new BlastProtein();
 
         if (Pattern.matches(hit.getAc()+"-[1-9]",hit.getId())){
-           entry.setAccession(hit.getId());
+            entry.setAccession(hit.getId());
         }
         else {
-           entry.setAccession(hit.getAc()); 
+            entry.setAccession(hit.getAc());
         }
         entry.setDescription(hit.getDescription());
         entry.setDatabase(hit.getDatabase());
@@ -165,7 +165,8 @@ public class BlastResultFilter {
             List<THit> xmlHits = this.results.getSequenceSimilaritySearchResult().getHits().getHit();
             return xmlHits;
         }
-        return null;
+        List<THit> empty = new ArrayList<THit>();
+        return empty;
     }
 
     /**
@@ -474,12 +475,15 @@ public class BlastResultFilter {
         }
 
         EBIApplicationResult appResult = null;
-        try {
-            appResult = bmr.read( results );
-        } catch (BlastMappingException e) {
-            throw new BlastResultFilterException(" Problem reading the InputStream containing the wswublast results",e);
+
+        if (results != null){
+            try {
+                appResult = bmr.read( results );
+            } catch (BlastMappingException e) {
+                throw new BlastResultFilterException(" Problem reading the InputStream containing the wswublast results",e);
+            }
+            this.results = appResult;
+            clearMatchingEntries();
         }
-        this.results = appResult;
-        clearMatchingEntries();
     }
 }
