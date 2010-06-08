@@ -7,6 +7,7 @@ import uk.ac.ebi.intact.bridges.ncbiblast.model.Job;
 import uk.ac.ebi.jdispatcher.soap.*;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.soap.SOAPFaultException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
@@ -112,7 +113,13 @@ public class NCBIBlastClient {
         for(int i = 0; i < resultTypes.length; i++) {
             // Get the results
             if(resultTypes[i].getIdentifier().equals(resultFormat)) {
-                byte[] resultbytes = this.service.getResult(jobid, resultTypes[i].getIdentifier(), null);
+                byte[] resultbytes = null;
+                try {
+                    resultbytes = this.service.getResult(jobid, resultTypes[i].getIdentifier(), null);
+                } catch (SOAPFaultException e){
+                    resultbytes = null;
+                    log.warn("A SOAP exception has been thrown for this job and we couldn't get any results.", e);
+                }
 
                 if(resultbytes == null) {
                     System.err.println("Null result for " + resultTypes[i].getIdentifier() + "!");
