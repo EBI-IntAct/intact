@@ -35,6 +35,7 @@
         <module>intact-proteins-update</module>
         <module>update-db-proteins-maven-plugin</module>
         <module>intact-smallmolecules-update</module>
+    <module>intact-datasets-update</module>
   </modules>
 
     <dependencyManagement>
