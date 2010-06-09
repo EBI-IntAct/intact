@@ -252,7 +252,7 @@ public class CCLineExport extends LineExport {
             }
         }
 
-        // contains the Uniprot ID of protein 1, if protein 1 is a splice variant, we retrieve its master's.
+        // contains the Uniprot ID of protein 2, if protein 2 is a splice variant, we retrieve its master's.
         String uniprotIdMaster2 = uniprotID2;
         Protein proteinMaster2 = protein2;
         if ( isSpliceVariantOrChain(protein2)) {
@@ -266,8 +266,16 @@ public class CCLineExport extends LineExport {
             }
         }
 
+        if( proteinMaster1 == null || proteinMaster2 == null ) {
+           getOut().println("ERROR: Skip generation of this CC line ");
+            return;
+        }
+
+        
         // produce the CC lines for the 1st protein
-        CcLine cc1 = formatCCLinesOld(uniprotIdMaster1, proteinMaster1, uniprotIdMaster2, proteinMaster2, eligibleExperiments);
+        CcLine cc1 = formatCCLinesOld(uniprotIdMaster1, proteinMaster1,
+                                      uniprotIdMaster2, proteinMaster2,
+                                      eligibleExperiments);
         List<CcLine> cc4protein1 = ccLines.get(uniprotIdMaster1);
         if (null == cc4protein1) {
             cc4protein1 = new ArrayList<CcLine>();
@@ -277,7 +285,9 @@ public class CCLineExport extends LineExport {
 
         // produce the CC lines for the 2nd protein
         if (!uniprotID1.equals(uniprotID2)) {
-            CcLine cc2 = formatCCLinesOld(uniprotIdMaster2, proteinMaster2, uniprotIdMaster1, proteinMaster1, eligibleExperiments);
+            CcLine cc2 = formatCCLinesOld(uniprotIdMaster2, proteinMaster2,
+                                          uniprotIdMaster1, proteinMaster1,
+                                          eligibleExperiments);
             List<CcLine> cc4protein2 = ccLines.get(uniprotIdMaster2);
             if (null == cc4protein2) {
                 cc4protein2 = new ArrayList<CcLine>();
