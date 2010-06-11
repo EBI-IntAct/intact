@@ -400,6 +400,7 @@ public class ProteinUpdateManager {
                     addUniprotCrossReferenceTo(prot, result.getFinalUniprotId(), daoFactory);
                     //daoFactory.getProteinDao().update( prot );
                     accessionsToUpdate.add(accession);
+                    this.intactContext.getCorePersister().saveOrUpdate(prot);
                 }
             }
 
