@@ -3,14 +3,20 @@ package uk.ac.ebi.intact.curationTools.strategies;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.test.context.ContextConfiguration;
+import uk.ac.ebi.intact.commons.util.Crc64;
+import uk.ac.ebi.intact.core.context.IntactContext;
+import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.curationTools.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.BlastReport;
+import uk.ac.ebi.intact.curationTools.model.actionReport.IntactCrc64Report;
 import uk.ac.ebi.intact.curationTools.model.actionReport.PICRReport;
 import uk.ac.ebi.intact.curationTools.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.curationTools.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.curationTools.model.results.IdentificationResults;
 import uk.ac.ebi.intact.curationTools.strategies.exceptions.StrategyException;
 import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.Protein;
 
 /**
  * Unit test for StrategyWithSequence
@@ -19,15 +25,28 @@ import uk.ac.ebi.intact.model.BioSource;
  * @version $Id$
  * @since <pre>30-Apr-2010</pre>
  */
-
-public class StrategyWithSequenceTest {
+@ContextConfiguration(locations = {"/META-INF/intact-curationTools.spring.xml", "/META-INF/standalone/curation-jpa.spring.xml"} )
+public class StrategyWithSequenceTest  extends IntactBasicTestCase {
 
     private StrategyWithSequence strategy;
+    private IntactContext intactContext;
+    private String acToFind;
 
     @Before
     public void createStrategy(){
         this.strategy = new StrategyWithSequence();
         this.strategy.enableIsoforms(false);
+        this.intactContext = IntactContext.getCurrentInstance();
+
+        String sequence = "GTRASKHVFEKNLRPKALKLKNAEHCSIITKETARTVLTIQSYLQSISNPEWAAAIAHKIAQELPTGPDKIHALKFCLHLAEKWKKNVSSENDAHEKADVFIKKLSVQYQRSATENVLITHKLNTPELLKQIGKPANLIVSLYEHSSVEQRIRHPTGRDYPDIHTAAKQISEVNNLNMSKICTLLLEKWICPPAVPQADKNKDVFGDIHGDEDLRRVIYLLQPYPVDYSSRMLYAIATSATS";
+
+        Protein prot = getMockBuilder().createProtein("P12345", "test-protein");
+        prot.setBioSource( createBiosource("xenla", "Xenopus laevis", "8355") );
+        prot.setSequence(sequence);
+        prot.setCrc64(Crc64.getCrc64(sequence));
+
+        this.intactContext.getCorePersister().saveOrUpdate(prot);
+        acToFind = prot.getAc();
     }
 
     private BioSource createBiosource(String shortLabel, String fullName, String taxId){
@@ -229,4 +248,70 @@ public class StrategyWithSequenceTest {
         }
 
     }
+
+    @Test
+    public void test_PICR_Unsuccessful_Intact_Successful(){
+
+        this.strategy.setIntactContext(this.intactContext);
+
+        String sequence = "GTRASKHVFEKNLRPKALKLKNAEHCSIITKETARTVLTIQSYLQSISNPEWAAAIAHKIAQELPTGPDKIHALKFCLHLAEKWKKNVSSENDAHEKADVFIKKLSVQYQRSATENVLITHKLNTPELLKQIGKPANLIVSLYEHSSVEQRIRHPTGRDYPDIHTAAKQISEVNNLNMSKICTLLLEKWICPPAVPQADKNKDVFGDIHGDEDLRRVIYLLQPYPVDYSSRMLYAIATSATS";
+        BioSource bioSource = createBiosource("xenla", "Xenopus laevis", "8355");
+
+        IdentificationContext context = new IdentificationContext();
+        context.setSequence(sequence);
+        context.setOrganism(bioSource);
+
+        try {
+            IdentificationResults result = this.strategy.identifyProtein(context);
+
+            Assert.assertNotNull(result);
+
+            for (ActionReport r : result.getListOfActions()){
+                System.out.println("Label : " + r.getStatus().getLabel().toString() + ": Description : " + r.getStatus().getDescription());
+            }
+
+            Assert.assertNull(result.getFinalUniprotId());
+            Assert.assertEquals(true, result.getLastAction() instanceof IntactCrc64Report);
+            Assert.assertEquals(acToFind, ((IntactCrc64Report) result.getLastAction()).getIntactid());
+            Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
+
+        } catch (StrategyException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    @Test
+    public void test_PICR_Unsuccessful_Intact_Successful_No_Organism(){
+
+        this.strategy.setIntactContext(this.intactContext);
+
+        String sequence = "GTRASKHVFEKNLRPKALKLKNAEHCSIITKETARTVLTIQSYLQSISNPEWAAAIAHKIAQELPTGPDKIHALKFCLHLAEKWKKNVSSENDAHEKADVFIKKLSVQYQRSATENVLITHKLNTPELLKQIGKPANLIVSLYEHSSVEQRIRHPTGRDYPDIHTAAKQISEVNNLNMSKICTLLLEKWICPPAVPQADKNKDVFGDIHGDEDLRRVIYLLQPYPVDYSSRMLYAIATSATS";
+
+        IdentificationContext context = new IdentificationContext();
+        context.setSequence(sequence);
+        context.setOrganism(null);
+
+        try {
+            IdentificationResults result = this.strategy.identifyProtein(context);
+
+            Assert.assertNotNull(result);
+
+            for (ActionReport r : result.getListOfActions()){
+                System.out.println("Label : " + r.getStatus().getLabel().toString() + ": Description : " + r.getStatus().getDescription());
+
+                for (String warn : r.getWarnings()){
+                    System.out.println(warn);
+                }
+            }
+
+            Assert.assertNull(result.getFinalUniprotId());
+            Assert.assertEquals(true, result.getLastAction() instanceof IntactCrc64Report);
+            Assert.assertEquals(acToFind, ((IntactCrc64Report) result.getLastAction()).getIntactid());
+            Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
+
+        } catch (StrategyException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
 }
