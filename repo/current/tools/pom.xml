@@ -33,7 +33,7 @@
 
     <modules>
         <!--<module>intact-psi-validator</module>-->
-        <module>curation-tools</module>
+        <module>protein-mapping</module>
     </modules>
 
 </project>
