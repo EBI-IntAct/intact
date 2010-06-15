@@ -1,5 +1,7 @@
 package uk.ac.ebi.intact.bridges.wswublast.client;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.jdispatcher.soap.*;
 
 import javax.xml.namespace.QName;
@@ -17,33 +19,66 @@ import java.net.URL;
 
 public class WUBlast {
 
-    private JDispatcherService_Service service;
+    private JDispatcherService service;
+    private uk.ac.ebi.jdispatcher.soap.ObjectFactory objFactory;
+    public static final Log log = LogFactory.getLog( WUBlast.class );
+
+    private final static String wsdlFile = "http://www.ebi.ac.uk/Tools/services/soap/wublast?wsdl";
+    private final static String jDispatcherURL = "http://soap.jdispatcher.ebi.ac.uk";
+    private final static String jDispatcherName = "JDispatcherService";
+
+    private final static String jobName = "WUBlast";
 
     public WUBlast(){
-        this("http://www.ebi.ac.uk/Tools/services/soap/wublast?wsdl");
+        this(wsdlFile);
     }
 
     public WUBlast(String wsdlUrl){
-        try {
-            service = new JDispatcherService_Service(new URL(wsdlUrl), new QName("http://soap.jdispatcher.ebi.ac.uk", "JDispatcherService"));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-    }
+        this.objFactory = new uk.ac.ebi.jdispatcher.soap.ObjectFactory();
 
-    public JDispatcherService getJDispatcherPort() {
-        return this.service.getJDispatcherServiceHttpPort();
+        JDispatcherService_Service service_service;
+
+        if (wsdlUrl == null){
+            service_service = new JDispatcherService_Service();
+        }
+        else {
+            try{
+                service_service = new JDispatcherService_Service(new URL(wsdlUrl), new QName(jDispatcherURL, jDispatcherName));
+            } catch (MalformedURLException e) {
+                log.error(e.getMessage());
+                log.error("Warning: problem with specified endpoint URL. Default endpoint used.");
+                service_service = new JDispatcherService_Service();
+            }
+        }
+
+        service = service_service.getJDispatcherServiceHttpPort();
     }
 
     public String runWUBlast(String email, InputParameters params){
-        return getJDispatcherPort().run(email, "WU wswublast", params);
+        return this.service.run(email, jobName, params);
     }
 
     public String checkStatus(String jobId){
-        return getJDispatcherPort().getStatus(jobId);
+        return this.service.getStatus(jobId);
     }
 
-    public byte[] poll(String jobId, String type){
+    /** Get details of the available result types for a job.
+     *
+     * @param jobId Job identifier to check for results types.
+     * @return Array of objects describing result types.
+     * @throws WuBlastClientException
+     */
+    public WsResultType[] getResultTypes(String jobId) throws WuBlastClientException {
+
+        WsResultType[] retVal = null;
+        WsResultTypes resultTypes = this.service.getResultTypes(jobId);
+        if(resultTypes != null) {
+            retVal = resultTypes.getType().toArray(new WsResultType[0]);
+        }
+        return retVal;
+    }
+
+    public byte[] poll(String jobId, String type) throws WuBlastClientException {
 
         // Get result types
         WsResultType[] resultTypes = getResultTypes(jobId);
@@ -71,10 +106,10 @@ public class WUBlast {
     }
 
     public void getParametersValues(){
-        WsParameters parameters = getJDispatcherPort().getParameters();
+        WsParameters parameters = this.service.getParameters();
 
         for (String id : parameters.getId()){
-            WsParameterDetails details = getJDispatcherPort().getParameterDetails(id);
+            WsParameterDetails details = this.service.getParameterDetails(id);
             System.out.println("parameter name : " + details.getName());
 
             System.out.println("parameter type : " + details.getType());
