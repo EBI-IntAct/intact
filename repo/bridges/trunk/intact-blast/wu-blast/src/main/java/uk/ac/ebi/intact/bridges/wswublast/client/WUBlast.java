@@ -3,6 +3,7 @@ package uk.ac.ebi.intact.bridges.wswublast.client;
 import uk.ac.ebi.jdispatcher.soap.*;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.soap.SOAPFaultException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -14,15 +15,15 @@ import java.net.URL;
  * @since <pre>12-Apr-2010</pre>
  */
 
-public class WsWUBlast {
+public class WUBlast {
 
     private JDispatcherService_Service service;
 
-    public WsWUBlast(){
+    public WUBlast(){
         this("http://www.ebi.ac.uk/Tools/services/soap/wublast?wsdl");
     }
 
-    public WsWUBlast(String wsdlUrl){
+    public WUBlast(String wsdlUrl){
         try {
             service = new JDispatcherService_Service(new URL(wsdlUrl), new QName("http://soap.jdispatcher.ebi.ac.uk", "JDispatcherService"));
         } catch (MalformedURLException e) {
@@ -43,15 +44,30 @@ public class WsWUBlast {
     }
 
     public byte[] poll(String jobId, String type){
-        WsRawOutputParameters parameters = new WsRawOutputParameters();
-        WsResultTypes types = getJDispatcherPort().getResultTypes(jobId);
 
-        for (WsResultType t : types.getType()){
-            System.out.println("Result label" + t.getLabel());
-            System.out.println("Result Identifier" + t.getIdentifier());
-            System.out.println("Result Description" + t.getDescription());
+        // Get result types
+        WsResultType[] resultTypes = getResultTypes(jobId);
+        int retValN = 0;
+
+        for(int i = 0; i < resultTypes.length; i++) {
+            // Get the results
+            if(resultTypes[i].getIdentifier().equals(type)) {
+                byte[] resultbytes = null;
+                try {
+                    resultbytes = this.service.getResult(jobId, resultTypes[i].getIdentifier(), null);
+                } catch (SOAPFaultException e){
+                    resultbytes = null;
+                    log.warn("A SOAP exception has been thrown for this job and we couldn't get any results.", e);
+                }
+
+                if(resultbytes == null) {
+                    System.err.println("Null result for " + resultTypes[i].getIdentifier() + "!");
+                }
+
+                return resultbytes;
+            }
         }
-        return getJDispatcherPort().getResult(jobId, type, parameters);
+        return null;
     }
 
     public void getParametersValues(){

@@ -22,8 +22,6 @@ import uk.ac.ebi.intact.bridges.wswublast.model.Job;
 import uk.ac.ebi.jdispatcher.soap.*;
 import uk.ac.ebi.jdispatcher.soap.ObjectFactory;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -38,7 +36,7 @@ public class BlastClient {
     // true for XML formated output, false otherwise
     private boolean		fileFormatXml	= true;
     private String		email;
-    private WsWUBlast	blast;
+    private WUBlast blast;
     private uk.ac.ebi.jdispatcher.soap.ObjectFactory objFactory;
 
     /**
@@ -53,7 +51,7 @@ public class BlastClient {
             throw new IllegalArgumentException("Email must not be null!");
         }
         this.email = email;
-        this.blast = new WsWUBlast();
+        this.blast = new WUBlast();
         this.objFactory = new uk.ac.ebi.jdispatcher.soap.ObjectFactory();
     }
 
