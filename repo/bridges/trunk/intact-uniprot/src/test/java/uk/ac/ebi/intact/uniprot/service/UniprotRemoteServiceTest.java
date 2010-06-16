@@ -6,10 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.ebi.intact.uniprot.UniprotServiceException;
 import uk.ac.ebi.intact.uniprot.data.MockUniProtEntries;
-import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
-import uk.ac.ebi.intact.uniprot.model.UniprotProteinType;
-import uk.ac.ebi.intact.uniprot.model.UniprotSpliceVariant;
-import uk.ac.ebi.intact.uniprot.model.UniprotXref;
+import uk.ac.ebi.intact.uniprot.model.*;
 import uk.ac.ebi.intact.uniprot.service.referenceFilter.CrossReferenceFilter;
 import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
 
@@ -275,7 +272,7 @@ public class UniprotRemoteServiceTest {
         assertEquals( 0, protein.getSpliceVariants().size() );
 
         // feature chain
-        assertEquals( 0, protein.getFeatureChains().size() );
+        assertEquals( 1, protein.getFeatureChains().size() );
     }
 
     @Test
@@ -427,6 +424,42 @@ public class UniprotRemoteServiceTest {
         assertTrue( "Q24208-1 was missing from the splice variant list.", sv1 );
         assertTrue( "P45975-1 was missing from the splice variant list.", sv2 );
         assertTrue( "Q24208-2 was missing from the splice variant list.", sv3 );
+    }
+
+    @Test
+    public void retrieveProteinWithChain() throws UniprotServiceException {
+
+        UniprotService uniprot = getUniprotService();
+        Collection<UniprotProtein> proteins = uniprot.retrieve( "P18459" );
+
+        assertNotNull( proteins );
+        assertEquals( 1, proteins.size() );
+
+        UniprotProtein protein = proteins.iterator().next();
+        assertNotNull( protein.getFeatureChains() );
+        assertEquals( 1, protein.getFeatureChains().size() );
+        
+        final UniprotFeatureChain chain = protein.getFeatureChains().iterator().next();
+
+        Assert.assertEquals( "P18459-PRO_0000205566", chain.getId() );
+
+        Assert.assertEquals( 7227, chain.getOrganism().getTaxid() );
+
+        Assert.assertEquals( "Tyrosine 3-monooxygenase", chain.getDescription() );
+
+        Assert.assertEquals( 1, chain.getStart() );
+        Assert.assertEquals( 579, chain.getEnd() );
+
+        Assert.assertEquals( "MMAVAAAQKNREMFAIKKSYSIENGYPSRRRSLVDDARFETLVVKQTKQTVLEEARSKAN" +
+                             "DDSLEDCIVQAQEHIPSEQDVELQDEHANLENLPLEEYVPVEEDVEFESVEQEQSESQSQ" +
+                             "EPEGNQQPTKNDYGLTEDEILLANAASESSDAEAAMQSAALVVRLKEGISSLGRILKAIE" +
+                             "TFHGTVQHVESRQSRVEGVDHDVLIKLDMTRGNLLQLIRSLRQSGSFSSMNLMADNNLNV" +
+                             "KAPWFPKHASELDNCNHLMTKYEPDLDMNHPGFADKVYRQRRKEIAEIAFAYKYGDPIPF" +
+                             "IDYSDVEVKTWRSVFKTVQDLAPKHACAEYRAAFQKLQDEQIFVETRLPQLQEMSDFLRK" +
+                             "NTGFSLRPAAGLLTARDFLASLAFRIFQSTQYVRHVNSPYHTPEPDSIHELLGHMPLLAD" +
+                             "PSFAQFSQEIGLASLGASDEEIEKLSTVYWFTVEFGLCKEHGQIKAYGAGLLSSYGELLH" +
+                             "AISDKCEHRAFEPASTAVQPYQDQEYQPIYYVAESFEDAKDKFRRWVSTMSRPFEVRFNP" +
+                             "HTERVEVLDSVDKLETLVHQMNTEILHLTNAISKLRRPF", chain.getSequence() );
     }
 
     @Test

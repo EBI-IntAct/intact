@@ -33,6 +33,11 @@ public class UniprotFeatureChain {
     private Organism organism;
 
     /**
+     * Description of the chain.
+     */
+    private String description;
+
+    /**
      * Start amino acid of the subsequence.
      */
     private Integer start;
@@ -115,6 +120,14 @@ public class UniprotFeatureChain {
             throw new IllegalArgumentException( "Organism must not be null." );
         }
         this.organism = organism;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription( String description ) {
+        this.description = description;
     }
 
     /**
@@ -210,11 +223,12 @@ public class UniprotFeatureChain {
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append( "UniprotFeatureChain" );
-        sb.append( "{end=" ).append( end );
-        sb.append( ", id='" ).append( id ).append( '\'' );
+        sb.append( "{ id='" ).append( id ).append( '\'' );
         sb.append( ", sequence='" ).append( sequence ).append( '\'' );
         sb.append( ", organism=" ).append( organism );
+        sb.append( ", description=" ).append( description );
         sb.append( ", start=" ).append( start );
+        sb.append( ", end=" ).append( end );
         sb.append( '}' );
         return sb.toString();
     }
