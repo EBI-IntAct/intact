@@ -261,7 +261,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
         //I commented this line because we not making any use of uniprot features in IntAct. But in case we use them later,
         // I have let the processFeatureChain method.
         // chains
-//        processFeatureChain( uniProtEntry, uniprotProtein );
+        processFeatureChain( uniProtEntry, uniprotProtein );
 
         return uniprotProtein;
     }
@@ -311,9 +311,11 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
         for ( ChainFeature featureChain : features ) {
 
-            String id = featureChain.getFeatureId().getValue();
+            String id = uniProtEntry.getPrimaryUniProtAccession().getValue() + "-" + featureChain.getFeatureId().getValue();
             // todo : when uniprot does not know where is the start or the end of the protein the value will be -1
             // Getting a sequence from -1 to x throw an Exception take into account this exception.
+
+            String description = featureChain.getFeatureDescription().getValue();
 
             FeatureLocation location = featureChain.getFeatureLocation();
             int begin = location.getStart();
@@ -322,9 +324,8 @@ public class UniprotRemoteService extends AbstractUniprotService {
             // TODO find more about startFuzzyness and endFuzzyness
             String chainSequence = protein.getSequence().substring( begin - 1, end );
 
-            UniprotFeatureChain chain = new UniprotFeatureChain( id,
-                    protein.getOrganism(),
-                    chainSequence );
+            UniprotFeatureChain chain = new UniprotFeatureChain( id, protein.getOrganism(), chainSequence );
+            chain.setDescription( description );
             chain.setStart( begin );
             chain.setEnd( end );
 
