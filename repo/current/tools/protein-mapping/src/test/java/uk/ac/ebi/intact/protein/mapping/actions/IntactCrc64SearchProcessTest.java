@@ -38,8 +38,6 @@ public class IntactCrc64SearchProcessTest extends IntactBasicTestCase {
 
         this.intactContext = IntactContext.getCurrentInstance();
 
-        this.process.setIntactContext(this.intactContext);
-
         String sequence = "GTRASKHVFEKNLRPKALKLKNAEHCSIITKETARTVLTIQSYLQSISNPEWAAAIAHKIAQELPTGPDKIHALKFCLHLAEKWKKNVSSENDAHEKADVFIKKLSVQYQRSATENVLITHKLNTPELLKQIGKPANLIVSLYEHSSVEQRIRHPTGRDYPDIHTAAKQISEVNNLNMSKICTLLLEKWICPPAVPQADKNKDVFGDIHGDEDLRRVIYLLQPYPVDYSSRMLYAIATSATS";
 
         Protein prot = getMockBuilder().createProtein("P12345", "test-protein");

@@ -31,7 +31,7 @@ import java.util.Set;
  * @since <pre>05-May-2010</pre>
  */
 
-public class FeatureRangeCheckingProcess extends ActionNeedingIntactContext{
+public class FeatureRangeCheckingProcess extends IdentificationActionImpl {
 
 
     /**
@@ -40,18 +40,10 @@ public class FeatureRangeCheckingProcess extends ActionNeedingIntactContext{
     public static final Log log = LogFactory.getLog( FeatureRangeCheckingProcess.class);
 
     /**
-     * Create a FeatureRangeCheckingProcess with an Intact context which is null and should be set later using the setIntactContext method
+     * Create a FeatureRangeCheckingProcess
      */
     public FeatureRangeCheckingProcess(){
         super();
-    }
-
-    /**
-     * Create a FeatureRangeCheckingProcess with an IntactContext 'context'
-     * @param context : the Intact context
-     */
-    public FeatureRangeCheckingProcess(IntactContext context){
-        super(context);
     }
 
     /**
@@ -127,11 +119,7 @@ public class FeatureRangeCheckingProcess extends ActionNeedingIntactContext{
     public String runAction(IdentificationContext context) throws ActionProcessingException {
         // always clear the list of reports from previous actions
         this.listOfReports.clear();
-
-        // Can't run the FeatureRangeCheckingProcess if we can't have access to IntAct database
-        if (this.intactContext == null){
-            throw new ActionProcessingException("We can't check if a feature is affected by the sequence changes if an IntactContext instance is not provided.");
-        }
+        IntactContext intactContext = IntactContext.getCurrentInstance();
 
         // We need to have a specific context containing the previous Trembl accession which totally matched the Intact protein and the possible
         // proteins from Swissprot which can replace the Trembl match
@@ -154,7 +142,7 @@ public class FeatureRangeCheckingProcess extends ActionNeedingIntactContext{
                 return processContext.getTremblAccession();
             }
 
-            DaoFactory factory = this.intactContext.getDaoFactory();
+            DaoFactory factory = intactContext.getDaoFactory();
             // get the components involving the Intact entry
             List<Component> components = factory.getComponentDao().getByInteractorAc(processContext.getIntactAccession());
 

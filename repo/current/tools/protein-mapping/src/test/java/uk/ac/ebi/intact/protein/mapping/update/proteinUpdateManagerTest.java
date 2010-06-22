@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
-import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
 
@@ -23,9 +22,8 @@ public class proteinUpdateManagerTest  extends IntactBasicTestCase {
     @Test
     @Ignore
     public void test_Protein_Update_Process(){
-        IntactContext context = IntactContext.getCurrentInstance();
 
-        ProteinUpdateManager updateManager = new ProteinUpdateManager(context);
+        ProteinUpdateManager updateManager = new ProteinUpdateManager();
         try {
             updateManager.writeResultsOfProteinUpdate();
             updateManager.writeUpdateReportForProteinsWithUniprotCrossReferences();

@@ -2,7 +2,6 @@ package uk.ac.ebi.intact.protein.mapping.strategies;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.protein.mapping.actions.*;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionReport;
@@ -37,7 +36,7 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
     /**
      * the intact context of this object if we want to look into Intact.
      */
-    private IntactContext intactContext;
+    private boolean enableIntactSearch = false;
 
     /**
      * A boolean value to know if we want to run a Blast if PICR can't map the sequence to any uniprot entry
@@ -50,11 +49,10 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
     private List<ActionReport> listOfReports = new ArrayList<ActionReport>();
 
     /**
-     * Create a new StrategyWithSequence with an Intact context null.
+     * Create a new StrategyWithSequence
      */
     public StrategyWithSequence(){
         super();
-        this.intactContext = null;
     }
 
     /**
@@ -71,14 +69,6 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
      */
     public void setBasicBlastRequired(boolean basicBlastRequired) {
         isBasicBlastRequired = basicBlastRequired;
-    }
-
-    /**
-     * set the Intact context of this object
-     * @param context : the intact context
-     */
-    public void setIntactContext(IntactContext context){
-        this.intactContext = context;
     }
 
     /**
@@ -127,11 +117,10 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
 
                 // If PICR didn't return any Uniprot accession
                 if (!result.hasUniqueUniprotId() && lastAction.getPossibleAccessions().isEmpty()){
-                    // if the intact context in not null, we can run a CRC64 search on Intact
-                    if (this.intactContext != null){
+                    // we can run a CRC64 search on Intact if it is enabled
+                    if (isEnableIntactSearch()){
                         // get the intact process and set the intact context
                         IntactCrc64SearchProcess intactProcess = (IntactCrc64SearchProcess) this.listOfActions.get(1);
-                        intactProcess.setIntactContext(this.intactContext);
 
                         // run the search on Intact. We don't expect any uniprot accession as we are looking for an intact accession
                         intactProcess.runAction(context);
@@ -241,11 +230,10 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
 
         // If PICR didn't return any Uniprot accession
         if (uniprot == null && report.getPossibleAccessions().isEmpty()){
-            // if the intact context in not null, we can run a CRC64 search on Intact
-            if (this.intactContext != null){
+            // we can run a CRC64 search on Intact if it is enabled
+            if (isEnableIntactSearch()){
                 // get the intact process and set the intact context
                 IntactCrc64SearchProcess intactProcess = (IntactCrc64SearchProcess) this.listOfActions.get(1);
-                intactProcess.setIntactContext(this.intactContext);
 
                 // run the search on Intact. We don't expect any uniprot accession as we are looking for an intact accession                
                 intactProcess.runAction(context);
@@ -311,5 +299,13 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
 
     public List<ActionReport> getListOfActionReports() {
         return this.listOfReports;
+    }
+
+    public boolean isEnableIntactSearch() {
+        return enableIntactSearch;
+    }
+
+    public void setEnableIntactSearch(boolean enableIntactSearch) {
+        this.enableIntactSearch = enableIntactSearch;
     }
 }

@@ -24,7 +24,7 @@ import java.util.List;
  * @since <pre>08-Apr-2010</pre>
  */
 
-public class IntactCrc64SearchProcess extends ActionNeedingIntactContext {
+public class IntactCrc64SearchProcess extends IdentificationActionImpl {
     
     /**
      * Sets up a logger for this class.
@@ -32,18 +32,10 @@ public class IntactCrc64SearchProcess extends ActionNeedingIntactContext {
     public static final Log log = LogFactory.getLog( IntactCrc64SearchProcess.class);
 
     /**
-     * Create an IntactCrc64SearchProcess with an intact context null. The intact context should be set later with the method setIntactContext.
+     * Create an IntactCrc64SearchProcess
      */
     public IntactCrc64SearchProcess(){
         super();
-    }
-
-    /**
-     * Create an IntactCrc64SearchProcess with an intact context 'context'
-     * @param context
-     */
-    public IntactCrc64SearchProcess(IntactContext context){
-        super(context);
     }
 
     /**
@@ -58,10 +50,7 @@ public class IntactCrc64SearchProcess extends ActionNeedingIntactContext {
         // Always clear the previous action reports from the list
         this.listOfReports.clear();
 
-        // The intact context should not be null if we want to search in Intact
-        if (this.intactContext == null){
-            throw new ActionProcessingException("To be able to search if the Intact database contains a protein with a matching CRC64, we need a non null IntactContext instance. Please, set the IntactContext instance.");
-        }
+        IntactContext intactContext = IntactContext.getCurrentInstance();
 
         // Create an IntactCrc64Report
         IntactCrc64Report report = new IntactCrc64Report(ActionName.SEARCH_intact_crc64);
@@ -71,7 +60,7 @@ public class IntactCrc64SearchProcess extends ActionNeedingIntactContext {
         report.setQuerySequence(context.getSequence());
 
         // Get the Intact datacontext
-        final DataContext dataContext = this.intactContext.getDataContext();
+        final DataContext dataContext = intactContext.getDataContext();
         final DaoFactory daoFactory = dataContext.getDaoFactory();
 
         // get the CRC64 of the sequence

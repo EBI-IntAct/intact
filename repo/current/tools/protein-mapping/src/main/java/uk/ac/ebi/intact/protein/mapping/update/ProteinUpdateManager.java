@@ -8,6 +8,11 @@ import uk.ac.ebi.intact.core.IntactTransactionException;
 import uk.ac.ebi.intact.core.context.DataContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.dbupdate.prot.ProteinUpdateProcessor;
+import uk.ac.ebi.intact.dbupdate.prot.ProteinUpdateProcessorConfig;
+import uk.ac.ebi.intact.dbupdate.prot.report.FileReportHandler;
+import uk.ac.ebi.intact.dbupdate.prot.report.UpdateReportHandler;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.PICRReport;
@@ -16,11 +21,6 @@ import uk.ac.ebi.intact.protein.mapping.model.results.IdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.model.results.PICRCrossReferences;
 import uk.ac.ebi.intact.protein.mapping.strategies.StrategyForProteinUpdate;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.dbupdate.prot.ProteinUpdateProcessor;
-import uk.ac.ebi.intact.dbupdate.prot.ProteinUpdateProcessorConfig;
-import uk.ac.ebi.intact.dbupdate.prot.report.FileReportHandler;
-import uk.ac.ebi.intact.dbupdate.prot.report.UpdateReportHandler;
-import uk.ac.ebi.intact.model.*;
 
 import javax.persistence.Query;
 import java.io.File;
@@ -58,46 +58,18 @@ public class ProteinUpdateManager {
     private StrategyForProteinUpdate strategy;
 
     /**
-     * the intact context
-     */
-    private IntactContext intactContext;
-
-    /**
      * the context of the protein to update
      */
     private UpdateContext context;
 
     /**
-     * create a new ProteinUpdate manager. The intact context is null and
-     * should be set later. The strategy for update doesn't take into account the isoforms and keep the canonical sequence.
+     * create a new ProteinUpdate manager.The strategy for update doesn't take into account the isoforms and keep the canonical sequence.
      */
     public ProteinUpdateManager(){
         this.strategy = new StrategyForProteinUpdate();
         this.strategy.enableIsoforms(false);
         this.strategy.setBasicBlastProcessRequired(false);
         this.context = new UpdateContext();
-    }
-
-    /**
-     * Create a new ProteinUpdateMananger with a specific Intact context. The strategy for update doesn't take into account
-     * the isoforms and keep the canonical sequence.
-     * @param context : the intact context
-     */
-    public ProteinUpdateManager(IntactContext context){
-        this.strategy = new StrategyForProteinUpdate();
-        this.strategy.enableIsoforms(false);
-        this.strategy.setBasicBlastProcessRequired(true);
-        setIntactContext(context);
-        this.context = new UpdateContext();
-    }
-
-    /**
-     * set the intact context
-     * @param intactContext
-     */
-    public void setIntactContext(IntactContext intactContext) {
-        this.intactContext = intactContext;
-        this.strategy.setIntactContextForFeatureRangeChecking(intactContext);
     }
 
     protected Query getProteinsWithoutUniprotXrefs(DataContext dataContext){
@@ -147,23 +119,20 @@ public class ProteinUpdateManager {
      * Write the results of the protein update process
      * @return the list of UpdateContext created from the protein to update
      * @throws ProteinUpdateException
-     * @throws uk.ac.ebi.intact.curationtools.strategies.exceptions.StrategyException
+     * @throws StrategyException
      */
     public void writeResultsOfProteinUpdate() throws ProteinUpdateException, StrategyException {
         // disable the update
         this.strategy.setUpdateEnabled(false);
 
         try {
+            IntactContext intactContext = IntactContext.getCurrentInstance();
+
             File file = new File("updateReport_"+ Calendar.getInstance().getTime().getTime() +".txt");
             Writer writer = new FileWriter(file);
 
-            // can't query Intact without any intact context
-            if (this.intactContext == null){
-                throw new StrategyException("We can't update the proteins without any IntactContext instance. please set the intactContext of the ProteinUpdateManager.");
-            }
-
             // set the intact data context
-            final DataContext dataContext = this.intactContext.getDataContext();
+            final DataContext dataContext = intactContext.getDataContext();
             TransactionStatus transactionStatus = dataContext.beginTransaction();
 
             // get all the intact entries without any uniprot cross reference or with uniprot cross reference with a qualifier different from 'identity' and which can only be uniprot-removed-ac
@@ -277,14 +246,16 @@ public class ProteinUpdateManager {
      * @return the InteractorXref with the uniprot ac and qualifier identity
      */
     private InteractorXref createIdentityInteractorXrefForUniprotAc(String uniprotAc){
+        IntactContext intactContext = IntactContext.getCurrentInstance();
+
         if (uniprotAc == null){
             return null;
         }
 
-        final CvDatabase uniprot = this.intactContext.getDaoFactory().getCvObjectDao(CvDatabase.class).getByPsiMiRef( CvDatabase.UNIPROT_MI_REF );
-        final CvXrefQualifier identity = this.intactContext.getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByPsiMiRef(CvXrefQualifier.IDENTITY_MI_REF);
+        final CvDatabase uniprot = intactContext.getDaoFactory().getCvObjectDao(CvDatabase.class).getByPsiMiRef( CvDatabase.UNIPROT_MI_REF );
+        final CvXrefQualifier identity = intactContext.getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByPsiMiRef(CvXrefQualifier.IDENTITY_MI_REF);
 
-        InteractorXref xRef = new InteractorXref(this.intactContext.getInstitution(), uniprot, uniprotAc, identity);
+        InteractorXref xRef = new InteractorXref(intactContext.getInstitution(), uniprot, uniprotAc, identity);
 
         return xRef;
     }
@@ -345,11 +316,13 @@ public class ProteinUpdateManager {
      * @throws ProteinUpdateException
      */
     public void updateProteins() throws ProteinUpdateException {
+        IntactContext intactContext = IntactContext.getCurrentInstance();
+
         // enable the update
         this.strategy.setUpdateEnabled(true);
 
         // get the data context
-        final DataContext dataContext = this.intactContext.getDataContext();
+        final DataContext dataContext = intactContext.getDataContext();
         TransactionStatus transactionStatus = dataContext.beginTransaction();
         try {
 
@@ -400,7 +373,7 @@ public class ProteinUpdateManager {
                     addUniprotCrossReferenceTo(prot, result.getFinalUniprotId(), daoFactory);
                     //daoFactory.getProteinDao().update( prot );
                     accessionsToUpdate.add(accession);
-                    this.intactContext.getCorePersister().saveOrUpdate(prot);
+                    intactContext.getCorePersister().saveOrUpdate(prot);
                 }
             }
 
@@ -434,11 +407,13 @@ public class ProteinUpdateManager {
      * @throws ProteinUpdateException
      */
     public void writeUpdateReportForProteinsWithUniprotCrossReferences() throws ProteinUpdateException {
+        IntactContext intactContext = IntactContext.getCurrentInstance();
+
         // disable the update
         this.strategy.setUpdateEnabled(false);
 
         // create the data context
-        final DataContext dataContext = this.intactContext.getDataContext();
+        final DataContext dataContext = intactContext.getDataContext();
         TransactionStatus transactionStatus = dataContext.beginTransaction();
         try {
 

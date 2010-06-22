@@ -27,7 +27,7 @@ import java.util.Collection;
  * @since <pre>07-Apr-2010</pre>
  */
 
-public class IntactNameSearchProcess extends ActionNeedingIntactContext {
+public class IntactNameSearchProcess extends IdentificationActionImpl {
 
     /**
      * Sets up a logger for that class.
@@ -39,14 +39,6 @@ public class IntactNameSearchProcess extends ActionNeedingIntactContext {
      */
     public IntactNameSearchProcess(){
         super();
-    }
-
-    /**
-     * Create a IntactNameSearchProcess with an Intact context which is null and should be set later using the setIntactContext method
-     * @param context : the intact context
-     */
-    public IntactNameSearchProcess(IntactContext context){
-        super(context);
     }
 
     /**
@@ -102,8 +94,10 @@ public class IntactNameSearchProcess extends ActionNeedingIntactContext {
      * @return The list of Intact accessions which are matching the name of the protein as well as the organism
      */
     private Collection<String> processNameSearch(String name, String organism, IntactReport report){
+        IntactContext intactContext = IntactContext.getCurrentInstance();
+
         // create the data context
-        final DataContext dataContext = this.intactContext.getDataContext();
+        final DataContext dataContext = intactContext.getDataContext();
         final DaoFactory daoFactory = dataContext.getDaoFactory();
 
         // the list of interactors with this exact shortlabel
@@ -159,13 +153,9 @@ public class IntactNameSearchProcess extends ActionNeedingIntactContext {
      * @throws uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException
      */
     public String runAction(IdentificationContext context) throws ActionProcessingException {
+
         // Always clear the previous report of this object
         this.listOfReports.clear();
-
-        // We can't look into the Intact database without an Intact context
-        if (this.intactContext == null){
-            throw new ActionProcessingException("To be able to search if the Intact database contains a protein with a matching name, we need a non null IntactContext instance. Please, set the IntactContext instance.");
-        }
 
         String geneName = context.getGene_name();
         String protein_name = context.getProtein_name();

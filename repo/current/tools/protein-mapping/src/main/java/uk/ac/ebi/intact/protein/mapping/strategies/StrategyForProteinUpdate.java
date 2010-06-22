@@ -2,7 +2,6 @@ package uk.ac.ebi.intact.protein.mapping.strategies;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.protein.mapping.actions.FeatureRangeCheckingProcess;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionName;
@@ -154,15 +153,6 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
     }
 
     /**
-     * Set the intact context for featureRangeChecking process
-     * @param context : the intact context
-     */
-    public void setIntactContextForFeatureRangeChecking(IntactContext context){
-        FeatureRangeCheckingProcess process = (FeatureRangeCheckingProcess) this.listOfActions.get(2);
-        process.setIntactContext(context);
-    }
-
-    /**
      *
      * @param listOfReports : the list of SWissprotRemappingReports
      * @return the last SwissprotRemappingReport with a status COMPLETED, null otherwise
@@ -195,45 +185,37 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
         FeatureRangeCheckingProcess process = (FeatureRangeCheckingProcess) this.listOfActions.get(2);
         ActionReport lastReport = results.getLastAction();
 
-        // We have an intact context so we can process the feature range checking process
-        if (process.getIntactContext() != null){
-            // the intact accession of the protein to update is null, we can't check the feature ranges
-            if (context.getIntactAccession() == null){
-                lastReport.addWarning("We can't check the feature ranges of the protein as the Intact accession is null in the context.");
-                results.setFinalUniprotId(null);
-            }
-            else {
-                // Get the list of SwissprotRemapping actions from the result
-                List<BlastReport> listOfSwissprotRemappingProcess = getSwissprotRemappingReports(results.getListOfActions());
-                // extract the successful Swissprot remapping report
-                BlastReport sr = getTheSuccessfulSwissprotRemappingReport(listOfSwissprotRemappingProcess);
-
-                // If we processed a Swissprot remapping and could successfully replace the trembl entry with the swissprot entry, we need to check the
-                // possible conflicts with existing feature ranges
-                if (sr != null && results.getFinalUniprotId() != null){
-
-                    context.setSequence(sr.getQuerySequence());
-
-                    // Create a specific context from the previous one
-                    FeatureRangeCheckingContext featureCheckingContext = new FeatureRangeCheckingContext(context);
-
-                    // add the Trembl accession and the results of the swissprot remapping process in the new context
-                    featureCheckingContext.setResultsOfSwissprotRemapping(sr.getBlastMatchingProteins());
-
-                    // run the featureRangeChecking process
-                    String accession = process.runAction(featureCheckingContext);
-                    // add the report to the result
-                    results.getListOfActions().addAll(process.getListOfActionReports());
-                    // process the isoforms and set the uniprot accession of the result with the one returned by the feature
-                    // range checking process
-                    processIsoforms(accession, results);
-                }
-            }
-        }
-        // We don't have any intact context, we can't process the feature range checking process
-        else {
-            lastReport.addWarning("As the IntactContext is null, we can't check if there are some conflicts between the sequence of the Swissprot entry and the range of some features attached to this protein.");
+        // the intact accession of the protein to update is null, we can't check the feature ranges
+        if (context.getIntactAccession() == null){
+            lastReport.addWarning("We can't check the feature ranges of the protein as the Intact accession is null in the context.");
             results.setFinalUniprotId(null);
+        }
+        else {
+            // Get the list of SwissprotRemapping actions from the result
+            List<BlastReport> listOfSwissprotRemappingProcess = getSwissprotRemappingReports(results.getListOfActions());
+            // extract the successful Swissprot remapping report
+            BlastReport sr = getTheSuccessfulSwissprotRemappingReport(listOfSwissprotRemappingProcess);
+
+            // If we processed a Swissprot remapping and could successfully replace the trembl entry with the swissprot entry, we need to check the
+            // possible conflicts with existing feature ranges
+            if (sr != null && results.getFinalUniprotId() != null){
+
+                context.setSequence(sr.getQuerySequence());
+
+                // Create a specific context from the previous one
+                FeatureRangeCheckingContext featureCheckingContext = new FeatureRangeCheckingContext(context);
+
+                // add the Trembl accession and the results of the swissprot remapping process in the new context
+                featureCheckingContext.setResultsOfSwissprotRemapping(sr.getBlastMatchingProteins());
+
+                // run the featureRangeChecking process
+                String accession = process.runAction(featureCheckingContext);
+                // add the report to the result
+                results.getListOfActions().addAll(process.getListOfActionReports());
+                // process the isoforms and set the uniprot accession of the result with the one returned by the feature
+                // range checking process
+                processIsoforms(accession, results);
+            }
         }
     }
 
@@ -393,7 +375,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
 
                     report.addPossibleAccession(result.getFinalUniprotId());
                     Status updateStatus = new Status(StatusLabel.PENDING, "The protein " + updateContext.getIntactAccession() + " could successfully be mapped to " + result.getFinalUniprotId() + " but was not updated because uniprot cross references already exist and a curator should check first that the protein can be updated.");
-                    result.setFinalUniprotId(null);                    
+                    result.setFinalUniprotId(null);
                     report.setStatus(updateStatus);
                     result.addActionReport(report);
                 }

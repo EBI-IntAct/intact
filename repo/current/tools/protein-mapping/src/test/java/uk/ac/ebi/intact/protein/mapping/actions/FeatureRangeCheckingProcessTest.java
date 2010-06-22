@@ -50,8 +50,6 @@ public class FeatureRangeCheckingProcessTest extends IntactBasicTestCase{
 
         this.intactContext = IntactContext.getCurrentInstance();
 
-        this.process.setIntactContext(this.intactContext);
-
         String sequence = "MEWPCILLFLLSVTEGVHSQVQLLQSGPELVKPGASVKISCRASGYAFSKSWMNWVKRRP\n" +
                 "GKGLEWIGRIFPGDGDTHYSGKFQGKAKLTADKSSVTAFLQLTSLTSEDSAVYFCARDSD\n" +
                 "YGDYFDDWGQGATVTVSSAKTTPPSVYPLAPGCGDTTGSSVTLGCLVKGYFPESVTVTWN\n" +

@@ -11,8 +11,10 @@ import uk.ac.ebi.intact.protein.mapping.model.results.IdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 import uk.ac.ebi.intact.uniprot.model.UniprotXref;
+import uk.ac.ebi.intact.uniprot.service.CachedUniprotService;
 import uk.ac.ebi.intact.uniprot.service.IdentifierChecker;
 import uk.ac.ebi.intact.uniprot.service.UniprotRemoteService;
+import uk.ac.ebi.intact.uniprot.service.UniprotService;
 import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseType;
 
 import java.util.ArrayList;
@@ -38,7 +40,7 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
     /**
      * The uniprot service
      */
-    private static UniprotRemoteService uniprotService = new UniprotRemoteService();
+    private static UniprotService uniprotService = new CachedUniprotService(new UniprotRemoteService());
 
     /**
      * The list of actions used by the strategy to identify a protein
