@@ -25,7 +25,7 @@ import javax.persistence.PersistenceContext;
         "/META-INF/standalone/curation-jpa.spring.xml"})
 @TransactionConfiguration( transactionManager = "curationTransactionManager" )
 @Transactional
-public class UpdateBasicTestCase {
+public abstract class UpdateBasicTestCase {
 
     /**
      * the daoFactory instance

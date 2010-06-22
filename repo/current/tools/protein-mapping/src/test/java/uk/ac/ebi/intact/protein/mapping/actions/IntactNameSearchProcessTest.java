@@ -37,8 +37,6 @@ public class IntactNameSearchProcessTest  extends IntactBasicTestCase {
 
         this.intactContext = IntactContext.getCurrentInstance();
 
-        this.process.setIntactContext(this.intactContext);
-
         Protein prot = getMockBuilder().createProtein("P12345", "intf_ecoli");
         prot.setFullName("Putative prophage CP4-6 integrase");
         prot.setBioSource( createBiosource("ecoli-2", "Escherichia coli (K12)", "83333") );

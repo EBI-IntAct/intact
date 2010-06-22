@@ -9,7 +9,9 @@ import uk.ac.ebi.intact.protein.mapping.model.actionReport.status.Status;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.intact.uniprot.service.CachedUniprotService;
 import uk.ac.ebi.intact.uniprot.service.UniprotRemoteService;
+import uk.ac.ebi.intact.uniprot.service.UniprotService;
 import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.ReflectionCrossReferenceBuilder;
 import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.UniprotCrossReference;
 import uk.ac.ebi.kraken.interfaces.uniparc.UniParcEntry;
@@ -52,7 +54,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
     /**
      * The uniprot remote service
      */
-    private static UniprotRemoteService uniprotRemoteService = new UniprotRemoteService();
+    private static UniprotService uniprotService = new CachedUniprotService(new UniprotRemoteService());
 
     /**
      * The swissprot database name in uniparc
@@ -273,7 +275,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
     private boolean hasTheAppropriateOrganism(String uniprot, String taxId) throws ActionProcessingException {
 
         if (taxId != null){
-            Collection<UniprotProtein> proteins = uniprotRemoteService.retrieve(uniprot);
+            Collection<UniprotProtein> proteins = uniprotService.retrieve(uniprot);
 
             if (proteins.size() != 1){
                 throw new ActionProcessingException("The uniprot accession " + uniprot + " could match several uniprot entries.");

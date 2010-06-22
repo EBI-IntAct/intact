@@ -252,14 +252,14 @@ public class StrategyWithSequenceTest  extends IntactBasicTestCase {
     @Test
     public void test_PICR_Unsuccessful_Intact_Successful(){
 
-        this.strategy.setIntactContext(this.intactContext);
-
         String sequence = "GTRASKHVFEKNLRPKALKLKNAEHCSIITKETARTVLTIQSYLQSISNPEWAAAIAHKIAQELPTGPDKIHALKFCLHLAEKWKKNVSSENDAHEKADVFIKKLSVQYQRSATENVLITHKLNTPELLKQIGKPANLIVSLYEHSSVEQRIRHPTGRDYPDIHTAAKQISEVNNLNMSKICTLLLEKWICPPAVPQADKNKDVFGDIHGDEDLRRVIYLLQPYPVDYSSRMLYAIATSATS";
         BioSource bioSource = createBiosource("xenla", "Xenopus laevis", "8355");
 
         IdentificationContext context = new IdentificationContext();
         context.setSequence(sequence);
         context.setOrganism(bioSource);
+
+        this.strategy.setEnableIntactSearch(true);
 
         try {
             IdentificationResults result = this.strategy.identifyProtein(context);
@@ -283,13 +283,13 @@ public class StrategyWithSequenceTest  extends IntactBasicTestCase {
     @Test
     public void test_PICR_Unsuccessful_Intact_Successful_No_Organism(){
 
-        this.strategy.setIntactContext(this.intactContext);
-
         String sequence = "GTRASKHVFEKNLRPKALKLKNAEHCSIITKETARTVLTIQSYLQSISNPEWAAAIAHKIAQELPTGPDKIHALKFCLHLAEKWKKNVSSENDAHEKADVFIKKLSVQYQRSATENVLITHKLNTPELLKQIGKPANLIVSLYEHSSVEQRIRHPTGRDYPDIHTAAKQISEVNNLNMSKICTLLLEKWICPPAVPQADKNKDVFGDIHGDEDLRRVIYLLQPYPVDYSSRMLYAIATSATS";
 
         IdentificationContext context = new IdentificationContext();
         context.setSequence(sequence);
         context.setOrganism(null);
+
+        this.strategy.setEnableIntactSearch(true);
 
         try {
             IdentificationResults result = this.strategy.identifyProtein(context);

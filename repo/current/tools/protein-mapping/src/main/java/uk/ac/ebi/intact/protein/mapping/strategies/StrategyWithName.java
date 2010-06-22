@@ -2,7 +2,6 @@ package uk.ac.ebi.intact.protein.mapping.strategies;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.protein.mapping.actions.IntactNameSearchProcess;
 import uk.ac.ebi.intact.protein.mapping.actions.UniprotNameSearchProcess;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
@@ -21,29 +20,17 @@ import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
 public class StrategyWithName extends IdentificationStrategyImpl {
 
     /**
-     * The intact context. Can be null if we don't want to query Intact
-     */
-    private IntactContext intactContext;
-
-    /**
      * Sets up a logger for that class.
      */
     public static final Log log = LogFactory.getLog( StrategyWithName.class );
 
+    private boolean enableIntactSearch = false;
+
     /**
-     * Create a new Strategy with name with an IntAct context null.
+     * Create a new Strategy
      */
     public StrategyWithName(){
         super();
-        this.intactContext = null;
-    }
-
-    /**
-     * Create a new Strategy with name with this intact context
-     * @param context
-     */
-    public void setIntactContext(IntactContext context){
-        this.intactContext = context;
     }
 
     /**
@@ -75,11 +62,10 @@ public class StrategyWithName extends IdentificationStrategyImpl {
 
                 // If the search on uniprot is unsuccessful
                 if (uniprot == null && result.getLastAction().getPossibleAccessions().isEmpty()){
-                    // if the intact context is not null, we can do a search on Intact
-                    if (this.intactContext != null){
+                    // we can do a search on Intact if it is enabled
+                    if (isEnableIntactSearch()){
                         // set the intact context of the action
                         IntactNameSearchProcess intactProcess = (IntactNameSearchProcess) this.listOfActions.get(1);
-                        intactProcess.setIntactContext(this.intactContext);
 
                         // run the action. as this method is looking for an Intact accession, we don't have any uniprot accession to expect
                         intactProcess.runAction(context);
@@ -107,5 +93,13 @@ public class StrategyWithName extends IdentificationStrategyImpl {
         // the second action is a search on Intact
         IntactNameSearchProcess secondAction = new IntactNameSearchProcess();
         this.listOfActions.add(secondAction);
+    }
+
+    public boolean isEnableIntactSearch() {
+        return enableIntactSearch;
+    }
+
+    public void setEnableIntactSearch(boolean enableIntactSearch) {
+        this.enableIntactSearch = enableIntactSearch;
     }
 }
