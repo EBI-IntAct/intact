@@ -52,14 +52,16 @@ New datasets can be requested, if relevant to your work, by mailing intact-help@
             This dataset has been used in <a href="http://biocreative.sourceforge.net/biocreative_2_ppi.html" target="_blank">BioCreative II</a> (Critical Assessment of Information Extraction systems in Biology): Protein-Protein Interaction Task
             . The protein-protein interaction task focused on the prediction of protein interactions from full text articles,
             which are represented in the Biocreative dataset.
-            The Biocreative dataset provided by IntAct is a resource for text mining development and testing.
+            The Biocreative dataset provided by IntAct is a resource for text mining development and testing. The data file (source-text.txt) that provides a mapping between
+            IntAct interactions and the sentence(s) of the publication that allowed an IntAct curator to identify the interaction is available <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/various/data-mining/" target="_blank">here</a>.
+
         </p>
         <p>Publications based on this dataset: PMID:
             <a href="http://genomebiology.com/2008/9/S2/S5" target="_blank">18834496</a>,
             <a href="http://genomebiology.com/2008/9/S2/S1" target="_blank">18834487</a>,
             <a href="http://www.biomedcentral.com/1471-2105/10/S1/S55" target="_blank">19208158</a>
         </p>
-        <h:panelGrid columns="3" cellpadding="0" cellspacing="15">
+        <h:panelGrid columns="2" cellpadding="0" cellspacing="15">
             <h:outputLink
                     value="http://www.ebi.ac.uk/intact/pages/interactions/interactions.xhtml?query=dataset:biocreative">
                 <h:graphicImage alt="webappLogo" value="#{intactView['webapp.logo.url']}"
@@ -69,10 +71,6 @@ New datasets can be requested, if relevant to your work, by mailing intact-help@
                     value="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25/datasets/BioCreative.zip">
                 <h:graphicImage alt="PSI 2.5" value="/images/psi25.png"
                                 style="border:0px solid"/>
-            </h:outputLink>
-            <h:outputLink
-                    value="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/various/data-mining/">
-                <h:outputText value="Source text annotations"/>
             </h:outputLink>
         </h:panelGrid>
     </li>
@@ -269,10 +267,11 @@ When datasets are computationally added to a publication, the large scale papers
     <li><strong>Synapse</strong> - Interactions of proteins with an established role in the presynapse.
         <p>
             This dataset has been created for proteins-protein interactions involving at least one protein with an
-            established link to the synapse. Interactions made by orthologous proteins have been added manually by
-            IntAct curators.
+            established link to the synapse. The list of human, rat and mouse gene names used for computationnally maintaining
+            this dataset are available <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25/datasets/Synapse/misc/gene-names.csv" target="_blank">here</a>.
+            Interactions made by orthologous proteins have been added manually by IntAct curators.
         </p>
-        <h:panelGrid columns="3" cellpadding="0" cellspacing="15">
+        <h:panelGrid columns="2" cellpadding="0" cellspacing="15">
             <h:outputLink
                     value="http://www.ebi.ac.uk/intact/pages/interactions/interactions.xhtml?query=dataset:synapse">
                 <h:graphicImage alt="webappLogo" value="#{intactView['webapp.logo.url']}"
@@ -283,11 +282,12 @@ When datasets are computationally added to a publication, the large scale papers
                 <h:graphicImage alt="PSI 2.5" value="/images/psi25.png"
                                 style="border:0px solid"/>
             </h:outputLink>
-            <h:outputLink
-                    value="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25/datasets/Synapse/misc/gene-names.csv">
-                <h:outputText value="List of human, rat and mouse gene names"/>
-            </h:outputLink>
         </h:panelGrid>
     </li>
 </ul>
+
+<!--<h1>Species sets</h1>
+
+<p>A cross-reference 'target-species' is automatically added to experiments where interactions involves proteins with
+   a specific organism.</p>-->
 </ui:composition>
