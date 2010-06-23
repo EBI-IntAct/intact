@@ -69,7 +69,11 @@
             <groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>
             <artifactId>intact-solr</artifactId>
             <version>2.1.2-SNAPSHOT</version>
-            <!--<exclusions>-->
+            <exclusions>
+                <exclusion>
+                    <groupId>asm</groupId>
+                    <artifactId>asm</artifactId>
+                </exclusion>
                 <!--<exclusion>-->
                     <!--<groupId>org.apache.lucene</groupId>-->
                     <!--<artifactId>com.springsource.org.apache.lucene</artifactId>-->
@@ -82,7 +86,7 @@
                     <!--<groupId>org.apache.solr</groupId>-->
                     <!--<artifactId>solr-lucene-highlighter</artifactId>-->
                 <!--</exclusion>-->
-            <!--</exclusions>-->
+            </exclusions>
         </dependency>        
 
     </dependencies>
