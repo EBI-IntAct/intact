@@ -321,8 +321,22 @@ public class UniprotRemoteService extends AbstractUniprotService {
             int begin = location.getStart();
             int end = location.getEnd();
 
-            // TODO find more about startFuzzyness and endFuzzyness
-            String chainSequence = protein.getSequence().substring( begin - 1, end );
+            if( begin == 0  || end < begin ) {
+                throw new IllegalArgumentException( "Unexpected feature location boundaries of chain "+
+                                                    featureChain.getFeatureId() +" for parent " +
+                                                    uniProtEntry.getPrimaryUniProtAccession() +
+                                                    ": ["+begin+", "+ end +"]" );
+            }
+
+            final String sequence = protein.getSequence();
+            if( sequence.length() < end ) {
+                throw new IllegalArgumentException( "The AA sequence (length:"+ sequence.length() +") of parent " +
+                                                    uniProtEntry.getPrimaryUniProtAccession() + " doesn't match the" +
+                                                    " boundaried of deature chain "+ featureChain.getFeatureId() +
+                                                    ": ["+begin+", "+ end +"]" );
+            }
+
+            String chainSequence = sequence.substring( begin - 1, end );
 
             UniprotFeatureChain chain = new UniprotFeatureChain( id, protein.getOrganism(), chainSequence );
             chain.setDescription( description );
