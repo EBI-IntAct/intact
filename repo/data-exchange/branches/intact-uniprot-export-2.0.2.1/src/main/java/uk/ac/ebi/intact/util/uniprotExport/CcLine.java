@@ -5,7 +5,7 @@
 package uk.ac.ebi.intact.util.uniprotExport;
 
 /**
- * TODO document this ;o)
+ * Representation of a CC line.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -15,12 +15,14 @@ public class CcLine implements Comparable {
     private final String ccLine;
     private final String geneName;
     private final String uniprotID;
+    private int nbExp;
 
-    public CcLine( String ccLine, String geneName, String uniprotID ) {
+    public CcLine( String ccLine, String geneName, String uniprotID, int nbExp ) {
 
         this.ccLine = ccLine;
         this.geneName = geneName;
         this.uniprotID = uniprotID;
+        this.nbExp = nbExp;
     }
 
     public String getCcLine() {
@@ -33,6 +35,14 @@ public class CcLine implements Comparable {
 
     public String getUniprotID() {
         return uniprotID;
+    }
+
+    public int getNbExp() {
+        return nbExp;
+    }
+
+    public void setNbExp( int nbExp ) {
+        this.nbExp = nbExp;
     }
 
     /**

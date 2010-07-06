@@ -281,7 +281,7 @@ public class CCLineExport extends LineExport {
             cc4protein1 = new ArrayList<CcLine>();
             ccLines.put(uniprotIdMaster1, cc4protein1);
         }
-        cc4protein1.add(cc1);
+        addOrMergeCCLine( cc4protein1, cc1 );
 
         // produce the CC lines for the 2nd protein
         if (!uniprotID1.equals(uniprotID2)) {
@@ -293,7 +293,28 @@ public class CCLineExport extends LineExport {
                 cc4protein2 = new ArrayList<CcLine>();
                 ccLines.put(uniprotIdMaster2, cc4protein2);
             }
-            cc4protein2.add(cc2);
+            addOrMergeCCLine( cc4protein2, cc2 );
+        }
+    }
+
+    private void addOrMergeCCLine( List<CcLine> ccLines, CcLine newCcLine ) {
+
+        boolean foundDuplicate = false;
+        for ( CcLine ccLine : ccLines ) {
+            if( ccLine.getUniprotID().equals( newCcLine.getUniprotID() ) ) {
+                // found duplicate
+                foundDuplicate = true;
+                getOut().println("\t\t\t Found duplicated CCLine for "+ ccLine.getUniprotID() +", merging NbExp count" );
+
+                // merge CCLines, i.e. sum up experiment count
+                ccLine.setNbExp( ccLine.getNbExp() + newCcLine.getNbExp() );
+
+                break;
+            }
+        }
+
+        if( ! foundDuplicate ) {
+            ccLines.add( newCcLine );
         }
     }
 
@@ -323,10 +344,11 @@ public class CCLineExport extends LineExport {
      */
     private CcLine formatCCLinesOld(String uniprotID1, Protein protein1,
                                     String uniprotID2, Protein protein2,
-                                    Set<Experiment> eligibleExperiments
-    ) {
+                                    Set<Experiment> eligibleExperiments ) {
 
-        StringBuffer buffer = new StringBuffer(256); // average size is 160 char
+        // Use the uniprot AC to find outif there is redundancy and merge if need be.
+
+        StringBuilder buffer = new StringBuilder(256); // average size is 160 char
 
         buffer.append("CC       ");
 
@@ -355,7 +377,7 @@ public class CCLineExport extends LineExport {
 
         buffer.append(NEW_LINE);
 
-        return new CcLine(buffer.toString(), geneName, uniprotID2);
+        return new CcLine(buffer.toString(), geneName, uniprotID2, eligibleExperiments.size());
     }
 
     /**
@@ -425,7 +447,7 @@ public class CCLineExport extends LineExport {
         getOut().println("\t\t\t" + buffer.toString());
         buffer.append(NEW_LINE);
 
-        return new CcLine(buffer.toString(), geneName1, uniprotID2);
+        return new CcLine(buffer.toString(), geneName1, uniprotID2, eligibleExperiments.size());
     }
 
     public Set<String> getPumedIds(Set<Experiment> experiments, final boolean stopOnceOneFound ) {
