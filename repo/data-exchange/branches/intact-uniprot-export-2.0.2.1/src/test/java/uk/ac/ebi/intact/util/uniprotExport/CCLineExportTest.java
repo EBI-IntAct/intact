@@ -32,12 +32,12 @@ public class CCLineExportTest {
 
         // Note: ASCII( 'a' )=65, and ASCII( 'A' )=97
 
-        ccLines.add( new CcLine( "blablabla", "abCDef", "" ) );
-        ccLines.add( new CcLine( "blablabla", "abcdef", "" ) );
-        ccLines.add( new CcLine( "blablabla", "Self", "" ) );
-        ccLines.add( new CcLine( "blablabla", "fedcba", "" ) );
-        ccLines.add( new CcLine( "blablabla", "aBcdEf", "" ) );
-        ccLines.add( new CcLine( "blablabla", "aBCdef", "" ) );
+        ccLines.add( new CcLine( "blablabla", "abCDef", "", 0 ) );
+        ccLines.add( new CcLine( "blablabla", "abcdef", "", 0 ) );
+        ccLines.add( new CcLine( "blablabla", "Self", "", 0 ) );
+        ccLines.add( new CcLine( "blablabla", "fedcba", "", 0 ) );
+        ccLines.add( new CcLine( "blablabla", "aBcdEf", "", 0 ) );
+        ccLines.add( new CcLine( "blablabla", "aBCdef", "", 0 ) );
 
         Assert.assertEquals( 6, ccLines.size() );
 
@@ -75,11 +75,11 @@ public class CCLineExportTest {
 
         // Note: ASCII( 'a' )=65, and ASCII( 'A' )=97
 
-        ccLines.add( new CcLine( "blablabla", "abCDef", "" ) );
-        ccLines.add( new CcLine( "blablabla", "abcdef", "" ) );
-        ccLines.add( new CcLine( "blablabla", "fedcba", "" ) );
-        ccLines.add( new CcLine( "blablabla", "aBcdEf", "" ) );
-        ccLines.add( new CcLine( "blablabla", "aBCdef", "" ) );
+        ccLines.add( new CcLine( "blablabla", "abCDef", "", 0 ) );
+        ccLines.add( new CcLine( "blablabla", "abcdef", "", 0 ) );
+        ccLines.add( new CcLine( "blablabla", "fedcba", "", 0 ) );
+        ccLines.add( new CcLine( "blablabla", "aBcdEf", "", 0 ) );
+        ccLines.add( new CcLine( "blablabla", "aBCdef", "", 0 ) );
 
         Assert.assertEquals( 5, ccLines.size() );
 
@@ -127,13 +127,13 @@ public class CCLineExportTest {
 //        CC       P23091:V-MAF (xeno); NbExp=1; IntAct=EBI-445651, EBI-445752;
 
 
-        ccLines.add( new CcLine( "blablabla", "V-MAF", "P23091" ) );
-        ccLines.add( new CcLine( "blablabla", "MAFF", "Q90595" ) );
-        ccLines.add( new CcLine( "blablabla", "JUN", "P18870" ) );
-        ccLines.add( new CcLine( "blablabla", "-", "Q90888" ) );
-        ccLines.add( new CcLine( "blablabla", "MAFK", "Q90596" ) );
-        ccLines.add( new CcLine( "blablabla", "MAFG", "Q90889" ) );
-        ccLines.add( new CcLine( "blablabla", "-", "Q92171" ) );
+        ccLines.add( new CcLine( "blablabla", "V-MAF", "P23091",0 ) );
+        ccLines.add( new CcLine( "blablabla", "MAFF", "Q90595",0 ) );
+        ccLines.add( new CcLine( "blablabla", "JUN", "P18870",0 ) );
+        ccLines.add( new CcLine( "blablabla", "-", "Q90888",0 ) );
+        ccLines.add( new CcLine( "blablabla", "MAFK", "Q90596",0 ) );
+        ccLines.add( new CcLine( "blablabla", "MAFG", "Q90889",0 ) );
+        ccLines.add( new CcLine( "blablabla", "-", "Q92171",0 ) );
 
         Assert.assertEquals( 7, ccLines.size() );
 

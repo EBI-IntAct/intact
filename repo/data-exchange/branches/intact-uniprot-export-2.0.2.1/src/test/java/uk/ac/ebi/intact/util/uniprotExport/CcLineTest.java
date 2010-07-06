@@ -44,12 +44,12 @@ public class CcLineTest extends UniprotExportTestCase {
 
         // Note: ASCII( 'a' )=65, and ASCII( 'A' )=97
 
-        ccLines.add( new CcLine( "blablabla", "abCDef", "" ) );
-        ccLines.add( new CcLine( "blablabla", "abcdef", "" ) );
-        ccLines.add( new CcLine( "blablabla", "Self", "" ) );
-        ccLines.add( new CcLine( "blablabla", "fedcba", "" ) );
-        ccLines.add( new CcLine( "blablabla", "aBcdEf", "" ) );
-        ccLines.add( new CcLine( "blablabla", "aBCdef", "" ) );
+        ccLines.add( new CcLine( "blablabla", "abCDef", "",0 ) );
+        ccLines.add( new CcLine( "blablabla", "abcdef", "",0 ) );
+        ccLines.add( new CcLine( "blablabla", "Self", "",0 ) );
+        ccLines.add( new CcLine( "blablabla", "fedcba", "",0 ) );
+        ccLines.add( new CcLine( "blablabla", "aBcdEf", "",0 ) );
+        ccLines.add( new CcLine( "blablabla", "aBCdef", "",0 ) );
 
         Assert.assertEquals( 6, ccLines.size() );
 
@@ -79,11 +79,11 @@ public class CcLineTest extends UniprotExportTestCase {
 
         // Note: ASCII( 'a' )=65, and ASCII( 'A' )=97
 
-        ccLines.add( new CcLine( "blablabla", "abCDef", "" ) );
-        ccLines.add( new CcLine( "blablabla", "abcdef", "" ) );
-        ccLines.add( new CcLine( "blablabla", "fedcba", "" ) );
-        ccLines.add( new CcLine( "blablabla", "aBcdEf", "" ) );
-        ccLines.add( new CcLine( "blablabla", "aBCdef", "" ) );
+        ccLines.add( new CcLine( "blablabla", "abCDef", "",0 ) );
+        ccLines.add( new CcLine( "blablabla", "abcdef", "",0 ) );
+        ccLines.add( new CcLine( "blablabla", "fedcba", "",0 ) );
+        ccLines.add( new CcLine( "blablabla", "aBcdEf", "",0 ) );
+        ccLines.add( new CcLine( "blablabla", "aBCdef", "",0 ) );
 
         Assert.assertEquals( 5, ccLines.size() );
 
