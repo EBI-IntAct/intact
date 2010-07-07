@@ -12,7 +12,7 @@ package uk.ac.ebi.intact.util.uniprotExport;
  */
 public class CcLine implements Comparable {
 
-    private final String ccLine;
+    private String ccLine;
     private final String geneName;
     private final String uniprotID;
     private int nbExp;
@@ -27,6 +27,10 @@ public class CcLine implements Comparable {
 
     public String getCcLine() {
         return ccLine;
+    }
+
+    public void setCcLine( String line ) {
+        this.ccLine = line;
     }
 
     public String getGeneName() {

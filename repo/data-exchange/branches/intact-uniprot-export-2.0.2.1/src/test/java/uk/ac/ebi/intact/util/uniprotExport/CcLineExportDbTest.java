@@ -176,14 +176,26 @@ public class CcLineExportDbTest extends UniprotExportTestCase {
 
         final Protein p12345 = getMockBuilder().createProtein( "P12345", "P12345_HUMAN", human );
 
-        final Interaction interaction1 = getMockBuilder().createInteraction( q9swi1, p14713Chain );
+        // setup a CC exportable experiment
         final Experiment exp = getMockBuilder().createDeterministicExperiment();
         final CvTopic uniprotDrExport = getMockBuilder().createCvObject( CvTopic.class, null, CvTopic.UNIPROT_DR_EXPORT );
         final Annotation annotation = new Annotation( getMockBuilder().getInstitution(), uniprotDrExport, "yes" );
         exp.addAnnotation( annotation );
+
+        // interaction with the master of the chain
+        final Interaction interaction1 = getMockBuilder().createInteraction( q9swi1, p14713 );
+        interaction1.getExperiments().clear();
         interaction1.addExperiment( exp );
 
-        PersisterHelper.saveOrUpdate( p14712, q9swi1, p14713Chain, p12345, interaction1 );
+        // interaction with the chain
+        final Interaction interaction2 = getMockBuilder().createInteraction( q9swi1, p14713Chain );
+        interaction2.getExperiments().clear();
+        interaction2.addExperiment( exp );
+
+        //interaction1,
+        PersisterHelper.saveOrUpdate( p14712, q9swi1, p14713Chain, p12345, interaction2 );
+
+        Assert.assertEquals( 2, getDaoFactory().getInteractionDao().countAll() );
 
         StringWriter ccWriter = new StringWriter(2048);
         Writer goaWriter = new StringWriter(2048);
@@ -202,6 +214,11 @@ public class CcLineExportDbTest extends UniprotExportTestCase {
         System.out.println(ccWriter.toString());
         System.out.println( "-----------------" );
 
+        System.out.println( "GOA Lines exported:" );
+        System.out.println( "-----------------" );
+        System.out.println(goaWriter.toString());
+        System.out.println( "-----------------" );
+
         Assert.assertEquals(2, ccLineExport.getCcLineCount());
         final List<String> lines = Arrays.asList( ccWriter.getBuffer().toString().split( "\n" ) );
         Assert.assertFalse( ccWriter.getBuffer().toString(),
@@ -210,6 +227,6 @@ public class CcLineExportDbTest extends UniprotExportTestCase {
         Assert.assertTrue(  ccWriter.getBuffer().toString(),
                             lines.contains( "CC       P14713:P14713_HUMAN; NbExp=2; IntAct="+q9swi1.getAc()+", "+p14713.getAc()+";" ) );
 
-        Assert.assertEquals(2, ccLineExport.getGoaLineCount());
+        Assert.assertEquals(4, ccLineExport.getGoaLineCount());
     }
 }
