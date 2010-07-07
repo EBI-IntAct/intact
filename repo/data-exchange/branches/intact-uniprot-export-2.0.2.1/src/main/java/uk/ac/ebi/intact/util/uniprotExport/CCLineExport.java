@@ -307,7 +307,12 @@ public class CCLineExport extends LineExport {
                 getOut().println("\t\t\t Found duplicated CCLine for "+ ccLine.getUniprotID() +", merging NbExp count" );
 
                 // merge CCLines, i.e. sum up experiment count
-                ccLine.setNbExp( ccLine.getNbExp() + newCcLine.getNbExp() );
+                final int oldNbExp = ccLine.getNbExp();
+                final int newNbExp = oldNbExp + newCcLine.getNbExp();
+                ccLine.setNbExp( newNbExp );
+
+                // Update the text of the CC line
+                ccLine.setCcLine( ccLine.getCcLine().replaceAll( "NbExp="+oldNbExp, "NbExp="+newNbExp ));
 
                 break;
             }
