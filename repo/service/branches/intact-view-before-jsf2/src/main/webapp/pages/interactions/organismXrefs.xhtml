@@ -11,7 +11,6 @@
                 xmlns:iav="http://intact.ebi.ac.uk/view"
                 xmlns:trh="http://myfaces.apache.org/trinidad/html">
 
-    <tr:document>
 
         <tr:iterator var="xref" value="#{xrefs}" varStatus="rowStatus" rows="0">
 
@@ -45,6 +44,5 @@
 
         <tr:outputText value="; " rendered="#{rowStatus.index + 1 lt fn:length(xrefs)}"/>
 
-    </tr:document>
 
 </ui:composition>

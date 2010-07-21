@@ -31,34 +31,34 @@
                 </tr:panelLabelAndMessage>
 
                 <tr:panelLabelAndMessage label="Host organism:">
-                    <ui:decorate template="/pages/details/biosourcePopup.xhtml">
+                    <ui:include src="/pages/details/biosourcePopup.xhtml">
                         <ui:param name="biosource" value="#{experiment.bioSource}"/>
-                    </ui:decorate>
+                    </ui:include>
                 </tr:panelLabelAndMessage>
 
                 <tr:panelLabelAndMessage label="Interaction Detection Method:">
-                    <ui:decorate template="/pages/details/cvPopup.xhtml">
+                    <ui:include src="/pages/details/cvPopup.xhtml">
                         <ui:param name="cv" value="#{experiment.cvInteraction}"/>
-                    </ui:decorate>
+                    </ui:include>
                 </tr:panelLabelAndMessage>
 
                 <tr:panelLabelAndMessage label="Participant Identification Method:">
-                    <ui:decorate template="/pages/details/cvPopup.xhtml">
+                    <ui:include src="/pages/details/cvPopup.xhtml">
                         <ui:param name="cv" value="#{experiment.cvIdentification}"/>
-                    </ui:decorate>
+                    </ui:include>
                 </tr:panelLabelAndMessage>
 
                 <tr:panelLabelAndMessage label="Cross References:" rendered="#{not empty experiment.xrefs}">
-                    <ui:decorate template="/pages/details/xrefs.xhtml">
+                    <ui:include src="/pages/details/xrefs.xhtml">
                         <ui:param name="xrefs" value="#{experiment.xrefs}"/>
-                    </ui:decorate>
+                    </ui:include>
                 </tr:panelLabelAndMessage>
 
                 <c:set var="experimentAnnotations" value="#{detailsBean.experimentAnnotations}"/>
                 <tr:panelLabelAndMessage label="Annotations:" rendered="#{not empty experimentAnnotations}">
-                    <ui:decorate template="/pages/details/annotations.xhtml">
+                    <ui:include src="/pages/details/annotations.xhtml">
                         <ui:param name="annotations" value="#{experimentAnnotations}"/>
-                    </ui:decorate>
+                    </ui:include>
                 </tr:panelLabelAndMessage>
 
             </tr:panelFormLayout>
@@ -97,15 +97,15 @@
                             </tr:panelLabelAndMessage>
 
                             <tr:panelLabelAndMessage label="Cross References:" rendered="#{not empty publication.xrefs}">
-                                <ui:decorate template="/pages/details/xrefs.xhtml">
+                                <ui:include src="/pages/details/xrefs.xhtml">
                                     <ui:param name="xrefs" value="#{publication.xrefs}"/>
-                                </ui:decorate>
+                                </ui:include>
                             </tr:panelLabelAndMessage>
 
                             <tr:panelLabelAndMessage label="Annotations:" rendered="#{not empty publication.annotations}">
-                                <ui:decorate template="/pages/details/annotations.xhtml">
+                                <ui:include src="/pages/details/annotations.xhtml">
                                     <ui:param name="annotations" value="#{publication.annotations}"/>
-                                </ui:decorate>
+                                </ui:include>
                             </tr:panelLabelAndMessage>
 
                         </tr:panelFormLayout>
@@ -146,23 +146,23 @@
                             </tr:panelLabelAndMessage>
 
                             <tr:panelLabelAndMessage label="Type:">
-                                <ui:decorate template="/pages/details/cvPopup.xhtml">
+                                <ui:include src="/pages/details/cvPopup.xhtml">
                                     <ui:param name="cv" value="#{interaction.cvInteractionType}"/>
-                                </ui:decorate>
+                                </ui:include>
                             </tr:panelLabelAndMessage>
 
                             <tr:panelLabelAndMessage label="Cross References:" rendered="#{not empty interaction.xrefs}"
                                     >
-                                <ui:decorate template="/pages/details/xrefs.xhtml">
+                                <ui:include src="/pages/details/xrefs.xhtml">
                                     <ui:param name="xrefs" value="#{interaction.xrefs}"/>
-                                </ui:decorate>
+                                </ui:include>
                             </tr:panelLabelAndMessage>
 
                             <tr:panelLabelAndMessage label="Annotations:" rendered="#{not empty interaction.annotations}"
                                     >
-                                <ui:decorate template="/pages/details/annotations.xhtml">
+                                <ui:include src="/pages/details/annotations.xhtml">
                                     <ui:param name="annotations" value="#{interaction.annotations}"/>
-                                </ui:decorate>
+                                </ui:include>
                             </tr:panelLabelAndMessage>
 
                         </tr:panelFormLayout>
@@ -259,38 +259,38 @@
 
                 <tr:column headerText="Species">
                     <tr:group rendered="#{interactor.bioSource != null}">
-                        <ui:decorate template="/pages/details/biosourcePopup.xhtml">
+                        <ui:include src="/pages/details/biosourcePopup.xhtml">
                             <ui:param name="biosource" value="#{interactor.bioSource}"/>
-                        </ui:decorate>
+                        </ui:include>
                     </tr:group>
                     <tr:outputText value="-" rendered="#{interactor.bioSource == null}"/>
                 </tr:column>
 
                 <tr:column headerText="Expression system">
                     <tr:group rendered="#{participant.expressedIn != null}">
-                        <ui:decorate template="/pages/details/biosourcePopup.xhtml">
+                        <ui:include src="/pages/details/biosourcePopup.xhtml">
                             <ui:param name="biosource" value="#{participant.expressedIn}"/>
-                        </ui:decorate>
+                        </ui:include>
                     </tr:group>
                     <tr:outputText value="-" rendered="#{participant.expressedIn == null}"/>
                 </tr:column>
 
                 <tr:column headerText="Experimental role" sortable="true" sortProperty="cvExperimentalRole.shortLabel">
-                    <ui:decorate template="/pages/details/cvPopup.xhtml">
+                    <ui:include src="/pages/details/cvPopup.xhtml">
                         <ui:param name="cv" value="#{participant.cvExperimentalRole}"/>
-                    </ui:decorate>
+                    </ui:include>
                 </tr:column>
 
                 <tr:column headerText="Biological role" sortable="true" sortProperty="cvBiologicalRole.shortLabel">
-                    <ui:decorate template="/pages/details/cvPopup.xhtml">
+                    <ui:include src="/pages/details/cvPopup.xhtml">
                         <ui:param name="cv" value="#{participant.cvBiologicalRole}"/>
-                    </ui:decorate>
+                    </ui:include>
                 </tr:column>
 
                 <tr:column headerText="Interactor type" sortable="true" sortProperty="interactor.cvInteractorType.shortLabel">
-                    <ui:decorate template="/pages/details/cvPopup.xhtml">
+                    <ui:include src="/pages/details/cvPopup.xhtml">
                         <ui:param name="cv" value="#{interactor.cvInteractorType}"/>
-                    </ui:decorate>
+                    </ui:include>
                 </tr:column>
 
                 <tr:column headerText="More...">
