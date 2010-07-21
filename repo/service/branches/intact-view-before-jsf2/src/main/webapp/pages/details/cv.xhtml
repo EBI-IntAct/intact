@@ -1,4 +1,4 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+<tr:document xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:jsp="http://java.sun.com/JSP/Page"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:f="http://java.sun.com/jsf/core"
@@ -7,10 +7,13 @@
                 xmlns:c="http://java.sun.com/jstl/core"
                 xmlns:fn="http://java.sun.com/jsp/jstl/functions"
 
-                xmlns:iav="http://intact.ebi.ac.uk/view" xmlns:trh="http://myfaces.apache.org/trinidad/html">
+                xmlns:iav="http://intact.ebi.ac.uk/view" xmlns:trh="http://myfaces.apache.org/trinidad/html"
 
-    <tr:document title="#{cvBean.className}: #{cvBean.cvObject.shortLabel}">
-        <tr:form>
+                title="#{cvBean.className}: #{cvBean.cvObject.shortLabel}">
+
+    <tr:form>
+
+        <ui:fragment >
 
         <tr:panelHeader text="#{cvBean.className}">
 
@@ -60,8 +63,8 @@
 
         </tr:panelHeader>
 
-        </tr:form>
+        </ui:fragment>
+    </tr:form>
 
-    </tr:document>
+</tr:document>
 
-</ui:composition>

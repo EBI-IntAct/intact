@@ -333,14 +333,6 @@
            rendered="#{iamf:getSelectedFromMap(configureColumn.columnMap,'moleculeA.aliases')}">
     <h:panelGroup rendered="#{not searchBean.results.sameThanPrevious}">
 
-    <iam:collapsibleIterator id="csd_altIdA_#{status.index}"
-                             disclosed="#{searchBean.showAlternativeIds}"
-                             value="#{iamf:getExclusionFilteredCrossReferences(binaryInteraction.interactorA.alternativeIdentifiers,null,'rogid')}"
-                             maxShown="3">
-
-        <tr:outputText value="#{item.identifier}"/>
-
-    </iam:collapsibleIterator>
     </h:panelGroup>
 </tr:column>
 
@@ -348,14 +340,6 @@
            inlineStyle="#{not searchBean.results.sameThanPrevious? 'border-top: 1px solid #CDCDCD' : ''}"
            rendered="#{iamf:getSelectedFromMap(configureColumn.columnMap,'moleculeB.aliases')}">
     <h:panelGroup rendered="#{not searchBean.results.sameThanPrevious}">
-    <iam:collapsibleIterator id="csd_altIdB_#{status.index}"
-                             disclosed="#{searchBean.showAlternativeIds}"
-                             value="#{iamf:getExclusionFilteredCrossReferences(binaryInteraction.interactorB.alternativeIdentifiers,null,'rogid')}"
-                             maxShown="3">
-
-        <tr:outputText value="#{item.identifier}"/>
-
-    </iam:collapsibleIterator>
     </h:panelGroup>
 </tr:column>
 
@@ -368,9 +352,9 @@
             <tr:outputText value="  "/>
         </f:facet>
         <f:facet name="OtherType">
-            <ui:decorate template="/pages/interactions/organism.xhtml">
+            <ui:include src="/pages/interactions/organism.xhtml">
                 <ui:param name="organism" value="#{binaryInteraction.interactorA.organism}"/>
-            </ui:decorate>
+            </ui:include>
         </f:facet>
     </tr:switcher>
     </h:panelGroup>
@@ -386,9 +370,9 @@
             <tr:outputText value="&#160;"/>
         </f:facet>
         <f:facet name="OtherType">
-            <ui:decorate template="/pages/interactions/organism.xhtml">
+            <ui:include src="/pages/interactions/organism.xhtml">
                 <ui:param name="organism" value="#{binaryInteraction.interactorB.organism}"/>
-            </ui:decorate>
+            </ui:include>
         </f:facet>
     </tr:switcher>
     </h:panelGroup>
@@ -532,17 +516,6 @@
             <tr:outputText value="#{messages['moleculeA.properties']}"/>
         </tr:panelGroupLayout>
     </f:facet>
-    <iam:collapsibleIterator id="csd_propsA_#{status.index}"
-                             disclosed="#{searchBean.showProperties}"
-                             value="#{binaryInteraction.propertiesA}"
-                             maxShown="5">
-        <c:set var="xrefUrl" value="#{iav:xrefUrl(appConfigBean.linkContext, item)}"/>
-        <tr:goLink text="#{item.identifier}"
-                   shortDesc="#{item.text}"
-                   targetFrame="_blank"
-                   destination="#{xrefUrl}"
-                   disabled="#{xrefUrl == null or xrefUrl == '#'}"/>
-    </iam:collapsibleIterator>
 
 </tr:column>
 
@@ -550,17 +523,6 @@
            rendered="#{searchBean.expandedView or iamf:getSelectedFromMap(configureColumn.columnMap,'moleculeB.properties')}"
            inlineStyle="#{not searchBean.results.sameThanPrevious? 'border-top: 1px solid #CDCDCD' : ''}"
            styleClass="cellTextTarget">
-    <iam:collapsibleIterator id="csd_propsB_#{status.index}"
-                             disclosed="#{searchBean.showProperties}"
-                             value="#{binaryInteraction.propertiesB}"
-                             maxShown="5">
-        <c:set var="xrefUrl" value="#{iav:xrefUrl(appConfigBean.linkContext, item)}"/>
-        <tr:goLink text="#{item.identifier}"
-                   shortDesc="#{item.text}"
-                   targetFrame="_blank"
-                   destination="#{xrefUrl}"
-                   disabled="#{xrefUrl == null or xrefUrl == '#'}"/>
-    </iam:collapsibleIterator>
 </tr:column>
 
 <tr:column headerText="#{messages['moleculeA.interactortype']}"
@@ -586,9 +548,9 @@
            rendered="#{searchBean.expandedView or iamf:getSelectedFromMap(configureColumn.columnMap,'interaction.hostorganism')}"
            inlineStyle="#{not searchBean.results.sameThanPrevious? 'border-top: 1px solid #CDCDCD' : ''}"
            styleClass="cellTextInteraction">
-    <ui:decorate template="/pages/interactions/organismXrefs.xhtml">
+    <ui:include src="/pages/interactions/organismXrefs.xhtml">
         <ui:param name="xrefs" value="#{binaryInteraction.hostOrganism}"/>
-    </ui:decorate>
+    </ui:include>
 </tr:column>
 
 <tr:column headerText="#{messages['interaction.expansionmethod']}"
