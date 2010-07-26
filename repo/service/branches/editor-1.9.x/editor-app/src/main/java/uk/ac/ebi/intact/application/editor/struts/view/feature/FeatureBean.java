@@ -267,7 +267,9 @@ public class FeatureBean extends AbstractEditKeyBean {
             myShortLabel = feature.getShortLabel();
         }
         myFullName = feature.getFullName();
-        myType = feature.getCvFeatureType().getShortLabel();
+        if( feature.getCvFeatureType() != null ) {
+            myType = feature.getCvFeatureType().getShortLabel();
+        }
         myDetection = feature.getCvFeatureIdentification() == null ? ""
                 : feature.getCvFeatureIdentification().getShortLabel();
 
