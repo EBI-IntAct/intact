@@ -76,11 +76,11 @@ public class UniprotRemoteServiceTest {
 
     @Test
     public void retrieveByUniprotId() throws Exception {
-        Collection<UniprotProtein> prots = getUniprotService().retrieve( "CDC2_HUMAN" );
+        Collection<UniprotProtein> prots = getUniprotService().retrieve( "CDK1_HUMAN" );
         final UniprotProtein uniprotProtein = prots.iterator().next();
         assertEquals( "P06493", uniprotProtein.getPrimaryAc() );
-        assertEquals( "Cell division control protein 2 homolog", uniprotProtein.getDescription());
-        assertEquals(2, uniprotProtein.getSynomyms().size());
+        assertEquals( "Cell division protein kinase 1", uniprotProtein.getDescription());
+        assertEquals(4, uniprotProtein.getSynomyms().size());
     }
 
     @Test
@@ -266,7 +266,7 @@ public class UniprotRemoteServiceTest {
         assertEquals( 7, protein.getKeywords().size() );
 
         // cross references
-        assertEquals( 45, protein.getCrossReferences().size() );
+        assertEquals( 43, protein.getCrossReferences().size() );
 
         // splice variants
         assertEquals( 0, protein.getSpliceVariants().size() );
