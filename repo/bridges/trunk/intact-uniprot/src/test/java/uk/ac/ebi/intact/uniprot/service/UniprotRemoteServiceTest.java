@@ -441,14 +441,14 @@ public class UniprotRemoteServiceTest {
         
         final UniprotFeatureChain chain = protein.getFeatureChains().iterator().next();
 
-        Assert.assertEquals( "P18459-PRO_0000205566", chain.getId() );
+        Assert.assertEquals( "P18459-PRO_0000205566", chain.getPrimaryAc() );
 
         Assert.assertEquals( 7227, chain.getOrganism().getTaxid() );
 
         Assert.assertEquals( "Tyrosine 3-monooxygenase", chain.getDescription() );
 
-        Assert.assertEquals( 1, chain.getStart() );
-        Assert.assertEquals( 579, chain.getEnd() );
+        Assert.assertEquals( 1, (int) chain.getStart() );
+        Assert.assertEquals( 579, (int) chain.getEnd() );
 
         Assert.assertEquals( "MMAVAAAQKNREMFAIKKSYSIENGYPSRRRSLVDDARFETLVVKQTKQTVLEEARSKAN" +
                              "DDSLEDCIVQAQEHIPSEQDVELQDEHANLENLPLEEYVPVEEDVEFESVEQEQSESQSQ" +
