@@ -5,6 +5,13 @@
  */
 package uk.ac.ebi.intact.uniprot.model;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Feature chain of a UniProt protein.
  *
@@ -12,25 +19,12 @@ package uk.ac.ebi.intact.uniprot.model;
  * @version $Id$
  * @since <pre>15-Sep-2006</pre>
  */
-public class UniprotFeatureChain {
+public class UniprotFeatureChain extends UniprotProteinTranscriptImpl{
+
+    public static final Log log = LogFactory.getLog( UniprotFeatureChain.class );
 
     /////////////////////////
     // instance attribute
-
-    /**
-     * Identifier of the feature chain.
-     */
-    private String id;
-
-    /**
-     * Sequence of the feature chain.
-     */
-    private String sequence;
-
-    /**
-     * Organism of the feature chain.
-     */
-    private Organism organism;
 
     /**
      * Description of the chain.
@@ -38,88 +32,59 @@ public class UniprotFeatureChain {
     private String description;
 
     /**
-     * Start amino acid of the subsequence.
+     * The parent XRef qualifier is chain parent
      */
-    private Integer start;
+    private final String parentXRefQualifier = "MI:0951";
 
-    private Integer end;
+    /**
+     * A feature chain can have a null sequence when the swissprot curators don't know exactly the ranges of the chain and put '?' in uniprot.
+     */
+    private final boolean isNullSequenceAllowed = false;
 
     ///////////////////////
     // Constructor
 
     public UniprotFeatureChain( String id, Organism organism, String sequence ) {
-        setId( id );
-        setSequence( sequence );
-        setOrganism( organism );
+        super(id, organism, sequence);
     }
 
     ///////////////////////////
     // Getters and Setters
 
     /**
-     * Getter for property 'id'.
      *
-     * @return Value for property 'id'.
+     * @return always an empty list because the feature chain doesn't have any secondary ac.
      */
-    public String getId() {
-        return id;
+    public List<String> getSecondaryAcs() {
+        return Collections.emptyList();
+    }
+
+    public void setSecondaryAcs(List<String> secondaryAcs) {
+        log.warn("A feature chain doesn't have any secondary acs, it is not possible to add a secondary ac to a feature chain. ");
     }
 
     /**
-     * Setter for property 'id'.
      *
-     * @param id Value to set for property 'id'.
+     * @return always an empty list because the feature chain doesn't have any synonyms.
      */
-    public void setId( String id ) {
-        if ( id == null ) {
-            throw new IllegalArgumentException( "ID must not be null." );
-        }
-        if( id.trim().equals( "" ) ) {
-            throw new IllegalArgumentException( "ID must not be empty." );
-        }
-        this.id = id;
+    public Collection<String> getSynomyms() {
+        return Collections.emptyList();
+    }
+
+    public void setSynomyms(Collection<String> synomyms) {
+        log.warn("A feature chain doesn't have any synonyms, it is not possible to add a synonym to a feature chain. ");
     }
 
     /**
-     * Getter for property 'sequence'.
      *
-     * @return Value for property 'sequence'.
+     * @return always null because the feature chain doesn't have any notes.
      */
-    public String getSequence() {
-        return sequence;
+    public String getNote() {
+        return null;
     }
 
-    /**
-     * Setter for property 'sequence'.
-     *
-     * @param sequence Value to set for property 'sequence'.
-     */
-    public void setSequence( String sequence ) {
-        if ( sequence == null ) {
-            throw new IllegalArgumentException( "Sequence must not be null." );
-        }
-        this.sequence = sequence;
-    }
-
-    /**
-     * Getter for property 'organism'.
-     *
-     * @return Value for property 'organism'.
-     */
-    public Organism getOrganism() {
-        return organism;
-    }
-
-    /**
-     * Setter for property 'organism'.
-     *
-     * @param organism Value to set for property 'organism'.
-     */
-    public void setOrganism( Organism organism ) {
-        if ( organism == null ) {
-            throw new IllegalArgumentException( "Organism must not be null." );
-        }
-        this.organism = organism;
+    public void setNote(String note) {
+        log.warn("A feature chain doesn't have any notes, it is not possible to add a note to a feature chain. ");
     }
 
     public String getDescription() {
@@ -131,51 +96,19 @@ public class UniprotFeatureChain {
     }
 
     /**
-     * Getter for property 'start'.
      *
-     * @return Value for property 'start'.
+     * @return always true because a feature chain can have an unknown range
      */
-    public int getStart() {
-        return start;
+    public boolean isNullSequenceAllowed() {
+        return isNullSequenceAllowed;
     }
 
     /**
-     * Setter for property 'start'.
      *
-     * @param start Value to set for property 'start'.
+     * @return  the MI identifier of 'chain-parent'
      */
-    public void setStart( int start ) {
-        if ( end != null && start > end ) {
-            throw new IllegalArgumentException( "Start (" + start + ") must be lower than end (" + end + ") !" );
-        }
-        if( start < 1 ) {
-            throw new IllegalArgumentException( "Start must be 1 or greater." );
-        }
-        this.start = start;
-    }
-
-    /**
-     * Getter for property 'end'.
-     *
-     * @return Value for property 'end'.
-     */
-    public int getEnd() {
-        return end;
-    }
-
-    /**
-     * Setter for property 'end'.
-     *
-     * @param end Value to set for property 'end'.
-     */
-    public void setEnd( int end ) {
-        if ( start != null && start > end ) {
-            throw new IllegalArgumentException( "End (" + end + ") must be greater than start (" + start + ") !" );
-        }
-        if( end < 1 ) {
-            throw new IllegalArgumentException( "End must be 1 or greater." );
-        }
-        this.end = end;
+    public String getParentXRefQualifier() {
+        return this.parentXRefQualifier;
     }
 
     ///////////////////////////
@@ -185,45 +118,10 @@ public class UniprotFeatureChain {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals( Object o ) {
-        if ( this == o ) {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() ) {
-            return false;
-        }
-
-        UniprotFeatureChain that = (UniprotFeatureChain) o;
-
-        if ( !id.equals( that.id ) ) {
-            return false;
-        }
-        if ( !organism.equals( that.organism ) ) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        int result;
-        result = id.hashCode();
-        result = 31 * result + organism.hashCode();
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append( "UniprotFeatureChain" );
-        sb.append( "{ id='" ).append( id ).append( '\'' );
+        sb.append( "{ id='" ).append( primaryAc ).append( '\'' );
         sb.append( ", sequence='" ).append( sequence ).append( '\'' );
         sb.append( ", organism=" ).append( organism );
         sb.append( ", description=" ).append( description );
