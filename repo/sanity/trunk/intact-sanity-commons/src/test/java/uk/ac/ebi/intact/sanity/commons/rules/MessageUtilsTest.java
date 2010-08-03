@@ -120,8 +120,8 @@ public class MessageUtilsTest extends IntactBasicTestCase {
         SanityReport sanityReport = MessageUtils.toSanityReport(messages);
 
         Assert.assertEquals(2, sanityReport.getSanityResults().size());
-        Assert.assertEquals(3, sanityReport.getSanityResults().get(0).getInsaneObjects().size());
-        Assert.assertEquals(5, sanityReport.getSanityResults().get(1).getInsaneObjects().size());
+        Assert.assertEquals(5, sanityReport.getSanityResults().get(0).getInsaneObjects().size());
+        Assert.assertEquals(3, sanityReport.getSanityResults().get(1).getInsaneObjects().size());
     }
 
 

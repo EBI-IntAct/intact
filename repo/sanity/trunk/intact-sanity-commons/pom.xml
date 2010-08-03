@@ -17,7 +17,7 @@
         <plugins>
             <plugin>
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
-	            <artifactId>maven-jaxb2-plugin</artifactId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
                 <configuration>
                     <schemaDirectory>${project.basedir}/src/main/resources/META-INF</schemaDirectory>
                     <bindingDirectory>${project.basedir}/src/main/resources/META-INF</bindingDirectory>
@@ -56,15 +56,4 @@
         </dependency>
     </dependencies>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>java-net</id>
-            <name>java.net repository</name>
-            <url>https://maven-repository.dev.java.net/nonav/repository/</url>
-            <layout>legacy</layout>
-        </pluginRepository>
-    </pluginRepositories>
 </project>
