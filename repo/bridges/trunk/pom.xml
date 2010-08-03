@@ -28,7 +28,7 @@
     </scm>
 
     <modules>
-       <module>intact-imexcentral</module> 
+<!--       <module>intact-imexcentral</module> -->
        <module>intact-picr</module>
        <module>intact-citexplore</module>
        <module>intact-taxonomy</module>
