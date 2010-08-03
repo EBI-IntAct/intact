@@ -23,6 +23,7 @@ public class DDBJMock {
     public static CvDatabase getMock(){
         CvDatabase ddbj = CvObjectMock.getMock(CvDatabase.class,CvDatabase.DDBG, CvDatabase.DDBG);
         ddbj = (CvDatabase) IntactObjectSetter.setBasicObject(ddbj);
+        ddbj.setIdentifier(CvDatabase.DDBG_MI_REF);
         CvObjectXref xref = XrefMock.getMock(CvObjectXref.class,PsiMiMock.getMock(), IdentityMock.getMock(),CvDatabase.DDBG_MI_REF);
         ddbj.addXref(xref);
         return ddbj;

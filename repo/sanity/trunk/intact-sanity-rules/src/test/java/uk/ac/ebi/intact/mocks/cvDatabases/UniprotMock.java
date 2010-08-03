@@ -32,6 +32,7 @@ public class UniprotMock {
     public static CvDatabase getMock(){
         CvDatabase uniprot = CvObjectMock.getMock(CvDatabase.class,CvDatabase.UNIPROT, "newt");
         uniprot = (CvDatabase) IntactObjectSetter.setBasicObject(uniprot);
+        uniprot.setIdentifier(CvDatabase.UNIPROT_MI_REF);
         CvObjectXref xref = XrefMock.getMock(CvObjectXref.class,PsiMiMock.getMock(), IdentityMock.getMock(),CvDatabase.UNIPROT_MI_REF);
         uniprot.addXref(xref);
         return uniprot;

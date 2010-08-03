@@ -38,9 +38,11 @@ public class InteractorClassAndTypeTest {
         final Protein protein = mockBuilder.createProteinRandom();
         // remove MI identity !!
         protein.getCvInteractorType().getXrefs().clear();
+        protein.getCvInteractorType().setIdentifier(null);
 
         Rule rule = new InteractorClassAndType();
         final Collection<InteractorMessage> messages = rule.check( protein );
+
         Assert.assertNotNull( messages );
         Assert.assertEquals( 1, messages.size() );
         Assert.assertEquals( MessageDefinition.INTERACTOR_WITH_INVALID_TYPE,
