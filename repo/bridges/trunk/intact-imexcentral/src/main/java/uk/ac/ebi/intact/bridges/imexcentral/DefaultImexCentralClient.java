@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * IMEx Central Client.
+ * Default IMEx Central Client.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -164,9 +164,9 @@ public class DefaultImexCentralClient implements ImexCentralClient {
      * @return an updated publication, null if not found.
      * @throws ImexCentralException
      */
-    public Publication updatePublicationStatus( String identifier, PublicationStatus status ) throws ImexCentralException {
+    public Publication updatePublicationStatus( String identifier, PublicationStatus status, String message ) throws ImexCentralException {
         try {
-            return port.updatePublicationStatus( buildIdentifier( identifier ), status.toString() );
+            return port.updatePublicationStatus( buildIdentifier( identifier ), status.toString(), message );
         } catch ( IcentralFault f ) {
 
             switch( f.getFaultInfo().getFaultCode() ) {
