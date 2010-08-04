@@ -5,11 +5,11 @@ import edu.ucla.mbi.imex.central.ws.Publication;
 import java.util.List;
 
 /**
- * TODO document this !
+ * IMEx Central Client.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
- * @since TODO add POM version
+ * @since 2.2.1
  */
 public interface ImexCentralClient {
     List<Publication> getPublicationById( List<String> identifiers ) throws ImexCentralException;
@@ -20,7 +20,7 @@ public interface ImexCentralClient {
 
     List<Publication> getPublicationByStatus( PublicationStatus... statuses ) throws ImexCentralException;
 
-    Publication updatePublicationStatus( String identifier, PublicationStatus status ) throws ImexCentralException;
+    Publication updatePublicationStatus( String identifier, PublicationStatus status, String message ) throws ImexCentralException;
 
     void createPublication( Publication publication ) throws ImexCentralException;
 
