@@ -57,7 +57,7 @@ public class DefaultImexCentralClient implements ImexCentralClient {
     protected static Identifier buildIdentifier( String identifier ) {
         final Identifier id = new ObjectFactory().createIdentifier();
         id.setAc( identifier );
-        id.setNs( "pmid" );
+        id.setNs( "pmid" );     
         return id;
     }
 
@@ -171,12 +171,53 @@ public class DefaultImexCentralClient implements ImexCentralClient {
 
             switch( f.getFaultInfo().getFaultCode() ) {
                 case 6:
-                    // simply no data found, return null
-                    return null;
+                    //  no data found
+                    throw new ImexCentralException( "Could not find publication '"+ identifier +
+                                                    "' on which we were attempting to upate the status to '"+
+                                                    status +"'", f );
             }
 
-            throw new ImexCentralException( "Error while getting a publication status by identifier/status: " +
-                                            identifier + "/" + status.toString(), f );
+            throw new ImexCentralException( "Error while attempting to update a publication status: " +
+                                            identifier + "/" + status, f );
+        }
+    }
+
+    public void updatePublicationAdminGroup( String identifier, Operation operation, String group ) throws ImexCentralException {
+        try {
+            port.updatePublicationAdminGroup( buildIdentifier(identifier ), operation.toString(), group );
+        } catch ( IcentralFault f ) {
+
+            switch( f.getFaultInfo().getFaultCode() ) {
+                case 6:
+                    //  no data found
+                    throw new ImexCentralException( "Could not find publication '"+ identifier +
+                                                    "' on which we were attempting to upate the admin group to '"+
+                                                    group +"'", f );
+            }
+
+            throw new ImexCentralException( "Error while attempting to update a publication admin group: " +
+                                            identifier + "/" + group, f );
+        }
+    }
+
+    public void updatePublicationAdminUser( String identifier, Operation operation, String user ) throws ImexCentralException {
+        try {
+            port.updatePublicationAdminGroup( buildIdentifier(identifier ), operation.toString(), user );
+        } catch ( IcentralFault f ) {
+
+            switch( f.getFaultInfo().getFaultCode() ) {
+                case 6:
+                    //  no data found
+                    throw new ImexCentralException( "Could not find publication '"+ identifier +
+                                                    "' on which we were attempting to upate the admin user to '"+
+                                                    user +"'", f );
+            }
+
+            final String message = f.getFaultInfo().getMessage();
+            final int code = f.getFaultInfo().getFaultCode();
+
+            throw new ImexCentralException( "["+ code+" - "+ message +"] Error while attempting to update a publication admin user: " +
+                                            identifier + "/" + user, f );
         }
     }
 
