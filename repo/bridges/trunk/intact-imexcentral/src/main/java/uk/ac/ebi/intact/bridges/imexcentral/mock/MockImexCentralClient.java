@@ -4,6 +4,7 @@ import edu.ucla.mbi.imex.central.ws.Identifier;
 import edu.ucla.mbi.imex.central.ws.Publication;
 import uk.ac.ebi.intact.bridges.imexcentral.ImexCentralClient;
 import uk.ac.ebi.intact.bridges.imexcentral.ImexCentralException;
+import uk.ac.ebi.intact.bridges.imexcentral.Operation;
 import uk.ac.ebi.intact.bridges.imexcentral.PublicationStatus;
 
 import java.util.ArrayList;
@@ -117,6 +118,14 @@ public class MockImexCentralClient implements ImexCentralClient {
             p.setStatus( status.toString() );
         }
         return p;
+    }
+
+    public void updatePublicationAdminGroup( String identifier, Operation operation, String group ) throws ImexCentralException {
+        throw new UnsupportedOperationException( );
+    }
+
+    public void updatePublicationAdminUser( String identifier, Operation operation, String user ) throws ImexCentralException {
+        throw new UnsupportedOperationException( );
     }
 
     public void createPublication( Publication publication ) throws ImexCentralException {

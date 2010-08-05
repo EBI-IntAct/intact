@@ -22,9 +22,15 @@ public interface ImexCentralClient {
 
     Publication updatePublicationStatus( String identifier, PublicationStatus status, String message ) throws ImexCentralException;
 
+    public void updatePublicationAdminGroup( String identifier, Operation operation, String group ) throws ImexCentralException;
+
+    public void updatePublicationAdminUser( String identifier, Operation operation, String user ) throws ImexCentralException;
+
     void createPublication( Publication publication ) throws ImexCentralException;
 
     Publication createPublicationById( String identifier ) throws ImexCentralException;
 
     Publication getPublicationImexAccession( String identifier, boolean aBoolean ) throws ImexCentralException;
+
+    
 }
