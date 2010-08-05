@@ -46,6 +46,11 @@ PROMPT
 @050_create_owner_triggers.sql
 
 PROMPT *********************************************************************************/
+PROMPT "Creating user tables"
+PROMPT
+@060_create_user_rables.sql
+
+PROMPT *********************************************************************************/
 PROMPT "Update schema version to 2.3.0"
 PROMPT
 UPDATE ia_db_info
