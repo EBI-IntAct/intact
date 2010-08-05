@@ -11,6 +11,7 @@ public enum PublicationStatus {
     NEW,
     RESERVED,
     INPROGRESS,
+    PROCESSED,
     RELEASED,
     DISCARDED,
     INCOMPLETE;
