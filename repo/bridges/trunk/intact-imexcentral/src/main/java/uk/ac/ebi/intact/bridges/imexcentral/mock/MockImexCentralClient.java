@@ -111,7 +111,7 @@ public class MockImexCentralClient implements ImexCentralClient {
         return publications;
     }
 
-    public Publication updatePublicationStatus( String identifier, PublicationStatus status ) throws ImexCentralException {
+    public Publication updatePublicationStatus( String identifier, PublicationStatus status, String message ) throws ImexCentralException {
         final Publication p = getPublicationById( identifier );
         if( p != null ) {
             p.setStatus( status.toString() );
