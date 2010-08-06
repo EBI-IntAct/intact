@@ -312,7 +312,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
         for ( ChainFeature featureChain : features ) {
 
             String id = uniProtEntry.getPrimaryUniProtAccession().getValue() + "-" + featureChain.getFeatureId().getValue();
-            // todo : when uniprot does not know where is the start or the end of the protein the value will be -1
+            // when uniprot does not know where is the start or the end of the protein the value will be -1
             // Getting a sequence from -1 to x throw an Exception take into account this exception.
 
             String description = featureChain.getFeatureDescription().getValue();
@@ -336,7 +336,11 @@ public class UniprotRemoteService extends AbstractUniprotService {
                                                     ": ["+begin+", "+ end +"]" );
             }
 
-            String chainSequence = sequence.substring( begin - 1, end );
+            String chainSequence = null;
+
+            if (begin != -1 && end != -1){
+                chainSequence = sequence.substring( begin - 1, end );
+            }
 
             UniprotFeatureChain chain = new UniprotFeatureChain( id, protein.getOrganism(), chainSequence );
             chain.setDescription( description );
