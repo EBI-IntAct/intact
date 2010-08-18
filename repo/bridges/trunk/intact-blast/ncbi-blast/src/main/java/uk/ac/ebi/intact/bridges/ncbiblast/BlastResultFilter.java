@@ -284,23 +284,27 @@ public class BlastResultFilter {
     private UniprotProtein importProteinFromUniprot(String accession){
         UniprotProtein prot = null;
 
-        if (accession != null){
-            Collection<UniprotProtein> entries = uniprotService.retrieve(accession);
-            UniprotProtein protein = entries.iterator().next();
+        try {
+            if (accession != null){
+                Collection<UniprotProtein> entries = uniprotService.retrieve(accession);
+                UniprotProtein protein = entries.iterator().next();
 
-            if (entries.size() != 1){
-                log.error("The uniprot accession " + accession + " is matching several UniprotEntry instances. We will only take into account the first one : " + protein.getPrimaryAc());
-            }
-
-            if (protein != null){
-                if (protein.getOrganism() != null){
-                    prot = protein;
+                if (entries.size() != 1){
+                    log.error("The uniprot accession " + accession + " is matching several UniprotEntry instances. We will only take into account the first one : " + protein.getPrimaryAc());
                 }
-            }
-            else {
-                log.error("There isn't any Uniprot entries with this accession number : "+accession);
-            }
 
+                if (protein != null){
+                    if (protein.getOrganism() != null){
+                        prot = protein;
+                    }
+                }
+                else {
+                    log.error("There isn't any Uniprot entries with this accession number : "+accession);
+                }
+
+            }
+        } catch (Throwable e) {
+            throw new IllegalStateException("Problem importing protein from Uniprot: "+accession, e);
         }
 
         return prot;
