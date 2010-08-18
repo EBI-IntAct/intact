@@ -49,7 +49,7 @@ public class BlastResultFilterTest {
         List<BlastProtein> filteredResults = filter.getMatchingEntries();
 
         Assert.assertEquals(false, filteredResults.isEmpty());
-        System.out.println(filteredResults.size());
+
         for (BlastProtein prot : filteredResults){
             System.out.println(prot.getAccession());
             System.out.println(prot.getIdentity());
@@ -65,7 +65,7 @@ public class BlastResultFilterTest {
         List<BlastProtein> filteredResults = filter.getMatchingEntries();
 
         Assert.assertEquals(false, filteredResults.isEmpty());
-        System.out.println(filteredResults.size());
+
         for (BlastProtein prot : filteredResults){
             System.out.println(prot.getAccession());
             System.out.println(prot.getIdentity());
@@ -81,7 +81,7 @@ public class BlastResultFilterTest {
         List<BlastProtein> filteredResults = filter.getMatchingEntries();
 
         Assert.assertEquals(false, filteredResults.isEmpty());
-        System.out.println(filteredResults.size());
+
         for (BlastProtein prot : filteredResults){
             System.out.println(prot.getAccession());
             System.out.println(prot.getIdentity());
