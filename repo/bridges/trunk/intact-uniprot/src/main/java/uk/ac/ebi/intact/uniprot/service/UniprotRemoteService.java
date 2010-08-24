@@ -321,7 +321,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
             int begin = location.getStart();
             int end = location.getEnd();
 
-            if( begin == 0  || end < begin ) {
+            if( end > 0 && begin > 0 && end < begin ) {
                 throw new IllegalArgumentException( "Unexpected feature location boundaries of chain "+
                                                     featureChain.getFeatureId() +" for parent " +
                                                     uniProtEntry.getPrimaryUniProtAccession() +

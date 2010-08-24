@@ -49,7 +49,7 @@ public abstract class UniprotProteinTranscriptImpl implements UniprotProteinTran
         if ( primaryAc == null ) {
             throw new IllegalArgumentException( "A protein transcript must have a primary AC." );
         }
-        if ( primaryAc.trim().equals( "" ) ) {
+        if ( primaryAc.trim().isEmpty() ) {
             throw new IllegalArgumentException( "A protein transcript must have a non empty primary AC." );
         }
         this.primaryAc = primaryAc;
@@ -96,11 +96,8 @@ public abstract class UniprotProteinTranscriptImpl implements UniprotProteinTran
 
     public void setEnd(Integer end) {
         if ( end != null ) {
-            if ( start != null && start > end ) {
+            if ( start != null && end > 0 && start > 0 &&  start > end ) {
                 throw new IllegalArgumentException( "End (" + end + ") must be greater than start (" + start + ") !" );
-            }
-            if ( end < 1 ) {
-                throw new IllegalArgumentException( "End must be 1 or greater." );
             }
         }
         this.end = end;
