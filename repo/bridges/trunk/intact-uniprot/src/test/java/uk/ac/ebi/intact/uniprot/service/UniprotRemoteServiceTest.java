@@ -88,6 +88,15 @@ public class UniprotRemoteServiceTest {
     }
 
     @Test
+    public void retrieveByUniprotId_chainWithStrangeSequenceBoundaries() throws Exception {
+        // This protein contains a chain PRO_0000296200, with boundaries 1-?
+        
+        Collection<UniprotProtein> prots = getUniprotService().retrieve( "P18850" );
+        final UniprotProtein uniprotProtein = prots.iterator().next();
+        assertEquals( "P18850", uniprotProtein.getPrimaryAc() );
+    }
+
+    @Test
     public void retrieveBySpliceVariantId() throws Exception {
         Collection<UniprotProtein> prots = getUniprotService().retrieve( "Q13535-1" );
         assertEquals( "ATR_HUMAN", prots.iterator().next().getId() );
