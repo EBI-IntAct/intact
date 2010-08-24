@@ -95,7 +95,7 @@ public class ReflectionCrossReferenceBuilder {
                 if ( !methodName.equals( "getId" ) && !methodName.equals("getDbAccession") &&
                        methodName.startsWith( "get" ) &&
                      ( methodName.endsWith( "Id" ) || methodName.endsWith( "Number" )
-                             || methodName.endsWith("Identifier") || methodName.endsWith("Accession")) ) {
+                             || methodName.endsWith("GeneIdentifier") || methodName.endsWith("PortalIdentifier") || methodName.endsWith("Accession")) ) {
                     method = candidateMethod;
                     foundId = true;
                 }
