@@ -1,7 +1,8 @@
 package uk.ac.ebi.intact.uniprot.model;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * UniprotSpliceVariant Tester.
@@ -85,12 +86,6 @@ public class UniprotSpliceVariantTest {
         UniprotSpliceVariant sv = new UniprotSpliceVariant( "P12345-1", new Organism( 1 ), "ABCD" );
         sv.setEnd( 5 );
         assertEquals( new Integer( 5 ), sv.getEnd() );
-        try {
-            sv.setEnd( -1 );
-            fail();
-        } catch ( Exception e ) {
-            // ok
-        }
         try {
             sv.setStart( 3 );
             sv.setEnd( 2 );
