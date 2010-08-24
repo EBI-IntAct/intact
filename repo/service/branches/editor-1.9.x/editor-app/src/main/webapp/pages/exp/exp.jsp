@@ -57,13 +57,9 @@
     <jsp:include page="../addXrefs.jsp" />
 
     <c:choose>
-        <c:when test="${user == 'davet'}" >
+        <c:when test="${user == 'mgt'}" >
             <p></p>
             <jsp:include page="../reviewAccept.jsp"/>
-        </c:when>
-        <c:when test="${user == 'cderow'}" >
-            <p></p>
-            <jsp:include page="../reviewAccept.jsp" />
         </c:when>
         <c:when test="${user == 'orchard'}" >
             <p></p>
