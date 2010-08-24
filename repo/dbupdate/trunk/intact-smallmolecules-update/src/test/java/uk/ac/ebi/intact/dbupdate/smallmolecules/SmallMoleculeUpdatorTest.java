@@ -15,20 +15,20 @@
  */
 package uk.ac.ebi.intact.dbupdate.smallmolecules;
 
-import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
-import uk.ac.ebi.intact.core.persister.PersisterHelper;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.core.context.IntactContext;
-import uk.ac.ebi.intact.core.context.DataContext;
-import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.core.persistence.dao.InteractorDao;
-import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.core.config.CvPrimer;
-import uk.ac.ebi.intact.core.config.impl.SmallCvPrimer;
-import org.junit.Test;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ebi.intact.core.config.CvPrimer;
+import uk.ac.ebi.intact.core.config.impl.SmallCvPrimer;
+import uk.ac.ebi.intact.core.context.DataContext;
+import uk.ac.ebi.intact.core.context.IntactContext;
+import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.core.persistence.dao.InteractorDao;
+import uk.ac.ebi.intact.core.persister.PersisterHelper;
+import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
+import uk.ac.ebi.intact.model.*;
 
 import java.util.List;
 
@@ -101,7 +101,7 @@ public class SmallMoleculeUpdatorTest extends IntactBasicTestCase {
         final List<SmallMoleculeImpl> moleculeList = smDao.getByXrefLike( chebi, secondaryAc, "CHEBI:38918" );
         Assert.assertEquals( 1, moleculeList.size() );
         final SmallMoleculeImpl compound = moleculeList.iterator().next();
-        Assert.assertEquals( 2, compound.getXrefs().size() );
+        Assert.assertEquals( 1, compound.getXrefs().size() );
 
         // shortlabel should have been updated
         Assert.assertEquals( "imatinib", compound.getShortLabel() );
