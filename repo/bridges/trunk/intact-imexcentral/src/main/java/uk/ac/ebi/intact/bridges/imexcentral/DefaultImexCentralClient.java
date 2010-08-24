@@ -195,14 +195,17 @@ public class DefaultImexCentralClient implements ImexCentralClient {
                                                     group +"'", f );
             }
 
-            throw new ImexCentralException( "Error while attempting to update a publication admin group: " +
+            final String message = f.getFaultInfo().getMessage();
+            final int code = f.getFaultInfo().getFaultCode();
+            throw new ImexCentralException( "["+ code+" - "+ message +
+                                            "] Error while attempting to update a publication admin group: " +
                                             identifier + "/" + group, f );
         }
     }
 
     public void updatePublicationAdminUser( String identifier, Operation operation, String user ) throws ImexCentralException {
         try {
-            port.updatePublicationAdminGroup( buildIdentifier(identifier ), operation.toString(), user );
+            port.updatePublicationAdminUser( buildIdentifier(identifier ), operation.toString(), user );
         } catch ( IcentralFault f ) {
 
             switch( f.getFaultInfo().getFaultCode() ) {
@@ -216,7 +219,8 @@ public class DefaultImexCentralClient implements ImexCentralClient {
             final String message = f.getFaultInfo().getMessage();
             final int code = f.getFaultInfo().getFaultCode();
 
-            throw new ImexCentralException( "["+ code+" - "+ message +"] Error while attempting to update a publication admin user: " +
+            throw new ImexCentralException( "["+ code+" - "+ message +
+                                            "] Error while attempting to update a publication admin user: " +
                                             identifier + "/" + user, f );
         }
     }
