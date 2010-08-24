@@ -1,8 +1,9 @@
 package uk.ac.ebi.intact.uniprot.model;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import org.junit.Test;
 
 /**
  * UniprotFeatureChain Tester.
@@ -86,12 +87,6 @@ public class UniprotFeatureChainTest {
         UniprotFeatureChain ufc = new UniprotFeatureChain( "PRO_123", new Organism( 1 ), "ABCD" );
         ufc.setEnd( 5 );
         assertEquals( 5, (long) ufc.getEnd() );
-        try {
-            ufc.setEnd( -1 );
-            fail();
-        } catch ( Exception e ) {
-            // ok
-        }
         try {
             ufc.setStart( 3 );
             ufc.setEnd( 2 );
