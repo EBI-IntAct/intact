@@ -12,7 +12,6 @@ import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseCrossReference;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -96,7 +95,7 @@ public class ReflectionCrossReferenceBuilder {
                 if ( !methodName.equals( "getId" ) && !methodName.equals("getDbAccession") &&
                        methodName.startsWith( "get" ) &&
                      ( methodName.endsWith( "Id" ) || methodName.endsWith( "Number" )
-                             || methodName.endsWith( "GeneIdentifier" ) || methodName.endsWith("Accession")) ) {
+                             || methodName.endsWith("Identifier") || methodName.endsWith("Accession")) ) {
                     method = candidateMethod;
                     foundId = true;
                 }
