@@ -68,7 +68,7 @@ public class UniprotFeatureChainTest {
         ufc.setStart( 2 );
         assertEquals( 2, (long) ufc.getStart() );
         try {
-            ufc.setStart( -1 );
+            ufc.setStart( -2 );
             fail();
         } catch ( Exception e ) {
             // ok
