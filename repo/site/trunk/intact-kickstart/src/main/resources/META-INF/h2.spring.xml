@@ -19,7 +19,7 @@
         <property name="properties">
             <props>
                 <!-- JDBC connection URL -->
-                <prop key="db.jdbcurl">jdbc:h2:file:intactdb;LOCK_MODE=0</prop>
+                <prop key="db.jdbcurl">jdbc:h2:file:intact-kickstart;LOCK_MODE=0</prop>
 
                 <!-- JDBC Driver class name -->
                 <prop key="db.driver">org.h2.Driver</prop>
