@@ -53,7 +53,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
     }
 
     public Collection<UniprotProtein> retrieve( String ac ) {
-       return retrieve(ac, true); 
+        return retrieve(ac, true);
     }
 
     public Collection<UniprotProtein> retrieve( String ac, boolean processSpliceVars ) {
@@ -65,7 +65,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
             if (log.isDebugEnabled()) log.debug("\tFound in cache");
             return retrievalCache.get(ac);
         }
-        
+
         Collection<UniprotProtein> proteins = new ArrayList<UniprotProtein>();
 
         Iterator<UniProtEntry> it = getUniProtEntry( ac );
@@ -256,12 +256,11 @@ public class UniprotRemoteService extends AbstractUniprotService {
         // splice variants
         if (fetchSpliceVariants) {
             processSpliceVariants( uniProtEntry, uniprotProtein );
+            //I commented this line because we not making any use of uniprot features in IntAct. But in case we use them later,
+            // I have let the processFeatureChain method.
+            // chains
+            processFeatureChain( uniProtEntry, uniprotProtein );
         }
-
-        //I commented this line because we not making any use of uniprot features in IntAct. But in case we use them later,
-        // I have let the processFeatureChain method.
-        // chains
-        processFeatureChain( uniProtEntry, uniprotProtein );
 
         return uniprotProtein;
     }
@@ -323,17 +322,17 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
             if( end > 0 && begin > 0 && end < begin ) {
                 throw new IllegalArgumentException( "Unexpected feature location boundaries of chain "+
-                                                    featureChain.getFeatureId() +" for parent " +
-                                                    uniProtEntry.getPrimaryUniProtAccession() +
-                                                    ": ["+begin+", "+ end +"]" );
+                        featureChain.getFeatureId() +" for parent " +
+                        uniProtEntry.getPrimaryUniProtAccession() +
+                        ": ["+begin+", "+ end +"]" );
             }
 
             final String sequence = protein.getSequence();
             if( sequence.length() < end ) {
                 throw new IllegalArgumentException( "The AA sequence (length:"+ sequence.length() +") of parent " +
-                                                    uniProtEntry.getPrimaryUniProtAccession() + " doesn't match the" +
-                                                    " boundaried of deature chain "+ featureChain.getFeatureId() +
-                                                    ": ["+begin+", "+ end +"]" );
+                        uniProtEntry.getPrimaryUniProtAccession() + " doesn't match the" +
+                        " boundaried of deature chain "+ featureChain.getFeatureId() +
+                        ": ["+begin+", "+ end +"]" );
             }
 
             String chainSequence = null;
@@ -511,7 +510,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
                             while (iterator.hasNext()) {
 
                                 UniProtEntry uniprotEntryParentProtein = iterator.next();
-                            //sequence = uniprotEntryParentProtein.getSplicedSequence(isoform.getName().getValue());
+                                //sequence = uniprotEntryParentProtein.getSplicedSequence(isoform.getName().getValue());
 
                                 if (numberOfEntryInIterator >= 1) {
                                     // we were expecting to find only one protein - hopefully that should not happen !

@@ -67,7 +67,7 @@ public class UniprotSpliceVariantTest {
         sv.setStart( 2 );
         assertEquals( new Integer( 2 ), sv.getStart() );
         try {
-            sv.setStart( -1 );
+            sv.setStart( -2 );
             fail();
         } catch ( Exception e ) {
             // ok

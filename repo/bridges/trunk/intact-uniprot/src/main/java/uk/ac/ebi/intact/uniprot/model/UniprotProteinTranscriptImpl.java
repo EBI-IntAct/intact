@@ -83,7 +83,7 @@ public abstract class UniprotProteinTranscriptImpl implements UniprotProteinTran
             if ( end != null && start > end ) {
                 throw new IllegalArgumentException( "Start (" + start + ") must be lower than end (" + end + ") !" );
             }
-            if ( start < 1 ) {
+            if ( start != -1 && start < 1 ) {
                 throw new IllegalArgumentException( "Start must be 1 or greater." );
             }
         }
@@ -98,6 +98,10 @@ public abstract class UniprotProteinTranscriptImpl implements UniprotProteinTran
         if ( end != null ) {
             if ( start != null && end > 0 && start > 0 &&  start > end ) {
                 throw new IllegalArgumentException( "End (" + end + ") must be greater than start (" + start + ") !" );
+            }
+
+            if ( end != -1 && end < 1){
+                throw new IllegalArgumentException( "End must be 1 or greater." );
             }
         }
         this.end = end;
