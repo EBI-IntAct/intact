@@ -5,7 +5,8 @@
 
 This is the tool used to curate !IntAct information. A new version is being developed at the moment.
 
- * Current phase: Design.
+ * Current phase: Implementation.
+ * The tool is currently live and usable for testing: [http://www.ebi.ac.uk/interpro/internal-tools/intactdev/editor/]
  * [http://spreadsheets.google.com/pub?key=tLkHetwRlQlWu0Qxccpw23Q&output=html Check the progress] of the current Sprint.
 
 = Specification =
