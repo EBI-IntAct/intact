@@ -68,6 +68,10 @@ public class MockImexCentralClient implements ImexCentralClient {
     ///////////////////////
     // ImexCentralClient
 
+    public String getEndpoint() {
+        return null;
+    }
+
     public List<Publication> getPublicationById( List<String> identifiers ) throws ImexCentralException {
         List<Publication> publications = new ArrayList<Publication>( );
         for ( Publication p : allPublications ) {

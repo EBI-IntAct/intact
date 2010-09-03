@@ -87,6 +87,10 @@ public class DefaultImexCentralClient implements ImexCentralClient {
     ///////////////////////
     // IMEx Central
 
+    public String getEndpoint() {
+        return endPoint;
+    }
+
     public List<Publication> getPublicationById( List<String> identifiers ) throws ImexCentralException {
         try {
             final PublicationList list = port.getPublicationById( buildIdentifierList( identifiers ) );
