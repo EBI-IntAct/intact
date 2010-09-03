@@ -12,6 +12,9 @@ import java.util.List;
  * @since 2.2.1
  */
 public interface ImexCentralClient {
+
+    String getEndpoint();
+
     List<Publication> getPublicationById( List<String> identifiers ) throws ImexCentralException;
 
     Publication getPublicationById( String identifier ) throws ImexCentralException;
@@ -31,6 +34,4 @@ public interface ImexCentralClient {
     Publication createPublicationById( String identifier ) throws ImexCentralException;
 
     Publication getPublicationImexAccession( String identifier, boolean aBoolean ) throws ImexCentralException;
-
-    
 }
