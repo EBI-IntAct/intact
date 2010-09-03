@@ -57,7 +57,13 @@ public class DefaultImexCentralClient implements ImexCentralClient {
     protected static Identifier buildIdentifier( String identifier ) {
         final Identifier id = new ObjectFactory().createIdentifier();
         id.setAc( identifier );
-        id.setNs( "pmid" );     
+        if( identifier.startsWith( "IM-" ) ) {
+            // this will enable searching for publication by IMEx id ... not obvious but it works ...
+            id.setNs( "imex" );
+        } else {
+            // fallback namespace
+            id.setNs( "pmid" );
+        }
         return id;
     }
 
@@ -275,13 +281,16 @@ public class DefaultImexCentralClient implements ImexCentralClient {
 
         DefaultImexCentralClient client = new DefaultImexCentralClient( username, password, endPoint );
 
-//        final List<Publication> releasedPublications = client.getPublicationByStatus( PublicationStatus.RELEASED );
-//        System.out.println( "Released publication: " + releasedPublications.size() );
-
         // test 19360080
-        final List<Publication> publications;
+        Publication publication;
         try {
-            publications = client.getPublicationById( Arrays.asList( "19249676" ) );
+            System.out.println( "Searching by PMID ..." );
+            publication = client.getPublicationById( "19249676" );
+            print( publication );
+
+            System.out.println( "Searching by IMEx ID ..." );
+            publication = client.getPublicationById( "IM-12212" );
+            print( publication );
         } catch ( ImexCentralException e ) {
             e.printStackTrace(  );
 
@@ -303,6 +312,7 @@ public class DefaultImexCentralClient implements ImexCentralClient {
     private static void print( Publication p ) {
         System.out.println( "-- " + p.getIdentifier().getAc() + " ------------------------" );
         System.out.println( "Author: " + p.getAuthor() );
+        System.out.println( "Title: " + p.getTitle() );
         System.out.println( "IMEx id: " + p.getImexAccession() );
         System.out.println( "Owner: " + p.getOwner() );
         System.out.println( "Status: " + p.getStatus() );
