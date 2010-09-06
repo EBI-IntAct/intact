@@ -26,7 +26,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>17-May-2010</pre>
  */
-@ContextConfiguration(locations = {"/META-INF/intact-curationTools.spring.xml", "/META-INF/standalone/curation-jpa.spring.xml"} )
+@ContextConfiguration(locations = {"/META-INF/standalone/curation-jpa.spring.xml"} )
 public class FeatureRangeCheckingProcessTest extends IntactBasicTestCase{
 
     private FeatureRangeCheckingProcess process;

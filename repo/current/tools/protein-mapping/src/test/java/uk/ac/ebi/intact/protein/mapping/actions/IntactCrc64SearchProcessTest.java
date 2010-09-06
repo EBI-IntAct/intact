@@ -23,7 +23,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>08-Apr-2010</pre>
  */
-@ContextConfiguration(locations = {"/META-INF/intact-curationTools.spring.xml", "/META-INF/standalone/curation-jpa.spring.xml"} )
+@ContextConfiguration(locations = {"/META-INF/standalone/curation-jpa.spring.xml"} )
 public class IntactCrc64SearchProcessTest extends IntactBasicTestCase {
 
     private IntactCrc64SearchProcess process;
