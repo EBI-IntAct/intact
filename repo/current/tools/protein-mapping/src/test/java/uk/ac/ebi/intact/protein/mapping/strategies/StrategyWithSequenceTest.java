@@ -25,7 +25,7 @@ import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
  * @version $Id$
  * @since <pre>30-Apr-2010</pre>
  */
-@ContextConfiguration(locations = {"/META-INF/intact-curationTools.spring.xml", "/META-INF/standalone/curation-jpa.spring.xml"} )
+@ContextConfiguration(locations = {"/META-INF/intact.spring.xml", "/META-INF/standalone/curation-jpa.spring.xml"} )
 public class StrategyWithSequenceTest  extends IntactBasicTestCase {
 
     private StrategyWithSequence strategy;

@@ -21,7 +21,7 @@ import javax.persistence.PersistenceContext;
  * @since <pre>20-May-2010</pre>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/intact-curationTools.spring.xml",
+@ContextConfiguration(locations = {"/META-INF/intact.spring.xml",
         "/META-INF/standalone/curation-jpa.spring.xml"})
 @TransactionConfiguration( transactionManager = "curationTransactionManager" )
 @Transactional
