@@ -1,5 +1,6 @@
 package uk.ac.ebi.intact.protein.mapping.model.unit;
 
+import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionName;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
@@ -17,7 +18,7 @@ import uk.ac.ebi.intact.protein.mapping.model.results.UpdateResults;
  * @version $Id$
  * @since <pre>20-May-2010</pre>
  */
-public class CurationMockBuilder {
+public class CurationMockBuilder extends IntactMockBuilder {
 
     /**
      *
