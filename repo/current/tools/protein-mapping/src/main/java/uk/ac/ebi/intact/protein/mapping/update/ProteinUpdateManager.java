@@ -385,10 +385,11 @@ public class ProteinUpdateManager {
 
             // update the database
             log.info("Processing the update of the proteins in Intact");
-            UpdateReportHandler reportHandler = new FileReportHandler(new File("target"));
-            ProteinUpdateProcessorConfig configUpdate = new ProteinUpdateProcessorConfig(reportHandler);
+            //UpdateReportHandler reportHandler = new FileReportHandler(new File("target"));
+            //ProteinUpdateProcessorConfig configUpdate = new ProteinUpdateProcessorConfig(reportHandler);
 
-            ProteinUpdateProcessor protUpdateProcessor = new ProteinUpdateProcessor(configUpdate);
+            //ProteinUpdateProcessor protUpdateProcessor = new ProteinUpdateProcessor(configUpdate);
+            ProteinUpdateProcessor protUpdateProcessor = new ProteinUpdateProcessor();
             protUpdateProcessor.updateByACs(accessionsToUpdate);
 
         } catch (IntactTransactionException e) {
