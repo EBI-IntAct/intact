@@ -25,9 +25,9 @@
             <version>2.3.2</version>
         </dependency>
         <dependency>
-            <groupId>com.google.code</groupId>
-            <artifactId>google-collections</artifactId>
-            <version>0.5</version>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>r06</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
