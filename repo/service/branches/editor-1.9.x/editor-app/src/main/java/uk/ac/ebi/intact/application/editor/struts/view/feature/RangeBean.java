@@ -137,9 +137,12 @@ public class RangeBean extends AbstractEditKeyBean {
                 fromRanges[1], toRanges[0], toRanges[1], null);
         range.setLinked(linked);
 
+        CvFuzzyType fromCvFuzzy = getFuzzyType(fromFuzzyType);
         // Set the from and to fuzzy types.
-        range.setFromCvFuzzyType(getFuzzyType(fromFuzzyType));
-        range.setToCvFuzzyType(getFuzzyType(toFuzzyType));
+        range.setFromCvFuzzyType(fromCvFuzzy);
+        CvFuzzyType toCvFuzzy = getFuzzyType(toFuzzyType);
+        range.setToCvFuzzyType(toCvFuzzy);
+
         // This needs to be done after setting the fuzzy types.
         range.setUndetermined();
         // Initialize the bean with the new range.
@@ -391,8 +394,14 @@ public class RangeBean extends AbstractEditKeyBean {
         Matcher toMatcher = ourRangePattern.matcher(myToRange);
         String toType = myFTConverter.getFuzzyShortLabel(toMatcher);
 
-        myRange.setFromCvFuzzyType(getFuzzyType(fromType));
-        myRange.setToCvFuzzyType(getFuzzyType(toType));
+        CvFuzzyType fromCvFuzzy = getFuzzyType(fromType);
+        // Set the from and to fuzzy types.
+
+        myRange.setFromCvFuzzyType(fromCvFuzzy);
+        CvFuzzyType toCvFuzzy = getFuzzyType(toType);
+        myRange.setToCvFuzzyType(toCvFuzzy);
+
+
         myRange.setLinked(myLink);
         myRange.setUndetermined();
 
@@ -528,6 +537,10 @@ public class RangeBean extends AbstractEditKeyBean {
         if (type.length() != 0) {
             CvObjectDao<CvFuzzyType> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvFuzzyType.class);
             fuzzyType = cvObjectDao.getByShortLabel(type);
+        }
+        else {
+            CvObjectDao<CvFuzzyType> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvFuzzyType.class);
+            fuzzyType = cvObjectDao.getByPsiMiRef(CvFuzzyType.CERTAIN_MI_REF);
         }
         return fuzzyType;
     }
