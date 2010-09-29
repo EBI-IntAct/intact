@@ -20,6 +20,7 @@ import uk.ac.ebi.intact.core.persistence.dao.ComponentDao;
 import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.core.persistence.dao.InteractorDao;
 import uk.ac.ebi.intact.core.persistence.dao.RangeDao;
+import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.model.*;
 
 import java.util.*;
@@ -44,7 +45,7 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
      * The default laytout name.
      */
     private static final String ourDefaultLayoutName = "edit.feature.layout";
-    
+
     /**
      * The component this feature belongs to.
      */
@@ -311,7 +312,7 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
     public void saveRange(RangeBean rb) {
         // The updated bean can only exists in one collection.
         if (!myRangesToAdd.contains(rb)) {
-             myRangesToUpdate.add(rb);
+            myRangesToUpdate.add(rb);
         }
     }
 
@@ -444,9 +445,8 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
             //From the sequence of the protein, taking into account the caracteristics of the protein (cvFuzzyType,
             //from interval start... the prepareSequence prepare and return the sequence that should be the range sequen-
             //ce
-            sequence = range.prepareSequence(sequence);
-            // Set the sequence for the range.
-            range.setSequence(sequence);
+
+            range.prepareSequence(sequence);
 
             if(getCorrespondingRange(feature, range) != null){
                 continue;
@@ -462,9 +462,9 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
             Range range = rangeBean.getRange();
             Range correspondingRange = getCorrespondingRange(feature,range);
             if(correspondingRange != null){
-               feature.removeRange(correspondingRange);
-               range.setFeature(null);
-               rangeDao.delete( correspondingRange );
+                feature.removeRange(correspondingRange);
+                range.setFeature(null);
+                rangeDao.delete( correspondingRange );
             }
         }
 
@@ -473,9 +473,11 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
         {
             // Update the 'updated' range.
             Range range = myRangeToUpdate.getUpdatedRange();
+            range.prepareSequence(sequence);
+
             Range correspondingRange = getCorrespondingRange(feature,range);
             if(correspondingRange == null){
-                range.setSequence(sequence);
+                range.prepareSequence(sequence);
             }
         }
         setAnnotatedObject(feature);
@@ -494,7 +496,7 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 
         myMenus.clear();
-        
+
 //        myMenus.putAll(super.getMenus());
         myMenus.putAll(super.getMenus(Feature.class));
 
@@ -604,7 +606,10 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
 
                 range.setLinked(searchedRange.isLinked());
                 range.setUndetermined(searchedRange.isUndetermined());
-                range.setSequence(range.getSequence());
+                range.setSequence(searchedRange.getSequence());
+                range.setFullSequence(searchedRange.getFullSequence());
+                range.setDownStreamSequence(searchedRange.getDownStreamSequence());
+                range.setUpStreamSequence(searchedRange.getUpStreamSequence());
                 return range;
 
             } else {
@@ -612,10 +617,10 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
                     continue;
                 }
                 if( !((range.getFromCvFuzzyType() == null && range.getFromCvFuzzyType() == null) ||
-                    (range.getFromCvFuzzyType()!= null  && searchedRange.getFromCvFuzzyType() != null && range.getFromCvFuzzyType().getAc().equals(searchedRange.getFromCvFuzzyType().getAc()))) ){
+                        (range.getFromCvFuzzyType()!= null  && searchedRange.getFromCvFuzzyType() != null && range.getFromCvFuzzyType().getAc().equals(searchedRange.getFromCvFuzzyType().getAc()))) ){
                     continue;
                 }else if(!((range.getToCvFuzzyType() == null && searchedRange.getToCvFuzzyType() == null) ||
-                    (range.getToCvFuzzyType()!= null && searchedRange.getToCvFuzzyType() != null && range.getToCvFuzzyType().getAc().equals(searchedRange.getToCvFuzzyType().getAc())))){
+                        (range.getToCvFuzzyType()!= null && searchedRange.getToCvFuzzyType() != null && range.getToCvFuzzyType().getAc().equals(searchedRange.getToCvFuzzyType().getAc())))){
                     continue;
                 }else if( range.getFromIntervalEnd() != searchedRange.getFromIntervalEnd()){
                     continue;
@@ -650,5 +655,49 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
 
     private void setMutationLayout() {
         myCurrentLayoutName = "edit.feature.mutation.layout";
+    }
+
+    /**
+     * Persists the current state to the persistent system. After this
+     * method is called the persistent view is as same as the current view.
+     * @exception IntactException for errors in updating the persistent system.
+     */
+    @Override
+    public void persist() {
+        // Persist my current state (this takes care of updating the wrapped
+        // object with values from the form).
+//        final TransactionStatus transactionStatus = IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
+        try {
+            setAnnotatedObject(createAnnotatedObjectFromView());
+            populateAnnotatedObjectFromView();
+        } catch (IllegalRangeException e){
+             throw new IntactException("Exception saving the feature object because one of the ranges is not valid (position out of the protein sequence).", e); 
+        }
+
+        Institution institution = IntactContext.getCurrentInstance().getInstitution();
+        institution.setAnnotations( institution.getAnnotations() );
+        institution.setAliases( institution.getAliases() );
+        institution.setXrefs( institution.getXrefs() );
+        getAnnotatedObject().setOwner( institution );
+
+        try {
+            final PersisterHelper persisterHelper = IntactContext.getCurrentInstance().getPersisterHelper();
+            persisterHelper.save(getAnnotatedObject());
+        } catch (Exception e) {
+            throw new IntactException("Exception saving object: " + getAnnotatedObject().getShortLabel(), e);
+        }
+
+        reset(getAnnotatedObject());
+
+//        try {
+//            IntactContext.getCurrentInstance().getDataContext().commitTransaction(transactionStatus);
+//        } catch (IntactTransactionException e) {
+//            throw new IntactException("Problem during commit", e);
+//        }
+
+        //IntactContext.getCurrentInstance().getDaoFactory().getEntityManager().clear();
+
+
     }
 }
