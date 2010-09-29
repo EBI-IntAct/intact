@@ -5,7 +5,10 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.Type;
+import uk.ac.ebi.intact.model.util.FeatureUtils;
 
 import javax.persistence.*;
 
@@ -46,6 +49,15 @@ public class Range extends BasicObjectImpl {
     //------------ attributes ------------------------------------
 
     /**
+     * Sets up a logger for that class.
+     */
+    public static final Log log = LogFactory.getLog( Range.class );
+
+    //------------ attributes ------------------------------------
+
+    private static final int minimumSizeForAlignment = 40;
+
+    /**
      * Sequence size limit for this class. Set to a default value.
      */
     private static int ourMaxSeqSize = 100;
@@ -79,6 +91,15 @@ public class Range extends BasicObjectImpl {
     private String sequence;
 
     /**
+     * Contains the full feature sequence
+     */
+    private String fullSequence;
+
+    private String upStreamSequence;
+
+    private String downStreamSequence;
+
+    /**
      * TODO Comments This is really a boolean but we need to use a character for it because Oracle does not support
      * boolean types NB JDBC spec has no JDBC type for char, only Strings!
      */
@@ -108,6 +129,7 @@ public class Range extends BasicObjectImpl {
     private CvFuzzyType toCvFuzzyType;
 
     private Feature feature;
+
 
     /**
      * Sets the bean's from range
@@ -167,23 +189,32 @@ public class Range extends BasicObjectImpl {
     }
 
     /**
-     * This is a convenient constructor to create Range with from and end values.
      *
-     * @param owner     the owner of this range.
-     * @param fromStart The starting point of the 'from' interval for the Range. The 'from' end value is set to this
-     *                  value.
-     * @param toStart   The starting point of the 'to' interval of the Range. The 'to' end value is set to this value.
-     * @param seq       The sequence - maximum of 100 characters (null allowed)
+     * @param owner
+     * @param fromStart
+     * @param toStart
+     * @param seq
+     * @deprecated the range status is mandatory in PSI MI. It is not possible to extract properly a feature sequence without this range status.
+     * Here by default, the range status will be set to 'certain'
      */
+    @Deprecated
     public Range( Institution owner, int fromStart, int toStart, String seq ) {
-        this( owner, fromStart, fromStart, toStart, toStart, seq );
+        super();
+        setOwner(owner);
+        setUpRange(fromStart, toStart, seq);
+    }
+
+    @Deprecated
+    public Range( Institution owner, int fromStart, int fromEnd, int toStart, int toEnd, String seq ) {
+        super();
+        setOwner(owner);        
+        setUpRange(fromStart, fromEnd, toStart, toEnd, seq);
     }
 
     /**
      * Sets up a valid Range instance. Range is dependent on the feature and hence it cannot exist on its own. Currently
      * a valid Range must have at least the following defined:
      *
-     * @param owner     the owner of this range.
      * @param fromStart The starting point of the 'from' interval for the Range.
      * @param fromEnd   The end point of the 'from' interval.
      * @param toStart   The starting point of the 'to' interval of the Range
@@ -195,32 +226,90 @@ public class Range extends BasicObjectImpl {
      *                  the number line when defining intervals. Thus '-6 to -4', '5 to 20' and '-7 to 15' are  all
      *                  <b>valid</b> single intervals, but '-3 to -8', '12 to 1' and  '5 to -7' are <b>not</b>. </p>
      */
-    public Range( Institution owner, int fromStart, int fromEnd, int toStart, int toEnd, String seq ) {
+    private void setUpRange( int fromStart, int fromEnd, int toStart, int toEnd, String seq ) {
         //NB negative intervals are allowed!! This needs more sophisticated checking..
-        super( owner );
+        CvFuzzyType range = new CvFuzzyType(this.getOwner(), CvFuzzyType.RANGE);
+        range.setIdentifier(CvFuzzyType.RANGE_MI_REF);
+        CvFuzzyType certain = new CvFuzzyType(this.getOwner(), CvFuzzyType.CERTAIN);
+        certain.setIdentifier(CvFuzzyType.CERTAIN_MI_REF);
 
-        if ( fromEnd < fromStart ) {
-            throw new IllegalArgumentException( "End of 'from' interval must be bigger than the start!" );
+        if (fromStart != fromEnd){
+            setFromCvFuzzyType(range);
         }
-        if ( toEnd < toStart ) {
-            throw new IllegalArgumentException( "End of 'to' interval must be bigger than the start!" );
+        else {
+            setFromCvFuzzyType(certain);
         }
-        if ( fromEnd > toStart ) {
-            throw new IllegalArgumentException( "The 'from' and 'to' intervals cannot overlap!" );
+
+        if (toStart != toEnd){
+            setToCvFuzzyType(range);
         }
-        if ( fromStart > toEnd ) {
-            throw new IllegalArgumentException( "The 'from' interval starts beyond the 'to' interval!" );
+        else {
+            setToCvFuzzyType(certain);
         }
-        if ( fromStart > toStart ) {
-            throw new IllegalArgumentException( "The 'from' interval cannot begin during the 'to' interval!" );
+        setRangePositions(fromStart, fromEnd, toStart, toEnd, seq);
+
+        if (seq != null){
+            prepareSequence(seq);
+        }
+    }
+
+    /**
+     * This is a convenient constructor to create Range with from and end values.
+     *
+     * @param fromStart The starting point of the 'from' interval for the Range. The 'from' end value is set to this
+     *                  value.
+     * @param toStart   The starting point of the 'to' interval of the Range. The 'to' end value is set to this value.
+     * @param seq       The sequence - maximum of 100 characters (null allowed)
+     */
+    private void setUpRange( int fromStart, int toStart, String seq ) {
+
+        CvFuzzyType certain = new CvFuzzyType(this.getOwner(), CvFuzzyType.CERTAIN);
+        certain.setIdentifier(CvFuzzyType.CERTAIN_MI_REF);
+
+        setFromCvFuzzyType(certain);
+        setToCvFuzzyType(certain);
+        setRangePositions(fromStart, fromStart, toStart, toStart, seq);
+
+        if (seq != null){
+            prepareSequence(seq);
+        }
+    }
+
+    private void setRangePositions(int fromStart, int fromEnd, int toStart, int toEnd, String seq ){
+        if (fromStart < 0){
+            throw new IllegalArgumentException( "The 'from' start position ("+fromStart+") cannot be negative." );
+        }
+        if (fromEnd < 0){
+            throw new IllegalArgumentException( "The 'from' en position ("+fromEnd+") cannot be negative." );
+        }
+        if (toStart < 0 ){
+            throw new IllegalArgumentException( "The 'to' start position ("+toStart+") cannot be negative." );
+        }
+        if (toEnd < 0){
+            throw new IllegalArgumentException( "The 'to' end position ("+toEnd+") cannot be negative." );
+        }
+
+        if (seq != null){
+            int sequenceLength = seq.length();
+
+            if (fromStart > sequenceLength){
+                throw new IllegalArgumentException( "The sequence length ("+sequenceLength+") is inferior to the 'from' start position ("+fromStart+")" );
+            }
+            if (fromEnd > sequenceLength){
+                throw new IllegalArgumentException( "The sequence length ("+sequenceLength+") is inferior to the 'from' en position ("+fromEnd+")" );
+            }
+            if (toStart > sequenceLength){
+                throw new IllegalArgumentException( "The sequence length ("+sequenceLength+") is inferior to the 'to' start position ("+toStart+")" );
+            }
+            if (toEnd > sequenceLength){
+                throw new IllegalArgumentException( "The sequence length ("+sequenceLength+") is inferior to the 'to' end position ("+toEnd+")" );
+            }
         }
 
         this.fromIntervalStart = fromStart;
         this.fromIntervalEnd = fromEnd;
         this.toIntervalStart = toStart;
         this.toIntervalEnd = toEnd;
-
-        this.sequence = prepareSequence( seq );
     }
 
     //------------------------- public methods --------------------------------------
@@ -362,29 +451,180 @@ public boolean isUndetermined() {
      * x bytes starting from from interval start is used.
      *
      * @param sequence the raw sequence (generally this string is the full sequence).
+     * @deprecated  the setFullSequence is now keeping the full sequence of the feature
      */
+    @Deprecated
     public void setSequence( String sequence ) {
         this.sequence = sequence;
     }
 
-    public String prepareSequence( String sequence ) {
-        // Get the sequence from start if there is no fuzzy type.
-        if ( fromCvFuzzyType == null ) {
-            setSequenceIntern( getSequenceStartingFrom( sequence, fromIntervalStart ) );
-            return this.sequence;
+    /**
+     *
+     * @param rangeStart : the start position of the feature range
+     * @param rangeEnd : the end position of the feature range
+     * @param fullSequence : the total sequence
+     */
+    private void prepareUpStreamDownStreamSequence(int rangeStart, int rangeEnd, String fullSequence){
+        this.upStreamSequence = null;
+        this.downStreamSequence = null;
+
+        int numberOfAminoAcidsUpStream = 0;
+        int numberOfAminoAcidsDownStream = 0;
+
+        if (rangeStart < 0){
+            throw new IllegalArgumentException("The start of the feature range ("+rangeStart+") can't be negative.");
         }
-        // Truncate according to type.
-        if ( fromCvFuzzyType.isCTerminal() ) {
-            setSequenceIntern( getLastSequence( sequence ) );
-        } else if ( fromCvFuzzyType.isNTerminal() || fromCvFuzzyType.isUndetermined() ) {
-            setSequenceIntern( getFirstSequence( sequence ) );
-        } else {
-            setSequenceIntern( getSequenceStartingFrom( sequence, fromIntervalStart ) );
+        if (rangeEnd < 0){
+            throw new IllegalArgumentException("The end of the feature range ("+rangeEnd+") can't be negative.");
+        }
+        if (rangeStart > fullSequence.length()){
+            throw new IllegalArgumentException("The start of the feature range ("+rangeStart+") can't be superior to the length of the protein ("+fullSequence.length()+").");
+        }
+        if (rangeEnd > fullSequence.length()){
+            throw new IllegalArgumentException("The end of the feature range ("+rangeEnd+") can't be superior to the length of the protein ("+fullSequence.length()+").");
+        }
+        if (rangeEnd < rangeStart){
+            throw  new IllegalArgumentException("The start of the feature range ("+rangeStart+") can't be superior to the end of the feature range ("+rangeEnd+")");
         }
 
-        return this.sequence;
+        // count number of amino acids upstream the feature
+        if (rangeStart - (minimumSizeForAlignment/2) < 0){
+            numberOfAminoAcidsUpStream = Math.max(0, rangeStart - 1);
+        }
+        else {
+            numberOfAminoAcidsUpStream = minimumSizeForAlignment/2;
+        }
+
+        // count the number of amino acids downstream the feature
+        if (rangeEnd + (minimumSizeForAlignment/2) > fullSequence.length()){
+            numberOfAminoAcidsDownStream = Math.max(0, fullSequence.length() - rangeEnd);
+        }
+        else {
+            numberOfAminoAcidsDownStream = minimumSizeForAlignment/2;
+        }
+
+        // Adjust the number of amino acids downstream and upstream to have a total number of amino acids equal to the minimumSizeForAlignment
+        if (numberOfAminoAcidsUpStream < minimumSizeForAlignment/2){
+            int numberAminoAcidsPendingAtTheEnd = fullSequence.length() - (rangeEnd + numberOfAminoAcidsDownStream);
+            numberOfAminoAcidsDownStream += Math.min(numberAminoAcidsPendingAtTheEnd, (minimumSizeForAlignment/2) - numberOfAminoAcidsUpStream);
+        }
+        if (numberOfAminoAcidsDownStream < minimumSizeForAlignment/2){
+            int numberAminoAcidsPendingAtTheBeginning = Math.max((rangeStart - numberOfAminoAcidsUpStream) - 1, 0);
+
+            numberOfAminoAcidsUpStream += Math.min(numberAminoAcidsPendingAtTheBeginning, (minimumSizeForAlignment/2) - numberOfAminoAcidsDownStream);
+        }
+
+        // Extract the proper downstream and upstream sequence
+        if (numberOfAminoAcidsUpStream > 0){
+            setUpStreamSequence(fullSequence.substring(Math.max(rangeStart - numberOfAminoAcidsUpStream - 1, 0), Math.max(rangeStart - 1, 1)));
+        }
+        if (numberOfAminoAcidsDownStream > 0){
+            setDownStreamSequence(fullSequence.substring(Math.min(fullSequence.length() - 1, rangeEnd), rangeEnd + numberOfAminoAcidsDownStream));
+        }
     }
 
+    public void prepareSequence( String sequence ) {
+        // we can only extract the feature sequence if the protein sequence is not null
+        if (sequence != null){
+
+            // we update the c-terminal position if not set already (when the sequence length is not known, the c-terminal position is 0.)
+            if (fromCvFuzzyType != null){
+                if (fromCvFuzzyType.isCTerminal() && fromIntervalStart == 0 && fromIntervalEnd == 0){
+                    setFromIntervalStart(sequence.length());
+                    setFromIntervalEnd(sequence.length());
+                }
+            }
+
+            if (toCvFuzzyType != null){
+                if (toCvFuzzyType.isCTerminal() && toIntervalStart == 0 && toIntervalEnd == 0){
+                    setToIntervalStart(sequence.length());
+                    setToIntervalEnd(sequence.length());
+                }
+            }
+
+            // the range should be valid and consistent with the protein sequence
+            if (!FeatureUtils.isABadRange(this, sequence)){
+
+                // both the start position and the end position have a status
+                // if both positions are undetermined, or of type 'n-?','n-n', 'c-c' or '?-c', no feature sequence can be extracted
+                if ((fromCvFuzzyType.isUndetermined() && toCvFuzzyType.isUndetermined())
+                        || (fromCvFuzzyType.isNTerminalRegion() && toCvFuzzyType.isUndetermined())
+                        || (fromCvFuzzyType.isUndetermined() && toCvFuzzyType.isCTerminalRegion())
+                        || (fromCvFuzzyType.isNTerminalRegion() && toCvFuzzyType.isNTerminalRegion())
+                        || (fromCvFuzzyType.isCTerminalRegion() && toCvFuzzyType.isCTerminalRegion())
+                        || (fromCvFuzzyType.isNTerminalRegion() && toCvFuzzyType.isCTerminalRegion())){
+                    this.sequence = null;
+                    this.fullSequence = null;
+                    this.upStreamSequence = null;
+                    this.downStreamSequence = null;
+                }
+                // a feature sequence can be extracted
+                else {
+                    // the start position is the start position of the start interval
+                    int startSequence = fromIntervalStart;
+                    // the end position is the end position of the end interval
+                    int endSequence = toIntervalEnd;
+
+                    // in case of greater than, the start position is starting from fromIntervalStart + 1
+                    if (fromCvFuzzyType.isGreaterThan()){
+                        startSequence ++;
+                    }
+                    // in case of less than, the start position is starting from fromIntervalStart - 1
+                    else if (fromCvFuzzyType.isLessThan()){
+                        startSequence --;
+                    }
+                    // in case of undetermined, the start position is starting from 1
+                    else if (fromCvFuzzyType.isUndetermined() || fromCvFuzzyType.isNTerminalRegion()){
+                        startSequence = 1;
+                    }
+
+                    // in case of greater than, the end position is at 'toIntervalEnd' + 1
+                    if (toCvFuzzyType.isGreaterThan()){
+                        endSequence ++;
+                    }
+                    // in case of less than, the end position is at 'toIntervalEnd' - 1
+                    else if (toCvFuzzyType.isLessThan()){
+                        endSequence --;
+                    }
+                    // in case of undetermined, the end position is at the end of the sequence
+                    else if (toCvFuzzyType.isUndetermined() || toCvFuzzyType.isCTerminalRegion()){
+                        endSequence = sequence.length();
+                    }
+
+                    // if the start is greater than and the end is also greater than, the end is the end of the sequence
+                    if (fromCvFuzzyType.isGreaterThan() && toCvFuzzyType.isGreaterThan()){
+                        endSequence = sequence.length();
+                    }
+                    // if both the start position and the end position is less than, the start position is 1
+                    else if (fromCvFuzzyType.isLessThan() && toCvFuzzyType.isLessThan()){
+                        startSequence = 1;
+                    }
+
+                    setSequenceIntern( getSequenceStartingFrom( sequence, startSequence ) );
+                    setFullSequence( getSequence( sequence, startSequence, endSequence));
+                    prepareUpStreamDownStreamSequence(startSequence, endSequence, sequence);
+                }
+            }
+            // if the range is not valid of not consistent with the protein sequence, it is not possible to extract the feature sequence
+            else {
+                throw new IllegalRangeException("Problem extracting sequence using range. "+ FeatureUtils.getBadRangeInfo(this, sequence)
+                        +": "+this+" / Start status: "+fromCvFuzzyType+" / End status: "+toCvFuzzyType+" / Seq.Length: "+(sequence != null? sequence.length() : 0));
+            }
+        }
+        // protein sequence null, no possible extraction of the feature sequence
+        else {
+            this.sequence = null;
+            this.fullSequence = null;
+            this.upStreamSequence = null;
+            this.downStreamSequence = null;
+        }
+    }
+
+    /**
+     * @deprecated the getFullSequence returns the full sequence of the feature and not a sequence of 100 amino acids
+     * @return  the truncated sequence
+     */
+    @Deprecated
     public String getSequence() {
         return this.sequence;
     }
@@ -411,6 +651,12 @@ public boolean isUndetermined() {
 
         if ( sequence != null ? !sequence.equals( range.sequence ) : range.sequence != null ) return false;
 
+        if ( fullSequence != null ? !fullSequence.equals( range.fullSequence ) : range.fullSequence != null ) return false;
+
+        if ( upStreamSequence != null ? !upStreamSequence.equals( range.upStreamSequence ) : range.upStreamSequence != null ) return false;
+
+        if ( downStreamSequence != null ? !downStreamSequence.equals( range.downStreamSequence ) : range.downStreamSequence != null ) return false;
+
         // Check that they are attached to the same feature, otherwise these ranges should be considered different
         // We do a feature identity check to avoid triggering an infinite loop as feature includes ranges too.
         if ( feature != null ? !feature.equals( range.feature, true, false ) : range.feature != null ) return false;
@@ -430,8 +676,11 @@ public boolean isUndetermined() {
 
         result = 31 * result + ( fromCvFuzzyType != null ? fromCvFuzzyType.hashCode() : 0 );
         result = 31 * result + ( toCvFuzzyType != null ? toCvFuzzyType.hashCode() : 0 );
-        
+
         result = 31 * result + ( sequence != null ? sequence.hashCode() : 0 );
+        result = 31 * result + ( fullSequence != null ? fullSequence.hashCode() : 0 );
+        result = 31 * result + ( upStreamSequence != null ? upStreamSequence.hashCode() : 0 );
+        result = 31 * result + ( downStreamSequence != null ? downStreamSequence.hashCode() : 0 );
 
         // Include the feature this range is linked to.
         result = 31 * result + ( feature != null ? feature.hashCode( true, false ) : 0 );
@@ -506,6 +755,43 @@ public boolean isUndetermined() {
     }
 
     /**
+     * A helper method to return the last sequence.
+     *
+     * @param sequence the full sequence
+     *
+     * @return the last {@link #getMaxSequenceSize()} characters of the sequence; could be null if <code>sequence</code>
+     *         is empty or null.
+     */
+    private static String getLastFullSequence( String sequence ) {
+        int start = sequence.length() - ourMaxSeqSize + 1;
+
+        if (start < 0){
+            start = 1;
+        }
+        return getSequence( sequence, start, sequence.length() );
+    }
+
+    /**
+     * A helper method to return the first sequence.
+     *
+     * @param sequence the full sequence
+     *
+     * @return the first {@link #getMaxSequenceSize()} characters of the sequence; could be null if
+     *         <code>sequence</code> is empty or null.
+     */
+    private static String getFirstFullSequence( String sequence ) {
+        int end = ourMaxSeqSize;
+
+        if (end > sequence.length()){
+            end = sequence.length();
+        }
+        if (end <= 0){
+            end = 1;
+        }
+        return getSequence( sequence, 1, end );
+    }
+
+    /**
      * A helper method to return the sequence starting at given index.
      *
      * @param sequence the full sequence
@@ -541,8 +827,12 @@ public boolean isUndetermined() {
     private static String getSequence( String sequence, int start, boolean first ) {
         String seq = null;
 
-        if ( ( sequence == null ) || sequence.length() == 0 || ( sequence.length() < start ) ) {
+        if ( ( sequence == null ) || sequence.length() == 0) {
             return seq;
+        }
+
+        if (sequence.length() < start){
+            throw new IllegalArgumentException("the start position ("+start+") is superior to the sequence length.");
         }
 
         if ( sequence.length() <= getMaxSequenceSize() ) {
@@ -558,15 +848,61 @@ public boolean isUndetermined() {
         if ( first ) {
             if ( sequence.length() >= start + getMaxSequenceSize() ) {
                 // The given sequence is large enough to go upto max size
-                seq = sequence.substring( start, start + getMaxSequenceSize() );
+                seq = sequence.substring( Math.max( 0, start - 1 ), Math.max( 0, start - 1 ) + getMaxSequenceSize() );
             } else {
                 // Exceeds the current sequence length
                 seq = sequence.substring( Math.max( 0, start - 1 ) ); // we make sure that we don't request index < 0.
             }
         } else {
             // returning the last 'size' characters
-            seq = sequence.substring( sequence.length() - getMaxSequenceSize() );
+            seq = sequence.substring( Math.max(0, sequence.length() - getMaxSequenceSize()) );
         }
+
+        return seq;
+    }
+
+    /**
+     * Constructs a sequence.
+     *
+     * @param sequence the full sequence
+     * @param start    the starting number for the sequence to return.
+     * @param end    the ending number for the sequence to return.
+     *
+     * @return the sequence constructed using given parameters.
+     */
+    private static String getSequence( String sequence, int start, int end) {
+        String seq = null;
+
+        if (start < 0){
+            throw new IllegalArgumentException("The start of the feature range ("+start+") can't be negative.");
+        }
+        if (end < 0){
+            throw new IllegalArgumentException("The end of the feature range ("+end+") can't be negative.");
+        }
+        if (start == 0){
+            log.warn("The start position " + start + " is 0, so we will consider the start position as the first amino acid in the sequence.");
+            start = 1;
+        }
+        if (end == 0){
+            log.warn("The end position " + end + " is not valid. It can't be a negative value, so we will consider the end position as the first amino acid in the sequence.");
+            end = 1;
+        }
+
+        if ( ( sequence == null ) || sequence.length() == 0) {
+            return seq;
+        }
+
+        if (end > sequence.length()){
+            throw new IllegalArgumentException("The end position " + end + " is not valid. It can't be superior to the length of the full sequence.");
+        }
+        if (sequence.length() < start){
+            throw new IllegalArgumentException("the start position ("+start+") is superior to the sequence length.");
+        }
+        if (start > end){
+            throw new IllegalArgumentException("The feature range start position " + start + " is superior to the feature range end position " + end + ".");
+        }
+
+        seq = sequence.substring( Math.max( 0, start - 1 ), end ); // we make sure that we don't request index < 0.
 
         return seq;
     }
@@ -605,6 +941,48 @@ public boolean isUndetermined() {
      */
     private boolean charToBoolean( String st ) {
         return !st.equals( "N" );
+    }
+
+    @Lob
+    @Column(name = "full_sequence")
+    public String getFullSequence() {
+        return fullSequence;
+    }
+
+    public void setFullSequence(String fullSequence) {
+        this.fullSequence = fullSequence;
+    }
+
+    @Column( name = "upstream_sequence", length = minimumSizeForAlignment)
+    public String getUpStreamSequence() {
+        return upStreamSequence;
+    }
+
+    public void setUpStreamSequence(String upStreamSequence) {
+
+        if (upStreamSequence != null){
+            if (upStreamSequence.length() > minimumSizeForAlignment * 2){
+                throw new IllegalArgumentException("You try to set the upstream sequence of the range with a sequence of lenth "+upStreamSequence.length()+". The upstream sequence can't have more than "+minimumSizeForAlignment*2+" amino acids");
+            }
+        }
+
+        this.upStreamSequence = upStreamSequence;
+    }
+
+    @Column( name = "downstream_sequence", length = minimumSizeForAlignment)
+    public String getDownStreamSequence() {
+
+        return downStreamSequence;
+    }
+
+    public void setDownStreamSequence(String downStreamSequence) {
+        if (downStreamSequence != null){
+            if (downStreamSequence.length() > minimumSizeForAlignment * 2){
+                throw new IllegalArgumentException("You try to set the downstream sequence of the range with a sequence of lenth "+downStreamSequence.length()+". The downstream sequence can't have more than "+minimumSizeForAlignment*2+" amino acids");
+            }
+        }
+
+        this.downStreamSequence = downStreamSequence;
     }
 }
 

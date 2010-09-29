@@ -57,12 +57,26 @@ public class CvFuzzyType extends CvDagObject implements Editable {
      */
     public static final String N_TERMINAL = "n-terminal";
     public static final String N_TERMINAL_MI_REF = "MI:0340";
+    public static final String RAGGED_N_TERMINUS = "ragged n-terminus";
+    public static final String RAGGED_N_TERMINUS_MI_REF = "MI:0341";
 
     /**
      * The constant for certain.
      */
     public static final String CERTAIN = "certain";
     public static final String CERTAIN_MI_REF = "MI:0335";
+
+    /**
+     * The constant for n-terminal region.
+     */
+    public static final String N_TERMINAL_REGION = "n-terminal region";
+    //public static final String N_TERMINAL_REGION_MI_REF = "MI:0xx1";
+
+    /**
+     * The constant for c-terminal region.
+     */
+    public static final String C_TERMINAL_REGION = "c-terminal region";
+    //public static final String C_TERMINAL_REGION_MI_REF = "MI:0xx2";
 
     // -- Start of Inner class ------------------------------------------------
 
@@ -90,8 +104,8 @@ public class CvFuzzyType extends CvDagObject implements Editable {
             ourNormalMap.put( LESS_THAN, "<" );
             ourNormalMap.put( GREATER_THAN, ">" );
             ourNormalMap.put( UNDETERMINED, "?" );
-            ourNormalMap.put( C_TERMINAL, "c" );
-            ourNormalMap.put( N_TERMINAL, "n" );
+            ourNormalMap.put( C_TERMINAL_REGION, "c" );
+            ourNormalMap.put( N_TERMINAL_REGION, "n" );
             ourNormalMap.put( RANGE, ".." );
         }
 
@@ -198,7 +212,7 @@ public class CvFuzzyType extends CvDagObject implements Editable {
      */
     @Transient
     public static boolean isSingleType( String type ) {
-        return type.equals( UNDETERMINED ) || type.equals( C_TERMINAL ) || type.equals( N_TERMINAL );
+        return type.equals( UNDETERMINED ) || type.equals( C_TERMINAL_REGION ) || type.equals( N_TERMINAL_REGION );
     }
 
     /**
@@ -231,7 +245,27 @@ public class CvFuzzyType extends CvDagObject implements Editable {
      */
     @Transient
     public final boolean isCTerminal() {
-        return hasMiIdentity( C_TERMINAL_MI_REF ) || getShortLabel().equals( C_TERMINAL );
+
+        if (this.getIdentifier() != null){
+           return hasMiIdentity( C_TERMINAL_MI_REF );
+        }
+        else{
+            return C_TERMINAL.equalsIgnoreCase( this.getShortLabel() );
+        }
+    }
+
+    /**
+     * @return true if this current type is of c_terminal region type.
+     */
+    @Transient
+    public final boolean isCTerminalRegion() {
+
+        //if (this.getIdentifier() != null){
+           //return hasMiIdentity( C_TERMINAL_REGION_MI_REF );
+        //}
+        //else{
+            return C_TERMINAL_REGION.equalsIgnoreCase( this.getShortLabel() );
+        //}
     }
 
     /**
@@ -239,7 +273,39 @@ public class CvFuzzyType extends CvDagObject implements Editable {
      */
     @Transient
     public final boolean isNTerminal() {
-        return hasMiIdentity( N_TERMINAL_MI_REF ) || getShortLabel().equals( N_TERMINAL );
+        if (this.getIdentifier() != null){
+           return hasMiIdentity( N_TERMINAL_MI_REF );
+        }
+        else{
+            return N_TERMINAL.equalsIgnoreCase( this.getShortLabel() );
+        }
+    }
+
+    /**
+     * @return true if this current type is of n_terminal region type.
+     */
+    @Transient
+    public final boolean isNTerminalRegion() {
+
+        //if (this.getIdentifier() != null){
+           //return hasMiIdentity( N_TERMINAL_REGION_MI_REF );
+        //}
+        //else{
+            return N_TERMINAL_REGION.equalsIgnoreCase( this.getShortLabel() );
+        //}
+    }
+
+    /**
+     * @return true if this current type is of ragged_n_terminal type.
+     */
+    @Transient
+    public final boolean isRaggedNTerminus() {
+        if (this.getIdentifier() != null){
+           return hasMiIdentity( RAGGED_N_TERMINUS_MI_REF );
+        }
+        else{
+            return RAGGED_N_TERMINUS.equalsIgnoreCase( this.getShortLabel() );
+        }
     }
 
     /**
@@ -247,7 +313,12 @@ public class CvFuzzyType extends CvDagObject implements Editable {
      */
     @Transient
     public final boolean isUndetermined() {
-        return hasMiIdentity( UNDETERMINED_MI_REF ) || getShortLabel().equals( UNDETERMINED );
+        if (this.getIdentifier() != null){
+           return hasMiIdentity( UNDETERMINED_MI_REF );
+        }
+        else{
+            return UNDETERMINED.equalsIgnoreCase( this.getShortLabel() );
+        }
     }
 
     /**
@@ -255,7 +326,12 @@ public class CvFuzzyType extends CvDagObject implements Editable {
      */
     @Transient
     public final boolean isLessThan() {
-        return hasMiIdentity( LESS_THAN_MI_REF ) || getShortLabel().equals( LESS_THAN );
+        if (this.getIdentifier() != null){
+           return hasMiIdentity( LESS_THAN_MI_REF );
+        }
+        else{
+            return LESS_THAN.equalsIgnoreCase( this.getShortLabel() );
+        }
     }
 
     /**
@@ -263,7 +339,12 @@ public class CvFuzzyType extends CvDagObject implements Editable {
      */
     @Transient
     public final boolean isGreaterThan() {
-        return hasMiIdentity( GREATER_THAN_MI_REF ) || getShortLabel().equals( GREATER_THAN );
+        if (this.getIdentifier() != null){
+           return hasMiIdentity( GREATER_THAN_MI_REF );
+        }
+        else{
+            return GREATER_THAN.equalsIgnoreCase( this.getShortLabel() );
+        }
     }
 
     /**
@@ -271,7 +352,12 @@ public class CvFuzzyType extends CvDagObject implements Editable {
      */
     @Transient
     public final boolean isRange() {
-        return hasMiIdentity( RANGE_MI_REF ) || getShortLabel().equals( RANGE );
+        if (this.getIdentifier() != null){
+           return hasMiIdentity( RANGE_MI_REF );
+        }
+        else{
+            return RANGE.equalsIgnoreCase( this.getShortLabel() );
+        }
     }
 
     /**
@@ -279,7 +365,12 @@ public class CvFuzzyType extends CvDagObject implements Editable {
      */
     @Transient
     public final boolean isCertain() {
-        return hasMiIdentity( CERTAIN_MI_REF ) || getShortLabel().equals( CERTAIN );
+        if (this.getIdentifier() != null){
+           return hasMiIdentity( CERTAIN_MI_REF );
+        }
+        else{
+            return CERTAIN.equalsIgnoreCase( this.getShortLabel() );
+        }
     }
 
     @Transient

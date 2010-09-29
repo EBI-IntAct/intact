@@ -63,13 +63,16 @@ public class PersisterHelper_FeatureTest extends IntactBasicTestCase {
                 // add a feature
                 Feature feature = mockBuilder.createFeatureRandom();
                 feature.setCvFeatureType( mockBuilder.createCvObject( CvFeatureType.class, "MI:0117", "binding site" ) );
-                Range range = mockBuilder.createRange( 4, 4, 20, 20 ); // KCVVVGDGAVGKTCLL
-                range.setFromCvFuzzyType( null );
-                range.setToCvFuzzyType( null );
+                Range range = mockBuilder.createRange( 4, 4, 20, 20 ); // IKCVVVGDGAVGKTCL ! substring method starts from 0 but the range positions start from 1
+
+                CvFuzzyType certain = mockBuilder.createCvObject(CvFuzzyType.class, CvFuzzyType.CERTAIN_MI_REF, CvFuzzyType.CERTAIN);
+                range.setFromCvFuzzyType(certain);
+                range.setToCvFuzzyType( certain );
+
                 feature.addRange( range );
                 range.prepareSequence( bait.getSequence() );
                 Assert.assertEquals( 100, range.getSequence().length() );
-                Assert.assertEquals( seq.substring( 4, 104 ), range.getSequence() );
+                Assert.assertEquals( seq.substring( 3, 103 ), range.getSequence() );
                 component.addBindingDomain( feature );
             }
         }
