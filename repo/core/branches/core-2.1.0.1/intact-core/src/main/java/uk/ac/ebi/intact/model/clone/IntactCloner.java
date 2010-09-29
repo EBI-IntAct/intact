@@ -82,8 +82,8 @@ public class IntactCloner {
 
         if ( log.isDebugEnabled() ) {
             log.debug( "Cloning " + intactObject.getClass().getSimpleName() + ": " +
-                       ( intactObject instanceof AnnotatedObject ?
-                         ( ( AnnotatedObject ) intactObject ).getShortLabel() : intactObject.getAc() ) );
+                    ( intactObject instanceof AnnotatedObject ?
+                            ( ( AnnotatedObject ) intactObject ).getShortLabel() : intactObject.getAc() ) );
         }
 
         T clone = null;
@@ -117,7 +117,7 @@ public class IntactCloner {
             cloneIntactObjectCommon( intactObject, clone );
 
         } catch (Throwable e) {
-           throw new IntactClonerException("Problem cloning "+intactObject.getClass().getSimpleName()+": "+intactObject, e);
+            throw new IntactClonerException("Problem cloning "+intactObject.getClass().getSimpleName()+": "+intactObject, e);
         }
 
         return clone;
@@ -235,7 +235,10 @@ public class IntactCloner {
         clone.setFromIntervalEnd( range.getFromIntervalEnd() );
         clone.setToIntervalStart( range.getToIntervalStart() );
         clone.setToIntervalEnd( range.getToIntervalEnd() );
-        clone.setSequence( range.getSequence() );
+        clone.setSequence(range.getSequence());
+        clone.setFullSequence(range.getFullSequence());
+        clone.setDownStreamSequence(range.getDownStreamSequence());
+        clone.setUpStreamSequence(range.getUpStreamSequence());
 
         clone.setFromCvFuzzyType(clone( range.getFromCvFuzzyType() ));
         clone.setToCvFuzzyType(clone( range.getToCvFuzzyType() ));
@@ -245,7 +248,7 @@ public class IntactCloner {
         return clone;
     }
 
-     protected Confidence cloneConfidence( Confidence confidence ) throws IntactClonerException {
+    protected Confidence cloneConfidence( Confidence confidence ) throws IntactClonerException {
         if ( confidence == null ) {
             throw new IllegalArgumentException( "You must give a non null confidence" );
         }
@@ -253,7 +256,7 @@ public class IntactCloner {
         Confidence clone = new Confidence();
 
         clonerManager.addClone( confidence, clone );
-             
+
         clone.setValue( confidence.getValue());
         clone.setInteraction( clone (confidence.getInteraction()));
         clone.setCvConfidenceType( clone(confidence.getCvConfidenceType()));
@@ -384,7 +387,7 @@ public class IntactCloner {
         for ( Confidence confidence : interaction.getConfidences() ) {
             clone.addConfidence(clone( confidence ));
         }
-        
+
         for ( InteractionParameter interactionParameter : interaction.getParameters() ) {
             clone.addParameter(clone( interactionParameter ));
         }
