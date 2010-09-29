@@ -523,7 +523,7 @@ public boolean isUndetermined() {
         }
     }
 
-    public void prepareSequence( String sequence ) {
+    public String prepareSequence( String sequence ) {
         // we can only extract the feature sequence if the protein sequence is not null
         if (sequence != null){
 
@@ -618,6 +618,8 @@ public boolean isUndetermined() {
             this.upStreamSequence = null;
             this.downStreamSequence = null;
         }
+
+        return this.sequence;
     }
 
     /**
