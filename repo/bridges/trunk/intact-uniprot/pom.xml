@@ -50,14 +50,11 @@
         <dependency>
             <groupId>uk.ac.ebi.uniprot.kraken</groupId>
             <artifactId>uniprotjapi</artifactId>
-            <version>[,10.5)</version>
-            <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--<groupId>org.springframework</groupId>-->
-                    <!--<artifactId>spring-remoting</artifactId>-->
-                <!--</exclusion>-->
-            <!--</exclusions>-->
+            <!-- There are two ranges in the version, the first one is what you would expect and works with
+                 maven 3. The second one is a hack that maven 3 does not like, but works with maven 2 -->
+            <version>[2010.09,),[,10.5)</version>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
