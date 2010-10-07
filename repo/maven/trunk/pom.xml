@@ -21,24 +21,22 @@
     </modules>
 
     <distributionManagement>
-        <repository>
-            <id>ebi-repo</id>
-            <name>EBI Repository</name>
-            <url>scp://bark.ebi.ac.uk/homes/maven/public_html/m2repo</url>
-        </repository>
+            <repository>
+                        <id>ebi-repo</id>
+                                    <url>http://www.ebi.ac.uk/interpro/internal-tools/intact-maven/nexus/content/repositories/ebi-repo</url>
+                                            </repository>
 
         <snapshotRepository>
-            <uniqueVersion>false</uniqueVersion>
-            <id>ebi-repo-snapshots</id>
-            <name>EBI Snapshots Repository</name>
-            <url>scp://bark.ebi.ac.uk/homes/maven/public_html/m2repo_snapshots</url>
-        </snapshotRepository>
+                    <id>ebi-repo-snapshots</id>
+                                <url>http://www.ebi.ac.uk/interpro/internal-tools/intact-maven/nexus/content/repositories/ebi-repo-snapshots</url>
+                                        </snapshotRepository>
 
         <site>
-            <id>intact-site</id>
-            <name>Intact site</name>
-            <url>${site.remote.basedir}/maven-poms</url>
-        </site>
-    </distributionManagement>
+                    <id>intact-site</id>
+                                <name>Intact site</name>
+                                            <url>${site.remote.basedir}/${artifactId}</url>
+                                                    </site>
+                                                        </distributionManagement>
+
 
 </project>
