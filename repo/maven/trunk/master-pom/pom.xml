@@ -231,6 +231,7 @@
     </profiles>
 
     <repositories>
+    <!--
         <repository>
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
@@ -265,10 +266,18 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
+-->
+        <repository>
+            <id>intact.nexus</id>
+            <name>IntAct Nexus</name>
+            <url>http://www.ebi.ac.uk/interpro/internal-tools/intact-maven/nexus/content/groups/public/</url>
+        </repository>
+
 
     </repositories>
 
     <pluginRepositories>
+    <!--
         <pluginRepository>
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
@@ -320,18 +329,11 @@
             <id>maven-plugins.sourceforge</id>
             <url>http://maven-plugins.sourceforge.net/repository</url>
         </pluginRepository>
-
+-->
         <pluginRepository>
-            <id>codehaus-plugins</id>
-            <name>Nexus</name>
-            <url>https://nexus.codehaus.org/content/repositories/releases</url>
-            <layout>default</layout>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
+            <id>intact.nexus</id>
+            <name>IntAct Nexus</name>
+            <url>http://www.ebi.ac.uk/intepro/internal-tools/intact-maven/nexus/content/groups/public/</url>
         </pluginRepository>
     </pluginRepositories>
 
