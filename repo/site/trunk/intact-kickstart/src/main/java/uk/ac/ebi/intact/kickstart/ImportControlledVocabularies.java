@@ -15,9 +15,11 @@
  */
 package uk.ac.ebi.intact.kickstart;
 
+import org.obo.datamodel.OBOSession;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.dataexchange.cvutils.CvUpdater;
 import uk.ac.ebi.intact.dataexchange.cvutils.CvUpdaterStatistics;
+import uk.ac.ebi.intact.dataexchange.cvutils.OboUtils;
 
 /**
  * Example of how to import or update the controlled vocabularies in the database.
@@ -37,8 +39,11 @@ public class ImportControlledVocabularies {
         // Import the ontology into the database, using the CvUpdater
         CvUpdater updater = CvUpdater.createInstance(intactContext);
 
+        // define versions of OBO
+        OBOSession oboSession = OboUtils.createOBOSessionFromDefault("1.54");
+
         // this starts the create/update
-        CvUpdaterStatistics stats = updater.executeUpdateWithLatestCVs();
+        CvUpdaterStatistics stats = updater.executeUpdate(oboSession);
 
         System.out.println("Created terms: "+stats.getCreatedCvs().size());
     }
