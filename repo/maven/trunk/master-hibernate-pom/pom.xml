@@ -17,9 +17,9 @@
     <description>This is a master POM that contains the data access (hibernate) configuration</description>
 
     <scm>
-        <connection>scm:svn:https://intact.googlecode.com/svn/repo/maven/trunk/</connection>
-        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/maven/trunk/</developerConnection>
-        <url>https://intact.googlecode.com/svn/repo/maven/trunk/</url>
+        <connection>scm:svn:https://intact.googlecode.com/svn/repo/maven/trunk/master-hibernate-pom/</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/maven/trunk/master-hibernate-pom/</developerConnection>
+        <url>https://intact.googlecode.com/svn/repo/maven/trunk/master-hibernate-pom/</url>
     </scm>
 
     <properties>
