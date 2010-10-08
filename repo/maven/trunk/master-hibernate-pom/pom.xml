@@ -3,7 +3,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master</artifactId>
-        <version>18</version>
+        <version>19</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -228,7 +228,7 @@
         <repository>
              <id>intact.nexus</id>
              <name>IntAct Nexus</name>
-             <url>http://www.ebi.ac.uk/interpro/internal-tools/intact-maven/nexus/content/groups/public/</url>
+             <url>http://www.ebi.ac.uk/intact/maven/nexus/content/groups/public/</url>
         </repository>
     </repositories>
 
@@ -236,7 +236,7 @@
         <pluginRepository>
               <id>intact.nexus</id>
               <name>IntAct Nexus</name>
-              <url>http://www.ebi.ac.uk/interpro/internal-tools/intact-maven/nexus/content/groups/public/</url>
+              <url>http://www.ebi.ac.uk/intact/maven/nexus/content/groups/public/</url>
         </pluginRepository>
     </pluginRepositories>
 
