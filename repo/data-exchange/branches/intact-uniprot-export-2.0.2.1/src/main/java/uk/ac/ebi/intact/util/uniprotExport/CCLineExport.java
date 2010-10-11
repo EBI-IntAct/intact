@@ -486,8 +486,8 @@ public class CCLineExport extends LineExport {
                               Set<Experiment> eligibleExperiments,
                               Set<Interaction> eligibleInteractions ) throws IOException {
 
-        // in case a protein is a splice variant, get its master ID
-        // we consider an isoform interacting with its parent as self interaction.
+        // in case a protein is a chain, get its master ID
+        // we consider an chain interacting with its parent as self interaction.
         String master1 = null;
         if ( isChain(protein1)) {
             Protein proteinMaster1 = getMasterProtein(protein1);
@@ -538,7 +538,7 @@ public class CCLineExport extends LineExport {
         // generate the line
         StringBuilder line = new StringBuilder( 256 );
         line.append("UniProt").append(TABULATION); // DB
-        line.append(uniprotID_1).append(TABULATION); // DB_object_ID
+        line.append(master1).append(TABULATION); // DB_object_ID
         line.append(TABULATION); // DB_Object_symbol
         line.append(TABULATION); // Qualifier
 
@@ -553,7 +553,7 @@ public class CCLineExport extends LineExport {
         line.append(pubmedBuffer.toString()).append(TABULATION); // DB:Reference
 
         line.append("IPI").append(TABULATION); // Evidence
-        line.append("UniProt:").append(uniprotID_2).append(TABULATION); // with
+        line.append("UniProt:").append(master2).append(TABULATION); // with
         line.append(TABULATION); // Aspect
         line.append(TABULATION); // DB_Object_name
         line.append(TABULATION); // synonym
@@ -569,14 +569,14 @@ public class CCLineExport extends LineExport {
             // write the reverse
 
             line.append("UniProt").append(TABULATION); // DB
-            line.append(uniprotID_2).append(TABULATION); // DB_object_ID
+            line.append(master2).append(TABULATION); // DB_object_ID
             line.append(TABULATION); // DB_Object_symbol
             line.append(TABULATION); // Qualifier
             line.append("GO:0005515").append(TABULATION); // GoId - protein binding
             line.append(pubmedBuffer.toString()).append(TABULATION); // DB:Reference
 
             line.append("IPI").append(TABULATION); // Evidence
-            line.append("UniProt:").append(uniprotID_1).append(TABULATION); // with
+            line.append("UniProt:").append(master1).append(TABULATION); // with
             line.append(TABULATION); // Aspect
             line.append(TABULATION); // DB_Object_name
             line.append(TABULATION); // synonym
