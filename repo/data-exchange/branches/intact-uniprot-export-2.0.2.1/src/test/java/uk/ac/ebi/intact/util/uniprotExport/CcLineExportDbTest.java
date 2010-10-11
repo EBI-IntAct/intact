@@ -208,7 +208,7 @@ public class CcLineExportDbTest extends UniprotExportTestCase {
         Assert.assertEquals( 3, getDaoFactory().getInteractionDao().countAll() );
 
         StringWriter ccWriter = new StringWriter(2048);
-        Writer goaWriter = new StringWriter(2048);
+        StringWriter goaWriter = new StringWriter(2048);
 
         LineExportConfig config = new LineExportConfig();
         config.setIgnoreUniprotDrExportAnnotation(true);
@@ -219,36 +219,29 @@ public class CcLineExportDbTest extends UniprotExportTestCase {
 
         ccLineExport.generateCCLines(uniprotIds);
 
-        System.out.println( "CC Lines exported:" );
-        System.out.println( "-----------------" );
-        System.out.println(ccWriter.toString());
-        System.out.println( "-----------------" );
-
-        System.out.println( "GOA Lines exported:" );
-        System.out.println( "-----------------" );
-        System.out.println(goaWriter.toString());
-        System.out.println( "-----------------" );
+//        System.out.println( "CC Lines exported:" );
+//        System.out.println( "-----------------" );
+//        System.out.println(ccWriter.toString());
+//        System.out.println( "-----------------" );
+//
+//        System.out.println( "GOA Lines exported:" );
+//        System.out.println( "-----------------" );
+//        System.out.println(goaWriter.toString());
+//        System.out.println( "-----------------" );
 
         Assert.assertEquals(3, ccLineExport.getCcLineCount());
-        final List<String> lines = Arrays.asList( ccWriter.getBuffer().toString().split( "\n" ) );
-        Assert.assertFalse( ccWriter.getBuffer().toString(),
-                            lines.contains( "CC       P97887-PRO_0000025599:xyz (xeno); NbExp=2; IntAct="+q9swi1.getAc()+", "+p14713Chain.getAc()+";" ) );
-
-        Assert.assertTrue(  ccWriter.getBuffer().toString(),
-                            lines.contains( "CC       P14713:xyz; NbExp=2; IntAct="+q9swi1.getAc()+", "+p14713.getAc()+";" ) );
-
-        Assert.assertTrue(  ccWriter.getBuffer().toString(),
-                            lines.contains( "CC       P97887-1:xyz (xeno); NbExp=1; IntAct="+q9swi1.getAc()+", "+p14713Isoform.getAc()+";" ) );
-
+        final String cc = ccWriter.getBuffer().toString();
+        List<String> lines = Arrays.asList( cc.split( "\n" ) );
+        Assert.assertFalse( "\n"+ cc, lines.contains("CC       P97887-PRO_0000025599:xyz (xeno); NbExp=2; IntAct="+q9swi1.getAc()+", "+p14713Chain.getAc()+";" ) );
+        Assert.assertTrue(  "\n"+ cc, lines.contains("CC       P14713:xyz; NbExp=2; IntAct="+q9swi1.getAc()+", "+p14713.getAc()+";" ) );
+        Assert.assertTrue(  "\n"+ cc, lines.contains("CC       P97887-1:xyz (xeno); NbExp=1; IntAct="+q9swi1.getAc()+", "+p14713Isoform.getAc()+";" ) );
 
 
         Assert.assertEquals(goaWriter.toString(), 6, ccLineExport.getGoaLineCount());
-
-        Assert.assertFalse(  goaWriter.toString(),
-                            lines.contains( "UniProt\tP97887-PRO_0000025599\t\t\tGO:0005515\tPMID:12345\tIPI\tUniProt:Q9SWI1\t\t\t\t\t\t\tIntAct" ) );
-        Assert.assertTrue(  goaWriter.toString(),
-                            lines.contains( "UniProt\tQ9SWI1\t\t\tGO:0005515\tPMID:12345\tIPI\tUniProt:P14713\t\t\t\t\t\t\tIntAct" ) );
-        Assert.assertTrue(  goaWriter.toString(),
-                            lines.contains( "UniProt\tP97887-1\t\t\tGO:0005515\tPMID:12345\tIPI\tUniProt:Q9SWI1\t\t\t\t\t\t\tIntAct" ) );
+        final String goa = goaWriter.getBuffer().toString();
+        lines = Arrays.asList( goa.split( "\n" ) );
+        Assert.assertFalse(  "\n"+ goa, lines.contains("UniProt\tP97887-PRO_0000025599\t\t\tGO:0005515\tPMID:12345\tIPI\tUniProt:Q9SWI1\t\t\t\t\t\t\tIntAct" ) );
+        Assert.assertTrue(  "\n"+ goa, lines.contains("UniProt\tQ9SWI1\t\t\tGO:0005515\tPMID:12345\tIPI\tUniProt:P14713\t\t\t\t\t\t\tIntAct" ) );
+        Assert.assertTrue(  "\n"+ goa, lines.contains("UniProt\tP97887-1\t\t\tGO:0005515\tPMID:12345\tIPI\tUniProt:Q9SWI1\t\t\t\t\t\t\tIntAct" ) );
     }
 }
