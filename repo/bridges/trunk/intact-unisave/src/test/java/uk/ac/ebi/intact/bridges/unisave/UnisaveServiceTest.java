@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.ebi.uniprot.unisave.EntryVersionInfo;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -93,6 +94,28 @@ public class UnisaveServiceTest {
         } catch ( UnisaveServiceException e ) {
             // ok
         }
+    }
+
+    @Test
+    public void getLastSequenceReleased() throws Exception {
+        UnisaveService service = new UnisaveService();
+
+        String sequence = service.getLastSequenceAtTheDate("Q98753", false, new Date(System.currentTimeMillis()));
+
+        Assert.assertNotNull( sequence );
+        Assert.assertEquals("VPFLSKAVRCGPVIPFVIHHFNFRRVTTTKRRRNKYVLVPGYGWVLQDDYLVNSVKMTGE" +
+                "NDLPPNQLPHDDDLLFTYAKILLYDYISYFPKFRHNNPDLLDHKTELELFPLKADSAARN" +
+                "KANFYARTLWNDTITDKSAFKPGTYNDTVAGLLLWQQCALMWSLPKSVINRTISGVCDAL" +
+                "TNRTSLTLLKRISDWLKQLGLACSPIHRLFIELPTLLGRGAIPGDADKDIKHRLAFDPSI" +
+                "TVDVPKEQLHLLIYRLLSRNLNITKVNSFEHHLEERLLWSKSGSHYYPDDKINELLPPQP" +
+                "TRKEFLDVVTTEYIKECKPQVFIRQSRKLEHGKERFIYNCDTVSYVYFDFILKLFETGWQ" +
+                "DSEAILSPGDYTSERLHAKISSYKYKAMLDYTDFNSQHTIQSMRLIFETMKELLPPEATF" +
+                "ALDWCIASFDNMQTSDGLKWMATLPSGHRATTFINTVLNWCYTQMVGLKFDSFMCAGDDV" +
+                "ILMSQQPISLAPILTSHFKFNPSKQSTGTRGEFLRKHYSEAGVFAYPCRAIASLVSGNWL" +
+                "SQSLRENTPILVPIQNGIDRLRSRAGLLGVPWKLGLSELIEREAIPKEVGMALLNSHAAG" +
+                "PGLITRDYSSFTVTPKPPKLSSTLEYTATRYGLQDLSKHVPWKQLTTVESDKLSRQIKKI" +
+                "SYRHCSQAKITYNCTYEVFKPRGLPTVLSGSSQPSLSMLWWQAMLKQAIQDDSTKKIDAR" +
+                "MFAANACTSSVSGDAFLRANASMAGVLITSLITSSS", sequence);
     }
 
     @Test
