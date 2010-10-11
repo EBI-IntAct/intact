@@ -1071,10 +1071,21 @@ public class LineExport {
      *
      * @return true if the name complies to the splice variant format.
      */
-    protected boolean isSpliceVariantOrChain(Protein protein) {
+    protected boolean isChainOrIsoform(Protein protein) {
         final String ac = getUniprotPrimaryAc( protein );
         if (ac.indexOf("-") != -1) {
-            // eg. P12345-2, Q62165-PRO_0000021067
+            // eg. Q62165-PRO_0000021067, not P12345-2
+            if (getMasterAc(protein) != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean isChain(Protein protein) {
+        final String ac = getUniprotPrimaryAc( protein );
+        if (ac.indexOf("-PRO_") != -1) {
+            // eg. Q62165-PRO_0000021067, not P12345-2
             if (getMasterAc(protein) != null) {
                 return true;
             }
@@ -1097,7 +1108,7 @@ public class LineExport {
         // in the case of a splice variant, we should pick the gene name from the master protein.
         Protein queryProtein = null;
 
-        if ( isSpliceVariantOrChain(protein)) {
+        if ( isChainOrIsoform(protein)) {
 
             // get the master protein.
             queryProtein = getMasterProtein(protein);
