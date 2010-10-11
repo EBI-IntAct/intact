@@ -20,9 +20,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.uniprot.unisave.*;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.*;
 
 /**
  * UniSave client that accesses the UniSave web service.
@@ -63,6 +65,47 @@ public class UnisaveService {
             throw new UnisaveServiceException( "Failed to find any version for "+ (isSecondary?"secondary":"primary") +" identifier " + identifier );
         }
         return list;
+    }
+
+    public String getLastSequenceAtTheDate(String identifier, boolean isSecondary, Date date) throws UnisaveServiceException {
+
+        if (date == null){
+            throw new IllegalArgumentException("The date cannot be null.");
+        }
+
+        List<EntryVersionInfo> listOfVersions = getVersions(identifier, isSecondary);
+
+        EntryVersionInfo lastEntryVersionBeforeDate = null;
+
+        try {
+            GregorianCalendar c = new GregorianCalendar();
+            c.setTime(date);
+            XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+
+            for (EntryVersionInfo version : listOfVersions){
+                XMLGregorianCalendar calendarRelease = version.getReleaseDate();
+
+                if (DatatypeConstants.LESSER == calendarRelease.compare(date2)){
+                    if (lastEntryVersionBeforeDate == null){
+                        lastEntryVersionBeforeDate = version;
+                    }
+                    else if(DatatypeConstants.GREATER == calendarRelease.compare(lastEntryVersionBeforeDate.getReleaseDate())){
+                        lastEntryVersionBeforeDate = version;
+                    }
+                }
+
+            }
+
+        } catch (DatatypeConfigurationException e) {
+            throw new UnisaveServiceException("The date " + date.toString() + " cannot be converted into XMLGregorianCalendar.", e);
+        }
+
+        if (lastEntryVersionBeforeDate == null){
+            return null;
+        }
+
+        FastaSequence fasta = getFastaSequence(lastEntryVersionBeforeDate);
+        return fasta.getSequence();
     }
 
     /**
@@ -118,7 +161,7 @@ public class UnisaveService {
      *         If we fail to find a match for the given sequence in UniSave, the list would contain all existing
      *         sequence update available.
      *         The list of ordered from the oldest to the most recent sequence.
-     * 
+     *
      * @throws UnisaveServiceException if the identifier cannot be found in UniSave.
      */
     public List<SequenceVersion> getAvailableSequenceUpdate( String identifier, boolean isSecondary, String sequence ) throws UnisaveServiceException {
