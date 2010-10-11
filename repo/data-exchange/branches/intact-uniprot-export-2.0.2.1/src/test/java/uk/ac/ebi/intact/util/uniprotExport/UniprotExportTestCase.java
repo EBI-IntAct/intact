@@ -73,12 +73,38 @@ public abstract class UniprotExportTestCase extends IntactBasicTestCase {
             throw new IllegalArgumentException("Cannot create an chain if the master protein does not have an AC: "+masterProt.getShortLabel());
         }
 
-        CvXrefQualifier isoformParent = getMockBuilder().createCvObject(CvXrefQualifier.class, "MI:0951", "chain-parent" );
+        CvXrefQualifier chainParent = getMockBuilder().createCvObject(CvXrefQualifier.class, "MI:0951", "chain-parent" );
         CvDatabase intact = getMockBuilder().createCvObject(CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT);
 
-        InteractorXref isoformXref = getMockBuilder().createXref(chain, masterProt.getAc(), isoformParent, intact);
+        InteractorXref isoformXref = getMockBuilder().createXref(chain, masterProt.getAc(), chainParent, intact);
         chain.addXref(isoformXref);
 
         return chain;
     }
+
+    protected Protein createProteinIsoform( Protein masterProt, String uniprotId, String shortLabel ) {
+
+        Protein isoform = getMockBuilder().createProtein(uniprotId, shortLabel);
+
+        if (masterProt.getAc() == null) {
+            throw new IllegalArgumentException("Cannot create an isoform if the master protein does not have an AC: "+masterProt.getShortLabel());
+        }
+
+        CvXrefQualifier isoformParent = getMockBuilder().createCvObject(CvXrefQualifier.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF, CvXrefQualifier.ISOFORM_PARENT );
+        CvDatabase intact = getMockBuilder().createCvObject(CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT);
+
+        InteractorXref isoformXref = getMockBuilder().createXref(isoform, masterProt.getAc(), isoformParent, intact);
+        isoform.addXref(isoformXref);
+
+        return isoform;
+    }
+
+    protected Experiment createExportableExperiment() {
+        Experiment exp = getMockBuilder().createDeterministicExperiment();
+        final CvTopic uniprotDrExport = getMockBuilder().createCvObject( CvTopic.class, null, CvTopic.UNIPROT_DR_EXPORT );
+        final Annotation annotation = new Annotation( getMockBuilder().getInstitution(), uniprotDrExport, "yes" );
+        exp.addAnnotation( annotation );
+        return exp;
+    }
+
 }

@@ -151,8 +151,12 @@ public class CcLineExportDbTest extends UniprotExportTestCase {
     }
 
     @Test
-    public void generateCCLines_chain() throws Exception {
-        Collection<String> uniprotIds = Arrays.asList( "Q9SWI1", "P14712", "P14713" );
+    public void generateCCLines_chain_and_isoform() throws Exception {
+
+        // AIM: we need to check that isoforms are remapped to parent protein while isoforms are exported.
+
+        // to be exportable in CC lines, we prepare the list of exportable proteins.
+        Collection<String> uniprotIds = Arrays.asList( "Q9SWI1", "P14712", "P14713", "P97887-1" );
 
         // build data
         final BioSource human = getMockBuilder().createBioSource( 9606, "human" );
@@ -170,17 +174,18 @@ public class CcLineExportDbTest extends UniprotExportTestCase {
         final Protein p14712 = getMockBuilder().createProtein( "P14712", "P14712_HUMAN", mouse );
 
         final Protein p14713 = getMockBuilder().createProtein( "P14713", "P14713_HUMAN", human );
+        p14713.getAliases().clear();
+        p14713.getAliases().add( getMockBuilder().createAliasGeneName( p14713, "xyz" ) );
         PersisterHelper.saveOrUpdate( p14713 ); // we need an AC to create the chain below
 
         final Protein p14713Chain = createProteinChain( p14713, "P97887-PRO_0000025599", "P97887-PRO_0000025599" );
 
+        final Protein p14713Isoform = createProteinChain( p14713, "P97887-1", "P97887-1" );
+
         final Protein p12345 = getMockBuilder().createProtein( "P12345", "P12345_HUMAN", human );
 
         // setup a CC exportable experiment
-        final Experiment exp = getMockBuilder().createDeterministicExperiment();
-        final CvTopic uniprotDrExport = getMockBuilder().createCvObject( CvTopic.class, null, CvTopic.UNIPROT_DR_EXPORT );
-        final Annotation annotation = new Annotation( getMockBuilder().getInstitution(), uniprotDrExport, "yes" );
-        exp.addAnnotation( annotation );
+        final Experiment exp = createExportableExperiment();
 
         // interaction with the master of the chain
         final Interaction interaction1 = getMockBuilder().createInteraction( q9swi1, p14713 );
@@ -192,10 +197,15 @@ public class CcLineExportDbTest extends UniprotExportTestCase {
         interaction2.getExperiments().clear();
         interaction2.addExperiment( exp );
 
-        //interaction1,
-        PersisterHelper.saveOrUpdate( p14712, q9swi1, p14713Chain, p12345, interaction2 );
+        // interaction with the chain
+        final Interaction interaction3 = getMockBuilder().createInteraction( q9swi1, p14713Isoform );
+        interaction3.getExperiments().clear();
+        interaction3.addExperiment( exp );
 
-        Assert.assertEquals( 2, getDaoFactory().getInteractionDao().countAll() );
+        //interaction1,
+        PersisterHelper.saveOrUpdate( p14712, q9swi1, p14713Chain, p12345, interaction2, interaction3 );
+
+        Assert.assertEquals( 3, getDaoFactory().getInteractionDao().countAll() );
 
         StringWriter ccWriter = new StringWriter(2048);
         Writer goaWriter = new StringWriter(2048);
@@ -219,14 +229,26 @@ public class CcLineExportDbTest extends UniprotExportTestCase {
         System.out.println(goaWriter.toString());
         System.out.println( "-----------------" );
 
-        Assert.assertEquals(2, ccLineExport.getCcLineCount());
+        Assert.assertEquals(3, ccLineExport.getCcLineCount());
         final List<String> lines = Arrays.asList( ccWriter.getBuffer().toString().split( "\n" ) );
         Assert.assertFalse( ccWriter.getBuffer().toString(),
-                            lines.contains( "CC       P97887-PRO_0000025599:P14713_HUMAN (xeno); NbExp=2; IntAct="+q9swi1.getAc()+", "+p14713Chain.getAc()+";" ) );
+                            lines.contains( "CC       P97887-PRO_0000025599:xyz (xeno); NbExp=2; IntAct="+q9swi1.getAc()+", "+p14713Chain.getAc()+";" ) );
 
         Assert.assertTrue(  ccWriter.getBuffer().toString(),
-                            lines.contains( "CC       P14713:P14713_HUMAN; NbExp=2; IntAct="+q9swi1.getAc()+", "+p14713.getAc()+";" ) );
+                            lines.contains( "CC       P14713:xyz; NbExp=2; IntAct="+q9swi1.getAc()+", "+p14713.getAc()+";" ) );
 
-        Assert.assertEquals(4, ccLineExport.getGoaLineCount());
+        Assert.assertTrue(  ccWriter.getBuffer().toString(),
+                            lines.contains( "CC       P97887-1:xyz (xeno); NbExp=1; IntAct="+q9swi1.getAc()+", "+p14713Isoform.getAc()+";" ) );
+
+
+
+        Assert.assertEquals(goaWriter.toString(), 6, ccLineExport.getGoaLineCount());
+
+        Assert.assertFalse(  goaWriter.toString(),
+                            lines.contains( "UniProt\tP97887-PRO_0000025599\t\t\tGO:0005515\tPMID:12345\tIPI\tUniProt:Q9SWI1\t\t\t\t\t\t\tIntAct" ) );
+        Assert.assertTrue(  goaWriter.toString(),
+                            lines.contains( "UniProt\tQ9SWI1\t\t\tGO:0005515\tPMID:12345\tIPI\tUniProt:P14713\t\t\t\t\t\t\tIntAct" ) );
+        Assert.assertTrue(  goaWriter.toString(),
+                            lines.contains( "UniProt\tP97887-1\t\t\tGO:0005515\tPMID:12345\tIPI\tUniProt:Q9SWI1\t\t\t\t\t\t\tIntAct" ) );
     }
 }
