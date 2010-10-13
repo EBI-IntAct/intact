@@ -4,6 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.ebi.uniprot.unisave.EntryVersionInfo;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -116,6 +118,40 @@ public class UnisaveServiceTest {
                 "PGLITRDYSSFTVTPKPPKLSSTLEYTATRYGLQDLSKHVPWKQLTTVESDKLSRQIKKI" +
                 "SYRHCSQAKITYNCTYEVFKPRGLPTVLSGSSQPSLSMLWWQAMLKQAIQDDSTKKIDAR" +
                 "MFAANACTSSVSGDAFLRANASMAGVLITSLITSSS", sequence);
+    }
+
+    @Test
+    public void getLastSequenceReleased_P51875() throws Exception {
+        UnisaveService service = new UnisaveService();
+
+        DateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+        String sequence = service.getLastSequenceAtTheDate("P51875", false, format.parse("2007/09/17"));
+
+        Assert.assertNotNull( sequence );
+        Assert.assertEquals("MGCTMSQEERAALERSRMIEKNLKEDGMQAAKDIKLLLLGAGESGKSTIVKQMKIIHESGFTAEDYKQYKPVVYSNTVQSLVAILRAMSNLGVSFGSADREVDA" +
+                "KLVMDVVARMEDTEPFSEELLSSMKRLWGDAGVQDCFSRSNEYQLNDSAKYFLDDLERLGEAIYQPTEQDILRTRVKTTGIVEVHFTFKNLNFKLFDVGGQRSERKKWIHCFEDVTA" +
+                "IIFCVAMSEYDQVLHEDETTNRMHESLKLFDSICNNKWFTDTSIILFLNKKDLFEEKIKKSPLTICFPEYSGRQDYHEASAYIQAQFEAKNKSANKEIYCHMTCATDTTNIQFVFDA" +
+                "VTDVIIANNLRGCGLY", sequence);
+        Assert.assertEquals(354, sequence.length());
+
+    }
+
+    @Test
+    public void getLastSequenceReleased_P51875_2() throws Exception {
+        UnisaveService service = new UnisaveService();
+
+        DateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+        String sequence = service.getLastSequenceAtTheDate("P51875", false, format.parse("2006/09/01"));
+
+        Assert.assertNotNull( sequence );
+        Assert.assertEquals("GCTMSQEERAALERSRMIEKNLKEDGMQAAKDIKLLLLGAGESGKSTIVKQMKIIHESGF" +
+                "TAEDYKQYKPVVYSNTVQSLVAILRAMSNLGVSFGSADREVDAKLVMDVVARMEDTEPFS" +
+                "EELLSSMKRLWGDAGVQDCFSRSNEYQLNDSAKYFLDDLERLGEAIYQPTEQDILRTRVK" +
+                "TTGIVEVHFTFKNLNFKLFDVGGQRSERKKWIHCFEDVTAIIFCVAMSEYDQVLHEDETT" +
+                "NRMHESLKLFDSICNNKWFTDTSIILFLNKKDLFEEKIKKSPLTICFPEYSGRQDYHEAS" +
+                "AYIQAQFEAKNKSANKEIYCHMTCATDTTNIQFVFDAVTDVIIANNLRGCGLY", sequence);
+        Assert.assertEquals(353, sequence.length());
+
     }
 
     @Test
