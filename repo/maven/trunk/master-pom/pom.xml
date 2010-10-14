@@ -6,7 +6,7 @@
     <artifactId>intact-master</artifactId>
     <packaging>pom</packaging>
     <name>Master POMs :: Master POM</name>
-    <version>20-SNAPSHOT</version>
+    <version>19-SNAPSHOT</version>
     
     <description>This is a master POM that is meant to be used by the various Intact modules. It contains information
         that is common to all projects.
