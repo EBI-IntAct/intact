@@ -6,7 +6,7 @@
     <artifactId>intact-master</artifactId>
     <packaging>pom</packaging>
     <name>Master POMs :: Master POM</name>
-    <version>21-SNAPSHOT</version>
+    <version>20-SNAPSHOT</version>
     
     <description>This is a master POM that is meant to be used by the various Intact modules. It contains information
         that is common to all projects.
@@ -25,30 +25,6 @@
         <site.remote.basedir>scp://quanea2.ebi.ac.uk/ebi/sp/pro6/intact/local/doc/devsite</site.remote.basedir>
     </properties>
 
-    <ciManagement>
-        <system>continuum</system>
-        <notifiers>
-            <notifier>
-                <type>mail</type>
-                <configuration>
-                    <address>skerrien@ebi.ac.uk</address>
-                </configuration>
-            </notifier>
-            <notifier>
-                <type>mail</type>
-                <configuration>
-                    <address>prem@ebi.ac.uk</address>
-                </configuration>
-            </notifier>
-            <notifier>
-                <type>mail</type>
-                <configuration>
-                    <address>baranda@ebi.ac.uk</address>
-                </configuration>
-            </notifier>
-        </notifiers>
-    </ciManagement>
-
     <developers>
         <developer>
             <id>skerrien</id>
@@ -59,9 +35,9 @@
             <timezone>0</timezone>
         </developer>
         <developer>
-            <id>prem</id>
-            <name>Achuthan Premanand</name>
-            <email>prem@ebi.ac.uk</email>
+            <id>marine</id>
+            <name>Marine Dumousseau</name>
+            <email>marine@ebi.ac.uk</email>
             <organization>IntAct - EBI</organization>
             <organizationUrl>http://www.ebi.ac.uk/intact</organizationUrl>
             <timezone>0</timezone>
@@ -272,105 +248,11 @@
 
     <reporting>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-            </plugin>
-            
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jdepend-maven-plugin</artifactId>
-                <version>2.0-beta-1</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>changelog-maven-plugin</artifactId>
-                <version>2.0-beta-1</version>
-                <reportSets>
-                    <reportSet>
-                        <id>dual-report</id>
-                        <configuration>
-                            <type>range</type>
-                            <range>30</range>
-                        </configuration>
-                        <reports>
-                            <report>changelog</report>
-                            <report>file-activity</report>
-                            <report>dev-activity</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-
+           
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.0-beta-3</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jxr-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>taglist-maven-plugin</artifactId>
-                <version>2.0-beta-1</version>
-                <configuration>
-                    <tags>TODO, FIXME, HACK, @deprecated</tags>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>surefire-report-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-changes-plugin</artifactId>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>changes-report</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-
-            <!-- Clover commented as it requires a licence we should not distribute.
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clover-plugin</artifactId>
-            </plugin>
-            -->
-
-            <!--
-            <plugin>
-                 <groupId>maven-plugins</groupId>
-	             <artifactId>maven-findbugs-plugin</artifactId>
-		         <version>1.4</version>
-                <configuration>
-                    <threshold>Normal</threshold>
-                </configuration>
-            </plugin>
-            -->
-
-            <plugin>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>2.2</version>
-                <configuration>
-                    <rulesets>
-                        <ruleset>/rulesets/basic.xml</ruleset>
-                        <ruleset>/rulesets/unusedcode.xml</ruleset>
-                    </rulesets>
-                    <linkXref>true</linkXref>
-                    <minimumTokens>100</minimumTokens>
-                    <targetJdk>1.5</targetJdk>
-                </configuration>
             </plugin>
 
         </plugins>
