@@ -22,9 +22,9 @@
     </properties>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/plugins/trunk</url>
+        <connection>scm:svn:https://intact.googlecode.com/svn/repo/plugins/trunk</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/plugins/trunk</developerConnection>
+        <url>https://intact.googlecode.com/svn/repo/plugins/trunk</url>
     </scm>
 
     <modules>
