@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.commons.util;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -21,10 +23,25 @@ import java.io.File;
  */
 public class CompressionUtilsTest {
 
+    private File fileToGzip;
+    private File fileToZip1;
+    private File fileToZip2;
+
+    @Before
+    public void prepareFiles() throws Exception {
+        fileToGzip = File.createTempFile("gzipped-", ".gz");
+        fileToZip1 = File.createTempFile("zipped1-", ".zip");
+        fileToZip2 = File.createTempFile("zipped2-", ".zip");
+    }
+
+    public void cleanFiles() {
+        if (fileToGzip.exists()) fileToGzip.delete();
+        if (fileToZip1.exists()) fileToZip1.delete();
+        if (fileToZip2.exists()) fileToZip2.delete();
+    }
+
     @Test
     public void gzip() throws Exception {
-        File fileToGzip = new File(CompressionUtilsTest.class.getResource("FileToGzip.txt").getFile());
-
         File gzippedFile = new File(fileToGzip.getParent(), fileToGzip.getName()+".gz");
         assertFalse(gzippedFile.exists());
 
@@ -49,9 +66,6 @@ public class CompressionUtilsTest {
 
     @Test
     public void zip() throws Exception {
-       File fileToZip1 = new File(CompressionUtilsTest.class.getResource("FileToZip1.txt").getFile());
-       File fileToZip2 = new File(CompressionUtilsTest.class.getResource("FileToZip2.txt").getFile());
-
         File zippedFile = new File(fileToZip1.getParent(), "FilesZipped.zip");
         if(zippedFile.exists()){
             zippedFile.delete();
@@ -78,9 +92,6 @@ public class CompressionUtilsTest {
 
     @Test
     public void zipWithFullPathName() throws Exception {
-        File fileToZip1 = new File( CompressionUtilsTest.class.getResource( "FileToZip1.txt" ).getFile() );
-        File fileToZip2 = new File( CompressionUtilsTest.class.getResource( "FileToZip2.txt" ).getFile() );
-
         File zippedFile = new File( fileToZip1.getParent(), "FilesZipped2.zip" );
 
         if ( zippedFile.exists() ) {
