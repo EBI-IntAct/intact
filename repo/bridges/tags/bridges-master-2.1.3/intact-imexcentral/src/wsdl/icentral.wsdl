@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- $Id::                                                                 $ -->
+
+<definitions targetNamespace="http://imex.mbi.ucla.edu/icentral/ws"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema"
+
+             xmlns:ic="http://imex.mbi.ucla.edu/icentral/ws"              
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+ <types>
+  <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+             targetNamespace="http://imex.mbi.ucla.edu/icentral/ws">
+
+   <xs:complexType name="identifier">
+    <xs:attribute name="ns" type="xs:string" use="required"/>
+    <xs:attribute name="ac" type="xs:string" use="required"/>
+   </xs:complexType>
+   
+   <xs:complexType name="publication">
+    <xs:sequence>
+     <xs:element name="identifier" type="ic:identifier" minOccurs="1" />
+     <xs:element name="author" type="xs:string" minOccurs="0" />
+     <xs:element name="title" type="xs:string" minOccurs="0" />
+     <xs:element name="paperAbstract" type="xs:string" minOccurs="0" />
+     <xs:element name="expectedPublicationDate" type="xs:dateTime" minOccurs="0" />
+     <xs:element name="publicationDate" type="xs:dateTime" minOccurs="0" />
+     <xs:element name="releaseDate" type="xs:dateTime" minOccurs="0" />
+     
+     <xs:element name="creationDate" type="xs:dateTime" minOccurs="0" />
+     <xs:element name="status" type="xs:string" minOccurs="0" />
+     <xs:element name="imexAccession" type="xs:string" minOccurs="0" />
+     <xs:element name="owner" type="xs:string" minOccurs="0" />
+    </xs:sequence>
+   </xs:complexType>
+   
+   <xs:complexType name="publicationList">
+    <xs:sequence>
+     <xs:element name="publication" type="ic:publication"  minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+   </xs:complexType>
+      
+   <xs:element name="ImexCentralFault">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="faultCode" type="xs:int"/>
+      <xs:element name="message" type="xs:string" minOccurs="0" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   
+   <xs:element name="publicationResponse">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="publication" type="ic:publication" minOccurs="1" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+
+   <xs:element name="publicationListResponse">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="publicationList" type="ic:publicationList" minOccurs="1" />
+     </xs:sequence>
+    </xs:complexType> 
+   </xs:element>
+   
+   <xs:element name="createPublicationById">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="identifier" type="ic:identifier"/>
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+
+   <xs:element name="createPublication">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="publication" type="ic:publication"/>
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   
+   <xs:element name="getPublicationById">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="identifier" type="ic:identifier" minOccurs="1" maxOccurs="unbounded"/>
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   
+   <xs:element name="getPublicationByOwner">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="owner" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   
+   <xs:element name="getPublicationByStatus">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="status" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   
+   <xs:element name="updatePublicationStatus">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="identifier" type="ic:identifier" minOccurs="1"/>
+      <xs:element name="status" type="xs:string" minOccurs="1"/>
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+
+   <xs:element name="getPublicationImexAccession">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="identifier" type="ic:identifier" minOccurs="1"/>
+      <xs:element name="create" type="xs:boolean" minOccurs="0"  default="false" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   
+  </xs:schema>
+ </types>
+
+ <message name="ImexCentralFault">
+  <part name="fault" element="ic:ImexCentralFault"/>
+ </message>
+
+ <message name="publicationResponse">
+  <part name="response" element="ic:publicationResponse"/>
+ </message>
+
+ <message name="publicationListResponse">
+  <part name="response" element="ic:publicationListResponse"/>
+ </message>
+
+ <message name="createPublication">
+  <part name="request" element="ic:createPublication"/>
+ </message>
+
+ <message name="createPublicationById">
+  <part name="request" element="ic:createPublicationById"/>
+ </message>
+ 
+ <message name="getPublicationById">
+  <part name="request" element="ic:getPublicationById"/>
+ </message>
+  
+ <message name="getPublicationByOwner">
+  <part name="request" element="ic:getPublicationByOwner"/>
+ </message>
+  
+ <message name="getPublicationByStatus">
+  <part name="request" element="ic:getPublicationByStatus"/>
+ </message>
+ 
+ <message name="updatePublicationStatus">
+  <part name="request" element="ic:updatePublicationStatus"/>
+ </message>
+
+ <message name="getPublicationImexAccession">
+  <part name="request" element="ic:getPublicationImexAccession"/>
+ </message>
+ 
+ <portType name="ImexCentralPort">
+
+  <operation name="createPublication">
+   <input message="ic:createPublication"/>
+   <output message="ic:publicationResponse"/>
+   <fault message="ic:ImexCentralFault" name="ImexCentralFault"/>
+  </operation>
+
+  <operation name="createPublicationById">
+   <input message="ic:createPublicationById"/>
+   <output message="ic:publicationResponse"/>
+   <fault message="ic:ImexCentralFault" name="ImexCentralFault"/>
+  </operation>
+  
+  <operation name="getPublicationById">
+   <input message="ic:getPublicationById"/>
+   <output message="ic:publicationListResponse"/>
+   <fault message="ic:ImexCentralFault" name="ImexCentralFault"/>
+  </operation>
+  
+  <operation name="getPublicationByOwner">
+   <input message="ic:getPublicationByOwner"/>
+   <output message="ic:publicationListResponse"/>
+   <fault message="ic:ImexCentralFault" name="ImexCentralFault"/>
+  </operation>
+  
+  <operation name="getPublicationByStatus">
+   <input message="ic:getPublicationByStatus"/>
+   <output message="ic:publicationListResponse"/>
+   <fault message="ic:ImexCentralFault" name="ImexCentralFault"/>
+  </operation>
+   
+  <operation name="updatePublicationStatus">
+   <input message="ic:updatePublicationStatus"/>
+   <output message="ic:publicationResponse"/>
+   <fault message="ic:ImexCentralFault" name="ImexCentralFault"/>
+  </operation>
+
+  <operation name="getPublicationImexAccession">
+   <input message="ic:getPublicationImexAccession"/>
+   <output message="ic:publicationResponse"/>
+   <fault message="ic:ImexCentralFault" name="ImexCentralFault"/>
+  </operation>
+ </portType>
+ 
+ <binding name="ImexCentralPortBinding" type="ic:ImexCentralPort">
+
+  <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+  
+  <operation name="createPublication">
+   <soap:operation soapAction="urn:createPublication"/>
+   <input><soap:body use="literal"/></input>
+   <output><soap:body use="literal"/></output>
+   <fault name="ImexCentralFault">
+    <soap:fault name="ImexCentralFault" use="literal"/>
+   </fault>
+  </operation>
+
+  <operation name="createPublicationById">
+   <soap:operation soapAction="urn:createPublicationById"/>
+   <input><soap:body use="literal"/></input>
+   <output><soap:body use="literal"/></output>
+   <fault name="ImexCentralFault">
+    <soap:fault name="ImexCentralFault" use="literal"/>
+   </fault>
+  </operation>
+  
+  <operation name="getPublicationById">
+   <soap:operation soapAction="urn:getPublicationById"/>
+   <input><soap:body use="literal"/></input>
+   <output><soap:body use="literal"/></output>
+   <fault name="ImexCentralFault">
+    <soap:fault name="ImexCentralFault" use="literal"/>
+   </fault>
+  </operation>
+  
+  <operation name="getPublicationByOwner">
+   <soap:operation soapAction="urn:getPublicationByOwner"/>
+   <input><soap:body use="literal"/></input>
+   <output><soap:body use="literal"/></output>
+   <fault name="ImexCentralFault">
+    <soap:fault name="ImexCentralFault" use="literal"/>
+   </fault>
+  </operation>
+  
+  <operation name="getPublicationByStatus">
+   <soap:operation soapAction="urn:getPublicationByStatus"/>
+   <input><soap:body use="literal"/></input>
+   <output><soap:body use="literal"/></output>
+   <fault name="ImexCentralFault">
+    <soap:fault name="ImexCentralFault" use="literal"/>
+   </fault>
+  </operation>
+  
+  <operation name="updatePublicationStatus">
+   <soap:operation soapAction="urn:updatePublicationStatus"/>
+   <input><soap:body use="literal"/></input>
+   <output><soap:body use="literal"/></output>
+   <fault name="ImexCentralFault">
+    <soap:fault name="ImexCentralFault" use="literal"/>
+   </fault>
+  </operation>
+
+  <operation name="getPublicationImexAccession">
+   <soap:operation soapAction="urn:updatePublicationStatus"/>
+   <input><soap:body use="literal"/></input>
+   <output><soap:body use="literal"/></output>
+   <fault name="ImexCentralFault">
+    <soap:fault name="ImexCentralFault" use="literal"/>
+   </fault>
+  </operation>
+
+ </binding>
+
+ <service name="ImexCentralService">
+  <port name="ImexCentralPort" binding="ic:ImexCentralPortBinding">
+   <soap:address location=""/>
+  </port>
+ </service>
+</definitions>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><umlet_diagram><element><type>com.umlet.element.base.Interface</type><coordinates><x>30</x><y>10</y><w>689</w><h>1220</h></coordinates><panel_attributes>BlastStrategy
+--
+submitJob(String uniprotAc): BlastJobEntity
+submitJobs(Set&lt;String&gt; uniprotAcs): List&lt;BlastJobEntity&gt;
+fetchIfDone(BlastJobEntity job): BlastResult
+fetchAvailableBlasts(Set&lt;String&gt; uniprotAcs): List&lt;BlastResult&gt;
+ fetchAvailableBlasts(List&lt;BlastJobEntity&gt; jobs): List&lt;BlastResult&gt;
+fetchPendingJobs(): List&lt;BlastJobEntity&gt;  refreshJob(BlastJobEntity job): BlastJobEntity
+refreshJobs(List&lt;BlastJobEntity&gt; jobs): List&lt;BlastJobEntity&gt;
+ fetchResult(BlastJobEntity job): BlastResult
+runBlast(Set&lt;String&gt; uniprotAcs): List&lt;Job&gt;
+runBlast(String uniprotAc): Job
+checkStatus(Job job): String
+getResult(Job job): String
+processOutput(File blastFile): BlastResult</panel_attributes><additional_attributes></additional_attributes></element></umlet_diagram>
