@@ -53,7 +53,7 @@
         <repository>
            <id>intact.nexus</id>
            <name>IntAct Nexus</name>
-           <url>http://www.ebi.ac.uk/intact/maven/nexus/content/groups/public</url><id>intact.nexus</id>
+           <url>http://www.ebi.ac.uk/intact/maven/nexus/content/groups/public</url>
         </repository>
     </repositories>
 
