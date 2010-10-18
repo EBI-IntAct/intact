@@ -100,9 +100,9 @@ public class UpdateDbProteinsMojo extends IntactJpaMojo {
         UpdateReportHandler reportHandler = new FileReportHandler(reportsDir);
         ProteinUpdateProcessorConfig configUpdate = new ProteinUpdateProcessorConfig(reportHandler);
         configUpdate.setFixDuplicates(fixDuplicates);
-        configUpdate.setDeleteSpliceVariantsWithoutInteractions(deleteSpliceVarsWithoutInteractions);
-        configUpdate.setProcessBatchSize(batchSize);
-        configUpdate.setProcessStepSize(stepSize);
+        configUpdate.setProcessProteinNotFoundInUniprot(deleteSpliceVarsWithoutInteractions);
+        //configUpdate.setProcessBatchSize(batchSize);
+        //configUpdate.setProcessStepSize(stepSize);
 
         PrintStream ps = new PrintStream(new File(reportsDir, "counts.txt"));
         ps.println("Counts before update");
