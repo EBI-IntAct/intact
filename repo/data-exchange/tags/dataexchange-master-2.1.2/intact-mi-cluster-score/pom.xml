@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>dataexchange-master</artifactId>
+        <groupId>uk.ac.ebi.intact.dataexchange</groupId>
+        <version>2.1.2-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>intact-mi-cluster-score</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+
+    <name>IntAct Data Exchange :: Intact MI cluster score</name>
+    <description>IntAct CC/DR line export for UniProt using the Mi cluster score</description>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>compute-mi-score</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>-Xmx2024m</argument>
+                                <argument>-classpath</argument>
+                                <!-- automatically creates the classpath using all project dependencies,
+                                     also adding the project build directory -->
+                                <classpath/>
+                                <argument>uk.ac.ebi.intact.dataexchange.uniprotexport.MiScoreComputing</argument>
+                                <!-- The file which will contain the mi-scores-->
+                                <argument>${file1}</argument>
+                                <!-- The file which will contain the mi scores of the interactions currently exoirted in uniprot -->
+                                <argument>${file2}</argument>
+                                <!-- The file which will contain the mi scores of the data not exported in uniprot -->
+                                <argument>${file3}</argument>
+                                <!-- The file which will contain the list of interaction ac which are eligible for a uniprot export-->
+                                <argument>${file4}</argument>
+                                <!-- The file which will contain the list of interaction ac which are currently exported in uniprot  -->
+                                <argument>${file5}</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>sort-mi-score</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>-Xmx2024m</argument>
+                                <argument>-classpath</argument>
+                                <!-- automatically creates the classpath using all project dependencies,
+                                     also adding the project build directory -->
+                                <classpath/>
+                                <argument>uk.ac.ebi.intact.dataexchange.uniprotexport.MiScoreSorting</argument>
+                                <!-- The file which will contain the mi-scores-->
+                                <argument>${file1}</argument>
+                                <!-- The file which will contain the mi scores of the interactions currently exoirted in uniprot -->
+                                <argument>${file2}</argument>
+                                <!-- The file which will contain the mi scores of the data not exported in uniprot -->
+                                <argument>${file3}</argument>
+                                <!-- The file which will contain the list of interaction ac which are exported in uniprot-->
+                                <argument>${file4}</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.dataexchange.uniprotexport</groupId>
+            <artifactId>intact-uniprot-export</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.intact.core</groupId>
+            <artifactId>intact-core</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+
+        <dependency>
+           <groupId>asm</groupId>
+           <artifactId>asm</artifactId>
+           <version>1.5.3</version>
+       </dependency>
+
+        <!-- Database drivers - Comment/uncomment the one/s you need -->
+
+        <!-- PostgreSQL -->
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>8.2-504.jdbc3</version>
+        </dependency>
+
+        <!-- Oracle -->
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>oracle-thin</artifactId>
+            <version>10.2.0.4</version>
+        </dependency>
+
+        <!-- H2 -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.0.20070617</version>
+        </dependency>
+
+        <!-- Other -->
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2</version>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+              <id>intact.nexus</id>
+              <name>IntAct Nexus</name>
+              <url>http://www.ebi.ac.uk/intact/maven/nexus/content/groups/public</url>
+        </repository>
+    </repositories>
+
+</project>
