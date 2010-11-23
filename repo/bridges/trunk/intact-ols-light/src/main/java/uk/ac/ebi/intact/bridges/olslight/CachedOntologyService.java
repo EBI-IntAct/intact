@@ -69,49 +69,52 @@ public class CachedOntologyService implements OntologyService {
     }
 
     @Override
-    public String getJsonData( String url ) throws OntologyServiceException {
-        String jsonData = getFromCache( url );
-        if( jsonData == null ){
-            jsonData = service.getJsonData( url );
-            storeInCache( url, jsonData );
-        }
-        return jsonData;
-    }
-
-    @Override
     public String getTermName( OntologyId ontologyId, String termId ) throws OntologyServiceException {
-        return service.getTermName( ontologyId, termId );
+        final String key = "getTermName#"+ontologyId+"#"+termId;
+        Object data = getFromCache( key );
+        if( data == null ) {
+            data = service.getTermName( ontologyId, termId );
+            storeInCache( key, data );
+        }
+        return (String) data;
     }
 
     @Override
     public Map<String, String> getTermDirectChildren( OntologyId ontologyId, String termId ) throws OntologyServiceException {
-        return service.getTermDirectChildren( ontologyId, termId );
-
+        final String key = "getTermDirectChildren#"+ontologyId+"#"+termId;
+        Object data = getFromCache( key );
+        if( data == null ) {
+            data = service.getTermDirectChildren( ontologyId, termId );
+            storeInCache( key, data );
+        }
+        return (Map<String, String>) data;
     }
 
     @Override
     public Map<String, String> getTermChildren( OntologyId ontologyId, String termId, int depth ) throws OntologyServiceException {
-        return service.getTermChildren( ontologyId, termId, depth );
+        final String key = "getTermChildren#"+ontologyId+"#"+termId+"#"+depth;
+        Object data = getFromCache( key );
+        if( data == null ) {
+            data = service.getTermChildren( ontologyId, termId, depth );
+            storeInCache( key, data );
+        }
+        return (Map<String, String>) data;
     }
 
     /////////////////////////
     // EH CACHE utilities
 
-    private String getFromCache( String url ) {
-
-        String data = null;
-
-        Element element = cache.get( url );
-
+    private Object getFromCache( String key ) {
+        Object data = null;
+        Element element = cache.get( key );
         if( element != null ){
-            data = ( String ) element.getValue();
+            data = element.getValue();
         }
-
         return data;
     }
 
-    private void storeInCache( String url, String jsonData ) {
-        Element element = new Element( url, jsonData );
+    private void storeInCache( String key, Object data ) {
+        Element element = new Element( key, data );
         cache.put( element );
     }
 }

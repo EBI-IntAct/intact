@@ -22,6 +22,7 @@ public class CachedOntologyServiceTest {
         Assert.assertEquals( "interaction detection method", service.getTermName( OntologyId.PSI_MI, "MI:0001" ) );
         Assert.assertEquals( "growth", service.getTermName( OntologyId.GENE_ONTOLOGY, "GO:0040007" ) );
         Assert.assertEquals( "acylated residue", service.getTermName( OntologyId.PSI_MOD, "MOD:00649" ) );
+        Assert.assertEquals( "Homo sapiens (Human)", service.getTermName( OntologyId.TAXONOMY, "9606" ) );
     }
 
     @Test
