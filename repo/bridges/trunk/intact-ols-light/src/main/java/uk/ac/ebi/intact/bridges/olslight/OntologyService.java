@@ -11,8 +11,6 @@ import java.util.Map;
  */
 public interface OntologyService {
 
-    String getJsonData( final String url ) throws OntologyServiceException;
-
     String getTermName( final OntologyId ontologyId, final String termId ) throws OntologyServiceException;
 
     Map<String, String> getTermDirectChildren( final OntologyId ontologyId, final String termId ) throws OntologyServiceException;

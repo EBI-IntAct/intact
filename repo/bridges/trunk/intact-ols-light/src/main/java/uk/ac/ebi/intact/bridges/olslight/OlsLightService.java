@@ -76,8 +76,7 @@ public class OlsLightService implements OntologyService {
     //////////////////////
     // Ontology Service
 
-    @Override
-    public String getJsonData( final String url ) throws OntologyServiceException {
+    private String getJsonData( final String url ) throws OntologyServiceException {
         if( log.isTraceEnabled() ){
             log.trace( "jsonQuery = " + url );
         }
