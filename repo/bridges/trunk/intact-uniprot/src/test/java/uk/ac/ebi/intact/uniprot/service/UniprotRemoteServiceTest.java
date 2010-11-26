@@ -205,8 +205,8 @@ public class UniprotRemoteServiceTest {
         assertEquals( "Myosin tail region-interacting protein MTI1", protein.getDescription() );
 
         assertEquals( "P47068", protein.getPrimaryAc() );
-        assertEquals( "P47067", protein.getSecondaryAcs().get( 0 ) );
-        assertEquals( "Q8X1F4", protein.getSecondaryAcs().get( 1 ) );
+        assertEquals( "D6VWG0", protein.getSecondaryAcs().get( 0 ) );
+        assertEquals( "P47067", protein.getSecondaryAcs().get( 1 ) );
 
         // gene names
         assertEquals( 1, protein.getGenes().size() );
@@ -554,5 +554,13 @@ public class UniprotRemoteServiceTest {
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0017024", "Go" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0030036", "Go" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "IPR001452", "InterPro" ) ) );
+    }
+
+    @Test
+    public void xxx() throws Exception {
+
+        UniprotService uniprot = getUniprotService(  );
+        Collection<UniprotProtein> proteins = uniprot.retrieve( "Q0G819" );
+
     }
 }
