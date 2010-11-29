@@ -137,6 +137,36 @@ public class UnisaveServiceTest {
     }
 
     @Test
+    public void getSequenceVersion(){
+        String sequence = "MNKLAILAIIAMVLFSANAFRFQSRIRSNVEAKTETRDLCEQSALQCNEQGCHNFCSPEDKPGCLGMVWNPELVP";
+        String uniprotAc = "P12350";
+        UnisaveService service = new UnisaveService();
+
+        try {
+            int sequenceVersion = service.getSequenceVersion(uniprotAc, false, sequence);
+
+            Assert.assertEquals(2, sequenceVersion);
+        } catch (UnisaveServiceException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void getSequenceVersion_sequence_not_found(){
+        String sequence = "MNKLAI";
+        String uniprotAc = "P12350";
+        UnisaveService service = new UnisaveService();
+
+        try {
+            int sequenceVersion = service.getSequenceVersion(uniprotAc, false, sequence);
+
+            Assert.assertEquals(-1, sequenceVersion);
+        } catch (UnisaveServiceException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
     public void getLastSequenceReleased_P51875_2() throws Exception {
         UnisaveService service = new UnisaveService();
 
