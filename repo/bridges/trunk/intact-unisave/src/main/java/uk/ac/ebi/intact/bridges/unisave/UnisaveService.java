@@ -109,7 +109,7 @@ public class UnisaveService {
     }
 
     /**
-     * Retreive a fasta sequence corresponding to a given EntryVersion.
+     * Retrieve a fasta sequence corresponding to a given EntryVersion.
      *
      * @param version the version for which we want the sequence
      * @return a fasta sequence.
@@ -148,6 +148,44 @@ public class UnisaveService {
         }
 
         return new FastaSequence( header, sequence );
+    }
+
+    /**
+     * Returns the sequence version of a sequence for a certain uniprot ac.
+     * Returns -1 if the sequence cannot be found for this uniprot ac
+     * @param identifier
+     * @param isSecondary
+     * @param sequence
+     * @return
+     * @throws UnisaveServiceException
+     */
+    public int getSequenceVersion(String identifier, boolean isSecondary, String sequence) throws UnisaveServiceException{
+
+        // 1. get all versions ordered from the most recent to the oldest
+        if ( log.isDebugEnabled() ) {
+            log.debug( "Collecting version(s) for entry by " + ( isSecondary ? "secondary" : "primary" ) + " ac: " + identifier );
+        }
+
+        final List<EntryVersionInfo> versions = getVersions( identifier, isSecondary );
+
+        if ( log.isDebugEnabled() ) {
+            log.debug( "Found " + versions.size() + " version(s)" );
+        }
+
+        // 3. for each protein sequence version
+        int currentSequenceVersion = -1;
+
+        for ( EntryVersionInfo versionInfo : versions) {
+
+            FastaSequence fasta = getFastaSequence(versionInfo);
+
+            if ( fasta.getSequence().equalsIgnoreCase(sequence) ) {
+                currentSequenceVersion = versionInfo.getSequenceVersion();
+                break;
+            } // if
+        } // versions
+
+        return currentSequenceVersion;
     }
 
     /**
