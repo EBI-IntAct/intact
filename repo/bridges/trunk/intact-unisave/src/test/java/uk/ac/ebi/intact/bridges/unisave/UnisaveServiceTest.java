@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * UnisaveService Tester.
@@ -189,7 +190,7 @@ public class UnisaveServiceTest {
         UnisaveService service = new UnisaveService();
 
         DateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-        List<String> sequences = service.getAllSequencesBeforeDate("P51875", false, format.parse("2006/09/01"));
+        Map<Integer, String> sequences = service.getAllSequencesBeforeDate("P51875", false, format.parse("2006/09/01"));
 
         Assert.assertEquals(2, sequences.size());
 
