@@ -109,22 +109,21 @@ public class UnisaveService {
     }
 
     /**
-     * Get the list of sequences existing in unisave before this date
+     * Get the map of sequences (and their sequence version in uniprot) existing in unisave before this date
      * @param identifier
      * @param isSecondary
      * @param date
      * @return
      * @throws UnisaveServiceException
      */
-    public List<String> getAllSequencesBeforeDate(String identifier, boolean isSecondary, Date date) throws UnisaveServiceException {
+    public Map<Integer, String> getAllSequencesBeforeDate(String identifier, boolean isSecondary, Date date) throws UnisaveServiceException {
 
         if (date == null){
             throw new IllegalArgumentException("The date cannot be null.");
         }
 
         List<EntryVersionInfo> listOfVersions = getVersions(identifier, isSecondary);
-        List<String> oldSequences = new ArrayList<String>();
-        List<Integer> sequenceVersions = new ArrayList<Integer>();
+        Map<Integer, String> oldSequences = new HashMap<Integer, String>();
 
         try {
             GregorianCalendar c = new GregorianCalendar();
@@ -135,11 +134,9 @@ public class UnisaveService {
                 XMLGregorianCalendar calendarRelease = version.getReleaseDate();
 
                 if (DatatypeConstants.LESSER == calendarRelease.compare(date2) || DatatypeConstants.EQUAL == calendarRelease.compare(date2)){
-                    if (!sequenceVersions.contains(version.getSequenceVersion())){
-                        sequenceVersions.add(version.getSequenceVersion());
-
+                    if (!oldSequences.keySet().contains(version.getSequenceVersion())){
                         FastaSequence fasta = getFastaSequence(version);
-                        oldSequences.add(fasta.getSequence());
+                        oldSequences.put(version.getSequenceVersion(), fasta.getSequence());
                     }
                 }
 
