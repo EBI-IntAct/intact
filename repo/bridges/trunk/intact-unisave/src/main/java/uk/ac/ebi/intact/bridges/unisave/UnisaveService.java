@@ -85,7 +85,7 @@ public class UnisaveService {
             for (EntryVersionInfo version : listOfVersions){
                 XMLGregorianCalendar calendarRelease = version.getReleaseDate();
 
-                if (DatatypeConstants.LESSER == calendarRelease.compare(date2)){
+                if (DatatypeConstants.LESSER == calendarRelease.compare(date2) || DatatypeConstants.EQUAL == calendarRelease.compare(date2)){
                     if (lastEntryVersionBeforeDate == null){
                         lastEntryVersionBeforeDate = version;
                     }
@@ -106,6 +106,50 @@ public class UnisaveService {
 
         FastaSequence fasta = getFastaSequence(lastEntryVersionBeforeDate);
         return fasta.getSequence();
+    }
+
+    /**
+     * Get the list of sequences existing in unisave before this date
+     * @param identifier
+     * @param isSecondary
+     * @param date
+     * @return
+     * @throws UnisaveServiceException
+     */
+    public List<String> getAllSequencesBeforeDate(String identifier, boolean isSecondary, Date date) throws UnisaveServiceException {
+
+        if (date == null){
+            throw new IllegalArgumentException("The date cannot be null.");
+        }
+
+        List<EntryVersionInfo> listOfVersions = getVersions(identifier, isSecondary);
+        List<String> oldSequences = new ArrayList<String>();
+        List<Integer> sequenceVersions = new ArrayList<Integer>();
+
+        try {
+            GregorianCalendar c = new GregorianCalendar();
+            c.setTime(date);
+            XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+
+            for (EntryVersionInfo version : listOfVersions){
+                XMLGregorianCalendar calendarRelease = version.getReleaseDate();
+
+                if (DatatypeConstants.LESSER == calendarRelease.compare(date2) || DatatypeConstants.EQUAL == calendarRelease.compare(date2)){
+                    if (!sequenceVersions.contains(version.getSequenceVersion())){
+                        sequenceVersions.add(version.getSequenceVersion());
+
+                        FastaSequence fasta = getFastaSequence(version);
+                        oldSequences.add(fasta.getSequence());
+                    }
+                }
+
+            }
+
+        } catch (DatatypeConfigurationException e) {
+            throw new UnisaveServiceException("The date " + date.toString() + " cannot be converted into XMLGregorianCalendar.", e);
+        }
+
+        return oldSequences;
     }
 
     /**

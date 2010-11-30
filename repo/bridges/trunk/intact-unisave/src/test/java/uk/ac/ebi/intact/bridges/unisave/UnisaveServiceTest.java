@@ -185,6 +185,17 @@ public class UnisaveServiceTest {
     }
 
     @Test
+    public void getAllPreviousSequenceReleased_P51875_2() throws Exception {
+        UnisaveService service = new UnisaveService();
+
+        DateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+        List<String> sequences = service.getAllSequencesBeforeDate("P51875", false, format.parse("2006/09/01"));
+
+        Assert.assertEquals(2, sequences.size());
+
+    }
+
+    @Test
     public void getAvailableSequenceUpdate_P12345() throws Exception {
 
         // example of a sequence that doesn't have any update through its history
