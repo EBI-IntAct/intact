@@ -20,7 +20,10 @@ import java.util.Map;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  * @since 1.0
+ *
+ * @deprecated use instead uk.ac.ebi.intact.bridges.taxonomy.UniprotTaxonomyService or uk.ac.ebi.intact.bridges.taxonomy.OLSTaxonomyService
  */
+@Deprecated
 public class NewtTaxonomyService implements TaxonomyService {
 
     /**
