@@ -153,6 +153,21 @@ public class UnisaveServiceTest {
     }
 
     @Test
+    public void getSequenceForSequenceVersion(){
+        String sequence = "MNKLAILAIIAMVLFSANAFRFQSRIRSNVEAKTETRDLCEQSALQCNEQGCHNFCSPEDKPGCLGMVWNPELVP";
+        String uniprotAc = "P12350";
+        UnisaveService service = new UnisaveService();
+
+        try {
+            String sequenceFromUnisave = service.getSequenceFor(uniprotAc, false, 2);
+
+            Assert.assertEquals(sequence, sequenceFromUnisave);
+        } catch (UnisaveServiceException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
     public void getSequenceVersion_sequence_not_found(){
         String sequence = "MNKLAI";
         String uniprotAc = "P12350";
