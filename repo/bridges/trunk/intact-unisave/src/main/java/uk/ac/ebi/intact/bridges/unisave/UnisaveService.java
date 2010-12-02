@@ -108,6 +108,20 @@ public class UnisaveService {
         return fasta.getSequence();
     }
 
+    public String getSequenceFor(String identifier, boolean isSecondary, int sequenceVersion) throws UnisaveServiceException {
+
+        List<EntryVersionInfo> listOfVersions = getVersions(identifier, isSecondary);
+
+        for (EntryVersionInfo versionInfo : listOfVersions){
+            if (versionInfo.getSequenceVersion() == sequenceVersion){
+                FastaSequence fasta = getFastaSequence(versionInfo);
+                return fasta.getSequence();
+            }
+        }
+
+        return null;
+    }
+
     /**
      * Get the map of sequences (and their sequence version in uniprot) existing in unisave before this date
      * @param identifier
