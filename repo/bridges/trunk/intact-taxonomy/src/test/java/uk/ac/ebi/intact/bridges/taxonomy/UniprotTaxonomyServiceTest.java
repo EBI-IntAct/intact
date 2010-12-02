@@ -1,7 +1,6 @@
 package uk.ac.ebi.intact.bridges.taxonomy;
 
 import org.junit.Test;
-import sun.jvm.hotspot.utilities.Assert;
 
 import static org.junit.Assert.*;
 
