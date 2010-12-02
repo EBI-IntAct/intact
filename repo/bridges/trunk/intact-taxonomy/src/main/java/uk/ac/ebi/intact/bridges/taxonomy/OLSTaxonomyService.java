@@ -11,8 +11,6 @@ import uk.ac.ebi.ook.web.services.Query;
 
 import javax.xml.rpc.ServiceException;
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.rmi.RemoteException;
@@ -58,7 +56,7 @@ public class OLSTaxonomyService implements TaxonomyService {
         } else if ( taxid == -3 ) {
             term = new TaxonomyTerm( -3 );
             term.setScientificName( "Unknown" );
-            term.setCommonName( "Uunknown" );
+            term.setCommonName( "Unknown" );
         } else if ( taxid == -4 ) {
             term = new TaxonomyTerm( -4 );
             term.setScientificName( "In vivo" );

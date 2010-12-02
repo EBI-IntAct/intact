@@ -6,10 +6,7 @@
 package uk.ac.ebi.intact.bridges.taxonomy;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Description of a taxonomy term.
@@ -50,15 +47,24 @@ public class TaxonomyTerm implements Serializable {
      */
     private String commonName;
 
+    private String mnemonic;
+
+    private Collection<String> synonyms;
+
     ///////////////////
     // Constructor
 
     public TaxonomyTerm( int taxid ) {
         setTaxid( taxid );
+        synonyms = new ArrayList<String>();
     }
 
     ////////////////////////
     // Getters and Setters
+
+    public boolean hasCommonName() {
+        return commonName != null;
+    }
 
     /**
      * Getter for property 'commonName'.
@@ -76,6 +82,10 @@ public class TaxonomyTerm implements Serializable {
      */
     public void setCommonName( String commonName ) {
         this.commonName = commonName;
+    }
+
+    public boolean hasScientificName() {
+        return scientificName != null;
     }
 
     /**
@@ -145,6 +155,26 @@ public class TaxonomyTerm implements Serializable {
         return Collections.unmodifiableSet( parents );
     }
 
+    public boolean hasMnemonic() {
+        return mnemonic != null;
+    }
+
+    public String getMnemonic() {
+        return mnemonic;
+    }
+
+    public void setMnemonic( String mnemonic ) {
+        this.mnemonic = mnemonic;
+    }
+
+    public Collection<String> getSynonyms() {
+        return synonyms;
+    }
+
+    public void setSynonyms( Collection<String> synonyms ) {
+        this.synonyms = synonyms;
+    }
+
     ///////////////////////
     // Object override
 
@@ -155,9 +185,13 @@ public class TaxonomyTerm implements Serializable {
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append( "TaxonomyTerm" );
-        sb.append( "{commonName='" ).append( commonName ).append( '\'' );
-        sb.append( ", taxid=" ).append( taxid );
+        sb.append( "{taxid=" ).append( taxid );
+        sb.append( ", commonName='" ).append( commonName ).append( '\'' );
         sb.append( ", scientificName='" ).append( scientificName ).append( '\'' );
+        sb.append( ", mnemonic='" ).append( mnemonic ).append( '\'' );
+        if( ! synonyms.isEmpty() ) {
+            sb.append( ", synonyms='" ).append( synonyms ).append( '\'' );
+        }
         sb.append( '}' );
         return sb.toString();
     }
