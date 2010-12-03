@@ -24,6 +24,9 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.namespace.QName;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -40,7 +43,15 @@ public class UnisaveService {
     private UnisavePortType unisavePortType;
 
     public UnisaveService() {
-        unisavePortType = new Unisave().getUnisave();
+        URL wsdlUrl = null;
+        try {
+            wsdlUrl = new URL("http://www.ebi.ac.uk/uniprot/unisave/unisave.wsdl");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        Unisave service = new Unisave(wsdlUrl, new QName("http://www.ebi.ac.uk/uniprot/unisave", "unisave"));
+        unisavePortType = service.getUnisave();
     }
 
     /**
