@@ -1,0 +1,14 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>psimitab-maven-plugin</artifactId>
+
+                <configuration>
+					<!-- These parameters are going to be set at runtime -->
+
+                </configuration>
+            </plugin>
+        </plugins>
+     </build>
+</project>

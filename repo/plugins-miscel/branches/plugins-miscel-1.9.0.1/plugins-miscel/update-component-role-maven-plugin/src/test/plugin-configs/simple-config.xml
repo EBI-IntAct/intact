@@ -1,0 +1,13 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>update-component-role-maven-plugin</artifactId>
+                <configuration>
+                    <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
+                    <logFile>target/component-role-update.log</logFile>
+                </configuration>
+            </plugin>
+        </plugins>
+     </build>
+</project>
