@@ -5,6 +5,9 @@
  */
 package uk.ac.ebi.intact.bridges.taxonomy;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,13 +27,19 @@ import java.util.regex.Pattern;
  */
 public class UniprotTaxonomyService implements TaxonomyService {
 
-    private static final String TAXID_PLACEHOLDER    = "_TAXID_";
+    private static final Log log = LogFactory.getLog( UniprotTaxonomyService.class );
+
+    private static final String TAXID_PLACEHOLDER = "_TAXID_";
     private static final String UNIPROT_TAXONOMY_URL = "http://www.uniprot.org/taxonomy/" + TAXID_PLACEHOLDER + ".rdf";
 
     public static final Pattern MNENOMIC_PATTERN        = Pattern.compile( "^<mnemonic>(.*)</mnemonic>$" );
     public static final Pattern SCIENTIFIC_NAME_PATTERN = Pattern.compile( "^<scientificName>(.*)</scientificName>$" );
     public static final Pattern COMMON_NAME_PATTERN     = Pattern.compile( "^<commonName>(.*)</commonName>$" );
     public static final Pattern SYNONYM_PATTERN         = Pattern.compile( "^<synonym>(.*)</synonym>$" );
+
+    public static final String OBSOLETE_FLAG = "<obsolete rdf:datatype=\"http://www.w3.org/2001/XMLSchema#boolean\">true</obsolete>";
+    public static final Pattern REPLACED_BY_PATTERN = Pattern.compile( "^<replacedBy rdf:resource=\"http:\\/\\/purl.uniprot.org\\/taxonomy\\/(\\d+)\" \\/>$" );
+
     // public static final Pattern OTHER_NAME_PATTERN      = Pattern.compile( "^<otherName>(.*)</otherName>$" );
 
     public UniprotTaxonomyService() {
@@ -48,33 +57,51 @@ public class UniprotTaxonomyService implements TaxonomyService {
 
         TaxonomyTerm term = new TaxonomyTerm( taxid );
 
+        String replacedByTaxid = null;
+
         try {
             BufferedReader in = new BufferedReader( new InputStreamReader( is ) );
             String line;
             boolean stop = false;
-            while( (line = in.readLine()) != null && ! stop ) {
+
+            while ( ( line = in.readLine() ) != null && !stop ) {
+
+                log.trace(line);
+
                 String value = null;
                 boolean otherLine = false;
 
-                if( !term.hasMnemonic() && (value = getValue( MNENOMIC_PATTERN, line) ) != null ) {
-                     term.setMnemonic( value );
-                } else if( !term.hasCommonName() && (value = getValue( COMMON_NAME_PATTERN, line) ) != null ) {
-                     term.setCommonName( value );
-                } else if( !term.hasScientificName() && (value = getValue( SCIENTIFIC_NAME_PATTERN, line) ) != null ) {
-                     term.setScientificName( value );
-                } else if( (value = getValue( SYNONYM_PATTERN, line) ) != null ) {
-                     term.getSynonyms().add( value );
-//                } else if( (value = getValue( OTHER_NAME_PATTERN, line) ) != null ) {
-
+                if ( !term.hasMnemonic() && ( value = getValue( MNENOMIC_PATTERN, line ) ) != null ) {
+                    term.setMnemonic( value );
+                } else if ( !term.hasCommonName() && ( value = getValue( COMMON_NAME_PATTERN, line ) ) != null ) {
+                    term.setCommonName( value );
+                } else if ( !term.hasScientificName() && ( value = getValue( SCIENTIFIC_NAME_PATTERN, line ) ) != null ) {
+                    term.setScientificName( value );
+                } else if ( ( value = getValue( SYNONYM_PATTERN, line ) ) != null ) {
+                    term.getSynonyms().add( value );
+//                } else if( line.equals( OBSOLETE_FLAG ) ) {
+//                    System.err.println( "WARNING - taxid " + taxid + " was made obsolete" );
+                } else if ( ( value = getValue( REPLACED_BY_PATTERN, line ) ) != null ) {
+                    replacedByTaxid = value;
+                    if( log.isInfoEnabled() )
+                        log.info( "WARNING - the taxid replacement for " + taxid + " is " + replacedByTaxid );
                 } else {
                     // ignore these lines
                     otherLine = true;
                 }
 
-                stop = ! term.getSynonyms().isEmpty() && otherLine;
+                stop = !term.getSynonyms().isEmpty() && otherLine || replacedByTaxid != null;
             }
         } finally {
             is.close();
+        }
+
+        if( replacedByTaxid != null ) {
+            // abandon whatever has been built and fetch the new taxid instead.
+            if( log.isInfoEnabled() )
+                log.info("Attempting to fetch taxon "+ replacedByTaxid +" as "+ taxid +" is obsolete...");
+            term = buildTerm( Integer.parseInt( replacedByTaxid ) );
+            term.setObsoleteTaxid( taxid );
         }
 
         return term;
@@ -83,7 +110,7 @@ public class UniprotTaxonomyService implements TaxonomyService {
     private String getValue( final Pattern pattern, final String line ) {
         Matcher matcher = pattern.matcher( line );
         String value = null;
-        if( matcher.matches() ){
+        if ( matcher.matches() ) {
             value = matcher.group( 1 );
         }
         return value;
@@ -91,39 +118,39 @@ public class UniprotTaxonomyService implements TaxonomyService {
 
     public TaxonomyTerm getTaxonomyTerm( int taxid ) throws TaxonomyServiceException {
 
-        if( ! TaxonomyUtils.isSupportedTaxid( taxid ) ){
+        if ( !TaxonomyUtils.isSupportedTaxid( taxid ) ) {
             throw new TaxonomyServiceException( "You must give a positive taxid or one of the exception supported " +
                                                 "by PSI-MI (-1, -2, -3, -4, -5): " + taxid );
         }
 
         TaxonomyTerm term = null;
 
-        if( taxid == - 1 ){
-            term = new TaxonomyTerm( - 1 );
+        if ( taxid == -1 ) {
+            term = new TaxonomyTerm( -1 );
             term.setScientificName( "In vitro" );
             term.setCommonName( "In vitro" );
-        } else if( taxid == - 2 ){
-            term = new TaxonomyTerm( - 2 );
+        } else if ( taxid == -2 ) {
+            term = new TaxonomyTerm( -2 );
             term.setScientificName( "Chemical synthesis" );
             term.setCommonName( "Chemical synthesis" );
-        } else if( taxid == - 3 ){
-            term = new TaxonomyTerm( - 3 );
+        } else if ( taxid == -3 ) {
+            term = new TaxonomyTerm( -3 );
             term.setScientificName( "Unknown" );
             term.setCommonName( "Unknown" );
-        } else if( taxid == - 4 ){
-            term = new TaxonomyTerm( - 4 );
+        } else if ( taxid == -4 ) {
+            term = new TaxonomyTerm( -4 );
             term.setScientificName( "In vivo" );
             term.setCommonName( "In vivo" );
-        } else if( taxid == - 5 ){
-            term = new TaxonomyTerm( - 5 );
+        } else if ( taxid == -5 ) {
+            term = new TaxonomyTerm( -5 );
             term.setScientificName( "In Silico" );
             term.setCommonName( "In Silico" );
         }
 
-        if( term == null ){
+        if ( term == null ) {
             try {
                 term = buildTerm( taxid );
-            } catch( IOException e ){
+            } catch ( IOException e ) {
                 throw new TaxonomyServiceException( "Could not build the taxonomy term by taxid: " + taxid, e );
             }
         }
@@ -150,15 +177,5 @@ public class UniprotTaxonomyService implements TaxonomyService {
 
     public String getSourceDatabaseMiRef() {
         return "MI:0942"; // uniprot taxonomy
-    }
-
-    public static void main( String[] args ) throws IOException {
-
-        UniprotTaxonomyService service = new UniprotTaxonomyService();
-        final TaxonomyTerm term = service.buildTerm( 9615 );
-        System.out.println( "term.getMnemonic() = " + term.getMnemonic() );
-        System.out.println( "term.getScientificName() = " + term.getScientificName() );
-        System.out.println( "term.getCommonName() = " + term.getCommonName() );
-        System.out.println( "term.getSynonyms() = " + term.getSynonyms() );
     }
 }

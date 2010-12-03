@@ -52,4 +52,19 @@ public class UniprotTaxonomyServiceTest {
         assertEquals( term.getScientificName(), "Saccharomyces cerevisiae" );
         assertEquals( 0, term.getSynonyms().size() );
     }
+
+    @Test
+    public void musvi() throws Exception {
+        TaxonomyService taxonomy = new UniprotTaxonomyService();
+        TaxonomyTerm term = taxonomy.getTaxonomyTerm( 9667 );
+        assertNotNull( term );
+//        System.out.println(term);
+        assertEquals( term.getTaxid(), 452646 );
+        assertEquals( term.getMnemonic(), "MUSVI" );
+        assertEquals( term.getCommonName(), "American mink" );
+        assertEquals( term.getScientificName(), "Mustela vison" );
+        assertEquals( 1, term.getSynonyms().size() );
+        assertTrue( term.hasObsoleteTaxid() );
+        assertEquals( 9667, term.getObsoleteTaxid() );
+    }
 }
