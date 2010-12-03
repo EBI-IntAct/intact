@@ -51,6 +51,12 @@ public class TaxonomyTerm implements Serializable {
 
     private Collection<String> synonyms;
 
+    private int obsoleteTaxid;
+
+    private boolean hasObsoleteTaxid;
+
+
+
     ///////////////////
     // Constructor
 
@@ -175,6 +181,19 @@ public class TaxonomyTerm implements Serializable {
         this.synonyms = synonyms;
     }
 
+    public int getObsoleteTaxid() {
+        return obsoleteTaxid;
+    }
+
+    public void setObsoleteTaxid( int obsoleteTaxid ) {
+        this.obsoleteTaxid = obsoleteTaxid;
+        hasObsoleteTaxid = true;
+    }
+
+    public boolean hasObsoleteTaxid() {
+        return hasObsoleteTaxid;
+    }
+
     ///////////////////////
     // Object override
 
@@ -191,6 +210,9 @@ public class TaxonomyTerm implements Serializable {
         sb.append( ", mnemonic='" ).append( mnemonic ).append( '\'' );
         if( ! synonyms.isEmpty() ) {
             sb.append( ", synonyms='" ).append( synonyms ).append( '\'' );
+        }
+        if( hasObsoleteTaxid ){
+            sb.append( ", obsoleteTaxid='" ).append( obsoleteTaxid ).append( '\'' );
         }
         sb.append( '}' );
         return sb.toString();
