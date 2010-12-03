@@ -71,8 +71,8 @@ public class Range2xmlPSI25 {
         locationElement.appendChild( beginElement );
 
         // 3. Generating endStatus ...
-        if ( range.getFromCvFuzzyType() != null ) {
-            CvObject2xmlPSI2.getInstance().createEndStatus( session, locationElement, range.getFromCvFuzzyType() );
+        if ( range.getToCvFuzzyType() != null ) {
+            CvObject2xmlPSI2.getInstance().createEndStatus( session, locationElement, range.getToCvFuzzyType() );
         } else {
             // generate certain.
             CvObject2xmlPSI2.getInstance().createEndCertainStatus( session, locationElement );
