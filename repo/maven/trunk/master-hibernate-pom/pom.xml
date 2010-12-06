@@ -194,7 +194,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>3.6.0.IntAct</version>
+            <version>3.6.0-intact</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
