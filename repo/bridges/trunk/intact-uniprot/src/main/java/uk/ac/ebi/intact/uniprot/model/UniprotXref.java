@@ -5,6 +5,8 @@
  */
 package uk.ac.ebi.intact.uniprot.model;
 
+import java.io.Serializable;
+
 /**
  * Cross reference of a UniProt protein.
  *
@@ -12,11 +14,13 @@ package uk.ac.ebi.intact.uniprot.model;
  * @version $Id$
  * @since <pre>15-Sep-2006</pre>
  */
-public class UniprotXref {
+public class UniprotXref implements Serializable {
 
     /////////////////////////
     // Instance attributes
 
+    private static final long serialVersionUID = -3414917566136587359L;
+    
     /**
      * Accession number of the cross reference.
      */

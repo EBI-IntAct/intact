@@ -5,6 +5,8 @@
  */
 package uk.ac.ebi.intact.uniprot.service.crossRefAdapter;
 
+import java.io.Serializable;
+
 /**
  * Uniprot cross reference.
  *
@@ -12,7 +14,7 @@ package uk.ac.ebi.intact.uniprot.service.crossRefAdapter;
  * @version $Id$
  * @since <pre>24-Oct-2006</pre>
  */
-public class UniprotCrossReference {
+public class UniprotCrossReference implements Serializable {
 
     private String accessionNumber;
     private String database;

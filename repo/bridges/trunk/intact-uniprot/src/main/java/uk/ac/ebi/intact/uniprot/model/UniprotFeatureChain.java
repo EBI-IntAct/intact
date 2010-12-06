@@ -26,6 +26,8 @@ public class UniprotFeatureChain extends UniprotProteinTranscriptImpl{
     /////////////////////////
     // instance attribute
 
+    private static final long serialVersionUID = -7257651581115886347L;
+    
     /**
      * Description of the chain.
      */

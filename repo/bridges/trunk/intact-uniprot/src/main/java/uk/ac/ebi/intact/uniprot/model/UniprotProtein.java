@@ -5,6 +5,7 @@
  */
 package uk.ac.ebi.intact.uniprot.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -17,11 +18,12 @@ import java.util.List;
  * @version $Id$
  * @since <pre>15-Sep-2006</pre>
  */
-public class UniprotProtein {
+public class UniprotProtein implements Serializable{
 
     /////////////////////////
     // Instance attributes
 
+    private static final long serialVersionUID = 7242817460003528682L;
     /**
      * Uniprot protein ID.
      */
@@ -133,6 +135,7 @@ public class UniprotProtein {
      * Where the entry is coming from .
      */
     private UniprotProteinType source;
+
 
     /////////////////////////
     // Constructor

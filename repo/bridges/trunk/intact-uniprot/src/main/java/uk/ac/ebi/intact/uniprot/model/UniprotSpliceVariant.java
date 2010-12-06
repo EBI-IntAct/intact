@@ -27,7 +27,8 @@ public class UniprotSpliceVariant extends UniprotProteinTranscriptImpl{
 
     /////////////////////////
     // instance attributes
-
+    private static final long serialVersionUID = 9150707995631479231L;
+    
     /**
      * Secondary accession number of the splice variant.
      */
