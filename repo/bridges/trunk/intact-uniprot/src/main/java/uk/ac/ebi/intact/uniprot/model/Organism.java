@@ -5,6 +5,7 @@
  */
 package uk.ac.ebi.intact.uniprot.model;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -15,11 +16,12 @@ import java.util.ArrayList;
  * @version $Id$
  * @since <pre>19-Oct-2006</pre>
  */
-public class Organism {
+public class Organism implements Serializable{
 
     ///////////////////////
     // Instance attributes
 
+    private static final long serialVersionUID = 5114610382670182399L;
     /**
      * The taxid of an organism.
      */
@@ -33,7 +35,7 @@ public class Organism {
     /**
      * The parents' name of an organism.
      */
-    private List<String> parents;
+    private List<String> parents;    
 
     ////////////////////////
     // Constructors

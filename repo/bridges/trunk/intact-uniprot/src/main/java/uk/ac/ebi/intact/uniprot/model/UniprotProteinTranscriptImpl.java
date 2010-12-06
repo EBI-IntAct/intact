@@ -1,5 +1,7 @@
 package uk.ac.ebi.intact.uniprot.model;
 
+import java.io.Serializable;
+
 /**
  * TODO comment this
  *
@@ -8,7 +10,7 @@ package uk.ac.ebi.intact.uniprot.model;
  * @since <pre>02-Aug-2010</pre>
  */
 
-public abstract class UniprotProteinTranscriptImpl implements UniprotProteinTranscript{
+public abstract class UniprotProteinTranscriptImpl implements UniprotProteinTranscript, Serializable{
 
     /**
      * Sequence of the protein transcript.
