@@ -1,6 +1,6 @@
 PROMPT Creating user tables
 
-create table ia_preference (pk number(19,0) not null, key varchar2(255 char), value varchar2(255 char), user_id number(19,0), primary key (pk));
+create table ia_preference (pk number(19,0) not null, key varchar2(255 char), value long, user_id number(19,0), primary key (pk));
 create table ia_role (pk number(19,0) not null, name varchar2(255 char) not null unique, primary key (pk));
 create table ia_user (pk number(19,0) not null, disabled number(1,0) not null, email varchar2(255 char) not null unique, firstName varchar2(255 char) not null, lastLogin timestamp, lastName varchar2(255 char) not null, login varchar2(255 char) not null unique, openIdUrl varchar2(255 char), password varchar2(255 char), primary key (pk));
 create table ia_user2role (user_id number(19,0) not null, role_id number(19,0) not null, primary key (user_id, role_id));
