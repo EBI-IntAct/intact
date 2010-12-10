@@ -13,6 +13,23 @@ alter table ia_user2role add constraint FK_ROLE_USER foreign key (role_id) refer
 alter table ia_user2role add constraint FK_USER_ROLES foreign key (user_id) references ia_user;
 create sequence users_seq;
 
+
+PROMPT granting roles
+
+grant select on ia_role to INTACT_SELECT ;
+grant select on ia_user to INTACT_SELECT ;
+grant select on ia_user2role to INTACT_SELECT ;
+grant select on ia_preference to INTACT_SELECT ;
+
+grant select,insert,update,delete on ia_role to INTACT_CURATOR ;
+grant select,insert,update,delete on ia_user to INTACT_CURATOR ;
+grant select,insert,update,delete on ia_user2role to INTACT_CURATOR ;
+grant select,insert,update,delete on ia_preference to INTACT_CURATOR ;
+grant select on users_seq to INTACT_CURATOR ;
+
+
+PROMPT Creating public synonyms
+
 create public synonym ia_user for intact.ia_user;
 create public synonym ia_role for intact.ia_role;
 create public synonym ia_preference for intact.ia_preference;
