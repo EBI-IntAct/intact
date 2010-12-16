@@ -4,12 +4,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionReport;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.UpdateContext;
-import uk.ac.ebi.intact.protein.mapping.model.results.IdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.BlastReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.update.model.proteinmapping.results.IdentificationResults;
 
 /**
  * Unit test for StrategyForProteinUpdate

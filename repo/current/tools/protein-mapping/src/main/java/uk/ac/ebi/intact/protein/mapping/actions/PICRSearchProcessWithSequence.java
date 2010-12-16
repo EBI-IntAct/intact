@@ -5,11 +5,11 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.bridges.picr.PicrClient;
 import uk.ac.ebi.intact.bridges.picr.PicrClientException;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionName;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.PICRReport;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.status.Status;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionName;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.PICRReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.status.Status;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.status.StatusLabel;
 import uk.ac.ebi.picr.model.CrossReference;
 import uk.ac.ebi.picr.model.UPEntry;
 

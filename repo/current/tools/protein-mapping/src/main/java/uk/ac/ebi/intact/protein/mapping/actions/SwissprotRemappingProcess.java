@@ -4,15 +4,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionName;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.status.Status;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.status.StatusLabel;
+
 import uk.ac.ebi.intact.protein.mapping.model.contexts.BlastContext;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.protein.mapping.model.results.BlastResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.IdentificationStrategyImpl;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionName;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.BlastReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.status.Status;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.update.model.proteinmapping.results.BlastResults;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -248,7 +249,7 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
                 }
 
                 // Merge the possible isoforms of the same protein
-                Set<String> accessions = mergeIsoformsFromBlastProteins(blastProteins);
+                Set<String> accessions = mergeIsoformsFromBlastResults(blastProteins);
 
                 // If the several BLASTProteins was isoforms of the same protein, we can do the Swissprot remapping process
                 if (accessions.size() == 1){
@@ -311,8 +312,8 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
                             }
                             else {
                                 // remove the results with another ensembl gene
-                                BlastProtein proteinToRemove = null;
-                                for (BlastProtein p : report.getBlastMatchingProteins()){
+                                BlastResults proteinToRemove = null;
+                                for (BlastResults p : report.getBlastMatchingProteins()){
                                     if (p.getAccession().startsWith(s)){
                                         proteinToRemove = p;
                                         break;

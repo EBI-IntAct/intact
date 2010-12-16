@@ -3,24 +3,21 @@ package uk.ac.ebi.intact.protein.mapping.update;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.TransactionStatus;
-import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
 import uk.ac.ebi.intact.core.IntactTransactionException;
 import uk.ac.ebi.intact.core.context.DataContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.dbupdate.prot.ProteinUpdateProcessor;
-import uk.ac.ebi.intact.dbupdate.prot.ProteinUpdateProcessorConfig;
-import uk.ac.ebi.intact.dbupdate.prot.report.FileReportHandler;
-import uk.ac.ebi.intact.dbupdate.prot.report.UpdateReportHandler;
+//import uk.ac.ebi.intact.dbupdate.prot.ProteinUpdateProcessor;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionReport;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.PICRReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.UpdateContext;
-import uk.ac.ebi.intact.protein.mapping.model.results.IdentificationResults;
-import uk.ac.ebi.intact.protein.mapping.model.results.PICRCrossReferences;
 import uk.ac.ebi.intact.protein.mapping.strategies.StrategyForProteinUpdate;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.BlastReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.PICRReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.results.BlastResults;
+import uk.ac.ebi.intact.update.model.proteinmapping.results.IdentificationResults;
+import uk.ac.ebi.intact.update.model.proteinmapping.results.PICRCrossReferences;
 
 import javax.persistence.Query;
 import java.io.File;
@@ -389,8 +386,8 @@ public class ProteinUpdateManager {
             //ProteinUpdateProcessorConfig configUpdate = new ProteinUpdateProcessorConfig(reportHandler);
 
             //ProteinUpdateProcessor protUpdateProcessor = new ProteinUpdateProcessor(configUpdate);
-            ProteinUpdateProcessor protUpdateProcessor = new ProteinUpdateProcessor();
-            protUpdateProcessor.updateByACs(accessionsToUpdate);
+            //ProteinUpdateProcessor protUpdateProcessor = new ProteinUpdateProcessor();
+            //protUpdateProcessor.updateByACs(accessionsToUpdate);
 
         } catch (IntactTransactionException e) {
             throw new ProteinUpdateException(e);
@@ -503,7 +500,7 @@ public class ProteinUpdateManager {
                 else if (report instanceof BlastReport){
                     BlastReport blast = (BlastReport) report;
 
-                    for (BlastProtein prot : blast.getBlastMatchingProteins()){
+                    for (BlastResults prot : blast.getBlastMatchingProteins()){
                         writer.write("BLAST Protein " + prot.getAccession() + " : identity = " + prot.getIdentity() + "\n");
                         writer.write("Query start = " + prot.getStartQuery() + ", end = " + prot.getEndQuery() + "\n");
                         writer.write("Match start = " + prot.getStartMatch() + ", end = " + prot.getEndMatch() + "\n");

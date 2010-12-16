@@ -12,10 +12,10 @@ import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.FeatureRangeCheckingContext;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.UpdateContext;
-import uk.ac.ebi.intact.protein.mapping.model.results.BlastResults;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.results.BlastResults;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>17-May-2010</pre>
  */
-@ContextConfiguration(locations = {"/META-INF/standalone/curation-jpa.spring.xml"} )
+@ContextConfiguration(locations = {"classpath*:/META-INF/standalone/update-jpa.spring.xml"} )
 public class FeatureRangeCheckingProcessTest extends IntactBasicTestCase{
 
     private FeatureRangeCheckingProcess process;

@@ -1,5 +1,7 @@
 package uk.ac.ebi.intact.protein.mapping.model.actionReport;
 
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionName;
+
 /**
  * This report aims at storing IntAct results of a search in Intact of a specific CRC64
  *

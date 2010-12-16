@@ -1,8 +1,9 @@
 package uk.ac.ebi.intact.protein.mapping.actions;
 
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.uniprot.service.IdentifierChecker;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.results.BlastResults;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,9 +38,35 @@ public abstract class IdentificationActionImpl implements IdentificationAction {
      * @param blastProteins : the results of a BLAST
      * @return the list of accessions of the merged proteins
      */
-    protected Set<String> mergeIsoformsFromBlastProteins(List<BlastProtein> blastProteins){
+    protected Set<String> mergeIsoformsFromBlastResults(List<BlastProtein> blastProteins){
         Set<String> isoformMerged = new HashSet<String>();
         for (BlastProtein b : blastProteins){
+            if (b != null){
+
+                if (b.getAccession() != null){
+                    String primaryId;
+                    if (IdentifierChecker.isSpliceVariantId(b.getAccession())){
+                        primaryId = b.getAccession().substring(0, b.getAccession().indexOf("-"));
+                    }
+                    else {
+                        primaryId = b.getAccession();
+                    }
+                    isoformMerged.add(primaryId);
+                }
+            }
+        }
+
+        return isoformMerged;
+    }
+
+    /**
+     * Merge the isoforms of a same protein if the list of BlastProteins contains any.
+     * @param blastProteins : the results of a BLAST
+     * @return the list of accessions of the merged proteins
+     */
+    protected Set<String> mergeIsoformsFromBlastProteins(List<BlastResults> blastProteins){
+        Set<String> isoformMerged = new HashSet<String>();
+        for (BlastResults b : blastProteins){
             if (b != null){
 
                 if (b.getAccession() != null){

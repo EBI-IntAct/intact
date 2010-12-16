@@ -5,12 +5,12 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.bridges.ncbiblast.BlastResultFilter;
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionName;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.status.Status;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.protein.mapping.model.results.BlastResults;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionName;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.BlastReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.status.Status;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.update.model.proteinmapping.results.BlastResults;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -193,10 +193,10 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
             else if (swissprotProteins.size() == 1){
                 Status status2 = new Status(StatusLabel.COMPLETED, "The blast on Uniprot successfully returned an unique swissprot entry" + blastProteinsGlobalAlignment.get(0).getAccession() + " (100% identity on the all sequence)");
                 report2.setStatus(status2);
-                report.setASwissprotEntry(true);
-                report2.addBlastMatchingProtein(new BlastResults(blastProteinsGlobalAlignment.get(0)));
+                report2.setASwissprotEntry(true);
+                report2.addBlastMatchingProtein(new BlastResults(swissprotProteins.get(0)));
 
-                return blastProteinsGlobalAlignment.get(0).getAccession();
+                return swissprotProteins.get(0).getAccession();
             }
             // we have sevral swisprot entries, we keep them
             else {

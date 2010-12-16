@@ -8,14 +8,14 @@ import uk.ac.ebi.intact.protein.mapping.actions.IdentificationAction;
 import uk.ac.ebi.intact.protein.mapping.actions.PICRSearchProcessWithAccession;
 import uk.ac.ebi.intact.protein.mapping.actions.SwissprotRemappingProcess;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionReport;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.BlastContext;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.protein.mapping.model.results.BlastResults;
-import uk.ac.ebi.intact.protein.mapping.model.results.IdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.BlastReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.results.BlastResults;
+import uk.ac.ebi.intact.update.model.proteinmapping.results.IdentificationResults;
 
 import java.util.ArrayList;
 import java.util.HashSet;
