@@ -5,9 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionReport;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.BlastContext;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.BlastReport;
 
 import java.util.List;
 

@@ -9,14 +9,14 @@ import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionReport;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.IntactCrc64Report;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.PICRReport;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.protein.mapping.model.results.IdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.BlastReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.PICRReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.update.model.proteinmapping.results.IdentificationResults;
 
 /**
  * Unit test for StrategyWithSequence
@@ -25,7 +25,7 @@ import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
  * @version $Id$
  * @since <pre>30-Apr-2010</pre>
  */
-@ContextConfiguration(locations = {"/META-INF/intact.spring.xml", "/META-INF/standalone/curation-jpa.spring.xml"} )
+@ContextConfiguration(locations = {"/META-INF/intact.spring.xml", "/META-INF/standalone/update-jpa.spring.xml"} )
 public class StrategyWithSequenceTest  extends IntactBasicTestCase {
 
     private StrategyWithSequence strategy;

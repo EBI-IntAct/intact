@@ -4,12 +4,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.protein.mapping.model.results.IdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.IdentificationStrategy;
 import uk.ac.ebi.intact.protein.mapping.strategies.StrategyWithIdentifier;
 import uk.ac.ebi.intact.protein.mapping.strategies.StrategyWithName;
 import uk.ac.ebi.intact.protein.mapping.strategies.StrategyWithSequence;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
+import uk.ac.ebi.intact.update.model.proteinmapping.results.IdentificationResults;
 
 import java.io.File;
 import java.io.FileInputStream;

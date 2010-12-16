@@ -2,20 +2,19 @@ package uk.ac.ebi.intact.protein.mapping.actions;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.Range;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionName;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.status.Status;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.status.StatusLabel;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.FeatureRangeCheckingContext;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.protein.mapping.model.results.BlastResults;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionName;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.BlastReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.status.Status;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.update.model.proteinmapping.results.BlastResults;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,7 +51,7 @@ public class FeatureRangeCheckingProcess extends IdentificationActionImpl {
      * @param protein : the protein hit which could replace the old protein in Intact
      * @return true if there is no conflict between the sequence of this BlastProtein and the range
      */
-    private boolean checkRangeValidWithNewSequence(Range range, BlastProtein protein, BlastReport report){
+    private boolean checkRangeValidWithNewSequence(Range range, BlastResults protein, BlastReport report){
         // The difference between the previous start position and the new one in the new sequence
         int diffStart = protein.getStartQuery() - protein.getStartMatch();
         // The difference between the previous end position and the new one in the new sequence
@@ -211,7 +210,7 @@ public class FeatureRangeCheckingProcess extends IdentificationActionImpl {
             }
             else {
                 if (report.getBlastMatchingProteins().size() == 1){
-                    BlastProtein swissprot = report.getBlastMatchingProteins().iterator().next();
+                    BlastResults swissprot = report.getBlastMatchingProteins().iterator().next();
                     Status status = new Status(StatusLabel.COMPLETED, "We don't have any conflicts between the sequence of the Swissprot entry " + swissprot.getAccession() + " and the feature ranges of the protein " + processContext.getIntactAccession());
                     report.setStatus(status);
                     return swissprot.getAccession();
@@ -219,7 +218,7 @@ public class FeatureRangeCheckingProcess extends IdentificationActionImpl {
                 else {
                     Status status = new Status(StatusLabel.COMPLETED, "We don't have any conflicts between the sequence(s) of the " + report.getBlastMatchingProteins().size() + " possible Swissprot proteins and the feature ranges of the protein " + processContext.getIntactAccession());
                     report.setStatus(status);
-                    ArrayList<BlastProtein> proteins = new ArrayList<BlastProtein> ();
+                    ArrayList<BlastResults> proteins = new ArrayList<BlastResults> ();
 
                     // merge the isoforms
                     proteins.addAll(report.getBlastMatchingProteins());

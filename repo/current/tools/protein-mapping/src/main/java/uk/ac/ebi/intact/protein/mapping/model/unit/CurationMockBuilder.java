@@ -1,15 +1,15 @@
 package uk.ac.ebi.intact.protein.mapping.model.unit;
 
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionName;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionReport;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.PICRReport;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.status.Status;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.status.StatusLabel;
-import uk.ac.ebi.intact.protein.mapping.model.results.BlastResults;
-import uk.ac.ebi.intact.protein.mapping.model.results.PICRCrossReferences;
-import uk.ac.ebi.intact.protein.mapping.model.results.UpdateResults;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionName;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.BlastReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.PICRReport;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.status.Status;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.update.model.proteinmapping.results.BlastResults;
+import uk.ac.ebi.intact.update.model.proteinmapping.results.PICRCrossReferences;
+import uk.ac.ebi.intact.update.model.proteinmapping.results.UpdateResults;
 
 /**
  * This class contains a set of methods to create objects for testing

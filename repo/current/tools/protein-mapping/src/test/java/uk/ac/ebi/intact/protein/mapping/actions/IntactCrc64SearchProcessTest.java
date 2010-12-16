@@ -10,9 +10,9 @@ import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.IntactCrc64Report;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionReport;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>08-Apr-2010</pre>
  */
-@ContextConfiguration(locations = {"/META-INF/standalone/curation-jpa.spring.xml"} )
+@ContextConfiguration(locations = {"/META-INF/standalone/update-jpa.spring.xml"} )
 public class IntactCrc64SearchProcessTest extends IntactBasicTestCase {
 
     private IntactCrc64SearchProcess process;

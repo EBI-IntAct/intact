@@ -1,8 +1,8 @@
 package uk.ac.ebi.intact.protein.mapping.actions;
 
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.ActionReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionReport;
 
 import java.util.List;
 
