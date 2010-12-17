@@ -87,7 +87,7 @@ public class FeatureRangeCheckingProcess extends IdentificationActionImpl {
             String rangeSequence = range.getFullSequence();
 
             if (rangeSequence == null){
-                rangeSequence = range.getSequence();
+                rangeSequence = range.getFullSequence();
             }
 
             // Check that the amino acids involved in the feature ranges are identical
