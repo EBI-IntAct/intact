@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.InteractionUtils;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.uniprot.service.IdentifierChecker;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -1073,7 +1074,7 @@ public class LineExport {
      */
     protected boolean isChainOrIsoform(Protein protein) {
         final String ac = getUniprotPrimaryAc( protein );
-        if (ac.indexOf("-") != -1) {
+        if (IdentifierChecker.isFeatureChainId(ac) || IdentifierChecker.isSpliceVariantId(ac)) {
             // eg. Q62165-PRO_0000021067, not P12345-2
             if (getMasterAc(protein) != null) {
                 return true;
