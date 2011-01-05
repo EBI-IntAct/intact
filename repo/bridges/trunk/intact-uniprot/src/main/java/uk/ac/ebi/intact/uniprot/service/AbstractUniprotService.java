@@ -7,6 +7,9 @@ package uk.ac.ebi.intact.uniprot.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.uniprot.model.UniprotFeatureChain;
+import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.intact.uniprot.model.UniprotSpliceVariant;
 import uk.ac.ebi.intact.uniprot.service.referenceFilter.CrossReferenceFilter;
 
 import java.util.HashMap;
@@ -29,6 +32,8 @@ public abstract class AbstractUniprotService implements UniprotService {
     public static final String SWISS_PROT_PREFIX = "SP_";
 
     public static final String TREMBL_PREFIX = "TrEMBL_";
+
+    protected static final String CHAIN_SEPARATOR = "PRO_";
 
     /**
      * Holds error messages accumulated during protein retreival.
@@ -60,7 +65,7 @@ public abstract class AbstractUniprotService implements UniprotService {
         if( errors.containsKey( ac ) ) {
             log.warn( "Overwriting existing report for UniProt AC: " + ac );
         }
-        
+
         errors.put( ac, report );
     }
 
@@ -73,5 +78,41 @@ public abstract class AbstractUniprotService implements UniprotService {
 
     public CrossReferenceFilter getCrossReferenceSelector() {
         return crossReferenceFilter;
+    }
+
+    public UniprotSpliceVariant retrieveUniprotSpliceVariant( UniprotProtein uniProtEntry, String ac) {
+
+        if (uniProtEntry != null && ac != null){
+            for (UniprotSpliceVariant sv : uniProtEntry.getSpliceVariants()){
+                if (ac.equals(sv.getPrimaryAc())){
+                    return sv;
+                }
+                else if (sv.getSecondaryAcs().contains(ac)){
+                    return sv;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public UniprotFeatureChain retrieveUniprotFeatureChain( UniprotProtein uniProtEntry, String ac) {
+
+        if (uniProtEntry != null && ac != null){
+            for (UniprotFeatureChain fc : uniProtEntry.getFeatureChains()){
+                String acFixed = ac;
+
+                // if not of type primaryAc-PRO_xxxxx, it is not a feature chain. we have to build the feature chain ac
+                if (ac.indexOf("-") == -1){
+                    acFixed = uniProtEntry.getPrimaryAc() + "-" + ac;
+                }
+                
+                if (acFixed.equals(fc.getPrimaryAc())){
+                    return fc;
+                }
+            }
+        }
+
+        return null;
     }
 }

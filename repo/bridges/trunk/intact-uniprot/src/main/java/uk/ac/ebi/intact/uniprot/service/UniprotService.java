@@ -6,7 +6,10 @@
 package uk.ac.ebi.intact.uniprot.service;
 
 import uk.ac.ebi.intact.uniprot.UniprotServiceException;
+import uk.ac.ebi.intact.uniprot.model.UniprotFeatureChain;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.intact.uniprot.model.UniprotProteinTranscript;
+import uk.ac.ebi.intact.uniprot.model.UniprotSpliceVariant;
 import uk.ac.ebi.intact.uniprot.service.referenceFilter.CrossReferenceFilter;
 
 import java.util.Collection;
@@ -80,4 +83,14 @@ public interface UniprotService {
      * @return Value for property 'crossReferenceSelector'.
      */
     public CrossReferenceFilter getCrossReferenceSelector();
+
+    public Collection<UniprotProteinTranscript> retrieveProteinTranscripts( String ac );
+
+    public Collection<UniprotSpliceVariant> retrieveSpliceVariant( String ac );
+
+    public Collection<UniprotFeatureChain> retrieveFeatureChain( String ac );
+
+    public UniprotFeatureChain retrieveUniprotFeatureChain( UniprotProtein uniProtEntry, String ac);
+
+    public UniprotSpliceVariant retrieveUniprotSpliceVariant( UniprotProtein uniProtEntry, String ac);
 }

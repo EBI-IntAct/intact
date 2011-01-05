@@ -103,6 +103,18 @@ public class UniprotRemoteServiceTest {
     }
 
     @Test
+    public void retrieveSpliceVariant() throws Exception {
+        Collection<UniprotSpliceVariant> prots = getUniprotService().retrieveSpliceVariant( "Q13535-1" );
+        assertEquals( "Q13535-1", prots.iterator().next().getPrimaryAc() );
+    }
+
+    @Test
+    public void retrieveFeatureChain() throws Exception {
+        Collection<UniprotFeatureChain> prots = getUniprotService().retrieveFeatureChain( "P97887-PRO_0000025599" );
+        assertEquals( "Presenilin-1 NTF subunit", prots.iterator().next().getDescription() );
+    }
+
+    @Test
     public void convert_FAU_DROME() throws Exception {
 
         UniProtEntry entry = MockUniProtEntries.build_Q9VGX3();

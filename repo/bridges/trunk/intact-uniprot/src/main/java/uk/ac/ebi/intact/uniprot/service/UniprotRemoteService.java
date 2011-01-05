@@ -36,7 +36,7 @@ import java.util.*;
  */
 public class UniprotRemoteService extends AbstractUniprotService {
 
-    private Map<String,Collection<UniprotProtein>> retrievalCache;
+    private Map<String,Collection<UniprotProtein>> retrievalCache;  
 
     /**
      * Sets up a logger for that class.
@@ -54,6 +54,109 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
     public Collection<UniprotProtein> retrieve( String ac ) {
         return retrieve(ac, true);
+    }
+
+    public Collection<UniprotProteinTranscript> retrieveProteinTranscripts( String ac ){
+        if (log.isDebugEnabled()) {
+            log.debug("Retrieving splice variants from UniProt: "+ac);
+        }
+        Collection<UniprotProteinTranscript> variants = new ArrayList<UniprotProteinTranscript>();
+
+        variants.addAll(retrieveSpliceVariant(ac));
+        variants.addAll(retrieveFeatureChain(ac));
+
+        return variants;
+    }
+
+    public Collection<UniprotSpliceVariant> retrieveSpliceVariant( String ac ) {
+        if (log.isDebugEnabled()) {
+            log.debug("Retrieving splice variants from UniProt: "+ac);
+        }
+        Collection<UniprotSpliceVariant> variants = new ArrayList<UniprotSpliceVariant>();
+        Collection<String> variantAcProcessed = new ArrayList<String>();
+
+        if (retrievalCache.containsKey(ac)) {
+            if (log.isDebugEnabled()) log.debug("\tFound in cache");
+            Collection<UniprotProtein> uniprotProteins = retrievalCache.get(ac);
+
+            for (UniprotProtein p : uniprotProteins){
+                UniprotSpliceVariant variant = retrieveUniprotSpliceVariant(p, ac);
+
+                if (!variantAcProcessed.contains(variant.getPrimaryAc())){
+                    variants.add(variant);
+                    variantAcProcessed.add(variant.getPrimaryAc());
+                }
+            }
+        }
+
+        Collection<UniprotProtein> proteins = new ArrayList<UniprotProtein>();
+
+        Iterator<UniProtEntry> it = getUniProtEntry( ac );
+
+        if ( !it.hasNext() ) {
+            // we didn't find anything
+            addError( ac, new UniprotServiceReport( "Could not find splice variants: " + ac ) );
+        }
+
+        while ( it.hasNext() ) {
+            UniProtEntry uniProtEntry = it.next();
+            UniprotProtein uniprotProtein = buildUniprotProtein( uniProtEntry, true );
+            proteins.add( uniprotProtein );
+            UniprotSpliceVariant variant = retrieveUniprotSpliceVariant(uniprotProtein, ac);
+
+            if (variant != null){
+                if (!variantAcProcessed.contains(variant.getPrimaryAc())){
+                    variants.add(variant);
+                    variantAcProcessed.add(variant.getPrimaryAc());
+                }
+            }
+        }
+
+        retrievalCache.put(ac, proteins);
+
+        return variants;
+    }
+
+    public Collection<UniprotFeatureChain> retrieveFeatureChain( String ac ) {
+        if (log.isDebugEnabled()) {
+            log.debug("Retrieving feature chains from UniProt: "+ac);
+        }
+        Collection<UniprotFeatureChain> variants = new ArrayList<UniprotFeatureChain>();
+
+        if (retrievalCache.containsKey(ac)) {
+            if (log.isDebugEnabled()) log.debug("\tFound in cache");
+            Collection<UniprotProtein> uniprotProteins = retrievalCache.get(ac);
+
+            for (UniprotProtein p : uniprotProteins){
+                UniprotFeatureChain variant = retrieveUniprotFeatureChain(p, ac);
+
+                if (variant != null){
+                   variants.add(variant);
+                }                
+            }
+        }
+
+        Collection<UniprotProtein> proteins = new ArrayList<UniprotProtein>();
+
+        Iterator<UniProtEntry> it = getUniProtEntry( ac );
+
+        if ( !it.hasNext() ) {
+            // we didn't find anything
+            addError( ac, new UniprotServiceReport( "Could not find splice variants: " + ac ) );
+        }
+
+        while ( it.hasNext() ) {
+            UniProtEntry uniProtEntry = it.next();
+            UniprotProtein uniprotProtein = buildUniprotProtein( uniProtEntry, true );
+            proteins.add( uniprotProtein );
+            UniprotFeatureChain variant = retrieveUniprotFeatureChain(uniprotProtein, ac);
+
+            variants.add(variant);
+        }
+
+        retrievalCache.put(ac, proteins);
+
+        return variants;
     }
 
     public Collection<UniprotProtein> retrieve( String ac, boolean processSpliceVars ) {
@@ -130,13 +233,25 @@ public class UniprotRemoteService extends AbstractUniprotService {
     private Iterator<UniProtEntry> getUniProtEntry( String ac ) {
         Iterator<UniProtEntry> iterator = null;
 
-        if ( IdentifierChecker.isSpliceVariantId( ac ) || IdentifierChecker.isFeatureChainId( ac ) ) {
+        if ( IdentifierChecker.isSpliceVariantId( ac ) ) {
 
-            // we only use this search for splice variants and feature chains
+            // we only use this search for splice variants
             Query query = UniProtQueryBuilder.buildFullTextSearch( ac );
             iterator = uniProtQueryService.getEntryIterator( query );
 
-        } else {
+        }
+        else if (IdentifierChecker.isFeatureChainId( ac )){
+            String acFixed = ac;
+
+            int index = ac.indexOf(CHAIN_SEPARATOR);
+            if (index != -1){
+                acFixed = ac.substring(index);
+            }
+            // we only use this search for feature chains
+            Query query = UniProtQueryBuilder.buildFullTextSearch( acFixed );
+            iterator = uniProtQueryService.getEntryIterator( query );
+        }
+        else {
             iterator = getUniProtEntryForProteinEntry( ac );
         }
 
