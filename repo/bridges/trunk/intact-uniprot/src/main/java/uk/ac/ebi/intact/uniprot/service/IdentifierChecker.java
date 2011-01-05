@@ -22,7 +22,7 @@ public class IdentifierChecker {
     // EMBL    : [A-Z]{3}[0-9]{5}
     // F. Chain: [OPQ][0-9][A-Z0-9]{3}[0-9]-PRO_[0-9]{10} | PRO_[0-9]{10}
 
-    private static final String PROTEIN_AC_PATTERN_STR = "[OPQ][0-9][A-Z0-9]{3}[0-9]";
+    private static final String PROTEIN_AC_PATTERN_STR = "[A-Z][0-9][A-Z0-9]{3}[0-9]";
 
 
     private static final Pattern PROTEIN_AC_PATTERN = Pattern.compile( PROTEIN_AC_PATTERN_STR );

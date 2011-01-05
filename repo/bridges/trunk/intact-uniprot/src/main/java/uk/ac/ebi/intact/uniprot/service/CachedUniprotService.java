@@ -10,13 +10,15 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.uniprot.model.UniprotFeatureChain;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.intact.uniprot.model.UniprotProteinTranscript;
+import uk.ac.ebi.intact.uniprot.model.UniprotSpliceVariant;
 import uk.ac.ebi.intact.uniprot.service.referenceFilter.CrossReferenceFilter;
+import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
 
 import java.net.URL;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Proxy implementation that caches the result of UniprotService queries.
@@ -25,7 +27,7 @@ import java.util.Map;
  * @version $Id$
  * @since 1.0
  */
-public class CachedUniprotService implements UniprotService {
+public class CachedUniprotService extends AbstractUniprotService implements UniprotService {
 
     /**
      * Sets up a logger for that class.
@@ -128,6 +130,64 @@ public class CachedUniprotService implements UniprotService {
 
     public CrossReferenceFilter getCrossReferenceSelector() {
         return service.getCrossReferenceSelector();
+    }
+
+    public Collection<UniprotProteinTranscript> retrieveProteinTranscripts( String ac ){
+        if (log.isDebugEnabled()) {
+            log.debug("Retrieving splice variants from UniProt: "+ac);
+        }
+        Collection<UniprotProteinTranscript> variants = new ArrayList<UniprotProteinTranscript>();
+
+        variants.addAll(retrieveSpliceVariant(ac));
+        variants.addAll(retrieveFeatureChain(ac));
+
+        return variants;
+    }
+
+    public Collection<UniprotSpliceVariant> retrieveSpliceVariant( String ac ) {
+        if (log.isDebugEnabled()) {
+            log.debug("Retrieving splice variants from UniProt: "+ac);
+        }
+        Collection<UniprotSpliceVariant> variants = new ArrayList<UniprotSpliceVariant>();
+        Collection<String> variantAcProcessed = new ArrayList<String>();
+
+        Collection<UniprotProtein> proteins = getFromCache( ac );
+        if ( proteins == null ) {
+            proteins = service.retrieve( ac );
+            storeInCache( proteins, ac );
+        }
+
+        for (UniprotProtein p : proteins){
+            UniprotSpliceVariant variant = super.retrieveUniprotSpliceVariant(p, ac);
+
+            if (!variantAcProcessed.contains(variant.getPrimaryAc())){
+                variants.add(variant);
+                variantAcProcessed.add(variant.getPrimaryAc());
+            }
+        }
+
+        return variants;
+    }
+
+    public Collection<UniprotFeatureChain> retrieveFeatureChain( String ac ) {
+        if (log.isDebugEnabled()) {
+            log.debug("Retrieving feature chains from UniProt: "+ac);
+        }
+        Collection<UniprotFeatureChain> variants = new ArrayList<UniprotFeatureChain>();
+
+        Collection<UniprotProtein> proteins = getFromCache( ac );
+        if ( proteins == null ) {
+            proteins = service.retrieve( ac );
+            storeInCache( proteins, ac );
+        }
+
+        for (UniprotProtein p : proteins){
+            UniprotFeatureChain variant = retrieveUniprotFeatureChain(p, ac);
+
+            variants.add(variant);
+        }
+
+        return variants;
     }
 
     /////////////////////////

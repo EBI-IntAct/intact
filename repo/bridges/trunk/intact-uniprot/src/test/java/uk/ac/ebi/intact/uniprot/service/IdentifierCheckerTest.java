@@ -19,7 +19,7 @@ public class IdentifierCheckerTest {
         assertTrue( IdentifierChecker.isProteinId( "Q98765" ) );
 
         // negative tests
-        assertFalse( IdentifierChecker.isProteinId( "Z12345" ) );
+        assertTrue( IdentifierChecker.isProteinId( "Z12345" ) );
         assertFalse( IdentifierChecker.isProteinId( "111111" ) );
         assertFalse( IdentifierChecker.isProteinId( "111111111" ) );
         assertFalse( IdentifierChecker.isProteinId( "1" ) );
