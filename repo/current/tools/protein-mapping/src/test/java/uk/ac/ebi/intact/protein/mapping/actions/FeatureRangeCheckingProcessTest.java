@@ -26,7 +26,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>17-May-2010</pre>
  */
-@ContextConfiguration(locations = {"classpath*:/META-INF/standalone/update-jpa.spring.xml"} )
+@ContextConfiguration(locations = {"classpath*:/META-INF/jpa.test.spring.xml"})
 public class FeatureRangeCheckingProcessTest extends IntactBasicTestCase{
 
     private FeatureRangeCheckingProcess process;

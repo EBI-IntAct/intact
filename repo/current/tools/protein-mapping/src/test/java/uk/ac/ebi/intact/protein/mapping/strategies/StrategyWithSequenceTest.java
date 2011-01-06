@@ -25,7 +25,7 @@ import uk.ac.ebi.intact.update.model.proteinmapping.results.IdentificationResult
  * @version $Id$
  * @since <pre>30-Apr-2010</pre>
  */
-@ContextConfiguration(locations = {"/META-INF/intact.spring.xml", "/META-INF/standalone/update-jpa.spring.xml"} )
+@ContextConfiguration(locations = {"classpath*:/META-INF/jpa.test.spring.xml"})
 public class StrategyWithSequenceTest  extends IntactBasicTestCase {
 
     private StrategyWithSequence strategy;
