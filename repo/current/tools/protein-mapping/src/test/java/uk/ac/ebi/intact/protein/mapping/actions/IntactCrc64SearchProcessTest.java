@@ -23,7 +23,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>08-Apr-2010</pre>
  */
-@ContextConfiguration(locations = {"/META-INF/standalone/update-jpa.spring.xml"} )
+@ContextConfiguration(locations = {"classpath*:/META-INF/jpa.test.spring.xml"})
 public class IntactCrc64SearchProcessTest extends IntactBasicTestCase {
 
     private IntactCrc64SearchProcess process;
