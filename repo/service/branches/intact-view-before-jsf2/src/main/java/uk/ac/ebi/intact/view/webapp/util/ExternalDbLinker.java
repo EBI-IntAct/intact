@@ -48,8 +48,8 @@ public class ExternalDbLinker {
     //URL Links
     public static final String INTERPROURL = "http://www.ebi.ac.uk/interpro/ISpy?ac=";
     public static final String CHROMOSOMEURL = "http://www.ensembl.org/Homo_sapiens/featureview?type=ProteinAlignFeature;id=";
-    public static final String EXPRESSIONURL_PREFIX = "http://www.ebi.ac.uk/microarray-as/atlas/qrs?gprop_0=&gval_0=";
-    public static final String EXPRESSIONURL_SUFFIX = "&fexp_0=UP_DOWN&fact_0=&specie_0=&fval_0=(all+conditions)&view=hm";
+    public static final String EXPRESSIONURL_PREFIX = "http://www.ebi.ac.uk/gxa/qrs?gprop_0=&gval_0=";
+    public static final String EXPRESSIONURL_SUFFIX = "&fexp_0=UP_DOWN&fact_0=&specie_0=&fval_0=&view=h";
     public static final String REACTOMEURL = "http://www.reactome.org/cgi-bin/skypainter2";
 
     //identifier seperators
