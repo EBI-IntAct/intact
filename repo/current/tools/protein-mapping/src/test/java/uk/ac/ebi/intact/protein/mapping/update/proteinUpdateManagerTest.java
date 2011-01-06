@@ -16,7 +16,7 @@ import javax.xml.ws.soap.SOAPFaultException;
  * @version $Id$
  * @since <pre>06-May-2010</pre>
  */
-@ContextConfiguration(locations = {"/META-INF/intact.spring.xml", "/META-INF/standalone/update-jpa.spring.xml"} )
+@ContextConfiguration(locations = {"/META-INF/intact.spring.xml"} )
 public class proteinUpdateManagerTest  extends IntactBasicTestCase {
 
     @Test
