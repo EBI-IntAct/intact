@@ -91,22 +91,22 @@ public class ProteinUpdateManager {
         // get all the intact entries without any uniprot cross reference or with uniprot cross reference with a qualifier different from 'identity' and which can only be uniprot-removed-ac
         final DaoFactory daoFactory = dataContext.getDaoFactory();
         final Query query = daoFactory.getEntityManager().createQuery("select distinct p from InteractorImpl p "+
-                    "left join p.sequenceChunks as seq " +
-                    "left join p.xrefs as xrefs " +
-                    "left join p.annotations as annotations " +
-                    "where p.objClass = 'uk.ac.ebi.intact.model.ProteinImpl' "+
-                    "and p not in ( "+
-                    "select p2 "+
-                    "from InteractorImpl p2 join p2.xrefs as xrefs "+
-                    "where p2.objClass = 'uk.ac.ebi.intact.model.ProteinImpl' "+
-                    "and xrefs.cvDatabase.ac = 'EBI-31' " +
-                    "and xrefs.cvXrefQualifier.shortLabel = 'identity') " +
-                    "and p in ( " +
-                    "select p2 " +
-                    "from InteractorImpl p2 join p2.xrefs as xrefs " +
-                    "where p2.objClass = 'uk.ac.ebi.intact.model.ProteinImpl' " +
-                    "and xrefs.cvDatabase.ac = 'EBI-31' " +
-                    "and xrefs.cvXrefQualifier.shortLabel <> 'uniprot-removed-ac')");
+                "left join p.sequenceChunks as seq " +
+                "left join p.xrefs as xrefs " +
+                "left join p.annotations as annotations " +
+                "where p.objClass = 'uk.ac.ebi.intact.model.ProteinImpl' "+
+                "and p not in ( "+
+                "select p2 "+
+                "from InteractorImpl p2 join p2.xrefs as xrefs "+
+                "where p2.objClass = 'uk.ac.ebi.intact.model.ProteinImpl' "+
+                "and xrefs.cvDatabase.ac = 'EBI-31' " +
+                "and xrefs.cvXrefQualifier.shortLabel = 'identity') " +
+                "and p in ( " +
+                "select p2 " +
+                "from InteractorImpl p2 join p2.xrefs as xrefs " +
+                "where p2.objClass = 'uk.ac.ebi.intact.model.ProteinImpl' " +
+                "and xrefs.cvDatabase.ac = 'EBI-31' " +
+                "and xrefs.cvXrefQualifier.shortLabel <> 'uniprot-removed-ac')");
 
         return query;
     }
@@ -222,14 +222,34 @@ public class ProteinUpdateManager {
             if (a.getCvTopic() != null){
                 CvTopic topic = a.getCvTopic();
 
-                if (topic.getIdentifier() != null){
-                    if (topic.getIdentifier().equals("IA:0280")){
+                if (topic.getShortLabel() != null){
+                    if (topic.getShortLabel().equals(CvTopic.NON_UNIPROT)){
                         return a;
                     }
                 }
-                else if (topic.getShortLabel() != null){
-                    if (topic.getShortLabel().equals(CvTopic.NON_UNIPROT)){
-                        return a;
+            }
+        }
+        return null;
+    }
+
+    private Annotation collectObsoleteAnnotation(Collection<Annotation> annotations){
+        String cautionMessage = "The sequence has been withdrawn from uniprot.";
+        for (Annotation a : annotations){
+            if (a.getCvTopic() != null){
+                CvTopic topic = a.getCvTopic();
+
+                if (a.getAnnotationText() != null){
+                    if (a.getAnnotationText().equalsIgnoreCase(cautionMessage)){
+                        if (topic.getIdentifier() != null){
+                            if (topic.getIdentifier().equals(CvTopic.CAUTION_MI_REF)){
+                                return a;
+                            }
+                        }
+                        else if (topic.getShortLabel() != null){
+                            if (topic.getShortLabel().equals(CvTopic.CAUTION)){
+                                return a;
+                            }
+                        }
                     }
                 }
             }
@@ -365,12 +385,19 @@ public class ProteinUpdateManager {
                     if (a != null){
                         log.info("annotation no_uniprot_update removed from the annotations of " + accession);
                         prot.removeAnnotation(a);
-                        //daoFactory.getAnnotationDao().delete(a);
+                        daoFactory.getAnnotationDao().delete(a);
+                    }
+
+                    Annotation a2 = collectObsoleteAnnotation(annotations);
+
+                    if (a2 != null){
+                        log.info("caution removed from the annotations of " + accession);
+                        prot.removeAnnotation(a2);
+                        daoFactory.getAnnotationDao().delete(a2);
                     }
                     addUniprotCrossReferenceTo(prot, result.getFinalUniprotId(), daoFactory);
-                    //daoFactory.getProteinDao().update( prot );
+                    daoFactory.getProteinDao().update( prot );
                     accessionsToUpdate.add(accession);
-                    intactContext.getCorePersister().saveOrUpdate(prot);
                 }
             }
 
