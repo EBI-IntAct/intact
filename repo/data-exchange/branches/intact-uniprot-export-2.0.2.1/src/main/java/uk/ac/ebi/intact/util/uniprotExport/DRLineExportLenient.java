@@ -214,7 +214,7 @@ public class DRLineExportLenient extends LineExport {
                 // Note: a protein is low-confidence if it has at least one low-confidence interaction.
 
                 // if this is a splice variant, we try to get its master protein
-                if (isSpliceVariantOrChain(protein)) {
+                if (isChainOrIsoform(protein)) {
 
                     String masterAc = getMasterAc(protein);
 
