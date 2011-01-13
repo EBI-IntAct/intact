@@ -12,6 +12,8 @@ import java.io.Serializable;
 
 public abstract class UniprotProteinTranscriptImpl implements UniprotProteinTranscript, Serializable{
 
+    private String id;
+
     /**
      * Sequence of the protein transcript.
      */
@@ -38,9 +40,14 @@ public abstract class UniprotProteinTranscriptImpl implements UniprotProteinTran
     protected Integer end;
 
     public UniprotProteinTranscriptImpl(String primaryAc, Organism organism, String sequence){
+        this.id = primaryAc;
         setPrimaryAc(primaryAc);
         setOrganism(organism);
         setSequence(sequence);
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getPrimaryAc() {

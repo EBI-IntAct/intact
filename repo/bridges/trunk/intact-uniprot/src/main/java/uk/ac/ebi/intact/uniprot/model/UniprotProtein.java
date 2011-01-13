@@ -18,7 +18,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>15-Sep-2006</pre>
  */
-public class UniprotProtein implements Serializable{
+public class UniprotProtein implements Serializable, UniprotProteinLike {
 
     /////////////////////////
     // Instance attributes
@@ -179,6 +179,7 @@ public class UniprotProtein implements Serializable{
      *
      * @return primary Accession Number.
      */
+    @Override
     public String getPrimaryAc() {
         return primaryAc;
     }
@@ -188,7 +189,8 @@ public class UniprotProtein implements Serializable{
      *
      * @param primaryAc primary Accession Number.
      */
-    public void setPrimaryAc( String primaryAc ) {
+    @Override
+    public void setPrimaryAc(String primaryAc) {
         if ( primaryAc == null ) {
             throw new IllegalArgumentException( "Primary Ac cannot be null." );
         }
@@ -203,6 +205,7 @@ public class UniprotProtein implements Serializable{
      *
      * @return non null ordered list of secondary Accession Numbers.
      */
+    @Override
     public List<String> getSecondaryAcs() {
         if ( secondaryAcs == null ) {
             secondaryAcs = new ArrayList<String>();
@@ -215,6 +218,7 @@ public class UniprotProtein implements Serializable{
      *
      * @return Value for property 'organism'.
      */
+    @Override
     public Organism getOrganism() {
         return organism;
     }
@@ -224,7 +228,8 @@ public class UniprotProtein implements Serializable{
      *
      * @param organism Value to set for property 'organism'.
      */
-    public void setOrganism( Organism organism ) {
+    @Override
+    public void setOrganism(Organism organism) {
         if ( organism == null ) {
             throw new IllegalArgumentException( "Organism cannot be null." );
         }
@@ -236,6 +241,7 @@ public class UniprotProtein implements Serializable{
      *
      * @return description of the protein.
      */
+    @Override
     public String getDescription() {
         return description;
     }
@@ -245,7 +251,8 @@ public class UniprotProtein implements Serializable{
      *
      * @param description description of the protein.
      */
-    public void setDescription( String description ) {
+    @Override
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -392,6 +399,7 @@ public class UniprotProtein implements Serializable{
      *
      * @return amino Acis sequence of the protein.
      */
+    @Override
     public String getSequence() {
         return sequence;
     }
@@ -401,7 +409,8 @@ public class UniprotProtein implements Serializable{
      *
      * @param sequence amino Acis sequence of the protein.
      */
-    public void setSequence( String sequence ) {
+    @Override
+    public void setSequence(String sequence) {
         this.sequence = sequence;
     }
 
