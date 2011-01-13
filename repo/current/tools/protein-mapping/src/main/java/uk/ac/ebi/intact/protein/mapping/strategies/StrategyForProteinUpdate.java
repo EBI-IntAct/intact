@@ -133,10 +133,9 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
             else {
                 updateReport.addWarning("We didn't find a unique uniprot AC neither when we tried to identify the protein using the sequence nor" +
                         " when we tried to identify this protein using its identifiers with qualifier set to 'identity'.");
-                return true;
             }
+            return true;
         }
-        return false;
     }
 
     /**
