@@ -56,6 +56,20 @@ public class UniprotRemoteService extends AbstractUniprotService {
         return retrieve(ac, true);
     }
 
+    /**
+     * Retrieves proteins and variants (protein transcripts) for the accession provided. It is the combination of calling
+     * the retrieve(ac) and the retriveProteinTranscripts(ac) methods.
+     * @param ac the accession to search
+     * @return proteins or variants, using an interface common to the UniprotProtein and UniprotProteinTranscript classes.
+     */
+    public Collection<UniprotProteinLike> retrieveAny( String ac ) {
+        Collection<UniprotProteinLike> protsAndVariants = new ArrayList<UniprotProteinLike>();
+        protsAndVariants.addAll(retrieve(ac));
+        protsAndVariants.addAll(retrieveProteinTranscripts(ac));
+
+        return protsAndVariants;
+    }
+
     public Collection<UniprotProteinTranscript> retrieveProteinTranscripts( String ac ){
         if (log.isDebugEnabled()) {
             log.debug("Retrieving splice variants from UniProt: "+ac);
@@ -82,7 +96,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
             for (UniprotProtein p : uniprotProteins){
                 UniprotSpliceVariant variant = retrieveUniprotSpliceVariant(p, ac);
 
-                if (!variantAcProcessed.contains(variant.getPrimaryAc())){
+                if (variant != null && !variantAcProcessed.contains(variant.getPrimaryAc())){
                     variants.add(variant);
                     variantAcProcessed.add(variant.getPrimaryAc());
                 }
@@ -151,7 +165,9 @@ public class UniprotRemoteService extends AbstractUniprotService {
             proteins.add( uniprotProtein );
             UniprotFeatureChain variant = retrieveUniprotFeatureChain(uniprotProtein, ac);
 
-            variants.add(variant);
+            if (variant != null) {
+                variants.add(variant);
+            }
         }
 
         retrievalCache.put(ac, proteins);
