@@ -516,23 +516,22 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
         // always clear the previous reports
         this.listOfReports.clear();
 
+                // Create a new report
+        ActionReport report = new ActionReport(ActionName.SEARCH_uniprot_name);
+        this.listOfReports.add(report);
+
         String geneName = context.getGene_name();
         String protein_name = context.getProtein_name();
         String organism = null;
         if (context.getOrganism() != null){
             organism = context.getOrganism().getTaxId();
         }
+        else{
+            report.addWarning("No organism was given for the protein with : name =  " + context.getGlobalName() != null ? context.getGlobalName() : (context.getGene_name()!= null ? context.getGene_name() : (context.getProtein_name() != null ? context.getProtein_name() : "")) + ". We will process the identification without looking at the organism.");
+        }
 
         String globalName = context.getGlobalName();
 
-        // Create a new report
-        ActionReport report = new ActionReport(ActionName.SEARCH_uniprot_name);
-        this.listOfReports.add(report);
-
-        if (organism == null){
-
-            report.addWarning("No organism was given for the protein with : name =  " + context.getGlobalName() != null ? context.getGlobalName() : (context.getGene_name()!= null ? context.getGene_name() : (context.getProtein_name() != null ? context.getProtein_name() : "")) + ". We will process the identification without looking at the organism.");
-        }
         report.setASwissprotEntry(true);
 
         // process a name search using gene name, protein name and/or glocal name
