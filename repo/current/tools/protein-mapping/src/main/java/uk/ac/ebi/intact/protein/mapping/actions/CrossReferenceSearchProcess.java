@@ -16,13 +16,11 @@ import uk.ac.ebi.intact.update.model.proteinmapping.actions.status.Status;
 import uk.ac.ebi.intact.update.model.proteinmapping.actions.status.StatusLabel;
 import uk.ac.ebi.kraken.interfaces.uniparc.UniParcEntry;
 import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseCrossReference;
+import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseType;
 import uk.ac.ebi.kraken.interfaces.uniprot.SecondaryUniProtAccession;
 import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
 import uk.ac.ebi.kraken.util.IndexField;
-import uk.ac.ebi.kraken.uuw.services.remoting.EntryIterator;
-import uk.ac.ebi.kraken.uuw.services.remoting.UniParcQueryBuilder;
-import uk.ac.ebi.kraken.uuw.services.remoting.UniParcQueryService;
-import uk.ac.ebi.kraken.uuw.services.remoting.UniProtJAPI;
+import uk.ac.ebi.kraken.uuw.services.remoting.*;
 
 import java.util.*;
 
@@ -49,7 +47,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
     /**
      * The map allowing to convert a sequence database MI to a Uniprot database name
      */
-    private Map<String, Set<String>> psiMIDatabaseToUniprot = new HashMap<String, Set<String>>();
+    private Map<String, Set<DatabaseType>> psiMIDatabaseToUniprot = new HashMap<String, Set<DatabaseType>>();
 
     /**
      * The uniprot remote service
@@ -78,76 +76,69 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
      * initialises the list of databases in uniprot with a MI number
      */
     private void initialisePsiMIDatabaseToUniprot(){
-        HashSet<String> huge = new HashSet<String>();
-        huge.add("HUGE");
-        psiMIDatabaseToUniprot.put("MI:0249", huge);
-        HashSet<String> CYGD = new HashSet<String>();
-        CYGD.add("CYGD");
+        HashSet<DatabaseType> CYGD = new HashSet<DatabaseType>();
+        CYGD.add(DatabaseType.CYGD);
         psiMIDatabaseToUniprot.put("MI:0464", CYGD);
-        HashSet<String> ddbjEmblGenbank = new HashSet<String>();
-        ddbjEmblGenbank.add("DDBJ");
-        ddbjEmblGenbank.add("EMBL");
-        ddbjEmblGenbank.add("GenBank");
+        HashSet<DatabaseType> ddbjEmblGenbank = new HashSet<DatabaseType>();
+        ddbjEmblGenbank.add(DatabaseType.getDatabaseType("DDBJ"));
+        ddbjEmblGenbank.add(DatabaseType.EMBL);
+        ddbjEmblGenbank.add(DatabaseType.getDatabaseType("GenBank"));
         psiMIDatabaseToUniprot.put("MI:0475", ddbjEmblGenbank);
-        HashSet<String> ensembl = new HashSet<String>();
-        ensembl.add("Ensembl");
+        HashSet<DatabaseType> ensembl = new HashSet<DatabaseType>();
+        ensembl.add(DatabaseType.ENSEMBL);
         psiMIDatabaseToUniprot.put("MI:0476", ensembl);
-        HashSet<String> geneId = new HashSet<String>();
-        geneId.add("GeneID");
+        HashSet<DatabaseType> geneId = new HashSet<DatabaseType>();
+        geneId.add(DatabaseType.GENEID);
         psiMIDatabaseToUniprot.put("MI:0477", geneId);
-        HashSet<String> flyBase = new HashSet<String>();
-        flyBase.add("FlyBase");
+        HashSet<DatabaseType> flyBase = new HashSet<DatabaseType>();
+        flyBase.add(DatabaseType.FLYBASE);
         psiMIDatabaseToUniprot.put("MI:0478", flyBase);
-        HashSet<String> mgi = new HashSet<String>();
-        mgi.add("MGI");
+        HashSet<DatabaseType> mgi = new HashSet<DatabaseType>();
+        mgi.add(DatabaseType.MGI);
         psiMIDatabaseToUniprot.put("MI:0479", mgi);
-        HashSet<String> mim = new HashSet<String>();
-        mim.add("MIM");
+        HashSet<DatabaseType> mim = new HashSet<DatabaseType>();
+        mim.add(DatabaseType.MIM);
         psiMIDatabaseToUniprot.put("MI:0480", mim);
-        HashSet<String> refSeq = new HashSet<String>();
-        refSeq.add("RefSeq");
+        HashSet<DatabaseType> refSeq = new HashSet<DatabaseType>();
+        refSeq.add(DatabaseType.REFSEQ);
         psiMIDatabaseToUniprot.put("MI:0481", refSeq);
-        HashSet<String> rgd = new HashSet<String>();
-        rgd.add("RGD");
+        HashSet<DatabaseType> rgd = new HashSet<DatabaseType>();
+        rgd.add(DatabaseType.RGD);
         psiMIDatabaseToUniprot.put("MI:0483", rgd);
-        HashSet<String> sgd = new HashSet<String>();
-        sgd.add("SGD");
+        HashSet<DatabaseType> sgd = new HashSet<DatabaseType>();
+        sgd.add(DatabaseType.SGD);
         psiMIDatabaseToUniprot.put("MI:0484", sgd);
-        HashSet<String> wormbase = new HashSet<String>();
-        wormbase.add("WormBase");
+        HashSet<DatabaseType> wormbase = new HashSet<DatabaseType>();
+        wormbase.add(DatabaseType.WORMBASE);
         psiMIDatabaseToUniprot.put("MI:0487", wormbase);
-        HashSet<String> ipi = new HashSet<String>();
-        ipi.add("IPI");
+        HashSet<DatabaseType> ipi = new HashSet<DatabaseType>();
+        ipi.add(DatabaseType.IPI);
         psiMIDatabaseToUniprot.put("MI:0675", ipi);
-        HashSet<String> peptide = new HashSet<String>();
-        peptide.add("PRIDE");
-        peptide.add("PeptideAtlas");
+        HashSet<DatabaseType> peptide = new HashSet<DatabaseType>();
+        peptide.add(DatabaseType.PRIDE);
+        peptide.add(DatabaseType.PEPTIDEATLAS);
         psiMIDatabaseToUniprot.put("MI:0737", peptide);
-        HashSet<String> pride = new HashSet<String>();
-        pride.add("PRIDE");
+        HashSet<DatabaseType> pride = new HashSet<DatabaseType>();
+        pride.add(DatabaseType.PRIDE);
         psiMIDatabaseToUniprot.put("MI:0738", pride);
-        HashSet<String> peptideAtlas = new HashSet<String>();
-        peptideAtlas.add("PeptideAtlas");
+        HashSet<DatabaseType> peptideAtlas = new HashSet<DatabaseType>();
+        peptideAtlas.add(DatabaseType.PEPTIDEATLAS);
         psiMIDatabaseToUniprot.put("MI:0741", peptideAtlas);
-        HashSet<String> genBank = new HashSet<String>();
-        genBank.add("GenBank");
+        HashSet<DatabaseType> genBank = new HashSet<DatabaseType>();
+        genBank.add(DatabaseType.getDatabaseType("GenBank"));
         psiMIDatabaseToUniprot.put("MI:0851", genBank);
-        HashSet<String> genBank2 = new HashSet<String>();
-        genBank2.add("GenBank");
+        HashSet<DatabaseType> genBank2 = new HashSet<DatabaseType>();
+        genBank2.add(DatabaseType.getDatabaseType("GenBank"));
         psiMIDatabaseToUniprot.put("MI:0860", genBank2);
-        HashSet<String> genBank3 = new HashSet<String>();
-        genBank3.add("GenBank");
+        HashSet<DatabaseType> genBank3 = new HashSet<DatabaseType>();
+        genBank3.add(DatabaseType.getDatabaseType("GenBank"));
         psiMIDatabaseToUniprot.put("MI:0852", genBank3);
-        HashSet<String> ensemblgenome = new HashSet<String>();
-        ensemblgenome.add("EnsemblBacteria");
-        ensemblgenome.add("EnsemblFungi");
-        ensemblgenome.add("EnsemblMetazoa");
-        ensemblgenome.add("EnsemblPlants");
-        ensemblgenome.add("EnsemblProtists");
-        psiMIDatabaseToUniprot.put("MI:1013", ensemblgenome);
-        psiMIDatabaseToUniprot.put("MI:1013", ensemblgenome);
-        psiMIDatabaseToUniprot.put("MI:1013", ensemblgenome);
-        psiMIDatabaseToUniprot.put("MI:1013", ensemblgenome);
+        HashSet<DatabaseType> ensemblgenome = new HashSet<DatabaseType>();
+        ensemblgenome.add(DatabaseType.ENSEMBLBACTERIA);
+        ensemblgenome.add(DatabaseType.ENSEMBLFUNGI);
+        ensemblgenome.add(DatabaseType.ENSEMBLMETAZOA);
+        ensemblgenome.add(DatabaseType.ENSEMBLPLANTS);
+        ensemblgenome.add(DatabaseType.ENSEMBLPROTISTS);
         psiMIDatabaseToUniprot.put("MI:1013", ensemblgenome);
     }
 
@@ -156,8 +147,9 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
      * @param database : the database
      * @return the appropriate name(s) in uniprot if database is a MI number of a sequence database existing in Uniprot, the database name as it was otherwise
      */
-    private Set<String> convertMINumberInUniprot(String database){
-        Set<String> name = new HashSet<String>();
+    private Set<DatabaseType> convertMINumberInUniprot(String database){
+
+        Set<DatabaseType> name = new HashSet<DatabaseType>();
 
         if (database == null){
             return name;
@@ -174,12 +166,86 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
      * @param identifier : the identifier of the protein we want to identify
      * @return the query as a String
      */
-    private String buildUniprotDatabaseCrossReferenceQuery(String identifier){
+    /*private String buildUniprotDatabaseCrossReferenceQuery(String identifier){
         String query = IndexField.DATABASE_CROSSREFERENCES+ ":" + identifier +
                 " OR " + IndexField.UNIPROT_ID+":"+identifier +
                 " OR " + IndexField.UNIPROT_IDENTIFIER+":"+identifier +
-                " OR " + IndexField.PRIMARY_ACCESSION+":"+identifier;
+                " OR " + IndexField.PRIMARY_ACCESSION+":"+identifier +
+                " OR " + IndexField.UNIPROT_EXPIRED_IDENTIFIER+":"+identifier;
         return query ;
+    }*/
+
+    /**
+     * Build the query in uniprot to get the swissprot entries with this identifier in their cross references
+     * @param identifier : the identifier of the protein we want to identify
+     * @return the iterator
+     */
+    private EntryIterator<UniProtEntry> getReviewedUniprotDatabaseCrossReferenceIterator(Set<DatabaseType> databases, String identifier){
+        EntryIterator<UniProtEntry> iteratorId = uniProtQueryService.getEntryIterator(UniProtQueryBuilder.setReviewedEntries(UniProtQueryBuilder.buildExactMatchIdentifierQuery(identifier)));
+
+        EntryIterator<UniProtEntry> iteratorUniprotXRef = null;
+
+        if (databases.isEmpty()){
+            return iteratorId;
+        }
+
+        for (DatabaseType database : databases){
+
+            if (database != null){
+                EntryIterator<UniProtEntry> singleDtabase = uniProtQueryService.getEntryIterator(UniProtQueryBuilder.setReviewedEntries(UniProtQueryBuilder.buildDatabaseCrossReferenceQuery(database, identifier)));
+                if (iteratorUniprotXRef == null){
+                    iteratorUniprotXRef = singleDtabase;
+                }
+                else {
+                    iteratorUniprotXRef = uniProtQueryService.getEntryIterator(iteratorUniprotXRef, SetOperation.Or, iteratorUniprotXRef);
+                }
+            }
+        }
+        return  uniProtQueryService.getEntryIterator(iteratorId, SetOperation.Or, iteratorUniprotXRef);
+    }
+
+    /**
+     * Build the query in uniprot to get the uniprot entries with this identifier in their cross references
+     * @param identifier : the identifier of the protein we want to identify
+     * @return the iterator
+     */
+    private EntryIterator<UniProtEntry> getUnreviewedUniprotDatabaseCrossReferenceIterator(Set<DatabaseType> databases, String identifier){
+        EntryIterator<UniProtEntry> iteratorId = uniProtQueryService.getEntryIterator(UniProtQueryBuilder.setUnreviewedEntries(UniProtQueryBuilder.buildExactMatchIdentifierQuery(identifier)));
+        EntryIterator<UniProtEntry> iteratorUniprotXRef = null;
+
+        if (databases.isEmpty()){
+            return iteratorId;
+        }
+        
+        for (DatabaseType database : databases){
+
+            if (database != null){
+                EntryIterator<UniProtEntry> singleDtabase = uniProtQueryService.getEntryIterator(UniProtQueryBuilder.setUnreviewedEntries(UniProtQueryBuilder.buildDatabaseCrossReferenceQuery(database, identifier)));
+                if (iteratorUniprotXRef == null){
+                    iteratorUniprotXRef = singleDtabase;
+                }
+                else {
+                    iteratorUniprotXRef = uniProtQueryService.getEntryIterator(iteratorUniprotXRef, SetOperation.Or, iteratorUniprotXRef);
+                }
+            }
+        }
+        return  uniProtQueryService.getEntryIterator(iteratorId, SetOperation.Or, iteratorUniprotXRef);
+    }
+
+    /**
+     * Build the query in uniparc to get the uniparc entries with this identifier in their cross references
+     * @param identifier : the identifier of the protein we want to identify
+     * @return the iterator
+     */
+    private EntryIterator<UniParcEntry> getUniparcDatabaseCrossReferenceIterator(String identifier){
+
+        List<String> ids = new ArrayList<String>();
+        ids.add(identifier);
+
+        EntryIterator<UniParcEntry> iteratorId = uniParcQueryService.getEntryIterator(UniParcQueryBuilder.buildIDListQuery(ids));
+        EntryIterator<UniParcEntry> iteratorUniparcXRef = uniParcQueryService.getEntryIterator(UniParcQueryBuilder.buildActiveCrossReferenceQuery(identifier));
+
+        return  uniParcQueryService.getEntryIterator(iteratorId, SetOperation.Or, iteratorUniparcXRef);
     }
 
     /**
@@ -309,11 +375,39 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
      * @param context : the context of the protein
      * @return an unique uniprot accession if successful, null otherwise
      */
-    private String processQuery(EntryIterator<UniProtEntry> iterator, ActionReport report, IdentificationContext context){
+    private String processIterator(EntryIterator<UniProtEntry> iterator, ActionReport report, IdentificationContext context){
         // we have only one entry
         if (iterator.getResultSize() == 1){
             UniProtEntry protein = iterator.next();
-            Set<String> databaseNames = convertMINumberInUniprot(context.getDatabaseForIdentifier());
+            String id = protein.getPrimaryUniProtAccession().getValue();
+
+            Status status = new Status(StatusLabel.COMPLETED, "The protein with the identifier " + context.getIdentifier() + " has successfully been identified as " + id );
+            report.setStatus(status);
+            return id;
+        }
+        // we have several matching entries
+        else if (iterator.getResultSize() > 1){
+
+            Status status = new Status(StatusLabel.TO_BE_REVIEWED, "The protein with the identifier " + context.getIdentifier() + " could match " + iterator.getResultSize() + " Uniprot entries.");
+            report.setStatus(status);
+            report.setASwissprotEntry(false);
+        }
+        return null;
+    }
+
+    /**
+     * Process the results of the query. If only one entry is matching, the query was successful, if several entries were matching,
+     * the results should be reviewed by a curator
+     * @param iterator : the results
+     * @param report : the current report
+     * @param context : the context of the protein
+     * @return an unique uniprot accession if successful, null otherwise
+     */
+    /*private String processQuery(EntryIterator<UniProtEntry> iterator, ActionReport report, IdentificationContext context){
+        // we have only one entry
+        if (iterator.getResultSize() == 1){
+            UniProtEntry protein = iterator.next();
+            Set<DatabaseType> databaseNames = convertMINumberInUniprot(context.getDatabaseForIdentifier());
             String id = protein.getPrimaryUniProtAccession().getValue();
 
             // The identifier matches an uniprot accession of identifier
@@ -343,9 +437,9 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
                         report.addPossibleAccession(id);
                     }
                     else {
-                        for (String name : databaseNames){
+                        for (DatabaseType name : databaseNames){
                             // the database name is matching the one in the context
-                            if (name.equalsIgnoreCase(databaseInUniprot)){
+                            if (name.toString().equalsIgnoreCase(databaseInUniprot)){
                                 Status status = new Status(StatusLabel.COMPLETED, "The protein with the identifier " + context.getIdentifier() + " from the database "+context.getDatabaseForIdentifier()+" has successfully been identified as " + id );
                                 report.setStatus(status);
                                 return id;
@@ -388,7 +482,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
             }
         }
         return null;
-    }
+    }*/
 
     /**
      * process the Uniparc entry to extract its uniprot cross references if any
@@ -427,7 +521,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
      * @return a unique uniprot accession if possible, null otherwise
      * @throws ActionProcessingException
      */
-    public String runAction(IdentificationContext context) throws ActionProcessingException {
+    /*public String runAction(IdentificationContext context) throws ActionProcessingException {
         // always clear the previous reports
         this.listOfReports.clear();
 
@@ -527,15 +621,178 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
                     else {
                         // get the database name in uniparc for what the identifier is matching
                         String databaseInUniparc = getTheDatabaseOfExactIdentifierInUniparcCrossReferences(entry, context.getIdentifier(), context.getDatabaseForIdentifier());
-                        Set<String> databaseNames = convertMINumberInUniprot(context.getDatabaseForIdentifier());
+                        Set<DatabaseType> databaseNames = convertMINumberInUniprot(context.getDatabaseForIdentifier());
 
                         // if the exact identifier is in the cross references of the uniparc entry
                         if (databaseInUniparc != null){
                             // We have a database name or MI for the identifier in the context
                             if (context.getDatabaseForIdentifier() != null){
-                                for (String name : databaseNames){
+                                for (DatabaseType name : databaseNames){
                                     // the database name is matching the one in the context
-                                    if (name.equalsIgnoreCase(databaseInUniparc)){
+                                    if (name.toString().equalsIgnoreCase(databaseInUniparc)){
+                                        processUniparcResult(entry, taxId, setOfSwissprotAccessions, setOfUniprotAccessions);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // No results
+                if (setOfUniprotAccessions.isEmpty() && setOfSwissprotAccessions.isEmpty()){
+                    Status statusUniparc = new Status(StatusLabel.FAILED, "There is no uniprot entry we could find in Uniparc associated with the identifier " + identifier + (taxId != null ? " and the taxId " + taxId : ""));
+                    reportUniparc.setStatus(statusUniparc);
+                }
+                // one swissprot entry
+                else if (setOfSwissprotAccessions.size() == 1){
+                    String id = setOfSwissprotAccessions.iterator().next();
+                    Status statusUniparc = new Status(StatusLabel.COMPLETED, "The protein with the identifier " + context.getIdentifier() + " has successfully been identified as " + id + " in Uniparc.");
+                    reportUniparc.setStatus(statusUniparc);
+                    reportUniparc.setASwissprotEntry(true);
+
+                    return id;
+                }
+                // several swissprot entries
+                else if (setOfSwissprotAccessions.size() > 1){
+                    Status statusUniparc = new Status(StatusLabel.TO_BE_REVIEWED, "The protein with the identifier " + context.getIdentifier() + " could match " + setOfSwissprotAccessions.size() + " Swissprot entries.");
+                    reportUniparc.setStatus(statusUniparc);
+                    reportUniparc.getPossibleAccessions().addAll(setOfSwissprotAccessions);
+                }
+                // one trembl entry
+                else if (setOfUniprotAccessions.size() == 1){
+                    String id = setOfUniprotAccessions.iterator().next();
+                    Status statusUniparc = new Status(StatusLabel.COMPLETED, "The protein with the identifier " + context.getIdentifier() + " has successfully been identified as " + id + " in Uniparc.");
+                    reportUniparc.setStatus(statusUniparc);
+                    reportUniparc.setASwissprotEntry(false);
+
+                    return id;
+                }
+                // several trembl entries
+                else {
+                    Status statusUniparc = new Status(StatusLabel.TO_BE_REVIEWED, "The protein with the identifier " + context.getIdentifier() + " could match " + setOfUniprotAccessions.size() + " Uniprot entries.");
+                    reportUniparc.setStatus(statusUniparc);
+                    reportUniparc.getPossibleAccessions().addAll(setOfUniprotAccessions);
+                }
+            }
+        }
+
+        return null;
+    }*/
+
+    /**
+     * Query uniprot to get the swissprot entries with a specific cross reference or identifier and a specific organism. If the query is not successful in Swissprot,
+     * Query uniprot without a filter on Swissprot.
+     * @param context  : the context of the protein
+     * @return a unique uniprot accession if possible, null otherwise
+     * @throws ActionProcessingException
+     */
+    public String runAction(IdentificationContext context) throws ActionProcessingException {
+        // always clear the previous reports
+        this.listOfReports.clear();
+
+        String identifier = context.getIdentifier();
+        Set<DatabaseType> databaseTypes = convertMINumberInUniprot(context.getDatabaseForIdentifier());
+
+        String taxId = null;
+
+        // get the results of the query on swissprot
+        EntryIterator<UniProtEntry> iteratorSwissprot = getReviewedUniprotDatabaseCrossReferenceIterator(databaseTypes, identifier);
+
+        // Create a new report
+        ActionReport report = new ActionReport(ActionName.SEARCH_Swissprot_CrossReference);
+        this.listOfReports.add(report);
+
+        // if the organism is not null, we can add a filter on the organism
+        if (context.getOrganism() != null){
+            taxId = context.getOrganism().getTaxId();
+            iteratorSwissprot = addTaxIdToUniprotIterator(iteratorSwissprot, taxId);
+        }
+        else {
+            report.addWarning("No organism was given for the protein with : identifier =  " + identifier  + ". We will process the identification without looking at the organism.");
+        }
+
+        // if the query on Swissprot was not successful
+        if (iteratorSwissprot == null || iteratorSwissprot.getResultSize() == 0){
+            Status status = new Status(StatusLabel.FAILED, "There is no Swissprot entry matching the identifier " + identifier  + (taxId != null ? " and the taxId " + taxId : ""));
+            report.setStatus(status);
+
+            // new query, new report
+            ActionReport report2 = new ActionReport(ActionName.SEARCH_Uniprot_CrossReference);
+            this.listOfReports.add(report2);
+
+            // get the results of the query on Trembl
+            EntryIterator<UniProtEntry> iteratorTrembl = getUnreviewedUniprotDatabaseCrossReferenceIterator(databaseTypes, identifier);
+
+            if (taxId != null){
+                iteratorTrembl = addTaxIdToUniprotIterator(iteratorTrembl, taxId);
+            }
+
+            // If the query was not successful in Uniprot, we had a status FAILED to the report
+            if (iteratorTrembl == null || iteratorTrembl.getResultSize() == 0){
+                Status status2 = new Status(StatusLabel.FAILED, "There is no Uniprot entry matching the identifier " + identifier + (taxId != null ? " and the taxId " + taxId : ""));
+                report2.setStatus(status2);
+            }
+            // query successful : process the results
+            else {
+                String ac = processIterator(iteratorTrembl, report2, context);
+                if (ac != null){
+                    return ac;
+                }
+            }
+        }
+        else {
+            // the results are not null on swissprot, we process them
+            report.setASwissprotEntry(true);
+            String ac = processIterator(iteratorSwissprot, report, context);
+            if (ac != null){
+                return ac;
+            }
+        }
+
+        // we couldn't find a result in uniprot
+        if ( report.getPossibleAccessions().isEmpty()){
+
+            // create a new report
+            ActionReport reportUniparc = new ActionReport(ActionName.SEARCH_Uniparc_CrossReference);
+            this.listOfReports.add(reportUniparc);
+
+            // build query for uniparc
+            // get the results of the query on uniparc
+            EntryIterator<UniParcEntry> iteratorUniparc = getUniparcDatabaseCrossReferenceIterator(identifier);
+
+            if (taxId != null){
+                iteratorUniparc = addTaxIdToUniparcIterator(iteratorUniparc, taxId);
+            }
+
+            // We don't have any results in Uniparc
+            if (iteratorUniparc == null || iteratorUniparc.getResultSize() == 0){
+                Status statusUniparc = new Status(StatusLabel.FAILED, "There is no cross reference in Uniparc matching the identifier " + identifier + (taxId != null ? " and the taxId " + taxId : ""));
+                reportUniparc.setStatus(statusUniparc);
+            }
+            else {
+                // list of Trembl entries in the uniparc entry
+                HashSet<String> setOfUniprotAccessions = new HashSet<String>();
+                // list of Swissprot entries in the uniparc entry
+                HashSet<String> setOfSwissprotAccessions = new HashSet<String>();
+
+                for (UniParcEntry entry : iteratorUniparc){
+
+                    // If the identifier can exactly match a uniparc accession
+                    if (hasTheExactIdentifierInUniparc(entry, context.getIdentifier())){
+                        processUniparcResult(entry, taxId, setOfSwissprotAccessions, setOfUniprotAccessions);
+                    }
+                    // the identidier doesn't match any uniparc accessions or identifiers
+                    else {
+                        // get the database name in uniparc for what the identifier is matching
+                        String databaseInUniparc = getTheDatabaseOfExactIdentifierInUniparcCrossReferences(entry, context.getIdentifier(), context.getDatabaseForIdentifier());
+
+                        // if the exact identifier is in the cross references of the uniparc entry
+                        if (databaseInUniparc != null){
+                            // We have a database name or MI for the identifier in the context
+                            if (context.getDatabaseForIdentifier() != null){
+                                for (DatabaseType name : databaseTypes){
+                                    // the database name is matching the one in the context
+                                    if (name.toString().equalsIgnoreCase(databaseInUniparc)){
                                         processUniparcResult(entry, taxId, setOfSwissprotAccessions, setOfUniprotAccessions);
                                     }
                                 }
@@ -585,4 +842,13 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
         return null;
     }
 
+    /**
+     * Add a filter on the Taxid in the initial query
+     * @param initialquery : the initial query
+     * @param organism  : the organism of the protein
+     * @return the query as a String
+     */
+    protected EntryIterator<UniParcEntry> addTaxIdToUniparcIterator(EntryIterator<UniParcEntry> initialquery, String organism){
+        return  uniParcQueryService.getEntryIterator(initialquery, SetOperation.And, uniParcQueryService.getEntryIterator(UniParcQueryBuilder.buildFullTextSearch(buildTaxIdQuery(organism))));
+    }
 }
