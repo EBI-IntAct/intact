@@ -2,11 +2,11 @@ package uk.ac.ebi.intact.protein.mapping.actions;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.kraken.interfaces.uniparc.UniParcEntry;
+import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseType;
+import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
 import uk.ac.ebi.kraken.util.IndexField;
-import uk.ac.ebi.kraken.uuw.services.remoting.Query;
-import uk.ac.ebi.kraken.uuw.services.remoting.UniProtJAPI;
-import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryBuilder;
-import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryService;
+import uk.ac.ebi.kraken.uuw.services.remoting.*;
 
 /**
  * This class is the class to extend if the IdentificationAction  is using a uniprot service
@@ -48,6 +48,16 @@ public abstract class ActionNeedingUniprotService extends IdentificationActionIm
         String query = "(" + initialquery + ")" + " AND " + "(" + buildTaxIdQuery(organism) + ")";
 
         return query;
+    }
+
+        /**
+     * Add a filter on the Taxid in the initial query
+     * @param initialquery : the initial query
+     * @param organism  : the organism of the protein
+     * @return the query as a String
+     */
+    protected EntryIterator<UniProtEntry> addTaxIdToUniprotIterator(EntryIterator<UniProtEntry> initialquery, String organism){
+        return  uniProtQueryService.getEntryIterator(initialquery, SetOperation.And, uniProtQueryService.getEntryIterator(UniProtQueryBuilder.buildQuery(buildTaxIdQuery(organism))));
     }
 
     /**
