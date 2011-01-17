@@ -324,7 +324,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
                         report.setStatus(status);
                         result.addActionReport(report);
                     }
-                    else if (isMatchingIdentifierResults && otherIdentifier.equals(result.getFinalUniprotId() == null)){
+                    else if (isMatchingIdentifierResults && otherIdentifier.equals(result.getFinalUniprotId())){
                         Status status = new Status(StatusLabel.COMPLETED, "There is no result conflicts when we try to identify the protein using the sequence then using the identifiers " + identifiers);
                         report.setStatus(status);
                         result.addActionReport(report);
