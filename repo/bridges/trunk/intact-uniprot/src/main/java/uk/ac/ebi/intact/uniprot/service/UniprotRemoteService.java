@@ -36,7 +36,7 @@ import java.util.*;
  */
 public class UniprotRemoteService extends AbstractUniprotService {
 
-    private Map<String,Collection<UniprotProtein>> retrievalCache;  
+    private Map<String,Collection<UniprotProtein>> retrievalCache;
 
     /**
      * Sets up a logger for that class.
@@ -146,7 +146,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
                 if (variant != null){
                    variants.add(variant);
-                }                
+                }
             }
         }
 
@@ -252,7 +252,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
         if ( IdentifierChecker.isSpliceVariantId( ac ) ) {
 
             // we only use this search for splice variants
-            Query query = UniProtQueryBuilder.buildFullTextSearch( ac );
+            Query query = UniProtQueryBuilder.buildExactMatchIdentifierQuery( ac );
             iterator = uniProtQueryService.getEntryIterator( query );
 
         }
@@ -279,13 +279,13 @@ public class UniprotRemoteService extends AbstractUniprotService {
 //        String query = "identifier:" + ac;
 
         // search for primary and secondary ACs
-        String query = IndexField.PRIMARY_ACCESSION.getValue() + ":" + ac +
-                " OR " +
-                IndexField.UNIPROT_EXPIRED_IDENTIFIER.getValue() + ":" + ac +
-                " OR " +
-                IndexField.UNIPROT_ID.getValue() + ":" + ac;
+        //String query = IndexField.PRIMARY_ACCESSION.getValue() + ":" + ac +
+                //" OR " +
+                //IndexField.UNIPROT_EXPIRED_IDENTIFIER.getValue() + ":" + ac +
+                //" OR " +
+                //IndexField.UNIPROT_ID.getValue() + ":" + ac;
 
-        return uniProtQueryService.getEntryIterator( UniProtQueryBuilder.buildQuery( query ) );
+        return uniProtQueryService.getEntryIterator( UniProtQueryBuilder.buildExactMatchIdentifierQuery( ac ) );
     }
 
     public static void main(String[] args) {
