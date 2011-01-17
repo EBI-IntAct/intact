@@ -304,6 +304,9 @@ public class BlastResultFilter {
                         log.error("There isn't any Uniprot entries with this accession number : "+accession);
                     }
                 }
+                else {
+                    throw new IllegalStateException("The uniprot protein : "+accession + " cannot be found in uniprot and one hit referred to this uniprot ac.");                    
+                }
             }
         } catch (Throwable e) {
             throw new IllegalStateException("Problem importing protein from Uniprot: "+accession, e);
@@ -322,10 +325,7 @@ public class BlastResultFilter {
         for ( THit hit : xmlHits ) {
             UniprotProtein protFromUniprot = importProteinFromUniprot(hit.getAc());
 
-            String organism = null;
-            if (protFromUniprot != null){
-                organism = Integer.toString(protFromUniprot.getOrganism().getTaxid());                
-            }
+            String organism = Integer.toString(protFromUniprot.getOrganism().getTaxid());
 
             if (organism != null){
                 if (organism.equals(taxId)){
@@ -353,10 +353,7 @@ public class BlastResultFilter {
             if (alignment.getIdentity() >= identity){
                 UniprotProtein protFromUniprot = importProteinFromUniprot(hit.getAc());
 
-                String organism = null;
-                if (protFromUniprot != null){
-                    organism = Integer.toString(protFromUniprot.getOrganism().getTaxid());                    
-                }
+                String organism = Integer.toString(protFromUniprot.getOrganism().getTaxid());
 
                 if (organism != null){
                     if (organism.equals(taxId)){
