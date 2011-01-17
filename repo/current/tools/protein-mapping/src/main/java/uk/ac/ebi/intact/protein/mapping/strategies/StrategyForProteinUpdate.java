@@ -363,11 +363,16 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
 
                 // We don't have any conflicts with the previous results  : if one identifier returns nothing but another allows to identify, we
                 // keep the one which could identify. However, if several different uniprot acs are found, we have a conflict
-                if (uniprots.isEmpty() || (uniprots.size() == 1)){
+                if (uniprots.size() == 1){
                     Status status = new Status(StatusLabel.COMPLETED, "There is no conflicts in the results when we tried to identify the protein using the identifiers " + identifiers);
                     report.setStatus(status);
                     result.addActionReport(report);
                     result.setFinalUniprotId(uniprots.iterator().next());
+                }
+                else if (uniprots.isEmpty()){
+                    Status status = new Status(StatusLabel.COMPLETED, "There is no conflicts in the results when we tried to identify the protein using the identifiers " + identifiers);
+                    report.setStatus(status);
+                    result.addActionReport(report);
                 }
                 // We have a conflict with the previous results, we set the uniprot id of the result to null and ask a curator to review this entry
                 else {
