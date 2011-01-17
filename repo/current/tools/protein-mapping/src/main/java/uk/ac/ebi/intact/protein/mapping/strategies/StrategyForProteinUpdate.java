@@ -298,14 +298,8 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
                         }
                     }
 
-                    // We don't have any conflicts with the previous results
-                    if (isMatchingIdentifierResults && otherIdentifier == result.getFinalUniprotId() ){
-                        Status status = new Status(StatusLabel.COMPLETED, "There is no result conflicts when we try to identify the protein using the sequence then using the identifiers " + identifiers);
-                        report.setStatus(status);
-                        result.addActionReport(report);
-                    }
                     // We have a conflict with the previous results, we set the uniprot id of the result to null and ask a curator to review this entry
-                    else {
+                    if(!isMatchingIdentifierResults) {
 
                         Status status = new Status(StatusLabel.TO_BE_REVIEWED, "There is a conflict in the results when we try to identify the protein using the sequence then using the identifiers " + identifiers);
                         report.setStatus(status);
@@ -315,6 +309,27 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
                         result.addActionReport(report);
                         result.setFinalUniprotId(null);
                     }
+                    else if (isMatchingIdentifierResults && ((otherIdentifier == null && result.getFinalUniprotId() != null) || (otherIdentifier != null && result.getFinalUniprotId() == null))){
+                        Status status = new Status(StatusLabel.TO_BE_REVIEWED, "There is a conflict in the results when we try to identify the protein using the sequence then using the identifiers " + identifiers);
+                        report.setStatus(status);
+                        if (result.getFinalUniprotId() != null){
+                            report.addPossibleAccession(result.getFinalUniprotId());
+                        }
+                        result.addActionReport(report);
+                        result.setFinalUniprotId(null);
+                    }
+                    // We don't have any conflicts with the previous results
+                    else if (isMatchingIdentifierResults && otherIdentifier == null && result.getFinalUniprotId() == null){
+                        Status status = new Status(StatusLabel.COMPLETED, "There is no result conflicts when we try to identify the protein using the sequence then using the identifiers " + identifiers);
+                        report.setStatus(status);
+                        result.addActionReport(report);
+                    }
+                    else if (isMatchingIdentifierResults && otherIdentifier.equals(result.getFinalUniprotId() == null)){
+                        Status status = new Status(StatusLabel.COMPLETED, "There is no result conflicts when we try to identify the protein using the sequence then using the identifiers " + identifiers);
+                        report.setStatus(status);
+                        result.addActionReport(report);
+                    }
+
                 }
 
                 // Run the feature range checking process if necessary
