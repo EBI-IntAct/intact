@@ -21,12 +21,10 @@ import java.util.List;
  */
 public class UniprotFeatureChain extends UniprotProteinTranscriptImpl{
 
-    public static final Log log = LogFactory.getLog( UniprotFeatureChain.class );
-
     /////////////////////////
     // instance attribute
 
-    private static final long serialVersionUID = -7257651581115886347L;
+    private static final long serialVersionUID = -5756756521582680353L;
     
     /**
      * Description of the chain.
@@ -62,7 +60,6 @@ public class UniprotFeatureChain extends UniprotProteinTranscriptImpl{
     }
 
     public void setSecondaryAcs(List<String> secondaryAcs) {
-        log.warn("A feature chain doesn't have any secondary acs, it is not possible to add a secondary ac to a feature chain. ");
     }
 
     /**
@@ -74,7 +71,6 @@ public class UniprotFeatureChain extends UniprotProteinTranscriptImpl{
     }
 
     public void setSynomyms(Collection<String> synomyms) {
-        log.warn("A feature chain doesn't have any synonyms, it is not possible to add a synonym to a feature chain. ");
     }
 
     /**
@@ -86,7 +82,6 @@ public class UniprotFeatureChain extends UniprotProteinTranscriptImpl{
     }
 
     public void setNote(String note) {
-        log.warn("A feature chain doesn't have any notes, it is not possible to add a note to a feature chain. ");
     }
 
     public String getDescription() {
