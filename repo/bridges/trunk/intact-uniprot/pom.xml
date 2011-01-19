@@ -52,7 +52,8 @@
             <artifactId>uniprotjapi</artifactId>
             <!-- There are two ranges in the version, the first one is what you would expect and works with
                  maven 3. The second one is a hack that maven 3 does not like, but works with maven 2 -->
-            <version>[2010.09,),[,10.5)</version>
+            <!--<version>[2011.01,),[,10.5)</version>-->
+            <version>2011.01</version>
         </dependency>
 
         <dependency>
