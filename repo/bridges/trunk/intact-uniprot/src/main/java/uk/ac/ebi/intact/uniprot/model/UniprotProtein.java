@@ -23,7 +23,7 @@ public class UniprotProtein implements Serializable, UniprotProteinLike {
     /////////////////////////
     // Instance attributes
 
-    private static final long serialVersionUID = 7242817460003528682L;
+    private static final long serialVersionUID = 9101096187357537539L;
     /**
      * Uniprot protein ID.
      */

@@ -22,12 +22,11 @@ import uk.ac.ebi.intact.uniprot.service.UniprotService;
  * @since <pre>15-Sep-2006</pre>
  */
 public class UniprotSpliceVariant extends UniprotProteinTranscriptImpl{
-    public static final Log log = LogFactory.getLog( UniprotSpliceVariant.class );
 
 
     /////////////////////////
     // instance attributes
-    private static final long serialVersionUID = 9150707995631479231L;
+    private static final long serialVersionUID = 4864882167147206959L;
     
     /**
      * Secondary accession number of the splice variant.
@@ -130,7 +129,6 @@ public class UniprotSpliceVariant extends UniprotProteinTranscriptImpl{
     @Override
     public String getSequence() {
         if ( sequence == null || sequence.trim().length() == 0 ) {
-            log.error("The sequence was null, the primary Ac of the splice variant is " + getPrimaryAc());
             throw new IllegalArgumentException( "A splice variant must have a sequence." );
         }
         return super.getSequence();
@@ -163,7 +161,6 @@ public class UniprotSpliceVariant extends UniprotProteinTranscriptImpl{
     }
 
     public void setDescription(String description) {
-        log.warn("A splice variant doesn't have a specific description. It is not possible to set the description of a splice variant.");
     }
 
     //////////////////////////
