@@ -5,13 +5,12 @@
  */
 package uk.ac.ebi.intact.bridges.taxonomy;
 
+import com.hp.hpl.jena.rdf.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -29,24 +28,14 @@ public class UniprotTaxonomyService implements TaxonomyService {
 
     private static final Log log = LogFactory.getLog( UniprotTaxonomyService.class );
 
-    private static final String TAXID_PLACEHOLDER = "_TAXID_";
-    private static final String UNIPROT_TAXONOMY_URL = "http://www.uniprot.org/taxonomy/" + TAXID_PLACEHOLDER + ".rdf";
-
-    public static final Pattern MNENOMIC_PATTERN        = Pattern.compile( "^<mnemonic>(.*)</mnemonic>$" );
-    public static final Pattern SCIENTIFIC_NAME_PATTERN = Pattern.compile( "^<scientificName>(.*)</scientificName>$" );
-    public static final Pattern COMMON_NAME_PATTERN     = Pattern.compile( "^<commonName>(.*)</commonName>$" );
-    public static final Pattern SYNONYM_PATTERN         = Pattern.compile( "^<synonym>(.*)</synonym>$" );
-
-    public static final String OBSOLETE_FLAG = "<obsolete rdf:datatype=\"http://www.w3.org/2001/XMLSchema#boolean\">true</obsolete>";
-    public static final Pattern REPLACED_BY_PATTERN = Pattern.compile( "^<replacedBy rdf:resource=\"http:\\/\\/purl.uniprot.org\\/taxonomy\\/(\\d+)\" \\/>$" );
-
-    // public static final Pattern OTHER_NAME_PATTERN      = Pattern.compile( "^<otherName>(.*)</otherName>$" );
+    private static final String UNIPROT_NS = "http://purl.uniprot.org/core/";
+    private static final String UNIPROT_TAXONOMY_NS = "http://purl.uniprot.org/taxonomy/";
 
     public UniprotTaxonomyService() {
     }
 
     private InputStream getInputStream( int taxid ) throws IOException {
-        String urlStr = UNIPROT_TAXONOMY_URL.replaceAll( TAXID_PLACEHOLDER, String.valueOf( taxid ) );
+        String urlStr = UNIPROT_TAXONOMY_NS + taxid + ".rdf";
         URL url = new URL( urlStr );
         return url.openStream();
     }
@@ -55,56 +44,61 @@ public class UniprotTaxonomyService implements TaxonomyService {
 
         final InputStream is = getInputStream( taxid );
 
-        TaxonomyTerm term = new TaxonomyTerm( taxid );
+        Model model = ModelFactory.createDefaultModel();
+        model.read(is, null);
 
-        String replacedByTaxid = null;
+//        model.write(System.out);
 
-        try {
-            BufferedReader in = new BufferedReader( new InputStreamReader( is ) );
-            String line;
-            boolean stop = false;
+        TaxonomyTerm term;
 
-            while ( ( line = in.readLine() ) != null && !stop ) {
+        // check first if it has been replaced by another record (would contain the replacedBy property)
+        Resource taxonomyResource = model.getResource(UNIPROT_TAXONOMY_NS + taxid);
+        Property replacedByProperty = model.getProperty(UNIPROT_NS, "replacedBy");
 
-                log.trace(line);
+        boolean isReplaced = model.contains(taxonomyResource, replacedByProperty);
 
-                String value = null;
-                boolean otherLine = false;
+        if (isReplaced) {
+            Statement replacedStatement = model.getProperty(taxonomyResource, replacedByProperty);
+            String replacedUri = replacedStatement.getObject().asResource().getURI();
 
-                if ( !term.hasMnemonic() && ( value = getValue( MNENOMIC_PATTERN, line ) ) != null ) {
-                    term.setMnemonic( value );
-                } else if ( !term.hasCommonName() && ( value = getValue( COMMON_NAME_PATTERN, line ) ) != null ) {
-                    term.setCommonName( value );
-                } else if ( !term.hasScientificName() && ( value = getValue( SCIENTIFIC_NAME_PATTERN, line ) ) != null ) {
-                    term.setScientificName( value );
-                } else if ( ( value = getValue( SYNONYM_PATTERN, line ) ) != null ) {
-                    term.getSynonyms().add( value );
-//                } else if( line.equals( OBSOLETE_FLAG ) ) {
-//                    System.err.println( "WARNING - taxid " + taxid + " was made obsolete" );
-                } else if ( ( value = getValue( REPLACED_BY_PATTERN, line ) ) != null ) {
-                    replacedByTaxid = value;
-                    if( log.isInfoEnabled() )
-                        log.info( "WARNING - the taxid replacement for " + taxid + " is " + replacedByTaxid );
-                } else {
-                    // ignore these lines
-                    otherLine = true;
-                }
+            String replacedByTaxidStr = replacedUri.replaceAll(UNIPROT_TAXONOMY_NS, "");
+            int replacledByTaxid = Integer.parseInt(replacedByTaxidStr);
 
-                stop = !term.getSynonyms().isEmpty() && otherLine || replacedByTaxid != null;
-            }
-        } finally {
-            is.close();
-        }
-
-        if( replacedByTaxid != null ) {
-            // abandon whatever has been built and fetch the new taxid instead.
             if( log.isInfoEnabled() )
-                log.info("Attempting to fetch taxon "+ replacedByTaxid +" as "+ taxid +" is obsolete...");
-            term = buildTerm( Integer.parseInt( replacedByTaxid ) );
-            term.setObsoleteTaxid( taxid );
+                        log.info( "WARNING - the taxid replacement for " + taxid + " is " + replacledByTaxid );
+
+            term = buildTerm(replacledByTaxid);
+            term.setObsoleteTaxid(taxid);
+
+        } else {
+           term = new TaxonomyTerm( taxid );
         }
+
+        // standard properties
+        String mnemonic = getLiteral(model, taxonomyResource, "mnemonic");
+        if (mnemonic != null) term.setMnemonic(mnemonic);
+
+        String commonName = getLiteral(model, taxonomyResource, "commonName");
+        if (commonName != null) term.setCommonName(commonName);
+
+        String scientificName = getLiteral(model, taxonomyResource, "scientificName");
+        if (scientificName != null) term.setScientificName(scientificName);
+
+        String synonym = getLiteral(model, taxonomyResource, "synonym");
+        if (synonym != null) term.getSynonyms().add(synonym);
+
 
         return term;
+    }
+
+    private String getLiteral(Model model, Resource taxonomyResource, String propertyName) {
+        Property property = model.getProperty(UNIPROT_NS, propertyName);
+
+        if (model.contains(taxonomyResource, property)) {
+            return model.getProperty(taxonomyResource, property).getLiteral().getString();
+        }
+
+        return null;
     }
 
     private String getValue( final Pattern pattern, final String line ) {
