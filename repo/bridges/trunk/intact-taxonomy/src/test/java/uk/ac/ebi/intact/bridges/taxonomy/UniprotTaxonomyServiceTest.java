@@ -19,10 +19,10 @@ public class UniprotTaxonomyServiceTest {
         TaxonomyTerm term = taxonomy.getTaxonomyTerm( 9606 );
         assertNotNull( term );
 //        System.out.println(term);
-        assertEquals( term.getTaxid(), 9606 );
-        assertEquals( term.getMnemonic(), "HUMAN" );
-        assertEquals( term.getCommonName(), "Human" );
-        assertEquals( term.getScientificName(), "Homo sapiens" );
+        assertEquals( 9606, term.getTaxid() );
+        assertEquals( "HUMAN", term.getMnemonic() );
+        assertEquals( "Human", term.getCommonName() );
+        assertEquals( "Homo sapiens", term.getScientificName() );
         assertTrue( term.getSynonyms().isEmpty() );
     }
 
@@ -32,10 +32,10 @@ public class UniprotTaxonomyServiceTest {
         TaxonomyTerm term = taxonomy.getTaxonomyTerm( 9615 );
         assertNotNull( term );
 //        System.out.println(term);
-        assertEquals( term.getTaxid(), 9615 );
-        assertEquals( term.getMnemonic(), "CANFA" );
-        assertEquals( term.getCommonName(), "Dog" );
-        assertEquals( term.getScientificName(), "Canis familiaris" );
+        assertEquals( 9615, term.getTaxid() );
+        assertEquals( "CANFA", term.getMnemonic() );
+        assertEquals( "Dog", term.getCommonName() );
+        assertEquals( "Canis familiaris", term.getScientificName() );
         assertEquals( 1, term.getSynonyms().size() );
         assertEquals( "Canis lupus familiaris", term.getSynonyms().iterator().next() );
     }
@@ -46,10 +46,10 @@ public class UniprotTaxonomyServiceTest {
         TaxonomyTerm term = taxonomy.getTaxonomyTerm( 4932 );
         assertNotNull( term );
 //        System.out.println(term);
-        assertEquals( term.getTaxid(), 4932 );
-        assertEquals( term.getMnemonic(), "YEAST" );
-        assertEquals( term.getCommonName(), "Baker's yeast" );
-        assertEquals( term.getScientificName(), "Saccharomyces cerevisiae" );
+        assertEquals( 4932, term.getTaxid() );
+        assertEquals( "YEAST", term.getMnemonic() );
+        assertEquals( "Baker's yeast", term.getCommonName() );
+        assertEquals( "Saccharomyces cerevisiae", term.getScientificName() );
         assertEquals( 0, term.getSynonyms().size() );
     }
 
@@ -59,10 +59,10 @@ public class UniprotTaxonomyServiceTest {
         TaxonomyTerm term = taxonomy.getTaxonomyTerm( 9667 );
         assertNotNull( term );
 //        System.out.println(term);
-        assertEquals( term.getTaxid(), 452646 );
-        assertEquals( term.getMnemonic(), "MUSVI" );
-        assertEquals( term.getCommonName(), "American mink" );
-        assertEquals( term.getScientificName(), "Mustela vison" );
+        assertEquals( 452646, term.getTaxid() );
+        assertEquals( "MUSVI", term.getMnemonic() );
+        assertEquals( "American mink", term.getCommonName() );
+        assertEquals( "Mustela vison", term.getScientificName() );
         assertEquals( 1, term.getSynonyms().size() );
         assertTrue( term.hasObsoleteTaxid() );
         assertEquals( 9667, term.getObsoleteTaxid() );
