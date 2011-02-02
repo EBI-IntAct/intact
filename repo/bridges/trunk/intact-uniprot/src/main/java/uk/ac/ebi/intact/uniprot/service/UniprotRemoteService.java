@@ -22,7 +22,6 @@ import uk.ac.ebi.kraken.interfaces.uniprot.features.FeatureType;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.GeneNameSynonym;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.ORFName;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.OrderedLocusName;
-import uk.ac.ebi.kraken.util.IndexField;
 import uk.ac.ebi.kraken.uuw.services.remoting.*;
 
 import java.util.*;
@@ -45,7 +44,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
     private UniProtQueryService uniProtQueryService;
 
-
+    private final static String FEATURE_CHAIN_FIELD = "feature.chain:";
     public UniprotRemoteService() {
         retrievalCache = new WeakHashMap<String,Collection<UniprotProtein>>();
 
@@ -264,7 +263,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
                 acFixed = ac.substring(index);
             }
             // we only use this search for feature chains
-            Query query = UniProtQueryBuilder.buildFullTextSearch( acFixed );
+            Query query = UniProtQueryBuilder.buildFullTextSearch( FEATURE_CHAIN_FIELD + acFixed );
             iterator = uniProtQueryService.getEntryIterator( query );
         }
         else {
