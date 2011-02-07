@@ -3,7 +3,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master</artifactId>
-        <version>21-SNAPSHOT</version>
+        <version>21</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -171,6 +171,19 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>3.6.0-intact</version>
+            <exclusions>
+                <!-- using the clib-nodep below, which includes dependencies such as asm -->
+                <exclusion>
+                    <groupId>cglib</groupId>
+                    <artifactId>cglib</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>2.2</version>
         </dependency>
 
         <dependency>
