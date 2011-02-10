@@ -20,17 +20,65 @@
         <spring.version>3.0.2.RELEASE</spring.version>
     </properties>
 
+
     <build>
-    <plugins>
-        <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-            <argLine>-Xmx256m</argLine>
-        </configuration>
-      </plugin>
-    </plugins>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-Xmx256m</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <configuration>
+                    <tasks>
+                        <echo>${env.}</echo>
+                    </tasks>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
+
+
+    <profiles>
+        <!-- This profiles are used to put the correct range for maven 2 and 3 for the uniprot artifact.
+         For some reason, the range resolution differs between the two versions of maven
+
+          http://maven.40175.n5.nabble.com/Activate-a-profile-based-on-Maven-version-td3249744.html
+         -->
+        <profile>
+            <id>uniprot-maven3</id>
+            <activation>
+                <file>
+                    <exists>${basedir}</exists>
+                </file>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>uk.ac.ebi.uniprot.kraken</groupId>
+                    <artifactId>uniprotjapi</artifactId>
+                    <version>[2011.01,)</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>uniprot-maven2</id>
+            <activation>
+                <file>
+                    <missing>${basedir}</missing>
+                </file>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>uk.ac.ebi.uniprot.kraken</groupId>
+                    <artifactId>uniprotjapi</artifactId>
+                    <version>[,10.5)</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -44,16 +92,6 @@
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-        </dependency>
-
-        <!-- UniProt Remote API -->
-        <dependency>
-            <groupId>uk.ac.ebi.uniprot.kraken</groupId>
-            <artifactId>uniprotjapi</artifactId>
-            <!-- There are two ranges in the version, the first one is what you would expect and works with
-                 maven 3. The second one is a hack that maven 3 does not like, but works with maven 2 -->
-            <!--<version>[2011.01,),[,10.5)</version>-->
-            <version>2011.01</version>
         </dependency>
 
         <dependency>

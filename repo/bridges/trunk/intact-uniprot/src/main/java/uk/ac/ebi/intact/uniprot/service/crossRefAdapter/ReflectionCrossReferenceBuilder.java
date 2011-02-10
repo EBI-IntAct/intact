@@ -92,12 +92,20 @@ public class ReflectionCrossReferenceBuilder {
                 Method candidateMethod = methods[i];
                 methodName = candidateMethod.getName();
 
-                if ( !methodName.equals( "getId" ) && !methodName.equals("getDbAccession") &&
-                       methodName.startsWith( "get" ) &&
-                     ( methodName.endsWith( "Id" ) || methodName.endsWith( "Number" )
-                             || methodName.endsWith("GeneIdentifier") || methodName.endsWith("PortalIdentifier") || methodName.endsWith("Accession")) ) {
-                    method = candidateMethod;
-                    foundId = true;
+                if (!methodName.equals("getId") && !methodName.equals("getDbAccession") &&
+                        methodName.startsWith("get")) {
+
+                    if (methodName.endsWith("Id") ||
+                        methodName.endsWith("Number") ||
+                        methodName.endsWith("GeneIdentifier") ||
+                        methodName.endsWith("Accession") ||
+                        methodName.endsWith("PortalIdentifier") ||
+                        methodName.endsWith("ProtIdentifier") ||
+                        methodName.endsWith("TreeIdentifier")) {
+
+                        method = candidateMethod;
+                        foundId = true;
+                    }
                 }
             }
 
@@ -112,6 +120,10 @@ public class ReflectionCrossReferenceBuilder {
                         foundId = true;
                     }
                 }
+            }
+
+            if (!foundId) {
+                throw new IllegalArgumentException("Cannot know the id from cross reference of type: "+clazz+" / db: "+db);
             }
 
             // cache it

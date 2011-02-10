@@ -75,7 +75,7 @@ public class UniprotRemoteServiceTest {
         Collection<UniprotProtein> prots = getUniprotService().retrieve( "CDK1_HUMAN" );
         final UniprotProtein uniprotProtein = prots.iterator().next();
         assertEquals( "P06493", uniprotProtein.getPrimaryAc() );
-        assertEquals( "Cell division protein kinase 1", uniprotProtein.getDescription());
+        assertEquals( "Cyclin-dependent kinase 1", uniprotProtein.getDescription());
         assertEquals(4, uniprotProtein.getSynomyms().size());
     }
 
