@@ -2,8 +2,6 @@ package uk.ac.ebi.intact.protein.mapping.actions;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.kraken.interfaces.uniparc.UniParcEntry;
-import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseType;
 import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
 import uk.ac.ebi.kraken.util.IndexField;
 import uk.ac.ebi.kraken.uuw.services.remoting.*;
