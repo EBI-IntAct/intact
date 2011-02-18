@@ -77,6 +77,40 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
      * @return true if at least one of the blast proteins representing an isoform of the same protein has a sequence coverage
      * superior or equal to coveragePercent
      */
+    private boolean checkAllSequenceCoverageForIsoformsFromBlastReport(Collection<BlastResults> proteins){
+
+        for (BlastResults p : proteins){
+            float queryCoveragePercent = getQuerySequenceCoveragePercentFor(p);
+            float matchCoveragePercent = getMatchSequenceCoveragePercentFor(p);
+
+            if (queryCoveragePercent >= coverage_percent && matchCoveragePercent >= coverage_percent){
+                return true;
+            }
+        }
+        return false;
+    }
+
+        /**
+     *
+     * @param protein : the protein to check
+     * @return true if the alignment covers at least the coverage_percent threshold  of the total query and match sequence
+     */
+    private boolean checkSequenceCoverageOfAlignment(BlastResults protein){
+        float queryCoveragePercent = getQuerySequenceCoveragePercentFor(protein);
+        float matchCoveragePercent = getMatchSequenceCoveragePercentFor(protein);
+
+        if (queryCoveragePercent >= coverage_percent && matchCoveragePercent >= coverage_percent){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @param proteins : the list of blast proteins
+     * @return true if at least one of the blast proteins representing an isoform of the same protein has a sequence coverage
+     * superior or equal to coveragePercent
+     */
     private boolean checkAllSequenceCoverageForIsoforms(Collection<BlastProtein> proteins){
 
         for (BlastProtein p : proteins){
@@ -108,6 +142,30 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
      * @return the sequence coverage of the alignment for the match sequence
      */
     private float getMatchSequenceCoveragePercentFor(BlastProtein protein){
+        if (protein == null){
+            return 0;
+        }
+        return ((float) (protein.getEndMatch() - protein.getStartMatch() + 1)) / (float) protein.getSequence().length() * 100;
+    }
+
+        /**
+     *
+     * @param protein : the blast protein
+     * @return the sequence coverage of the alignment for the query sequence
+     */
+    private float getQuerySequenceCoveragePercentFor(BlastResults protein){
+        if (protein == null){
+            return 0;
+        }
+        return ((float) (protein.getEndQuery() - protein.getStartQuery() + 1)) / (float) this.context.getSequence().length() * 100;
+    }
+
+    /**
+     *
+     * @param protein : the blast protein
+     * @return the sequence coverage of the alignment for the match sequence
+     */
+    private float getMatchSequenceCoveragePercentFor(BlastResults protein){
         if (protein == null){
             return 0;
         }
@@ -335,7 +393,7 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
                         else if (matchingAcs.size() == 1){
                             newUniprotId = matchingAcs.get(0);
 
-                            if (checkAllSequenceCoverageForIsoforms((Collection)report.getBlastMatchingProteins())){
+                            if (checkAllSequenceCoverageForIsoformsFromBlastReport(report.getBlastMatchingProteins())){
                                 if (keepBlastResult){
                                     Status status = new Status(StatusLabel.COMPLETED, "We replaced the Trembl entry with the Swissprot entry " + newUniprotId + " : the Trembl sequence matches several swissprot splice variant sequences of this protein and has the same ensembl gene accession : " + this.context.getEnsemblGene());
                                     report.setASwissprotEntry(true);
