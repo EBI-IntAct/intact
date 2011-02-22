@@ -386,10 +386,14 @@ function configuration()
 					/**
 					* SPECIFIC DAS ANNOTATION SERVERS
 					*/
-						feature_url_prefix = proxy_url + '?m=features&q=' + query_id + '&t=' + timeout + '&s=';
+
+                    feature_url_prefix = proxy_url + '?m=features&q=' + query_id + '&t=' + timeout + '&s=';
+
                     feature_url[0] = {id : 'uniprot', url : feature_url_prefix + 'http://www.ebi.ac.uk/das-srv/uniprot/das/uniprot/'};
                     feature_url[1] = {id : 'interpro', url : feature_url_prefix + 'http://das.ensembl.org/das/interpro/'};
                     feature_url[2] = {id : 'intact', url : feature_url_prefix + '${das.annotationserver.intact.url}'};
+                    feature_url[3] = {id : 'pride', url : feature_url_prefix + 'http://www.ebi.ac.uk/pride-das/das/PrideDataSource/'};
+
                     //feature_url[3] = {id : 'chebi', url : feature_url_prefix + '${das.annotationserver.chebi.url}'};
 						//feature_url[1] = {id : 'msdmotif', url : feature_url_prefix + 'http://www.ebi.ac.uk/msd-srv/msdmotif/das/s3dm/'};
 						//feature_url[2] = {id : 'netphos', url : feature_url_prefix + 'http://genome.cbs.dtu.dk:9000/das/netphos/'};
