@@ -43,8 +43,11 @@ public class BioSource2xmlCommons {
      *         generated  yet.
      */
     public Element getXmlFromCache( Map cache, BioSource bioSource ) {
+        if (bioSource == null) return null;
 
-        Element element = (Element) cache.get( bioSource );
+        Object key = (bioSource.getAc() != null)? bioSource.getAc() : bioSource;
+
+        Element element = (Element) cache.get( key );
 
         if ( element != null ) {
             // if that element has already been generated, we clone it.
@@ -62,7 +65,10 @@ public class BioSource2xmlCommons {
      * @param element   The DOM root (as an Element) of the XML representation of the given BioSource.
      */
     public void updateCache( Map cache, BioSource bioSource, Element element ) {
+        if (bioSource == null) return;
 
-        cache.put( bioSource, element );
+        Object key = (bioSource.getAc() != null)? bioSource.getAc() : bioSource;
+
+        cache.put( key, element );
     }
 }
