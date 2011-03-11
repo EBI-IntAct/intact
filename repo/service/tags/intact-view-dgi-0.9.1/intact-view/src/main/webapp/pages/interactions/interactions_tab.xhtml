@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:tr="http://myfaces.apache.org/trinidad"
+                xmlns:c="http://java.sun.com/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:sf="http://www.ebi.ac.uk/faces/site"
+                xmlns:ebi="http://ebi.ac.uk/faces/components"
+                xmlns:iav="http://intact.ebi.ac.uk/view"
+                xmlns:iam="http://intact.ebi.ac.uk/miscel"
+                xmlns:iax="http://intact.ebi.ac.uk/extlinks"
+                xmlns:iaf="http://intact.ebi.ac.uk/functions"
+                xmlns:iamf="http://intact.ebi.ac.uk/mitabfunctions"
+
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="http://intact.ebi.ac.uk/miscel /WEB-INF/intact-miscel.tld">
+
+<!-- RESULT SUMMARY -->
+
+<ui:include src="/pages/inc/queryDisplay.xhtml" />
+
+<br/>
+
+<!-- RESULTS TABLE -->
+
+<tr:table id="interactionResults" value="#{searchBean.results}" var="binaryInteraction" varStatus="status"
+          summary="Binary Interactions"
+          emptyText="No interactions found matching the query."
+          rows="#{searchBean.pageSize}" rowBandingInterval="1"
+          partialTriggers=":interactionResults:btnToogleProps :interactionResults:btnStandardView :interactionResults:btnExpandedView :interactionResults:selPageRangeChoice">
+
+<f:facet name="actions">
+    <tr:panelHorizontalLayout>
+        <f:facet name="separator">
+            <tr:outputFormatted value="&#160;&#160;&lt;b>|&lt;/b>&#160;&#160;"/>
+        </f:facet>
+
+        <tr:selectRangeChoiceBar var="range" id="selPageRangeChoice"
+                                 value="#{searchBean.results}"
+                                 rows="30" rangeChangeListener="#{searchBean.rangeChanged}"
+                                 rendered="#{searchBean.results.rowCount gt searchBean.pageSize}"/>
+
+        <tr:panelHorizontalLayout>
+            <f:facet name="separator">
+                <tr:outputFormatted value="&#160;"/>
+            </f:facet>
+
+            <strong>
+                <tr:outputText value="View: "/>
+            </strong>
+
+            <tr:commandLink id="btnStandardView"
+                            text="Standard" disabled="#{!searchBean.expandedView}"
+                            partialSubmit="true" inlineStyle="white-space:nowrap;">
+                <f:setPropertyActionListener value="#{false}"
+                                             target="#{searchBean.expandedView}"/>
+            </tr:commandLink>
+            <tr:outputText value="-"/>
+            <tr:commandLink id="btnExpandedView"
+                            text="Extended" disabled="#{searchBean.expandedView}"
+                            partialSubmit="true" inlineStyle="white-space:nowrap;">
+                <f:setPropertyActionListener value="#{true}"
+                                             target="#{searchBean.expandedView}"/>
+            </tr:commandLink>
+        </tr:panelHorizontalLayout>
+
+        <tr:commandLink id="btnToogleProps" immediate="true" rendered="#{searchBean.expandedView}"
+                        text="#{searchBean.showProperties? 'Hide all properties' : 'Show all properties'}"
+                        partialSubmit="true" inlineStyle="white-space:nowrap;">
+            <f:setPropertyActionListener value="#{searchBean.showProperties? false : true}"
+                                         target="#{searchBean.showProperties}"/>
+        </tr:commandLink>
+
+        <tr:panelGroupLayout layout="horizontal">
+            <tr:selectOneChoice id="exportFormatSelect"
+                                label="Export to:" unselectedLabel="Select format..."
+                                value="#{searchBean.exportFormat}" autoSubmit="true">
+                <tr:selectItem label="MI-TAB" value="mitab"/>
+                <tr:selectItem label="MI-TAB (Expanded)" value="mitab_intact"/>
+                <tr:selectItem label="MI-XML 2.5" value="xml" disabled="#{searchBean.results.rowCount ge 1000}"/>
+                <tr:selectItem label="MI-XML 2.5 (HTML view)" value="xml_html"
+                               disabled="#{searchBean.results.rowCount ge 1000}"/>
+            </tr:selectOneChoice>
+
+            <tr:goButton text="Export" partialTriggers="exportFormatSelect"
+                         disabled="#{searchBean.exportFormat == null}"
+                         targetFrame="_blank"
+                         destination="/export?query=#{searchBean.results.searchQuery}&amp;format=#{searchBean.exportFormat}&amp;sort=#{searchBean.results.sortColumn}&amp;asc=#{searchBean.results.ascending}"/>
+        </tr:panelGroupLayout>
+
+    </tr:panelHorizontalLayout>
+
+</f:facet>
+
+<tr:column>
+    <tr:outputText value="#{status.index + 1}"/>
+</tr:column>
+
+<tr:column headerText="Compound Name" sortable="true" sortProperty="idA_s">
+    <tr:switcher facetName="#{binaryInteraction.interactorA.interactorType.identifier}" defaultFacet="defaultType">
+        <f:facet name="MI:0326"><!-- Protein MI identifier-->
+            <h:panelGroup>
+                <tr:iterator var="alias" value="#{binaryInteraction.interactorA.aliases}"
+                             varStatus="rowStatus" rows="0">
+                    <tr:outputText value="#{alias.name}"/>
+                    <tr:outputText value="; "
+                                   rendered="#{rowStatus.index + 1 lt fn:length(binaryInteraction.interactorA.aliases)}"/>
+                </tr:iterator>
+
+                <!-- HACK: Aparently we can find at this moment proteins with commercial/drug band names, that come from Drugbank -->
+                <tr:iterator var="altid" value="#{binaryInteraction.interactorA.alternativeIdentifiers}"
+                             rows="0" rendered="#{empty binaryInteraction.interactorA.aliases}">
+                    <h:panelGroup rendered="#{altid.text == 'commercial name'}">
+                        <tr:outputText value="#{altid.identifier}"/>
+                    </h:panelGroup>
+                </tr:iterator>
+            </h:panelGroup>
+        </f:facet>
+        <f:facet name="MI:0328"><!-- Smallmolecule MI identifier-->
+            <tr:iterator var="altid" value="#{binaryInteraction.interactorA.alternativeIdentifiers}"
+                         rows="0">
+                <h:panelGroup rendered="#{altid.text == 'commercial name'}">
+                    <tr:outputText value="#{altid.identifier}"/>
+                </h:panelGroup>
+            </tr:iterator>
+        </f:facet>
+        <f:facet name="defaultType">
+            <iav:xrefDataList value="#{binaryInteraction.interactorA.aliases}"/>
+        </f:facet>
+    </tr:switcher>
+</tr:column>
+
+<tr:column headerText="Compound Links" sortable="false">
+    <!--add compound links -->
+    <tr:iterator var="xref" value="#{binaryInteraction.interactorA.identifiers}" varStatus="rowStatus"
+                 rows="0">
+        <tr:switcher facetName="#{xref.database}">
+            <f:facet name="uniprotkb">
+                <h:panelGroup>
+                    <iax:goUniprot query="#{xref.identifier}" onlyLogo="true"/>
+                    <br/>
+                    <iax:goMoleculeView baseUrl="#{intactViewConfiguration.dastyUrl}"
+                            query="#{xref.identifier}" onlyLogo="true"/>
+                    <br/>
+                </h:panelGroup>
+            </f:facet>
+            <f:facet name="chebi">
+                <h:panelGroup>
+                    <iax:goChebi query="#{xref.identifier}" onlyLogo="true"/>
+                    <br/>
+                </h:panelGroup>
+            </f:facet>
+            <f:facet name="drugbank">
+                <h:panelGroup>
+                    <iax:goDrugbank query="#{xref.identifier}" onlyLogo="true"/>
+                    <br/>
+                    <iax:goDrugPortChemicalView query="#{xref.identifier}" onlyLogo="true" renderDrugPort="#{iamf:isApprovedDrug(iamf:getDrugStatus(binaryInteraction.interactorA))}"/>
+                    <br/>
+                </h:panelGroup>
+            </f:facet>
+            <f:facet name="intact">
+                <!-- nothing -->
+            </f:facet>
+        </tr:switcher>
+    </tr:iterator>
+</tr:column>
+
+<tr:column headerText="Target Name" sortable="true" sortProperty="idB_s">
+    <tr:switcher facetName="#{binaryInteraction.interactorB.interactorType.identifier}" defaultFacet="defaultType">
+        <f:facet name="MI:0326"><!-- Protein MI identifier-->
+            <h:panelGroup>
+                <tr:iterator var="alias" value="#{binaryInteraction.interactorB.aliases}"
+                             varStatus="rowStatus" rows="0">
+                    <tr:outputText value="#{alias.name}"/>
+                    <tr:outputText value="; "
+                                   rendered="#{rowStatus.index + 1 lt fn:length(binaryInteraction.interactorB.aliases)}"/>
+                </tr:iterator>
+
+                <!-- HACK: Aparently we can find at this moment proteins with commercial/drug band names, that come from Drugbank -->
+                <tr:iterator var="altid" value="#{binaryInteraction.interactorB.alternativeIdentifiers}"
+                             rows="0" rendered="#{empty binaryInteraction.interactorB.aliases}">
+                    <h:panelGroup rendered="#{altid.text == 'commercial name'}">
+                        <tr:outputText value="#{altid.identifier}"/>
+                    </h:panelGroup>
+                </tr:iterator>
+            </h:panelGroup>
+        </f:facet>
+        <f:facet name="MI:0328"><!-- Smallmolecule MI identifier-->
+            <tr:iterator var="altid" value="#{binaryInteraction.interactorB.alternativeIdentifiers}"
+                         varStatus="rowStatus" rows="0">
+                <h:panelGroup rendered="#{altid.text == 'commercial name'}">
+                    <tr:outputText value="#{altid.identifier}"/>
+                    <tr:outputText value="; "
+                                   rendered="#{rowStatus.index + 1 lt fn:length(binaryInteraction.interactorB.alternativeIdentifiers)}"/>
+                </h:panelGroup>
+            </tr:iterator>
+        </f:facet>
+        <f:facet name="defaultType">
+            <iav:xrefDataList value="#{binaryInteraction.interactorB.aliases}"/>
+        </f:facet>
+    </tr:switcher>
+</tr:column>
+
+<tr:column headerText="Target Links" sortable="false">
+    <!--add target links -->
+    <tr:iterator var="xref" value="#{binaryInteraction.interactorB.identifiers}"
+                 varStatus="rowStatus" rows="0">
+        <tr:switcher facetName="#{xref.database}">
+            <f:facet name="uniprotkb">
+                <h:panelGroup>
+                    <iax:goUniprot query="#{xref.identifier}" onlyLogo="true"/>
+                    <br/>
+                    <iax:goMoleculeView baseUrl="#{intactViewConfiguration.dastyUrl}"
+                            query="#{xref.identifier}" onlyLogo="true"/>
+                    <br/>
+                    <iax:goDrugPortProteinView query="#{xref.identifier}" onlyLogo="true"/>
+                    <br/>
+                </h:panelGroup>
+            </f:facet>
+            <f:facet name="chebi">
+                <h:panelGroup>
+                    <iax:goChebi query="#{xref.identifier}" onlyLogo="true"/>
+                    <br/>
+                </h:panelGroup>
+            </f:facet>
+            <f:facet name="drugbank">
+                <h:panelGroup>
+                    <iax:goDrugbank query="#{xref.identifier}" onlyLogo="true"/>
+                    <br/>
+                </h:panelGroup>
+            </f:facet>
+            <f:facet name="intact">
+                <!-- nothing -->
+            </f:facet>
+        </tr:switcher>
+    </tr:iterator>
+</tr:column>
+
+<tr:column headerText="Compound Aliases" sortable="true" sortProperty="altidA_s">
+    <iam:collapsibleIterator id="csd_altIdA_#{status.index}"
+                             disclosed="#{searchBean.showAlternativeIds}"
+                             value="#{binaryInteraction.interactorA.alternativeIdentifiers}"
+                             maxShown="5">
+        <tr:outputText value="#{item.identifier}"/>
+    </iam:collapsibleIterator>
+</tr:column>
+
+<tr:column headerText="Target Aliases" sortable="true" sortProperty="altidB_s">
+    <iam:collapsibleIterator id="csd_altIdB_#{status.index}"
+                             disclosed="#{searchBean.showAlternativeIds}"
+                             value="#{binaryInteraction.interactorB.alternativeIdentifiers}"
+                             maxShown="5">
+        <tr:outputText value="#{item.identifier}"/>
+    </iam:collapsibleIterator>
+</tr:column>
+
+<tr:column headerText="Compound species" sortable="true" sortProperty="taxidA_s">
+    <tr:switcher facetName="#{binaryInteraction.interactorA.interactorType.identifier}" defaultFacet="OtherType">
+        <f:facet name="MI:0328"><!-- Smallmolecule MI identifier-->
+            <tr:outputText value="  "/>
+        </f:facet>
+        <f:facet name="OtherType">
+            <tr:iterator var="organism" value="#{binaryInteraction.interactorA.organism}" rows="0">
+                <tr:iterator var="xref" value="#{organism.identifiers}"
+                             varStatus="rowStatus" rows="0">
+                    <iax:goOls query="#{xref.identifier}" termName="#{xref.text}"/>
+                </tr:iterator>
+                <tr:outputText value="; " rendered="#{rowStatus.index + 1 lt fn:length(organism.identifiers)}"/>
+            </tr:iterator>
+        </f:facet>
+    </tr:switcher>
+</tr:column>
+
+<tr:column headerText="Target species" sortable="true" sortProperty="taxidB_s">
+    <tr:switcher facetName="#{binaryInteraction.interactorB.interactorType.identifier}" defaultFacet="OtherType">
+        <f:facet name="MI:0328"><!-- Smallmolecule MI identifier-->
+            <tr:outputText value="&#160;"/>
+        </f:facet>
+        <f:facet name="OtherType">
+            <tr:iterator var="organism" value="#{binaryInteraction.interactorB.organism}"
+                         varStatus="rowStatus" rows="0">
+                <tr:iterator var="xref" value="#{organism.identifiers}" rows="0">
+                    <iax:goOls query="#{xref.identifier}" termName="#{xref.text}"/>
+                </tr:iterator>
+                <tr:outputText value="; " rendered="#{rowStatus.index + 1 lt fn:length(organism.identifiers)}"/>
+            </tr:iterator>
+        </f:facet>
+    </tr:switcher>
+</tr:column>
+
+<tr:column headerText="First Author" rendered="#{searchBean.expandedView}" sortable="true" sortProperty="pubauth_s">
+    <tr:iterator var="author" value="#{binaryInteraction.authors}" rows="0">
+            <span style="display:block">
+                <nobr>
+                    <tr:outputText value="#{author.name}"/>
+                </nobr>
+            </span>
+
+    </tr:iterator>
+</tr:column>
+
+<tr:column headerText="PubMed identifier" sortable="true" sortProperty="pubid_s">
+    <iav:xrefDataList value="#{binaryInteraction.publications}" itemPerLine="true"/>
+</tr:column>
+
+<tr:column headerText="Interaction type" rendered="#{searchBean.expandedView}" sortable="true" sortProperty="type_s">
+    <iav:xrefDataList value="#{binaryInteraction.interactionTypes}" onlyText="true" itemPerLine="true"/>
+</tr:column>
+
+<tr:column headerText="Interaction detection method" rendered="#{searchBean.expandedView}" sortable="true"
+           sortProperty="detmethod_s">
+    <iav:xrefDataList value="#{binaryInteraction.detectionMethods}" onlyText="true" itemPerLine="true"/>
+</tr:column>
+
+<tr:column headerText="Source database(s)" sortable="true" sortProperty="source_s">
+    <iav:xrefDataList value="#{binaryInteraction.sourceDatabases}" itemPerLine="true" onlyText="true"/>
+</tr:column>
+<tr:column headerText="Interaction AC" sortable="true" sortProperty="interaction_id_s">
+    <iav:xrefDataList value="#{binaryInteraction.interactionAcs}" itemPerLine="true" disableLinks="true"/>
+</tr:column>
+<tr:column headerText="Confidence Value(s)" rendered="#{searchBean.expandedView}" sortable="true"
+           sortProperty="confidence_s">
+    <tr:iterator var="confidence" value="#{binaryInteraction.confidenceValues}" rows="0">
+                        <span style="display:block">
+                            <nobr>
+                                <tr:outputText value="#{confidence.type}:#{confidence.value}"/>
+                            </nobr>
+                        </span>
+    </tr:iterator>
+</tr:column>
+<tr:column headerText="Compound Experimental role" rendered="#{searchBean.expandedView}" sortable="true"
+           sortProperty="experimentalRoleA_s">
+    <iav:xrefDataList value="#{binaryInteraction.experimentalRolesInteractorA}" onlyText="true" itemPerLine="true"/>
+</tr:column>
+<tr:column headerText="Target Experimental role" rendered="#{searchBean.expandedView}" sortable="true"
+           sortProperty="experimentalRoleB_s">
+    <iav:xrefDataList value="#{binaryInteraction.experimentalRolesInteractorB}" onlyText="true" itemPerLine="true"/>
+</tr:column>
+<tr:column headerText="Compound Biological role" rendered="#{searchBean.expandedView}" sortable="true"
+           sortProperty="biologicalRoleA_s">
+    <iav:xrefDataList value="#{binaryInteraction.biologicalRolesInteractorA}" onlyText="true" itemPerLine="true"/>
+</tr:column>
+<tr:column headerText="Target Biological role" rendered="#{searchBean.expandedView}" sortable="true"
+           sortProperty="biologicalRoleB_s">
+    <iav:xrefDataList value="#{binaryInteraction.biologicalRolesInteractorB}" onlyText="true" itemPerLine="true"/>
+</tr:column>
+<tr:column rendered="#{searchBean.expandedView}" sortable="true" sortProperty="propertiesA_s">
+    <f:facet name="header">
+        <tr:panelGroupLayout layout="vertical">
+            <tr:outputText value="Compound Properties"/>
+        </tr:panelGroupLayout>
+    </f:facet>
+    <iam:collapsibleIterator id="csd_propsA_#{status.index}"
+                             disclosed="#{searchBean.showProperties}"
+                             value="#{binaryInteraction.propertiesA}"
+                             maxShown="5">
+        <c:set var="xrefUrl" value="#{iav:xrefUrl(appConfigBean.linkContext, item)}"/>
+        <tr:goLink text="#{item.identifier}"
+                   shortDesc="#{item.text}"
+                   targetFrame="_blank"
+                   destination="#{xrefUrl}"
+                   disabled="#{xrefUrl == null or xrefUrl == '#'}"/>
+    </iam:collapsibleIterator>
+
+</tr:column>
+<tr:column headerText="Target Properties" rendered="#{searchBean.expandedView}" sortable="true"
+           sortProperty="propertiesB_s">
+    <iam:collapsibleIterator id="csd_propsB_#{status.index}"
+                             disclosed="#{searchBean.showProperties}"
+                             value="#{binaryInteraction.propertiesB}"
+                             maxShown="5">
+        <c:set var="xrefUrl" value="#{iav:xrefUrl(appConfigBean.linkContext, item)}"/>
+        <tr:goLink text="#{item.identifier}"
+                   shortDesc="#{item.text}"
+                   targetFrame="_blank"
+                   destination="#{xrefUrl}"
+                   disabled="#{xrefUrl == null or xrefUrl == '#'}"/>
+    </iam:collapsibleIterator>
+</tr:column>
+<tr:column headerText="Compound Interactor type" rendered="#{searchBean.expandedView}" sortable="true"
+           sortProperty="typeA_s">
+    <iav:xrefDataList value="#{binaryInteraction.interactorTypeA}" onlyText="true"/>
+</tr:column>
+<tr:column headerText="Target Interactor type" rendered="#{searchBean.expandedView}" sortable="true"
+           sortProperty="typeB_s">
+    <iav:xrefDataList value="#{binaryInteraction.interactorTypeB}" onlyText="true"/>
+</tr:column>
+<tr:column headerText="Host organism" rendered="#{searchBean.expandedView}" sortable="true"
+           sortProperty="hostOrganism_s">
+    <iav:xrefDataList value="#{binaryInteraction.hostOrganism}" onlyText="true" itemPerLine="true"/>
+</tr:column>
+<tr:column headerText="Expansion method" rendered="#{searchBean.expandedView}" sortable="true"
+           sortProperty="expansion_s">
+    <tr:outputText value="#{binaryInteraction.expansionMethod}"/>
+</tr:column>
+<tr:column headerText="Dataset" rendered="#{searchBean.expandedView}" sortable="true" sortProperty="dataset_s">
+    <tr:iterator var="dataset" value="#{binaryInteraction.dataset}" rows="0">
+                        <span style="display:block">
+                            <nobr>
+                                <tr:outputText value="#{dataset}"/>
+                            </nobr>
+                        </span>
+    </tr:iterator>
+</tr:column>
+
+</tr:table>
+
+</ui:composition>
