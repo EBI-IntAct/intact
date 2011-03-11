@@ -12,11 +12,11 @@ import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.IntactCrc64Report;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionReport;
-import uk.ac.ebi.intact.update.model.proteinmapping.actions.BlastReport;
-import uk.ac.ebi.intact.update.model.proteinmapping.actions.PICRReport;
-import uk.ac.ebi.intact.update.model.proteinmapping.actions.status.StatusLabel;
-import uk.ac.ebi.intact.update.model.proteinmapping.results.IdentificationResults;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.PICRReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
 
 /**
  * Unit test for StrategyWithSequence

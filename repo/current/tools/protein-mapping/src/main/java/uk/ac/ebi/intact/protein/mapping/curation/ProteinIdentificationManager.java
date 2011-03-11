@@ -9,7 +9,7 @@ import uk.ac.ebi.intact.protein.mapping.strategies.StrategyWithIdentifier;
 import uk.ac.ebi.intact.protein.mapping.strategies.StrategyWithName;
 import uk.ac.ebi.intact.protein.mapping.strategies.StrategyWithSequence;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.update.model.proteinmapping.results.IdentificationResults;
+import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
 
 import java.io.File;
 import java.io.FileInputStream;

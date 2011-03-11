@@ -1,7 +1,7 @@
 package uk.ac.ebi.intact.protein.mapping.model.actionReport;
 
-import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
 
 import java.util.HashSet;
 import java.util.Set;
