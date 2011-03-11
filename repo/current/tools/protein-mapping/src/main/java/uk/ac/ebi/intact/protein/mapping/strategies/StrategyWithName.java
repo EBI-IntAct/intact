@@ -7,7 +7,7 @@ import uk.ac.ebi.intact.protein.mapping.actions.UniprotNameSearchProcess;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.update.model.proteinmapping.results.IdentificationResults;
+import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
 
 /**
  * This strategy aims at identifying a protein using a gene name and/or a protein name, or a general name and its organism.

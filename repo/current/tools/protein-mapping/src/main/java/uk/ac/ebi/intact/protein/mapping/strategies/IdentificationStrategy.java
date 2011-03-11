@@ -2,7 +2,7 @@ package uk.ac.ebi.intact.protein.mapping.strategies;
 
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.update.model.proteinmapping.results.IdentificationResults;
+import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
 
 /**
  * An Identification strategy is a logical set of actions done to identify the protein. A strategy follows the Intact curation rules

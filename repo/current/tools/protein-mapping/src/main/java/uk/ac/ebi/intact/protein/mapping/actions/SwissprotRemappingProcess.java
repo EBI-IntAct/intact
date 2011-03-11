@@ -9,11 +9,11 @@ import uk.ac.ebi.intact.protein.mapping.model.contexts.BlastContext;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.protein.mapping.strategies.IdentificationStrategyImpl;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.proteinmapping.actions.BlastReport;
-import uk.ac.ebi.intact.update.model.proteinmapping.actions.status.Status;
-import uk.ac.ebi.intact.update.model.proteinmapping.actions.status.StatusLabel;
-import uk.ac.ebi.intact.update.model.proteinmapping.results.BlastResults;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.Status;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.update.model.protein.mapping.results.BlastResults;
 
 import java.io.InputStream;
 import java.util.ArrayList;

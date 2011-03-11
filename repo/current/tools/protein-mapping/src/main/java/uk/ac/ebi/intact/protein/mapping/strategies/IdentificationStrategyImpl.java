@@ -11,10 +11,10 @@ import uk.ac.ebi.intact.uniprot.service.CachedUniprotService;
 import uk.ac.ebi.intact.uniprot.service.IdentifierChecker;
 import uk.ac.ebi.intact.uniprot.service.UniprotRemoteService;
 import uk.ac.ebi.intact.uniprot.service.UniprotService;
-import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionReport;
-import uk.ac.ebi.intact.update.model.proteinmapping.actions.BlastReport;
-import uk.ac.ebi.intact.update.model.proteinmapping.results.IdentificationResults;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
 import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseType;
 
 import java.util.ArrayList;

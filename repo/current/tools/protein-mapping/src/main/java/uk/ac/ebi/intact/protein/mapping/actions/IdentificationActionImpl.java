@@ -2,8 +2,8 @@ package uk.ac.ebi.intact.protein.mapping.actions;
 
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
 import uk.ac.ebi.intact.uniprot.service.IdentifierChecker;
-import uk.ac.ebi.intact.update.model.proteinmapping.actions.ActionReport;
-import uk.ac.ebi.intact.update.model.proteinmapping.results.BlastResults;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.results.BlastResults;
 
 import java.util.ArrayList;
 import java.util.HashSet;
