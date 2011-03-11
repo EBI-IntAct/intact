@@ -36,6 +36,60 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>mitab-db-export</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>-Xmx1024m</argument>
+                                <argument>-classpath</argument>
+                                <!-- automatically creates the classpath using all project dependencies,
+                                     also adding the project build directory -->
+                                <classpath/>
+                                <argument>uk.ac.ebi.intact.plugins.DatabaseMitabExporter</argument>
+
+                                <!-- Output MITAB file -->
+                                <argument>intact.txt</argument>
+
+                                <!-- Ontology mapping-->
+                                <argument>go</argument>
+                                <argument>http://www.geneontology.org/ontology/gene_ontology_edit.obo</argument>
+
+                                <argument>interpro</argument>
+                                <argument>http://www.ebi.ac.uk/~intact/external/InterProHierarchyOBO.obo</argument>
+
+                                <argument>psi-mi</argument>
+                                <argument>http://psidev.sourceforge.net/mi/rel25/data/psi-mi25.obo</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>com.oracle</groupId>
+                    <artifactId>oracle-thin</artifactId>
+                    <version>10.2.0.4</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
     <dependencies>
 
         <!-- IntAct deps -->
@@ -174,5 +228,30 @@
             <url>${site.remote.basedir}/maven-plugins/${artifactId}</url>
         </site>
     </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
 </project>
