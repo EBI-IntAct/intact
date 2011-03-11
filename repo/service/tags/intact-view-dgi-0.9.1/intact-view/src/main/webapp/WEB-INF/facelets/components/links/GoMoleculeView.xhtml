@@ -1,0 +1,9 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="GoTemplate.xhtml">
+
+    <ui:param name="baseUrl" value="#{baseUrl != null? baseUrl : 'http://wwwdev.ebi.ac.uk/dasty/client/interactor.php'}"/>
+
+    <ui:param name="queryUrl" value="#{baseUrl}?q=#{query}&amp;label=any&amp;t=3"/>
+    <ui:param name="imageSource" value="/images/logos/dasty2_logo_50.png"/>
+
+</ui:composition>
