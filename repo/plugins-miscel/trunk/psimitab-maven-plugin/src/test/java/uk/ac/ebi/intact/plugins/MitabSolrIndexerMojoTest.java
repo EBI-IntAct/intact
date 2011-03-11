@@ -5,17 +5,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.params.DefaultSolrParams;
-import org.apache.solr.common.SolrDocumentList;
-import org.junit.Before;
-import org.junit.After;
-import static org.junit.Assert.assertEquals;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.core.persister.PersisterHelper;
-import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.server.SolrJettyRunner;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.*;
 
