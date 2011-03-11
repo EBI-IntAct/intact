@@ -25,7 +25,7 @@ public class UnisaveServiceTest {
         UnisaveService service = new UnisaveService();
         final List<EntryVersionInfo> versions = service.getVersions( "P12345", false );
         Assert.assertNotNull( versions );
-        Assert.assertEquals( 71, versions.size() );
+        Assert.assertEquals( 72, versions.size() );
     }
 
     /*
@@ -224,7 +224,7 @@ public class UnisaveServiceTest {
         Assert.assertNotNull( sv );
         Assert.assertNotNull( sv.getSequence() );
         Assert.assertEquals( "SSWWAHVEMGPPDPILGVTEAYKRDTNSKK", sv.getSequence().getSequence() );
-        Assert.assertEquals( "UniProtKB/Swiss-Prot|P12345|Release 2011_02/2011_02|08-FEB-2011", sv.getSequence().getHeader() );
+        Assert.assertEquals( "UniProtKB/Swiss-Prot|P12345|Release 2011_03/2011_03|08-MAR-2011", sv.getSequence().getHeader() );
         Assert.assertEquals( 1, sv.getVersion() );
     }
 
