@@ -36,7 +36,7 @@ This is the description of an experimental setting. One can define the interacto
 Interactor is a generic type that covers for Interaction, Protein, NucleicAcid, Polymer...
 The column objclass (used by hibernate) and the interactorType_ac (controlled vocabulary) allow to discriminate the interactor type of a specific instance.
 
-<img src="http://intact.googlecode.com/svn/wiki/images/database/1.3.0/Interactor.png"/>
+<img width="800"  src="http://intact.googlecode.com/svn/wiki/images/database/1.3.0/Interactor.png"/>
 
 
 ==== Component ==== 
