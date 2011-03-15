@@ -64,4 +64,4 @@ This is the definition of an interacting interface such as a tag or a binding re
 
 Here we show the main tables the IntAct data model is relying on. Note that all Xref, Annotation and Alias tables haven't been repeated for clarity purpose.
 
-<img width="1000"  src="http://intact.googlecode.com/svn/wiki/images/database/1.3.0/Model.png"/>
+<img width="800"  src="http://intact.googlecode.com/svn/wiki/images/database/1.3.0/Model.png"/>
