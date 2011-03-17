@@ -47,10 +47,12 @@ public class NucleicAcidIdentity implements Rule<NucleicAcid> {
                 CvObjectXref qualifierIdentity = CvObjectUtils.getPsiMiIdentityXref( xref.getCvXrefQualifier() );
                 if ( qualifierIdentity != null && CvXrefQualifier.IDENTITY_MI_REF.equals( qualifierIdentity.getPrimaryId() ) ) {
                     CvObjectXref databaseIdentity = CvObjectUtils.getPsiMiIdentityXref( xref.getCvDatabase() );
-                    if ( cvDatabaseMis.contains( databaseIdentity.getPrimaryId() ) ) {
-                        identityCount++;
-                    } else {
-                        messages.add( new GeneralMessage(MessageDefinition.NUC_ACID_IDENTITY_INVALID_DB, nucleicAcid ) );
+                    if( databaseIdentity != null ) {
+                        if ( cvDatabaseMis.contains( databaseIdentity.getPrimaryId() ) ) {
+                            identityCount++;
+                        } else {
+                            messages.add( new GeneralMessage(MessageDefinition.NUC_ACID_IDENTITY_INVALID_DB, nucleicAcid ) );
+                        }
                     }
                 }
             }
