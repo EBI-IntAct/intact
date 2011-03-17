@@ -44,13 +44,11 @@ public class NucleicAcidIdentity extends Rule<NucleicAcid> {
                 String qualifierIdentityMi = xref.getCvXrefQualifier().getIdentifier();
                 if ( qualifierIdentityMi != null && CvXrefQualifier.IDENTITY_MI_REF.equals( qualifierIdentityMi ) ) {
                     String databaseIdentityMi = xref.getCvDatabase().getIdentifier();
-                    if( databaseIdentityMi != null ) {
-                        if ( cvDatabaseMis.contains( databaseIdentityMi ) ) {
-                            identityCount++;
-                        } else {
-                            if ( !isIgnored( nucleicAcid, MessageDefinition.NUC_ACID_IDENTITY_INVALID_DB ) ) {
-                                messages.add( new GeneralMessage( MessageDefinition.NUC_ACID_IDENTITY_INVALID_DB, nucleicAcid ) );
-                            }
+                    if ( cvDatabaseMis.contains( databaseIdentityMi ) ) {
+                        identityCount++;
+                    } else {
+                        if ( !isIgnored( nucleicAcid, MessageDefinition.NUC_ACID_IDENTITY_INVALID_DB ) ) {
+                            messages.add( new GeneralMessage( MessageDefinition.NUC_ACID_IDENTITY_INVALID_DB, nucleicAcid ) );
                         }
                     }
                 }
