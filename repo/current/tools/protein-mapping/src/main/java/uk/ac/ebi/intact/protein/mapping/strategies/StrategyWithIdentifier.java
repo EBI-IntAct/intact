@@ -12,7 +12,7 @@ import uk.ac.ebi.intact.protein.mapping.model.contexts.BlastContext;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.results.BlastResults;
 import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
@@ -40,7 +40,7 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
     /**
      * The list of reports of this action
      */
-    private List<ActionReport> listOfReports = new ArrayList<ActionReport> ();
+    private List<MappingReport> listOfReports = new ArrayList<MappingReport> ();
 
     /**
      * the list of special organisms entirely sequenced
@@ -203,7 +203,7 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
         // get the reports of the second action
         result.getListOfActions().addAll(this.listOfActions.get(1).getListOfActionReports());
 
-        ActionReport lastReport = result.getLastAction();
+        MappingReport lastReport = result.getLastAction();
 
         processIsoforms(uniprotResult, result);
     }
@@ -274,7 +274,7 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
 
                 // PICR and uniprot could map the identifier to a Swissprot accession
                 if (result.getFinalUniprotId() != null){
-                    ActionReport report = result.getLastAction();
+                    MappingReport report = result.getLastAction();
 
                     // PICR or uniprot could map to a Trembl entry
                     if (!report.isASwissprotEntry()){
@@ -347,7 +347,7 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
             // get the reports of the first action
             this.listOfReports.addAll(this.listOfActions.get(0).getListOfActionReports());
 
-            ActionReport lastReport =  this.listOfReports.get(this.listOfReports.size() - 1);
+            MappingReport lastReport =  this.listOfReports.get(this.listOfReports.size() - 1);
 
             if (uniprot == null && lastReport.getPossibleAccessions().isEmpty()){
                 String taxId = null;
@@ -373,7 +373,7 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
         }
 
         // Get the last report
-        ActionReport report = this.listOfReports.get(this.listOfReports.size() - 1);
+        MappingReport report = this.listOfReports.get(this.listOfReports.size() - 1);
 
         // If PICR and Uniprot could mapp the identifier to an unique Uniprot accession
         if (uniprot != null){
@@ -426,7 +426,7 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
      *
      * @return the list of reports of this object
      */
-    public List<ActionReport> getListOfActionReports() {
+    public List<MappingReport> getListOfActionReports() {
         return this.listOfReports;
     }
 }

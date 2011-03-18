@@ -6,7 +6,7 @@ import org.junit.Test;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
 
 import java.util.List;
@@ -49,7 +49,7 @@ public class UniprotNameSearchProcessTest {
 
         try {
             String ac = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
             Assert.assertEquals(1, reports.size());
             for (String warn : reports.get(0).getWarnings()){
                 System.out.println(warn);
@@ -75,7 +75,7 @@ public class UniprotNameSearchProcessTest {
 
         try {
             String ac = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
             Assert.assertEquals(1, reports.size());
             for (String warn : reports.get(0).getWarnings()){
                 System.out.println(warn);
@@ -108,7 +108,7 @@ public class UniprotNameSearchProcessTest {
 
         try {
             String ac = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
             Assert.assertEquals(1, reports.size());
             for (String warn : reports.get(0).getWarnings()){
                 System.out.println(warn);
@@ -136,7 +136,7 @@ public class UniprotNameSearchProcessTest {
 
         try {
             String ac = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
             for (String warn : reports.get(2).getWarnings()){
                 System.out.println(warn);
             }
@@ -162,7 +162,7 @@ public class UniprotNameSearchProcessTest {
 
         try {
             String ac = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
             for (String warn : reports.get(1).getWarnings()){
                 System.out.println(warn);
             }
@@ -188,7 +188,7 @@ public class UniprotNameSearchProcessTest {
 
         try {
             String ac = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
             Assert.assertEquals(1, reports.size());
             for (String warn : reports.get(0).getWarnings()){
                 System.out.println(warn);

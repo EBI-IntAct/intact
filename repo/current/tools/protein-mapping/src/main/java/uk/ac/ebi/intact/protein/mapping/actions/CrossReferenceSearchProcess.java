@@ -11,7 +11,7 @@ import uk.ac.ebi.intact.uniprot.service.UniprotService;
 import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.ReflectionCrossReferenceBuilder;
 import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.UniprotCrossReference;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.Status;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
 import uk.ac.ebi.kraken.interfaces.uniparc.UniParcEntry;
@@ -374,7 +374,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
      * @param context : the context of the protein
      * @return an unique uniprot accession if successful, null otherwise
      */
-    private String processIterator(EntryIterator<UniProtEntry> iterator, ActionReport report, IdentificationContext context){
+    private String processIterator(EntryIterator<UniProtEntry> iterator, MappingReport report, IdentificationContext context){
         // we have only one entry
         if (iterator.getResultSize() == 1){
             UniProtEntry protein = iterator.next();
@@ -698,7 +698,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
         EntryIterator<UniProtEntry> iteratorSwissprot = getReviewedUniprotDatabaseCrossReferenceIterator(databaseTypes, identifier);
 
         // Create a new report
-        ActionReport report = new ActionReport(ActionName.SEARCH_Swissprot_CrossReference);
+        MappingReport report = new MappingReport(ActionName.SEARCH_Swissprot_CrossReference);
         this.listOfReports.add(report);
 
         // if the organism is not null, we can add a filter on the organism
@@ -716,7 +716,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
             report.setStatus(status);
 
             // new query, new report
-            ActionReport report2 = new ActionReport(ActionName.SEARCH_Uniprot_CrossReference);
+            MappingReport report2 = new MappingReport(ActionName.SEARCH_Uniprot_CrossReference);
             this.listOfReports.add(report2);
 
             // get the results of the query on Trembl
@@ -752,7 +752,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
         if ( report.getPossibleAccessions().isEmpty()){
 
             // create a new report
-            ActionReport reportUniparc = new ActionReport(ActionName.SEARCH_Uniparc_CrossReference);
+            MappingReport reportUniparc = new MappingReport(ActionName.SEARCH_Uniparc_CrossReference);
             this.listOfReports.add(reportUniparc);
 
             // build query for uniparc

@@ -6,7 +6,7 @@ import org.junit.Test;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.BlastContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
 
@@ -59,7 +59,7 @@ public class SwissprotRemappingProcessTest {
 
         try {
             String ac = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
             Assert.assertEquals(2, reports.size());
             for (String warn : reports.get(1).getWarnings()){
                 System.out.println(warn);
@@ -95,7 +95,7 @@ public class SwissprotRemappingProcessTest {
 
         try {
             String ac = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
             Assert.assertEquals(2, reports.size());
             for (String warn : reports.get(1).getWarnings()){
                 System.out.println(warn);
@@ -130,7 +130,7 @@ public class SwissprotRemappingProcessTest {
 
         try {
             String ac = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
             Assert.assertEquals(3, reports.size());
             for (String warn : reports.get(2).getWarnings()){
                 System.out.println(warn);
@@ -167,7 +167,7 @@ public class SwissprotRemappingProcessTest {
 
         try {
             String ac = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
             Assert.assertEquals(3, reports.size());
             for (String warn : reports.get(2).getWarnings()){
                 System.out.println(warn);

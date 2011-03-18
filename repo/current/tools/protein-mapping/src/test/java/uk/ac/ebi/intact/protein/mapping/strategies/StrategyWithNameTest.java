@@ -6,7 +6,7 @@ import org.junit.Test;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
 import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
 
@@ -50,7 +50,7 @@ public class StrategyWithNameTest {
 
         try {
             IdentificationResults result = this.strategy.identifyProtein(context);
-            List<ActionReport> reports = result.getListOfActions();
+            List<MappingReport> reports = result.getListOfActions();
 
             Assert.assertEquals(1, reports.size());
             for (String warn : reports.get(0).getWarnings()){
@@ -80,7 +80,7 @@ public class StrategyWithNameTest {
 
         try {
             IdentificationResults result = this.strategy.identifyProtein(context);
-            List<ActionReport> reports = result.getListOfActions();
+            List<MappingReport> reports = result.getListOfActions();
 
             Assert.assertEquals(1, reports.size());
             for (String warn : reports.get(0).getWarnings()){
@@ -116,7 +116,7 @@ public class StrategyWithNameTest {
 
         try {
             IdentificationResults result = this.strategy.identifyProtein(context);
-            List<ActionReport> reports = result.getListOfActions();
+            List<MappingReport> reports = result.getListOfActions();
             Assert.assertEquals(1, reports.size());
             for (String warn : reports.get(0).getWarnings()){
                 System.out.println(warn);
@@ -146,7 +146,7 @@ public class StrategyWithNameTest {
 
         try {
             IdentificationResults result = this.strategy.identifyProtein(context);
-            List<ActionReport> reports = result.getListOfActions();
+            List<MappingReport> reports = result.getListOfActions();
             for (String warn : reports.get(2).getWarnings()){
                 System.out.println(warn);
             }
@@ -174,7 +174,7 @@ public class StrategyWithNameTest {
 
         try {
             IdentificationResults result = this.strategy.identifyProtein(context);
-            List<ActionReport> reports = result.getListOfActions();
+            List<MappingReport> reports = result.getListOfActions();
             for (String warn : reports.get(1).getWarnings()){
                 System.out.println(warn);
             }
@@ -202,7 +202,7 @@ public class StrategyWithNameTest {
 
         try {
             IdentificationResults result = this.strategy.identifyProtein(context);
-            List<ActionReport> reports = result.getListOfActions();
+            List<MappingReport> reports = result.getListOfActions();
             Assert.assertEquals(1, reports.size());
             for (String warn : reports.get(0).getWarnings()){
                 System.out.println(warn);

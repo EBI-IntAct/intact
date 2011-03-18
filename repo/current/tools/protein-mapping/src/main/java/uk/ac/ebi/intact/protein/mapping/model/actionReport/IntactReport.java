@@ -1,7 +1,7 @@
 package uk.ac.ebi.intact.protein.mapping.model.actionReport;
 
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,7 +14,7 @@ import java.util.Set;
  * @since <pre>07-Apr-2010</pre>
  */
 
-public class IntactReport extends ActionReport {
+public class IntactReport extends MappingReport {
 
     /**
      * The unique IntAct accession matching the CRC64

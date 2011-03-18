@@ -9,7 +9,7 @@ import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.UpdateContext;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.Status;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
@@ -95,7 +95,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
      * @throws uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException
      * @throws uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException
      */
-    private boolean checkIdentifierResults(IdentificationResults result, ActionReport updateReport, String otherIdentifier) throws ActionProcessingException, StrategyException {
+    private boolean checkIdentifierResults(IdentificationResults result, MappingReport updateReport, String otherIdentifier) throws ActionProcessingException, StrategyException {
         // The strategy using the sequence found a unique Uniprot accession
         if (result.getFinalUniprotId() != null){
 
@@ -169,7 +169,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
     private void runThirdAction(UpdateContext context, IdentificationResults results) throws StrategyException, ActionProcessingException {
         // get the feature range checking process
         FeatureRangeCheckingProcess process = (FeatureRangeCheckingProcess) this.listOfActions.get(2);
-        ActionReport lastReport = results.getLastAction();
+        MappingReport lastReport = results.getLastAction();
 
         // the intact accession of the protein to update is null, we can't check the feature ranges
         if (context.getIntactAccession() == null){
@@ -241,7 +241,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
             // we don't have neither a sequence nor an identifier for this protein
             if (updateContext.getSequence() == null && updateContext.getIdentifiers().isEmpty()){
                 // create a new report which will be added to the results
-                ActionReport report = new ActionReport(ActionName.update_checking);
+                MappingReport report = new MappingReport(ActionName.update_checking);
                 Status status = new Status(StatusLabel.FAILED, "The sequence of the protein is null and there are no cross references with qualifier 'identity'.");
                 report.setStatus(status);
                 result.addActionReport(report);
@@ -261,7 +261,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
                 // The protein also has identifiers
                 if (!identifiers.isEmpty()){
                     // we create a new update report which will be added to the results
-                    ActionReport report = new ActionReport(ActionName.update_checking);
+                    MappingReport report = new MappingReport(ActionName.update_checking);
                     report.addPossibleAccession(result.getFinalUniprotId());
 
                     // boolean value to know if there is a conflict with the previous results
@@ -338,7 +338,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
             // we don't have a sequence but the protein has identifier(s)
             else{
                 // we create a new update report which will be added to the results
-                ActionReport report = new ActionReport(ActionName.update_checking);
+                MappingReport report = new MappingReport(ActionName.update_checking);
                 report.addPossibleAccession(result.getFinalUniprotId());
 
                 Set<String> uniprots = new HashSet<String>();
@@ -392,7 +392,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
 
                 if (result.getFinalUniprotId() != null){
                     // we create a new update report which will be added to the results
-                    ActionReport report = new ActionReport(ActionName.update_checking);
+                    MappingReport report = new MappingReport(ActionName.update_checking);
 
                     report.addPossibleAccession(result.getFinalUniprotId());
                     Status updateStatus = new Status(StatusLabel.PENDING, "The protein " + updateContext.getIntactAccession() + " could successfully be mapped to " + result.getFinalUniprotId() + " but was not updated because uniprot cross references already exist and a curator should check first that the protein can be updated.");

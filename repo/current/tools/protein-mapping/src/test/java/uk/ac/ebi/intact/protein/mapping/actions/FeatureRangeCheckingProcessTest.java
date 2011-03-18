@@ -14,7 +14,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.FeatureRangeCheckingContext;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.UpdateContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.results.BlastResults;
 
 import java.util.List;
@@ -127,10 +127,10 @@ public class FeatureRangeCheckingProcessTest extends IntactBasicTestCase{
 
         try {
             String id = this.process.runAction(featureContext);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
             dataContext.commitTransaction(transactionStatus);
 
-            for (ActionReport report : reports){
+            for (MappingReport report : reports){
                 System.out.println(report.getStatus().getLabel() + " " + report.getStatus().getDescription());
                 for (String warn : report.getWarnings()){
                     System.out.println(warn);

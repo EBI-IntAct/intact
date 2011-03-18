@@ -6,7 +6,7 @@ import org.junit.Test;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.BlastContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
 
@@ -34,7 +34,7 @@ public class BasicBlastProcessTest {
 
         try {
             String id = this.blastProcess.runAction(context);
-            List<ActionReport> reports = this.blastProcess.getListOfActionReports();
+            List<MappingReport> reports = this.blastProcess.getListOfActionReports();
 
             Assert.assertNull(id);
             Assert.assertEquals(true, reports.get(0) instanceof BlastReport);
@@ -60,7 +60,7 @@ public class BasicBlastProcessTest {
 
         try {
             String id = this.blastProcess.runAction(context);
-            List<ActionReport> reports = this.blastProcess.getListOfActionReports();
+            List<MappingReport> reports = this.blastProcess.getListOfActionReports();
 
             Assert.assertNull(id);
             Assert.assertEquals(true, reports.get(0) instanceof BlastReport);
@@ -86,7 +86,7 @@ public class BasicBlastProcessTest {
 
         try {
             String id = this.blastProcess.runAction(context);
-            List<ActionReport> reports = this.blastProcess.getListOfActionReports();
+            List<MappingReport> reports = this.blastProcess.getListOfActionReports();
 
             Assert.assertNull(id);
             Assert.assertEquals(true, reports.get(0) instanceof BlastReport);

@@ -12,7 +12,7 @@ import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.IntactCrc64Report;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 
 import java.util.List;
 
@@ -59,7 +59,7 @@ public class IntactCrc64SearchProcessTest extends IntactBasicTestCase {
 
         try {
             String id = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
 
             Assert.assertNull(id);
             Assert.assertEquals(true, reports.get(0) instanceof IntactCrc64Report);
@@ -85,7 +85,7 @@ public class IntactCrc64SearchProcessTest extends IntactBasicTestCase {
 
         try {
             String id = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
 
             Assert.assertNull(id);
             Assert.assertEquals(true, reports.get(0) instanceof IntactCrc64Report);
@@ -112,7 +112,7 @@ public class IntactCrc64SearchProcessTest extends IntactBasicTestCase {
 
         try {
             String id = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
 
             Assert.assertNull(id);
             Assert.assertEquals(true, reports.get(0) instanceof IntactCrc64Report);

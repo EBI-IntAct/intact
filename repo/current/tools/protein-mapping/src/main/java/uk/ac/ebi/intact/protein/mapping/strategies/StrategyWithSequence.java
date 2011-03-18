@@ -9,7 +9,7 @@ import uk.ac.ebi.intact.protein.mapping.model.contexts.BlastContext;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.PICRReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.results.BlastResults;
@@ -46,7 +46,7 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
     /**
      * the list of reports of this object
      */
-    private List<ActionReport> listOfReports = new ArrayList<ActionReport>();
+    private List<MappingReport> listOfReports = new ArrayList<MappingReport>();
 
     /**
      * Create a new StrategyWithSequence
@@ -297,7 +297,7 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
 
     }
 
-    public List<ActionReport> getListOfActionReports() {
+    public List<MappingReport> getListOfActionReports() {
         return this.listOfReports;
     }
 

@@ -6,7 +6,7 @@ import org.junit.Test;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.PICRReport;
 
 import java.util.List;
@@ -51,7 +51,7 @@ public class PICRSearchProcessWithSequenceTest {
 
         try {
             String ac = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
 
             for (String warn : reports.get(0).getWarnings()){
                 System.out.println(warn);
@@ -93,7 +93,7 @@ public class PICRSearchProcessWithSequenceTest {
 
         try {
             String ac = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
 
             for (String warn : reports.get(0).getWarnings()){
                 System.out.println(warn);
@@ -134,7 +134,7 @@ public class PICRSearchProcessWithSequenceTest {
 
         try {
             String ac = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
 
             for (String warn : reports.get(0).getWarnings()){
                 System.out.println(warn);
@@ -169,7 +169,7 @@ public class PICRSearchProcessWithSequenceTest {
 
         try {
             String ac = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
             Assert.assertEquals(2, reports.size());
 
             for (String warn : reports.get(1).getWarnings()){
@@ -201,7 +201,7 @@ public class PICRSearchProcessWithSequenceTest {
 
         try {
             String ac = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
             Assert.assertEquals(2, reports.size());
 
             for (String warn : reports.get(1).getWarnings()){

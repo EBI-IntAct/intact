@@ -7,7 +7,7 @@ import org.junit.Test;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.PICRReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
@@ -117,7 +117,7 @@ public class StrategyWithIdentifierTest {
                 Assert.assertEquals(true, result.getLastAction() instanceof BlastReport);
                 Assert.assertEquals(StatusLabel.COMPLETED, result.getListOfActions().get(0).getStatus().getLabel());
 
-                for (ActionReport r : result.getListOfActions()){
+                for (MappingReport r : result.getListOfActions()){
                     System.out.println("Label : " + r.getStatus().getLabel().toString() + ": Description : " + r.getStatus().getDescription());
                 }
 
@@ -194,7 +194,7 @@ public class StrategyWithIdentifierTest {
         try {
             result = this.strategy.identifyProtein(context);
 
-            for (ActionReport r : result.getListOfActions()){
+            for (MappingReport r : result.getListOfActions()){
                 System.out.println("name " + r.getName().toString() + " Label : " + r.getStatus().getLabel().toString() + ": Description : " + r.getStatus().getDescription());
             }
 
