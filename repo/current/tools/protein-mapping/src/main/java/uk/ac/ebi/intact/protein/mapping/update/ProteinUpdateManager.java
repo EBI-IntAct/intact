@@ -12,7 +12,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.UpdateContext;
 import uk.ac.ebi.intact.protein.mapping.strategies.StrategyForProteinUpdate;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.PICRReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.results.BlastResults;
@@ -505,7 +505,7 @@ public class ProteinUpdateManager {
             writer.write("************************" + protAc + "************************************ \n");
 
             writer.write("Uniprot accession found : " + result.getFinalUniprotId() + "\n");
-            for (ActionReport report : result.getListOfActions()){
+            for (MappingReport report : result.getListOfActions()){
                 writer.write(report.getName().toString() + " : " + report.getStatus().getLabel() + ", " + report.getStatus().getDescription() + "\n");
 
                 for (String warn : report.getWarnings()){

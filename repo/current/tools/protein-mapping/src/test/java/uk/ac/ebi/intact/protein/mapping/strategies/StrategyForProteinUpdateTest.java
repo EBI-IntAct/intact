@@ -6,7 +6,7 @@ import org.junit.Test;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.UpdateContext;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
 import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
@@ -55,7 +55,7 @@ public class StrategyForProteinUpdateTest {
 
             Assert.assertNotNull(result);
 
-            for (ActionReport r : result.getListOfActions()){
+            for (MappingReport r : result.getListOfActions()){
                 System.out.println("Label : " + r.getStatus().getLabel().toString() + ": Description : " + r.getStatus().getDescription());
             }
 
@@ -86,7 +86,7 @@ public class StrategyForProteinUpdateTest {
 
             Assert.assertNotNull(result);
 
-            for (ActionReport r : result.getListOfActions()){
+            for (MappingReport r : result.getListOfActions()){
                 System.out.println("name" + r.getName().toString() + "Label : " + r.getStatus().getLabel().toString() + ": Description : " + r.getStatus().getDescription());
             }
 
@@ -113,7 +113,7 @@ public class StrategyForProteinUpdateTest {
 
             Assert.assertNotNull(result);
 
-            for (ActionReport r : result.getListOfActions()){
+            for (MappingReport r : result.getListOfActions()){
                 System.out.println("name " + r.getName().toString() + "Label : " + r.getStatus().getLabel().toString() + ": Description : " + r.getStatus().getDescription());
             }
 

@@ -6,7 +6,7 @@ import org.junit.Test;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 
 /**
  * Unit test for CrossReferenceSearchProcess
@@ -50,7 +50,7 @@ public class CrossReferenceSearchProcessTest {
         try {
             String ac = this.process.runAction(context);
 
-            for (ActionReport r : process.getListOfActionReports()){
+            for (MappingReport r : process.getListOfActionReports()){
                 System.out.println("name = " + r.getName() + " " + r.getStatus().getLabel() + " " + r.getStatus().getDescription());
                 for (String warn : r.getWarnings()){
                     System.out.println(warn);
@@ -78,7 +78,7 @@ public class CrossReferenceSearchProcessTest {
         try {
             String ac = this.process.runAction(context);
 
-            for (ActionReport r : process.getListOfActionReports()){
+            for (MappingReport r : process.getListOfActionReports()){
                 System.out.println("name = " + r.getName() + " " + r.getStatus().getLabel() + " " + r.getStatus().getDescription());
                 for (String warn : r.getWarnings()){
                     System.out.println(warn);
@@ -107,7 +107,7 @@ public class CrossReferenceSearchProcessTest {
         try {
             String ac = this.process.runAction(context);
 
-            for (ActionReport r : process.getListOfActionReports()){
+            for (MappingReport r : process.getListOfActionReports()){
                 System.out.println("name = " + r.getName() + " " + r.getStatus().getLabel() + " " + r.getStatus().getDescription());
                 for (String warn : r.getWarnings()){
                     System.out.println(warn);
@@ -134,7 +134,7 @@ public class CrossReferenceSearchProcessTest {
         try {
             String ac = this.process.runAction(context);
 
-            ActionReport lastReport = process.getListOfActionReports().get(process.getListOfActionReports().size() - 1);
+            MappingReport lastReport = process.getListOfActionReports().get(process.getListOfActionReports().size() - 1);
             for (String warn : lastReport.getWarnings()){
                 System.out.println(warn);
             }

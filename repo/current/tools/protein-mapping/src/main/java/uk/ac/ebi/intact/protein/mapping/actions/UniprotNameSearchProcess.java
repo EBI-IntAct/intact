@@ -5,7 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.Status;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
 import uk.ac.ebi.kraken.interfaces.uniprot.Gene;
@@ -182,7 +182,7 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
      * @param context : the context of the protein to identify
      * @return the unique uniprot id if an unique unprot entry, null otherwise
      */
-    private String processQuery(EntryIterator<UniProtEntry> iterator, ActionReport report, IdentificationContext context){
+    private String processQuery(EntryIterator<UniProtEntry> iterator, MappingReport report, IdentificationContext context){
         // we have only one entry
         if (iterator.getResultSize() == 1){
             String id = iterator.next().getPrimaryUniProtAccession().getValue();
@@ -210,7 +210,7 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
      * @param context : the context of the protein to identify
      * @return the unique uniprot id if an unique unprot entry, null otherwise
      */
-    private String processGeneQuery(EntryIterator<UniProtEntry> iterator, ActionReport report, IdentificationContext context){
+    private String processGeneQuery(EntryIterator<UniProtEntry> iterator, MappingReport report, IdentificationContext context){
         // We have only one matching protein
         if (iterator.getResultSize() == 1){
             String id = iterator.next().getPrimaryUniProtAccession().getValue();
@@ -418,7 +418,7 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
      * @param context : the current context
      * @return an unique uniprot AC if possible, null otherwise
      */
-    private String processNameSearch(String geneName, String protein_name, String organism, String globalName, ActionReport report, IdentificationContext context){
+    private String processNameSearch(String geneName, String protein_name, String organism, String globalName, MappingReport report, IdentificationContext context){
         // If the gene name or the protein name is not null, we can do a specific search on Uniprot
         if (geneName != null || protein_name != null){
 
@@ -433,7 +433,7 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
 
                 // get the results on Trembl
                 iterator = queryUniprotWith(geneName, protein_name, organism);
-                ActionReport report2 = new ActionReport(ActionName.SEARCH_uniprot_name);
+                MappingReport report2 = new MappingReport(ActionName.SEARCH_uniprot_name);
                 this.listOfReports.add(report2);
 
                 // if we don't have any result, the search fails
@@ -468,7 +468,7 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
                 // get the results on uniprot
                 iterator = queryUniprotWithGeneNameOrProteinName(null, null, globalName, organism);
 
-                ActionReport report2 = new ActionReport(ActionName.SEARCH_uniprot_name);
+                MappingReport report2 = new MappingReport(ActionName.SEARCH_uniprot_name);
                 this.listOfReports.add(report2);
 
                 // if we don't have any result, the search fails
@@ -497,7 +497,7 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
      * @param report : the current report
      * @param query : the query
      */
-    private void processGlobalQuery(ActionReport report, Query query){
+    private void processGlobalQuery(MappingReport report, Query query){
         EntryIterator<UniProtEntry> iterator = uniProtQueryService.getEntryIterator(query);
         if (iterator != null && iterator.getResultSize() != 0){
             for (UniProtEntry e : iterator){
@@ -517,7 +517,7 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
         this.listOfReports.clear();
 
                 // Create a new report
-        ActionReport report = new ActionReport(ActionName.SEARCH_uniprot_name);
+        MappingReport report = new MappingReport(ActionName.SEARCH_uniprot_name);
         this.listOfReports.add(report);
 
         String geneName = context.getGene_name();
@@ -545,7 +545,7 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
         else if (accession == null && report.getPossibleAccessions().isEmpty()){
 
             // Create a new report
-            ActionReport report2 = new ActionReport(ActionName.wide_SEARCH_uniprot);
+            MappingReport report2 = new MappingReport(ActionName.wide_SEARCH_uniprot);
             this.listOfReports.add(report2);
 
             // get non specific results with gene name or protein name or global name

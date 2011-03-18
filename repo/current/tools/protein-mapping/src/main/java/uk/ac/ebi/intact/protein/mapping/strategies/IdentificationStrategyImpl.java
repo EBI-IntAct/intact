@@ -12,7 +12,7 @@ import uk.ac.ebi.intact.uniprot.service.IdentifierChecker;
 import uk.ac.ebi.intact.uniprot.service.UniprotRemoteService;
 import uk.ac.ebi.intact.uniprot.service.UniprotService;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
 import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseType;
@@ -236,10 +236,10 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
      * @param listOfActions : the list of actions to look into
      * @return the list of swissprot remapping reports which have been done to identify the protein
      */
-    protected List<BlastReport> getSwissprotRemappingReports(List<ActionReport> listOfActions){
+    protected List<BlastReport> getSwissprotRemappingReports(List<MappingReport> listOfActions){
         ArrayList<BlastReport> reports = new ArrayList<BlastReport>();
 
-        for (ActionReport action : listOfActions){
+        for (MappingReport action : listOfActions){
             if (action instanceof BlastReport){
                 BlastReport blastReport = (BlastReport) action;
 

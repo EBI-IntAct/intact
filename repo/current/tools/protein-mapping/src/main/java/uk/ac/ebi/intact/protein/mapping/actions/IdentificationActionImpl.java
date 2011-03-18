@@ -2,7 +2,7 @@ package uk.ac.ebi.intact.protein.mapping.actions;
 
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
 import uk.ac.ebi.intact.uniprot.service.IdentifierChecker;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.results.BlastResults;
 
 import java.util.ArrayList;
@@ -23,13 +23,13 @@ public abstract class IdentificationActionImpl implements IdentificationAction {
     /**
      * List of reports
      */
-    protected List<ActionReport> listOfReports = new ArrayList<ActionReport>();
+    protected List<MappingReport> listOfReports = new ArrayList<MappingReport>();
 
     /**
      *
      * @return the list of reports of this object
      */
-    public List<ActionReport> getListOfActionReports() {
+    public List<MappingReport> getListOfActionReports() {
         return this.listOfReports;
     }
 

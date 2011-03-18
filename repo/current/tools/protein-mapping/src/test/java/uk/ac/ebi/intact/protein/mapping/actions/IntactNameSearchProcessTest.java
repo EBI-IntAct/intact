@@ -11,7 +11,7 @@ import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.IntactReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionReport;
+import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 
 import java.util.List;
 
@@ -62,7 +62,7 @@ public class IntactNameSearchProcessTest  extends IntactBasicTestCase {
         this.context.setOrganism(null);
         try {
             String id = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
 
             for (String warn : reports.get(0).getWarnings()){
                 System.out.println(warn);
@@ -87,7 +87,7 @@ public class IntactNameSearchProcessTest  extends IntactBasicTestCase {
         this.context.setOrganism(null);
         try {
             String id = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
 
             for (String warn : reports.get(1).getWarnings()){
                 System.out.println(warn);
@@ -113,7 +113,7 @@ public class IntactNameSearchProcessTest  extends IntactBasicTestCase {
         this.context.setOrganism(organism);
         try {
             String id = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
 
             for (String warn : reports.get(0).getWarnings()){
                 System.out.println(warn);
@@ -139,7 +139,7 @@ public class IntactNameSearchProcessTest  extends IntactBasicTestCase {
         this.context.setOrganism(organism);
         try {
             String id = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
 
             for (String warn : reports.get(1).getWarnings()){
                 System.out.println(warn);
@@ -163,9 +163,9 @@ public class IntactNameSearchProcessTest  extends IntactBasicTestCase {
         this.context.setOrganism(null);
         try {
             String id = this.process.runAction(context);
-            List<ActionReport> reports = this.process.getListOfActionReports();
+            List<MappingReport> reports = this.process.getListOfActionReports();
 
-            for (ActionReport report : reports){
+            for (MappingReport report : reports){
                 for (String warn : report.getWarnings()){
                     System.out.println(warn);
                 }
