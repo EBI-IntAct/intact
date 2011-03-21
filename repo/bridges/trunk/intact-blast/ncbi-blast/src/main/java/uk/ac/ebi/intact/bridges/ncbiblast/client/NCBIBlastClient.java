@@ -1,6 +1,5 @@
 package uk.ac.ebi.intact.bridges.ncbiblast.client;
 
-import com.sun.xml.internal.ws.server.UnsupportedMediaException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastJobStatus;
@@ -81,7 +80,7 @@ public class NCBIBlastClient {
         service = service_service.getJDispatcherServiceHttpPort();
     }
 
-    public String runWUBlast(String email, InputParameters params){
+    public String runNCBIBlast(String email, InputParameters params){
         return this.service.run(email, jobName, params);
     }
 
@@ -89,7 +88,7 @@ public class NCBIBlastClient {
         try {
             return this.service.getStatus(jobId);
         }
-        catch (UnsupportedMediaException e){
+        catch (Exception e){
             return "ERROR";
             //throw new NCBIBlastClientException("The current job " + jobId + " cannot be processed for the moment, try later.");
         }
@@ -226,7 +225,7 @@ public class NCBIBlastClient {
         params.setStype(sType);
 
         Job job = null;
-        job = new Job(runWUBlast(email, params), sequence);
+        job = new Job(runNCBIBlast(email, params), sequence);
         checkStatus(job);
         return job;
     }
@@ -263,7 +262,7 @@ public class NCBIBlastClient {
 
         Job job = null;
         try {
-            job = new Job(blast.runWUBlast(params, inputs), blastInput);
+            job = new Job(blast.runNCBIBlast(params, inputs), blastInput);
             checkStatus(job);
         } catch (RemoteException e) {
             // FIXME: axisfault
