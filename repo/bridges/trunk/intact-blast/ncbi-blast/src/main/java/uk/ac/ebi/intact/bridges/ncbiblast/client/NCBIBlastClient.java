@@ -1,5 +1,6 @@
 package uk.ac.ebi.intact.bridges.ncbiblast.client;
 
+import com.sun.xml.internal.ws.server.UnsupportedMediaException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastJobStatus;
@@ -85,7 +86,13 @@ public class NCBIBlastClient {
     }
 
     public String checkStatus(String jobId){
-        return this.service.getStatus(jobId);
+        try {
+            return this.service.getStatus(jobId);
+        }
+        catch (UnsupportedMediaException e){
+            return "ERROR";
+            //throw new NCBIBlastClientException("The current job " + jobId + " cannot be processed for the moment, try later.");
+        }
     }
 
     /** Get details of the available result types for a job.

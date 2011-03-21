@@ -70,7 +70,7 @@ public class ProteinNCBIBlastService {
 
     public File getResultsOfBlastOnSwissprot(String sequence, String fileName){
         File results = getResultsOfBlastInFile(sequence, swissprot, fileName);
-        
+
         return results;
     }
 
@@ -86,11 +86,18 @@ public class ProteinNCBIBlastService {
         Job job = runBlast(sequence, databaseName);
 
         if (job != null){
-            try {
-                File results = bc.getResultInFile(job, fileName);
-                return results;
-            } catch (NCBIBlastClientException e) {
-                log.error(" One error has occured with the BlastClient during the wswublast job", e);
+
+            if (job.getStatus() != null){
+                BlastJobStatus blastStatus = job.getStatus();
+
+                if (blastStatus.equals(BlastJobStatus.FINISHED)){
+                    try {
+                        File results = bc.getResultInFile(job, fileName);
+                        return results;
+                    } catch (NCBIBlastClientException e) {
+                        log.error(" One error has occured with the BlastClient during the wswublast job", e);
+                    }
+                }
             }
         }
         return null;
@@ -141,11 +148,17 @@ public class ProteinNCBIBlastService {
 
         if (job != null){
 
-            try {
-                ByteArrayInputStream results = bc.getResultAsInputStream(job);
-                return results;
-            } catch (NCBIBlastClientException e) {
-                log.error(" One error has occured with the BlastClient during the wswublast job", e);
+            if (job.getStatus() != null){
+                BlastJobStatus blastStatus = job.getStatus();
+
+                if (blastStatus.equals(BlastJobStatus.FINISHED)){
+                    try {
+                        ByteArrayInputStream results = bc.getResultAsInputStream(job);
+                        return results;
+                    } catch (NCBIBlastClientException e) {
+                        log.error(" One error has occured with the BlastClient during the wswublast job", e);
+                    }
+                }
             }
         }
         return null;

@@ -6,7 +6,7 @@
 package uk.ac.ebi.intact.bridges.ncbiblast.model;
 
 /**
- * Class representing a submitted wswublast job.
+ * Class representing a submitted NCBI blast job.
  * 
  * @author Irina Armean (iarmean@ebi.ac.uk)
  * @version
