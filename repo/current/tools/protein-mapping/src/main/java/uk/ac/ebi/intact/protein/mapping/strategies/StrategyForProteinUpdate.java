@@ -14,7 +14,6 @@ import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.Status;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
 import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.UpdateMappingResults;
 
 import java.util.HashSet;
 import java.util.List;
@@ -233,9 +232,9 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
         Map<String, String> identifiers = ((UpdateContext) context).getIdentifiers();
 
         // create a new result instance
-        UpdateMappingResults result = new UpdateMappingResults();
-        // set the intact accession of the result
-        result.setIntactAccession(((UpdateContext) context).getIntactAccession());
+        IdentificationResults result = new IdentificationResults();
+        // set the intact accession of the result  is not necessary because the protein update takes care of that
+        // result.setIntactAccession(((UpdateContext) context).getIntactAccession());
 
         try {
             // we don't have neither a sequence nor an identifier for this protein
