@@ -174,7 +174,7 @@
         <dependency>
             <groupId>uk.ac.ebi.uniprot.kraken</groupId>
             <artifactId>uniprotjapi</artifactId>
-            <version>2011.02</version>
+            <version>2011.03</version>
         </dependency>
     </dependencies>
 
