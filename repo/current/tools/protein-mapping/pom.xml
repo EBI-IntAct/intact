@@ -171,11 +171,11 @@
         </dependency>
 
         <!-- uniprot interfaces -->
-        <dependency>
+        <!--<dependency>
             <groupId>uk.ac.ebi.uniprot.kraken</groupId>
             <artifactId>uniprotjapi</artifactId>
-            <version>2011.03</version>
-        </dependency>
+            <version>2011.04</version>
+        </dependency>-->
     </dependencies>
 
 
