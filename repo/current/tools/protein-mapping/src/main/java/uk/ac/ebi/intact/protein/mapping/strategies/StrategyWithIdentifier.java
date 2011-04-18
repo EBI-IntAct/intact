@@ -383,13 +383,14 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
 
                 // Get the Uniprot protein for this Trembl entry
                 UniprotProtein tremblEntry = getUniprotProteinFor(uniprot);
-                String sequence = tremblEntry.getSequence();
 
                 // Create a new blast context containing the ensembl gane of the Trembl entry
                 BlastContext blastContext = new BlastContext(context);
-                blastContext.setSequence(sequence);
-
                 if (tremblEntry != null){
+                    String sequence = tremblEntry.getSequence();
+
+                    blastContext.setSequence(sequence);
+
                     // extract the ensembl gene of the Trembl entry
                     String ensemblGene = extractENSEMBLGeneAccessionFrom(tremblEntry.getCrossReferences());
                     blastContext.setEnsemblGene(ensemblGene);
