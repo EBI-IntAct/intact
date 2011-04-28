@@ -1,0 +1,3070 @@
+   <entrySet level="2" minorVersion="3" version="5" xmlns="net:sf:psidev:mi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="net:sf:psidev:mi http://psidev.sourceforge.net/mi/rel25/src/MIF253.xsd">
+     <entry>
+       <source releaseDate="2008-07-04">
+         <names>
+           <shortLabel>European Bioinformatics Institute</shortLabel>
+         </names>
+         <bibref>
+           <xref>
+             <primaryRef db="pubmed" dbAc="MI:0446" id="14681455" refType="primary-reference" refTypeAc="MI:0358"/>
+           </xref>
+         </bibref>
+         <xref>
+           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0469" refType="primary-reference" refTypeAc="MI:0358"/>
+         </xref>
+         <attributeList>
+           <attribute name="postalAddress">Wellcome Trust Genome Campus, Hinxton, Cambridge, CB10 1SD, United Kingdom</attribute>
+           <attribute name="url">http://www.ebi.ac.uk</attribute>
+         </attributeList>
+       </source>
+       <experimentList>
+         <experimentDescription id="2">
+           <names>
+             <shortLabel>cheeseman-2006-5</shortLabel>
+             <fullName>The conserved KMN network constitutes the core microtubule-binding site of the kinetochore.</fullName>
+           </names>
+           <bibref>
+             <xref>
+               <primaryRef db="pubmed" dbAc="MI:0446" id="17129783" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </bibref>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-1176308" refType="identity" refTypeAc="MI:0356" secondary="cheeseman-2006-5"/>
+             <secondaryRef db="newt" dbAc="MI:0247" id="6239" refType="target-species" secondary="caeel"/>
+           </xref>
+           <hostOrganismList>
+             <hostOrganism ncbiTaxId="6239">
+               <names>
+                 <shortLabel>caeel-embryo</shortLabel>
+                 <fullName>Caenorhabditis elegans embryo</fullName>
+               </names>
+               <tissue>
+                 <names>
+                   <shortLabel>embryo</shortLabel>
+                   <fullName>Embryo</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="intact" dbAc="MI:0469" id="IA:0224" refType="identity" refTypeAc="MI:0356"/>
+                 </xref>
+               </tissue>
+             </hostOrganism>
+           </hostOrganismList>
+           <interactionDetectionMethod>
+             <names>
+               <shortLabel>molecular sieving</shortLabel>
+               <fullName>molecular sieving</fullName>
+               <alias>Gel Filtration</alias>
+               <alias>Siezing column</alias>
+               <alias>Size Exclusion Chromatography</alias>
+               <alias>Siezing column</alias>
+               <alias>Size Exclusion Chromatography</alias>
+               <alias>Gel Filtration</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0071" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="7708014" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionDetectionMethod>
+           <participantIdentificationMethod>
+             <names>
+               <shortLabel>western blot</shortLabel>
+               <fullName>western blot</fullName>
+               <alias>Immuno blot</alias>
+               <alias>Immuno blot</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0113" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </participantIdentificationMethod>
+           <attributeList>
+             <attribute name="author-list">Cheeseman IM., Chappie JS., Wilson-Kubalek EM., Desai A.</attribute>
+             <attribute name="journal">Cell (0092-8674)</attribute>
+             <attribute name="publication year">2006</attribute>
+             <attribute name="dataset">Cancer - Interactions investigated in the context of cancer</attribute>
+             <attribute name="contact-email">abdesai@ucsd.edu</attribute>
+             <attribute name="contact-email">icheeseman@ucsd.edu</attribute>
+           </attributeList>
+         </experimentDescription>
+         <experimentDescription id="16">
+           <names>
+             <shortLabel>cheeseman-2006-2</shortLabel>
+             <fullName>The conserved KMN network constitutes the core microtubule-binding site of the kinetochore.</fullName>
+           </names>
+           <bibref>
+             <xref>
+               <primaryRef db="pubmed" dbAc="MI:0446" id="17129783" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </bibref>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-1175961" refType="identity" refTypeAc="MI:0356" secondary="cheeseman-2006-2"/>
+             <secondaryRef db="newt" dbAc="MI:0247" id="6239" refType="target-species" secondary="caeel"/>
+           </xref>
+           <hostOrganismList>
+             <hostOrganism ncbiTaxId="-1">
+               <names>
+                 <shortLabel>in vitro</shortLabel>
+               </names>
+             </hostOrganism>
+           </hostOrganismList>
+           <interactionDetectionMethod>
+             <names>
+               <shortLabel>molecular sieving</shortLabel>
+               <fullName>molecular sieving</fullName>
+               <alias>Gel Filtration</alias>
+               <alias>Siezing column</alias>
+               <alias>Size Exclusion Chromatography</alias>
+               <alias>Siezing column</alias>
+               <alias>Size Exclusion Chromatography</alias>
+               <alias>Gel Filtration</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0071" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="7708014" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionDetectionMethod>
+           <participantIdentificationMethod>
+             <names>
+               <shortLabel>western blot</shortLabel>
+               <fullName>western blot</fullName>
+               <alias>Immuno blot</alias>
+               <alias>Immuno blot</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0113" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </participantIdentificationMethod>
+           <attributeList>
+             <attribute name="author-list">Cheeseman IM., Chappie JS., Wilson-Kubalek EM., Desai A.</attribute>
+             <attribute name="journal">Cell (0092-8674)</attribute>
+             <attribute name="publication year">2006</attribute>
+             <attribute name="exp-modification">The high speed supernatant was subjected to nickel agarose elution, Mono S elution and finally gel filtration. The participants were identified by Western blot.</attribute>
+             <attribute name="dataset">Cancer - Interactions investigated in the context of cancer</attribute>
+             <attribute name="contact-email">abdesai@ucsd.edu</attribute>
+             <attribute name="contact-email">icheeseman@ucsd.edu</attribute>
+           </attributeList>
+         </experimentDescription>
+         <experimentDescription id="34">
+           <names>
+             <shortLabel>cheeseman-2006-1</shortLabel>
+             <fullName>The conserved KMN network constitutes the core microtubule-binding site of the kinetochore.</fullName>
+           </names>
+           <bibref>
+             <xref>
+               <primaryRef db="pubmed" dbAc="MI:0446" id="17129783" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </bibref>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-1175886" refType="identity" refTypeAc="MI:0356" secondary="cheeseman-2006-1"/>
+             <secondaryRef db="newt" dbAc="MI:0247" id="6239" refType="target-species" secondary="caeel"/>
+           </xref>
+           <hostOrganismList>
+             <hostOrganism ncbiTaxId="-1">
+               <names>
+                 <shortLabel>in vitro</shortLabel>
+               </names>
+             </hostOrganism>
+           </hostOrganismList>
+           <interactionDetectionMethod>
+             <names>
+               <shortLabel>molecular sieving</shortLabel>
+               <fullName>molecular sieving</fullName>
+               <alias>Gel Filtration</alias>
+               <alias>Siezing column</alias>
+               <alias>Size Exclusion Chromatography</alias>
+               <alias>Siezing column</alias>
+               <alias>Size Exclusion Chromatography</alias>
+               <alias>Gel Filtration</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0071" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="7708014" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionDetectionMethod>
+           <participantIdentificationMethod>
+             <names>
+               <shortLabel>weight by comassie</shortLabel>
+               <fullName>molecular weight estimation by coomasie staining</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0818" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </participantIdentificationMethod>
+           <attributeList>
+             <attribute name="author-list">Cheeseman IM., Chappie JS., Wilson-Kubalek EM., Desai A.</attribute>
+             <attribute name="journal">Cell (0092-8674)</attribute>
+             <attribute name="publication year">2006</attribute>
+             <attribute name="exp-modification">Cell lysates were fractionated by 20% ammonium sulfate precipitation, followed by nickel agarose elution, Mono S elution and finally gel filtration. The participants&apos; identity was inferred based on molecular mass.</attribute>
+             <attribute name="dataset">Cancer - Interactions investigated in the context of cancer</attribute>
+             <attribute name="contact-email">abdesai@ucsd.edu</attribute>
+             <attribute name="contact-email">icheeseman@ucsd.edu</attribute>
+           </attributeList>
+         </experimentDescription>
+         <experimentDescription id="65">
+           <names>
+             <shortLabel>cheeseman-2006-4</shortLabel>
+             <fullName>The conserved KMN network constitutes the core microtubule-binding site of the kinetochore.</fullName>
+           </names>
+           <bibref>
+             <xref>
+               <primaryRef db="pubmed" dbAc="MI:0446" id="17129783" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </bibref>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-1176244" refType="identity" refTypeAc="MI:0356" secondary="cheeseman-2006-4"/>
+             <secondaryRef db="newt" dbAc="MI:0247" id="6239" refType="target-species" secondary="caeel"/>
+             <secondaryRef db="newt" dbAc="MI:0247" id="9606" refType="target-species" secondary="human"/>
+           </xref>
+           <hostOrganismList>
+             <hostOrganism ncbiTaxId="-1">
+               <names>
+                 <shortLabel>in vitro</shortLabel>
+               </names>
+             </hostOrganism>
+           </hostOrganismList>
+           <interactionDetectionMethod>
+             <names>
+               <shortLabel>molecular sieving</shortLabel>
+               <fullName>molecular sieving</fullName>
+               <alias>Gel Filtration</alias>
+               <alias>Siezing column</alias>
+               <alias>Size Exclusion Chromatography</alias>
+               <alias>Siezing column</alias>
+               <alias>Size Exclusion Chromatography</alias>
+               <alias>Gel Filtration</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0071" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="7708014" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionDetectionMethod>
+           <participantIdentificationMethod>
+             <names>
+               <shortLabel>weight by comassie</shortLabel>
+               <fullName>molecular weight estimation by coomasie staining</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0818" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </participantIdentificationMethod>
+           <attributeList>
+             <attribute name="author-list">Cheeseman IM., Chappie JS., Wilson-Kubalek EM., Desai A.</attribute>
+             <attribute name="journal">Cell (0092-8674)</attribute>
+             <attribute name="publication year">2006</attribute>
+             <attribute name="exp-modification">The high speed supernatant was subjected to nickel agarose elution, Mono S elution and finally gel filtration. The participants were identified by molecular mass.</attribute>
+             <attribute name="dataset">Cancer - Interactions investigated in the context of cancer</attribute>
+             <attribute name="contact-email">abdesai@ucsd.edu</attribute>
+             <attribute name="contact-email">icheeseman@ucsd.edu</attribute>
+           </attributeList>
+         </experimentDescription>
+         <experimentDescription id="75">
+           <names>
+             <shortLabel>cheeseman-2006-6</shortLabel>
+             <fullName>The conserved KMN network constitutes the core microtubule-binding site of the kinetochore.</fullName>
+           </names>
+           <bibref>
+             <xref>
+               <primaryRef db="pubmed" dbAc="MI:0446" id="17129783" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </bibref>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-1179874" refType="identity" refTypeAc="MI:0356" secondary="cheeseman-2006-6"/>
+             <secondaryRef db="newt" dbAc="MI:0247" id="6239" refType="target-species" secondary="caeel"/>
+           </xref>
+           <hostOrganismList>
+             <hostOrganism ncbiTaxId="-1">
+               <names>
+                 <shortLabel>in vitro</shortLabel>
+               </names>
+             </hostOrganism>
+           </hostOrganismList>
+           <interactionDetectionMethod>
+             <names>
+               <shortLabel>molecular sieving</shortLabel>
+               <fullName>molecular sieving</fullName>
+               <alias>Gel Filtration</alias>
+               <alias>Siezing column</alias>
+               <alias>Size Exclusion Chromatography</alias>
+               <alias>Siezing column</alias>
+               <alias>Size Exclusion Chromatography</alias>
+               <alias>Gel Filtration</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0071" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="7708014" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionDetectionMethod>
+           <participantIdentificationMethod>
+             <names>
+               <shortLabel>weight silver stain</shortLabel>
+               <fullName>molecular weight estimation by silver staining</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0817" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </participantIdentificationMethod>
+           <attributeList>
+             <attribute name="author-list">Cheeseman IM., Chappie JS., Wilson-Kubalek EM., Desai A.</attribute>
+             <attribute name="journal">Cell (0092-8674)</attribute>
+             <attribute name="publication year">2006</attribute>
+             <attribute name="exp-modification">Cell lysates were fractionated by 20% ammonium sulfate precipitation, followed by nickel agarose elution, Mono S elution and finally gel filtration. The participants&apos; identity was inferred based on molecular mass.</attribute>
+             <attribute name="dataset">Cancer - Interactions investigated in the context of cancer</attribute>
+             <attribute name="contact-email">abdesai@ucsd.edu</attribute>
+             <attribute name="contact-email">icheeseman@ucsd.edu</attribute>
+           </attributeList>
+         </experimentDescription>
+         <experimentDescription id="79">
+           <names>
+             <shortLabel>cheeseman-2006-3</shortLabel>
+             <fullName>The conserved KMN network constitutes the core microtubule-binding site of the kinetochore.</fullName>
+           </names>
+           <bibref>
+             <xref>
+               <primaryRef db="pubmed" dbAc="MI:0446" id="17129783" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </bibref>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-1176059" refType="identity" refTypeAc="MI:0356" secondary="cheeseman-2006-3"/>
+             <secondaryRef db="newt" dbAc="MI:0247" id="6239" refType="target-species" secondary="caeel"/>
+             <secondaryRef db="newt" dbAc="MI:0247" id="4932" refType="target-species" secondary="yeast"/>
+           </xref>
+           <hostOrganismList>
+             <hostOrganism ncbiTaxId="-1">
+               <names>
+                 <shortLabel>in vitro</shortLabel>
+               </names>
+             </hostOrganism>
+           </hostOrganismList>
+           <interactionDetectionMethod>
+             <names>
+               <shortLabel>enzymatic study</shortLabel>
+               <fullName>enzymatic study</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0415" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionDetectionMethod>
+           <participantIdentificationMethod>
+             <names>
+               <shortLabel>weight autoradiogra</shortLabel>
+               <fullName>molecular weight estimation by autoradiography</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0821" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </participantIdentificationMethod>
+           <attributeList>
+             <attribute name="author-list">Cheeseman IM., Chappie JS., Wilson-Kubalek EM., Desai A.</attribute>
+             <attribute name="journal">Cell (0092-8674)</attribute>
+             <attribute name="publication year">2006</attribute>
+             <attribute name="dataset">Cancer - Interactions investigated in the context of cancer</attribute>
+             <attribute name="contact-email">abdesai@ucsd.edu</attribute>
+             <attribute name="contact-email">icheeseman@ucsd.edu</attribute>
+           </attributeList>
+         </experimentDescription>
+       </experimentList>
+       <interactorList>
+         <interactor id="4">
+           <names>
+             <shortLabel>kntc2_caeel</shortLabel>
+             <fullName>Kinetochore protein ndc-80</fullName>
+             <alias type="gene name" typeAc="MI:0301">ndc-80</alias>
+             <alias type="orf name" typeAc="MI:0306">W01B6.9</alias>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="Q17635" refType="identity" refTypeAc="MI:0356" version="SP_45"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR005550" secondary="Ndc80_HEC"/>
+             <secondaryRef db="uniprotkb" dbAc="MI:0486" id="Q23107" refType="secondary-ac" refTypeAc="MI:0360" version="SP_45"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0005515" secondary="F:protein binding"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0000910"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0040016"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0009792"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0035262"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0040035"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0007626"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0002009"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0030334"/>
+             <secondaryRef db="ensembl" dbAc="MI:0476" id="W01B6.9"/>
+             <secondaryRef db="intact" dbAc="MI:0469" id="EBI-314429" refType="identity" refTypeAc="MI:0356" secondary="kntc2_caeel"/>
+           </xref>
+           <interactorType>
+             <names>
+               <shortLabel>protein</shortLabel>
+               <fullName>protein</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+               <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="identity" refTypeAc="MI:0356"/>
+             </xref>
+           </interactorType>
+           <organism ncbiTaxId="6239">
+             <names>
+               <shortLabel>caeel</shortLabel>
+               <fullName>Caenorhabditis elegans</fullName>
+             </names>
+           </organism>
+           <sequence>MFGDRRKTGGLNLNGRASIAITPTKRFTDYTGSTSVRKTDARPSLSQPRVSLFNTKNSSVAPRDVKSLVSLNGSKIYNFLVEYESSDAPSEQLIMKPRGKNDFIACFELIYQHLSKDYEFPRHERIEEEVSQIFKGLGYPYPLKNSYYQPMGSSHGYPHLLDALSWLIDIIRINSAVSEDTQNILFGDFMEQGKAQEKTLNYAWMTSTFRDYTNDRKAAENPSSSYWDDTKHRLRKYFEQSNEFEDMTKTAASALEMLNYECDEIEADKGNEASLKEEISRIRDDIRKAKDYLEQNLHVKQHMEKELAMVKSEQEEKISENEKVQKMVDDLKNKIELQKQIHGLTGKEVRQMNLDNNKDKEVVLEIQSELDRLSKETWKLKDEDFFKEQKSKFIHLAEQIMKILSGLNIQMNLEPLRAPTNERDLKDYWETLNKIWVPEISRQLHQRKLELETEQSRFSNKAVTAEERIQIQSETLCEAKKNEAREERIRRNERDSWKDARKHIEQRYEQLLNEKEVLLKQMKLDGSLEKEIEDETARMSATGEEHIQKRSQLEAGIRQILDLMVVEIAEIENKKIGFHVQCAGIEKAVL</sequence>
+         </interactor>
+         <interactor id="6">
+           <names>
+             <shortLabel>o76406_caeel</shortLabel>
+             <fullName>Kinetochore null protein 3</fullName>
+             <alias type="gene name" typeAc="MI:0301">knl-3</alias>
+             <alias type="orf name" typeAc="MI:0306">T10B5.6</alias>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="O76406" refType="identity" refTypeAc="MI:0356" version="TrEMBL_26"/>
+             <secondaryRef db="ensembl" dbAc="MI:0476" id="T10B5.6"/>
+             <secondaryRef db="intact" dbAc="MI:0469" id="EBI-1175918" refType="identity" refTypeAc="MI:0356" secondary="o76406_caeel"/>
+           </xref>
+           <interactorType>
+             <names>
+               <shortLabel>protein</shortLabel>
+               <fullName>protein</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+               <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="identity" refTypeAc="MI:0356"/>
+             </xref>
+           </interactorType>
+           <organism ncbiTaxId="6239">
+             <names>
+               <shortLabel>caeel</shortLabel>
+               <fullName>Caenorhabditis elegans</fullName>
+             </names>
+           </organism>
+           <sequence>MSQKSNDTTFSVRAALFASPVGSSSAVPKKKVAREVPRAGPPVFALEHDVSEVTDRNKDGTFLAADACASGPTLKVPDETQGCPETFSVSEHEDDDDVEPMEVDGTIVPSPQRATPTRGVTPCEKSTTPRRRSSRKSMPTPGKRLFFTSKDTTNEDRKADDSTQLELLMAKIPQEMSGYMKKLATDIKEMSQYDAQLARNIDDMEAVFKSRETKLKSAIEIAKDSFISSALPLRLETLDMTLRKEESPNDIVARLHGSFLDKTQDAGNVNTAQKENQQLEDERGMLEEKLESLNKIKREKDEFLAKMRKEEEEALARREEIKQGFERIDALMSKIKPIPIFEF</sequence>
+         </interactor>
+         <interactor id="8">
+           <names>
+             <shortLabel>nuf2_caeel</shortLabel>
+             <fullName>Kinetochore protein Nuf2 homolog</fullName>
+             <alias type="orf name" typeAc="MI:0306">R12B2.4</alias>
+             <alias type="gene name" typeAc="MI:0301">him-10</alias>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="Q21952" refType="identity" refTypeAc="MI:0356" version="SP_44"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0005515" secondary="F:protein binding"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR005549"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0000776"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0008608"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0000910"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0040016"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0009792"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0007276"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0051383"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0002119"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0007626"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0045132"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0000070"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0007052"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0040010"/>
+             <secondaryRef db="ensembl" dbAc="MI:0476" id="R12B2.4"/>
+             <secondaryRef db="intact" dbAc="MI:0469" id="EBI-326288" refType="identity" refTypeAc="MI:0356" secondary="nuf2_caeel"/>
+           </xref>
+           <interactorType>
+             <names>
+               <shortLabel>protein</shortLabel>
+               <fullName>protein</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+               <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="identity" refTypeAc="MI:0356"/>
+             </xref>
+           </interactorType>
+           <organism ncbiTaxId="6239">
+             <names>
+               <shortLabel>caeel</shortLabel>
+               <fullName>Caenorhabditis elegans</fullName>
+             </names>
+           </organism>
+           <sequence>MSNVVLIVYDPRMISKYLGQKLHMGLVADDIIKPTAEIAQQIFANFVRLVLNVSESSLTTLPLSANCDYDPELHKKSIPIIILFQCMKAFIKDNSGNKLDLTMCDLVTPAKHEHRFRKLTSFLVDFLKLHELATPAFNEISEEFSDRKFEMEKIREELLEAEKKKNDLLAKQSIRKRHEHELINEQSNAKAELKNVVNEYTETRQINEELDKQKEEAILHIQALEKEMLTGKKTIEHLNEEVLTSPEQLKQEMEERKRHIEELRDCLESSKKGLQAKLEAREICINSEKNVPVIIEKIHQWTEVREVIIDLIDVESENLRKLKEMEEQLDFMMKEMETAQKRLVEQSETHEQLRIEHTQKSEERQRRIEEITEQIANLKTSQPDVSQEIAKKKQELLALKNAHSETISQITNSCQDAVAKFAKLNAMFKETQKVAFEKNTAAAREMERLKSSLTGRLLSDYTFGSSTIDAGENTENCDPQPNDSSFSVFK</sequence>
+         </interactor>
+         <interactor id="10">
+           <names>
+             <shortLabel>knl_1</shortLabel>
+             <fullName>Caenorhabditis elegans Knl-1 (homologous to yeast Spc105)</fullName>
+           </names>
+           <xref>
+             <primaryRef db="wormbase" dbAc="MI:0487" id="WBGene00002231" refType="primary-reference" refTypeAc="MI:0358"/>
+             <secondaryRef db="uniprotkb" dbAc="MI:0486" id="P34278" refType="primary-reference" refTypeAc="MI:0358"/>
+             <secondaryRef db="uniprotkb" dbAc="MI:0486" id="P53148" refType="see-also" refTypeAc="MI:0361"/>
+             <secondaryRef db="intact" dbAc="MI:0469" id="EBI-1179655" refType="identity" refTypeAc="MI:0356" secondary="knl_1"/>
+           </xref>
+           <interactorType>
+             <names>
+               <shortLabel>protein</shortLabel>
+               <fullName>protein</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+               <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="identity" refTypeAc="MI:0356"/>
+             </xref>
+           </interactorType>
+           <organism ncbiTaxId="6239">
+             <names>
+               <shortLabel>caeel</shortLabel>
+               <fullName>Caenorhabditis elegans</fullName>
+             </names>
+           </organism>
+           <attributeList>
+             <attribute name="no-uniprot-update">An amino acid sequence which is not represented in UniProt</attribute>
+             <attribute name="caution">It is stated that this protein is homologous to yeast Spc105. In WormBase the protein referred to as Knl-1 is a kinetochore protein but it displays little sequence homology with yeast Spc105.</attribute>
+           </attributeList>
+         </interactor>
+         <interactor id="18">
+           <names>
+             <shortLabel>q95qb8_caeel</shortLabel>
+             <fullName>Knl (Kinetochore null) binding protein protein 1</fullName>
+             <alias type="gene name" typeAc="MI:0301">kbp-1</alias>
+             <alias type="orf name" typeAc="MI:0306">R13F6.1</alias>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="Q95QB8" refType="identity" refTypeAc="MI:0356" version="TrEMBL_21"/>
+             <secondaryRef db="ensembl" dbAc="MI:0476" id="R13F6.1"/>
+             <secondaryRef db="intact" dbAc="MI:0469" id="EBI-1175928" refType="identity" refTypeAc="MI:0356" secondary="q95qb8_caeel"/>
+           </xref>
+           <interactorType>
+             <names>
+               <shortLabel>protein</shortLabel>
+               <fullName>protein</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+               <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="identity" refTypeAc="MI:0356"/>
+             </xref>
+           </interactorType>
+           <organism ncbiTaxId="6239">
+             <names>
+               <shortLabel>caeel</shortLabel>
+               <fullName>Caenorhabditis elegans</fullName>
+             </names>
+           </organism>
+           <sequence>MTTPSPQEISTVTLNSLSKEERKKAILALQTKKNEIKLVIDEHQKKLAEFRQSIPDGCCEMFENEKKIRLKHSSTAELLPHLQKVGSSSVDKEKMINNIRQRVEVQVADQETFKSIEERNELLRRENENLKKEVNTVAAELLQEFESYE</sequence>
+         </interactor>
+         <interactor id="20">
+           <names>
+             <shortLabel>q8mnt1_caeel</shortLabel>
+             <fullName>Knl (Kinetochore null) binding protein protein 2</fullName>
+             <alias type="gene name" typeAc="MI:0301">kbp-2</alias>
+             <alias type="orf name" typeAc="MI:0306">F26F4.13</alias>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="Q8MNT1" refType="identity" refTypeAc="MI:0356" version="TrEMBL_19"/>
+             <secondaryRef db="ensembl" dbAc="MI:0476" id="F26F4.13"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR007128"/>
+             <secondaryRef db="intact" dbAc="MI:0469" id="EBI-1175933" refType="identity" refTypeAc="MI:0356" secondary="q8mnt1_caeel"/>
+           </xref>
+           <interactorType>
+             <names>
+               <shortLabel>protein</shortLabel>
+               <fullName>protein</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+               <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="identity" refTypeAc="MI:0356"/>
+             </xref>
+           </interactorType>
+           <organism ncbiTaxId="6239">
+             <names>
+               <shortLabel>caeel</shortLabel>
+               <fullName>Caenorhabditis elegans</fullName>
+             </names>
+           </organism>
+           <sequence>MDKAAVDAVMARMAKSTQQKVLEKTDQMIKENSVYELFDDMEQLTRESEELNKQLGREMGYNPVNAKRDVALHLSETAEKMLTEADAEIEKIEKELKAEEDEIARRKQVLKELATIVESQQQKL</sequence>
+         </interactor>
+         <interactor id="22">
+           <names>
+             <shortLabel>q9n3r7_caeel</shortLabel>
+             <fullName>Human/fission yeast mis (Minichromosome stability) homolog protein 12</fullName>
+             <alias type="gene name" typeAc="MI:0301">mis-12</alias>
+             <alias type="orf name" typeAc="MI:0306">Y47G6A.24</alias>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="Q9N3R7" refType="identity" refTypeAc="MI:0356" version="TrEMBL_23"/>
+             <secondaryRef db="ensembl" dbAc="MI:0476" id="Y47G6A.24"/>
+             <secondaryRef db="intact" dbAc="MI:0469" id="EBI-1175923" refType="identity" refTypeAc="MI:0356" secondary="q9n3r7_caeel"/>
+           </xref>
+           <interactorType>
+             <names>
+               <shortLabel>protein</shortLabel>
+               <fullName>protein</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+               <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="identity" refTypeAc="MI:0356"/>
+             </xref>
+           </interactorType>
+           <organism ncbiTaxId="6239">
+             <names>
+               <shortLabel>caeel</shortLabel>
+               <fullName>Caenorhabditis elegans</fullName>
+             </names>
+           </organism>
+           <sequence>MESELSGISNENQISFFGFSAGSFSDSIFNIYVDAWEEVCSNEFKNSLKKLTDKDRLCLLSFPFSDKTNEKAFKMMKRFCVTNIFRIPASVTLPECKKMLIASAKEHKSLKQVEKEFDEKLEKIRQLRIKLAKRHDELEAVNNAIEVLHVMEKSQEQLISQKRIVPDSPTRMSPV</sequence>
+         </interactor>
+         <interactor id="36">
+           <names>
+             <shortLabel>kbp3_caeel</shortLabel>
+             <fullName>Kinetochore-binding protein 3</fullName>
+             <alias type="gene name" typeAc="MI:0301">kbp-3</alias>
+             <alias type="orf name" typeAc="MI:0306">F26H11.1</alias>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="O45406" refType="identity" refTypeAc="MI:0356" version="SP_35"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0009792"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0040035"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0002119"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0007626"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0040010"/>
+             <secondaryRef db="ensembl" dbAc="MI:0476" id="F26H11.1"/>
+             <secondaryRef db="intact" dbAc="MI:0469" id="EBI-1175834" refType="identity" refTypeAc="MI:0356" secondary="kbp3_caeel"/>
+           </xref>
+           <interactorType>
+             <names>
+               <shortLabel>protein</shortLabel>
+               <fullName>protein</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+               <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="identity" refTypeAc="MI:0356"/>
+             </xref>
+           </interactorType>
+           <organism ncbiTaxId="6239">
+             <names>
+               <shortLabel>caeel</shortLabel>
+               <fullName>Caenorhabditis elegans</fullName>
+             </names>
+           </organism>
+           <sequence>MESLNEYMDKIINRLKAVNEKDELVDEGMRKLQKCQEKIMKTRIDAQKHIDERHEQQSFEQQLLNKNMFETEQLEEKLKRLDDENKIGNEREFNKKLEAISAKWTDDVNLLKTTPNEPNDGNRKKLSNLSNILV</sequence>
+         </interactor>
+         <interactor id="40">
+           <names>
+             <shortLabel>q9n2x3_caeel</shortLabel>
+             <fullName>Knl (Kinetochore null) binding protein protein 4</fullName>
+             <alias type="gene name" typeAc="MI:0301">kbp-4</alias>
+             <alias type="orf name" typeAc="MI:0306">Y92C3B.1</alias>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="Q9N2X3" refType="identity" refTypeAc="MI:0356" version="TrEMBL_24"/>
+             <secondaryRef db="ensembl" dbAc="MI:0476" id="Y92C3B.1"/>
+             <secondaryRef db="intact" dbAc="MI:0469" id="EBI-1175844" refType="identity" refTypeAc="MI:0356" secondary="q9n2x3_caeel"/>
+           </xref>
+           <interactorType>
+             <names>
+               <shortLabel>protein</shortLabel>
+               <fullName>protein</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+               <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="identity" refTypeAc="MI:0356"/>
+             </xref>
+           </interactorType>
+           <organism ncbiTaxId="6239">
+             <names>
+               <shortLabel>caeel</shortLabel>
+               <fullName>Caenorhabditis elegans</fullName>
+             </names>
+           </organism>
+           <sequence>MQKSIDDMINEVLAVKVEKLPKTQDFSDLQEVCASKLQIINKEMDEADRKLEETLEKRKLVEKQLEDLQEQYKVKEFAFSLQKEFQDELKKVAEEIF</sequence>
+         </interactor>
+         <interactor id="67">
+           <names>
+             <shortLabel>nuf2_human</shortLabel>
+             <fullName>Kinetochore protein Nuf2</fullName>
+             <alias type="gene name" typeAc="MI:0301">NUF2</alias>
+             <alias type="gene name synonym" typeAc="MI:0302">CDCA1</alias>
+             <alias type="gene name synonym" typeAc="MI:0302">NUF2R</alias>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="Q9BZD4" refType="identity" refTypeAc="MI:0356" version="SP_41"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0000775" secondary="C:chromosome, pericentric regi"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0007059" secondary="P:chromosome segregation"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR005549" secondary="Nuf2"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0005515"/>
+             <secondaryRef db="ensembl" dbAc="MI:0476" id="ENSG00000143228"/>
+             <secondaryRef db="uniprotkb" dbAc="MI:0486" id="Q8WU69" refType="secondary-ac" refTypeAc="MI:0360" version="SP_41"/>
+             <secondaryRef db="uniprotkb" dbAc="MI:0486" id="Q96HJ4" refType="secondary-ac" refTypeAc="MI:0360" version="SP_41"/>
+             <secondaryRef db="uniprotkb" dbAc="MI:0486" id="Q96Q78" refType="secondary-ac" refTypeAc="MI:0360" version="SP_41"/>
+             <secondaryRef db="intact" dbAc="MI:0469" id="EBI-999865" refType="identity" refTypeAc="MI:0356" secondary="nuf2_human"/>
+           </xref>
+           <interactorType>
+             <names>
+               <shortLabel>protein</shortLabel>
+               <fullName>protein</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+               <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="identity" refTypeAc="MI:0356"/>
+             </xref>
+           </interactorType>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>METLSFPRYNVAEIVIHIRNKILTGADGKNLTKNDLYPNPKPEVLHMIYMRALQIVYGIRLEHFYMMPVNSEVMYPHLMEGFLPFSNLVTHLDSFLPICRVNDFETADILCPKAKRTSRFLSGIINFIHFREACRETYMEFLWQYKSSADKMQQLNAAHQEALMKLERLDSVPVEEQEEFKQLSDGIQELQQSLNQDFHQKTIVLQEGNSQKKSNISEKTKRLNELKLSVVSLKEIQESLKTKIVDSPEKLKNYKEKMKDTVQKLKNARQEVVEKYEIYGDSVDCLPSCQLEVQLYQKKIQDLSDNREKLASILKESLNLEDQIESDESELKKLKTEENSFKRLMIVKKEKLATAQFKINKKHEDVKQYKRTVIEDCNKVQEKRGAVYERVTTINQEIQKIKLGIQQLKDAAEREKLKSQEIFLNLKTALEKYHDGIEKAAEDSYAKIDEKTAELKRKMFKMST</sequence>
+         </interactor>
+         <interactor id="69">
+           <names>
+             <shortLabel>ndc80_human</shortLabel>
+             <fullName>Kinetochore protein NDC80 homolog</fullName>
+             <alias type="gene name" typeAc="MI:0301">NDC80</alias>
+             <alias type="gene name synonym" typeAc="MI:0302">HEC</alias>
+             <alias type="gene name synonym" typeAc="MI:0302">KNTC2</alias>
+             <alias type="gene name synonym" typeAc="MI:0302">HEC1</alias>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="O14777" refType="identity" refTypeAc="MI:0356" version="SP_52"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0000775" secondary="C:chromosome, pericentric regi"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0005634" secondary="C:nucleus"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0005515"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0000070" secondary="P:mitotic sister chromatid seg"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0048015" secondary="P:phosphoinositide-mediated si"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0007051" secondary="P:spindle organization and bio"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR005550" secondary="Ndc80_HEC"/>
+             <secondaryRef db="rcsb pdb" dbAc="MI:0460" id="2IGP"/>
+             <secondaryRef db="ensembl" dbAc="MI:0476" id="ENSG00000080986"/>
+             <secondaryRef db="uniprotkb" dbAc="MI:0486" id="Q6PJX2" refType="secondary-ac" refTypeAc="MI:0360" version="SP_52"/>
+             <secondaryRef db="intact" dbAc="MI:0469" id="EBI-715849" refType="identity" refTypeAc="MI:0356" secondary="ndc80_human"/>
+           </xref>
+           <interactorType>
+             <names>
+               <shortLabel>protein</shortLabel>
+               <fullName>protein</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+               <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="identity" refTypeAc="MI:0356"/>
+             </xref>
+           </interactorType>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MKRSSVSSGGAGRLSMQELRSQDVNKQGLYTPQTKEKPTFGKLSINKPTSERKVSLFGKRTSGHGSRNSQLGIFSSSEKIKDPRPLNDKAFIQQCIRQLCEFLTENGYAHNVSMKSLQAPSVKDFLKIFTFLYGFLCPSYELPDTKFEEEVPRIFKDLGYPFALSKSSMYTVGAPHTWPHIVAALVWLIDCIKIHTAMKESSPLFDDGQPWGEETEDGIMHNKLFLDYTIKCYESFMSGADSFDEMNAELQSKLKDLFNVDAFKLESLEAKNRALNEQIARLEQEREKEPNRLESLRKLKASLQGDVQKYQAYMSNLESHSAILDQKLNGLNEEIARVELECETIKQENTRLQNIIDNQKYSVADIERINHERNELQQTINKLTKDLEAEQQKLWNEELKYARGKEAIETQLAEYHKLARKLKLIPKGAENSKGYDFEIKFNPEAGANCLVKYRAQVYVPLKELLNETEEEINKALNKKMGLEDTLEQLNAMITESKRSVRTLKEEVQKLDDLYQQKIKEAEEEDEKCASELESLEKHKHLLESTVNQGLSEAMNELDAVQREYQLVVQTTTEERRKVGNNLQRLLEMVATHVGSVEKHLEEQIAKVDREYEECMSEDLSENIKEIRDKYEKKATLIKSSEE</sequence>
+         </interactor>
+         <interactor id="83">
+           <names>
+             <shortLabel>ipl1_yeast</shortLabel>
+             <fullName>Spindle assembly checkpoint kinase</fullName>
+             <alias type="gene name" typeAc="MI:0301">IPL1</alias>
+             <alias type="locus name" typeAc="MI:0305">YPL209C</alias>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="P38991" refType="identity" refTypeAc="MI:0356" version="SP_78"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0004672" secondary="F:protein kinase activity"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0008608" secondary="P:attachment of spindle microt"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0000778" secondary="C:condensed nuclear chromosome"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0051233" secondary="C:spindle midzone"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0005515" secondary="F:protein binding"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0051228" secondary="P:mitotic spindle disassembly"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR000719" secondary="Prot_kinase"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR008271" secondary="Ser_thr_pkin_AS"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR002290" secondary="Ser_thr_pkinase"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR001245" secondary="Tyr_pkinase"/>
+             <secondaryRef db="sgd" dbAc="MI:0484" id="S000006130" secondary="IPL1"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0005828" secondary="C:kinetochore microtubule"/>
+             <secondaryRef db="cygd" dbAc="MI:0464" id="YPL209c"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0045144"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0032465"/>
+             <secondaryRef db="ensembl" dbAc="MI:0476" id="YPL209C"/>
+             <secondaryRef db="intact" dbAc="MI:0469" id="EBI-9319" refType="identity" refTypeAc="MI:0356" secondary="ipl1_yeast"/>
+           </xref>
+           <interactorType>
+             <names>
+               <shortLabel>protein</shortLabel>
+               <fullName>protein</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+               <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="identity" refTypeAc="MI:0356"/>
+             </xref>
+           </interactorType>
+           <organism ncbiTaxId="4932">
+             <names>
+               <shortLabel>yeast</shortLabel>
+               <fullName>Saccharomyces cerevisiae</fullName>
+             </names>
+           </organism>
+           <sequence>MQRNSLVNIKLNANSPSKKTTTRPNTSRINKPWRISHSPQQRNPNSKIPSPVREKLNRLPVNNKKFLDMESSKIPSPIRKATSSKMIHENKKLPKFKSLSLDDFELGKKLGKGKFGKVYCVRHRSTGYICALKVMEKEEIIKYNLQKQFRREVEIQTSLNHPNLTKSYGYFHDEKRVYLLMEYLVNGEMYKLLRLHGPFNDILASDYIYQIANALDYMHKKNIIHRDIKPENILIGFNNVIKLTDFGWSIINPPENRRKTVCGTIDYLSPEMVESREYDHTIDAWALGVLAFELLTGAPPFEEEMKDTTYKRIAALDIKMPSNISQDAQDLILKLLKYDPKDRMRLGDVKMHPWILRNKPFWENKRL</sequence>
+         </interactor>
+       </interactorList>
+       <interactionList>
+         <interaction id="1">
+           <names>
+             <shortLabel>him_10-knl_1</shortLabel>
+             <fullName>Gel filtration of C. elegans embryo extract to characterize the KMN network (50 mM NaCl)</fullName>
+           </names>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-1176356" refType="identity" refTypeAc="MI:0356" secondary="him_10-knl_1"/>
+           </xref>
+           <experimentList>
+             <experimentRef>2</experimentRef>
+           </experimentList>
+           <participantList>
+             <participant id="3">
+               <interactorRef>4</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+             </participant>
+             <participant id="5">
+               <interactorRef>6</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+             </participant>
+             <participant id="7">
+               <interactorRef>8</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+             </participant>
+             <participant id="9">
+               <interactorRef>10</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+             </participant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>physical interaction</shortLabel>
+               <fullName>physical interaction</fullName>
+               <alias>aggregation</alias>
+               <alias>aggregation</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionType>
+           <attributeList>
+             <attribute name="figure legend">S2</attribute>
+             <attribute name="comment">This interaction occured under low salt (50 mM) conditions. Under high salt conditions (750 mM) HIM-10 did not co-fractionate with these proteins.</attribute>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction id="11">
+           <names>
+             <shortLabel>knl_1-knl_3</shortLabel>
+             <fullName>Gel filtration of C. elegans embryo extract to characterize the KMN network (750 mM NaCl)</fullName>
+           </names>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-1176376" refType="identity" refTypeAc="MI:0356" secondary="knl_1-knl_3"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0031262" refType="component" refTypeAc="MI:0354" secondary="Ndc80 complex"/>
+           </xref>
+           <experimentList>
+             <experimentRef>2</experimentRef>
+           </experimentList>
+           <participantList>
+             <participant id="12">
+               <interactorRef>4</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+             </participant>
+             <participant id="13">
+               <interactorRef>6</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+             </participant>
+             <participant id="14">
+               <interactorRef>10</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+             </participant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>physical interaction</shortLabel>
+               <fullName>physical interaction</fullName>
+               <alias>aggregation</alias>
+               <alias>aggregation</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionType>
+           <attributeList>
+             <attribute name="figure legend">S2</attribute>
+             <attribute name="comment">This interaction occured under high salt conditions (750 mM) and unlike under low salt conditions (50 mM) HIM-10 did not co-fractionate with these proteins.</attribute>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction id="15">
+           <names>
+             <shortLabel>kbp_1-kbp_2-3</shortLabel>
+             <fullName>Expression and purification of the MIS-12 complex</fullName>
+           </names>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-1175914" refType="identity" refTypeAc="MI:0356" secondary="kbp_1-kbp_2-3"/>
+           </xref>
+           <experimentList>
+             <experimentRef>16</experimentRef>
+           </experimentList>
+           <participantList>
+             <participant id="17">
+               <interactorRef>18</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="19">
+               <interactorRef>20</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="21">
+               <interactorRef>22</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <featureList>
+                 <feature id="23">
+                   <names>
+                     <shortLabel>region</shortLabel>
+                   </names>
+                   <featureType>
+                     <names>
+                       <shortLabel>flag tag</shortLabel>
+                       <fullName>flag tag</fullName>
+                       <alias>DYKDDDDKV epitope tag</alias>
+                       <alias>FLAG</alias>
+                       <alias>FLAG-tagged</alias>
+                       <alias>FLAG</alias>
+                       <alias>FLAG-tagged</alias>
+                       <alias>DYKDDDDKV epitope tag</alias>
+                     </names>
+                     <xref>
+                       <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0518" refType="identity" refTypeAc="MI:0356"/>
+                       <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                     </xref>
+                   </featureType>
+                   <featureRangeList>
+                     <featureRange>
+                       <startStatus>
+                         <names>
+                           <shortLabel>undetermined</shortLabel>
+                           <fullName>undetermined sequence position</fullName>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+                           <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                         </xref>
+                       </startStatus>
+                       <begin position="0"/>
+                       <endStatus>
+                         <names>
+                           <shortLabel>undetermined</shortLabel>
+                           <fullName>undetermined sequence position</fullName>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+                           <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                         </xref>
+                       </endStatus>
+                       <end position="0"/>
+                     </featureRange>
+                   </featureRangeList>
+                 </feature>
+               </featureList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="24">
+               <interactorRef>6</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <featureList>
+                 <feature id="25">
+                   <names>
+                     <shortLabel>region</shortLabel>
+                   </names>
+                   <featureType>
+                     <names>
+                       <shortLabel>his tag</shortLabel>
+                       <fullName>his tag</fullName>
+                       <alias>Histidine-tag</alias>
+                       <alias>6-His-tag</alias>
+                       <alias>Hexa-His-tag</alias>
+                       <alias>6-His-tagged</alias>
+                       <alias>Hexa-His-tagged</alias>
+                       <alias>Histidine-tagged</alias>
+                       <alias>Histidine-tag</alias>
+                       <alias>Hexa-His-tag</alias>
+                       <alias>6-His-tag</alias>
+                     </names>
+                     <xref>
+                       <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0521" refType="identity" refTypeAc="MI:0356"/>
+                       <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                     </xref>
+                   </featureType>
+                   <featureRangeList>
+                     <featureRange>
+                       <startStatus>
+                         <names>
+                           <shortLabel>undetermined</shortLabel>
+                           <fullName>undetermined sequence position</fullName>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+                           <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                         </xref>
+                       </startStatus>
+                       <begin position="0"/>
+                       <endStatus>
+                         <names>
+                           <shortLabel>undetermined</shortLabel>
+                           <fullName>undetermined sequence position</fullName>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+                           <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                         </xref>
+                       </endStatus>
+                       <end position="0"/>
+                     </featureRange>
+                   </featureRangeList>
+                 </feature>
+               </featureList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>physical interaction</shortLabel>
+               <fullName>physical interaction</fullName>
+               <alias>aggregation</alias>
+               <alias>aggregation</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionType>
+           <attributeList>
+             <attribute name="figure legend">S 1</attribute>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction id="26">
+           <names>
+             <shortLabel>kbp_1-kbp_2-1</shortLabel>
+             <fullName>Expression and purification of the KNL-1/MIS-12 complex</fullName>
+           </names>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-1176016" refType="identity" refTypeAc="MI:0356" secondary="kbp_1-kbp_2-1"/>
+           </xref>
+           <experimentList>
+             <experimentRef>16</experimentRef>
+           </experimentList>
+           <participantList>
+             <participant id="27">
+               <interactorRef>18</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="28">
+               <interactorRef>20</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="29">
+               <interactorRef>22</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <featureList>
+                 <feature id="30">
+                   <names>
+                     <shortLabel>region</shortLabel>
+                   </names>
+                   <featureType>
+                     <names>
+                       <shortLabel>flag tag</shortLabel>
+                       <fullName>flag tag</fullName>
+                       <alias>DYKDDDDKV epitope tag</alias>
+                       <alias>FLAG</alias>
+                       <alias>FLAG-tagged</alias>
+                       <alias>FLAG</alias>
+                       <alias>FLAG-tagged</alias>
+                       <alias>DYKDDDDKV epitope tag</alias>
+                     </names>
+                     <xref>
+                       <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0518" refType="identity" refTypeAc="MI:0356"/>
+                       <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                     </xref>
+                   </featureType>
+                   <featureRangeList>
+                     <featureRange>
+                       <startStatus>
+                         <names>
+                           <shortLabel>undetermined</shortLabel>
+                           <fullName>undetermined sequence position</fullName>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+                           <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                         </xref>
+                       </startStatus>
+                       <begin position="0"/>
+                       <endStatus>
+                         <names>
+                           <shortLabel>undetermined</shortLabel>
+                           <fullName>undetermined sequence position</fullName>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+                           <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                         </xref>
+                       </endStatus>
+                       <end position="0"/>
+                     </featureRange>
+                   </featureRangeList>
+                 </feature>
+               </featureList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="31">
+               <interactorRef>6</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="32">
+               <interactorRef>10</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>physical interaction</shortLabel>
+               <fullName>physical interaction</fullName>
+               <alias>aggregation</alias>
+               <alias>aggregation</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionType>
+           <attributeList>
+             <attribute name="figure legend">S 1</attribute>
+             <attribute name="comment">MIS-12 is reduced relative to other subunits in the purification with KNL-1-6XHis.</attribute>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction id="33">
+           <names>
+             <shortLabel>him_10-kbp_3</shortLabel>
+             <fullName>Expression and purification of the NCD-80 complex</fullName>
+           </names>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-1175852" refType="identity" refTypeAc="MI:0356" secondary="him_10-kbp_3"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0031262" refType="component" refTypeAc="MI:0354" secondary="Ndc80 complex"/>
+           </xref>
+           <experimentList>
+             <experimentRef>34</experimentRef>
+           </experimentList>
+           <participantList>
+             <participant id="35">
+               <interactorRef>36</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="37">
+               <interactorRef>8</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="38">
+               <interactorRef>4</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="39">
+               <interactorRef>40</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <featureList>
+                 <feature id="41">
+                   <names>
+                     <shortLabel>region</shortLabel>
+                   </names>
+                   <featureType>
+                     <names>
+                       <shortLabel>his tag</shortLabel>
+                       <fullName>his tag</fullName>
+                       <alias>Histidine-tag</alias>
+                       <alias>6-His-tag</alias>
+                       <alias>Hexa-His-tag</alias>
+                       <alias>6-His-tagged</alias>
+                       <alias>Hexa-His-tagged</alias>
+                       <alias>Histidine-tagged</alias>
+                       <alias>Histidine-tag</alias>
+                       <alias>Hexa-His-tag</alias>
+                       <alias>6-His-tag</alias>
+                     </names>
+                     <xref>
+                       <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0521" refType="identity" refTypeAc="MI:0356"/>
+                       <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                     </xref>
+                   </featureType>
+                   <featureRangeList>
+                     <featureRange>
+                       <startStatus>
+                         <names>
+                           <shortLabel>undetermined</shortLabel>
+                           <fullName>undetermined sequence position</fullName>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+                           <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                         </xref>
+                       </startStatus>
+                       <begin position="0"/>
+                       <endStatus>
+                         <names>
+                           <shortLabel>undetermined</shortLabel>
+                           <fullName>undetermined sequence position</fullName>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+                           <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                         </xref>
+                       </endStatus>
+                       <end position="0"/>
+                     </featureRange>
+                   </featureRangeList>
+                 </feature>
+               </featureList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>physical interaction</shortLabel>
+               <fullName>physical interaction</fullName>
+               <alias>aggregation</alias>
+               <alias>aggregation</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionType>
+           <attributeList>
+             <attribute name="figure legend">1 D</attribute>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction id="42">
+           <names>
+             <shortLabel>kbp_1-kbp_2-2</shortLabel>
+             <fullName>Expression and purification of the KNL-1/MIS-12 complex</fullName>
+           </names>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-1175966" refType="identity" refTypeAc="MI:0356" secondary="kbp_1-kbp_2-2"/>
+           </xref>
+           <experimentList>
+             <experimentRef>34</experimentRef>
+           </experimentList>
+           <participantList>
+             <participant id="43">
+               <interactorRef>20</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="44">
+               <interactorRef>22</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <featureList>
+                 <feature id="45">
+                   <names>
+                     <shortLabel>region</shortLabel>
+                   </names>
+                   <featureType>
+                     <names>
+                       <shortLabel>flag tag</shortLabel>
+                       <fullName>flag tag</fullName>
+                       <alias>DYKDDDDKV epitope tag</alias>
+                       <alias>FLAG</alias>
+                       <alias>FLAG-tagged</alias>
+                       <alias>FLAG</alias>
+                       <alias>FLAG-tagged</alias>
+                       <alias>DYKDDDDKV epitope tag</alias>
+                     </names>
+                     <xref>
+                       <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0518" refType="identity" refTypeAc="MI:0356"/>
+                       <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                     </xref>
+                   </featureType>
+                   <featureRangeList>
+                     <featureRange>
+                       <startStatus>
+                         <names>
+                           <shortLabel>undetermined</shortLabel>
+                           <fullName>undetermined sequence position</fullName>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+                           <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                         </xref>
+                       </startStatus>
+                       <begin position="0"/>
+                       <endStatus>
+                         <names>
+                           <shortLabel>undetermined</shortLabel>
+                           <fullName>undetermined sequence position</fullName>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+                           <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                         </xref>
+                       </endStatus>
+                       <end position="0"/>
+                     </featureRange>
+                   </featureRangeList>
+                 </feature>
+               </featureList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="46">
+               <interactorRef>6</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="47">
+               <interactorRef>18</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="48">
+               <interactorRef>10</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>physical interaction</shortLabel>
+               <fullName>physical interaction</fullName>
+               <alias>aggregation</alias>
+               <alias>aggregation</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionType>
+           <attributeList>
+             <attribute name="figure legend">1 H</attribute>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction id="49">
+           <names>
+             <shortLabel>kbp_1-kbp_2</shortLabel>
+             <fullName>Expression and purification of the MIS-12 complex</fullName>
+           </names>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-1179641" refType="identity" refTypeAc="MI:0356" secondary="kbp_1-kbp_2"/>
+           </xref>
+           <experimentList>
+             <experimentRef>34</experimentRef>
+           </experimentList>
+           <participantList>
+             <participant id="50">
+               <interactorRef>20</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="51">
+               <interactorRef>22</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <featureList>
+                 <feature id="52">
+                   <names>
+                     <shortLabel>region-x</shortLabel>
+                   </names>
+                   <featureType>
+                     <names>
+                       <shortLabel>flag tag</shortLabel>
+                       <fullName>flag tag</fullName>
+                       <alias>DYKDDDDKV epitope tag</alias>
+                       <alias>FLAG</alias>
+                       <alias>FLAG-tagged</alias>
+                       <alias>FLAG</alias>
+                       <alias>FLAG-tagged</alias>
+                       <alias>DYKDDDDKV epitope tag</alias>
+                     </names>
+                     <xref>
+                       <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0518" refType="identity" refTypeAc="MI:0356"/>
+                       <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                     </xref>
+                   </featureType>
+                   <featureRangeList>
+                     <featureRange>
+                       <startStatus>
+                         <names>
+                           <shortLabel>undetermined</shortLabel>
+                           <fullName>undetermined sequence position</fullName>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+                           <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                         </xref>
+                       </startStatus>
+                       <begin position="0"/>
+                       <endStatus>
+                         <names>
+                           <shortLabel>undetermined</shortLabel>
+                           <fullName>undetermined sequence position</fullName>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+                           <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                         </xref>
+                       </endStatus>
+                       <end position="0"/>
+                     </featureRange>
+                   </featureRangeList>
+                 </feature>
+               </featureList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="53">
+               <interactorRef>6</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="54">
+               <interactorRef>18</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>physical interaction</shortLabel>
+               <fullName>physical interaction</fullName>
+               <alias>aggregation</alias>
+               <alias>aggregation</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionType>
+           <attributeList>
+             <attribute name="figure legend">1 F</attribute>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction id="55">
+           <names>
+             <shortLabel>him_10-kbp_2</shortLabel>
+             <fullName>NDC-80 and KNL-1/MIS-12 complexes showed similar fractionation profiles</fullName>
+           </names>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-1179918" refType="identity" refTypeAc="MI:0356" secondary="him_10-kbp_2"/>
+           </xref>
+           <experimentList>
+             <experimentRef>34</experimentRef>
+           </experimentList>
+           <participantList>
+             <participant id="56">
+               <interactorRef>8</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="57">
+               <interactorRef>22</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="58">
+               <interactorRef>20</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="59">
+               <interactorRef>4</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="60">
+               <interactorRef>6</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="61">
+               <interactorRef>40</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="62">
+               <interactorRef>18</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="63">
+               <interactorRef>10</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>physical interaction</shortLabel>
+               <fullName>physical interaction</fullName>
+               <alias>aggregation</alias>
+               <alias>aggregation</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionType>
+           <attributeList>
+             <attribute name="figure legend">2 B</attribute>
+             <attribute name="comment">Densitometry revealed MIS-12 was present at a lower stoichiometry.</attribute>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction id="64">
+           <names>
+             <shortLabel>cdca1-kntc2</shortLabel>
+             <fullName>Copurification of the two subunits of the human Ndc80 complex: Hec1/hNdc80 and hNuf2</fullName>
+           </names>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-1176296" refType="identity" refTypeAc="MI:0356" secondary="cdca1-kntc2"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0031262" refType="component" refTypeAc="MI:0354" secondary="Ndc80 complex"/>
+           </xref>
+           <experimentList>
+             <experimentRef>65</experimentRef>
+           </experimentList>
+           <participantList>
+             <participant id="66">
+               <interactorRef>67</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>prey</shortLabel>
+                     <fullName>prey</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0498" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="9606">
+                   <names>
+                     <shortLabel>human</shortLabel>
+                     <fullName>Homo sapiens</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="68">
+               <interactorRef>69</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>bait</shortLabel>
+                     <fullName>bait</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0496" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <featureList>
+                 <feature id="70">
+                   <names>
+                     <shortLabel>region</shortLabel>
+                   </names>
+                   <featureType>
+                     <names>
+                       <shortLabel>his tag</shortLabel>
+                       <fullName>his tag</fullName>
+                       <alias>Histidine-tag</alias>
+                       <alias>6-His-tag</alias>
+                       <alias>Hexa-His-tag</alias>
+                       <alias>6-His-tagged</alias>
+                       <alias>Hexa-His-tagged</alias>
+                       <alias>Histidine-tagged</alias>
+                       <alias>Histidine-tag</alias>
+                       <alias>Hexa-His-tag</alias>
+                       <alias>6-His-tag</alias>
+                     </names>
+                     <xref>
+                       <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0521" refType="identity" refTypeAc="MI:0356"/>
+                       <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                     </xref>
+                   </featureType>
+                   <featureRangeList>
+                     <featureRange>
+                       <startStatus>
+                         <names>
+                           <shortLabel>undetermined</shortLabel>
+                           <fullName>undetermined sequence position</fullName>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+                           <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                         </xref>
+                       </startStatus>
+                       <begin position="0"/>
+                       <endStatus>
+                         <names>
+                           <shortLabel>undetermined</shortLabel>
+                           <fullName>undetermined sequence position</fullName>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+                           <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                         </xref>
+                       </endStatus>
+                       <end position="0"/>
+                     </featureRange>
+                   </featureRangeList>
+                 </feature>
+               </featureList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="9606">
+                   <names>
+                     <shortLabel>human</shortLabel>
+                     <fullName>Homo sapiens</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>physical interaction</shortLabel>
+               <fullName>physical interaction</fullName>
+               <alias>aggregation</alias>
+               <alias>aggregation</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionType>
+           <attributeList>
+             <attribute name="figure legend">6 G</attribute>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction id="71">
+           <names>
+             <shortLabel>him_10-ndc_80</shortLabel>
+             <fullName>Copurification of the two subunits of the NDC-80 complex head: Him-10 and Ndc-80</fullName>
+           </names>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-1176210" refType="identity" refTypeAc="MI:0356" secondary="him_10-ndc_80"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0031262" refType="component" refTypeAc="MI:0354" secondary="Ndc80 complex"/>
+           </xref>
+           <experimentList>
+             <experimentRef>65</experimentRef>
+           </experimentList>
+           <participantList>
+             <participant id="72">
+               <interactorRef>4</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="73">
+               <interactorRef>8</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>physical interaction</shortLabel>
+               <fullName>physical interaction</fullName>
+               <alias>aggregation</alias>
+               <alias>aggregation</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionType>
+           <attributeList>
+             <attribute name="figure legend">6 A</attribute>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction id="74">
+           <names>
+             <shortLabel>him_10-ndc_80-1</shortLabel>
+             <fullName>NDC-80 and HIM-10 showed similar fractionation profiles</fullName>
+           </names>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-1179909" refType="identity" refTypeAc="MI:0356" secondary="him_10-ndc_80-1"/>
+           </xref>
+           <experimentList>
+             <experimentRef>75</experimentRef>
+           </experimentList>
+           <participantList>
+             <participant id="76">
+               <interactorRef>8</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+             </participant>
+             <participant id="77">
+               <interactorRef>4</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>physical interaction</shortLabel>
+               <fullName>physical interaction</fullName>
+               <alias>aggregation</alias>
+               <alias>aggregation</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionType>
+           <attributeList>
+             <attribute name="figure legend">2 A gels 1, 5, 6, 7</attribute>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction id="78">
+           <names>
+             <shortLabel>ipl1-ndc_80</shortLabel>
+             <fullName>Ipl1/Aurora B phosphorylates NDc-80</fullName>
+           </names>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-1176131" refType="identity" refTypeAc="MI:0356" secondary="ipl1-ndc_80"/>
+           </xref>
+           <experimentList>
+             <experimentRef>79</experimentRef>
+           </experimentList>
+           <participantList>
+             <participant id="80">
+               <interactorRef>4</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>enzyme target</shortLabel>
+                   <fullName>enzyme target</fullName>
+                   <alias>substrate</alias>
+                   <alias>substrate</alias>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0502" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>unspecified role</shortLabel>
+                     <fullName>unspecified role</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <featureList>
+                 <feature id="81">
+                   <names>
+                     <shortLabel>thr8ala-ser18ala</shortLabel>
+                   </names>
+                   <featureType>
+                     <names>
+                       <shortLabel>mutation disrupting</shortLabel>
+                       <fullName>mutation disrupting interaction</fullName>
+                     </names>
+                     <xref>
+                       <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0573" refType="identity" refTypeAc="MI:0356"/>
+                       <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                     </xref>
+                   </featureType>
+                   <featureDetectionMethod>
+                     <names>
+                       <shortLabel>alanine scanning</shortLabel>
+                       <fullName>alanine scanning</fullName>
+                     </names>
+                     <xref>
+                       <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0005" refType="identity" refTypeAc="MI:0356"/>
+                       <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                     </xref>
+                   </featureDetectionMethod>
+                   <featureRangeList>
+                     <featureRange>
+                       <startStatus>
+                         <names>
+                           <shortLabel>certain</shortLabel>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0335" refType="identity" refTypeAc="MI:0356"/>
+                         </xref>
+                       </startStatus>
+                       <begin position="8"/>
+                       <endStatus>
+                         <names>
+                           <shortLabel>certain</shortLabel>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0335" refType="identity" refTypeAc="MI:0356"/>
+                         </xref>
+                       </endStatus>
+                       <end position="8"/>
+                     </featureRange>
+                     <featureRange>
+                       <startStatus>
+                         <names>
+                           <shortLabel>certain</shortLabel>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0335" refType="identity" refTypeAc="MI:0356"/>
+                         </xref>
+                       </startStatus>
+                       <begin position="18"/>
+                       <endStatus>
+                         <names>
+                           <shortLabel>certain</shortLabel>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0335" refType="identity" refTypeAc="MI:0356"/>
+                         </xref>
+                       </endStatus>
+                       <end position="18"/>
+                     </featureRange>
+                     <featureRange>
+                       <startStatus>
+                         <names>
+                           <shortLabel>certain</shortLabel>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0335" refType="identity" refTypeAc="MI:0356"/>
+                         </xref>
+                       </startStatus>
+                       <begin position="44"/>
+                       <endStatus>
+                         <names>
+                           <shortLabel>certain</shortLabel>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0335" refType="identity" refTypeAc="MI:0356"/>
+                         </xref>
+                       </endStatus>
+                       <end position="44"/>
+                     </featureRange>
+                     <featureRange>
+                       <startStatus>
+                         <names>
+                           <shortLabel>certain</shortLabel>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0335" refType="identity" refTypeAc="MI:0356"/>
+                         </xref>
+                       </startStatus>
+                       <begin position="51"/>
+                       <endStatus>
+                         <names>
+                           <shortLabel>certain</shortLabel>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0335" refType="identity" refTypeAc="MI:0356"/>
+                         </xref>
+                       </endStatus>
+                       <end position="51"/>
+                     </featureRange>
+                   </featureRangeList>
+                 </feature>
+               </featureList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="6239">
+                   <names>
+                     <shortLabel>caeel</shortLabel>
+                     <fullName>Caenorhabditis elegans</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+             <participant id="82">
+               <interactorRef>83</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>enzyme</shortLabel>
+                   <fullName>enzyme</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0501" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>unspecified role</shortLabel>
+                     <fullName>unspecified role</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <hostOrganismList>
+                 <hostOrganism ncbiTaxId="4932">
+                   <names>
+                     <shortLabel>yeast</shortLabel>
+                     <fullName>Saccharomyces cerevisiae</fullName>
+                   </names>
+                 </hostOrganism>
+               </hostOrganismList>
+             </participant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>physical interaction</shortLabel>
+               <fullName>physical interaction</fullName>
+               <alias>aggregation</alias>
+               <alias>aggregation</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionType>
+           <attributeList>
+             <attribute name="figure legend">7 B</attribute>
+             <attribute name="comment">NDC-80 was phosphorylated by Ipl1 when present as a constituent in the NDC-80 complex as well as when a constituent of the head dimer.</attribute>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+       </interactionList>
+     </entry>
+   </entrySet>
