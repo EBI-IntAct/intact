@@ -26,6 +26,14 @@ import java.util.List;
 
 /**
  * Download interactions from PSICQUIC, using the universal client.
+ *
+ * @see org.hupo.psi.mi.psicquic.wsclient.UniversalPsicquicClient
+ * @see org.hupo.psi.mi.psicquic.wsclient.UniversalPsicquicClient#getByQuery(String, int, int)
+ * @see psidev.psi.mi.tab.model.BinaryInteraction
+ * @see psidev.psi.mi.tab.model.Interactor
+ * @see psidev.psi.mi.tab.model.Interactor#getIdentifiers()
+ * @see psidev.psi.mi.tab.model.CrossReference
+
  */
 public class PsicquicQuery {
 

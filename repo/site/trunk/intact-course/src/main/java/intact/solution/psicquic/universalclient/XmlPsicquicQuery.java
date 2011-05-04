@@ -25,6 +25,11 @@ import psidev.psi.mi.xml.model.Participant;
 
 /**
  * Download interactions from PSICQUIC, using the universal client.
+ *
+ * @see org.hupo.psi.mi.psicquic.wsclient.XmlPsicquicClient
+ * @see org.hupo.psi.mi.psicquic.wsclient.XmlPsicquicClient#getByQuery(String, int, int)
+ * @see org.hupo.psi.mi.psicquic.wsclient.XmlSearchResult
+ * @see psidev.psi.mi.xml.model.EntrySet
  */
 public class XmlPsicquicQuery {
 
