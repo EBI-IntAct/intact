@@ -30,6 +30,11 @@ import java.util.List;
 /**
  * Read a MITAB file using the method of your choice and count how many interaction are original experimental
  * binary interaction and how many have been generated using the spoke model.
+ *
+ * @see uk.ac.ebi.intact.psimitab.IntactPsimiTabReader
+ * @see uk.ac.ebi.intact.psimitab.IntactPsimiTabReader#iterate(java.io.File)
+ * @see uk.ac.ebi.intact.psimitab.IntactBinaryInteraction
+ * @see uk.ac.ebi.intact.psimitab.IntactBinaryInteraction#getExpansionMethods()
  */
 public class FilterSpokeInteractions {
 

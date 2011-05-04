@@ -26,6 +26,10 @@ import java.util.Iterator;
 
 /**
  * Iterate through a MITAB file and count the interactions.
+ *
+ * @see psidev.psi.mi.tab.PsimiTabReader
+ * @see psidev.psi.mi.tab.PsimiTabReader#iterate(java.io.File)
+ * @see psidev.psi.mi.tab.model.BinaryInteraction
  */
 public class IterateThroughFile {
     public static void main( String[] args ) throws ConverterException, IOException {

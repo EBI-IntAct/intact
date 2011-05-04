@@ -29,8 +29,14 @@ import java.util.Iterator;
 
 /**
  * Read a Standard MITAB file and write it back to an other file.
+ *
+ * @see psidev.psi.mi.tab.PsimiTabReader
+ * @see psidev.psi.mi.tab.model.BinaryInteraction
+ * @see psidev.psi.mi.tab.PsimiTabWriter
+ * @see psidev.psi.mi.tab.PsimiTabWriter#write(java.util.Collection, java.io.Writer)
  */
 public class WriteToFile {
+
     public static void main( String[] args ) throws ConverterException, IOException {
         // Prepare the input MITAB file
         File intputFile = new File( ReadWholeFile.class.getResource( "/samples/mitab/18189341.txt" ).getFile() );

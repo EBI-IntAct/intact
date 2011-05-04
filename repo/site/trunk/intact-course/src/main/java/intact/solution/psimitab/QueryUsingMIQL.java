@@ -25,7 +25,7 @@ import psidev.psi.mi.tab.model.BinaryInteraction;
 import java.io.File;
 
 /**
- * Now that we have built an index, let�s see how fast can we get data.
+ * Now that we have built an index, let's see how to query it.
  * <p/>
  * Try to query using the following criteria: interactor identifier, species, interaction type.
  */
