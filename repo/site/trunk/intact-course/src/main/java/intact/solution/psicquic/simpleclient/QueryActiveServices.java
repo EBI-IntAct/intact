@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package intact.solution.psicquic.simpleclient;
 
 import org.hupo.psi.mi.psicquic.registry.ServiceType;
