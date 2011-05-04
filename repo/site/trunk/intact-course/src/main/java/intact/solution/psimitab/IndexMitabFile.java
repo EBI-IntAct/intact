@@ -31,7 +31,7 @@ import java.io.InputStream;
 public class IndexMitabFile {
     public static void main( String[] args ) throws Exception {
 
-        // Load a PSI-MITAB2.5 file stored locally
+        // Load a MITAB2.5 file stored locally
         InputStream psimitabFileStream = IndexMitabFile.class.getResourceAsStream("/samples/mitab/17129783.txt");
 
         PsimiIndexWriter indexWriter = new PsimiIndexWriter(new DefaultDocumentBuilder());

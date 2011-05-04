@@ -29,7 +29,7 @@ import java.io.File;
  * <p/>
  * Try to query using the following criteria: interactor identifier, species, interaction type.
  */
-public class QueryUsingMIQL {
+public class QueryLocalIndexUsingMIQL {
     public static void main( String[] args ) throws Exception {
 
         // Prepare the local index
