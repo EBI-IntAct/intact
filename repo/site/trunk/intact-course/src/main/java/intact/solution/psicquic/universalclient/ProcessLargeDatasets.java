@@ -28,6 +28,15 @@ import java.util.Collection;
  * <p/>
  * The aim here is to prevent the following exception from being thrown:
  * <pre>java.lang.OutOfMemoryError: Java heap space</pre>
+ *
+ * @see org.hupo.psi.mi.psicquic.wsclient.UniversalPsicquicClient
+ * @see org.hupo.psi.mi.psicquic.wsclient.UniversalPsicquicClient#getByQuery(String, int, int)
+ * @see psidev.psi.mi.search.SearchResult
+ * @see psidev.psi.mi.search.SearchResult#getTotalCount()
+ * @see psidev.psi.mi.tab.model.BinaryInteraction
+ * @see psidev.psi.mi.tab.model.Interactor
+ * @see psidev.psi.mi.tab.model.Interactor#getIdentifiers()
+ * @see psidev.psi.mi.tab.model.CrossReference
  */
 public class ProcessLargeDatasets {
     public static void main( String[] args ) throws Exception {
