@@ -24,6 +24,9 @@ import java.util.List;
 
 /**
  * List all the available Services using the PSICQUIC Registry.
+ *
+ * @see org.hupo.psi.mi.psicquic.registry.client.registry.DefaultPsicquicRegistryClient
+ * @see org.hupo.psi.mi.psicquic.registry.client.registry.DefaultPsicquicRegistryClient#listServices()
  */
 public class ListingAllServices {
 
