@@ -28,6 +28,10 @@ import java.io.InputStreamReader;
 
 /**
  * Querying a PSICQUIC service and reading the results using the MITAB library.
+ *
+ * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient
+ * @see psidev.psi.mi.tab.PsimiTabReader
+ * @see psidev.psi.mi.tab.PsimiTabReader#readLine(String)
  */
 public class ClientAndMitabBetterMemory {
 

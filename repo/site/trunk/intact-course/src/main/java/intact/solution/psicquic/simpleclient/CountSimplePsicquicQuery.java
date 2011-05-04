@@ -18,13 +18,11 @@ package intact.solution.psicquic.simpleclient;
 
 import org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 /**
  * Download interactions from PSICQUIC, using the simple client.
+ *
+ * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient
+ * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient#countByQuery(String)
  */
 public class CountSimplePsicquicQuery {
 
