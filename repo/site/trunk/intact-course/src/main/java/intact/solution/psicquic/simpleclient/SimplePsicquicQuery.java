@@ -25,6 +25,10 @@ import java.io.InputStreamReader;
 
 /**
  * Download interactions from PSICQUIC, using the simple client.
+ *
+ * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient
+ * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient#getByQuery(String)
+ *
  */
 public class SimplePsicquicQuery {
 

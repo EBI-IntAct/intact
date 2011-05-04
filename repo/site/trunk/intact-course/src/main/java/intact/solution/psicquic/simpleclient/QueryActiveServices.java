@@ -24,7 +24,14 @@ import org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient;
 import java.util.List;
 
 /**
+ * Reads from the PSICQUIC Registry the list of currently active services and print for each a count of
+ * interaction available.
  *
+ * @see org.hupo.psi.mi.psicquic.registry.client.registry.DefaultPsicquicRegistryClient
+ * @see org.hupo.psi.mi.psicquic.registry.client.registry.DefaultPsicquicRegistryClient#listActiveServices()
+ * @see org.hupo.psi.mi.psicquic.registry.ServiceType
+ * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient
+ * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient#countByInteractor(String)
  */
 public class QueryActiveServices {
 
@@ -55,5 +62,4 @@ public class QueryActiveServices {
         System.out.println("Total interactions: "+totalCount);
 
     }
-
 }
