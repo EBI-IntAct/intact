@@ -24,6 +24,9 @@ import java.io.InputStream;
 
 /**
  * Build a Lucene index based on a given mitab file.
+ *
+ * @see psidev.psi.mi.search.index.PsimiIndexWriter
+ * @see psidev.psi.mi.search.index.PsimiIndexWriter#index(org.apache.lucene.store.Directory, java.io.InputStream, boolean, boolean)
  */
 public class IndexMitabFile {
     public static void main( String[] args ) throws Exception {

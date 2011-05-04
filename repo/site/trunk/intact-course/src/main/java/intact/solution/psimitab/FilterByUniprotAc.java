@@ -29,6 +29,13 @@ import java.util.Iterator;
 /**
  * Read a MITAB file using the method of your choice and count all interactions involving
  * the interactor having the given uniprot AC.
+ *
+ * @see psidev.psi.mi.tab.PsimiTabReader
+ * @see psidev.psi.mi.tab.model.BinaryInteraction
+ * @see psidev.psi.mi.tab.model.BinaryInteraction#getInteractorA()
+ * @see psidev.psi.mi.tab.model.BinaryInteraction#getInteractorB()
+ * @see psidev.psi.mi.tab.model.Interactor
+ * @see psidev.psi.mi.tab.model.Interactor#getIdentifiers()
  */
 public class FilterByUniprotAc {
     
