@@ -24,6 +24,9 @@ import java.util.List;
 
 /**
  * List the PSICQUIC Services by its tags, using the Registry.
+ *
+ * @see org.hupo.psi.mi.psicquic.registry.client.registry.DefaultPsicquicRegistryClient
+ * @see org.hupo.psi.mi.psicquic.registry.client.registry.DefaultPsicquicRegistryClient#listServicesByTags(String)
  */
 public class ListingServicesByTags {
 
