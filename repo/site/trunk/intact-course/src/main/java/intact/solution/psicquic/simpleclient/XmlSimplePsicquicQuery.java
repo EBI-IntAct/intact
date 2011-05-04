@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 /**
  * Download interactions from PSICQUIC, using the simple client.
  */
-public class SimplePsicquicQuery {
+public class XmlSimplePsicquicQuery {
 
      public static void main(String[] args) throws Exception {
         // get a REST URl from the registry http://www.ebi.ac.uk/Tools/webservices/psicquic/registry/registry?action=STATUS
@@ -21,7 +21,7 @@ public class SimplePsicquicQuery {
         String miqlQuery = "pubid:16189514";
 
         try {
-            final InputStream result = client.getByQuery(miqlQuery);
+            final InputStream result = client.getByQuery(miqlQuery, PsicquicSimpleClient.XML25, 0, 5);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(result));
 

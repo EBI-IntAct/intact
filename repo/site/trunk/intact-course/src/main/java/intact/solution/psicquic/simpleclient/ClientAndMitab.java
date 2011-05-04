@@ -3,6 +3,7 @@ package intact.solution.psicquic.simpleclient;
 import org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient;
 import psidev.psi.mi.tab.PsimiTabReader;
 import psidev.psi.mi.tab.model.BinaryInteraction;
+import psidev.psi.mi.tab.model.CrossReference;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,9 +28,31 @@ public class ClientAndMitab {
 
             System.out.println("Interactions found: "+binaryInteractions.size());
 
+            printBinaryInteractions(binaryInteractions);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void printBinaryInteractions(Collection<BinaryInteraction> binaryInteractions) {
+
+        for ( BinaryInteraction<?> binaryInteraction : binaryInteractions ) {
+            String idA = getFirstIdentifier( binaryInteraction.getInteractorA().getIdentifiers() );
+            String idB = getFirstIdentifier( binaryInteraction.getInteractorB().getIdentifiers() );
+
+            String interactionAc = getFirstIdentifier( binaryInteraction.getInteractionAcs() );
+
+            System.out.println( "\tInteraction (" + interactionAc + "): " + idA + " interacts with " + idB );
+        }
+
+    }
+
+    private static String getFirstIdentifier( Collection<CrossReference> identifiers ) {
+        if ( !identifiers.isEmpty() ) {
+            return identifiers.iterator().next().getIdentifier();
+        }
+        return null;
     }
 
 }
