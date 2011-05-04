@@ -45,7 +45,7 @@ public class XmlPsicquicQuery {
         String soapServiceAddress = "http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/psicquic";
 
         XmlPsicquicClient client = new XmlPsicquicClient(soapServiceAddress);
-        final XmlSearchResult xmlResult = client.getByQuery("brca2", 0, Integer.MAX_VALUE);
+        final XmlSearchResult xmlResult = client.getByQuery("bbc1", 0, Integer.MAX_VALUE);
 
         // Print the results in the console
         System.out.println( "Interactions found: " + xmlResult.getTotalResults() );
