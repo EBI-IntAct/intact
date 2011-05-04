@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 /**
  * Download interactions from PSICQUIC, using the simple client.
  */
-public class SimplePsicquicQuery {
+public class CountSimplePsicquicQuery {
 
      public static void main(String[] args) throws Exception {
         // get a REST URl from the registry http://www.ebi.ac.uk/Tools/webservices/psicquic/registry/registry?action=STATUS
@@ -20,21 +20,9 @@ public class SimplePsicquicQuery {
         // miql query
         String miqlQuery = "pubid:16189514";
 
-        try {
-            final InputStream result = client.getByQuery(miqlQuery);
+        final long count = client.countByQuery(miqlQuery);
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(result));
-
-            String line;
-
-            while ((line = in.readLine()) != null) {
-                System.out.println(line);
-            }
-
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        System.out.println("Count: "+count);
     }
 
 }

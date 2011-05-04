@@ -53,7 +53,7 @@ public class QueryUsingMIQL {
         // We print some information about the interactions found
         System.out.println( "Interactions found: " + result.getTotalCount() );
 
-        for ( BinaryInteraction binaryInteraction : result.getInteractions() ) {
+        for ( BinaryInteraction binaryInteraction : result.getData() ) {
             String interactorIdA = binaryInteraction.getInteractorA().getIdentifiers().iterator().next().getIdentifier();
             String interactorIdB = binaryInteraction.getInteractorB().getIdentifiers().iterator().next().getIdentifier();
 

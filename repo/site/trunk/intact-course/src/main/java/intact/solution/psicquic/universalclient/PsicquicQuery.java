@@ -6,6 +6,7 @@ import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.model.CrossReference;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Download interactions from PSICQUIC, using the universal client.
@@ -25,7 +26,14 @@ public class PsicquicQuery {
         // Print the results in the console
         System.out.println( "Interactions found: " + results.getTotalCount() );
 
-        for ( BinaryInteraction<?> binaryInteraction : results.getData() ) {
+        List<BinaryInteraction> binaryInteractions = results.getData();
+
+        printBinaryInteractions(binaryInteractions);
+    }
+
+    private static void printBinaryInteractions(Collection<BinaryInteraction> binaryInteractions) {
+
+        for ( BinaryInteraction<?> binaryInteraction : binaryInteractions ) {
             String idA = getFirstIdentifier( binaryInteraction.getInteractorA().getIdentifiers() );
             String idB = getFirstIdentifier( binaryInteraction.getInteractorB().getIdentifiers() );
 
@@ -33,6 +41,7 @@ public class PsicquicQuery {
 
             System.out.println( "\tInteraction (" + interactionAc + "): " + idA + " interacts with " + idB );
         }
+
     }
 
     private static String getFirstIdentifier( Collection<CrossReference> identifiers ) {

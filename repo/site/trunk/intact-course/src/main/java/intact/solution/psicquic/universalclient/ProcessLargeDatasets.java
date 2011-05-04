@@ -30,7 +30,7 @@ import java.util.Collection;
  */
 public class ProcessLargeDatasets {
     public static void main( String[] args ) throws Exception {
-        String miqlQuery = "BBC1";
+        String miqlQuery = "pubid:16189514";
 
         // Instantiate the service client
         String soapServiceAddress = "http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/psicquic";
@@ -39,8 +39,10 @@ public class ProcessLargeDatasets {
 
         SearchResult<BinaryInteraction> results;
 
+        System.out.println("Total results: "+client.getByQuery(miqlQuery, 0, 0).getTotalCount());
+
         int firstResult = 0;
-        final int maxResults = 5;
+        final int maxResults = 200;
 
         do {
             results = client.getByQuery(miqlQuery, firstResult, maxResults);

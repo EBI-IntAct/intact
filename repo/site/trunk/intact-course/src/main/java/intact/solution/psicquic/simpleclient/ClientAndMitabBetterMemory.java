@@ -32,7 +32,7 @@ public class ClientAndMitabBetterMemory {
             while ((line = in.readLine()) != null) {
                 BinaryInteraction binaryInteraction = mitabReader.readLine(line);
 
-                processBinaryInteraction(binaryInteraction);
+                printBinaryInteraction(binaryInteraction);
             }
 
             in.close();
@@ -41,7 +41,7 @@ public class ClientAndMitabBetterMemory {
         }
     }
 
-    private static void processBinaryInteraction(BinaryInteraction<?> binaryInteraction) {
+    private static void printBinaryInteraction(BinaryInteraction<?> binaryInteraction) {
         // print first ids for interactors and interaction
         CrossReference idA = binaryInteraction.getInteractorA().getIdentifiers().iterator().next();
         CrossReference idB = binaryInteraction.getInteractorB().getIdentifiers().iterator().next();

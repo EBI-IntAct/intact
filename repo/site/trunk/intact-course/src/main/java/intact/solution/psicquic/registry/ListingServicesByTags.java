@@ -19,7 +19,7 @@ public class ListingServicesByTags {
         final List<ServiceType> services = registryClient.listServicesByTags("imex curation");
 
         for (ServiceType service : services) {
-            System.out.println(service.getName());
+            System.out.println(service.getName()+" - "+service.getCount()+" - "+service.getRestExample());
         }
 
     }
