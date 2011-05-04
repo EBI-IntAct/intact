@@ -30,6 +30,10 @@ import psidev.psi.mi.xml.model.Participant;
  * @see org.hupo.psi.mi.psicquic.wsclient.XmlPsicquicClient#getByQuery(String, int, int)
  * @see org.hupo.psi.mi.psicquic.wsclient.XmlSearchResult
  * @see psidev.psi.mi.xml.model.EntrySet
+ * @see psidev.psi.mi.xml.model.Entry
+ * @see psidev.psi.mi.xml.model.Interaction
+ * @see psidev.psi.mi.xml.model.Participant
+ * @see psidev.psi.mi.xml.model.Interactor
  */
 public class XmlPsicquicQuery {
 
