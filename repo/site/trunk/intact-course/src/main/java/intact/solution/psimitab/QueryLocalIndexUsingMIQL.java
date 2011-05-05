@@ -28,6 +28,14 @@ import java.io.File;
  * Now that we have built an index, let's see how to query it.
  * <p/>
  * Try to query using the following criteria: interactor identifier, species, interaction type.
+ *
+ * @see org.apache.lucene.store.FSDirectory#getDirectory(String)
+ * @see org.apache.lucene.store.Directory
+ * @see psidev.psi.mi.search.Searcher#search(String, org.apache.lucene.store.Directory)
+ * @see psidev.psi.mi.search.SearchResult
+ * @see psidev.psi.mi.tab.model.BinaryInteraction
+ * @see psidev.psi.mi.tab.model.BinaryInteraction#getInteractorA()
+ * @see psidev.psi.mi.tab.model.BinaryInteraction#getInteractorB()
  */
 public class QueryLocalIndexUsingMIQL {
     public static void main( String[] args ) throws Exception {
