@@ -25,9 +25,7 @@ import psidev.psi.mi.tab.model.BinaryInteraction;
 import java.io.File;
 
 /**
- * Now that we have built an index, let's see how to query it.
- * <p/>
- * Try to query using the following criteria: interactor identifier, species, interaction type.
+ * Question 2:  Write a program that queries the local Lucene index to search for interaction evidences involving specific molecules. For instance by uniprot identifier O45406 or pubmed id 17129783.
  *
  * @see org.apache.lucene.store.FSDirectory#getDirectory(String)
  * @see org.apache.lucene.store.Directory
@@ -53,7 +51,7 @@ public class Q2_QueryLocalIndexUsingMIQL {
         //   - type:\"physical interaction\"
         //   - type:\"MI:0218\"
 
-        final String query = "species:human";
+        final String query = "id:O45406";
 
         // After a directory has been created, you can use this directory (or any existing directory
         // in the filesystem) to execute your searches.

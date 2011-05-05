@@ -19,7 +19,7 @@ package intact.solution.chapter5.exercise2;
 import org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient;
 
 /**
- * Download interactions from PSICQUIC, using the simple client.
+ * Question 2: If you wanted to count the results for the above query before loading the data, what could you do?
  *
  * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient
  * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient#countByQuery(String)

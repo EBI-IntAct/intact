@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 /**
- * Read a whole MITAB file into a Collection of BinaryInteraction.
+ * Question 1: Can you write a class that reads a MITAB data file/stream and print out the count of interactions parsed ?
  *
  * @see psidev.psi.mi.tab.PsimiTabReader
  * @see psidev.psi.mi.tab.model.BinaryInteraction

@@ -26,9 +26,9 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Reads a PSI-MI XML file in a memory efficient way.
- * <p/>
- * The file is first indexed and then small chunks are parsed on demand.
+ * Question 3: You can read files in a memory-efficient way by using the psidev.psi.mi.xml.PsimiXmlLightweightReader,
+ * which internally indexes the file to read one interaction at a time.
+ * Could you write a class using this reader and printing some information about the interactions in the file?
  */
 public class Q3_ReadIndexedFile {
     public static void main( String[] args ) throws PsimiXmlReaderException {

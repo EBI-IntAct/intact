@@ -29,7 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Iterate through interaction and display information about its participants (count, molecule type, id, role).
+ * Question 4: Could you list the participants of the interactions in a file, and their respective roles?
  */
 public class Q4_ListParticipantsAndRole {
     public static void main( String[] args ) throws PsimiXmlReaderException {

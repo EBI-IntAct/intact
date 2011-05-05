@@ -27,7 +27,11 @@ import java.io.InputStream;
 import java.util.Iterator;
 
 /**
- * Iterate through a MITAB file using the MITAB library.
+ * Question 2:  Should you attempt to load the whole content of a data file/stream into memory could cause problems
+ * if the volume of data is large. To facilitate this the class psidev.psi.mi.tab.PsimiTabReader also allows
+ * developers to iterate over the data.
+ *
+ * Now write an other program (similar to question 2) that implements this more efficient memory management.
  *
  * @see psidev.psi.mi.tab.PsimiTabReader#iterate(java.io.File)
  * @see psidev.psi.mi.tab.model.BinaryInteraction
@@ -41,7 +45,7 @@ public class Q2_ClientAndMitabBetterMemory {
 
         System.out.println( "Reading MITAB data from: " + intputFile.getAbsolutePath() );
 
-        // Instanciate the reader class that supports the Standard MITAB data format
+        // Instantiate the reader class that supports the Standard MITAB data format
         PsimiTabReader reader = new PsimiTabReader( true );
 
         try {

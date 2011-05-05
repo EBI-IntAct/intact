@@ -26,7 +26,9 @@ import java.io.InputStream;
 import java.util.Collection;
 
 /**
- * Querying a PSICQUIC service and reading the results using the MITAB library.
+ * Question 3: You could use the MITAB Java library to parse the results stream into a data model.
+ * How would you read the whole result using the psidev.psi.mi.tab.PsimiTabReader class?
+ * Could you print the identifiers for molecules A and B?
  *
  * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient
  * @see psidev.psi.mi.tab.PsimiTabReader

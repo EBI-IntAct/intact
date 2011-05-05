@@ -28,8 +28,9 @@ import java.io.File;
 import java.util.Collection;
 
 /**
- * read an complete XML file, browse its interactions and for each interaction having more than 2 participants, convert
- * it to a set a binary interaction using the spoke expansion algorithm.
+ * Question 1: Write some code that expands the interactions in a file by using the Spoke expansion using
+ * the provided XML file in the exercise. How many interactions are present in the file and how many binary
+ * interactions would be generated with the expansion?
  *
  * @see psidev.psi.mi.tab.expansion.SpokeExpansion
  * @see psidev.psi.mi.tab.expansion.SpokeWithoutBaitExpansion

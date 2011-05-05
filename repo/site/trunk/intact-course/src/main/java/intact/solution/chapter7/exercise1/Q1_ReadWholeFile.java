@@ -25,7 +25,8 @@ import psidev.psi.mi.xml.model.Interaction;
 import java.io.File;
 
 /**
- * Read a entire PSI-MI XML file in memory using the Java API.
+ * Question 1: Could you use the psidev.psi.mi.xml.PsimiXmlReader to read a data file? Iterate through the
+ * interactions in the file and print some information.
  */
 public class Q1_ReadWholeFile {
     public static void main( String[] args ) throws PsimiXmlReaderException {

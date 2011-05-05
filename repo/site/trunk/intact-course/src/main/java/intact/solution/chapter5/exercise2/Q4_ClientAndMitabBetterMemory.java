@@ -27,7 +27,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * Querying a PSICQUIC service and reading the results using the MITAB library.
+ * Question 4: Is the approach of the previous exercise memory-efficient?
+ * If you have not done it, could you think of a better way to handle the problem and
+ * only store in memory one binary interaction at a time?
  *
  * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient
  * @see psidev.psi.mi.tab.PsimiTabReader
