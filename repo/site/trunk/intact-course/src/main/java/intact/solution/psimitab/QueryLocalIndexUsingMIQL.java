@@ -40,7 +40,7 @@ public class QueryLocalIndexUsingMIQL {
         Directory directory = FSDirectory.getDirectory(indexLocation );
 
         // Other queries you can test:
-        //   - id:P38991
+        //   - id:O45406
         //   - pubid:17129783
         //   - type:\"physical interaction\"
         //   - type:\"MI:0218\"
