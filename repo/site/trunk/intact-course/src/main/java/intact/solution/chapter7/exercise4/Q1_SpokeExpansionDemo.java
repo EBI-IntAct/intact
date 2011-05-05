@@ -29,10 +29,9 @@ import java.util.Collection;
 
 /**
  * read an complete XML file, browse its interactions and for each interaction having more than 2 participants, convert
- * it to a set a binary interaction using the spoke model algorithm.
+ * it to a set a binary interaction using the spoke expansion algorithm.
  *
  * @see psidev.psi.mi.tab.expansion.SpokeExpansion
- * @see psidev.psi.mi.tab.expansion.MatrixExpansion
  * @see psidev.psi.mi.tab.expansion.SpokeWithoutBaitExpansion
  */
 public class Q1_SpokeExpansionDemo {
