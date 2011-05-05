@@ -25,7 +25,7 @@ import psidev.psi.mi.xml.model.EntrySet;
 import java.io.File;
 
 /**
- * Read a data file and write it back to a file.
+ * Question 1: Could you write an EntrySet to a file by using the  psidev.psi.mi.xml.PsimiXmlWriter?
  */
 public class Q1_WriteToFile {
     public static void main( String[] args ) throws PsimiXmlReaderException, PsimiXmlWriterException {

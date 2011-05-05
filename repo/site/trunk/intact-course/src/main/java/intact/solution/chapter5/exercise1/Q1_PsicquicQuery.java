@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Download interactions from PSICQUIC, using the universal client.
+ * Question 1: Could you write the code to query the interactions for brca2 from IntAct and print the identifiers for molecule A and B in the console?
  *
  * @see org.hupo.psi.mi.psicquic.wsclient.UniversalPsicquicClient
  * @see org.hupo.psi.mi.psicquic.wsclient.UniversalPsicquicClient#getByQuery(String, int, int)
@@ -39,12 +39,11 @@ public class Q1_PsicquicQuery {
 
     public static void main(String[] args) throws Exception {
         // the universal client uses the SOAP service URL, obtainable from the Registry
-
-        // Exercise: search for "bbc1" in IntAct
-
         String soapServiceAddress = "http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/psicquic";
 
         UniversalPsicquicClient client = new UniversalPsicquicClient(soapServiceAddress);
+
+        // search by brca2
         SearchResult<BinaryInteraction> results = client.getByQuery("brca2", 0, Integer.MAX_VALUE);
 
         // Print the results in the console

@@ -24,10 +24,9 @@ import psidev.psi.mi.tab.model.CrossReference;
 import java.util.Collection;
 
 /**
- * Query the IntAct web service and process large amount of interactions.
- * <p/>
- * The aim here is to prevent the following exception from being thrown:
- * <pre>java.lang.OutOfMemoryError: Java heap space</pre>
+ * Question 2: Access with SOAP to PSICQUIC services has a hard limit of 200 interactions per query.
+ * Could you write some code to get all the interactions for pubmed 16189514 from IntAct,
+ * which contains more than 2700 interactions?
  *
  * @see org.hupo.psi.mi.psicquic.wsclient.UniversalPsicquicClient
  * @see org.hupo.psi.mi.psicquic.wsclient.UniversalPsicquicClient#getByQuery(String, int, int)
@@ -53,6 +52,8 @@ public class Q2_ProcessLargeDatasets {
 
         int firstResult = 0;
         final int maxResults = 200;
+
+        // paginate until you retrieve all the results
 
         do {
             results = client.getByQuery(miqlQuery, firstResult, maxResults);

@@ -24,8 +24,8 @@ import org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient;
 import java.util.List;
 
 /**
- * Reads from the PSICQUIC Registry the list of currently active services and print for each a count of
- * interaction available.
+ * Question 6: Could you query all the active PSICQUIC services and print the partial and
+ * total interaction counts for P04637 (TP53)?
  *
  * @see org.hupo.psi.mi.psicquic.registry.client.registry.DefaultPsicquicRegistryClient
  * @see org.hupo.psi.mi.psicquic.registry.client.registry.DefaultPsicquicRegistryClient#listActiveServices()

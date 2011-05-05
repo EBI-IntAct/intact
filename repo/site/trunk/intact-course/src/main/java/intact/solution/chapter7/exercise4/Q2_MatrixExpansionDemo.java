@@ -28,8 +28,7 @@ import java.io.File;
 import java.util.Collection;
 
 /**
- * read an complete XML file, browse its interactions and for each interaction having more than 2 participants, convert
- * it to a set a binary interaction using the matrix expansion algorithm.
+ * Question 2: Do like in Question 1, but now use Matrix expansion. How many interactions are generated now?
  *
  * @see psidev.psi.mi.tab.expansion.MatrixExpansion
  */

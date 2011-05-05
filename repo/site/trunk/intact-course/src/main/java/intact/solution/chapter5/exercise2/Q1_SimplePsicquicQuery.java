@@ -24,7 +24,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * Download interactions from PSICQUIC, using the simple client.
+ * Question 1: Could you write the code to download a MITAB stream from PSICQUIC using the simple client?
+ * Print the MITAB for the publication with pubmed 16189514 from IntAct in the console.
  *
  * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient
  * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient#getByQuery(String)

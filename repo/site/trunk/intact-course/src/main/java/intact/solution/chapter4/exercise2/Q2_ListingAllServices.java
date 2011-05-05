@@ -23,7 +23,7 @@ import org.hupo.psi.mi.psicquic.registry.client.registry.PsicquicRegistryClient;
 import java.util.List;
 
 /**
- * List all the available Services using the PSICQUIC Registry.
+ * Question 2: Like in the previous question, but could you print the count of interactions and the REST URL examples as well?
  *
  * @see org.hupo.psi.mi.psicquic.registry.client.registry.DefaultPsicquicRegistryClient
  * @see org.hupo.psi.mi.psicquic.registry.client.registry.DefaultPsicquicRegistryClient#listServices()
@@ -34,7 +34,7 @@ public class Q2_ListingAllServices {
         // instantiate the registry client
         PsicquicRegistryClient registryClient = new DefaultPsicquicRegistryClient();
 
-        // Exercise: Iterate through all the ACTIVE services listing its name, interaction count and REST Example URLs.
+        // Question 2: Like in the previous question, but could you print the count of interactions and the REST URL examples as well?
         final List<ServiceType> activeServices = registryClient.listActiveServices();
 
         for (ServiceType service : activeServices) {

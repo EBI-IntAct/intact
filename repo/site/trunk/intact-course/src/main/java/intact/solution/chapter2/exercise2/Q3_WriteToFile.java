@@ -28,7 +28,8 @@ import java.io.Writer;
 import java.util.Iterator;
 
 /**
- * Read a Standard MITAB file and write it back to an other file.
+ * Question 3:  Now that we have read the content of a MITAB file/stream, we can attempt to write this content back to
+ * a file. Write a program that writes the MITAB content read into a file.
  *
  * @see psidev.psi.mi.tab.PsimiTabReader
  * @see psidev.psi.mi.tab.model.BinaryInteraction

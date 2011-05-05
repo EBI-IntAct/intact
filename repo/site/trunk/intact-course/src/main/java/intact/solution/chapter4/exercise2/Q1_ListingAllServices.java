@@ -23,7 +23,7 @@ import org.hupo.psi.mi.psicquic.registry.client.registry.PsicquicRegistryClient;
 import java.util.List;
 
 /**
- * List all the available Services using the PSICQUIC Registry.
+ * Question 1: Could you list all the PSICQUIC Services and print its name in the console?
  *
  * @see org.hupo.psi.mi.psicquic.registry.client.registry.DefaultPsicquicRegistryClient
  * @see org.hupo.psi.mi.psicquic.registry.client.registry.DefaultPsicquicRegistryClient#listServices()
@@ -34,7 +34,7 @@ public class Q1_ListingAllServices {
         // instantiate the registry client
         PsicquicRegistryClient registryClient = new DefaultPsicquicRegistryClient();
 
-        // Exercise: List the names of all the services in the registry
+        // Question 1: Could you list all the PSICQUIC Services and print its name in the console?
         final List<ServiceType> services = registryClient.listServices();
 
         for (ServiceType service : services) {

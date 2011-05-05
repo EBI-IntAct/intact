@@ -28,8 +28,13 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Read a MITAB file using the method of your choice and count how many interaction are original experimental
- * binary interaction and how many have been generated using the spoke model.
+ * Question 3:  Like MITAB2.6 and higher, the IntAct extended MITAB format does have a column that describe potential
+ * complex expansion that may have been applied to generate binary interactions.
+ * Write a program that reads an IntAct MITAB file and  print the following:
+ *
+ * total count of interactions;
+ * count of spoke expanded interaction;
+ * count of experimentaly identified binary interaction (i.e. not expanded).
  *
  * @see uk.ac.ebi.intact.psimitab.IntactPsimiTabReader
  * @see uk.ac.ebi.intact.psimitab.IntactPsimiTabReader#iterate(java.io.File)

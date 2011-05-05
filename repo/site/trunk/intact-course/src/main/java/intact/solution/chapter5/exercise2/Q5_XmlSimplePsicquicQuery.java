@@ -24,7 +24,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * Download interactions from PSICQUIC, using the simple client.
+ * Question 5: Could you write the code to print the PSI-MI XML format for the first 5 interactions
+ *  of the query in Question 1?
  *
  * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient
  * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient#getByQuery(String)

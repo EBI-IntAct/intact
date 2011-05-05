@@ -23,7 +23,9 @@ import java.io.File;
 import java.io.InputStream;
 
 /**
- * Build a Lucene index based on a given mitab file.
+ * Question 1: This library offers the possibility to to index a MITAB dataset using Lucene.
+ * This enables users to run local MIQL queries, thus easing data processing.
+ * Write a program that indexes the provided MITAB data file.
  *
  * @see psidev.psi.mi.search.index.PsimiIndexWriter
  * @see psidev.psi.mi.search.index.PsimiIndexWriter#index(org.apache.lucene.store.Directory, java.io.InputStream, boolean, boolean)
