@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package intact.solution.chapter2.exercise2;
+package intact.exercise.chapter2.exercise2;
 
 import psidev.psi.mi.tab.PsimiTabReader;
 import psidev.psi.mi.tab.model.BinaryInteraction;
-import psidev.psi.mi.tab.model.CrossReference;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Iterator;
 
 /**
  * Question 2:  Should you attempt to load the whole content of a data file/stream into memory could cause problems
@@ -47,24 +43,10 @@ public class Q2_ClientAndMitabBetterMemory {
         // Instantiate the reader class that supports the Standard MITAB data format
         PsimiTabReader reader = new PsimiTabReader( true );
 
-        InputStream is = new FileInputStream( intputFile );
-        final Iterator<BinaryInteraction> interactionIterator = reader.iterate( is );
-
-        while ( interactionIterator.hasNext() ) {
-            BinaryInteraction binaryInteraction = interactionIterator.next();
-
-            printBinaryInteraction( binaryInteraction );
-        }
-
-        is.close();
+        // TODO start here - iterate through the interactions in the file using the reader
     }
 
     private static void printBinaryInteraction(BinaryInteraction<?> binaryInteraction) {
         // print first ids for interactors and interaction
-        CrossReference idA = binaryInteraction.getInteractorA().getIdentifiers().iterator().next();
-        CrossReference idB = binaryInteraction.getInteractorB().getIdentifiers().iterator().next();
-        CrossReference interactionAc = binaryInteraction.getInteractionAcs().iterator().next();
-
-        System.out.println("Interaction "+interactionAc.getIdentifier()+": "+idA.getIdentifier()+" - "+idB.getIdentifier());
     }
 }

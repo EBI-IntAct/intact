@@ -14,49 +14,32 @@
  * limitations under the License.
  */
 
-package intact.solution.chapter2.exercise2;
+package intact.exercise.chapter5.exercise2;
 
+import org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient;
 import psidev.psi.mi.tab.PsimiTabReader;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.model.CrossReference;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Iterator;
-
 /**
- * Question 2:  Should you attempt to load the whole content of a data file/stream into memory could cause problems
- * if the volume of data is large. To facilitate this the class psidev.psi.mi.tab.PsimiTabReader also allows
- * developers to iterate over the data.
+ * Question 4: Is the approach of the previous exercise memory-efficient?
+ * If you have not done it, could you think of a better way to handle the problem and
+ * only store in memory one binary interaction at a time?
  *
- * Now write an other program (similar to question 2) that implements this more efficient memory management.
- *
- * @see psidev.psi.mi.tab.PsimiTabReader#iterate(java.io.File)
- * @see psidev.psi.mi.tab.model.BinaryInteraction
+ * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient
+ * @see psidev.psi.mi.tab.PsimiTabReader
+ * @see psidev.psi.mi.tab.PsimiTabReader#readLine(String)
  */
-public class Q2_ClientAndMitabBetterMemory {
+public class Q4_ClientAndMitabBetterMemory {
 
     public static void main(String[] args) throws Exception {
+        // get a REST URl from the registry http://www.ebi.ac.uk/Tools/webservices/psicquic/registry/registry?action=STATUS
 
-        // Prepare the input MITAB file
-        File intputFile = new File( Q1_ReadWholeFile.class.getResource( "/samples/mitab/18189341.txt" ).getFile() );
+        PsicquicSimpleClient client = new PsicquicSimpleClient("http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/current/search/");
 
-        System.out.println( "Reading MITAB data from: " + intputFile.getAbsolutePath() );
+        PsimiTabReader mitabReader = new PsimiTabReader(false);
 
-        // Instantiate the reader class that supports the Standard MITAB data format
-        PsimiTabReader reader = new PsimiTabReader( true );
-
-        InputStream is = new FileInputStream( intputFile );
-        final Iterator<BinaryInteraction> interactionIterator = reader.iterate( is );
-
-        while ( interactionIterator.hasNext() ) {
-            BinaryInteraction binaryInteraction = interactionIterator.next();
-
-            printBinaryInteraction( binaryInteraction );
-        }
-
-        is.close();
+        // TODO start here, how to read the interactions one at a time?
     }
 
     private static void printBinaryInteraction(BinaryInteraction<?> binaryInteraction) {
@@ -67,4 +50,5 @@ public class Q2_ClientAndMitabBetterMemory {
 
         System.out.println("Interaction "+interactionAc.getIdentifier()+": "+idA.getIdentifier()+" - "+idB.getIdentifier());
     }
+
 }

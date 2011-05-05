@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package intact.solution.chapter7.exercise1;
+package intact.exercise.chapter7.exercise1;
 
 import psidev.psi.mi.xml.PsimiXmlReader;
 import psidev.psi.mi.xml.PsimiXmlReaderException;

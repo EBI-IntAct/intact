@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package intact.solution.chapter7.exercise1;
+package intact.exercise.chapter7.exercise1;
 
 import psidev.psi.mi.xml.PsimiXmlLightweightReader;
 import psidev.psi.mi.xml.PsimiXmlReaderException;
-import psidev.psi.mi.xml.model.Interaction;
-import psidev.psi.mi.xml.xmlindex.IndexedEntry;
 
 import java.io.File;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Question 3: You can read files in a memory-efficient way by using the psidev.psi.mi.xml.PsimiXmlLightweightReader,
@@ -34,6 +30,7 @@ import java.util.List;
  * @see psidev.psi.mi.xml.PsimiXmlLightweightReader#getIndexedEntries()
  * @see psidev.psi.mi.xml.xmlindex.IndexedEntry
  * @see psidev.psi.mi.xml.xmlindex.IndexedEntry#unmarshallInteractionIterator()
+ *
  */
 public class Q3_ReadIndexedFile {
     public static void main( String[] args ) throws PsimiXmlReaderException {
@@ -44,20 +41,7 @@ public class Q3_ReadIndexedFile {
         // Create a reader
         PsimiXmlLightweightReader reader = new PsimiXmlLightweightReader( inputFile );
 
-        // Read the whole file into an EntrySet
-        final List<IndexedEntry> indexedEntries = reader.getIndexedEntries();
+        // Read the whole file here
 
-        // Show all interactions, their respective id and label
-        for ( IndexedEntry entry : indexedEntries ) {
-            final Iterator<Interaction> iterator = entry.unmarshallInteractionIterator();
-            while ( iterator.hasNext() ) {
-                Interaction interaction = iterator.next();
-
-                final String label = interaction.getNames().getShortLabel();
-                final int id = interaction.getId();
-
-                System.out.println( "Interaction " + id + ": " + label );
-            }
-        }
     }
 }

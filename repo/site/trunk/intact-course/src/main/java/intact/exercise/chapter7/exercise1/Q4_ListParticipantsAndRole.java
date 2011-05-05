@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package intact.solution.chapter7.exercise1;
+package intact.exercise.chapter7.exercise1;
 
 import psidev.psi.mi.xml.PsimiXmlLightweightReader;
 import psidev.psi.mi.xml.PsimiXmlReaderException;
+import psidev.psi.mi.xml.model.DbReference;
 import psidev.psi.mi.xml.model.Interaction;
+import psidev.psi.mi.xml.model.Interactor;
+import psidev.psi.mi.xml.model.Participant;
 import psidev.psi.mi.xml.xmlindex.IndexedEntry;
 
 import java.io.File;
@@ -26,20 +29,18 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Question 3: You can read files in a memory-efficient way by using the psidev.psi.mi.xml.PsimiXmlLightweightReader,
- * which internally indexes the file to read one interaction at a time.
- * Could you write a class using this reader and printing some information about the interactions in the file?
+ * Question 4: Could you list the participants of the interactions in a file, and their respective roles?
  *
  * @see psidev.psi.mi.xml.PsimiXmlLightweightReader
  * @see psidev.psi.mi.xml.PsimiXmlLightweightReader#getIndexedEntries()
  * @see psidev.psi.mi.xml.xmlindex.IndexedEntry
  * @see psidev.psi.mi.xml.xmlindex.IndexedEntry#unmarshallInteractionIterator()
  */
-public class Q3_ReadIndexedFile {
+public class Q4_ListParticipantsAndRole {
     public static void main( String[] args ) throws PsimiXmlReaderException {
 
         // The data file to be parsed by the API
-        File inputFile = new File( Q3_ReadIndexedFile.class.getResource( "/samples/psixml25/16705748.xml" ).getFile() );
+        File inputFile = new File( Q4_ListParticipantsAndRole.class.getResource( "/samples/psixml25/17129783.xml" ).getFile() );
 
         // Create a reader
         PsimiXmlLightweightReader reader = new PsimiXmlLightweightReader( inputFile );
@@ -55,9 +56,28 @@ public class Q3_ReadIndexedFile {
 
                 final String label = interaction.getNames().getShortLabel();
                 final int id = interaction.getId();
+                final int participantCount = interaction.getParticipants().size();
 
-                System.out.println( "Interaction " + id + ": " + label );
+                System.out.println( "Interaction " + id + ": " + label + " (" + participantCount + " participants)" );
+
+                for ( Participant participant : interaction.getParticipants() ) {
+                    final Interactor interactor = participant.getInteractor();
+                    final String interactorTypeLabel = interactor.getInteractorType().getNames().getShortLabel();
+                    final String identity = getIdentity( interactor );
+                    final String role = participant.getBiologicalRole().getNames().getShortLabel();
+
+                    System.out.println( "\t " + interactorTypeLabel + ": " + identity + " (" + role + ")" );
+                }
             }
         }
+    }
+
+    private static String getIdentity( Interactor interactor ) {
+        for ( DbReference ref : interactor.getXref().getAllDbReferences() ) {
+            if ( "MI:0356".equals( ref.getRefTypeAc() ) || "identity".equals( ref.getRefType() ) ) {
+                return ref.getId();
+            }
+        }
+        return null;
     }
 }

@@ -22,7 +22,6 @@ import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.model.CrossReference;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -44,23 +43,19 @@ public class Q4_ClientAndMitabBetterMemory {
 
         PsimiTabReader mitabReader = new PsimiTabReader(false);
 
-        try {
-            final InputStream result = client.getByQuery("brca2");
+        final InputStream result = client.getByQuery("brca2");
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(result));
+        BufferedReader in = new BufferedReader(new InputStreamReader(result));
 
-            String line;
+        String line;
 
-            while ((line = in.readLine()) != null) {
-                BinaryInteraction binaryInteraction = mitabReader.readLine(line);
+        while ((line = in.readLine()) != null) {
+            BinaryInteraction binaryInteraction = mitabReader.readLine(line);
 
-                printBinaryInteraction(binaryInteraction);
-            }
-
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            printBinaryInteraction(binaryInteraction);
         }
+
+        in.close();
     }
 
     private static void printBinaryInteraction(BinaryInteraction<?> binaryInteraction) {
