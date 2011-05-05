@@ -29,11 +29,9 @@ import java.util.Collection;
 
 /**
  * read an complete XML file, browse its interactions and for each interaction having more than 2 participants, convert
- * it to a set a binary interaction using the spoke model algorithm.
+ * it to a set a binary interaction using the matrix expansion algorithm.
  *
- * @see psidev.psi.mi.tab.expansion.SpokeExpansion
  * @see psidev.psi.mi.tab.expansion.MatrixExpansion
- * @see psidev.psi.mi.tab.expansion.SpokeWithoutBaitExpansion
  */
 public class Q2_MatrixExpansionDemo {
     public static void main( String[] args ) throws PsimiXmlReaderException {
@@ -65,7 +63,7 @@ public class Q2_MatrixExpansionDemo {
 
                 if ( interaction.getParticipants().size() > 2 ) {
                     // convert this interaction using the spoke model: links bait participant to each prey
-                    System.out.println( "\t Expanding interaction " + id + " using the spoke model..." );
+                    System.out.println( "\t Expanding interaction " + id + " using the expansion model..." );
 
                     final Collection<Interaction> binaryInteractions = expander.expand( interaction );
                     final int expandedCount = binaryInteractions.size();
