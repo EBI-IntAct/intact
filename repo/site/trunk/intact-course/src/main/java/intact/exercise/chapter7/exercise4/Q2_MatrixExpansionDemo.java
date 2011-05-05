@@ -14,28 +14,25 @@
  * limitations under the License.
  */
 
-package intact.solution.chapter7.exercise1;
+package intact.exercise.chapter7.exercise4;
 
+import psidev.psi.mi.tab.expansion.ExpansionStrategy;
 import psidev.psi.mi.xml.PsimiXmlReader;
 import psidev.psi.mi.xml.PsimiXmlReaderException;
-import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.EntrySet;
-import psidev.psi.mi.xml.model.Interaction;
 
 import java.io.File;
 
 /**
- * Question 1: Could you use the psidev.psi.mi.xml.PsimiXmlReader to read a data file? Iterate through the
- * interactions in the file and print some information.
+ * Question 2: Do like in Question 1, but now use Matrix expansion. How many interactions are generated now?
  *
- * @see psidev.psi.mi.xml.PsimiXmlReader
- * @see psidev.psi.mi.xml.PsimiXmlReader#read(java.io.File)
+ * @see psidev.psi.mi.tab.expansion.MatrixExpansion
  */
-public class Q1_ReadWholeFile {
+public class Q2_MatrixExpansionDemo {
     public static void main( String[] args ) throws PsimiXmlReaderException {
 
         // The data file to be parsed by the API
-        File inputFile = new File( Q1_ReadWholeFile.class.getResource( "/samples/psixml25/16705748.xml" ).getFile() );
+        File inputFile = new File( Q2_MatrixExpansionDemo.class.getResource( "/samples/psixml25/16705748.xml" ).getFile() );
 
         // Create a reader
         PsimiXmlReader reader = new PsimiXmlReader();
@@ -43,14 +40,12 @@ public class Q1_ReadWholeFile {
         // Read the whole file into an EntrySet
         final EntrySet entrySet = reader.read( inputFile );
 
-        // Show all interactions, their respective id and label
-        for ( Entry entry : entrySet.getEntries() ) {
-            for ( Interaction interaction : entry.getInteractions() ) {
-                final String label = interaction.getNames().getShortLabel();
-                final int id = interaction.getId();
+        int interactionCount = 0;
+        int expandedBinaryInteractionCount = 0;
 
-                System.out.println( "Interaction " + id + ": " + label );
-            }
-        }
+        // TODO start here
+        ExpansionStrategy strategy = null; // change this!
+
+        // iterate through the Interactions inside the Entries inside the EntrySet and
     }
 }

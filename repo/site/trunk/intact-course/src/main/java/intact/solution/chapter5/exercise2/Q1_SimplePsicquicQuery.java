@@ -19,7 +19,6 @@ package intact.solution.chapter5.exercise2;
 import org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -41,21 +40,17 @@ public class Q1_SimplePsicquicQuery {
         // miql query
         String miqlQuery = "pubid:16189514";
 
-        try {
-            final InputStream result = client.getByQuery(miqlQuery);
+        final InputStream result = client.getByQuery(miqlQuery);
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(result));
+        BufferedReader in = new BufferedReader(new InputStreamReader(result));
 
-            String line;
+        String line;
 
-            while ((line = in.readLine()) != null) {
-                System.out.println(line);
-            }
-
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        while ((line = in.readLine()) != null) {
+            System.out.println(line);
         }
+
+        in.close();
     }
 
 }

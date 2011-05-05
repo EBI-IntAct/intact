@@ -39,13 +39,12 @@ public class Q1_WriteToFile {
         // Read the whole file into an EntrySet
         final EntrySet entrySet = reader.read( inputFile );
 
-        // Do some update on the data (eg. expand all n-ary interaction using the spoke model)
+        final File outputFile = new File( "16705748.updated.xml" );
 
         // Instanciate the PsimiXmlWriter that is responsible for writing the data into a file
         PsimiXmlWriter writer = new PsimiXmlWriter();
 
-        // Preparing the output file
-        final File outputFile = new File( "16705748.updated.xml" );
+
         System.out.println( "Writing the data to: " + outputFile.getAbsolutePath() );
 
         // Write the data to the output file

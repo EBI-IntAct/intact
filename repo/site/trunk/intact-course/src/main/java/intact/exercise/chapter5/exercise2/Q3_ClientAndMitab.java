@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package intact.solution.chapter5.exercise2;
+package intact.exercise.chapter5.exercise2;
 
 import org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient;
 import psidev.psi.mi.tab.PsimiTabReader;
@@ -40,35 +40,25 @@ public class Q3_ClientAndMitab {
 
         PsicquicSimpleClient client = new PsicquicSimpleClient("http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/current/search/");
 
+        // instantiate the reader
         PsimiTabReader mitabReader = new PsimiTabReader(false);
 
-        InputStream result = client.getByQuery("brca2");
+        InputStream result = null; // how to get the result from PSICQUIC?
 
-        Collection<BinaryInteraction> binaryInteractions = mitabReader.read(result);
+        Collection<BinaryInteraction> binaryInteractions = null; // what to put here?
 
         System.out.println("Interactions found: "+binaryInteractions.size());
 
         printBinaryInteractions(binaryInteractions);
-
     }
 
     private static void printBinaryInteractions(Collection<BinaryInteraction> binaryInteractions) {
-
-        for ( BinaryInteraction<?> binaryInteraction : binaryInteractions ) {
-            String idA = getFirstIdentifier( binaryInteraction.getInteractorA().getIdentifiers() );
-            String idB = getFirstIdentifier( binaryInteraction.getInteractorB().getIdentifiers() );
-
-            String interactionAc = getFirstIdentifier( binaryInteraction.getInteractionAcs() );
-
-            System.out.println( "\tInteraction (" + interactionAc + "): " + idA + " interacts with " + idB );
-        }
+        // print the first identifiers for molecule A and B
 
     }
 
     private static String getFirstIdentifier( Collection<CrossReference> identifiers ) {
-        if ( !identifiers.isEmpty() ) {
-            return identifiers.iterator().next().getIdentifier();
-        }
+        // print only the first identifier
         return null;
     }
 

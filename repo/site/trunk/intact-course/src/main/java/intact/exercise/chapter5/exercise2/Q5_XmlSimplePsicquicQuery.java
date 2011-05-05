@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-package intact.solution.chapter5.exercise2;
+package intact.exercise.chapter5.exercise2;
 
 import org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * Question 5: Could you write the code to print the PSI-MI XML format for the first 5 interactions
@@ -39,17 +35,7 @@ public class Q5_XmlSimplePsicquicQuery {
         // miql query
         String miqlQuery = "pubid:16189514";
 
-        final InputStream result = client.getByQuery(miqlQuery, PsicquicSimpleClient.XML25, 0, 5);
-
-        BufferedReader in = new BufferedReader(new InputStreamReader(result));
-
-        String line;
-
-        while ((line = in.readLine()) != null) {
-            System.out.println(line);
-        }
-
-        in.close();
+        // TODO start here
     }
 
 }

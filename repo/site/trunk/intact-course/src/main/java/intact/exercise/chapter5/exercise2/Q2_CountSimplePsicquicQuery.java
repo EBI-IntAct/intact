@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package intact.solution.chapter5.exercise2;
+package intact.exercise.chapter5.exercise2;
 
 import org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 /**
- * Question 5: Could you write the code to print the PSI-MI XML format for the first 5 interactions
- *  of the query in Question 1?
+ * Question 2: If you wanted to count the results for the above query before loading the data, what could you do?
  *
  * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient
- * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient#getByQuery(String)
+ * @see org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient#countByQuery(String)
  */
-public class Q5_XmlSimplePsicquicQuery {
+public class Q2_CountSimplePsicquicQuery {
 
      public static void main(String[] args) throws Exception {
         // get a REST URl from the registry http://www.ebi.ac.uk/Tools/webservices/psicquic/registry/registry?action=STATUS
@@ -39,17 +34,7 @@ public class Q5_XmlSimplePsicquicQuery {
         // miql query
         String miqlQuery = "pubid:16189514";
 
-        final InputStream result = client.getByQuery(miqlQuery, PsicquicSimpleClient.XML25, 0, 5);
-
-        BufferedReader in = new BufferedReader(new InputStreamReader(result));
-
-        String line;
-
-        while ((line = in.readLine()) != null) {
-            System.out.println(line);
-        }
-
-        in.close();
+        // TODO start here
     }
 
 }

@@ -30,6 +30,11 @@ import java.util.List;
 
 /**
  * Question 4: Could you list the participants of the interactions in a file, and their respective roles?
+ *
+ * @see psidev.psi.mi.xml.PsimiXmlLightweightReader
+ * @see psidev.psi.mi.xml.PsimiXmlLightweightReader#getIndexedEntries()
+ * @see psidev.psi.mi.xml.xmlindex.IndexedEntry
+ * @see psidev.psi.mi.xml.xmlindex.IndexedEntry#unmarshallInteractionIterator()
  */
 public class Q4_ListParticipantsAndRole {
     public static void main( String[] args ) throws PsimiXmlReaderException {

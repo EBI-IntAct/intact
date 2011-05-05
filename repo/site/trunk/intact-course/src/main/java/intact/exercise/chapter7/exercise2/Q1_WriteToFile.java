@@ -14,28 +14,23 @@
  * limitations under the License.
  */
 
-package intact.solution.chapter7.exercise1;
+package intact.exercise.chapter7.exercise2;
 
 import psidev.psi.mi.xml.PsimiXmlReader;
 import psidev.psi.mi.xml.PsimiXmlReaderException;
-import psidev.psi.mi.xml.model.Entry;
+import psidev.psi.mi.xml.PsimiXmlWriterException;
 import psidev.psi.mi.xml.model.EntrySet;
-import psidev.psi.mi.xml.model.Interaction;
 
 import java.io.File;
 
 /**
- * Question 1: Could you use the psidev.psi.mi.xml.PsimiXmlReader to read a data file? Iterate through the
- * interactions in the file and print some information.
- *
- * @see psidev.psi.mi.xml.PsimiXmlReader
- * @see psidev.psi.mi.xml.PsimiXmlReader#read(java.io.File)
+ * Question 1: Could you write an EntrySet to a file by using the  psidev.psi.mi.xml.PsimiXmlWriter?
  */
-public class Q1_ReadWholeFile {
-    public static void main( String[] args ) throws PsimiXmlReaderException {
+public class Q1_WriteToFile {
+    public static void main( String[] args ) throws PsimiXmlReaderException, PsimiXmlWriterException {
 
         // The data file to be parsed by the API
-        File inputFile = new File( Q1_ReadWholeFile.class.getResource( "/samples/psixml25/16705748.xml" ).getFile() );
+        File inputFile = new File( Q1_WriteToFile.class.getResource( "/samples/psixml25/16705748.xml" ).getFile() );
 
         // Create a reader
         PsimiXmlReader reader = new PsimiXmlReader();
@@ -43,14 +38,9 @@ public class Q1_ReadWholeFile {
         // Read the whole file into an EntrySet
         final EntrySet entrySet = reader.read( inputFile );
 
-        // Show all interactions, their respective id and label
-        for ( Entry entry : entrySet.getEntries() ) {
-            for ( Interaction interaction : entry.getInteractions() ) {
-                final String label = interaction.getNames().getShortLabel();
-                final int id = interaction.getId();
+        final File outputFile = new File( "16705748.updated.xml" );
 
-                System.out.println( "Interaction " + id + ": " + label );
-            }
-        }
+        // TODO start here - write that EntrySet to the outputFile
+
     }
 }

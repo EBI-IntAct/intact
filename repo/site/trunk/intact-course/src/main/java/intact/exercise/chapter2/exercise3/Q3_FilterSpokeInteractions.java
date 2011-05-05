@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package intact.solution.chapter2.exercise3;
+package intact.exercise.chapter2.exercise3;
 
 import psidev.psi.mi.tab.PsimiTabReader;
 import psidev.psi.mi.tab.model.BinaryInteraction;
@@ -25,7 +25,6 @@ import uk.ac.ebi.intact.psimitab.IntactPsimiTabReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Question 3:  Like MITAB2.6 and higher, the IntAct extended MITAB format does have a column that describe potential
@@ -62,21 +61,17 @@ public class Q3_FilterSpokeInteractions {
         int countExperimentalInteractions = 0;
         int countSpokeInteractions = 0;
 
+        // TODO start here - use the iterator and filter the interactions by its expansion method
+
         while ( interactionIterator.hasNext() ) {
             // Here we get an IntAct specific BinaryInteraction that gives access to the additional fields
             IntactBinaryInteraction bi = ( IntactBinaryInteraction ) interactionIterator.next();
 
-            final List<String> expansionMethods = bi.getExpansionMethods();
-            if ( expansionMethods.contains( SPOKE ) ) {
-                countSpokeInteractions++;
-            } else {
-                countExperimentalInteractions++;
-            }
-            count++;
+            // TODO - filter and count here
         }
 
-        System.out.println( "Read " + count + " IntAct binary interactionIterator" );
-        System.out.println( "\t Of which " + countExperimentalInteractions + " were experimentaly reported binary interactionIterator" );
+        System.out.println( "Read " + count + " IntAct binary interactions" );
+        System.out.println( "\t Of which " + countExperimentalInteractions + " were experimentaly reported binary interactions" );
         System.out.println( "\t Of which " + countSpokeInteractions + " were expanded using the spoke model" );
     }
 }
