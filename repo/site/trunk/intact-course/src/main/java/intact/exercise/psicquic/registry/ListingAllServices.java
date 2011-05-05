@@ -16,14 +16,13 @@
 
 package intact.exercise.psicquic.registry;
 
-import org.hupo.psi.mi.psicquic.registry.ServiceType;
 import org.hupo.psi.mi.psicquic.registry.client.registry.DefaultPsicquicRegistryClient;
 import org.hupo.psi.mi.psicquic.registry.client.registry.PsicquicRegistryClient;
 
-import java.util.List;
-
 /**
  * List all the available Services using the PSICQUIC Registry.
+ *
+ * Exercise 2: Programmatic access to the Registry
  *
  * @see org.hupo.psi.mi.psicquic.registry.client.registry.DefaultPsicquicRegistryClient
  * @see org.hupo.psi.mi.psicquic.registry.client.registry.DefaultPsicquicRegistryClient#listServices()
@@ -34,21 +33,12 @@ public class ListingAllServices {
         // instantiate the registry client
         PsicquicRegistryClient registryClient = new DefaultPsicquicRegistryClient();
 
-        // Exercise: List the names of all the services in the registry
-        final List<ServiceType> services = registryClient.listServices();
-
-        for ( ServiceType service : services ) {
-            System.out.println( service.getName() );
-        }
+        // Question 1: Could you list all the PSICQUIC Services and print its name in the console?
 
         System.out.println( "-------------------------------------------------" );
 
-        // Exercise: Iterate through all the ACTIVE services listing its name, interaction count and REST Example URLs.
-        final List<ServiceType> activeServices = registryClient.listActiveServices();
+        // Question 2: Like in the previous question, but could you print the count of interactions and the REST URL examples as well?
 
-        for ( ServiceType service : activeServices ) {
-            System.out.println( service.getName() + " - " + service.getCount() + " - " + service.getRestExample() );
-        }
     }
 
 }
