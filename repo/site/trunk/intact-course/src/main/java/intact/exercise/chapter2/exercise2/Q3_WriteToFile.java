@@ -17,11 +17,13 @@
 package intact.exercise.chapter2.exercise2;
 
 import psidev.psi.mi.tab.PsimiTabReader;
+import psidev.psi.mi.tab.PsimiTabWriter;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.xml.converter.ConverterException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -44,12 +46,13 @@ public class Q3_WriteToFile {
         // Instantiate the reader class that supports the Standard MITAB data format
         PsimiTabReader reader = new PsimiTabReader( true );
 
-        // Prepare for iterating over the file.
-        final Iterator<BinaryInteraction> interactions = reader.iterate( intputFile );
+        // Read the collections from the file
+        final Collection<BinaryInteraction> interactions = reader.read(intputFile);
 
         File outputFile = new File( "18189341.out.txt" );
 
         // TODO start here - instantiate the PsimiTabWriter and write all the interactions to the file
+
 
     }
 }
