@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -47,23 +48,15 @@ public class Q3_WriteToFile {
         // Instantiate the reader class that supports the Standard MITAB data format
         PsimiTabReader reader = new PsimiTabReader( true );
 
-        // Prepare for iterating over the file.
-        final Iterator<BinaryInteraction> interactions = reader.iterate( intputFile );
-
-        PsimiTabWriter tabwriter = new PsimiTabWriter();
-        tabwriter.setHeaderEnabled( true );
+        // Read the collections from the file
+        final Collection<BinaryInteraction> interactions = reader.read(intputFile);
 
         File outputFile = new File( "18189341.out.txt" );
-        Writer fileWriter = new FileWriter( outputFile );
 
-        int count = 0;
-        while ( interactions.hasNext() ) {
-            BinaryInteraction binaryInteraction = interactions.next();
-            count++;
+        PsimiTabWriter tabwriter = new PsimiTabWriter();
 
-            tabwriter.write( binaryInteraction, fileWriter );
-        }
+        tabwriter.write(interactions, outputFile);
 
-        System.out.println( "Wrote " + count + " binary interactions to " + outputFile.getAbsolutePath() );
+        System.out.println(interactions.size()+"interactions written to file: "+outputFile);
     }
 }
