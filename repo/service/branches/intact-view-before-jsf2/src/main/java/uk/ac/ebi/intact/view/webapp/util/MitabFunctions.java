@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.view.webapp.util;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import psidev.psi.mi.tab.model.Alias;
 import psidev.psi.mi.tab.model.CrossReference;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.model.Annotation;
@@ -214,6 +215,16 @@ public final class MitabFunctions {
 
     public static String getInteractorDisplayName( ExtendedInteractor interactor ) {
         IntactBinaryInteraction ibi = new IntactBinaryInteraction(interactor, interactor);
+
+        if (interactor.getAliases().size() == 1) {
+            Alias alias = interactor.getAliases().iterator().next();
+
+            if ("uniprotkb".equals(alias.getDbSource()) && alias.getAliasType() == null) {
+                return alias.getName();
+            }
+        }
+
+
         return IntactPsimitabUtils.getInteractorAName(ibi);
     }
 
