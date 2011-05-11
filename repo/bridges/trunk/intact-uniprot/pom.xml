@@ -41,46 +41,13 @@
         </plugins>
     </build>
 
-
-    <profiles>
-        <!-- This profiles are used to put the correct range for maven 2 and 3 for the uniprot artifact.
-         For some reason, the range resolution differs between the two versions of maven
-
-          http://maven.40175.n5.nabble.com/Activate-a-profile-based-on-Maven-version-td3249744.html
-         -->
-        <profile>
-            <id>uniprot-maven3</id>
-            <activation>
-                <file>
-                    <exists>${basedir}</exists>
-                </file>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>uk.ac.ebi.uniprot.kraken</groupId>
-                    <artifactId>uniprotjapi</artifactId>
-                    <version>[2011.01,)</version>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>uniprot-maven2</id>
-            <activation>
-                <file>
-                    <missing>${basedir}</missing>
-                </file>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>uk.ac.ebi.uniprot.kraken</groupId>
-                    <artifactId>uniprotjapi</artifactId>
-                    <version>[,10.5)</version>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
-
     <dependencies>
+        <dependency>
+            <groupId>uk.ac.ebi.uniprot.kraken</groupId>
+            <artifactId>uniprotjapi</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
