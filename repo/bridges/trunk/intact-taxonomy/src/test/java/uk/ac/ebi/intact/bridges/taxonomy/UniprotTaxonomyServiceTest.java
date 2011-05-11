@@ -47,7 +47,7 @@ public class UniprotTaxonomyServiceTest {
         assertNotNull( term );
 //        System.out.println(term);
         assertEquals( 4932, term.getTaxid() );
-        assertEquals( "YEAST", term.getMnemonic() );
+        assertEquals( "YEASX", term.getMnemonic() );
         assertEquals( "Baker's yeast", term.getCommonName() );
         assertEquals( "Saccharomyces cerevisiae", term.getScientificName() );
         assertEquals( 0, term.getSynonyms().size() );
