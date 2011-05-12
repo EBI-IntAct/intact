@@ -5,14 +5,9 @@
  */
 package uk.ac.ebi.intact.uniprot.model;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import uk.ac.ebi.intact.uniprot.service.UniprotService;
 
 /**
  * Splice variant of a UniProt protein.
@@ -128,7 +123,7 @@ public class UniprotSpliceVariant extends UniprotProteinTranscriptImpl{
      */
     @Override
     public String getSequence() {
-        if ( sequence == null || sequence.trim().length() == 0 ) {
+        if ( getSequence() == null || getSequence().trim().length() == 0 ) {
             throw new IllegalArgumentException( "A splice variant must have a sequence." );
         }
         return super.getSequence();
@@ -203,11 +198,11 @@ public class UniprotSpliceVariant extends UniprotProteinTranscriptImpl{
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append( "SpliceVariant" );
-        sb.append( "{primaryAC='" ).append( primaryAc ).append( '\'' );
+        sb.append( "{primaryAC='" ).append( getPrimaryAc() ).append( '\'' );
         sb.append( ",secondaryAcs=" ).append( secondaryAcs );
-        sb.append( ",sequence='" ).append( sequence ).append( '\'' );
-        sb.append( ", start=" ).append( start );
-        sb.append( ", end=" ).append( end );
+        sb.append( ",sequence='" ).append( getSequence() ).append( '\'' );
+        sb.append( ", start=" ).append( getStart() );
+        sb.append( ", end=" ).append( getEnd() );
         sb.append( ", note='" ).append( note ).append( '\'' );
         sb.append( '}' );
         return sb.toString();

@@ -17,27 +17,29 @@ public abstract class UniprotProteinTranscriptImpl implements UniprotProteinTran
     /**
      * Sequence of the protein transcript.
      */
-    protected String sequence;
+    private String sequence;
 
     /**
      * primaryAc of the protein transcript.
      */
-    protected String primaryAc;
+    private String primaryAc;
 
     /**
      * Organism of a protein transcript.
      */
-    protected Organism organism;
+    private Organism organism;
 
     /**
      * Start range of the protein transcript.
      */
-    protected Integer start;
+    private Integer start;
 
     /**
      * End range of the protein transcript.
      */
-    protected Integer end;
+    private Integer end;
+
+    private UniprotProtein masterProtein;
 
     public UniprotProteinTranscriptImpl(String primaryAc, Organism organism, String sequence){
         this.id = primaryAc;
@@ -114,6 +116,17 @@ public abstract class UniprotProteinTranscriptImpl implements UniprotProteinTran
             }
         }
         this.end = end;
+    }
+
+    @Override
+    public UniprotProtein getMasterProtein() {
+        return masterProtein;
+    }
+
+
+    @Override
+    public void setMasterProtein(UniprotProtein uniprotProtein) {
+        this.masterProtein = uniprotProtein;
     }
 
     /**

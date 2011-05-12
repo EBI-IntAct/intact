@@ -31,4 +31,8 @@ public interface UniprotProteinTranscript extends UniprotProteinLike {
     public String getNote();
 
     public void setNote( String note );
+
+    public UniprotProtein getMasterProtein();
+
+    public void setMasterProtein(UniprotProtein uniprotProtein);
 }
