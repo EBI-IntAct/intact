@@ -105,7 +105,10 @@ public class UniprotRemoteServiceTest {
     @Test
     public void retrieveSpliceVariant() throws Exception {
         Collection<UniprotSpliceVariant> prots = getUniprotService().retrieveSpliceVariant( "Q13535-1" );
-        assertEquals( "Q13535-1", prots.iterator().next().getPrimaryAc() );
+        UniprotSpliceVariant spliceVariant = prots.iterator().next();
+
+        assertEquals("Q13535-1", spliceVariant.getPrimaryAc());
+        assertEquals("Q13535", spliceVariant.getMasterProtein().getPrimaryAc());
     }
 
     @Test

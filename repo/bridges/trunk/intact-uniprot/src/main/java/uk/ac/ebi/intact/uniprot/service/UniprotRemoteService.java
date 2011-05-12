@@ -98,6 +98,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
                 if (variant != null && !variantAcProcessed.contains(variant.getPrimaryAc())){
                     variants.add(variant);
                     variantAcProcessed.add(variant.getPrimaryAc());
+                    variant.setMasterProtein(p);
                 }
             }
         }
@@ -121,6 +122,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
                 if (!variantAcProcessed.contains(variant.getPrimaryAc())){
                     variants.add(variant);
                     variantAcProcessed.add(variant.getPrimaryAc());
+                    variant.setMasterProtein(uniprotProtein);
                 }
             }
         }
@@ -145,6 +147,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
                 if (variant != null){
                    variants.add(variant);
+                    variant.setMasterProtein(p);
                 }
             }
         }
@@ -166,6 +169,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
             if (variant != null) {
                 variants.add(variant);
+                variant.setMasterProtein(uniprotProtein);
             }
         }
 

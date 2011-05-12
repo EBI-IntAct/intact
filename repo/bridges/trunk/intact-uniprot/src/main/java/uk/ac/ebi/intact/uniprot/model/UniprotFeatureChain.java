@@ -5,9 +5,6 @@
  */
 package uk.ac.ebi.intact.uniprot.model;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -118,12 +115,12 @@ public class UniprotFeatureChain extends UniprotProteinTranscriptImpl{
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append( "UniprotFeatureChain" );
-        sb.append( "{ id='" ).append( primaryAc ).append( '\'' );
-        sb.append( ", sequence='" ).append( sequence ).append( '\'' );
-        sb.append( ", organism=" ).append( organism );
+        sb.append( "{ id='" ).append( getPrimaryAc() ).append( '\'' );
+        sb.append( ", sequence='" ).append( getSequence() ).append( '\'' );
+        sb.append( ", organism=" ).append( getOrganism() );
         sb.append( ", description=" ).append( description );
-        sb.append( ", start=" ).append( start );
-        sb.append( ", end=" ).append( end );
+        sb.append( ", start=" ).append( getStart() );
+        sb.append( ", end=" ).append( getEnd() );
         sb.append( '}' );
         return sb.toString();
     }
