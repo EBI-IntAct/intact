@@ -123,7 +123,7 @@ public class UniprotSpliceVariant extends UniprotProteinTranscriptImpl{
      */
     @Override
     public String getSequence() {
-        if ( getSequence() == null || getSequence().trim().length() == 0 ) {
+        if ( super.getSequence() == null || super.getSequence().trim().length() == 0 ) {
             throw new IllegalArgumentException( "A splice variant must have a sequence." );
         }
         return super.getSequence();
