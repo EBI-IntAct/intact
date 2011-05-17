@@ -10,7 +10,7 @@
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>psixml-generator-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.9.0.2</version>
+    <version>1.9.0.3</version>
 
     <name>Plugin - PSI XML Generator</name>
     <description>
