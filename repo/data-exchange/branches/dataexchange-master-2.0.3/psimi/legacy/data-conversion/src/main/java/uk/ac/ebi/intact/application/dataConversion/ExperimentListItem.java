@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.application.dataConversion;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.annotations.CascadeType;
 import uk.ac.ebi.intact.business.IntactException;
 
 import java.util.Arrays;
@@ -29,10 +30,17 @@ public class ExperimentListItem
     /**
      * Unreadable but working pattern to parse an experimentListItem from a String.
      * Note: file path can contain / or \ indifferently
+     *
+     * species/horse_small.xml
+     * species/horse_small_negative.xml
+     * species/camje_parrish-2007-1_05.xml
+     * species/guanarito-virus-(iso_small.xml
+     * species/western-european-house-mouse_small.xml
+     * species/yersinia-pestis-kim-_dyer-2010-1_01.xml
      */
     private static final Pattern PATTERN =
             Pattern.compile("((?:\\w+(?:/|\\\\))*)(\\w+(?:-\\d+)?-?+(?:_small)?)(?:_\\w+-\\d{4}-\\d+)?(?:-|_)?(\\d{1,2})?_?(negative)?\\.xml\\s(\\S+(?:,\\S)*)+(?:\\s\\[(\\d+),(\\d+)\\])?");
-
+            //                <-- directories --> <-specie name->               <-  exp shortlabel ->
     private Collection<String> experimentLabels;
 
     /**
@@ -55,39 +63,37 @@ public class ExperimentListItem
         this.parentFolders = removeTrailingSlash(parentFolders);
     }
 
-    public String getFilename()
-    {
+    public String getFilename() {
         String strNegative = "";
-        if (negative)
-        {
+        if (negative) {
             strNegative = "_negative";
         }
 
         String fileNumber = "";
-        if (chunkNumber != null)
-        {
-            fileNumber = "-"+twoDigitNumber(chunkNumber);
+        if (chunkNumber != null) {
+            fileNumber = "_"+twoDigitNumber(chunkNumber);
         }
 
         String strLargeScale = "";
 
-        if (largeScaleChunkSize != null)
-        {
+        if (largeScaleChunkSize != null) {
             if (experimentLabels.size() > 1)
             {
                 throw new RuntimeException("On large scale items, only one experiment label is allowed");
             }
 
-            strLargeScale = "_"+experimentLabels.iterator().next()+"_"+twoDigitNumber(chunkNumber);
-            fileNumber = "";
+            final String expLabel = experimentLabels.iterator().next();
+            if( ! name.contains( expLabel ) ) {
+                strLargeScale = "_"+ expLabel +"_"+twoDigitNumber(chunkNumber);
+                fileNumber = "";
+            }
         }
 
         return parentFolders + FileHelper.SLASH + name +
                strLargeScale + fileNumber + strNegative + FileHelper.XML_FILE_EXTENSION;
     }
 
-    public String getPattern()
-    {
+    public String getPattern() {
         StringBuffer sb = new StringBuffer();
 
         int i=0;
@@ -106,8 +112,7 @@ public class ExperimentListItem
         return sb.toString();
     }
 
-    public String getInteractionRange()
-    {
+    public String getInteractionRange() {
         if (largeScaleChunkSize == null)
         {
             return "";
@@ -119,35 +124,27 @@ public class ExperimentListItem
         return "["+first+","+last+"]";
     }
 
-    public Integer getChunkNumber()
-    {
+    public Integer getChunkNumber() {
         return chunkNumber;
     }
 
-    public boolean isNegative()
-    {
+    public boolean isNegative() {
         return negative;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public Collection<String> getExperimentLabels()
-    {
+    public Collection<String> getExperimentLabels() {
         return experimentLabels;
     }
 
-
-    public Integer getLargeScaleChunkSize()
-    {
+    public Integer getLargeScaleChunkSize() {
         return largeScaleChunkSize;
     }
 
-
-    public String getParentFolders()
-    {
+    public String getParentFolders() {
         return parentFolders;
     }
 
@@ -156,8 +153,77 @@ public class ExperimentListItem
      * @param strItem
      * @return
      */
-    public static ExperimentListItem parseString(String strItem)
-    {
+    public static ExperimentListItem parseString(final String strItem) {
+
+        int fileIdx = strItem.indexOf( " " );
+        String filepath = strItem.substring( 0, fileIdx );
+
+        final int slashIdx = filepath.lastIndexOf( '/' );
+        final int backslashIdx = filepath.lastIndexOf( '\\' );
+        int sepIdx = Math.max( backslashIdx, slashIdx );
+
+        String dir = null;
+        String filename = null;
+        if( sepIdx != -1 ) {
+            dir = filepath.substring( 0, sepIdx );
+            filename = filepath.substring( sepIdx + 1 );
+        } else {
+            filename = filepath;
+        }
+
+        boolean isNegative = false;
+        if( filename.contains( "_negative" ) ) {
+            filename = filename.replaceAll( "_negative", "" );
+            isNegative = true;
+        }
+
+        Integer chunk = null;
+        String chunkStr;
+        final Pattern p = Pattern.compile( ".*_(\\d+)\\.xml" );
+        final Matcher matcher1 = p.matcher( filename );
+        if( matcher1.matches() ) {
+            chunkStr = matcher1.group( 1 );
+            chunk = Integer.parseInt(chunkStr);
+            filename = filename.substring( 0, filename.lastIndexOf( '_' ) );
+        }
+
+        final String experimentList;
+        Integer largeScaleSize = null;
+        int expIdx = strItem.indexOf( " ", fileIdx + 1 );
+        if( expIdx == -1 ) {
+            experimentList = strItem.substring( fileIdx + 1, strItem.length() );
+        } else {
+            experimentList = strItem.substring( fileIdx + 1, expIdx );
+
+            int rangeIdx = strItem.indexOf( " ", expIdx );
+            if( rangeIdx != -1 ) {
+                final String range = strItem.substring( expIdx + 1, strItem.length() );
+                final Pattern p2 = Pattern.compile( "\\[(\\d+),(\\d+)\\]" );
+                final Matcher matcher2 = p2.matcher( range );
+                if( matcher2.matches() ) {
+                    String firstStr = matcher2.group( 1 );
+                    String lastStr = matcher2.group( 2 );
+                    Integer first = Integer.parseInt( firstStr );
+                    Integer last = Integer.parseInt( lastStr );
+                    largeScaleSize = last - first + 1;
+                }
+            }
+        }
+
+        String[] experimentLabels = experimentList.split(",");
+
+        filename = filename.replaceAll( ".xml", "" );
+        return new ExperimentListItem(Arrays.asList(experimentLabels), filename, dir, isNegative, chunk, largeScaleSize);
+    }
+
+    /**
+     * Instantiates a ExperimentListItem by parsing a String
+     * @param strItem
+     * @return
+     * @deprecated for cause of rotten regex
+     */
+    public static ExperimentListItem parseString_old(final String strItem) {
+
         Matcher matcher = PATTERN.matcher(strItem);
 
         if (matcher.find())
@@ -189,15 +255,13 @@ public class ExperimentListItem
 
             Integer largeScaleSize = null;
 
-            if (strFirstResult != null && strLastResult != null)
-            {
+            if (strFirstResult != null && strLastResult != null) {
                 largeScaleSize = Integer.parseInt(strLastResult)-Integer.parseInt(strFirstResult)+1;
             }
 
+            System.out.println( name +"  "+ parentFolder +"  "+ negative +"  "+ chunk +"  "+ largeScaleSize );
             return new ExperimentListItem(Arrays.asList(experimentLabels), name, parentFolder, negative, chunk, largeScaleSize);
-        }
-        else
-        {
+        } else {
             throw new IntactException("Could not parse string: " + strItem);
         }
     }

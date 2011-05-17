@@ -7,10 +7,14 @@
 package uk.ac.ebi.intact.application.dataConversion;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -45,6 +49,29 @@ public class ExperimentListItemTest {
     }
 
     @Test
+    public void funkyBiosourceLabel() throws Exception {
+        ExperimentListItem experimentListItem = ExperimentListItem.parseString( "species/yersinia-pestis-kim-_dyer-2010-1_01.xml dyer-2010-1 [1,2000]" );
+        assertEquals( "species/yersinia-pestis-kim-_dyer-2010-1_01.xml", experimentListItem.getFilename() );
+    }
+
+    @Test
+    public void giot_chunk() throws Exception {
+        ExperimentListItem experimentListItem = ExperimentListItem.parseString( "species/drome_giot-2003-1_01.xml giot-2003-1 [1,2000]" );
+        assertEquals( "species/drome_giot-2003-1_01.xml", experimentListItem.getFilename() );
+
+        assertNotNull( experimentListItem.getLargeScaleChunkSize() );
+        assertEquals( 2000, experimentListItem.getLargeScaleChunkSize().intValue() );
+
+        assertEquals( "[1,2000]", experimentListItem.getInteractionRange() );
+
+        assertNotNull( experimentListItem.getChunkNumber() );
+        assertEquals( 1, experimentListItem.getChunkNumber().intValue() );
+
+        assertEquals( "drome_giot-2003-1", experimentListItem.getName() );
+        assertEquals( Arrays.asList( "giot-2003-1" ), experimentListItem.getExperimentLabels() );
+    }
+
+    @Test
     public void testStaticParseString() throws Exception {
         ExperimentListItem experimentListItem = ExperimentListItem.parseString( "species/humt-_small.xml kanamori-2003-4" );
         assertEquals( "species/humt-_small.xml", experimentListItem.getFilename() );
@@ -62,11 +89,11 @@ public class ExperimentListItemTest {
                                                              "s-2005-1,matern-2000-1,rodriguez_n-2002-1,english-2006-1,lalo-1996-1,allard-1999-1,mizuguchi-2004-2,singh-2006-3,eugster-2000\\\n" +
                                                              "-3,fiedler-2002-2,chavan-2005-1,kim-2005a-1,zhao-2005-2" );
         assertEquals( "species/yeast_small-11.xml", experimentListItem.getFilename() );
+    }
 
-        experimentListItem = ExperimentListItem.parseString( "species/drome_giot-2003-1_01.xml giot-2003-1 [1,2000]" );
-        assertEquals( "species/drome_giot-2003-1_01.xml", experimentListItem.getFilename() );
-
-        experimentListItem = ExperimentListItem.parseString( "pmid/2007/unassigned1.xml ewans-2007-1" );
+    @Test
+    public void unassigned() throws Exception {
+        ExperimentListItem experimentListItem = ExperimentListItem.parseString( "pmid/2007/unassigned1.xml ewans-2007-1" );
         assertEquals( "pmid/2007/unassigned1.xml", experimentListItem.getFilename() );
     }
 
@@ -74,7 +101,18 @@ public class ExperimentListItemTest {
     public void testGetFilename() throws Exception {
         assertEquals( "species" + FileHelper.SLASH + "onelabel_negative.xml", mockWithOneLabel.getFilename() );
         assertEquals( "pmid" + FileHelper.SLASH + "2006" + FileHelper.SLASH + "onelabellarge_test-2006-1_02.xml", mockWithOneLabelLarge.getFilename() );
-        assertEquals( "species" + FileHelper.SLASH + "manylabel-03.xml", mockWithManyLabels.getFilename() );
+        assertEquals( "species" + FileHelper.SLASH + "manylabel_03.xml", mockWithManyLabels.getFilename() );
+    }
+
+    @Test
+    public void chunk() throws Exception {
+
+
+        ExperimentListItem experimentListItem = ExperimentListItem.parseString( "species/ecoli_small_03.xml arifuzzaman-2006-1" );
+        assertEquals( "species/ecoli_small_03.xml", experimentListItem.getFilename() );
+        Assert.assertNotNull( experimentListItem.getChunkNumber() );
+        assertEquals( 3, experimentListItem.getChunkNumber().intValue() );
+
     }
 
     @Test
@@ -125,7 +163,7 @@ public class ExperimentListItemTest {
     public void testToString() throws Exception {
         assertEquals( "species" + FileHelper.SLASH + "onelabel_negative.xml test-2006-1", mockWithOneLabel.toString() );
         assertEquals( "pmid" + FileHelper.SLASH + "2006" + FileHelper.SLASH + "onelabellarge_test-2006-1_02.xml test-2006-1 [2001,4000]", mockWithOneLabelLarge.toString() );
-        assertEquals( "species" + FileHelper.SLASH + "manylabel-03.xml test-2006-1,test-2006-2", mockWithManyLabels.toString() );
+        assertEquals( "species" + FileHelper.SLASH + "manylabel_03.xml test-2006-1,test-2006-2", mockWithManyLabels.toString() );
     }
 
     @Test
