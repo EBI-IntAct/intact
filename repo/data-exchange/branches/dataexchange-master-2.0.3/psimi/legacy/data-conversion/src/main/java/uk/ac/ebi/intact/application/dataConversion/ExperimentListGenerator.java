@@ -536,6 +536,10 @@ public class ExperimentListGenerator {
         }
     }
 
+    public static void main( String[] args ) {
+        System.out.println( "lala lili lolo".replace( ' ', '-' ) );
+    }
+
     /**
      * Build the classification by pubmed id.
      * <br/>
@@ -742,6 +746,7 @@ public class ExperimentListGenerator {
         List<String> labelsNegative = new ArrayList<String>();
 
         for ( SimplifiedAnnotatedObject exp : exps ) {
+
             if ( isNegative( exp.getShortLabel() ) ) {
                 labelsNegative.add( exp.getShortLabel() );
             } else {
