@@ -103,6 +103,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
                     variant.setMasterProtein(p);
                 }
             }
+            return variants;
         }
 
         Collection<UniprotProtein> proteins = new ArrayList<UniprotProtein>();
@@ -152,6 +153,8 @@ public class UniprotRemoteService extends AbstractUniprotService {
                     variant.setMasterProtein(p);
                 }
             }
+
+            return variants;
         }
 
         Collection<UniprotProtein> proteins = new ArrayList<UniprotProtein>();
