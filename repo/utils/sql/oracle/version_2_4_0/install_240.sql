@@ -1,6 +1,6 @@
 set serveroutput on size 1000000
 
-spool install_230.log
+spool install_240.log
 
 select to_char(sysdate,'dd-mon-yyyy hh24:mi:ss')  start_date from dual;
 
@@ -40,6 +40,8 @@ PROMPT "Creating public synonyms..."
 PROMPT *********************************************************************************/
 PROMPT "Creating audit triggers..."
 @030_create_audit_trigger.sql
+
+@040_alter_xref_secondaryid.sql
 
 
 PROMPT *********************************************************************************/
