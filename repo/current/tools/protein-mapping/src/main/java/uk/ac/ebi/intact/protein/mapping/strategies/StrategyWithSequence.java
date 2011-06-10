@@ -258,38 +258,41 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
             if (uniprot != null && !report.isASwissprotEntry()){
                 // get the uniprot protein for the Trembl entry
                 UniprotProtein tremblEntry = getUniprotProteinFor(uniprot);
-                String sequence = tremblEntry.getSequence();
 
-                // create a Blast context
-                BlastContext blastContext = new BlastContext(context);
-                blastContext.setSequence(sequence);
-
-                // extract the Ensembl gene accession
                 if (tremblEntry != null){
+                    String sequence = tremblEntry.getSequence();
+
+                    // create a Blast context
+                    BlastContext blastContext = new BlastContext(context);
+                    blastContext.setSequence(sequence);
+
+                    // extract the Ensembl gene accession
                     String ensemblGene = extractENSEMBLGeneAccessionFrom(tremblEntry.getCrossReferences());
                     blastContext.setEnsemblGene(ensemblGene);
+
+                    // run a swissprot remapping process
+                    String uniprot2 = this.listOfActions.get(2).runAction(blastContext);
+                    // process the isoforms
+                    uniprot2 = processIsoforms(uniprot2);
+
+                    // if the swissprot remapping process was successful, we replace the trembl accession with the swissprot one
+                    if (uniprot2 != null){
+                        uniprot = uniprot2;
+                    }
+                    // add the reports to the list of reports
+                    this.listOfReports.addAll(this.listOfActions.get(2).getListOfActionReports());
+
+                    List<BlastReport> listOfSwissprotRemappingReports = getSwissprotRemappingReports(this.listOfReports);
+
+                    for (BlastReport sr : listOfSwissprotRemappingReports){
+                        for (BlastResults r : sr.getBlastMatchingProteins()){
+                            r.setTremblAccession(tremblEntry.getPrimaryAc());
+                        }
+                    }
+
                 }
                 else {
                     throw new ActionProcessingException("We couldn't find any Uniprot entries which match this accession number " + uniprot);
-                }
-                // run a swissprot remapping process
-                String uniprot2 = this.listOfActions.get(2).runAction(blastContext);
-                // process the isoforms
-                uniprot2 = processIsoforms(uniprot2);
-
-                // if the swissprot remapping process was successful, we replace the trembl accession with the swissprot one
-                if (uniprot2 != null){
-                    uniprot = uniprot2;
-                }
-                // add the reports to the list of reports
-                this.listOfReports.addAll(this.listOfActions.get(2).getListOfActionReports());
-
-                List<BlastReport> listOfSwissprotRemappingReports = getSwissprotRemappingReports(this.listOfReports);
-
-                for (BlastReport sr : listOfSwissprotRemappingReports){
-                    for (BlastResults r : sr.getBlastMatchingProteins()){
-                        r.setTremblAccession(tremblEntry.getPrimaryAc());
-                    }
                 }
             }
         }
