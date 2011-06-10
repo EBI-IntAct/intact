@@ -90,7 +90,7 @@ public class StrategyWithIdentifierTest {
 
     @Test
     public void test_Swissprot_Remapping_Successfull(){
-        // 4 identifiers to test
+        // 3 identifiers to test
         File file = new File(getClass().getResource("/SwissprotRemapping.csv").getFile());
         BioSource organism = createBiosource("human", "Homo sapiens", "9606");
 
