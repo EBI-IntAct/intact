@@ -13,7 +13,6 @@ import uk.ac.ebi.intact.protein.mapping.model.actionReport.IntactCrc64Report;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.PICRReport;
 import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
 import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
@@ -129,7 +128,7 @@ public class StrategyWithSequenceTest  extends IntactBasicTestCase {
     }
 
     @Test
-    public void test_Sequence_Swissprot_Remapping_Successful(){
+    public void test_Sequence_PICR_Swissprot_Remapping_Successful(){
         String sequence = "MAGNFDSEERSSWYWGRLSRQEAVALLQGQRHGVFLVRDSSTSPGDYVLSVSENSRVSHY\n" +
                 "IINSSGPRPPVPPSPAQPPPGVSPSRLRIGDQEFDSLPALLEFYKIHYLDTTTLIEPVSR\n" +
                 "SRQGSGVILRQEEAEYVRALFDFNGNDEEDLPFKKGDILRIRDKPEEQWWNAEDSEGKRG\n" +
@@ -153,12 +152,12 @@ public class StrategyWithSequenceTest  extends IntactBasicTestCase {
             }
 
             Assert.assertNotNull(result.getFinalUniprotId());
-            Assert.assertEquals(3, result.getListOfActions().size());
+            Assert.assertEquals(1, result.getListOfActions().size());
             Assert.assertEquals(ac_to_find, result.getFinalUniprotId());
-            Assert.assertEquals(true, result.getLastAction() instanceof BlastReport);
+            Assert.assertEquals(true, result.getLastAction() instanceof PICRReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
-            Assert.assertEquals(true, ((BlastReport) result.getLastAction()).getBlastMatchingProteins().size() > 0);
-            Assert.assertEquals(true, ((BlastReport) result.getLastAction()).getBlastMatchingProteins().iterator().next().getTremblAccession() != null);
+            //Assert.assertEquals(true, ((BlastReport) result.getLastAction()).getBlastMatchingProteins().size() > 0);
+            //Assert.assertEquals(true, ((BlastReport) result.getLastAction()).getBlastMatchingProteins().iterator().next().getTremblAccession() != null);
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
