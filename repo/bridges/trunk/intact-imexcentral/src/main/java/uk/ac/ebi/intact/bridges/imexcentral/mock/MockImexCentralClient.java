@@ -125,11 +125,15 @@ public class MockImexCentralClient implements ImexCentralClient {
     }
 
     public void updatePublicationAdminGroup( String identifier, Operation operation, String group ) throws ImexCentralException {
-        throw new UnsupportedOperationException( );
+        Publication p = getPublicationImexAccession( identifier, false );
+
+        // TODO when you figure out where to store this, do it. The publication object doesn't seem to hold it.
     }
 
     public void updatePublicationAdminUser( String identifier, Operation operation, String user ) throws ImexCentralException {
-        throw new UnsupportedOperationException( );
+        Publication p = getPublicationImexAccession( identifier, false );
+
+        // TODO when you figure out where to store this, do it. The publication object doesn't seem to hold it.
     }
 
     public void createPublication( Publication publication ) throws ImexCentralException {
