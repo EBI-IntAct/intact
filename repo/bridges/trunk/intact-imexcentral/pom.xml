@@ -22,6 +22,9 @@
 
     <dependencies>
 
+        <!-- DIP's library to access the IMEx Central web service,
+             SVN: https://imex.mbi.ucla.edu/svn/central/trunk
+         -->
         <dependency>
             <groupId>edu.ucla.mbi.imex</groupId>
              <artifactId>ic-api</artifactId>
