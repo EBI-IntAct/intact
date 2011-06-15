@@ -6,8 +6,8 @@
 package uk.ac.ebi.intact.uniprot.model;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Representation of an organism.
@@ -28,9 +28,14 @@ public class Organism implements Serializable{
     private int taxid;
 
     /**
-     * The name of an organism.
+     * The scientific name of an organism.
      */
     private String name;
+
+    /**
+     * The common name of an organism
+     */
+    private String commonName;
 
     /**
      * The parents' name of an organism.
@@ -76,6 +81,14 @@ public class Organism implements Serializable{
             throw new IllegalArgumentException( "taxid must be 1 or greater." );
         }
         this.taxid = taxid;
+    }
+
+    public String getCommonName() {
+        return commonName;
+    }
+
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
     }
 
     //////////////////////////////

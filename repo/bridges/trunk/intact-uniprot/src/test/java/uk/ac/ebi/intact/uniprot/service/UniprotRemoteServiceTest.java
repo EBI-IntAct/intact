@@ -77,6 +77,9 @@ public class UniprotRemoteServiceTest {
         assertEquals( "P06493", uniprotProtein.getPrimaryAc() );
         assertEquals( "Cyclin-dependent kinase 1", uniprotProtein.getDescription());
         assertEquals(4, uniprotProtein.getSynomyms().size());
+
+        Assert.assertEquals("Homo sapiens", uniprotProtein.getOrganism().getName());
+        Assert.assertEquals("Human", uniprotProtein.getOrganism().getCommonName());
     }
 
     @Test

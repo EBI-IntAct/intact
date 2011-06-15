@@ -314,6 +314,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
         String organismName = organism.getScientificName().getValue();
         String entryTaxid = taxids.get( 0 ).getValue();
         Organism o = new Organism( Integer.parseInt( entryTaxid ), organismName );
+        o.setCommonName(organism.getCommonName().getValue());
 
         // extract parent's names
         if ( organism.hasCommonName() ) {
