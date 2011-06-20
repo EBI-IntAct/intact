@@ -19,7 +19,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.bridges</groupId>
             <artifactId>intact-citexplore</artifactId>
-            <version>${pom.version}</version>
+            <version>${pom.parent.version}</version>
         </dependency>
 
         <!-- JAX-WS -->

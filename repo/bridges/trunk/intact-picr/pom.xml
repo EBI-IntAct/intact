@@ -48,7 +48,7 @@
         <dependency>
             <groupId>${pom.groupId}</groupId>
             <artifactId>intact-uniprot</artifactId>
-            <version>${pom.version}</version>
+            <version>${pom.parent.version}</version>
         </dependency>
 
         <!-- JAX-WS -->
