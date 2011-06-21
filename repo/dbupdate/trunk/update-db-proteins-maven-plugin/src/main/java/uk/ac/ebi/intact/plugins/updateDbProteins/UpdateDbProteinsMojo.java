@@ -19,10 +19,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import uk.ac.ebi.intact.core.util.DebugUtil;
+import uk.ac.ebi.intact.dbupdate.prot.ProteinUpdateContext;
 import uk.ac.ebi.intact.dbupdate.prot.ProteinUpdateProcessor;
 import uk.ac.ebi.intact.dbupdate.prot.ProteinUpdateProcessorConfig;
 import uk.ac.ebi.intact.dbupdate.prot.report.FileReportHandler;
-import uk.ac.ebi.intact.dbupdate.prot.report.UpdateReportHandler;
 import uk.ac.ebi.intact.plugin.IntactJpaMojo;
 
 import java.io.File;
@@ -68,7 +68,7 @@ public class UpdateDbProteinsMojo extends IntactJpaMojo {
     /**
      * @parameter
      */
-    private boolean deleteSpliceVarsWithoutInteractions = false;
+    private boolean deleteSpliceVarsWithoutInteractions = true;
 
     /**
      * @parameter
@@ -97,12 +97,15 @@ public class UpdateDbProteinsMojo extends IntactJpaMojo {
         System.out.println( "batchSize:"+getBatchSize() );
         System.out.println( "stepSize:"+stepSize );
 
-        UpdateReportHandler reportHandler = new FileReportHandler(reportsDir);
-        ProteinUpdateProcessorConfig configUpdate = new ProteinUpdateProcessorConfig(reportHandler);
-        configUpdate.setFixDuplicates(fixDuplicates);
-        configUpdate.setProcessProteinNotFoundInUniprot(deleteSpliceVarsWithoutInteractions);
         //configUpdate.setProcessBatchSize(batchSize);
         //configUpdate.setProcessStepSize(stepSize);
+        ProteinUpdateProcessorConfig config = ProteinUpdateContext.getInstance().getConfig();
+        config.setDeleteProteinTranscriptWithoutInteractions(deleteSpliceVarsWithoutInteractions);
+        config.setDeleteProtsWithoutInteractions(true);
+        config.setGlobalProteinUpdate(true);
+        config.setFixDuplicates(fixDuplicates);
+        config.setProcessProteinNotFoundInUniprot(true);
+        config.setBlastEnabled(false);
 
         PrintStream ps = new PrintStream(new File(reportsDir, "counts.txt"));
         ps.println("Counts before update");
@@ -110,9 +113,21 @@ public class UpdateDbProteinsMojo extends IntactJpaMojo {
         DebugUtil.printDatabaseCounts(ps);
         ps.flush();
 
+        try {
+            config.setReportHandler(new FileReportHandler(reportsDir));
 
-        ProteinUpdateProcessor protUpdateProcessor = new ProteinUpdateProcessor(configUpdate);
-        protUpdateProcessor.updateAll();
+            ProteinUpdateProcessor updateProcessor = new ProteinUpdateProcessor();
+            System.out.println("Starting the global update");
+            updateProcessor.updateAll();
+            //List<Protein> proteins = updateProcessor.retrieveAndUpdateProteinFromUniprot("Q9XYZ4");
+            //List<String> acs = new ArrayList<String>();
+            //acs.add("EBI-3044019");
+            //updateProcessor.updateByACs(acs);
+
+        } catch (IOException e) {
+            System.err.println("The repository " + reportsDir.getName() + " cannot be found. We cannot write log files and so we cannot run a global protein update.");
+            e.printStackTrace();
+        }
 
         ps.println("\nCounts after update");
         ps.println("---------------------");
