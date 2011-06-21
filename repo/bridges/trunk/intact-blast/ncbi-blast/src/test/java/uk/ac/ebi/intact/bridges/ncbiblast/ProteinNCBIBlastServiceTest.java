@@ -1,7 +1,6 @@
 package uk.ac.ebi.intact.bridges.ncbiblast;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -20,9 +19,12 @@ public class ProteinNCBIBlastServiceTest {
 
     ProteinNCBIBlastService blastService;
 
-    @Before
-	public void setUp() throws BlastServiceException {
-        blastService = new ProteinNCBIBlastService("marine@ebi.ac.uk");
+    public ProteinNCBIBlastServiceTest(){
+        try {
+            blastService = new ProteinNCBIBlastService("marine@ebi.ac.uk");
+        } catch (BlastServiceException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
     @Test

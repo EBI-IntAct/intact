@@ -1,7 +1,6 @@
 package uk.ac.ebi.intact.bridges.ncbiblast;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
 
@@ -22,12 +21,15 @@ public class BlastResultFilterTest {
     BlastResultFilter filter;
     private final String sequence = "MFAVMRIDNDDCRSDFRRKMRPKCEFICKYCQRRFTKPYNLMIHERTHKSPEITYSCEVCGKYFKQRDNLRQHRCSQCVWR";
 
-    @Before
-    public void setUp() throws BlastServiceException {
-        blastService = new ProteinNCBIBlastService("marine@ebi.ac.uk");
-        results = blastService.getResultsOfBlastOnUniprot(sequence);
+    public BlastResultFilterTest(){
+        try {
+            blastService = new ProteinNCBIBlastService("marine@ebi.ac.uk");
+            results = blastService.getResultsOfBlastOnUniprot(sequence);
 
-        filter = new BlastResultFilter(results);
+            filter = new BlastResultFilter(results);
+        } catch (BlastServiceException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
     @Test
@@ -107,7 +109,7 @@ public class BlastResultFilterTest {
         List<BlastProtein> filteredResultsOnOrganismAndIdentity = filter.filterMappingEntriesWithIdentityAndOrganism((float)100, "7227");
 
         Assert.assertEquals(false, filteredResultsOnOrganismAndIdentity.isEmpty());
-        Assert.assertEquals(1, filteredResultsOnOrganismAndIdentity.size()); 
+        Assert.assertEquals(1, filteredResultsOnOrganismAndIdentity.size());
 
         List<BlastProtein> filteredResultsWithTotalAlignment = BlastResultFilter.collectMappingEntriesWithTotalAlignment(filteredResultsOnIdentity, this.sequence.length());
         Assert.assertEquals(12, filteredResultsWithTotalAlignment.size());

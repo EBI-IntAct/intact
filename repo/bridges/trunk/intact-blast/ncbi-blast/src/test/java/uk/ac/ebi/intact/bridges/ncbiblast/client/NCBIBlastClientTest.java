@@ -5,14 +5,14 @@
  */
 package uk.ac.ebi.intact.bridges.ncbiblast.client;
 
-import org.junit.*;
-import uk.ac.ebi.intact.bridges.ncbiblast.client.NCBIBlastClient;
-import uk.ac.ebi.intact.bridges.ncbiblast.model.*;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastJobStatus;
+import uk.ac.ebi.intact.bridges.ncbiblast.model.Job;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 /**
  * Test class for the wswublast client.
@@ -25,11 +25,7 @@ public class NCBIBlastClientTest {
     private NCBIBlastClient bc;
     private static final String email = "marine@ebi.ac.uk";
 
-    /**
-     * @throws Exception     : BlastCleintException
-     */
-    @Before
-    public void setUp() throws Exception {
+    public NCBIBlastClientTest() {
         bc = new NCBIBlastClient();
     }
 
