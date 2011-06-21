@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="setOfResults" type="setOfResults" />
+    <xs:complexType name="listOfWarnings">
+        <xs:sequence>
+            <xs:element type="xs:string" name="warning" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+      <xs:complexType name="setOfResults">
+    <xs:sequence>
+      <xs:element type="results" name="results" maxOccurs="unbounded" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+    <xs:complexType name="possibleIntActAccession">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="accession" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="listOfActions">
+        <xs:sequence>
+            <xs:element type="action" name="action" maxOccurs="unbounded" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="listOfCrossReferences">
+        <xs:sequence>
+            <xs:element type="crossReference" name="crossReference" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="picrReport">
+        <xs:sequence>
+            <xs:element type="xs:string" name="isASwissprotEntry" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element type="listOfCrossReferences" name="listOfCrossReferences" maxOccurs="1" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="status">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="label"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="possibleUniprotAccession">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="accession" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="sequence">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="start" use="required"/>
+                <xs:attribute type="xs:string" name="end" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="listOfProteins">
+        <xs:sequence>
+            <xs:element type="protein" name="protein" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="crossReference">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="database" use="required"/>
+                <xs:attribute type="xs:string" name="accession" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="action">
+        <xs:sequence>
+            <xs:element type="status" name="status" maxOccurs="1" minOccurs="1"/>
+            <xs:element type="listOfWarnings" name="listOfWarnings" maxOccurs="1" minOccurs="0"/>
+            <xs:element type="listOfPossibleUniprotAccessions" name="listOfPossibleUniprotAccessions" maxOccurs="1" minOccurs="0"/>
+            <xs:element type="intActReport" name="intActReport" maxOccurs="1" minOccurs="0"/>
+            <xs:element type="intActCRC64Report" name="intActCRC64Report" maxOccurs="1" minOccurs="0"/>
+            <xs:element type="picrReport" name="picrReport" maxOccurs="1" minOccurs="0"/>
+            <xs:element type="blastReport" name="blastReport" maxOccurs="1" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="name" use = 'required' />
+    </xs:complexType>
+    <xs:complexType name="listOfIdentifiers">
+        <xs:sequence>
+            <xs:element type="xs:string" name="identifier" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="protein">
+        <xs:sequence>
+            <xs:element type="querySequence" name="querySequence" maxOccurs="1" minOccurs="1"/>
+            <xs:element type="xs:string" name="alignment" maxOccurs="1" minOccurs="1"/>
+            <xs:element type="sequence" name="sequence" maxOccurs="1" minOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="accession" use="required"/>
+        <xs:attribute type="xs:string" name="identity" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="context">
+        <xs:sequence>
+            <xs:element type="xs:string" name="sequence" maxOccurs="1" minOccurs="0"/>
+            <xs:element type="listOfIdentifiers" name="listOfIdentifiers" maxOccurs="1" minOccurs="0"/>
+            <xs:element type="xs:string" name="taxId" maxOccurs="1" minOccurs="0"/>
+            <xs:element type="xs:string" name="globalName" maxOccurs="1" minOccurs="0"/>
+            <xs:element type="xs:string" name="geneName" maxOccurs="1" minOccurs="0"/>
+            <xs:element type="xs:string" name="proteinName" maxOccurs="1" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="intActCRC64Report">
+        <xs:sequence>
+            <xs:element type="xs:string" name="querySequence" maxOccurs="1" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="listOfPossibleIntActAccessions">
+        <xs:sequence>
+            <xs:element type="possibleIntActAccession" name="possibleIntActAccession" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="querySequence">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="start" use="optional"/>
+                <xs:attribute type="xs:string" name="end" use="optional"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="listOfPossibleUniprotAccessions">
+        <xs:sequence>
+            <xs:element type="possibleUniprotAccession" name="possibleUniprotAccession" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="intActReport">
+        <xs:sequence>
+            <xs:element type="xs:string" name="intActAccession" maxOccurs="1" minOccurs="1"/>
+            <xs:element type="listOfPossibleIntActAccessions" name="listOfPossibleIntActAccessions" maxOccurs="1" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="results">
+        <xs:sequence>
+            <xs:element type="xs:string" name="uniprotAccession"/>
+            <xs:element type="context" name="context" maxOccurs="1" minOccurs="1"/>
+            <xs:element type="listOfActions" name="listOfActions" maxOccurs="1" minOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="protein" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="blastReport">
+        <xs:sequence>
+            <xs:element type="listOfProteins" name="listOfProteins" maxOccurs="1" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="database" use="required"/>
+    </xs:complexType>
+</xs:schema>

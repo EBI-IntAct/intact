@@ -32,11 +32,12 @@
 
     <modules>
         <module>intact-biosource-update</module>
+        <module>intact-update-model</module>
+        <module>protein-mapping</module>
         <module>intact-proteins-update</module>
         <module>update-db-proteins-maven-plugin</module>
         <module>intact-smallmolecules-update</module>
-        <module>intact-datasets-update</module>
-        <module>intact-update-model</module>
+        <module>intact-datasets-update</module>        
   </modules>
 
     <dependencyManagement>
