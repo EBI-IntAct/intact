@@ -47,7 +47,7 @@ public class UpdateDbProteinsMojo extends IntactJpaMojo {
      */
     private MavenProject project;
 
-     /**
+    /**
      * A spring config file (JPA, ...).
      * @parameter
      * @required
@@ -106,6 +106,7 @@ public class UpdateDbProteinsMojo extends IntactJpaMojo {
         config.setFixDuplicates(fixDuplicates);
         config.setProcessProteinNotFoundInUniprot(true);
         config.setBlastEnabled(false);
+        config.setReportHandler(new FileReportHandler(reportsDir));
 
         PrintStream ps = new PrintStream(new File(reportsDir, "counts.txt"));
         ps.println("Counts before update");
@@ -113,21 +114,13 @@ public class UpdateDbProteinsMojo extends IntactJpaMojo {
         DebugUtil.printDatabaseCounts(ps);
         ps.flush();
 
-        try {
-            config.setReportHandler(new FileReportHandler(reportsDir));
-
-            ProteinUpdateProcessor updateProcessor = new ProteinUpdateProcessor();
-            System.out.println("Starting the global update");
-            updateProcessor.updateAll();
-            //List<Protein> proteins = updateProcessor.retrieveAndUpdateProteinFromUniprot("Q9XYZ4");
-            //List<String> acs = new ArrayList<String>();
-            //acs.add("EBI-3044019");
-            //updateProcessor.updateByACs(acs);
-
-        } catch (IOException e) {
-            System.err.println("The repository " + reportsDir.getName() + " cannot be found. We cannot write log files and so we cannot run a global protein update.");
-            e.printStackTrace();
-        }
+        ProteinUpdateProcessor updateProcessor = new ProteinUpdateProcessor();
+        System.out.println("Starting the global update");
+        updateProcessor.updateAll();
+        //List<Protein> proteins = updateProcessor.retrieveAndUpdateProteinFromUniprot("Q9XYZ4");
+        //List<String> acs = new ArrayList<String>();
+        //acs.add("EBI-3044019");
+        //updateProcessor.updateByACs(acs);
 
         ps.println("\nCounts after update");
         ps.println("---------------------");
