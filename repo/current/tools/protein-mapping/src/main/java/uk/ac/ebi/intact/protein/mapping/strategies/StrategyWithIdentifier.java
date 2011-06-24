@@ -8,14 +8,14 @@ import uk.ac.ebi.intact.protein.mapping.actions.IdentificationAction;
 import uk.ac.ebi.intact.protein.mapping.actions.PICRSearchProcessWithAccession;
 import uk.ac.ebi.intact.protein.mapping.actions.SwissprotRemappingProcess;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.BlastContext;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.protein.mapping.results.BlastResults;
+import uk.ac.ebi.intact.protein.mapping.results.IdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.BlastResults;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -141,15 +141,15 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
     protected void initialiseSetOfActions(){
 
         // first action = PICRSearchProcessWithAccession
-        PICRSearchProcessWithAccession firstAction = new PICRSearchProcessWithAccession();
+        PICRSearchProcessWithAccession firstAction = new PICRSearchProcessWithAccession(getReportsFactory());
         this.listOfActions.add(firstAction);
 
         // second action = CrossReferenceSearchProcess (optional)
-        CrossReferenceSearchProcess secondAction = new CrossReferenceSearchProcess();
+        CrossReferenceSearchProcess secondAction = new CrossReferenceSearchProcess(getReportsFactory());
         this.listOfActions.add(secondAction);
 
         // third action = SwissprotRemappingProcess
-        SwissprotRemappingProcess thirdAction = new SwissprotRemappingProcess();
+        SwissprotRemappingProcess thirdAction = new SwissprotRemappingProcess(getReportsFactory());
         this.listOfActions.add(thirdAction);
     }
 
@@ -227,7 +227,7 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
      */
     public IdentificationResults identifyProtein(IdentificationContext context) throws StrategyException {
         // new result
-        IdentificationResults result = new IdentificationResults();
+        IdentificationResults result = getResultsFactory().getIdentificationResults();
 
         // the strategy is based on the identifier
         if (context.getIdentifier() == null){

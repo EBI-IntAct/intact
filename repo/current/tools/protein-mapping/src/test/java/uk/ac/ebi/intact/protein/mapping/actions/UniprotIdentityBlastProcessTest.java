@@ -1,13 +1,13 @@
 package uk.ac.ebi.intact.protein.mapping.actions;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.factories.impl.DefaultReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultBlastReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.BlastContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
 
 import java.util.List;
 
@@ -23,9 +23,8 @@ public class UniprotIdentityBlastProcessTest {
     private UniprotIdentityBlastProcess process;
     private BlastContext context;
 
-    @Before
-    public void createBlastProcess(){
-        this.process = new UniprotIdentityBlastProcess();
+    public UniprotIdentityBlastProcessTest(){
+        this.process = new UniprotIdentityBlastProcess(new DefaultReportsFactory());
         this.context = new BlastContext();
     }
 
@@ -65,7 +64,7 @@ public class UniprotIdentityBlastProcessTest {
             System.out.println(reports.get(1).getStatus().getLabel() + " " + reports.get(1).getStatus().getDescription());
 
             Assert.assertNotNull(ac);
-            Assert.assertEquals(true, reports.get(1) instanceof BlastReport);
+            Assert.assertEquals(true, reports.get(1) instanceof DefaultBlastReport);
             Assert.assertEquals("P41240", ac);
 
         } catch (ActionProcessingException e) {
@@ -100,8 +99,8 @@ public class UniprotIdentityBlastProcessTest {
             System.out.println(reports.get(1).getStatus().getLabel() + " " + reports.get(1).getStatus().getDescription());
 
             Assert.assertNull(ac);
-            Assert.assertEquals(true, reports.get(1) instanceof BlastReport);
-            Assert.assertEquals(false, ((BlastReport)reports.get(1)).getBlastMatchingProteins().isEmpty());
+            Assert.assertEquals(true, reports.get(1) instanceof DefaultBlastReport);
+            Assert.assertEquals(false, ((DefaultBlastReport)reports.get(1)).getBlastMatchingProteins().isEmpty());
 
         } catch (ActionProcessingException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -132,8 +131,8 @@ public class UniprotIdentityBlastProcessTest {
             System.out.println(reports.get(1).getStatus().getLabel() + " " + reports.get(1).getStatus().getDescription());
 
             Assert.assertNull(ac);
-            Assert.assertEquals(true, reports.get(1) instanceof BlastReport);
-            Assert.assertEquals(true, ((BlastReport)reports.get(1)).getBlastMatchingProteins().isEmpty());
+            Assert.assertEquals(true, reports.get(1) instanceof DefaultBlastReport);
+            Assert.assertEquals(true, ((DefaultBlastReport)reports.get(1)).getBlastMatchingProteins().isEmpty());
 
         } catch (ActionProcessingException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

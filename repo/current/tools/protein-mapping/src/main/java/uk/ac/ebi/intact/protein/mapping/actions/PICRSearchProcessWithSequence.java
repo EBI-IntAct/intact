@@ -5,11 +5,11 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.bridges.picr.PicrClient;
 import uk.ac.ebi.intact.bridges.picr.PicrClientException;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.actions.status.Status;
+import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.PICRReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.PICRReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.Status;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
 import uk.ac.ebi.picr.model.CrossReference;
 import uk.ac.ebi.picr.model.UPEntry;
 
@@ -39,13 +39,14 @@ public class PICRSearchProcessWithSequence extends IdentificationActionImpl {
     /**
      * Create a new PICRSearchProcessWithSequence
      */
-    public PICRSearchProcessWithSequence(){
+    public PICRSearchProcessWithSequence(ReportsFactory factory){
+        super(factory);
         this.picrClient = new PicrClient();
     }
 
     /**
      * Query PICR with the sequence of the protein to identify. Query PICR on swissprot database first, if no results, query the Trembl database.
-     * If several proteins are matching, they are added to the list of possible proteins in the PICRReport
+     * If several proteins are matching, they are added to the list of possible proteins in the DefaultPICRReport
      * @param context  : the context of the protein
      * @return an unique uniprot AC if only one uniprot entry is matching the sequence, null otherwise
      * @throws uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException
@@ -60,8 +61,8 @@ public class PICRSearchProcessWithSequence extends IdentificationActionImpl {
             taxId = context.getOrganism().getTaxId();
         }
 
-        // create a PICRReport
-        PICRReport report = new PICRReport(ActionName.PICR_sequence_Swissprot);
+        // create a DefaultPICRReport
+        PICRReport report = getReportsFactory().getPICRReport(ActionName.PICR_sequence_Swissprot);
         this.listOfReports.add(report);
 
         if (taxId == null){
@@ -79,7 +80,7 @@ public class PICRSearchProcessWithSequence extends IdentificationActionImpl {
                     Status status = new Status(StatusLabel.COMPLETED, "PICR successfully returned an unique Swissprot accession " + swissprotIds.get(0));
                     report.setStatus(status);
 
-                    report.setASwissprotEntry(true);
+                    report.setIsASwissprotEntry(true);
                     return swissprotIds.get(0);
                 }
                 else {
@@ -99,7 +100,7 @@ public class PICRSearchProcessWithSequence extends IdentificationActionImpl {
                 // The different matching swissprot entries were in fact several isoforms of the same protein so we keep the canonical sequence
                 if (accessions.size() == 1){
                     String ac = accessions.iterator().next();
-                    report.setASwissprotEntry(true);
+                    report.setIsASwissprotEntry(true);
                     Status status = new Status(StatusLabel.COMPLETED, "We found a Unique Swissprot entry " + ac + " : the sequence matches several swissprot splice variant sequences of the same protein and we kept the canonical sequence.");
 
                     report.setStatus(status);
@@ -122,7 +123,7 @@ public class PICRSearchProcessWithSequence extends IdentificationActionImpl {
                 report.setStatus(status);
 
                 // new PICR query so new report
-                PICRReport report2 = new PICRReport(ActionName.PICR_sequence_Trembl);
+                PICRReport report2 = getReportsFactory().getPICRReport(ActionName.PICR_sequence_Trembl);
                 this.listOfReports.add(report2);
                 report2.getWarnings().addAll(report.getWarnings());
 
@@ -134,7 +135,7 @@ public class PICRSearchProcessWithSequence extends IdentificationActionImpl {
                     Status status2 = new Status(StatusLabel.COMPLETED, "PICR successfully returned an unique Trembl accession " + tremblIds.get(0));
                     report2.setStatus(status2);
 
-                    report.setASwissprotEntry(false);
+                    report.setIsASwissprotEntry(false);
                     return tremblIds.get(0);
                 }
                 // Several trembl entries, we can't choose and we can't merge as we don't have trembl splice variants sequences

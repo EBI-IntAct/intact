@@ -1,8 +1,10 @@
 package uk.ac.ebi.intact.protein.mapping.strategies;
 
+import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.factories.ResultsFactory;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.protein.mapping.results.IdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
 
 /**
  * An Identification strategy is a logical set of actions done to identify the protein. A strategy follows the Intact curation rules
@@ -17,7 +19,7 @@ public interface IdentificationStrategy {
     /**
      * Identify the protein depending on the context and following a specific strategy
      * @param context : the context of the protein to identify
-     * @return an IdentificationResults instance containing the results of the strategy
+     * @return an DefaultIdentificationResults instance containing the results of the strategy
      * @throws uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException
      */
     public IdentificationResults identifyProtein(IdentificationContext context) throws StrategyException;
@@ -28,5 +30,13 @@ public interface IdentificationStrategy {
      * @param enableIsoformId : the boolean value
      */
     public void enableIsoforms(boolean enableIsoformId);
+
+    public ReportsFactory getReportsFactory();
+
+    public void setReportsFactory(ReportsFactory factory);
+
+    public ResultsFactory getResultsFactory();
+
+    public void setResultsFactory(ResultsFactory factory);
 
 }

@@ -1,17 +1,16 @@
 package uk.ac.ebi.intact.protein.mapping.actions;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.IntactReport;
+import uk.ac.ebi.intact.protein.mapping.factories.impl.DefaultReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultIntactReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 
 import java.util.List;
 
@@ -22,7 +21,6 @@ import java.util.List;
  * @version $Id$
  * @since <pre>28-Apr-2010</pre>
  */
-@ContextConfiguration(locations = {"classpath*:/META-INF/jpa.test.spring.xml"})
 public class IntactNameSearchProcessTest  extends IntactBasicTestCase {
 
     private IntactNameSearchProcess process;
@@ -30,9 +28,8 @@ public class IntactNameSearchProcessTest  extends IntactBasicTestCase {
     private IntactContext intactContext;
     private String acToFind;
 
-    @Before
-    public void createBlastProcess(){
-        this.process = new IntactNameSearchProcess();
+    public IntactNameSearchProcessTest(){
+        this.process = new IntactNameSearchProcess(new DefaultReportsFactory());
         this.context = new IdentificationContext();
 
         this.intactContext = IntactContext.getCurrentInstance();
@@ -71,9 +68,9 @@ public class IntactNameSearchProcessTest  extends IntactBasicTestCase {
             System.out.println(reports.get(0).getStatus().getLabel() + " " + reports.get(0).getStatus().getDescription());
 
             Assert.assertNull(id);
-            Assert.assertEquals(true, reports.get(0) instanceof IntactReport);
-            Assert.assertNotNull(((IntactReport)reports.get(0)).getIntactid());
-            Assert.assertEquals(acToFind, ((IntactReport)reports.get(0)).getIntactid());
+            Assert.assertEquals(true, reports.get(0) instanceof DefaultIntactReport);
+            Assert.assertNotNull(((DefaultIntactReport)reports.get(0)).getIntactAc());
+            Assert.assertEquals(acToFind, ((DefaultIntactReport)reports.get(0)).getIntactAc());
         } catch (ActionProcessingException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -96,9 +93,9 @@ public class IntactNameSearchProcessTest  extends IntactBasicTestCase {
             System.out.println(reports.get(1).getStatus().getLabel() + " " + reports.get(1).getStatus().getDescription());
 
             Assert.assertNull(id);
-            Assert.assertEquals(true, reports.get(1) instanceof IntactReport);
-            Assert.assertNotNull(((IntactReport)reports.get(1)).getIntactid());
-            Assert.assertEquals(acToFind, ((IntactReport)reports.get(1)).getIntactid());
+            Assert.assertEquals(true, reports.get(1) instanceof DefaultIntactReport);
+            Assert.assertNotNull(((DefaultIntactReport)reports.get(1)).getIntactAc());
+            Assert.assertEquals(acToFind, ((DefaultIntactReport)reports.get(1)).getIntactAc());
         } catch (ActionProcessingException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -122,9 +119,9 @@ public class IntactNameSearchProcessTest  extends IntactBasicTestCase {
             System.out.println(reports.get(0).getStatus().getLabel() + " " + reports.get(0).getStatus().getDescription());
 
             Assert.assertNull(id);
-            Assert.assertEquals(true, reports.get(0) instanceof IntactReport);
-            Assert.assertNotNull(((IntactReport)reports.get(0)).getIntactid());
-            Assert.assertEquals(acToFind, ((IntactReport)reports.get(0)).getIntactid());
+            Assert.assertEquals(true, reports.get(0) instanceof DefaultIntactReport);
+            Assert.assertNotNull(((DefaultIntactReport)reports.get(0)).getIntactAc());
+            Assert.assertEquals(acToFind, ((DefaultIntactReport)reports.get(0)).getIntactAc());
         } catch (ActionProcessingException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -148,8 +145,8 @@ public class IntactNameSearchProcessTest  extends IntactBasicTestCase {
             System.out.println(reports.get(1).getStatus().getLabel() + " " + reports.get(1).getStatus().getDescription());
 
             Assert.assertNull(id);
-            Assert.assertEquals(true, reports.get(1) instanceof IntactReport);
-            Assert.assertNull(((IntactReport)reports.get(1)).getIntactid());
+            Assert.assertEquals(true, reports.get(1) instanceof DefaultIntactReport);
+            Assert.assertNull(((DefaultIntactReport)reports.get(1)).getIntactAc());
         } catch (ActionProcessingException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -173,9 +170,9 @@ public class IntactNameSearchProcessTest  extends IntactBasicTestCase {
             }
 
             Assert.assertNull(id);
-            Assert.assertEquals(true, reports.get(reports.size() - 1) instanceof IntactReport);
-            Assert.assertNotNull(((IntactReport)reports.get(reports.size() - 1)).getIntactid());
-            Assert.assertTrue(((IntactReport)reports.get(reports.size() - 1)).getPossibleIntactIds().isEmpty());
+            Assert.assertEquals(true, reports.get(reports.size() - 1) instanceof DefaultIntactReport);
+            Assert.assertNotNull(((DefaultIntactReport)reports.get(reports.size() - 1)).getIntactAc());
+            Assert.assertTrue(((DefaultIntactReport)reports.get(reports.size() - 1)).getPossibleIntactIds().isEmpty());
         } catch (ActionProcessingException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

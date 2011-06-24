@@ -2,7 +2,7 @@ package uk.ac.ebi.intact.protein.mapping.model.contexts;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.BlastResults;
+import uk.ac.ebi.intact.protein.mapping.results.BlastResults;
 
 import java.util.HashSet;
 import java.util.Set;

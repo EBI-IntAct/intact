@@ -1,8 +1,9 @@
 package uk.ac.ebi.intact.protein.mapping.actions;
 
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 
 import java.util.List;
 
@@ -30,5 +31,9 @@ public interface IdentificationAction {
      * @return the list of ActionReports the action contains
      */
     public List<MappingReport> getListOfActionReports();
+
+    public ReportsFactory getReportsFactory();
+
+    public void setReportsFactory(ReportsFactory factory);
     
 }

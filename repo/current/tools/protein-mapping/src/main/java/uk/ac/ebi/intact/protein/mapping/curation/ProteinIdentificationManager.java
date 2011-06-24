@@ -4,12 +4,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.protein.mapping.results.IdentificationResults;
+import uk.ac.ebi.intact.protein.mapping.results.impl.DefaultIdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.IdentificationStrategy;
 import uk.ac.ebi.intact.protein.mapping.strategies.StrategyWithIdentifier;
 import uk.ac.ebi.intact.protein.mapping.strategies.StrategyWithName;
 import uk.ac.ebi.intact.protein.mapping.strategies.StrategyWithSequence;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -142,8 +143,8 @@ public class ProteinIdentificationManager {
         this.identificationContext.setProtein_name(proteinName);
     }
 
-   /* public ArrayList<IdentificationResults> processProteinIdentification(){
-        ArrayList<IdentificationResults> identificationResults = new ArrayList<IdentificationResults>();
+   /* public ArrayList<DefaultIdentificationResults> processProteinIdentification(){
+        ArrayList<DefaultIdentificationResults> identificationResults = new ArrayList<DefaultIdentificationResults>();
 
         for (int i = 0; i < this.sheetContent.size(); i++){
             this.identificationContext.clean();
@@ -190,7 +191,7 @@ public class ProteinIdentificationManager {
         return null;
     }
 
-    public IdentificationResults processProteinIdentificationUsingSequence(String sequence, BioSource organism){
+    public DefaultIdentificationResults processProteinIdentificationUsingSequence(String sequence, BioSource organism){
         this.identificationContext.clean();
         this.identificationContext.setSequence(sequence);
         this.identificationContext.setOrganism(organism);

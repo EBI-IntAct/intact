@@ -3,7 +3,6 @@ package uk.ac.ebi.intact.protein.mapping.update;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
 
@@ -16,7 +15,6 @@ import javax.xml.ws.soap.SOAPFaultException;
  * @version $Id$
  * @since <pre>06-May-2010</pre>
  */
-@ContextConfiguration(locations = {"/META-INF/intact.spring.xml"} )
 public class proteinUpdateManagerTest  extends IntactBasicTestCase {
 
     @Test

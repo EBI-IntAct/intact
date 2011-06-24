@@ -1,18 +1,17 @@
 package uk.ac.ebi.intact.protein.mapping.actions;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ebi.intact.commons.util.Crc64;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.IntactCrc64Report;
+import uk.ac.ebi.intact.protein.mapping.factories.impl.DefaultReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultIntactCrc64Report;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 
 import java.util.List;
 
@@ -23,7 +22,6 @@ import java.util.List;
  * @version $Id$
  * @since <pre>08-Apr-2010</pre>
  */
-@ContextConfiguration(locations = {"classpath*:/META-INF/jpa.test.spring.xml"})
 public class IntactCrc64SearchProcessTest extends IntactBasicTestCase {
 
     private IntactCrc64SearchProcess process;
@@ -31,9 +29,8 @@ public class IntactCrc64SearchProcessTest extends IntactBasicTestCase {
     private IntactContext intactContext;
     private String acToFind;
 
-    @Before
-    public void createBlastProcess(){
-        this.process = new IntactCrc64SearchProcess();
+    public IntactCrc64SearchProcessTest(){
+        this.process = new IntactCrc64SearchProcess(new DefaultReportsFactory());
         this.context = new IdentificationContext();
 
         this.intactContext = IntactContext.getCurrentInstance();
@@ -62,9 +59,9 @@ public class IntactCrc64SearchProcessTest extends IntactBasicTestCase {
             List<MappingReport> reports = this.process.getListOfActionReports();
 
             Assert.assertNull(id);
-            Assert.assertEquals(true, reports.get(0) instanceof IntactCrc64Report);
-            Assert.assertNotNull(((IntactCrc64Report)reports.get(0)).getIntactid());
-            Assert.assertEquals(acToFind, ((IntactCrc64Report)reports.get(0)).getIntactid());
+            Assert.assertEquals(true, reports.get(0) instanceof DefaultIntactCrc64Report);
+            Assert.assertNotNull(((DefaultIntactCrc64Report)reports.get(0)).getIntactAc());
+            Assert.assertEquals(acToFind, ((DefaultIntactCrc64Report)reports.get(0)).getIntactAc());
 
             for (String warn : reports.get(0).getWarnings()){
                 System.out.println(warn);
@@ -88,9 +85,9 @@ public class IntactCrc64SearchProcessTest extends IntactBasicTestCase {
             List<MappingReport> reports = this.process.getListOfActionReports();
 
             Assert.assertNull(id);
-            Assert.assertEquals(true, reports.get(0) instanceof IntactCrc64Report);
-            Assert.assertNotNull(((IntactCrc64Report)reports.get(0)).getIntactid());
-            Assert.assertEquals(acToFind, ((IntactCrc64Report)reports.get(0)).getIntactid());
+            Assert.assertEquals(true, reports.get(0) instanceof DefaultIntactCrc64Report);
+            Assert.assertNotNull(((DefaultIntactCrc64Report)reports.get(0)).getIntactAc());
+            Assert.assertEquals(acToFind, ((DefaultIntactCrc64Report)reports.get(0)).getIntactAc());
 
             for (String warn : reports.get(0).getWarnings()){
                 System.out.println(warn);
@@ -115,8 +112,8 @@ public class IntactCrc64SearchProcessTest extends IntactBasicTestCase {
             List<MappingReport> reports = this.process.getListOfActionReports();
 
             Assert.assertNull(id);
-            Assert.assertEquals(true, reports.get(0) instanceof IntactCrc64Report);
-            Assert.assertNull(((IntactCrc64Report)reports.get(0)).getIntactid());
+            Assert.assertEquals(true, reports.get(0) instanceof DefaultIntactCrc64Report);
+            Assert.assertNull(((DefaultIntactCrc64Report)reports.get(0)).getIntactAc());
 
             for (String warn : reports.get(0).getWarnings()){
                 System.out.println(warn);

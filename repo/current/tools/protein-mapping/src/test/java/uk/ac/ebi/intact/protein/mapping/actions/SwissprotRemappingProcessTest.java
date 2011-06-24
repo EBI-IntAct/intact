@@ -1,14 +1,14 @@
 package uk.ac.ebi.intact.protein.mapping.actions;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.protein.mapping.factories.impl.DefaultReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultBlastReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.BlastContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
 
 import java.util.List;
 
@@ -25,9 +25,8 @@ public class SwissprotRemappingProcessTest {
     private SwissprotRemappingProcess process;
     private BlastContext context;
 
-    @Before
-    public void createBlastProcess(){
-        this.process = new SwissprotRemappingProcess();
+    public SwissprotRemappingProcessTest(){
+        this.process = new SwissprotRemappingProcess(new DefaultReportsFactory());
         this.context = new BlastContext();
     }
 
@@ -68,7 +67,7 @@ public class SwissprotRemappingProcessTest {
             System.out.println(reports.get(1).getStatus().getLabel() + " " + reports.get(1).getStatus().getDescription());
 
             Assert.assertNull(ac);
-            Assert.assertEquals(true, reports.get(1) instanceof BlastReport);
+            Assert.assertEquals(true, reports.get(1) instanceof DefaultBlastReport);
             Assert.assertEquals(StatusLabel.TO_BE_REVIEWED, reports.get(1).getStatusLabel());
 
         } catch (ActionProcessingException e) {
@@ -104,7 +103,7 @@ public class SwissprotRemappingProcessTest {
             System.out.println(reports.get(1).getStatus().getLabel() + " " + reports.get(1).getStatus().getDescription());
 
             Assert.assertNull(ac);
-            Assert.assertEquals(true, reports.get(1) instanceof BlastReport);
+            Assert.assertEquals(true, reports.get(1) instanceof DefaultBlastReport);
             Assert.assertEquals(StatusLabel.TO_BE_REVIEWED, reports.get(1).getStatusLabel());
 
         } catch (ActionProcessingException e) {
@@ -139,8 +138,8 @@ public class SwissprotRemappingProcessTest {
             System.out.println(reports.get(2).getStatus().getLabel() + " " + reports.get(2).getStatus().getDescription());
 
             Assert.assertNull(ac);
-            Assert.assertEquals(true, reports.get(2) instanceof BlastReport);
-            Assert.assertEquals(true, ((BlastReport) reports.get(2)).getBlastMatchingProteins().size() == 0);
+            Assert.assertEquals(true, reports.get(2) instanceof DefaultBlastReport);
+            Assert.assertEquals(true, ((DefaultBlastReport) reports.get(2)).getBlastMatchingProteins().size() == 0);
             Assert.assertEquals(StatusLabel.FAILED, reports.get(1).getStatus().getLabel());
             Assert.assertEquals(StatusLabel.FAILED, reports.get(2).getStatus().getLabel());
 
@@ -176,8 +175,8 @@ public class SwissprotRemappingProcessTest {
             System.out.println(reports.get(2).getStatus().getLabel() + " " + reports.get(2).getStatus().getDescription());
 
             Assert.assertNull(ac);
-            Assert.assertEquals(true, reports.get(2) instanceof BlastReport);
-            Assert.assertEquals(true, ((BlastReport) reports.get(2)).getBlastMatchingProteins().size() > 0);
+            Assert.assertEquals(true, reports.get(2) instanceof DefaultBlastReport);
+            Assert.assertEquals(true, ((DefaultBlastReport) reports.get(2)).getBlastMatchingProteins().size() > 0);
             Assert.assertEquals(StatusLabel.FAILED, reports.get(1).getStatus().getLabel());
             Assert.assertEquals(StatusLabel.TO_BE_REVIEWED, reports.get(2).getStatus().getLabel());
 

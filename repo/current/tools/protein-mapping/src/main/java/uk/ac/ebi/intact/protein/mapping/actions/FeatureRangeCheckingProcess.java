@@ -8,13 +8,13 @@ import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.Range;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.actions.status.Status;
+import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.FeatureRangeCheckingContext;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.Status;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.BlastResults;
+import uk.ac.ebi.intact.protein.mapping.results.BlastResults;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,8 +41,8 @@ public class FeatureRangeCheckingProcess extends IdentificationActionImpl {
     /**
      * Create a FeatureRangeCheckingProcess
      */
-    public FeatureRangeCheckingProcess(){
-        super();
+    public FeatureRangeCheckingProcess(ReportsFactory factory){
+        super(factory);
     }
 
     /**
@@ -130,8 +130,8 @@ public class FeatureRangeCheckingProcess extends IdentificationActionImpl {
             FeatureRangeCheckingContext processContext = (FeatureRangeCheckingContext) context;
             int initialNumberOfBlastProtein = processContext.getResultsOfSwissprotRemapping().size();
 
-            // Create a BlastReport
-            BlastReport report = new BlastReport(ActionName.feature_range_checking);
+            // Create a DefaultBlastReport
+            BlastReport report = getReportsFactory().getBlastReport(ActionName.feature_range_checking);
             this.listOfReports.add(report);
 
             // If there were no Swissprot proteins which can replace the Trembl entry, it is an error and this action fails

@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.bridges.ncbiblast.BlastResultFilter;
 import uk.ac.ebi.intact.bridges.ncbiblast.BlastServiceException;
 import uk.ac.ebi.intact.bridges.ncbiblast.ProteinNCBIBlastService;
+import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
 
 /**
  * this class is the class to extend if the action needs a BlastService
@@ -44,7 +45,8 @@ public abstract class ActionNeedingBlastService extends IdentificationActionImpl
     /**
      * Create the process
      */
-    public ActionNeedingBlastService(){
+    public ActionNeedingBlastService(ReportsFactory factory){
+        super(factory);
         try {
             this.blastService = new ProteinNCBIBlastService("marine@ebi.ac.uk");
             this.blastFilter = new BlastResultFilter();

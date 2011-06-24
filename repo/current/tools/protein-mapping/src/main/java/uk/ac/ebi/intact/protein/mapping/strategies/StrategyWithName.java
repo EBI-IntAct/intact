@@ -6,8 +6,8 @@ import uk.ac.ebi.intact.protein.mapping.actions.IntactNameSearchProcess;
 import uk.ac.ebi.intact.protein.mapping.actions.UniprotNameSearchProcess;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.protein.mapping.results.IdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
 
 /**
  * This strategy aims at identifying a protein using a gene name and/or a protein name, or a general name and its organism.
@@ -44,7 +44,7 @@ public class StrategyWithName extends IdentificationStrategyImpl {
     public IdentificationResults identifyProtein(IdentificationContext context) throws StrategyException {
 
         // Create a result instance
-        IdentificationResults result = new IdentificationResults();
+        IdentificationResults result = getResultsFactory().getIdentificationResults();
 
         // If the context doesn't contain any names for this protein, this strategy can't be used
         if (context.getProtein_name() == null && context.getGene_name() == null && context.getGlobalName() == null){
@@ -87,11 +87,11 @@ public class StrategyWithName extends IdentificationStrategyImpl {
     @Override
     protected void initialiseSetOfActions() {
         // The first action is a search on uniprot
-        UniprotNameSearchProcess firstAction = new UniprotNameSearchProcess();
+        UniprotNameSearchProcess firstAction = new UniprotNameSearchProcess(getReportsFactory());
         this.listOfActions.add(firstAction);
 
         // the second action is a search on Intact
-        IntactNameSearchProcess secondAction = new IntactNameSearchProcess();
+        IntactNameSearchProcess secondAction = new IntactNameSearchProcess(getReportsFactory());
         this.listOfActions.add(secondAction);
     }
 

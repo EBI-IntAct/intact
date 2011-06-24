@@ -1,13 +1,13 @@
 package uk.ac.ebi.intact.protein.mapping.actions;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.factories.impl.DefaultReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultPICRReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.PICRReport;
 
 import java.util.List;
 
@@ -24,9 +24,8 @@ public class PICRSearchProcessWithAccessionTest {
     private PICRSearchProcessWithAccession process;
     private IdentificationContext context;
 
-    @Before
-    public void createBlastProcess(){
-        this.process = new PICRSearchProcessWithAccession();
+    public PICRSearchProcessWithAccessionTest(){
+        this.process = new PICRSearchProcessWithAccession(new DefaultReportsFactory());
         this.context = new IdentificationContext();
     }
 
@@ -57,7 +56,7 @@ public class PICRSearchProcessWithAccessionTest {
             System.out.println(reports.get(0).getStatus().getLabel() + " " + reports.get(0).getStatus().getDescription());
 
             Assert.assertNotNull(ac);
-            Assert.assertEquals(true, reports.get(0) instanceof PICRReport);
+            Assert.assertEquals(true, reports.get(0) instanceof DefaultPICRReport);
             Assert.assertEquals("P84092", ac);
 
         } catch (ActionProcessingException e) {
@@ -84,7 +83,7 @@ public class PICRSearchProcessWithAccessionTest {
             System.out.println(reports.get(0).getStatus().getLabel() + " " + reports.get(0).getStatus().getDescription());
 
             Assert.assertNotNull(ac);
-            Assert.assertEquals(true, reports.get(0) instanceof PICRReport);
+            Assert.assertEquals(true, reports.get(0) instanceof DefaultPICRReport);
             Assert.assertEquals("Q96CW1", ac);
 
         } catch (ActionProcessingException e) {
@@ -111,7 +110,7 @@ public class PICRSearchProcessWithAccessionTest {
             System.out.println(reports.get(0).getStatus().getLabel() + " " + reports.get(0).getStatus().getDescription());
 
             Assert.assertNull(ac);
-            Assert.assertEquals(true, reports.get(0) instanceof PICRReport);
+            Assert.assertEquals(true, reports.get(0) instanceof DefaultPICRReport);
 
         } catch (ActionProcessingException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

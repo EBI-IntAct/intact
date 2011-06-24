@@ -1,13 +1,13 @@
 package uk.ac.ebi.intact.protein.mapping.actions;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.factories.impl.DefaultReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultPICRReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.PICRReport;
 
 import java.util.List;
 
@@ -24,9 +24,8 @@ public class PICRSearchProcessWithSequenceTest {
     private PICRSearchProcessWithSequence process;
     private IdentificationContext context;
 
-    @Before
-    public void createBlastProcess(){
-        this.process = new PICRSearchProcessWithSequence();
+    public PICRSearchProcessWithSequenceTest(){
+        this.process = new PICRSearchProcessWithSequence(new DefaultReportsFactory());
         this.context = new IdentificationContext();
     }
 
@@ -60,7 +59,7 @@ public class PICRSearchProcessWithSequenceTest {
             System.out.println(reports.get(0).getStatus().getLabel() + " " + reports.get(0).getStatus().getDescription());
 
             Assert.assertNotNull(ac);
-            Assert.assertEquals(true, reports.get(0) instanceof PICRReport);
+            Assert.assertEquals(true, reports.get(0) instanceof DefaultPICRReport);
             Assert.assertEquals("P41240", ac);
 
         } catch (ActionProcessingException e) {
@@ -102,7 +101,7 @@ public class PICRSearchProcessWithSequenceTest {
             System.out.println(reports.get(0).getStatus().getLabel() + " " + reports.get(0).getStatus().getDescription());
 
             Assert.assertNotNull(ac);
-            Assert.assertEquals(true, reports.get(0) instanceof PICRReport);
+            Assert.assertEquals(true, reports.get(0) instanceof DefaultPICRReport);
             Assert.assertEquals("P63010-2", ac);
 
         } catch (ActionProcessingException e) {
@@ -143,7 +142,7 @@ public class PICRSearchProcessWithSequenceTest {
             System.out.println(reports.get(0).getStatus().getLabel() + " " + reports.get(0).getStatus().getDescription());
 
             Assert.assertNull(ac);
-            Assert.assertEquals(true, reports.get(0) instanceof PICRReport);
+            Assert.assertEquals(true, reports.get(0) instanceof DefaultPICRReport);
             Assert.assertEquals(2, reports.get(0).getPossibleAccessions().size());
 
         } catch (ActionProcessingException e) {
@@ -179,7 +178,7 @@ public class PICRSearchProcessWithSequenceTest {
             System.out.println(reports.get(1).getStatus().getLabel() + " " + reports.get(1).getStatus().getDescription());
 
             Assert.assertNull(ac);
-            Assert.assertEquals(true, reports.get(1) instanceof PICRReport);
+            Assert.assertEquals(true, reports.get(1) instanceof DefaultPICRReport);
             Assert.assertEquals(0, reports.get(1).getPossibleAccessions().size());
 
         } catch (ActionProcessingException e) {
@@ -211,7 +210,7 @@ public class PICRSearchProcessWithSequenceTest {
             System.out.println(reports.get(1).getStatus().getLabel() + " " + reports.get(1).getStatus().getDescription());
 
             Assert.assertNotNull(ac);
-            Assert.assertEquals(true, reports.get(1) instanceof PICRReport);
+            Assert.assertEquals(true, reports.get(1) instanceof DefaultPICRReport);
             Assert.assertEquals("Q53EL3", ac);
 
         } catch (ActionProcessingException e) {
