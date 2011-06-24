@@ -3,6 +3,10 @@ package uk.ac.ebi.intact.protein.mapping.actions;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.actions.status.Status;
+import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 import uk.ac.ebi.intact.uniprot.service.CachedUniprotService;
@@ -10,10 +14,6 @@ import uk.ac.ebi.intact.uniprot.service.UniprotRemoteService;
 import uk.ac.ebi.intact.uniprot.service.UniprotService;
 import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.ReflectionCrossReferenceBuilder;
 import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.UniprotCrossReference;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.Status;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
 import uk.ac.ebi.kraken.interfaces.uniparc.UniParcEntry;
 import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseCrossReference;
 import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseType;
@@ -66,8 +66,8 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
     /**
      * Create a new CrossReferenceSearchProcess and initialises the list of databases in uniprot with a MI number
      */
-    public CrossReferenceSearchProcess(){
-        super();
+    public CrossReferenceSearchProcess(ReportsFactory factory){
+        super(factory);
         initialisePsiMIDatabaseToUniprot();
     }
 
@@ -389,7 +389,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
 
             Status status = new Status(StatusLabel.TO_BE_REVIEWED, "The protein with the identifier " + context.getIdentifier() + " could match " + iterator.getResultSize() + " Uniprot entries.");
             report.setStatus(status);
-            report.setASwissprotEntry(false);
+            report.setIsASwissprotEntry(false);
         }
         return null;
     }
@@ -423,7 +423,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
                 // if the exact identifier is not in the cross references of the uniprot entry
                 if (databaseInUniprot == null){
                     Status status = new Status(StatusLabel.FAILED, "The identifier " + context.getIdentifier() + " couldn't exactly match a uniprot/uniparc cross reference." );
-                    report.setASwissprotEntry(false);
+                    report.setIsASwissprotEntry(false);
                     report.setStatus(status);
                 }
                 // the exact identifier is present in the cross references and we got the database name
@@ -465,7 +465,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
 
             if (report.getPossibleAccessions().isEmpty()){
                 Status status = new Status(StatusLabel.FAILED, "The identifier " + context.getIdentifier() + " couldn't exactly match any uniprot cross references." );
-                report.setASwissprotEntry(false);
+                report.setIsASwissprotEntry(false);
                 report.setStatus(status);
             }
             else if (report.getPossibleAccessions().size() == 1){
@@ -477,7 +477,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
             else {
                 Status status = new Status(StatusLabel.TO_BE_REVIEWED, "The protein with the identifier " + context.getIdentifier() + " could match " + iterator.getResultSize() + " Uniprot entries.");
                 report.setStatus(status);
-                report.setASwissprotEntry(false);
+                report.setIsASwissprotEntry(false);
             }
         }
         return null;
@@ -577,7 +577,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
         }
         else {
             // the results are not null on swissprot, we process them
-            report.setASwissprotEntry(true);
+            report.setIsASwissprotEntry(true);
             String ac = processQuery(iterator, report, context);
             if (ac != null){
                 return ac;
@@ -647,7 +647,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
                     String id = setOfSwissprotAccessions.iterator().next();
                     Status statusUniparc = new Status(StatusLabel.COMPLETED, "The protein with the identifier " + context.getIdentifier() + " has successfully been identified as " + id + " in Uniparc.");
                     reportUniparc.setStatus(statusUniparc);
-                    reportUniparc.setASwissprotEntry(true);
+                    reportUniparc.setIsASwissprotEntry(true);
 
                     return id;
                 }
@@ -662,7 +662,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
                     String id = setOfUniprotAccessions.iterator().next();
                     Status statusUniparc = new Status(StatusLabel.COMPLETED, "The protein with the identifier " + context.getIdentifier() + " has successfully been identified as " + id + " in Uniparc.");
                     reportUniparc.setStatus(statusUniparc);
-                    reportUniparc.setASwissprotEntry(false);
+                    reportUniparc.setIsASwissprotEntry(false);
 
                     return id;
                 }
@@ -698,7 +698,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
         EntryIterator<UniProtEntry> iteratorSwissprot = getReviewedUniprotDatabaseCrossReferenceIterator(databaseTypes, identifier);
 
         // Create a new report
-        MappingReport report = new MappingReport(ActionName.SEARCH_Swissprot_CrossReference);
+        MappingReport report = getReportsFactory().getMappingReport(ActionName.SEARCH_Swissprot_CrossReference);
         this.listOfReports.add(report);
 
         // if the organism is not null, we can add a filter on the organism
@@ -716,7 +716,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
             report.setStatus(status);
 
             // new query, new report
-            MappingReport report2 = new MappingReport(ActionName.SEARCH_Uniprot_CrossReference);
+            MappingReport report2 = getReportsFactory().getMappingReport(ActionName.SEARCH_Uniprot_CrossReference);
             this.listOfReports.add(report2);
 
             // get the results of the query on Trembl
@@ -741,7 +741,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
         }
         else {
             // the results are not null on swissprot, we process them
-            report.setASwissprotEntry(true);
+            report.setIsASwissprotEntry(true);
             String ac = processIterator(iteratorSwissprot, report, context);
             if (ac != null){
                 return ac;
@@ -752,7 +752,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
         if ( report.getPossibleAccessions().isEmpty()){
 
             // create a new report
-            MappingReport reportUniparc = new MappingReport(ActionName.SEARCH_Uniparc_CrossReference);
+            MappingReport reportUniparc = getReportsFactory().getMappingReport(ActionName.SEARCH_Uniparc_CrossReference);
             this.listOfReports.add(reportUniparc);
 
             // build query for uniparc
@@ -810,7 +810,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
                     String id = setOfSwissprotAccessions.iterator().next();
                     Status statusUniparc = new Status(StatusLabel.COMPLETED, "The protein with the identifier " + context.getIdentifier() + " has successfully been identified as " + id + " in Uniparc.");
                     reportUniparc.setStatus(statusUniparc);
-                    reportUniparc.setASwissprotEntry(true);
+                    reportUniparc.setIsASwissprotEntry(true);
 
                     return id;
                 }
@@ -825,7 +825,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
                     String id = setOfUniprotAccessions.iterator().next();
                     Status statusUniparc = new Status(StatusLabel.COMPLETED, "The protein with the identifier " + context.getIdentifier() + " has successfully been identified as " + id + " in Uniparc.");
                     reportUniparc.setStatus(statusUniparc);
-                    reportUniparc.setASwissprotEntry(false);
+                    reportUniparc.setIsASwissprotEntry(false);
 
                     return id;
                 }

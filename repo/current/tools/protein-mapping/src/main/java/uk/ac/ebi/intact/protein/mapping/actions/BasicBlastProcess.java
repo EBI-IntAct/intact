@@ -4,12 +4,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.actions.status.Status;
+import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.Status;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.BlastResults;
+import uk.ac.ebi.intact.protein.mapping.results.impl.DefaultBlastResults;
 
 import java.io.InputStream;
 import java.util.List;
@@ -33,8 +33,8 @@ public class BasicBlastProcess extends ActionNeedingBlastService{
     /**
      * Create the process
      */
-    public BasicBlastProcess(){
-        super();
+    public BasicBlastProcess(ReportsFactory factory){
+        super(factory);
     }
 
     /**
@@ -49,8 +49,8 @@ public class BasicBlastProcess extends ActionNeedingBlastService{
         // always clear the list of reports from previous actions
         this.listOfReports.clear();
 
-        // Create a BlastReport
-        BlastReport report = new BlastReport(ActionName.BLAST_uniprot);
+        // Create a DefaultBlastReport
+        BlastReport report = getReportsFactory().getBlastReport(ActionName.BLAST_uniprot);
         this.listOfReports.add(report);
 
         // Run the blast on Uniprot and save the results in the BLAST filter
@@ -82,7 +82,7 @@ public class BasicBlastProcess extends ActionNeedingBlastService{
                     break;
                 }
                 else {
-                    report.addBlastMatchingProtein(new BlastResults(b));
+                    report.addBlastMatchingProtein(new DefaultBlastResults(b));
                 }
             }
 

@@ -1,18 +1,17 @@
 package uk.ac.ebi.intact.protein.mapping.strategies;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultBlastReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultPICRReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.protein.mapping.results.BlastResults;
+import uk.ac.ebi.intact.protein.mapping.results.IdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.PICRReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.BlastResults;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -29,8 +28,7 @@ public class StrategyWithIdentifierTest {
 
     private StrategyWithIdentifier strategy;
 
-    @Before
-    public void createStrategy(){
+    public StrategyWithIdentifierTest(){
         this.strategy = new StrategyWithIdentifier();
         this.strategy.enableIsoforms(false);
     }
@@ -71,7 +69,7 @@ public class StrategyWithIdentifierTest {
                 Assert.assertNotNull(result);
                 Assert.assertNotNull(result.getFinalUniprotId());
                 Assert.assertEquals(ac_toFind, result.getFinalUniprotId());
-                Assert.assertEquals(true, result.getLastAction() instanceof PICRReport);
+                Assert.assertEquals(true, result.getLastAction() instanceof DefaultPICRReport);
                 Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
                 Assert.assertEquals(true, result.getLastAction().isASwissprotEntry());
 
@@ -114,7 +112,7 @@ public class StrategyWithIdentifierTest {
 
                 Assert.assertNotNull(result);
                 Assert.assertNotNull(result.getFinalUniprotId());
-                Assert.assertEquals(true, result.getLastAction() instanceof BlastReport);
+                Assert.assertEquals(true, result.getLastAction() instanceof DefaultBlastReport);
                 Assert.assertEquals(StatusLabel.COMPLETED, result.getListOfActions().get(0).getStatus().getLabel());
 
                 for (MappingReport r : result.getListOfActions()){
@@ -131,7 +129,7 @@ public class StrategyWithIdentifierTest {
                     Assert.assertEquals(StatusLabel.TO_BE_REVIEWED, result.getLastAction().getStatus().getLabel());
 
                     ArrayList<String> accessions = new ArrayList<String>();
-                    for (BlastResults p : ((BlastReport)result.getLastAction()).getBlastMatchingProteins()){
+                    for (BlastResults p : ((DefaultBlastReport)result.getLastAction()).getBlastMatchingProteins()){
                         accessions.add(p.getAccession());
                     }
                     Assert.assertTrue(accessions.contains(ac_toFind));
@@ -168,7 +166,7 @@ public class StrategyWithIdentifierTest {
             Assert.assertNotNull(result);
             Assert.assertNotNull(result.getFinalUniprotId());
             Assert.assertEquals(ac_to_find, result.getFinalUniprotId());
-            Assert.assertEquals(true, result.getLastAction() instanceof PICRReport);
+            Assert.assertEquals(true, result.getLastAction() instanceof DefaultPICRReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
             Assert.assertEquals(true, result.getLastAction().isASwissprotEntry());
         } catch (StrategyException e) {
@@ -201,7 +199,7 @@ public class StrategyWithIdentifierTest {
             Assert.assertNotNull(result);
             Assert.assertNotNull(result.getFinalUniprotId());
             Assert.assertEquals(ac_to_find, result.getFinalUniprotId());
-            Assert.assertEquals(false, result.getLastAction() instanceof PICRReport);
+            Assert.assertEquals(false, result.getLastAction() instanceof DefaultPICRReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
             Assert.assertEquals(true, result.getLastAction().isASwissprotEntry());
         } catch (StrategyException e) {
@@ -231,7 +229,7 @@ public class StrategyWithIdentifierTest {
             Assert.assertNotNull(result);
             Assert.assertNotNull(result.getFinalUniprotId());
             Assert.assertEquals(ac_to_find, result.getFinalUniprotId());
-            Assert.assertEquals(true, result.getLastAction() instanceof PICRReport);
+            Assert.assertEquals(true, result.getLastAction() instanceof DefaultPICRReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
             Assert.assertEquals(true, result.getLastAction().isASwissprotEntry());
         } catch (StrategyException e) {

@@ -4,16 +4,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
-
+import uk.ac.ebi.intact.protein.mapping.actions.status.Status;
+import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.BlastContext;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.protein.mapping.results.BlastResults;
+import uk.ac.ebi.intact.protein.mapping.results.impl.DefaultBlastResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.IdentificationStrategyImpl;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.Status;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.BlastResults;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -52,8 +52,8 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
     /**
      * Create a new SwissprotRemappingProcess
      */
-    public SwissprotRemappingProcess(){
-        super();
+    public SwissprotRemappingProcess(ReportsFactory factory){
+        super(factory);
     }
 
     /**
@@ -257,23 +257,23 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
                         if (checkSequenceCoverageOfAlignment(blastProteins.get(0))){
                             if (keepBlastResult){
                                 Status status = new Status(StatusLabel.COMPLETED, "We replaced the Trembl entry with the Swissprot entry " + ac + " : Trembl sequence matches the swissprot sequence with " + blastProteins.get(0).getIdentity() + " % identity and matches the Ensembl gene " + context.getEnsemblGene());
-                                report.setASwissprotEntry(true);
+                                report.setIsASwissprotEntry(true);
                                 report.setStatus(status);
-                                report.addBlastMatchingProtein(new BlastResults(blastProteins.get(0)));
+                                report.addBlastMatchingProtein(new DefaultBlastResults(blastProteins.get(0)));
                                 return ac;
                             }
                             else {
                                 Status status = new Status(StatusLabel.TO_BE_REVIEWED, "Could we replace the Trembl entry with this Swissprot entry " + ac + "? The Swissprot entry has been found with " + blastProteins.get(0).getIdentity() + " % identity and matches the Ensembl gene " + context.getEnsemblGene());
 
                                 report.setStatus(status);
-                                report.addBlastMatchingProtein(new BlastResults(blastProteins.get(0)));
+                                report.addBlastMatchingProtein(new DefaultBlastResults(blastProteins.get(0)));
                             }
                         }
                         else {
                             Status status = new Status(StatusLabel.TO_BE_REVIEWED, "The Swissprot entry has been found with " + blastProteins.get(0).getIdentity() + " % identity and matches the Ensembl gene " + context.getEnsemblGene() + " but the sequence coverage of the alignment is " + getQuerySequenceCoveragePercentFor(blastProteins.get(0)) + "% for the query sequence and "+ getMatchSequenceCoveragePercentFor(blastProteins.get(0))+"% for the match sequence.");
 
                             report.setStatus(status);
-                            report.addBlastMatchingProtein(new BlastResults(blastProteins.get(0)));
+                            report.addBlastMatchingProtein(new DefaultBlastResults(blastProteins.get(0)));
                         }
                     }
                     else {
@@ -289,7 +289,7 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
                     Status status = new Status(StatusLabel.TO_BE_REVIEWED, "Could we replace the Trembl entry with this Swissprot entry " + ac + "? The Swissprot entry has been found with " + blastProteins.get(0).getIdentity() + " % identity.");
 
                     report.setStatus(status);
-                    report.addBlastMatchingProtein(new BlastResults(blastProteins.get(0)));
+                    report.addBlastMatchingProtein(new DefaultBlastResults(blastProteins.get(0)));
                 }
             }
             // We have several Swissprot entries in the BLAST results
@@ -302,7 +302,7 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
                         break;
                     }
                     else {
-                        report.addBlastMatchingProtein(new BlastResults(b));
+                        report.addBlastMatchingProtein(new DefaultBlastResults(b));
                     }
                 }
 
@@ -319,7 +319,7 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
                             if (checkAllSequenceCoverageForIsoforms(blastProteins)){
                                 if (keepBlastResult){
                                     Status status = new Status(StatusLabel.COMPLETED, "We replaced the Trembl entry with the Swissprot entry " + ac + " : the Trembl sequence matches several swissprot splice variant sequences of the same protein which matches the Ensembl gene " + context.getEnsemblGene());
-                                    report.setASwissprotEntry(true);
+                                    report.setIsASwissprotEntry(true);
                                     report.setStatus(status);
                                     return ac;
                                 }
@@ -396,7 +396,7 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
                             if (checkAllSequenceCoverageForIsoformsFromBlastReport(report.getBlastMatchingProteins())){
                                 if (keepBlastResult){
                                     Status status = new Status(StatusLabel.COMPLETED, "We replaced the Trembl entry with the Swissprot entry " + newUniprotId + " : the Trembl sequence matches several swissprot splice variant sequences of this protein and has the same ensembl gene accession : " + this.context.getEnsemblGene());
-                                    report.setASwissprotEntry(true);
+                                    report.setIsASwissprotEntry(true);
                                     report.setStatus(status);
                                     return newUniprotId;
                                 }
@@ -471,7 +471,7 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
             while (blastProteins.size() == 0 && i >= maximumIdentityThreshold){
 
                 // Create a blast report each time we decrease the identity percent
-                BlastReport report = new BlastReport(ActionName.BLAST_Swissprot_Remapping);
+                BlastReport report = getReportsFactory().getBlastReport(ActionName.BLAST_Swissprot_Remapping);
                 this.listOfReports.add(report);
                 report.setQuerySequence(this.context.getSequence());
 
@@ -495,7 +495,7 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
                 }
             }
 
-            // We get the last BlastReport in case the status has not been added yet
+            // We get the last DefaultBlastReport in case the status has not been added yet
             BlastReport lastReport = (BlastReport) this.listOfReports.get(this.listOfReports.size() - 1);
 
             // if we don't have any results with the filter on the maximum identity threshold
@@ -508,7 +508,7 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
                 }
 
                 // Create a new Blast report where we can stores the Blast results not filtered with the maximum identity threshold
-                BlastReport report = new BlastReport(ActionName.BLAST_Swissprot_Remapping);
+                BlastReport report = getReportsFactory().getBlastReport(ActionName.BLAST_Swissprot_Remapping);
                 this.listOfReports.add(report);
                 report.setQuerySequence(this.context.getSequence());
 

@@ -1,13 +1,13 @@
 package uk.ac.ebi.intact.protein.mapping.actions;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.protein.mapping.factories.impl.DefaultReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
 
 import java.util.List;
 
@@ -24,9 +24,8 @@ public class UniprotNameSearchProcessTest {
     private UniprotNameSearchProcess process;
     private IdentificationContext context;
 
-    @Before
-    public void createBlastProcess(){
-        this.process = new UniprotNameSearchProcess();
+    public UniprotNameSearchProcessTest(){
+        this.process = new UniprotNameSearchProcess(new DefaultReportsFactory());
         this.context = new IdentificationContext();
     }
 

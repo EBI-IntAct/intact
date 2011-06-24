@@ -2,8 +2,17 @@ package uk.ac.ebi.intact.protein.mapping.strategies;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.protein.mapping.actions.ActionName;
 import uk.ac.ebi.intact.protein.mapping.actions.IdentificationAction;
+import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.factories.ResultsFactory;
+import uk.ac.ebi.intact.protein.mapping.factories.impl.DefaultReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.factories.impl.DefaultResultsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.protein.mapping.results.IdentificationResults;
+import uk.ac.ebi.intact.protein.mapping.results.impl.DefaultIdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 import uk.ac.ebi.intact.uniprot.model.UniprotXref;
@@ -11,10 +20,6 @@ import uk.ac.ebi.intact.uniprot.service.CachedUniprotService;
 import uk.ac.ebi.intact.uniprot.service.IdentifierChecker;
 import uk.ac.ebi.intact.uniprot.service.UniprotRemoteService;
 import uk.ac.ebi.intact.uniprot.service.UniprotService;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
 import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseType;
 
 import java.util.ArrayList;
@@ -62,12 +67,18 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
      */
     private boolean enableIsoformId = false;
 
+    private ReportsFactory reportsFactory;
+
+    private ResultsFactory resultsFactory;
+
     /**
      * Create a new IdentificationStrategyImpl
      */
     public IdentificationStrategyImpl(){
         // initialise the set of actions for this strategy
         initialiseSetOfActions();
+        this.reportsFactory = new DefaultReportsFactory();
+        this.resultsFactory = new DefaultResultsFactory();
     }
 
     /**
@@ -164,7 +175,7 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
             if (!this.enableIsoformId){
                 if (IdentifierChecker.isSpliceVariantId(matchingId)){
                     if (result == null){
-                        result = new IdentificationResults();
+                        result = new DefaultIdentificationResults();
                     }
 
                     if (result.getLastAction() != null){
@@ -249,5 +260,21 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
             }
         }
         return reports;
+    }
+
+    public ReportsFactory getReportsFactory() {
+        return reportsFactory;
+    }
+
+    public void setReportsFactory(ReportsFactory reportsFactory) {
+        this.reportsFactory = reportsFactory;
+    }
+
+    public ResultsFactory getResultsFactory() {
+        return resultsFactory;
+    }
+
+    public void setResultsFactory(ResultsFactory resultsFactory) {
+        this.resultsFactory = resultsFactory;
     }
 }

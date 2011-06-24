@@ -1,21 +1,19 @@
 package uk.ac.ebi.intact.protein.mapping.strategies;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ebi.intact.commons.util.Crc64;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.protein.mapping.model.actionReport.IntactCrc64Report;
+import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultIntactCrc64Report;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultPICRReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.protein.mapping.results.IdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.PICRReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
 
 /**
  * Unit test for StrategyWithSequence
@@ -24,15 +22,13 @@ import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResul
  * @version $Id$
  * @since <pre>30-Apr-2010</pre>
  */
-@ContextConfiguration(locations = {"classpath*:/META-INF/jpa.test.spring.xml"})
 public class StrategyWithSequenceTest  extends IntactBasicTestCase {
 
     private StrategyWithSequence strategy;
     private IntactContext intactContext;
     private String acToFind;
 
-    @Before
-    public void createStrategy(){
+    public StrategyWithSequenceTest(){
         this.strategy = new StrategyWithSequence();
         this.strategy.enableIsoforms(false);
         this.intactContext = IntactContext.getCurrentInstance();
@@ -119,7 +115,7 @@ public class StrategyWithSequenceTest  extends IntactBasicTestCase {
 
             Assert.assertNotNull(result.getFinalUniprotId());
             Assert.assertEquals(ac_to_find, result.getFinalUniprotId());
-            Assert.assertEquals(true, result.getLastAction() instanceof PICRReport);
+            Assert.assertEquals(true, result.getLastAction() instanceof DefaultPICRReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
             Assert.assertEquals(true, result.getLastAction().isASwissprotEntry());
         } catch (StrategyException e) {
@@ -154,10 +150,10 @@ public class StrategyWithSequenceTest  extends IntactBasicTestCase {
             Assert.assertNotNull(result.getFinalUniprotId());
             Assert.assertEquals(1, result.getListOfActions().size());
             Assert.assertEquals(ac_to_find, result.getFinalUniprotId());
-            Assert.assertEquals(true, result.getLastAction() instanceof PICRReport);
+            Assert.assertEquals(true, result.getLastAction() instanceof DefaultPICRReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
-            //Assert.assertEquals(true, ((BlastReport) result.getLastAction()).getBlastMatchingProteins().size() > 0);
-            //Assert.assertEquals(true, ((BlastReport) result.getLastAction()).getBlastMatchingProteins().iterator().next().getTremblAccession() != null);
+            //Assert.assertEquals(true, ((DefaultBlastReport) result.getLastAction()).getBlastMatchingProteins().size() > 0);
+            //Assert.assertEquals(true, ((DefaultBlastReport) result.getLastAction()).getBlastMatchingProteins().iterator().next().getTremblAccession() != null);
         } catch (StrategyException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -196,7 +192,7 @@ public class StrategyWithSequenceTest  extends IntactBasicTestCase {
             Assert.assertNotNull(result);
             Assert.assertNotNull(result.getFinalUniprotId());
             Assert.assertEquals(ac_to_find, result.getFinalUniprotId());
-            Assert.assertEquals(true, result.getLastAction() instanceof PICRReport);
+            Assert.assertEquals(true, result.getLastAction() instanceof DefaultPICRReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
             Assert.assertEquals(true, result.getLastAction().isASwissprotEntry());
         } catch (StrategyException e) {
@@ -239,7 +235,7 @@ public class StrategyWithSequenceTest  extends IntactBasicTestCase {
             Assert.assertNotNull(result);
             Assert.assertNotNull(result.getFinalUniprotId());
             Assert.assertEquals(ac_to_find, result.getFinalUniprotId());
-            Assert.assertEquals(true, result.getLastAction() instanceof PICRReport);
+            Assert.assertEquals(true, result.getLastAction() instanceof DefaultPICRReport);
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
             Assert.assertEquals(true, result.getLastAction().isASwissprotEntry());
         } catch (StrategyException e) {
@@ -270,8 +266,8 @@ public class StrategyWithSequenceTest  extends IntactBasicTestCase {
             }
 
             Assert.assertNull(result.getFinalUniprotId());
-            Assert.assertEquals(true, result.getLastAction() instanceof IntactCrc64Report);
-            Assert.assertEquals(acToFind, ((IntactCrc64Report) result.getLastAction()).getIntactid());
+            Assert.assertEquals(true, result.getLastAction() instanceof DefaultIntactCrc64Report);
+            Assert.assertEquals(acToFind, ((DefaultIntactCrc64Report) result.getLastAction()).getIntactAc());
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
 
         } catch (StrategyException e) {
@@ -304,8 +300,8 @@ public class StrategyWithSequenceTest  extends IntactBasicTestCase {
             }
 
             Assert.assertNull(result.getFinalUniprotId());
-            Assert.assertEquals(true, result.getLastAction() instanceof IntactCrc64Report);
-            Assert.assertEquals(acToFind, ((IntactCrc64Report) result.getLastAction()).getIntactid());
+            Assert.assertEquals(true, result.getLastAction() instanceof DefaultIntactCrc64Report);
+            Assert.assertEquals(acToFind, ((DefaultIntactCrc64Report) result.getLastAction()).getIntactAc());
             Assert.assertEquals(StatusLabel.COMPLETED, result.getLastAction().getStatus().getLabel());
 
         } catch (StrategyException e) {

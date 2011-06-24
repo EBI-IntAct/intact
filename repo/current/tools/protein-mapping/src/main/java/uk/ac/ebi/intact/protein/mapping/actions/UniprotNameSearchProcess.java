@@ -3,11 +3,11 @@ package uk.ac.ebi.intact.protein.mapping.actions;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.actions.status.Status;
+import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.Status;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
 import uk.ac.ebi.kraken.interfaces.uniprot.Gene;
 import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.GeneNameSynonym;
@@ -32,6 +32,10 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
      * Sets up a logger for that class.
      */
     public static final Log log = LogFactory.getLog( UniprotNameSearchProcess.class );
+
+    public UniprotNameSearchProcess(ReportsFactory factory){
+        super(factory);
+    }
 
     /**
      * Create a query to get the Uniprot entries with this gene name
@@ -195,7 +199,7 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
         else if (iterator.getResultSize() > 1){
             Status status = new Status(StatusLabel.TO_BE_REVIEWED, "The protein " + (context.getGene_name() != null ? "with the gene name " + context.getGene_name() : (context.getProtein_name() != null ? "with the protein name " + context.getProtein_name() : "")) + " could match " + iterator.getResultSize() + " Uniprot entries.");
             report.setStatus(status);
-            report.setASwissprotEntry(false);
+            report.setIsASwissprotEntry(false);
             for (UniProtEntry u : iterator){
                 report.addPossibleAccession(u.getPrimaryUniProtAccession().getValue());
             }
@@ -427,13 +431,13 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
 
             // if we don't have any results, we look into trembl
             if (iterator == null || iterator.getResultSize() == 0){
-                report.setASwissprotEntry(false);
+                report.setIsASwissprotEntry(false);
                 Status status = new Status(StatusLabel.FAILED, "We couldn't find any Swissprot entry which matches : name = " + globalName + "; TaxId = " + organism + ". We will look in Trembl.");
                 report.setStatus(status);
 
                 // get the results on Trembl
                 iterator = queryUniprotWith(geneName, protein_name, organism);
-                MappingReport report2 = new MappingReport(ActionName.SEARCH_uniprot_name);
+                MappingReport report2 = getReportsFactory().getMappingReport(ActionName.SEARCH_uniprot_name);
                 this.listOfReports.add(report2);
 
                 // if we don't have any result, the search fails
@@ -468,7 +472,7 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
                 // get the results on uniprot
                 iterator = queryUniprotWithGeneNameOrProteinName(null, null, globalName, organism);
 
-                MappingReport report2 = new MappingReport(ActionName.SEARCH_uniprot_name);
+                MappingReport report2 = getReportsFactory().getMappingReport(ActionName.SEARCH_uniprot_name);
                 this.listOfReports.add(report2);
 
                 // if we don't have any result, the search fails
@@ -517,7 +521,7 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
         this.listOfReports.clear();
 
                 // Create a new report
-        MappingReport report = new MappingReport(ActionName.SEARCH_uniprot_name);
+        MappingReport report = getReportsFactory().getMappingReport(ActionName.SEARCH_uniprot_name);
         this.listOfReports.add(report);
 
         String geneName = context.getGene_name();
@@ -532,7 +536,7 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
 
         String globalName = context.getGlobalName();
 
-        report.setASwissprotEntry(true);
+        report.setIsASwissprotEntry(true);
 
         // process a name search using gene name, protein name and/or glocal name
         String accession = processNameSearch(geneName, protein_name, organism, globalName, report, context);
@@ -545,7 +549,7 @@ public class UniprotNameSearchProcess extends ActionNeedingUniprotService {
         else if (accession == null && report.getPossibleAccessions().isEmpty()){
 
             // Create a new report
-            MappingReport report2 = new MappingReport(ActionName.wide_SEARCH_uniprot);
+            MappingReport report2 = getReportsFactory().getBlastReport(ActionName.wide_SEARCH_uniprot);
             this.listOfReports.add(report2);
 
             // get non specific results with gene name or protein name or global name

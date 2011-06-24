@@ -1,12 +1,12 @@
 package uk.ac.ebi.intact.protein.mapping.actions;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.factories.impl.DefaultReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
 
 /**
  * Unit test for CrossReferenceSearchProcess
@@ -21,9 +21,8 @@ public class CrossReferenceSearchProcessTest {
     private CrossReferenceSearchProcess process;
     private IdentificationContext context;
 
-    @Before
-    public void createBlastProcess(){
-        this.process = new CrossReferenceSearchProcess();
+    public CrossReferenceSearchProcessTest(){
+        this.process = new CrossReferenceSearchProcess(new DefaultReportsFactory());
         this.context = new IdentificationContext();
     }
 

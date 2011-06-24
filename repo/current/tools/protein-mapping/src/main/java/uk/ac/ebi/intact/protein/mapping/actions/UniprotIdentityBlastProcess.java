@@ -5,12 +5,12 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.bridges.ncbiblast.BlastResultFilter;
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.actions.status.Status;
+import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.Status;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.BlastResults;
+import uk.ac.ebi.intact.protein.mapping.results.impl.DefaultBlastResults;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -47,8 +47,8 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
     /**
      * Create a new UniprotIdentityBlastProcess
      */
-    public UniprotIdentityBlastProcess(){
-        super();
+    public UniprotIdentityBlastProcess(ReportsFactory factory){
+        super(factory);
     }
 
     /**
@@ -86,7 +86,7 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
         this.listOfReports.clear();
 
         // Create a new Blast report
-        BlastReport report = new BlastReport(ActionName.BLAST_Uniprot_Total_Identity);
+        BlastReport report = getReportsFactory().getBlastReport(ActionName.BLAST_Uniprot_Total_Identity);
         this.listOfReports.add(report);
 
         // Run a blast on uniprot and store the results in the Blast filter
@@ -116,7 +116,7 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
             report.setStatus(status);
 
             // New Report to store the results without filtering on 100% identity on the all sequence
-            BlastReport report2 = new BlastReport(ActionName.BLAST_uniprot);
+            BlastReport report2 = getReportsFactory().getBlastReport(ActionName.BLAST_uniprot);
             this.listOfReports.add(report2);
 
             List<BlastProtein> globalResults = this.blastFilter.getMatchingEntries();
@@ -136,7 +136,7 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
                         break;
                     }
                     else {
-                        report2.addBlastMatchingProtein(new BlastResults(p));
+                        report2.addBlastMatchingProtein(new DefaultBlastResults(p));
                     }
                 }
             }
@@ -145,10 +145,10 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
         else if (blastProteinsGlobalAlignment.size() == 1){
             Status status = new Status(StatusLabel.COMPLETED, "The blast on Uniprot successfully returned an unique uniprot Id " + blastProteinsGlobalAlignment.get(0).getAccession() + "(100% identity on the all sequence)");
             report.setStatus(status);
-            report.addBlastMatchingProtein(new BlastResults(blastProteinsGlobalAlignment.get(0)));
+            report.addBlastMatchingProtein(new DefaultBlastResults(blastProteinsGlobalAlignment.get(0)));
 
             if (blastProteinsGlobalAlignment.get(0).getDatabase().equalsIgnoreCase(swissprot) ){
-                report.setASwissprotEntry(true);
+                report.setIsASwissprotEntry(true);
             }
 
             return blastProteinsGlobalAlignment.get(0).getAccession();
@@ -164,12 +164,12 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
                     break;
                 }
                 else {
-                    report.addBlastMatchingProtein(new BlastResults(p));
+                    report.addBlastMatchingProtein(new DefaultBlastResults(p));
                 }
             }
 
             // we will look filter on the database so a new Blast report is necessary
-            BlastReport report2 = new BlastReport(ActionName.BLAST_Swissprot_Total_Identity);
+            BlastReport report2 = getReportsFactory().getBlastReport(ActionName.BLAST_Swissprot_Total_Identity);
             this.listOfReports.add(report2);
 
             // Get the results from Swissprot
@@ -185,7 +185,7 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
                         break;
                     }
                     else {
-                        report2.addBlastMatchingProtein(new BlastResults(p));
+                        report2.addBlastMatchingProtein(new DefaultBlastResults(p));
                     }
                 }
             }
@@ -193,8 +193,8 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
             else if (swissprotProteins.size() == 1){
                 Status status2 = new Status(StatusLabel.COMPLETED, "The blast on Uniprot successfully returned an unique swissprot entry" + blastProteinsGlobalAlignment.get(0).getAccession() + " (100% identity on the all sequence)");
                 report2.setStatus(status2);
-                report2.setASwissprotEntry(true);
-                report2.addBlastMatchingProtein(new BlastResults(swissprotProteins.get(0)));
+                report2.setIsASwissprotEntry(true);
+                report2.addBlastMatchingProtein(new DefaultBlastResults(swissprotProteins.get(0)));
 
                 return swissprotProteins.get(0).getAccession();
             }
@@ -208,7 +208,7 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
                         break;
                     }
                     else {
-                        report2.addBlastMatchingProtein(new BlastResults(p));
+                        report2.addBlastMatchingProtein(new DefaultBlastResults(p));
                     }
                 }
             }

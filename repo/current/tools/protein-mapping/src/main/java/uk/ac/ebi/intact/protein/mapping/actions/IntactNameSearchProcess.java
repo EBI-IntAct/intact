@@ -8,11 +8,12 @@ import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.InteractorImpl;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.actions.status.Status;
+import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.IntactReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultIntactReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.Status;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
 
 import javax.persistence.Query;
 import java.util.ArrayList;
@@ -37,8 +38,8 @@ public class IntactNameSearchProcess extends IdentificationActionImpl {
     /**
      * Create an IntactNameSearchProcess with an Intact context which is null and should be set later using the setIntactContext method
      */
-    public IntactNameSearchProcess(){
-        super();
+    public IntactNameSearchProcess(ReportsFactory factory){
+        super(factory);
     }
 
     /**
@@ -111,8 +112,8 @@ public class IntactNameSearchProcess extends IdentificationActionImpl {
             Status status = new Status(StatusLabel.FAILED, "No IntAct entries are matching the exact shortlabel " + name + " with the organism " + organism);
             report.setStatus(status);
 
-            // New search = new IntactReport
-            IntactReport report2 = new IntactReport(ActionName.SEARCH_intact_shortLabel);
+            // New search = new DefaultIntactReport
+            IntactReport report2 = getReportsFactory().getIntactReport(ActionName.SEARCH_intact_shortLabel);
             this.listOfReports.add(report2);
 
             // the list of interactors with shortlabel like 'name%'
@@ -125,8 +126,8 @@ public class IntactNameSearchProcess extends IdentificationActionImpl {
                 Status status2 = new Status(StatusLabel.FAILED, "No IntAct entries are matching the shortlabel %" + name + "%");
                 report2.setStatus(status2);
 
-                // New search = new IntactReport
-                IntactReport report3 = new IntactReport(ActionName.SEARCH_intact_fullName);
+                // New search = new DefaultIntactReport
+                DefaultIntactReport report3 = new DefaultIntactReport(ActionName.SEARCH_intact_fullName);
                 this.listOfReports.add(report3);
 
                 // get the list of interactors with fullname like '%name%'
@@ -149,7 +150,7 @@ public class IntactNameSearchProcess extends IdentificationActionImpl {
      * It will look if the gene name, protein name and/or general name of the protein to identify is matching a shortlabel of fullname of an Intact entry
      * @param context : the context of the protein
      * @return Always null as the process doesn't aimed at finding an unique uniprot entry but aimed at finding an unique IntAct entry. It Will add the results of the process
-     * (Intact accession, possible intact entries, etc.) on an IntactReport which will be added to the list of reports of this object.
+     * (Intact accession, possible intact entries, etc.) on an DefaultIntactReport which will be added to the list of reports of this object.
      * @throws uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException
      */
     public String runAction(IdentificationContext context) throws ActionProcessingException {
@@ -166,8 +167,8 @@ public class IntactNameSearchProcess extends IdentificationActionImpl {
         }
         String globalName = context.getGlobalName();
 
-        // create an IntactReport
-        IntactReport report = new IntactReport(ActionName.SEARCH_intact_exact_shortLabel);
+        // create an DefaultIntactReport
+        IntactReport report = getReportsFactory().getIntactReport(ActionName.SEARCH_intact_exact_shortLabel);
         this.listOfReports.add(report);
 
         if (organism == null){
@@ -201,14 +202,14 @@ public class IntactNameSearchProcess extends IdentificationActionImpl {
             Status status = new Status(StatusLabel.COMPLETED, "One Intact entry "+ intactAccessions.get(0) +" is matching the names : " + (geneName != null ? geneName : "no gene name") + (protein_name != null ? " and " + protein_name : " and no protein name") + (globalName != null ? " and " + globalName : "and no other name"));
             ir.setStatus(status);
 
-            ir.setIntactid(intactAccessions.get(0));
+            ir.setIntactAc(intactAccessions.get(0));
         }
         else {
             Status status = new Status(StatusLabel.TO_BE_REVIEWED, intactAccessions.size() +" IntAct entries are matching the names : " + (geneName != null ? geneName : "no gene name") + (protein_name != null ? " and " + protein_name : " and no protein name") + (globalName != null ? " and " + globalName : "and no other name"));
             ir.setStatus(status);
 
             for (String ac : intactAccessions){
-                ir.addPossibleIntactid(ac);
+                ir.addPossibleIntactAc(ac);
             }
         }
         return null;

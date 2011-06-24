@@ -1,9 +1,7 @@
 package uk.ac.ebi.intact.protein.mapping.actions;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.TransactionStatus;
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
 import uk.ac.ebi.intact.commons.util.Crc64;
@@ -12,10 +10,11 @@ import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.factories.impl.DefaultReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.FeatureRangeCheckingContext;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.UpdateContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.BlastResults;
+import uk.ac.ebi.intact.protein.mapping.results.impl.DefaultBlastResults;
 
 import java.util.List;
 
@@ -26,7 +25,6 @@ import java.util.List;
  * @version $Id$
  * @since <pre>17-May-2010</pre>
  */
-@ContextConfiguration(locations = {"classpath*:/META-INF/jpa.test.spring.xml"})
 public class FeatureRangeCheckingProcessTest extends IntactBasicTestCase{
 
     private FeatureRangeCheckingProcess process;
@@ -43,9 +41,8 @@ public class FeatureRangeCheckingProcessTest extends IntactBasicTestCase{
         return bioSource;
     }
 
-    @Before
-    public void createBlastProcess(){
-        this.process = new FeatureRangeCheckingProcess();
+    public FeatureRangeCheckingProcessTest(){
+        this.process = new FeatureRangeCheckingProcess(new DefaultReportsFactory());
         this.context = new UpdateContext();
 
         this.intactContext = IntactContext.getCurrentInstance();
@@ -123,7 +120,7 @@ public class FeatureRangeCheckingProcessTest extends IntactBasicTestCase{
 
         FeatureRangeCheckingContext featureContext = new FeatureRangeCheckingContext(this.context);
         featureContext.setTremblAccession(tremblAccession);
-        featureContext.getResultsOfSwissprotRemapping().add(new BlastResults(swissprot));
+        featureContext.getResultsOfSwissprotRemapping().add(new DefaultBlastResults(swissprot));
 
         try {
             String id = this.process.runAction(featureContext);

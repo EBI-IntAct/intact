@@ -6,11 +6,11 @@ import uk.ac.ebi.intact.bridges.picr.PicrClient;
 import uk.ac.ebi.intact.bridges.picr.PicrClientException;
 import uk.ac.ebi.intact.bridges.picr.PicrSearchDatabase;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.actions.status.Status;
+import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.PICRReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.PICRReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.Status;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
 import uk.ac.ebi.picr.model.CrossReference;
 import uk.ac.ebi.picr.model.UPEntry;
 
@@ -40,7 +40,8 @@ public class PICRSearchProcessWithAccession extends IdentificationActionImpl {
     /**
      * Create a new PICRSearchProcessWithAccession
      */
-    public PICRSearchProcessWithAccession(){
+    public PICRSearchProcessWithAccession(ReportsFactory factory){
+        super(factory);
         this.picrClient = new PicrClient();
     }
 
@@ -60,8 +61,8 @@ public class PICRSearchProcessWithAccession extends IdentificationActionImpl {
             taxId = context.getOrganism().getTaxId();
         }
 
-        // create a new PICRReport
-        PICRReport report = new PICRReport(ActionName.PICR_accession);
+        // create a new DefaultPICRReport
+        PICRReport report = getReportsFactory().getPICRReport(ActionName.PICR_accession);
         this.listOfReports.add(report);
 
         if (taxId == null){
@@ -85,7 +86,7 @@ public class PICRSearchProcessWithAccession extends IdentificationActionImpl {
                     Status status = new Status(StatusLabel.COMPLETED, "PICR successfully matched the identifier " + context.getIdentifier() + " to this Swissprot accession " + uniprotId);
                     report.setStatus(status);
 
-                    report.setASwissprotEntry(true);
+                    report.setIsASwissprotEntry(true);
                     return uniprotId;
                 }
                 // we have a Trembl entry
@@ -93,7 +94,7 @@ public class PICRSearchProcessWithAccession extends IdentificationActionImpl {
                     Status status = new Status(StatusLabel.COMPLETED, "PICR successfully matched the identifier " + context.getIdentifier() + " to this Trembl accession " + uniprotId);
                     report.setStatus(status);
 
-                    report.setASwissprotEntry(false);
+                    report.setIsASwissprotEntry(false);
                     return uniprotId;
                 }
                 else {

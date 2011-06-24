@@ -7,17 +7,16 @@ import uk.ac.ebi.intact.core.IntactTransactionException;
 import uk.ac.ebi.intact.core.context.DataContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
-//import uk.ac.ebi.intact.dbupdate.prot.ProteinUpdateProcessor;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultBlastReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultPICRReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.UpdateContext;
+import uk.ac.ebi.intact.protein.mapping.results.BlastResults;
+import uk.ac.ebi.intact.protein.mapping.results.IdentificationResults;
+import uk.ac.ebi.intact.protein.mapping.results.PICRCrossReferences;
 import uk.ac.ebi.intact.protein.mapping.strategies.StrategyForProteinUpdate;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.PICRReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.BlastResults;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.PICRCrossReferences;
 
 import javax.persistence.Query;
 import java.io.File;
@@ -28,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
+
+//import uk.ac.ebi.intact.dbupdate.prot.ProteinUpdateProcessor;
 
 /**
  * This class can update the Intact proteins following a specific update strategy
@@ -516,16 +517,16 @@ public class ProteinUpdateManager {
                     writer.write("possible accession : " + ac + "\n");
                 }
 
-                if (report instanceof PICRReport){
-                    PICRReport picr = (PICRReport) report;
+                if (report instanceof DefaultPICRReport){
+                    DefaultPICRReport picr = (DefaultPICRReport) report;
                     writer.write("Is a Swissprot entry : " + picr.isASwissprotEntry() + "\n");
 
                     for (PICRCrossReferences xrefs : picr.getCrossReferences()){
                         writer.write(xrefs.getDatabase() + " cross reference : " + xrefs.getAccessions() + "\n");
                     }
                 }
-                else if (report instanceof BlastReport){
-                    BlastReport blast = (BlastReport) report;
+                else if (report instanceof DefaultBlastReport){
+                    DefaultBlastReport blast = (DefaultBlastReport) report;
 
                     for (BlastResults prot : blast.getBlastMatchingProteins()){
                         writer.write("BLAST Protein " + prot.getAccession() + " : identity = " + prot.getIdentity() + "\n");

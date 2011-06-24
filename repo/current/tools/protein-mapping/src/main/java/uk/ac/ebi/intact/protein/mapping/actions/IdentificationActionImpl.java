@@ -1,9 +1,10 @@
 package uk.ac.ebi.intact.protein.mapping.actions;
 
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
+import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
+import uk.ac.ebi.intact.protein.mapping.results.BlastResults;
 import uk.ac.ebi.intact.uniprot.service.IdentifierChecker;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.BlastResults;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,6 +25,12 @@ public abstract class IdentificationActionImpl implements IdentificationAction {
      * List of reports
      */
     protected List<MappingReport> listOfReports = new ArrayList<MappingReport>();
+
+    private ReportsFactory reportsFactory;
+
+    public IdentificationActionImpl(ReportsFactory factory){
+        this.reportsFactory = factory;
+    }
 
     /**
      *
@@ -109,5 +116,13 @@ public abstract class IdentificationActionImpl implements IdentificationAction {
         }
 
         return isoformMerged;
+    }
+
+    public ReportsFactory getReportsFactory() {
+        return reportsFactory;
+    }
+
+    public void setReportsFactory(ReportsFactory reportsFactory) {
+        this.reportsFactory = reportsFactory;
     }
 }

@@ -1,44 +1,15 @@
 package uk.ac.ebi.intact.protein.mapping.model.actionReport;
 
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
-
 /**
- * This report aims at storing IntAct results of a search in Intact of a specific CRC64
+ * Interface to implement for IntactCrc64Report reports
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
- * @since <pre>01-Apr-2010</pre>
+ * @since <pre>24/06/11</pre>
  */
 
-public class IntactCrc64Report extends IntactReport {
+public interface IntactCrc64Report extends IntactReport{
 
-    /**
-     * The sequence used to query IntAct
-     */
-    protected String querySequence;
-
-    /**
-     * create a new IntactCrc64Report
-     * @param name : the name of the report
-     */
-    public IntactCrc64Report(ActionName name) {
-        super(name);
-        this.querySequence = null;
-    }
-
-    /**
-     *
-     * @return  the sequence used to query intact
-     */
-    public String getQuerySequence() {
-        return querySequence;
-    }
-
-    /**
-     * set the sequence used to query intact
-     * @param querySequence : the sequence
-     */
-    public void setQuerySequence(String querySequence) {
-        this.querySequence = querySequence;
-    }
+    public String getQuerySequence();
+    public void setQuerySequence(String sequence);
 }

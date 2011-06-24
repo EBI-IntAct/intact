@@ -8,11 +8,11 @@ import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.model.ProteinImpl;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.actions.status.Status;
+import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.IntactCrc64Report;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.Status;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
 
 import java.util.List;
 
@@ -34,8 +34,8 @@ public class IntactCrc64SearchProcess extends IdentificationActionImpl {
     /**
      * Create an IntactCrc64SearchProcess
      */
-    public IntactCrc64SearchProcess(){
-        super();
+    public IntactCrc64SearchProcess(ReportsFactory factory){
+        super(factory);
     }
 
     /**
@@ -43,7 +43,7 @@ public class IntactCrc64SearchProcess extends IdentificationActionImpl {
      * to identify is given, add a filter on the organism to the search
      * @param context  : the context of the protein
      * @return Always null as the process doesn't aimed at finding an unique uniprot entry but aimed at finding an unique IntAct entry. It Will add the results of the process
-     * (Intact accession, possible intact entries, etc.) on an IntactCrc64Report which will be added to the list of reports of this object.
+     * (Intact accession, possible intact entries, etc.) on an DefaultIntactCrc64Report which will be added to the list of reports of this object.
      * @throws uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException
      */
     public String runAction(IdentificationContext context) throws ActionProcessingException {
@@ -52,8 +52,8 @@ public class IntactCrc64SearchProcess extends IdentificationActionImpl {
 
         IntactContext intactContext = IntactContext.getCurrentInstance();
 
-        // Create an IntactCrc64Report
-        IntactCrc64Report report = new IntactCrc64Report(ActionName.SEARCH_intact_crc64);
+        // Create an DefaultIntactCrc64Report
+        IntactCrc64Report report = getReportsFactory().getIntactCrc64Report(ActionName.SEARCH_intact_crc64);
         this.listOfReports.add(report);
 
         // Add the sequence to the report
@@ -95,15 +95,15 @@ public class IntactCrc64SearchProcess extends IdentificationActionImpl {
         }
         else if (proteins.size() == 1){
             if (proteins.get(0) != null){
-                report.setIntactid(proteins.get(0).getAc());
+                report.setIntactAc(proteins.get(0).getAc());
 
-                Status status = new Status(StatusLabel.COMPLETED, "The Crc64 search on Intact successfully returned the IntAct entry " + report.getIntactid()  + (taxId != null ? " with organism " + taxId : ""));
+                Status status = new Status(StatusLabel.COMPLETED, "The Crc64 search on Intact successfully returned the IntAct entry " + report.getIntactAc()  + (taxId != null ? " with organism " + taxId : ""));
                 report.setStatus(status);
             }
         }
         else {
             for (ProteinImpl p : proteins){
-                report.addPossibleIntactid(p.getAc());
+                report.addPossibleIntactAc(p.getAc());
             }
             Status status = new Status(StatusLabel.TO_BE_REVIEWED, "The Crc64 search on IntAct returned " + proteins.size() + " matching IntAct entries."  + (taxId != null ? " with organism " + taxId : ""));
             report.setStatus(status);

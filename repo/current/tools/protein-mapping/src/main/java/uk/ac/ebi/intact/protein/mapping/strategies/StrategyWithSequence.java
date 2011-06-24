@@ -4,16 +4,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.protein.mapping.actions.*;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.IntactCrc64Report;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.PICRReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultIntactCrc64Report;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultPICRReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.BlastContext;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
+import uk.ac.ebi.intact.protein.mapping.results.BlastResults;
+import uk.ac.ebi.intact.protein.mapping.results.IdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.PICRReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.BlastResults;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +98,7 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
     @Override
     public IdentificationResults identifyProtein(IdentificationContext context) throws StrategyException {
         // create the result instance
-        IdentificationResults result = new IdentificationResults();
+        IdentificationResults result = getResultsFactory().getIdentificationResults();
 
         // this strategy needs a sequence of the protein to identify
         if (context.getSequence() == null){
@@ -130,7 +132,7 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
                         // get the last report
                         IntactCrc64Report lastReport = (IntactCrc64Report) result.getLastAction();
                         // if the Intact search failed and the BLAST process is enabled, we process the BLAST on uniprot
-                        if (lastReport.getIntactid() == null && lastReport.getPossibleIntactIds().isEmpty() && isBasicBlastRequired){
+                        if (lastReport.getIntactAc() == null && lastReport.getPossibleIntactIds().isEmpty() && isBasicBlastRequired){
                             processLastAction(context, result);
                         }
                     }
@@ -192,19 +194,19 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
     @Override
     protected void initialiseSetOfActions() {
         // the first action is a PICR query using the sequence
-        PICRSearchProcessWithSequence firstAction = new PICRSearchProcessWithSequence();
+        PICRSearchProcessWithSequence firstAction = new PICRSearchProcessWithSequence(getReportsFactory());
         this.listOfActions.add(firstAction);
 
         // the second action is a CRC64 search on Intact (only if the intact context is not null)
-        IntactCrc64SearchProcess secondAction = new IntactCrc64SearchProcess();
+        IntactCrc64SearchProcess secondAction = new IntactCrc64SearchProcess(getReportsFactory());
         this.listOfActions.add(secondAction);
 
         // the third action is a swissprot remapping process
-        SwissprotRemappingProcess thirdAction = new SwissprotRemappingProcess();
+        SwissprotRemappingProcess thirdAction = new SwissprotRemappingProcess(getReportsFactory());
         this.listOfActions.add(thirdAction);
 
         // the last action is a BLAST on uniprot (only if the Blast is enabled)
-        BasicBlastProcess lastAction = new BasicBlastProcess();
+        BasicBlastProcess lastAction = new BasicBlastProcess(getReportsFactory());
         this.listOfActions.add(lastAction);
     }
 
@@ -226,7 +228,7 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
         // collect the reports and add them to the list of reports
         this.listOfReports.addAll(this.listOfActions.get(0).getListOfActionReports());
         // get the PICR report
-        PICRReport report = (PICRReport) this.listOfReports.get(this.listOfReports.size() - 1);
+        DefaultPICRReport report = (DefaultPICRReport) this.listOfReports.get(this.listOfReports.size() - 1);
 
         // If PICR didn't return any Uniprot accession
         if (uniprot == null && report.getPossibleAccessions().isEmpty()){
@@ -240,10 +242,10 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
                 // add the reports to the result
                 this.listOfReports.addAll(this.listOfActions.get(1).getListOfActionReports());
                 // get the last report
-                IntactCrc64Report report2 = (IntactCrc64Report) this.listOfReports.get(this.listOfReports.size() - 1);
+                DefaultIntactCrc64Report report2 = (DefaultIntactCrc64Report) this.listOfReports.get(this.listOfReports.size() - 1);
 
                 // if the Intact search failed and the BLAST process is enabled, we process the BLAST on uniprot
-                if (report2.getIntactid() == null && report2.getPossibleIntactIds().isEmpty() && isBasicBlastRequired){
+                if (report2.getIntactAc() == null && report2.getPossibleIntactIds().isEmpty() && isBasicBlastRequired){
                     processLastAction(context, null);
                 }
             }

@@ -1,14 +1,14 @@
 package uk.ac.ebi.intact.protein.mapping.actions;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.protein.mapping.factories.impl.DefaultReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultBlastReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.BlastContext;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
 
 import java.util.List;
 
@@ -20,9 +20,8 @@ public class BasicBlastProcessTest {
     private BasicBlastProcess blastProcess;
     private BlastContext context;
 
-    @Before
-    public void createBlastProcess(){
-        this.blastProcess = new BasicBlastProcess();
+    public BasicBlastProcessTest(){
+        this.blastProcess = new BasicBlastProcess(new DefaultReportsFactory());
         this.context = new BlastContext();
     }
 
@@ -37,9 +36,9 @@ public class BasicBlastProcessTest {
             List<MappingReport> reports = this.blastProcess.getListOfActionReports();
 
             Assert.assertNull(id);
-            Assert.assertEquals(true, reports.get(0) instanceof BlastReport);
-            Assert.assertEquals(true, ((BlastReport)reports.get(0)).getBlastMatchingProteins().isEmpty());
-            System.out.println(((BlastReport)reports.get(0)).getBlastMatchingProteins().size());
+            Assert.assertEquals(true, reports.get(0) instanceof DefaultBlastReport);
+            Assert.assertEquals(true, ((DefaultBlastReport)reports.get(0)).getBlastMatchingProteins().isEmpty());
+            System.out.println(((DefaultBlastReport)reports.get(0)).getBlastMatchingProteins().size());
             for (String warn : reports.get(0).getWarnings()){
                 System.out.println(warn);
             }
@@ -63,8 +62,8 @@ public class BasicBlastProcessTest {
             List<MappingReport> reports = this.blastProcess.getListOfActionReports();
 
             Assert.assertNull(id);
-            Assert.assertEquals(true, reports.get(0) instanceof BlastReport);
-            Assert.assertEquals(0, ((BlastReport)reports.get(0)).getBlastMatchingProteins().size());
+            Assert.assertEquals(true, reports.get(0) instanceof DefaultBlastReport);
+            Assert.assertEquals(0, ((DefaultBlastReport)reports.get(0)).getBlastMatchingProteins().size());
 
             for (String warn : reports.get(0).getWarnings()){
                 System.out.println(warn);
@@ -89,7 +88,7 @@ public class BasicBlastProcessTest {
             List<MappingReport> reports = this.blastProcess.getListOfActionReports();
 
             Assert.assertNull(id);
-            Assert.assertEquals(true, reports.get(0) instanceof BlastReport);
+            Assert.assertEquals(true, reports.get(0) instanceof DefaultBlastReport);
             Assert.assertEquals(StatusLabel.FAILED, reports.get(0).getStatus().getLabel());
 
             for (String warn : reports.get(0).getWarnings()){

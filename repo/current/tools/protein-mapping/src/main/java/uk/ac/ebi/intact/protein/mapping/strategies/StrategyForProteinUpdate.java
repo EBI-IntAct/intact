@@ -2,18 +2,18 @@ package uk.ac.ebi.intact.protein.mapping.strategies;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.protein.mapping.actions.ActionName;
 import uk.ac.ebi.intact.protein.mapping.actions.FeatureRangeCheckingProcess;
 import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException;
+import uk.ac.ebi.intact.protein.mapping.actions.status.Status;
+import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.FeatureRangeCheckingContext;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.UpdateContext;
+import uk.ac.ebi.intact.protein.mapping.results.IdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.ActionName;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.MappingReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.BlastReport;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.Status;
-import uk.ac.ebi.intact.update.model.protein.mapping.actions.status.StatusLabel;
-import uk.ac.ebi.intact.update.model.protein.mapping.results.IdentificationResults;
 
 import java.util.HashSet;
 import java.util.List;
@@ -232,7 +232,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
         Map<String, String> identifiers = ((UpdateContext) context).getIdentifiers();
 
         // create a new result instance
-        IdentificationResults result = new IdentificationResults();
+        IdentificationResults result = getResultsFactory().getIdentificationResults();
         // set the intact accession of the result  is not necessary because the protein update takes care of that
         // result.setIntactAccession(((UpdateContext) context).getIntactAccession());
 
@@ -240,7 +240,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
             // we don't have neither a sequence nor an identifier for this protein
             if (updateContext.getSequence() == null && updateContext.getIdentifiers().isEmpty()){
                 // create a new report which will be added to the results
-                MappingReport report = new MappingReport(ActionName.update_checking);
+                MappingReport report = getReportsFactory().getMappingReport(ActionName.update_checking);
                 Status status = new Status(StatusLabel.FAILED, "The sequence of the protein is null and there are no cross references with qualifier 'identity'.");
                 report.setStatus(status);
                 result.addActionReport(report);
@@ -260,7 +260,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
                 // The protein also has identifiers
                 if (!identifiers.isEmpty()){
                     // we create a new update report which will be added to the results
-                    MappingReport report = new MappingReport(ActionName.update_checking);
+                    MappingReport report = getReportsFactory().getMappingReport(ActionName.update_checking);
                     report.addPossibleAccession(result.getFinalUniprotId());
 
                     // boolean value to know if there is a conflict with the previous results
@@ -337,7 +337,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
             // we don't have a sequence but the protein has identifier(s)
             else{
                 // we create a new update report which will be added to the results
-                MappingReport report = new MappingReport(ActionName.update_checking);
+                MappingReport report = getReportsFactory().getMappingReport(ActionName.update_checking);
                 report.addPossibleAccession(result.getFinalUniprotId());
 
                 Set<String> uniprots = new HashSet<String>();
@@ -391,7 +391,7 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
 
                 if (result.getFinalUniprotId() != null){
                     // we create a new update report which will be added to the results
-                    MappingReport report = new MappingReport(ActionName.update_checking);
+                    MappingReport report = getReportsFactory().getMappingReport(ActionName.update_checking);
 
                     report.addPossibleAccession(result.getFinalUniprotId());
                     Status updateStatus = new Status(StatusLabel.PENDING, "The protein " + updateContext.getIntactAccession() + " could successfully be mapped to " + result.getFinalUniprotId() + " but was not updated because uniprot cross references already exist and a curator should check first that the protein can be updated.");
@@ -414,16 +414,20 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
 
         // the first action is a StrategyWithSequence
         StrategyWithSequence firstAction = new StrategyWithSequence();
+        firstAction.setReportsFactory(getReportsFactory());
+        firstAction.setResultsFactory(getResultsFactory());
         firstAction.enableIsoforms(this.isIsoformEnabled());
         this.listOfActions.add(firstAction);
 
         // the second action is a StrategyWithIdentifier
         StrategyWithIdentifier secondAction = new StrategyWithIdentifier();
+        secondAction.setReportsFactory(getReportsFactory());
+        secondAction.setResultsFactory(getResultsFactory());
         secondAction.enableIsoforms(this.isIsoformEnabled());
         this.listOfActions.add(secondAction);
 
         // The last action is a feature range checking process
-        FeatureRangeCheckingProcess thirdAction = new FeatureRangeCheckingProcess();
+        FeatureRangeCheckingProcess thirdAction = new FeatureRangeCheckingProcess(getReportsFactory());
         this.listOfActions.add(thirdAction);
     }
 
