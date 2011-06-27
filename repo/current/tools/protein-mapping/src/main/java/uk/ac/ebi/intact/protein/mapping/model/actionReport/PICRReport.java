@@ -12,9 +12,9 @@ import java.util.Set;
  * @since <pre>24/06/11</pre>
  */
 
-public interface PICRReport extends MappingReport{
+public interface PICRReport<T extends PICRCrossReferences> extends MappingReport{
 
-    public Set<PICRCrossReferences> getCrossReferences();
+    public Set<T> getCrossReferences();
     public void addCrossReference(String databaseName, String accession);
-    public void addPICRCrossReference(PICRCrossReferences refs);
+    public void addPICRCrossReference(T refs);
 }

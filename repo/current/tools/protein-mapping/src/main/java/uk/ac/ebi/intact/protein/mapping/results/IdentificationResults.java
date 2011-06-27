@@ -13,14 +13,14 @@ import java.util.List;
  * @since <pre>24/06/11</pre>
  */
 
-public interface IdentificationResults {
+public interface IdentificationResults<T extends MappingReport> {
 
     public String getFinalUniprotId();
     public boolean hasUniqueUniprotId();
-    public List<MappingReport> getListOfActions();
-    public boolean addActionReport(MappingReport report);
-    public boolean removeActionReport(MappingReport report);
-    public MappingReport getLastAction();
-    public List<MappingReport> getActionsByName(ActionName name);
+    public List<T> getListOfActions();
+    public boolean addActionReport(T report);
+    public boolean removeActionReport(T report);
+    public T getLastAction();
+    public List<T> getActionsByName(ActionName name);
     public void setFinalUniprotId(String id);
 }

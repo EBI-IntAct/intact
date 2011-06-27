@@ -307,7 +307,7 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
 
                         List<BlastReport> listOfSwissprotRemappingReports = getSwissprotRemappingReports(result.getListOfActions());
 
-                        for (BlastReport sr : listOfSwissprotRemappingReports){
+                        for (BlastReport<BlastResults> sr : listOfSwissprotRemappingReports){
                             for (BlastResults r : sr.getBlastMatchingProteins()){
                                 r.setTremblAccession(tremblEntry.getPrimaryAc());
                             }
@@ -413,7 +413,7 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
 
                 List<BlastReport> listOfSwissprotRemappingReports = getSwissprotRemappingReports(this.listOfReports);
 
-                for (BlastReport sr : listOfSwissprotRemappingReports){
+                for (BlastReport<BlastResults> sr : listOfSwissprotRemappingReports){
                     for (BlastResults r : sr.getBlastMatchingProteins()){
                         r.setTremblAccession(tremblEntry.getPrimaryAc());
                     }

@@ -501,7 +501,7 @@ public class ProteinUpdateManager {
      * @param writer : the file writer
      * @throws ProteinUpdateException
      */
-    private void writeResultReports(String protAc, IdentificationResults result, Writer writer) throws ProteinUpdateException {
+    private void writeResultReports(String protAc, IdentificationResults<MappingReport> result, Writer writer) throws ProteinUpdateException {
         try {
             writer.write("************************" + protAc + "************************************ \n");
 

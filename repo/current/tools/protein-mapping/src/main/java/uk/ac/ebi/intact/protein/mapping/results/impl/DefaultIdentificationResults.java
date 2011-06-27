@@ -3,6 +3,7 @@ package uk.ac.ebi.intact.protein.mapping.results.impl;
 import org.apache.commons.collections.CollectionUtils;
 import uk.ac.ebi.intact.protein.mapping.actions.ActionName;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultMappingReport;
 import uk.ac.ebi.intact.protein.mapping.results.IdentificationResults;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>24-Mar-2010</pre>
  */
-public class DefaultIdentificationResults implements IdentificationResults{
+public class DefaultIdentificationResults implements IdentificationResults<DefaultMappingReport>{
 
     /**
      * the unique uniprot id identifying the protein
@@ -26,7 +27,7 @@ public class DefaultIdentificationResults implements IdentificationResults{
     /**
      * the list of actions done to identify the protein
      */
-    private List<MappingReport> listOfActions = new ArrayList<MappingReport>();
+    private List<DefaultMappingReport> listOfActions = new ArrayList<DefaultMappingReport>();
 
     /**
      * Create a new Identificationresult
@@ -35,7 +36,7 @@ public class DefaultIdentificationResults implements IdentificationResults{
         this.finalUniprotId = null;
     }
 
-    public void setListOfActions(List<MappingReport> listOfActions) {
+    public void setListOfActions(List<DefaultMappingReport> listOfActions) {
         this.listOfActions = listOfActions;
     }
 
@@ -67,7 +68,7 @@ public class DefaultIdentificationResults implements IdentificationResults{
      *
      * @return the list of actions done to identify the protein
      */
-    public List<MappingReport> getListOfActions(){
+    public List<DefaultMappingReport> getListOfActions(){
         return this.listOfActions;
     }
 
@@ -75,14 +76,14 @@ public class DefaultIdentificationResults implements IdentificationResults{
      * add a new action report to the list of reports
      * @param report : action report
      */
-    public boolean addActionReport(MappingReport report){
+    public boolean addActionReport(DefaultMappingReport report){
         if (this.listOfActions.add(report)){
             return true;
         }
         return false;
     }
 
-    public boolean removeActionReport(MappingReport report){
+    public boolean removeActionReport(DefaultMappingReport report){
         if (this.listOfActions.remove(report)){
             return true;
         }
@@ -93,7 +94,7 @@ public class DefaultIdentificationResults implements IdentificationResults{
      *
      * @return the last action report added to this result
      */
-    public MappingReport getLastAction(){
+    public DefaultMappingReport getLastAction(){
         if (listOfActions.isEmpty()){
             return null;
         }
@@ -105,10 +106,10 @@ public class DefaultIdentificationResults implements IdentificationResults{
      * @param name : name of a specific action
      * @return the list of actions with this specific name which have been done to identify the protein
      */
-    public List<MappingReport> getActionsByName(ActionName name){
-        ArrayList<MappingReport> reports = new ArrayList<MappingReport>();
+    public List<DefaultMappingReport> getActionsByName(ActionName name){
+        ArrayList<DefaultMappingReport> reports = new ArrayList<DefaultMappingReport>();
 
-        for (MappingReport action : this.listOfActions){
+        for (DefaultMappingReport action : this.listOfActions){
             if (action.getName() != null && action.getName().equals(name)){
                 reports.add(action);
             }

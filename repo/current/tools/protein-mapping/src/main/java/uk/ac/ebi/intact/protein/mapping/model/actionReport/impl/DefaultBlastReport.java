@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import uk.ac.ebi.intact.protein.mapping.actions.ActionName;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.protein.mapping.results.BlastResults;
+import uk.ac.ebi.intact.protein.mapping.results.impl.DefaultBlastResults;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,12 +16,12 @@ import java.util.Set;
  * @version $Id$
  * @since <pre>01-Apr-2010</pre>
  */
-public class DefaultBlastReport extends DefaultMappingReport implements BlastReport{
+public class DefaultBlastReport extends DefaultMappingReport implements BlastReport<DefaultBlastResults>{
 
     /**
      * The list of BLASTProteins
      */
-    protected Set<BlastResults> listOfProteins = new HashSet<BlastResults>();
+    protected Set<DefaultBlastResults> listOfProteins = new HashSet<DefaultBlastResults>();
 
     /**
      * The sequence used for the blast
@@ -40,11 +41,11 @@ public class DefaultBlastReport extends DefaultMappingReport implements BlastRep
      *
      * @return the list of Blast results
      */
-    public Set<BlastResults> getBlastMatchingProteins(){
+    public Set<DefaultBlastResults> getBlastMatchingProteins(){
         return this.listOfProteins;
     }
 
-    public void setBlastMatchingProteins(Set<BlastResults> blastResults){
+    public void setBlastMatchingProteins(Set<DefaultBlastResults> blastResults){
         this.listOfProteins = blastResults;
     }
 
@@ -52,7 +53,7 @@ public class DefaultBlastReport extends DefaultMappingReport implements BlastRep
      *  add a blast protein
      * @param prot : new blast result
      */
-    public void addBlastMatchingProtein(BlastResults prot){
+    public void addBlastMatchingProtein(DefaultBlastResults prot){
         this.listOfProteins.add(prot);
     }
 

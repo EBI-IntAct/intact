@@ -6,6 +6,7 @@ import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultBlastReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultMappingReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.UpdateContext;
 import uk.ac.ebi.intact.protein.mapping.results.IdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
@@ -46,7 +47,7 @@ public class StrategyForProteinUpdateTest {
 
         this.strategy.setBasicBlastProcessRequired(true);
 
-        IdentificationResults result = null;
+        IdentificationResults<DefaultMappingReport> result = null;
         try {
             result = this.strategy.identifyProtein(context);
 
@@ -77,7 +78,7 @@ public class StrategyForProteinUpdateTest {
 
         this.strategy.setBasicBlastProcessRequired(false);
 
-        IdentificationResults result = null;
+        IdentificationResults<DefaultMappingReport> result = null;
         try {
             result = this.strategy.identifyProtein(context);
 
@@ -104,7 +105,7 @@ public class StrategyForProteinUpdateTest {
 
         this.strategy.setBasicBlastProcessRequired(false);
 
-        IdentificationResults result = null;
+        IdentificationResults<MappingReport> result = null;
         try {
             result = this.strategy.identifyProtein(context);
 

@@ -80,7 +80,7 @@ public class FeatureRangeCheckingProcess extends IdentificationActionImpl {
         }
         // No ranges should be after the new end positions
         else if (endTo > protein.getEndMatch() || range.getToIntervalEnd() > protein.getEndQuery()){
-            report.addWarning("The feature range is " + range.getFromIntervalEnd() + "-" + range.getToIntervalEnd() + " and the alignment with the Swissprot sequence finishes before " + range.getToIntervalStart() + ". We can't change the previous sequence with the sequence of the Swissprot entry because it will be incoherent with the current feature(s) of the protein.");            
+            report.addWarning("The feature range is " + range.getFromIntervalEnd() + "-" + range.getToIntervalEnd() + " and the alignment with the Swissprot sequence finishes before " + range.getToIntervalStart() + ". We can't change the previous sequence with the sequence of the Swissprot entry because it will be incoherent with the current feature(s) of the protein.");
             return false;
         }
         else {
@@ -131,7 +131,7 @@ public class FeatureRangeCheckingProcess extends IdentificationActionImpl {
             int initialNumberOfBlastProtein = processContext.getResultsOfSwissprotRemapping().size();
 
             // Create a DefaultBlastReport
-            BlastReport report = getReportsFactory().getBlastReport(ActionName.feature_range_checking);
+            BlastReport<BlastResults> report = getReportsFactory().getBlastReport(ActionName.feature_range_checking);
             this.listOfReports.add(report);
 
             // If there were no Swissprot proteins which can replace the Trembl entry, it is an error and this action fails
@@ -189,7 +189,7 @@ public class FeatureRangeCheckingProcess extends IdentificationActionImpl {
                     report.getBlastMatchingProteins().addAll(processContext.getResultsOfSwissprotRemapping());
                 }
                 else {
-                     // there is no conflict, we can keep the previous blast results
+                    // there is no conflict, we can keep the previous blast results
                     if (!hasRangeConflict){
                         report.getBlastMatchingProteins().addAll(processContext.getResultsOfSwissprotRemapping());
                     }

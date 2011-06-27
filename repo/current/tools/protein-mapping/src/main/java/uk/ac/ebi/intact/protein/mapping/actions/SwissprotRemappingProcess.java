@@ -245,7 +245,7 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
      * @return The unique Swissprot AC if we want to keep the swissprot entry which matches the ensembl gene of the Trembl entry
      * @throws ActionProcessingException
      */
-    private String processBlast(List<BlastProtein> blastProteins, BlastReport report, boolean keepBlastResult) throws ActionProcessingException{
+    private String processBlast(List<BlastProtein> blastProteins, BlastReport<BlastResults> report, boolean keepBlastResult) throws ActionProcessingException{
         try {
             // Only one Swissprot entry in the BLAST results
             if (blastProteins.size() == 1){

@@ -171,7 +171,7 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
 
                         List<BlastReport> listOfSwissprotRemappingReports = getSwissprotRemappingReports(result.getListOfActions());
 
-                        for (BlastReport sr : listOfSwissprotRemappingReports){
+                        for (BlastReport<BlastResults> sr : listOfSwissprotRemappingReports){
                             for (BlastResults r : sr.getBlastMatchingProteins()){
                                 r.setTremblAccession(tremblEntry.getPrimaryAc());
                             }
@@ -286,7 +286,7 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
 
                     List<BlastReport> listOfSwissprotRemappingReports = getSwissprotRemappingReports(this.listOfReports);
 
-                    for (BlastReport sr : listOfSwissprotRemappingReports){
+                    for (BlastReport<BlastResults> sr : listOfSwissprotRemappingReports){
                         for (BlastResults r : sr.getBlastMatchingProteins()){
                             r.setTremblAccession(tremblEntry.getPrimaryAc());
                         }

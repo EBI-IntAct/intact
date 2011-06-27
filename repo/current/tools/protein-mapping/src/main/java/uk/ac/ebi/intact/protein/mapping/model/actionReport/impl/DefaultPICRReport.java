@@ -16,12 +16,12 @@ import java.util.Set;
  * @version $Id$
  * @since <pre>01-Apr-2010</pre>
  */
-public class DefaultPICRReport extends DefaultMappingReport implements PICRReport{
+public class DefaultPICRReport extends DefaultMappingReport implements PICRReport<DefaultPICRCrossReferences>{
 
     /**
      * the list of cross references that PICR could collect
      */
-    private Set<PICRCrossReferences> crossReferences = new HashSet<PICRCrossReferences>();
+    private Set<DefaultPICRCrossReferences> crossReferences = new HashSet<DefaultPICRCrossReferences>();
 
     /**
      * Create a new DefaultPICRReport
@@ -35,7 +35,7 @@ public class DefaultPICRReport extends DefaultMappingReport implements PICRRepor
      *
      * @return the cross references
      */
-    public Set<PICRCrossReferences> getCrossReferences(){
+    public Set<DefaultPICRCrossReferences> getCrossReferences(){
         return this.crossReferences;
     }
 
@@ -47,7 +47,7 @@ public class DefaultPICRReport extends DefaultMappingReport implements PICRRepor
     public void addCrossReference(String databaseName, String accession){
         boolean isADatabaseNamePresent = false;
 
-        for (PICRCrossReferences c : this.crossReferences){
+        for (DefaultPICRCrossReferences c : this.crossReferences){
             if (c.getDatabase() != null){
                 if (c.getDatabase().equalsIgnoreCase(databaseName)){
                     isADatabaseNamePresent = true;
@@ -67,7 +67,7 @@ public class DefaultPICRReport extends DefaultMappingReport implements PICRRepor
      * Add a new PICRCrossReference instance to the list of references
      * @param refs : the PICRCrossReference instance to add
      */
-    public void addPICRCrossReference(PICRCrossReferences refs){
+    public void addPICRCrossReference(DefaultPICRCrossReferences refs){
          if (refs != null){
             this.crossReferences.add(refs);
          }
@@ -77,7 +77,7 @@ public class DefaultPICRReport extends DefaultMappingReport implements PICRRepor
      * Set the PICR cross references
      * @param crossReferences : set containing the PICR cross references
      */
-    public void setCrossReferences(Set<PICRCrossReferences> crossReferences) {
+    public void setCrossReferences(Set<DefaultPICRCrossReferences> crossReferences) {
         this.crossReferences = crossReferences;
     }
 
