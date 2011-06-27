@@ -1,7 +1,9 @@
 package uk.ac.ebi.intact.protein.mapping.actions;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.TransactionStatus;
 import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
 import uk.ac.ebi.intact.commons.util.Crc64;
@@ -25,6 +27,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>17-May-2010</pre>
  */
+@ContextConfiguration(locations = {"classpath*:/META-INF/jpa.test.spring.xml"})
 public class FeatureRangeCheckingProcessTest extends IntactBasicTestCase{
 
     private FeatureRangeCheckingProcess process;
@@ -41,7 +44,8 @@ public class FeatureRangeCheckingProcessTest extends IntactBasicTestCase{
         return bioSource;
     }
 
-    public FeatureRangeCheckingProcessTest(){
+    @Before
+    public void createProcess(){
         this.process = new FeatureRangeCheckingProcess(new DefaultReportsFactory());
         this.context = new UpdateContext();
 
