@@ -1,7 +1,9 @@
 package uk.ac.ebi.intact.protein.mapping.actions;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ebi.intact.commons.util.Crc64;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
@@ -22,6 +24,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>08-Apr-2010</pre>
  */
+@ContextConfiguration(locations = {"classpath*:/META-INF/jpa.test.spring.xml"})
 public class IntactCrc64SearchProcessTest extends IntactBasicTestCase {
 
     private IntactCrc64SearchProcess process;
@@ -29,7 +32,8 @@ public class IntactCrc64SearchProcessTest extends IntactBasicTestCase {
     private IntactContext intactContext;
     private String acToFind;
 
-    public IntactCrc64SearchProcessTest(){
+    @Before
+    public void createProcess(){
         this.process = new IntactCrc64SearchProcess(new DefaultReportsFactory());
         this.context = new IdentificationContext();
 

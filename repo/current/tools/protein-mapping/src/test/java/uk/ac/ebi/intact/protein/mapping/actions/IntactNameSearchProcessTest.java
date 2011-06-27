@@ -1,7 +1,9 @@
 package uk.ac.ebi.intact.protein.mapping.actions;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.BioSource;
@@ -21,6 +23,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>28-Apr-2010</pre>
  */
+@ContextConfiguration(locations = {"classpath*:/META-INF/jpa.test.spring.xml"})
 public class IntactNameSearchProcessTest  extends IntactBasicTestCase {
 
     private IntactNameSearchProcess process;
@@ -28,7 +31,9 @@ public class IntactNameSearchProcessTest  extends IntactBasicTestCase {
     private IntactContext intactContext;
     private String acToFind;
 
-    public IntactNameSearchProcessTest(){
+    @Before
+    public void createBlastProcess(){
+
         this.process = new IntactNameSearchProcess(new DefaultReportsFactory());
         this.context = new IdentificationContext();
 

@@ -17,7 +17,6 @@ import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
  * @version $Id$
  * @since <pre>30-Apr-2010</pre>
  */
-
 public class StrategyForProteinUpdateTest {
 
     private StrategyForProteinUpdate strategy;

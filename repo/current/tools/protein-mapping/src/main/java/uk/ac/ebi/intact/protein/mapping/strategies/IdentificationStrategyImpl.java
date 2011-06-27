@@ -76,9 +76,9 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
      */
     public IdentificationStrategyImpl(){
         // initialise the set of actions for this strategy
+        setReportsFactory(new DefaultReportsFactory());
+        setResultsFactory(new DefaultResultsFactory());
         initialiseSetOfActions();
-        this.reportsFactory = new DefaultReportsFactory();
-        this.resultsFactory = new DefaultResultsFactory();
     }
 
     /**
@@ -268,6 +268,9 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
 
     public void setReportsFactory(ReportsFactory reportsFactory) {
         this.reportsFactory = reportsFactory;
+        for (IdentificationAction action : this.listOfActions){
+            action.setReportsFactory(reportsFactory);
+        }
     }
 
     public ResultsFactory getResultsFactory() {

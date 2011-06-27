@@ -1,7 +1,9 @@
 package uk.ac.ebi.intact.protein.mapping.strategies;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ebi.intact.commons.util.Crc64;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
@@ -22,13 +24,15 @@ import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
  * @version $Id$
  * @since <pre>30-Apr-2010</pre>
  */
+@ContextConfiguration(locations = {"classpath*:/META-INF/jpa.test.spring.xml"})
 public class StrategyWithSequenceTest  extends IntactBasicTestCase {
 
     private StrategyWithSequence strategy;
     private IntactContext intactContext;
     private String acToFind;
 
-    public StrategyWithSequenceTest(){
+    @Before
+    public void createProcess(){
         this.strategy = new StrategyWithSequence();
         this.strategy.enableIsoforms(false);
         this.intactContext = IntactContext.getCurrentInstance();
