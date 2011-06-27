@@ -107,7 +107,7 @@ public class StrategyWithSequenceTest  extends IntactBasicTestCase {
         context.setSequence(sequence);
         context.setOrganism(organism);
 
-        IdentificationResults result = null;
+        IdentificationResults<MappingReport> result = null;
         try {
             result = this.strategy.identifyProtein(context);
 
@@ -141,7 +141,7 @@ public class StrategyWithSequenceTest  extends IntactBasicTestCase {
         context.setSequence(sequence);
         context.setOrganism(organism);
 
-        IdentificationResults result = null;
+        IdentificationResults<MappingReport> result = null;
         try {
             result = this.strategy.identifyProtein(context);
 
@@ -261,7 +261,7 @@ public class StrategyWithSequenceTest  extends IntactBasicTestCase {
         this.strategy.setEnableIntactSearch(true);
 
         try {
-            IdentificationResults result = this.strategy.identifyProtein(context);
+            IdentificationResults<MappingReport> result = this.strategy.identifyProtein(context);
 
             Assert.assertNotNull(result);
 
@@ -291,7 +291,7 @@ public class StrategyWithSequenceTest  extends IntactBasicTestCase {
         this.strategy.setEnableIntactSearch(true);
 
         try {
-            IdentificationResults result = this.strategy.identifyProtein(context);
+            IdentificationResults<MappingReport> result = this.strategy.identifyProtein(context);
 
             Assert.assertNotNull(result);
 

@@ -12,10 +12,10 @@ import java.util.Set;
  * @since <pre>24/06/11</pre>
  */
 
-public interface BlastReport extends MappingReport{
+public interface BlastReport<T extends BlastResults> extends MappingReport{
 
-    public Set<BlastResults> getBlastMatchingProteins();
-    public void addBlastMatchingProtein(BlastResults prot);
+    public Set<T> getBlastMatchingProteins();
+    public void addBlastMatchingProtein(T prot);
     public String getQuerySequence();
     public void setQuerySequence(String sequence);
 }

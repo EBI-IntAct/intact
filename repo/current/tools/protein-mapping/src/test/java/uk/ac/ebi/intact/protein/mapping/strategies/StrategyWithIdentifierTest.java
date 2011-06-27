@@ -7,6 +7,7 @@ import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultBlastReport;
+import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultMappingReport;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.impl.DefaultPICRReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.protein.mapping.results.BlastResults;
@@ -108,7 +109,7 @@ public class StrategyWithIdentifierTest {
                 context.setDatabaseForIdentifier("ipi");
                 context.setOrganism(organism);
 
-                IdentificationResults result = this.strategy.identifyProtein(context);
+                IdentificationResults<DefaultMappingReport> result = this.strategy.identifyProtein(context);
 
                 Assert.assertNotNull(result);
                 Assert.assertNotNull(result.getFinalUniprotId());
@@ -188,7 +189,7 @@ public class StrategyWithIdentifierTest {
         context.setOrganism(organism);
         context.setDatabaseForIdentifier("MI:0477"); // database = ENTREZ
 
-        IdentificationResults result = null;
+        IdentificationResults<DefaultMappingReport> result = null;
         try {
             result = this.strategy.identifyProtein(context);
 
