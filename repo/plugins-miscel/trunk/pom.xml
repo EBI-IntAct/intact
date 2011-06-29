@@ -9,7 +9,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>41</version>
+        <version>28</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -32,9 +32,9 @@
     <properties>
         <site.remote.basedir>scp://quanea2.ebi.ac.uk/ebi/sp/pro6/intact/local/doc/devsite</site.remote.basedir>
 
-        <core.version>2.4.0-SNAPSHOT</core.version>
-        <bridges.version>2.1.3</bridges.version>
-        <plugin.version>2.7-SNAPSHOT</plugin.version>
+        <core.version>1.9.4</core.version>
+        <bridges.version>2.0.5</bridges.version>
+        <plugin.version>2.4</plugin.version>
     </properties>
 
     <modules>
@@ -116,21 +116,26 @@
         </plugins>
     </reporting>
 
-    <distributionManagement>
+    <repositories>
         <repository>
-            <id>ebi-repo</id>
-            <url>http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo</url>
+            <id>intact.nexus</id>
+            <name>IntAct Nexus</name>
+            <url>http://www.ebi.ac.uk/intact/maven/nexus/content/groups/public</url>
         </repository>
+    </repositories>
 
-        <snapshotRepository>
-            <id>ebi-repo-snapshots</id>
-            <url>http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo-snapshots</url>
-        </snapshotRepository>
-
+    <pluginRepositories>
+        <pluginRepository>
+            <id>intact.nexus</id>
+            <name>IntAct Nexus</name>
+            <url>http://www.ebi.ac.uk/intact/maven/nexus/content/groups/public</url>
+        </pluginRepository>
+    </pluginRepositories>
+    <distributionManagement>
         <site>
             <id>intact-site</id>
             <name>Intact site</name>
-            <url>${site.remote.basedir}/${artifactId}</url>
+            <url>${site.remote.basedir}/plugins</url>
         </site>
     </distributionManagement>
 
