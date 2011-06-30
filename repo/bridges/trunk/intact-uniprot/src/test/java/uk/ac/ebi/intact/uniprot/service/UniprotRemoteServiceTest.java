@@ -522,7 +522,7 @@ public class UniprotRemoteServiceTest {
         Assert.assertEquals(2, uniprotSpliceVariants.size());
         Assert.assertEquals("P47100-1", uniprotSpliceVariants.get(0).getPrimaryAc());
         Assert.assertTrue(uniprotSpliceVariants.get(0).getSequence() != null);
-        Assert.assertEquals("P47100", uniprotSpliceVariants.get(1).getPrimaryAc());
+        Assert.assertEquals("P47099-1", uniprotSpliceVariants.get(1).getPrimaryAc());
         Assert.assertTrue(uniprotSpliceVariants.get(1).getSequence() != null);
     }
 
