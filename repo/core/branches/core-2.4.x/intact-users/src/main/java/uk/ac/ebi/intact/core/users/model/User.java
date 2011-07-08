@@ -15,7 +15,7 @@ import java.util.*;
  * @since 2.2.1
  */
 @Entity
-@Table( name = "ia_user" )
+@Table( name = "ia_user_old" )
 @javax.persistence.SequenceGenerator( name = "SEQ_USER", sequenceName = "users_seq", initialValue = 1 )
 public class User implements Identifiable {
 
