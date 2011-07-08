@@ -12,7 +12,7 @@ import javax.persistence.*;
  * @since 2.2.1
  */
 @Entity
-@Table( name = "ia_role" )
+@Table( name = "ia_role_old" )
 @javax.persistence.SequenceGenerator( name="SEQ_USER", sequenceName="users_seq", initialValue = 1 )
 public class Role implements Identifiable {
 
