@@ -22,7 +22,7 @@ public class Preference implements Identifiable {
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_USER")
     private Long pk;
 
-    @Index( name = "idx_preference_key" )
+    @Index( name = "idx_preference_old_key" )
     private String key;
 
     @Lob
@@ -30,7 +30,7 @@ public class Preference implements Identifiable {
 
     @ManyToOne( targetEntity = User.class )
     @JoinColumn( name = "user_id" )
-    @ForeignKey(name="FK_PREF_USER")
+    @ForeignKey(name="FK_PREF_OLD_USER")
     private User user;
 
     //////////////////

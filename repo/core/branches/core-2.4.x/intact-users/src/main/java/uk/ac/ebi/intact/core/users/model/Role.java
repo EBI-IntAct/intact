@@ -21,7 +21,7 @@ public class Role implements Identifiable {
     private long pk;
 
     @Column( unique = true, nullable = false )
-    @Index( name = "idx_role_name" )
+    @Index( name = "idx_role_old_name" )
     private String name;
 
     //////////////////
