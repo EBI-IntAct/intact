@@ -24,7 +24,7 @@ public class User implements Identifiable {
     private Long pk;
 
     @Column( nullable = false, unique = true )
-    @Index( name = "idx_user_login" )
+    @Index( name = "idx_user_old_login" )
     private String login;
 
     private String password;
@@ -36,7 +36,7 @@ public class User implements Identifiable {
     private String lastName;
 
     @Column( nullable = false, unique = true )
-    @Index( name = "idx_user_email" )
+    @Index( name = "idx_user_old_email" )
     private String email;
 
     private String openIdUrl;
@@ -52,11 +52,11 @@ public class User implements Identifiable {
     @ManyToMany( cascade = CascadeType.PERSIST, fetch = FetchType.EAGER )
     @Cascade( org.hibernate.annotations.CascadeType.SAVE_UPDATE )
     @JoinTable(
-            name = "ia_user2role",
+            name = "ia_user2role_old",
             joinColumns = {@JoinColumn( name = "user_id" )},
             inverseJoinColumns = {@JoinColumn( name = "role_id" )}
     )
-    @ForeignKey(name = "FK_USER_ROLES", inverseName = "FK_ROLE_USER")
+    @ForeignKey(name = "FK_USER_OLD_ROLES", inverseName = "FK_ROLE_OLD_USER")
     private Set<Role> roles;
 
     @OneToMany( mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER )
