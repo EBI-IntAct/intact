@@ -3,6 +3,8 @@ package uk.ac.ebi.intact.view.webapp.servlet.cytoscape;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
+import psidev.psi.mi.tab.converter.tab2graphml.Tab2Cytoscapeweb;
+import psidev.psi.mi.tab.converter.tab2xml.Tab2Xml;
 import psidev.psi.mi.xml.converter.ConverterException;
 
 import javax.servlet.ServletException;
@@ -13,8 +15,6 @@ import javax.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 
 /**
  * Servlet enabling the conversion of a MITAB Stream into GraphML.
@@ -45,10 +45,11 @@ public class GraphmlServlet extends HttpServlet {
         stream = response.getOutputStream();
         response.setContentType("text/plain");
 
-        final GraphmlBuilder builder = new GraphmlBuilder();
+        final Tab2Cytoscapeweb tab2Cytoscapeweb = new Tab2Cytoscapeweb();
+
         String output = null;
         try {
-            output = builder.build( is );
+            output = tab2Cytoscapeweb.convert(is);
         } catch (ConverterException e) {
             throw new IllegalStateException( "Could not parse input MITAB.", e );
         }

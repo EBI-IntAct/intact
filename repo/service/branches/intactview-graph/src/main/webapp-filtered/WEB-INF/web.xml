@@ -310,17 +310,6 @@
         <url-pattern>/test</url-pattern>
     </servlet-mapping>
 
-    <!-- Cytoscape Servlet -->
-    <servlet>
-        <servlet-name>exportCytoscape</servlet-name>
-        <servlet-class>uk.ac.ebi.intact.view.webapp.servlet.cytoscape.CytoscapeServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>exportCytoscape</servlet-name>
-        <url-pattern>/exportCytoscape</url-pattern>
-    </servlet-mapping>
-
     <!-- Table Header Servlet -->
     <servlet>
         <servlet-name>tableHeader</servlet-name>
@@ -341,6 +330,17 @@
     <servlet-mapping>
         <servlet-name>jsonExport</servlet-name>
         <url-pattern>/json</url-pattern>
+    </servlet-mapping>
+
+    <!-- Proxy Servlet -->
+    <servlet>
+        <servlet-name>proxy</servlet-name>
+        <servlet-class>uk.ac.ebi.intact.view.webapp.servlet.Proxy</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>proxy</servlet-name>
+        <url-pattern>/proxy</url-pattern>
     </servlet-mapping>
 
     <servlet>
