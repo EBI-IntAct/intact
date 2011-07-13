@@ -115,7 +115,9 @@ ParticipantDrawer = function(interactionInformation){
         var lengthText = "";
         var participantName = "";
         
-        if (interactor === undefined) {
+        if (interactor == null || interactor === undefined) {
+            console.log(interactorRef);
+            console.log(self._interactionInformation._interactionInformation.interactors);
             // if there is no additional information to the features, length = maximum protein length
             // and no name for the participant is provided 
             drawLength = self._interactionInformation._proteinWidth;
@@ -789,8 +791,13 @@ ParticipantDrawer = function(interactionInformation){
 
         var legendPictureWidth = this.calculateLegendPictureWidth(legendItemWidth, textGap);
         var legendRangetypeSectionWidth = this.calculateLegendRangetypeSectionWidth(textGap);
+
+        if(legendRangetypeSectionWidth > 0){
+            legendRangetypeSectionWidth += this._interactionInformation._legendItemWidth + 3*textGap;
+        }
+
         if(this._interactionInformation.options.legendPosition == "right"){
-            x = this._interactionInformation.options.width - (legendPictureWidth + legendRangetypeSectionWidth);
+            x = this._interactionInformation.options.width - (legendPictureWidth + legendRangetypeSectionWidth) - gap;
         }
 
         var legendText = this._shapeDrawer.getText(x, y, "Legend:");
@@ -857,7 +864,7 @@ ParticipantDrawer = function(interactionInformation){
                 textObject.remove();
             });
         }
-        return width + this._interactionInformation._legendItemWidth + 3*textGap;
+        return width;
     };
 
     this.getLegendRangetypeItemText = function(functionName, range){
