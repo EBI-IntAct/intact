@@ -343,6 +343,7 @@
         <url-pattern>/proxy</url-pattern>
     </servlet-mapping>
 
+    <!-- GraphML Servlet-->
     <servlet>
         <servlet-name>graphmlDownload</servlet-name>
         <servlet-class>uk.ac.ebi.intact.view.webapp.servlet.cytoscape.GraphmlServlet</servlet-class>

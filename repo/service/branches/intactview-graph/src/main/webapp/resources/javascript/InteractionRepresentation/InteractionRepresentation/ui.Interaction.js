@@ -111,18 +111,19 @@
 		_DASStylesheet: 'http://wwwdev.ebi.ac.uk/das-srv/uniprot/das/uniprot/stylesheet',
 
 		// structures needed to manage data --
-		_featureTracksPerParticipant: new Array(),
-        _featurePositions: new Object(),
-        _linkedFeatures: new Object(),
-		_joinedFeatures: new Object(),
-        _participantsWithFeatures: new Object(),
+		_featureTracksPerParticipant: null,
+        _featurePositions: null,
+        _linkedFeatures: null,
+		_joinedFeatures: null,
+        _participantsWithFeatures: null,
         _error: false,
         // --
 
         _featureGap: 0,
         _proteinGap: 0,
 
-        _finishedRequests: new Object(),
+        _requestCount: 0,
+        _finishedRequestCount: 0,
         _height: 0,
         _interactionInformation: null,
         _pxPerAA: 0,
@@ -163,6 +164,13 @@
             this._legendItemOpacity = 1;
             this._tooltipColour = "#696969";
             this._tooltipOpacity = 0.7;
+
+            this._featureTracksPerParticipant = new Array();
+            this._featurePositions = new Object();
+            this._linkedFeatures = new Object();
+		    this._joinedFeatures = new Object();
+            this._participantsWithFeatures = new Object();
+            this._error = false;
         },
 
 		// init function called by widget framework
@@ -172,7 +180,6 @@
             var self = this;
 			// if all data is loaded
             $(this.element).bind('load_finished', function(){
-
                 $(self.element).empty();
 
                 if(self._error){
@@ -191,9 +198,7 @@
         },
 
         _load: function(){
-            this._finishedRequests["loadData"] = false;
-            this._finishedRequests["loadAllIdentifiers"] = false;
-			this._finishedRequests["loadColours"] = false;
+            this._requestCount = 3;
             this._loadData();
             this._loadAllIdentifiers();
 			this._loadColours();
@@ -216,19 +221,8 @@
                     url: url,
                     method: 'GET',
                     dataType: 'json',
-                    success: function(json){
-						if(typeof(json) != 'object'){
-							json = $.parseJSON(json);
-						}
-                        self._interactionInformation = json;
-                        self._finishedRequests["loadData"] = true;
-                        self._checkRequests();
-                    },
-                    error: function(){
-                        self._alertError(url);
-                        self._finishedRequests["loadData"] = true;
-                        self._checkRequests();
-                    }
+                    success: success,
+                    error: error
                 });
             }else{
                 url = escape(url);
@@ -237,20 +231,25 @@
                     method: "GET",
                     dataType: 'json',
                     data: "url=" + url,
-                    success: function(json){
-						if(typeof(json) != 'object'){
-							json = $.parseJSON(json);
-						}
-                        self._interactionInformation = json;
-                        self._finishedRequests["loadData"] = true;
-                        self._checkRequests();
-                    },
-                    error: function(){
-                        self._alertError(proxyUrl + "?url=" + url);
-                        self._finishedRequests["loadData"] = true;
-                        self._checkRequests();
-                    }
+                    success: success,
+                    error: error
                 });
+            }
+
+            // ajax result handling functions
+            function success(json){
+                if(typeof(json) != 'object'){
+                        json = $.parseJSON(json);
+                    }
+                    self._interactionInformation = json;
+                    self._finishedRequestCount++;
+                    self._checkRequests();
+            }
+
+            function error(){
+                 self._alertError(url);
+                 self._finishedRequestCount++;
+                 self._checkRequests();
             }
         },
 
@@ -271,42 +270,36 @@
                 $.ajax({
                     url: self._MIOntologyUrl + self._MIParent,
                     method: "GET",
-                    success: function(json){
-						if(typeof(json) != 'object'){
-							json = $.parseJSON(json);
-						}
-                        self._parseResponse(json);
-                        self._finishedRequests["loadAllIdentifiers"] = true;
-                        self._checkRequests();
-                    },
-
-                    error: function(){
-                        self._alertError(url);
-                        self._finishedRequests["loadAllIdentifiers"] = true;
-                        self._checkRequests();
-                    }
+                    dataType: 'json',
+                    success: success,
+                    error: error
                 });
             }else{
                 var url = escape(self._MIOntologyUrl) + self._MIParent;
                 $.ajax({
                     url: proxyUrl,
                     method: "GET",
+                    dataType: 'json',
                     data: "url=" + url,
-                    success: function(json){
-						if(typeof(json) != 'object'){
-							json = $.parseJSON(json);
-						}
-                        self._parseResponse(json);
-                        self._finishedRequests["loadAllIdentifiers"] = true;
-                        self._checkRequests();
-                    },
-
-                    error: function(){
-                        self._alertError(url);
-                        self._finishedRequests["loadAllIdentifiers"] = true;
-                        self._checkRequests();
-                    }
+                    success: success,
+                    error: error
                 });
+            }
+
+            // ajax result handling functions
+            function success(json){
+                if(typeof(json) != 'object'){
+                    json = $.parseJSON(json);
+                }
+                self._parseResponse(json);
+                self._finishedRequestCount++;
+                self._checkRequests();
+            }
+
+            function error(){
+                self._alertError(url);
+                self._finishedRequestCount++;
+                self._checkRequests();
             }
         },
 
@@ -318,16 +311,8 @@
 					type: "GET",
 					url: url,
 					dataType: "xml",
-					success: function(xml){
-						self._parseColours(xml);
-						self._finishedRequests["loadColours"] = true;
-						self._checkRequests();
-					},
-					error: function(){
-						self._alertError(url);
-                        self._finishedRequests["loadColours"] = true;
-                        self._checkRequests();
-					}
+					success: success,
+					error: error
 				});
 			}else{
 				var proxyUrl = this.options.proxyUrl;
@@ -336,19 +321,23 @@
                     url: proxyUrl,
                     method: "GET",
                     data: "url=" + url,
-                    success: function(xml){
-						self._parseColours(xml);
-						self._finishedRequests["loadColours"] = true;
-						self._checkRequests();
-                    },
-
-                    error: function(){
-                        self._alertError(url);
-                        self._finishedRequests["loadColours"] = true;
-                        self._checkRequests();
-                    }
+                    success: success,
+                    error: error
                 });
 			}
+
+            // ajax result handling functions
+            function success(xml){
+                self._parseColours(xml);
+                self._finishedRequestCount++;
+                self._checkRequests();
+            }
+
+            function error(){
+                self._alertError(url);
+                self._finishedRequestCount++;
+                self._checkRequests();
+            }
 		},
 
 		// parse the response of the request sent to the EBI-Ontology
@@ -768,13 +757,7 @@
         // check whether all registered requests are finished ('true' in this._finishedRequests)
         // and fire event 'load_finished' if all are finished
         _checkRequests: function(){
-            var finished = true;
-            for (var i in this._finishedRequests) {
-                if (!this._finishedRequests[i]) {
-                    finished = false;
-                }
-            }
-            if (finished) {
+            if (this._finishedRequestCount == this._requestCount){
                 $(this.element).trigger("load_finished");
             }
         },
