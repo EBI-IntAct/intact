@@ -40,9 +40,7 @@ public class GraphmlServlet extends HttpServlet {
         final URL inputUrl = new URL( mitabUrl );
         final InputStream is = inputUrl.openStream();
 
-        ServletOutputStream stream = null;
-
-        stream = response.getOutputStream();
+        ServletOutputStream stream = response.getOutputStream();
         response.setContentType("text/plain");
 
         final Tab2Cytoscapeweb tab2Cytoscapeweb = new Tab2Cytoscapeweb();
