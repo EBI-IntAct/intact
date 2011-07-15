@@ -63,14 +63,18 @@
         </div>
     </div>
 
-    <div id="cytoscapeweb" style="width:80%; height:900px; border:1px solid #d3d3d3;">
-        Interaction Graph should show here in a few moment...
+    <div id="cytoscapeweb" style="width:80%; height:600px; border:1px solid #d3d3d3;">
+        Interaction Graph should show here in a few moments...
     </div>
 
 
 </h:panelGroup>
 <script type="text/javascript">
-    var xmlUrl = '/editor/service/export/mi/#{object}?ac=#{ac}&amp;format=graphml';
-    loadGraph(xmlUrl);
+    function handleChangePublication(event, ui){
+        if(ui.panel.id == 'graphTab'){
+           var xmlUrl = '/editor/service/export/mi/#{object}?ac=#{ac}&amp;format=graphml';
+           loadGraph(xmlUrl);
+       }
+    }
 </script>
 </ui:composition>

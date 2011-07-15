@@ -885,6 +885,9 @@ public class InteractionController extends ParameterizableObjectController {
         Interaction interaction = getInteraction();
         for(Component component : interaction.getComponents()){
             featuresAvailable = featuresAvailable || (component.getBindingDomains().size() > 0);
+            if(featuresAvailable){
+                continue;
+            }
         }
         return featuresAvailable;
     }
