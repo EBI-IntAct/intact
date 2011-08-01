@@ -16,10 +16,7 @@ import uk.ac.ebi.kraken.interfaces.uniprot.comments.*;
 import uk.ac.ebi.kraken.interfaces.uniprot.description.Field;
 import uk.ac.ebi.kraken.interfaces.uniprot.description.FieldType;
 import uk.ac.ebi.kraken.interfaces.uniprot.description.Name;
-import uk.ac.ebi.kraken.interfaces.uniprot.features.ChainFeature;
-import uk.ac.ebi.kraken.interfaces.uniprot.features.FeatureLocation;
-import uk.ac.ebi.kraken.interfaces.uniprot.features.FeatureType;
-import uk.ac.ebi.kraken.interfaces.uniprot.features.PeptideFeature;
+import uk.ac.ebi.kraken.interfaces.uniprot.features.*;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.GeneNameSynonym;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.ORFName;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.OrderedLocusName;
@@ -47,6 +44,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
     private final static String FEATURE_CHAIN_FIELD = "feature.chain:";
     private final static String FEATURE_PEPTIDE_FIELD = "feature.peptide:";
+    private final static String FEATURE_PRO_PEPTIDE_FIELD = "feature.propep:";
     public UniprotRemoteService() {
         retrievalCache = new WeakHashMap<String,Collection<UniprotProtein>>();
 
@@ -149,7 +147,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
                 UniprotFeatureChain variant = retrieveUniprotFeatureChain(p, ac);
 
                 if (variant != null){
-                   variants.add(variant);
+                    variants.add(variant);
                     variant.setMasterProtein(p);
                 }
             }
@@ -272,7 +270,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
                 acFixed = ac.substring(index);
             }
             // we only use this search for feature chains
-            Query query = UniProtQueryBuilder.buildFullTextSearch( FEATURE_CHAIN_FIELD + acFixed + " OR " + FEATURE_PEPTIDE_FIELD + acFixed );
+            Query query = UniProtQueryBuilder.buildFullTextSearch( FEATURE_CHAIN_FIELD + acFixed + " OR " + FEATURE_PEPTIDE_FIELD + acFixed + " OR " + FEATURE_PRO_PEPTIDE_FIELD + acFixed );
             iterator = uniProtQueryService.getEntryIterator( query );
         }
         else {
@@ -288,10 +286,10 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
         // search for primary and secondary ACs
         //String query = IndexField.PRIMARY_ACCESSION.getValue() + ":" + ac +
-                //" OR " +
-                //IndexField.UNIPROT_EXPIRED_IDENTIFIER.getValue() + ":" + ac +
-                //" OR " +
-                //IndexField.UNIPROT_ID.getValue() + ":" + ac;
+        //" OR " +
+        //IndexField.UNIPROT_EXPIRED_IDENTIFIER.getValue() + ":" + ac +
+        //" OR " +
+        //IndexField.UNIPROT_ID.getValue() + ":" + ac;
 
         return uniProtQueryService.getEntryIterator( UniProtQueryBuilder.buildExactMatchIdentifierQuery( ac ) );
     }
@@ -402,6 +400,8 @@ public class UniprotRemoteService extends AbstractUniprotService {
             processFeatureChain( uniProtEntry, uniprotProtein );
             // feature peptides to be processed as feature chains
             processFeaturePeptide(uniProtEntry, uniprotProtein);
+            // feature pro-peptides to be processed as feature chains
+            processFeatureProPeptide(uniProtEntry, uniprotProtein);
         }
 
         return uniprotProtein;
@@ -493,7 +493,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
         }
     }
 
-        private void processFeaturePeptide( UniProtEntry uniProtEntry, UniprotProtein protein ) {
+    private void processFeaturePeptide( UniProtEntry uniProtEntry, UniprotProtein protein ) {
         Collection<PeptideFeature> features = uniProtEntry.getFeatures( FeatureType.PEPTIDE );
 
         for ( PeptideFeature featurePeptide : features ) {
@@ -520,6 +520,52 @@ public class UniprotRemoteService extends AbstractUniprotService {
                 throw new IllegalArgumentException( "The AA sequence (length:"+ sequence.length() +") of parent " +
                         uniProtEntry.getPrimaryUniProtAccession() + " doesn't match the" +
                         " boundaried of feature peptide "+ featurePeptide.getFeatureId() +
+                        ": ["+begin+", "+ end +"]" );
+            }
+
+            String chainSequence = null;
+
+            if (begin != -1 && end != -1){
+                chainSequence = sequence.substring( begin - 1, end );
+            }
+
+            UniprotFeatureChain chain = new UniprotFeatureChain( id, protein.getOrganism(), chainSequence );
+            chain.setDescription( description );
+            chain.setStart( begin );
+            chain.setEnd( end );
+
+            // add the chain to the protein
+            protein.getFeatureChains().add( chain );
+        }
+    }
+
+    private void processFeatureProPeptide( UniProtEntry uniProtEntry, UniprotProtein protein ) {
+        Collection<ProPepFeature> features = uniProtEntry.getFeatures( FeatureType.PROPEP );
+
+        for ( ProPepFeature proPep : features ) {
+
+            String id = uniProtEntry.getPrimaryUniProtAccession().getValue() + "-" + proPep.getFeatureId().getValue();
+            // when uniprot does not know where is the start or the end of the protein the value will be -1
+            // Getting a sequence from -1 to x throw an Exception take into account this exception.
+
+            String description = proPep.getFeatureDescription().getValue();
+
+            FeatureLocation location = proPep.getFeatureLocation();
+            int begin = location.getStart();
+            int end = location.getEnd();
+
+            if( end > 0 && begin > 0 && end < begin ) {
+                throw new IllegalArgumentException( "Unexpected feature location boundaries of peptide "+
+                        proPep.getFeatureId() +" for parent " +
+                        uniProtEntry.getPrimaryUniProtAccession() +
+                        ": ["+begin+", "+ end +"]" );
+            }
+
+            final String sequence = protein.getSequence();
+            if( sequence.length() < end ) {
+                throw new IllegalArgumentException( "The AA sequence (length:"+ sequence.length() +") of parent " +
+                        uniProtEntry.getPrimaryUniProtAccession() + " doesn't match the" +
+                        " boundaried of feature peptide "+ proPep.getFeatureId() +
                         ": ["+begin+", "+ end +"]" );
             }
 

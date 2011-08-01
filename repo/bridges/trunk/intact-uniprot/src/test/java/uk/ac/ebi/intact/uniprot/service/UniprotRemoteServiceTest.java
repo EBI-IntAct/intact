@@ -84,7 +84,7 @@ public class UniprotRemoteServiceTest {
 
     @Test
     public void retrieveByUniprotId_noGeneNames() throws Exception {
-        Collection<UniprotProtein> prots = getUniprotService().retrieve( "O58917" );
+        Collection<UniprotProtein> prots = getUniprotService().retrieve( "Q9XYF4-PRO_0000004672" );
 
         UniprotProtein uniprotProtein = prots.iterator().next();
         assertTrue( uniprotProtein.getGenes().isEmpty() );
