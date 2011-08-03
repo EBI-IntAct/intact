@@ -1,5 +1,7 @@
 package uk.ac.ebi.intact.bridges.picr;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.bridges.picr.jaxb.GetUPIForAccessionReturn;
 import uk.ac.ebi.intact.bridges.picr.jaxb.IdenticalCrossReferences;
 import uk.ac.ebi.intact.bridges.picr.resultParsing.PicrParsingException;
@@ -16,6 +18,7 @@ import javax.xml.namespace.QName;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,6 +38,11 @@ public class PicrClient {
     private static final String restURLForUniprotBestGuess = "http://www.ebi.ac.uk/Tools/picr/rest/getUniProtBestGuess?";
     private static final String accessionMappingURL = "http://www.ebi.ac.uk/picr/AccessionMappingService";
     private static final String accessionMappingName = "AccessionMapperService";
+
+    /**
+     * Sets up a logger for that class.
+     */
+    public static final Log log = LogFactory.getLog(PicrClient.class);
 
     public PicrClient(){
         this(wsdlFile);
@@ -144,7 +152,14 @@ public class PicrClient {
             throw new PicrClientException("The identifier must not be null.");
         }
         if (databases == null) databases = PicrSearchDatabase.values();
-        return getAccessionMapperPort().getUPIForAccession(accession, null, databaseEnumToList(databases), taxonId, true);
+        List<UPEntry> entries = Collections.EMPTY_LIST;
+        try{
+            entries = getAccessionMapperPort().getUPIForAccession(accession, null, databaseEnumToList(databases), taxonId, true);
+        }
+        catch (Exception e){
+            log.error("PICR could not work properly", e);
+        }
+        return entries;
     }
 
     /**
@@ -235,9 +250,18 @@ public class PicrClient {
             sequence = ">mySequence"+System.getProperty("line.separator")+sequence;
         }
 
-        return getAccessionMapperPort().getUPIForSequence(sequence, databaseEnumToList(databases),
-                taxonId,
-                true);
+        UPEntry entry = null;
+
+        try{
+            entry = getAccessionMapperPort().getUPIForSequence(sequence, databaseEnumToList(databases),
+                    taxonId,
+                    true);
+        }
+        catch (Exception e){
+            log.error("PICR could not work properly", e);
+        }
+
+        return entry;
     }
 
     /**
