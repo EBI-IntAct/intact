@@ -34,7 +34,7 @@ public class CachedOntologyServiceTest {
         Assert.assertEquals( 2, children.size() );
 
         children = service.getTermDirectChildren( OntologyId.GENE_ONTOLOGY, "GO:0016209" );
-        Assert.assertEquals( 6, children.size() );
+        Assert.assertEquals( 7, children.size() );
     }
 
     @Test
