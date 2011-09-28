@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+    <!-- Needed by Spring to find the annotations in the code -->
+    <context:component-scan base-package="uk.ac.ebi.intact.editor"/>
+    
+    <bean name="editorConfig" class="uk.ac.ebi.intact.editor.config.EditorConfig">
+        <property name="buildVersion" value="${pom.version}"/>
+        <property name="buildTimestamp" value="${timestamp}"/>
+        <property name="instanceName" value="${intact.instance.name}"/>
+        <property name="databaseUrl" value="${db.url}"/>
+        <property name="logoUrl" value="${webapp.logo.url}"/>
+        <property name="googleUsername" value="${google.username}"/>
+        <property name="googlePassword" value="${google.password}"/>
+    </bean>
+
+    <!-- Uniprot -->
+    <bean id="uniprotService" class="uk.ac.ebi.intact.uniprot.service.UniprotRemoteService"/>
+    <bean id="proteinService" class="uk.ac.ebi.intact.util.ProteinServiceImpl"/>
+
+    <!-- Biosource update -->
+    <bean id="editorBioSourceService" class="uk.ac.ebi.intact.editor.controller.curate.interaction.EditorBioSourceService">
+        <constructor-arg>
+            <bean id="taxonomyService" class="uk.ac.ebi.intact.bridges.taxonomy.UniprotTaxonomyService"/>
+        </constructor-arg>
+    </bean>
+   
+</beans>
