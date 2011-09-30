@@ -17,6 +17,8 @@
   
 *************************************************************/
 
+WHENEVER SQLERROR EXIT FAILURE ROLLBACK
+
 SET   SERVEROUT ON
 SET   FEEDBACK OFF
 SET   VERIFY OFF
