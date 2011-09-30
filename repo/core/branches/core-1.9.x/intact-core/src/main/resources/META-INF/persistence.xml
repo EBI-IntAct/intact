@@ -15,7 +15,7 @@
          <property name="hibernate.connection.driver_class" value="org.h2.Driver"/>
          <property name="hibernate.connection.username" value="sa"/>
          <property name="hibernate.connection.password" value=""/>
-         <property name="hibernate.connection.url" value="jdbc:h2:mem:intact_core_mem"/>
+         <property name="hibernate.connection.url" value="jdbc:h2:mem:intact_core_mem;LOCK_MODE=0"/>
          <property name="hibernate.max_fetch_depth" value="3"/>
 
          <property name="hibernate.current_session_context_class" value="thread"/>
