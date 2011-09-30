@@ -118,7 +118,6 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<T> {
 
     public List<T> getAll( int firstResult, int maxResults ) {
         return getSession().createCriteria( getEntityClass() )
-                .addOrder(Order.asc("ac"))
                 .setFirstResult( firstResult )
                 .setMaxResults( maxResults ).list();
     }
@@ -359,7 +358,6 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<T> {
 
     public Object executeDetachedCriteria( DetachedCriteria crit, int firstResult, int maxResults ) {
         return crit.getExecutableCriteria( getSession() )
-                .addOrder(Order.asc("ac"))
                 .setFirstResult( firstResult )
                 .setMaxResults( maxResults )
                 .list();

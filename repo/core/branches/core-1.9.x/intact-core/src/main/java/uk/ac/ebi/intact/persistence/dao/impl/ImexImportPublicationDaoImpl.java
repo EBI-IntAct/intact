@@ -15,7 +15,10 @@
  */
 package uk.ac.ebi.intact.persistence.dao.impl;
 
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.model.meta.ImexImport;
 import uk.ac.ebi.intact.model.meta.ImexImportPublication;
 import uk.ac.ebi.intact.model.meta.ImexImportPublicationStatus;
 import uk.ac.ebi.intact.persistence.dao.ImexImportPublicationDao;
@@ -42,9 +45,9 @@ public class ImexImportPublicationDaoImpl extends HibernateBaseDaoImpl<ImexImpor
      */
     public List<ImexImportPublication> getFailed() {
         Query query = getEntityManager().createQuery("select iip from uk.ac.ebi.intact.model.meta.ImexImportPublication iip " +
-                                                     "where iip.status = :failedStatus and iip.pk.pmid not in ( " +
-                                                     "select iip2.pk.pmid from uk.ac.ebi.intact.model.meta.ImexImportPublication iip2 " +
-                                                     "where iip2.status = :okStatus )");
+                "where iip.status = :failedStatus and iip.pk.pmid not in ( " +
+                "select iip2.pk.pmid from uk.ac.ebi.intact.model.meta.ImexImportPublication iip2 " +
+                "where iip2.status = :okStatus )");
         query.setParameter("failedStatus", ImexImportPublicationStatus.ERROR);
         query.setParameter("okStatus", ImexImportPublicationStatus.OK);
 
@@ -53,9 +56,26 @@ public class ImexImportPublicationDaoImpl extends HibernateBaseDaoImpl<ImexImpor
 
     public List<ImexImportPublication> getByPmid(String pmid) {
         Query query = getEntityManager().createQuery("select iip from uk.ac.ebi.intact.model.meta.ImexImportPublication iip " +
-                                                     "where iip.pk.pmid = :pmid");
+                "where iip.pk.pmid = :pmid");
         query.setParameter("pmid", pmid);
 
         return query.getResultList();
+    }
+
+    @Override
+    public Object executeDetachedCriteria( DetachedCriteria crit, int firstResult, int maxResults ) {
+        return crit.getExecutableCriteria( getSession() )
+                .addOrder(Order.asc("pk"))
+                .setFirstResult( firstResult )
+                .setMaxResults( maxResults )
+                .list();
+    }
+
+    @Override
+    public List<ImexImportPublication> getAll( int firstResult, int maxResults ) {
+        return getSession().createCriteria( getEntityClass() )
+                .addOrder(Order.asc("pk"))
+                .setFirstResult( firstResult )
+                .setMaxResults( maxResults ).list();
     }
 }

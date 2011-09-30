@@ -6,6 +6,7 @@
 package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.hibernate.HibernateException;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import uk.ac.ebi.intact.context.IntactSession;
@@ -90,7 +91,7 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
         return getAllIterator();
     }
 
-        public int deleteByAc( String ac ) {
+    public int deleteByAc( String ac ) {
 
         T o = getByAc( ac );
         if ( o == null ) {
@@ -111,4 +112,20 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
         return ( getSession().get( getEntityClass(), obj.getAc() ) != null );
     }
 
+    @Override
+    public Object executeDetachedCriteria( DetachedCriteria crit, int firstResult, int maxResults ) {
+        return crit.getExecutableCriteria( getSession() )
+                .addOrder(Order.asc("ac"))
+                .setFirstResult( firstResult )
+                .setMaxResults( maxResults )
+                .list();
+    }
+
+    @Override
+    public List<T> getAll( int firstResult, int maxResults ) {
+        return getSession().createCriteria( getEntityClass() )
+                .addOrder(Order.asc("ac"))
+                .setFirstResult( firstResult )
+                .setMaxResults( maxResults ).list();
+    }
 }

@@ -6,6 +6,8 @@
 package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.hibernate.Criteria;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import uk.ac.ebi.intact.annotation.PotentialThreat;
@@ -89,18 +91,18 @@ public class SearchItemDaoImpl extends HibernateBaseDaoImpl<SearchItem> implemen
     }
 
     @PotentialThreat( description = "This method is using raw SQL (INSERT Query), which may create problems " +
-                                    "when run with hibernate",
-                      origin = "This code is used in a EventListener, so the session cannot be committed and we" +
-                               "need a workaroung" )
+            "when run with hibernate",
+            origin = "This code is used in a EventListener, so the session cannot be committed and we" +
+                    "need a workaroung" )
     public void persist( SearchItem searchItem ) {
         String sql = "INSERT INTO ia_search (ac,value,objclass,type) VALUES (?,?,?,?)";
         executeQueryUpdateForSearchItem( sql, searchItem );
     }
 
     @PotentialThreat( description = "This method is using raw SQL (DELETE Query), which may create problems " +
-                                    "when run with hibernate",
-                      origin = "This code is used in a EventListener, so the session cannot be committed and we" +
-                               "need a workaroung" )
+            "when run with hibernate",
+            origin = "This code is used in a EventListener, so the session cannot be committed and we" +
+                    "need a workaroung" )
     public void delete( SearchItem searchItem ) {
         String sql = "DELETE from ia_search WHERE ac=? AND value=? AND objclass=? AND type=?";
         executeQueryUpdateForSearchItem( sql, searchItem );
@@ -138,9 +140,9 @@ public class SearchItemDaoImpl extends HibernateBaseDaoImpl<SearchItem> implemen
     }
 
     @PotentialThreat( description = "This method is using raw SQL (DELETE Query), which may create problems " +
-                                    "when run with hibernate",
-                      origin = "This code is used in a EventListener, so the session cannot be committed and we" +
-                               "need a workaroung" )
+            "when run with hibernate",
+            origin = "This code is used in a EventListener, so the session cannot be committed and we" +
+                    "need a workaroung" )
     public int deleteByAc( String ac ) {
         String sql = "DELETE FROM ia_search WHERE ac=?";
 
@@ -196,4 +198,20 @@ public class SearchItemDaoImpl extends HibernateBaseDaoImpl<SearchItem> implemen
         return crit;
     }
 
+    @Override
+    public Object executeDetachedCriteria( DetachedCriteria crit, int firstResult, int maxResults ) {
+        return crit.getExecutableCriteria( getSession() )
+                .addOrder(Order.asc("pk"))
+                .setFirstResult( firstResult )
+                .setMaxResults( maxResults )
+                .list();
+    }
+
+    @Override
+    public List<SearchItem> getAll( int firstResult, int maxResults ) {
+        return getSession().createCriteria( getEntityClass() )
+                .addOrder(Order.asc("pk"))
+                .setFirstResult( firstResult )
+                .setMaxResults( maxResults ).list();
+    }
 }

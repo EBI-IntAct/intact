@@ -17,6 +17,8 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.meta.DbInfo;
 import uk.ac.ebi.intact.persistence.dao.DbInfoDao;
@@ -52,6 +54,21 @@ public class DbInfoDaoImpl extends HibernateBaseDaoImpl<DbInfo> implements DbInf
         getEntityManager().persist( dbInfo );
     }
 
+        @Override
+    public Object executeDetachedCriteria( DetachedCriteria crit, int firstResult, int maxResults ) {
+        return crit.getExecutableCriteria( getSession() )
+                .addOrder(Order.asc("key"))
+                .setFirstResult( firstResult )
+                .setMaxResults( maxResults )
+                .list();
+    }
 
+    @Override
+    public List<DbInfo> getAll( int firstResult, int maxResults ) {
+        return getSession().createCriteria( getEntityClass() )
+                .addOrder(Order.asc("key"))
+                .setFirstResult( firstResult )
+                .setMaxResults( maxResults ).list();
+    }
 
 }

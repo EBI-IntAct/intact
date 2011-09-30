@@ -9,10 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Property;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.hibernate.ejb.HibernateQuery;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -87,9 +84,9 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
         Query query;
 
         if (ignoreCase) {
-           query = getEntityManager().createQuery("from "+getEntityClass().getSimpleName()+" where lower(shortlabel) = lower(:label)");
+            query = getEntityManager().createQuery("from "+getEntityClass().getSimpleName()+" where lower(shortlabel) = lower(:label)");
         } else {
-           query = getEntityManager().createQuery("from "+getEntityClass().getSimpleName()+" where shortlabel = :label");
+            query = getEntityManager().createQuery("from "+getEntityClass().getSimpleName()+" where shortlabel = :label");
         }
 
         query.setParameter("label", value);
@@ -179,14 +176,14 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
 
         if ( excludeObsolete && excludeHidden ) {
             crit.add( Restrictions.or(
-                                      Restrictions.and(Restrictions.eq("topicXrefQual.shortLabel", CvXrefQualifier.IDENTITY),
-                                                       Restrictions.eq("topicXref.primaryId",CvTopic.OBSOLETE_MI_REF )),
-                                      Restrictions.eq( "annotTopic.shortLabel", CvTopic.HIDDEN ) )
+                    Restrictions.and(Restrictions.eq("topicXrefQual.shortLabel", CvXrefQualifier.IDENTITY),
+                            Restrictions.eq("topicXref.primaryId",CvTopic.OBSOLETE_MI_REF )),
+                    Restrictions.eq( "annotTopic.shortLabel", CvTopic.HIDDEN ) )
             );
             subList = crit.list();
         } else if ( excludeObsolete && !excludeHidden ) {
             crit.add( Restrictions.and(Restrictions.eq("topicXrefQual.shortLabel", CvXrefQualifier.IDENTITY),
-                                       Restrictions.eq("topicXref.primaryId",CvTopic.OBSOLETE_MI_REF )) );
+                    Restrictions.eq("topicXref.primaryId",CvTopic.OBSOLETE_MI_REF )) );
             subList = crit.list();
             System.out.println("subList.size() = " + subList.size());
         } else if ( !excludeObsolete && excludeHidden ) {
@@ -216,4 +213,6 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
                 .add(Restrictions.like("shortLabel", labelLike))
                 .setProjection(Projections.property("shortLabel")).list();
     }
+
+
 }

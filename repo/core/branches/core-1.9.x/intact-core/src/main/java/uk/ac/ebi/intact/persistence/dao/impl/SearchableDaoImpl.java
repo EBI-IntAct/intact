@@ -147,7 +147,8 @@ public class SearchableDaoImpl extends HibernateBaseDaoImpl<AnnotatedObjectImpl>
     public List<String> getAcsByQuery( Class<? extends Searchable> searchableClass, SearchableQuery query, Integer firstResult, Integer maxResults ) {
         Criteria crit = new SearchableCriteriaBuilder( query )
                 .createCriteria( searchableClass, getSession() )
-                .setProjection( Projections.distinct( Property.forName( "ac" ) ) );
+                .setProjection( Projections.distinct( Property.forName( "ac" ) ) )
+                .addOrder(Order.asc("ac"));
 
         if ( firstResult != null ) {
             crit.setFirstResult( firstResult );
