@@ -16,6 +16,7 @@
   $Locker$
 
 *************************************************************/
+WHENEVER SQLERROR EXIT FAILURE ROLLBACK
 
 INSERT INTO IA_DetectionMethodsStatistics(ac , fullname, number_interactions)
     SELECT  Intact_statistics_seq.nextval, t.*
