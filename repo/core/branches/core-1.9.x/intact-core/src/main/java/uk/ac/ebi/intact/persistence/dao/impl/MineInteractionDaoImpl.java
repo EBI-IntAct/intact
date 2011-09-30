@@ -16,10 +16,13 @@
 package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.hibernate.Criteria;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.MineInteraction;
+import uk.ac.ebi.intact.model.meta.ImexImportPublication;
 import uk.ac.ebi.intact.persistence.dao.MineInteractionDao;
 
 import javax.persistence.EntityManager;
@@ -79,7 +82,8 @@ public class MineInteractionDaoImpl extends HibernateBaseDaoImpl<MineInteraction
         Criteria crit = getSession().createCriteria( getEntityClass() )
                 .add( Restrictions.or(
                         Restrictions.eq( "protein1Ac", proteinIntactAc ),
-                        Restrictions.eq( "protein2Ac", proteinIntactAc ) ) );
+                        Restrictions.eq( "protein2Ac", proteinIntactAc ) ) )
+                .addOrder(Order.asc("pk"));
 
         if ( firstResult != null && firstResult > 0 ) {
             crit.setFirstResult( firstResult );
@@ -89,5 +93,22 @@ public class MineInteractionDaoImpl extends HibernateBaseDaoImpl<MineInteraction
         }
 
         return crit.list();
+    }
+
+        @Override
+    public Object executeDetachedCriteria( DetachedCriteria crit, int firstResult, int maxResults ) {
+        return crit.getExecutableCriteria( getSession() )
+                .addOrder(Order.asc("pk"))
+                .setFirstResult( firstResult )
+                .setMaxResults( maxResults )
+                .list();
+    }
+
+    @Override
+    public List<MineInteraction> getAll( int firstResult, int maxResults ) {
+        return getSession().createCriteria( getEntityClass() )
+                .addOrder(Order.asc("pk"))
+                .setFirstResult( firstResult )
+                .setMaxResults( maxResults ).list();
     }
 }

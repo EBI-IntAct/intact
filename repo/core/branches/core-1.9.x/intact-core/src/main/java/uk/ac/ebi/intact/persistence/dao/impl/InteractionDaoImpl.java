@@ -8,18 +8,19 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.InteractionImpl;
-import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.InteractorXref;
 import uk.ac.ebi.intact.model.util.InteractionUtils;
 import uk.ac.ebi.intact.model.util.XrefUtils;
 import uk.ac.ebi.intact.persistence.dao.InteractionDao;
-import uk.ac.ebi.intact.business.IntactException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -76,7 +77,8 @@ public class InteractionDaoImpl extends InteractorDaoImpl<InteractionImpl> imple
     public List<Interaction> getInteractionByExperimentShortLabel( String[] experimentLabels, Integer firstResult, Integer maxResults ) {
         Criteria criteria = getSession().createCriteria( Interaction.class )
                 .createCriteria( "experiments" )
-                .add( Restrictions.in( "shortLabel", experimentLabels ) );
+                .add( Restrictions.in( "shortLabel", experimentLabels ) )
+                .addOrder(Order.asc("ac"));
 
         if ( firstResult != null && firstResult >= 0 ) {
             criteria.setFirstResult( firstResult );

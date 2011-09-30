@@ -15,8 +15,11 @@
  */
 package uk.ac.ebi.intact.persistence.dao.impl;
 
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.joda.time.DateTime;
 import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.model.meta.DbInfo;
 import uk.ac.ebi.intact.model.meta.ImexImport;
 import uk.ac.ebi.intact.model.meta.ImexImportActivationType;
 import uk.ac.ebi.intact.persistence.dao.ImexImportDao;
@@ -51,5 +54,22 @@ public class ImexImportDaoImpl extends HibernateBaseDaoImpl<ImexImport> implemen
         }
 
         return dateTimes.iterator().next();
+    }
+
+            @Override
+    public Object executeDetachedCriteria( DetachedCriteria crit, int firstResult, int maxResults ) {
+        return crit.getExecutableCriteria( getSession() )
+                .addOrder(Order.asc("id"))
+                .setFirstResult( firstResult )
+                .setMaxResults( maxResults )
+                .list();
+    }
+
+    @Override
+    public List<ImexImport> getAll( int firstResult, int maxResults ) {
+        return getSession().createCriteria( getEntityClass() )
+                .addOrder(Order.asc("id"))
+                .setFirstResult( firstResult )
+                .setMaxResults( maxResults ).list();
     }
 }
