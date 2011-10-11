@@ -142,6 +142,14 @@ public class CompressionUtils {
         }
     }
 
+    /**
+     * Zip the subdirectory and exclude already zipped files
+     * @param path
+     * @param srcFolder
+     * @param zip
+     * @param includeFullPath
+     * @throws IOException
+     */
     static private void addFolderToZip(String path, String srcFolder, ZipOutputStream zip, boolean includeFullPath) throws IOException {
         File folder = new File(srcFolder);
 
@@ -153,7 +161,7 @@ public class CompressionUtils {
                 else {
                     addFileToZip(folder.getName(), srcFolder + "/" + fileName, zip);
                 }
-            } else {
+            } else if (!fileName.endsWith(".zip")) {
                 addFileToZip(path + "/" + folder.getName(), srcFolder + "/" + fileName, zip);
             }
         }
