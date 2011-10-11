@@ -89,11 +89,7 @@ public class CompressionUtils {
         for (File sourceFile : sourceFiles)
         {
             if (sourceFile.isDirectory()){
-                if ( includeFullPathName ) {
-                    addFolderToZip("", sourceFile.toString(), out);
-                } else {
-                    addFolderToZip("", sourceFile.getName(), out);
-                }
+                addFolderToZip("", sourceFile.getAbsolutePath(), out, includeFullPathName);
             }
             else {
                 FileInputStream in = new FileInputStream(sourceFile);
@@ -134,7 +130,7 @@ public class CompressionUtils {
 
         File folder = new File(srcFile);
         if (folder.isDirectory()) {
-            addFolderToZip(path, srcFile, zip);
+            addFolderToZip(path, srcFile, zip, false);
         } else {
             byte[] buf = new byte[1024];
             int len;
@@ -146,12 +142,17 @@ public class CompressionUtils {
         }
     }
 
-    static private void addFolderToZip(String path, String srcFolder, ZipOutputStream zip) throws IOException {
+    static private void addFolderToZip(String path, String srcFolder, ZipOutputStream zip, boolean includeFullPath) throws IOException {
         File folder = new File(srcFolder);
 
         for (String fileName : folder.list()) {
             if (path.equals("")) {
-                addFileToZip(folder.getName(), srcFolder + "/" + fileName, zip);
+                if (includeFullPath){
+                    addFileToZip(folder.toString(), srcFolder + "/" + fileName, zip);
+                }
+                else {
+                    addFileToZip(folder.getName(), srcFolder + "/" + fileName, zip);
+                }
             } else {
                 addFileToZip(path + "/" + folder.getName(), srcFolder + "/" + fileName, zip);
             }
