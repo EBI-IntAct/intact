@@ -5,12 +5,7 @@
  */
 package uk.ac.ebi.intact.commons.util;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -74,7 +69,7 @@ public class CompressionUtils {
     }
 
     /**
-     * Compresses a file using GZIP
+     * Compresses a file (or directory) using GZIP
      *
      * @param sourceFiles         the files to include in the zip
      * @param destFile the zipped file
@@ -93,25 +88,34 @@ public class CompressionUtils {
         // Compress the files
         for (File sourceFile : sourceFiles)
         {
-            FileInputStream in = new FileInputStream(sourceFile);
-
-            // Add ZIP entry to output stream.
-            if ( includeFullPathName ) {
-                out.putNextEntry( new ZipEntry( sourceFile.toString() ) );
-            } else {
-                out.putNextEntry( new ZipEntry( sourceFile.getName() ) );
+            if (sourceFile.isDirectory()){
+                if ( includeFullPathName ) {
+                    addFolderToZip("", sourceFile.toString(), out);
+                } else {
+                    addFolderToZip("", sourceFile.getName(), out);
+                }
             }
+            else {
+                FileInputStream in = new FileInputStream(sourceFile);
 
-            // Transfer bytes from the file to the ZIP file
-            int len;
-            while ((len = in.read(buf)) > 0)
-            {
-                out.write(buf, 0, len);
+                // Add ZIP entry to output stream.
+                if ( includeFullPathName ) {
+                    out.putNextEntry( new ZipEntry( sourceFile.toString() ) );
+                } else {
+                    out.putNextEntry( new ZipEntry( sourceFile.getName() ) );
+                }
+
+                // Transfer bytes from the file to the ZIP file
+                int len;
+                while ((len = in.read(buf)) > 0)
+                {
+                    out.write(buf, 0, len);
+                }
+
+                // Complete the entry
+                out.closeEntry();
+                in.close();
             }
-
-            // Complete the entry
-            out.closeEntry();
-            in.close();
         }
 
         // Complete the ZIP file
@@ -122,6 +126,34 @@ public class CompressionUtils {
             for (File sourceFile : sourceFiles)
             {
                 sourceFile.delete();
+            }
+        }
+    }
+
+    static private void addFileToZip(String path, String srcFile, ZipOutputStream zip) throws IOException {
+
+        File folder = new File(srcFile);
+        if (folder.isDirectory()) {
+            addFolderToZip(path, srcFile, zip);
+        } else {
+            byte[] buf = new byte[1024];
+            int len;
+            FileInputStream in = new FileInputStream(srcFile);
+            zip.putNextEntry(new ZipEntry(path + "/" + folder.getName()));
+            while ((len = in.read(buf)) > 0) {
+                zip.write(buf, 0, len);
+            }
+        }
+    }
+
+    static private void addFolderToZip(String path, String srcFolder, ZipOutputStream zip) throws IOException {
+        File folder = new File(srcFolder);
+
+        for (String fileName : folder.list()) {
+            if (path.equals("")) {
+                addFileToZip(folder.getName(), srcFolder + "/" + fileName, zip);
+            } else {
+                addFileToZip(path + "/" + folder.getName(), srcFolder + "/" + fileName, zip);
             }
         }
     }
