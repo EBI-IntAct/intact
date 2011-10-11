@@ -154,7 +154,7 @@ public class CompressionUtils {
         File folder = new File(srcFolder);
 
         for (String fileName : folder.list()) {
-            if (path.equals("")) {
+            if (path.equals("") && !fileName.endsWith(".zip")) {
                 if (includeFullPath){
                     addFileToZip(folder.toString(), srcFolder + "/" + fileName, zip);
                 }
