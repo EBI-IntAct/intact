@@ -9,6 +9,7 @@ import uk.ac.ebi.cdb.webservice.Citation;
 import uk.ac.ebi.cdb.webservice.Author;
 import uk.ac.ebi.intact.bridges.citexplore.CitexploreClient;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -111,7 +112,7 @@ public class IntactCitationFactory {
      * @throws UnexpectedException
      */
     public IntactCitation buildCitation( String pubmedId ) throws UnexpectedException,
-                                                                  PublicationNotFoundException {
+            PublicationNotFoundException {
 
         if ( pubmedId == null ) {
             throw new IllegalArgumentException( "You must give a non null pubmed id." );
@@ -167,40 +168,59 @@ public class IntactCitationFactory {
             Author author = (Author) authorList.iterator().next();
 
             // it has to be lowercase
-            authorLastName = author.getLastName().toLowerCase();
+            if (author.getLastName() != null){
+                authorLastName = author.getLastName().toLowerCase();
+                // 11 characters maximum
+                authorLastName = authorLastName.substring( 0, Math.min( 11, authorLastName.length() ) );
 
-            // 11 characters maximum
-            authorLastName = authorLastName.substring( 0, Math.min( 11, authorLastName.length() ) );
+                // replace everything that is not in [a-z] by _
+                StringBuffer sb = new StringBuffer( authorLastName );
+                for ( int i = 0; i < sb.length(); i++ ) {
+                    char ch = sb.charAt( i );
 
-            // replace everything that is not in [a-z] by _
-            StringBuffer sb = new StringBuffer( authorLastName );
-            for ( int i = 0; i < sb.length(); i++ ) {
-                char ch = sb.charAt( i );
-
-                // if current char is not in [a-z], replace it
-                if ( !( ch >= 'a' && ch <= 'z' ) ) {
-                    sb.setCharAt( i, '_' );
+                    // if current char is not in [a-z], replace it
+                    if ( !( ch >= 'a' && ch <= 'z' ) ) {
+                        sb.setCharAt( i, '_' );
+                    }
                 }
-            }
 
-            authorLastName = sb.toString();
+                authorLastName = sb.toString();
+            }
 
             // build the list of authors
             if ( authorList.size() > 1 ) {
 
                 StringBuffer authorsBuffer = new StringBuffer( 128 );
-
+                List<String> authorLastNames = new ArrayList<String>(authorList.size());
                 for ( Iterator iterator = authorList.iterator(); iterator.hasNext(); ) {
                     Author anAuthor = (Author) iterator.next();
 
-                    authorsBuffer.append( anAuthor.getLastName() ).append( ' ' ).append( anAuthor.getInitials() ).append( '.' );
+                    if (anAuthor.getLastName() != null){
+                        if (anAuthor.getInitials() != null){
+                            authorLastNames.add(anAuthor.getLastName() + " " + anAuthor.getInitials() + ".");
+                        }
+                        else {
+                            authorLastNames.add(anAuthor.getLastName() + ".");
+                        }
+                    }
+                }
+
+                for ( Iterator iterator = authorLastNames.iterator(); iterator.hasNext(); ) {
+                    String lastName = (String) iterator.next();
+
+                    authorsBuffer.append( lastName );
 
                     if ( iterator.hasNext() ) {
                         authorsBuffer.append( ',' ).append( ' ' );
                     }
                 }
 
-                authors = authorsBuffer.toString();
+                if (authorsBuffer.length() > 0){
+                    authors = authorsBuffer.toString();
+                }
+                else {
+                    authors = null;
+                }
             }
 
         }
