@@ -64,7 +64,7 @@ public class IntactCitation {
             // truncate after the first ': ' or '. '
 
             for ( Iterator iterator = TITLE_SEPARATORS.iterator(); iterator.hasNext()
-                                                                   && title.length() > FULLNAME_MAX_LENGTH; ) {
+                    && title.length() > FULLNAME_MAX_LENGTH; ) {
                 String separator = (String) iterator.next();
 
                 int index = title.indexOf( separator );
@@ -81,13 +81,14 @@ public class IntactCitation {
 
         if ( authorLastName != null ) {
             authorLastName = authorLastName.trim();
+
+            // truncate it if required
+            if ( authorLastName.length() > AUTHOR_NAME_MAX_LENGTH ) {
+                // truncate then
+                authorLastName = authorLastName.substring( 1, AUTHOR_NAME_MAX_LENGTH );
+            }
+            this.authorLastName = authorLastName;
         }
-        // truncate it if required
-        if ( authorLastName.length() > AUTHOR_NAME_MAX_LENGTH ) {
-            // truncate then
-            authorLastName = authorLastName.substring( 1, AUTHOR_NAME_MAX_LENGTH );
-        }
-        this.authorLastName = authorLastName;
 
         if ( email != null ) {
             email = email.trim();
