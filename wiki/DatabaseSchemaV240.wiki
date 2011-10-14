@@ -6,9 +6,17 @@ In order to make the representation of the database simpler we have chosen to sp
 
 Then we will see how these object types relate to each other.
 
+Here is what we cover in this version:
  * [DatabaseSchemaV240#Controlled_Vocabulary ControlledVocabulary]
  * [DatabaseSchemaV240#Publication Publication]
-
+ * [DatabaseSchemaV240#Experiment Experiment]
+ * [DatabaseSchemaV240#Generic_Interactor Generic Interactor]
+ * [DatabaseSchemaV240#Component Component]
+ * [DatabaseSchemaV240#BioSource BioSource]
+ * [DatabaseSchemaV240#Feature Feature]
+ * [DatabaseSchemaV240#Full_data_model Full data model]
+ * [DatabaseSchemaV240#User User]
+ * [DatabaseSchemaV240#Statistics_Tables Statistics Tables]
 
 ==== Controlled Vocabulary ====
 
