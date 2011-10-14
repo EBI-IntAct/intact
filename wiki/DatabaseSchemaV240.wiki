@@ -6,6 +6,9 @@ In order to make the representation of the database simpler we have chosen to sp
 
 Then we will see how these object types relate to each other.
 
+ * [DatabaseSchemaV240#Controlled_Vocabulary ControlledVocabulary]
+ * [DatabaseSchemaV240#Publication Publication]
+
 
 ==== Controlled Vocabulary ====
 
