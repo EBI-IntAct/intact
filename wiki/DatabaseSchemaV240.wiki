@@ -53,7 +53,7 @@ This is the object that allows to specify which iteractor interacts in an intera
 <img width="800"  src="http://intact.googlecode.com/svn/wiki/images/database/2.4.0/Component.png"/>
 
 
-==== BioSource ==== 
+==== !BioSource ==== 
 
 This is the instance of an organism. Optional cell type, tissue, cell compartment can be specified through controlled vocabulary.
 
