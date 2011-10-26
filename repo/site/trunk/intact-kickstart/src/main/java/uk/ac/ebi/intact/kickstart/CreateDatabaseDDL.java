@@ -18,6 +18,8 @@ package uk.ac.ebi.intact.kickstart;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.util.SchemaUtils;
 
+import java.sql.Connection;
+
 /**
  * This class uses a special configuration file (/hsqldb-create-hibernate.cfg.xml) where the property hbm2ddl.auto
  * is set to 'create'. When the context is initialized the database schema will be automatically created.
@@ -32,6 +34,13 @@ public class CreateDatabaseDDL {
         //final String[] sqlStatements = SchemaUtils.generateCreateSchemaDDLForH2();
         //final String[] sqlStatements = SchemaUtils.generateDropSchemaDDLForOracle();
         final String[] sqlStatements = SchemaUtils.generateCreateSchemaDDLForPostgreSQL();
+
+        // it could be possible to generate an update DDL between your existing database schema
+        // and any intact-core version. The target intact-core version is the one specified in the POM file.
+        // Example:
+
+        //Connection connection = ... // create a JDBC connection to your existing database
+        //String[] sqlStatements = SchemaUtils.generateUpdateSchemaDDLForPostgreSQL(connection)
 
         System.out.println("--***************** DDL ************************");
 
