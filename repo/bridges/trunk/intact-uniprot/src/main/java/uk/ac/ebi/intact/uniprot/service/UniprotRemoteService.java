@@ -181,6 +181,11 @@ public class UniprotRemoteService extends AbstractUniprotService {
         return variants;
     }
 
+    @Override
+    public void close() {
+        // nothing to close
+    }
+
     public Collection<UniprotProtein> retrieve( String ac, boolean processSpliceVars ) {
         if (log.isDebugEnabled()) {
             log.debug("Retrieving from UniProt: "+ac);

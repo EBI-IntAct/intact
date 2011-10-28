@@ -93,4 +93,9 @@ public interface UniprotService {
     public UniprotFeatureChain retrieveUniprotFeatureChain( UniprotProtein uniProtEntry, String ac);
 
     public UniprotSpliceVariant retrieveUniprotSpliceVariant( UniprotProtein uniProtEntry, String ac);
+
+    /**
+     * Close the service and any caching system used
+     */
+    public void close();
 }
