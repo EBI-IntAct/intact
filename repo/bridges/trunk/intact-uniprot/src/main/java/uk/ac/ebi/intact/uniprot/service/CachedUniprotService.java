@@ -203,12 +203,6 @@ public class CachedUniprotService extends AbstractUniprotService implements Unip
                 cache.dispose();
             }
         }
-
-        if (this.cacheManager != null){
-            if( Status.STATUS_ALIVE.equals( cacheManager.getStatus() ) ) {
-                cacheManager.shutdown();
-            }
-        }
     }
 
     /////////////////////////
