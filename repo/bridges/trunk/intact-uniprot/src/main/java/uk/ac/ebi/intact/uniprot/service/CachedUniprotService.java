@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.uniprot.service;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.Status;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.uniprot.model.UniprotFeatureChain;
@@ -15,10 +16,12 @@ import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 import uk.ac.ebi.intact.uniprot.model.UniprotProteinTranscript;
 import uk.ac.ebi.intact.uniprot.model.UniprotSpliceVariant;
 import uk.ac.ebi.intact.uniprot.service.referenceFilter.CrossReferenceFilter;
-import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Proxy implementation that caches the result of UniprotService queries.
@@ -45,6 +48,7 @@ public class CachedUniprotService extends AbstractUniprotService implements Unip
      * Cache for queries to UniProt.
      */
     private Cache cache;
+    private CacheManager cacheManager;
 
     /**
      * The UniprotService we are going to cache queries for.
@@ -66,7 +70,8 @@ public class CachedUniprotService extends AbstractUniprotService implements Unip
         }
 
         // TODO This class could look who has references (soft reference) to it and shutdown the cache when no one is referencing to it anymore.
-        this.cache = new CacheManager( url ).getCache( CACHE_NAME );
+        this.cacheManager = new CacheManager( url );
+        this.cache = cacheManager.getCache( CACHE_NAME );
 
         if ( cache == null ) {
             throw new RuntimeUniprotServiceException( "Could not load cache: " + CACHE_NAME );
@@ -188,6 +193,20 @@ public class CachedUniprotService extends AbstractUniprotService implements Unip
         }
 
         return variants;
+    }
+
+    @Override
+    public void close() {
+        if (this.cache != null){
+            if( Status.STATUS_ALIVE.equals( cache.getStatus() ) ) {
+                System.out.println( "Attempting to dispose of: " + cache.getName() + "..." );
+                cache.dispose();
+            }
+        }
+
+        if (this.cacheManager != null){
+            cacheManager.shutdown();
+        }
     }
 
     /////////////////////////
