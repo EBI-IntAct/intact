@@ -76,8 +76,8 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
     public void setBasicBlastProcessRequired(boolean basicBlastProcessRequired) {
         isBasicBlastProcessRequired = basicBlastProcessRequired;
         // the first action of this object is a StrategyWithSequence
-        StrategyWithSequence firstAction = (StrategyWithSequence) this.listOfActions.get(0);
-        firstAction.setBasicBlastRequired(this.isBasicBlastProcessRequired);
+        //StrategyWithSequence firstAction = (StrategyWithSequence) this.listOfActions.get(0);
+        //firstAction.setBasicBlastRequired(this.isBasicBlastProcessRequired);
     }
 
     /**
@@ -87,8 +87,8 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
     @Override
     public void enableIsoforms(boolean enableIsoformId){
         super.enableIsoforms(enableIsoformId);
-        ((StrategyWithSequence) this.listOfActions.get(0)).enableIsoforms(enableIsoformId);
-        ((StrategyWithIdentifier) this.listOfActions.get(1)).enableIsoforms(enableIsoformId);
+        //((StrategyWithSequence) this.listOfActions.get(0)).enableIsoforms(enableIsoformId);
+        //((StrategyWithIdentifier) this.listOfActions.get(1)).enableIsoforms(enableIsoformId);
     }
 
     /**
@@ -419,14 +419,14 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
     protected void initialiseSetOfActions() {
 
         // the first action is a StrategyWithSequence
-        StrategyWithSequence firstAction = new StrategyWithSequence();
+        StrategyWithSequence firstAction = new StrategyWithSequence(uniprotService);
         firstAction.setReportsFactory(getReportsFactory());
         firstAction.setResultsFactory(getResultsFactory());
         firstAction.enableIsoforms(this.isIsoformEnabled());
         this.listOfActions.add(firstAction);
 
         // the second action is a StrategyWithIdentifier
-        StrategyWithIdentifier secondAction = new StrategyWithIdentifier();
+        StrategyWithIdentifier secondAction = new StrategyWithIdentifier(uniprotService);
         secondAction.setReportsFactory(getReportsFactory());
         secondAction.setResultsFactory(getResultsFactory());
         secondAction.enableIsoforms(this.isIsoformEnabled());

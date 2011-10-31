@@ -9,7 +9,6 @@ import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
-import uk.ac.ebi.intact.uniprot.service.CachedUniprotService;
 import uk.ac.ebi.intact.uniprot.service.UniprotRemoteService;
 import uk.ac.ebi.intact.uniprot.service.UniprotService;
 import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.ReflectionCrossReferenceBuilder;
@@ -51,7 +50,7 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
     /**
      * The uniprot remote service
      */
-    private static UniprotService uniprotService = new CachedUniprotService(new UniprotRemoteService());
+    private static UniprotService uniprotService;
 
     /**
      * The swissprot database name in uniparc
@@ -69,6 +68,13 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
     public CrossReferenceSearchProcess(ReportsFactory factory){
         super(factory);
         initialisePsiMIDatabaseToUniprot();
+        uniprotService = new UniprotRemoteService();
+    }
+
+    public CrossReferenceSearchProcess(ReportsFactory factory, UniprotService service){
+        super(factory);
+        initialisePsiMIDatabaseToUniprot();
+        uniprotService = service != null ? service : new UniprotRemoteService();
     }
 
     /**

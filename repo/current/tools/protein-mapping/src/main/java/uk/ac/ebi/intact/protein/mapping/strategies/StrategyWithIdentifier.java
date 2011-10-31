@@ -154,7 +154,7 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
         this.listOfActions.add(firstAction);
 
         // second action = CrossReferenceSearchProcess (optional)
-        CrossReferenceSearchProcess secondAction = new CrossReferenceSearchProcess(getReportsFactory());
+        CrossReferenceSearchProcess secondAction = new CrossReferenceSearchProcess(getReportsFactory(), uniprotService);
         this.listOfActions.add(secondAction);
 
         // third action = SwissprotRemappingProcess
