@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.protein.mapping.results.BlastResults;
 import uk.ac.ebi.intact.protein.mapping.results.IdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.intact.uniprot.service.UniprotService;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -62,6 +63,14 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
      */
     public StrategyWithIdentifier(){
         super();
+        if (listOfMIDatabasesManagedByPICR.isEmpty()){
+            initialiseListOfMIDatabasesManagedByPICR();
+            initialiseListOfDatabaseNamesManagedByPICR();
+        }
+    }
+
+    public StrategyWithIdentifier(UniprotService uniprotService) {
+        super(uniprotService);
         if (listOfMIDatabasesManagedByPICR.isEmpty()){
             initialiseListOfMIDatabasesManagedByPICR();
             initialiseListOfDatabaseNamesManagedByPICR();

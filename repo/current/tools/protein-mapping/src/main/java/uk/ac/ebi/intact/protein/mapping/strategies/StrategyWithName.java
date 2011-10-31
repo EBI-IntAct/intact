@@ -8,6 +8,7 @@ import uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingExcept
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.protein.mapping.results.IdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
+import uk.ac.ebi.intact.uniprot.service.UniprotService;
 
 /**
  * This strategy aims at identifying a protein using a gene name and/or a protein name, or a general name and its organism.
@@ -31,6 +32,10 @@ public class StrategyWithName extends IdentificationStrategyImpl {
      */
     public StrategyWithName(){
         super();
+    }
+
+    public StrategyWithName(UniprotService uniprotService) {
+        super(uniprotService);
     }
 
     /**

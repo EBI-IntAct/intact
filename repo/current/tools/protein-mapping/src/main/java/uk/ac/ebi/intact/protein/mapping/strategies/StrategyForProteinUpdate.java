@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.UpdateContext;
 import uk.ac.ebi.intact.protein.mapping.results.IdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
+import uk.ac.ebi.intact.uniprot.service.UniprotService;
 
 import java.util.HashSet;
 import java.util.List;
@@ -51,6 +52,11 @@ public class StrategyForProteinUpdate extends IdentificationStrategyImpl {
      */
     public StrategyForProteinUpdate(){
         super();
+        updateEnabled = true;
+    }
+
+    public StrategyForProteinUpdate(UniprotService uniprotService) {
+        super(uniprotService);
         updateEnabled = true;
     }
 

@@ -45,7 +45,7 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
     /**
      * The uniprot service
      */
-    private static UniprotService uniprotService = new CachedUniprotService(new UniprotRemoteService());
+    private static UniprotService uniprotService;
 
     /**
      * The list of actions used by the strategy to identify a protein
@@ -79,6 +79,15 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
         setReportsFactory(new DefaultReportsFactory());
         setResultsFactory(new DefaultResultsFactory());
         initialiseSetOfActions();
+        uniprotService = new CachedUniprotService(new UniprotRemoteService());
+    }
+
+    public IdentificationStrategyImpl(UniprotService uniprotService){
+        // initialise the set of actions for this strategy
+        setReportsFactory(new DefaultReportsFactory());
+        setResultsFactory(new DefaultResultsFactory());
+        initialiseSetOfActions();
+        uniprotService = uniprotService != null ? uniprotService : new CachedUniprotService(new UniprotRemoteService());
     }
 
     /**
