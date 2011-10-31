@@ -16,7 +16,6 @@ import uk.ac.ebi.intact.protein.mapping.results.impl.DefaultIdentificationResult
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 import uk.ac.ebi.intact.uniprot.model.UniprotXref;
-import uk.ac.ebi.intact.uniprot.service.CachedUniprotService;
 import uk.ac.ebi.intact.uniprot.service.IdentifierChecker;
 import uk.ac.ebi.intact.uniprot.service.UniprotRemoteService;
 import uk.ac.ebi.intact.uniprot.service.UniprotService;
@@ -45,7 +44,7 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
     /**
      * The uniprot service
      */
-    private static UniprotService uniprotService;
+    protected static UniprotService uniprotService;
 
     /**
      * The list of actions used by the strategy to identify a protein
@@ -79,7 +78,7 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
         setReportsFactory(new DefaultReportsFactory());
         setResultsFactory(new DefaultResultsFactory());
         initialiseSetOfActions();
-        uniprotService = new CachedUniprotService(new UniprotRemoteService());
+        uniprotService = new UniprotRemoteService();
     }
 
     public IdentificationStrategyImpl(UniprotService uniprotService){
@@ -87,7 +86,7 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
         setReportsFactory(new DefaultReportsFactory());
         setResultsFactory(new DefaultResultsFactory());
         initialiseSetOfActions();
-        uniprotService = uniprotService != null ? uniprotService : new CachedUniprotService(new UniprotRemoteService());
+        uniprotService = uniprotService != null ? uniprotService : new UniprotRemoteService();
     }
 
     /**
