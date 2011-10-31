@@ -17,7 +17,7 @@ import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 import uk.ac.ebi.intact.uniprot.model.UniprotXref;
 import uk.ac.ebi.intact.uniprot.service.IdentifierChecker;
-import uk.ac.ebi.intact.uniprot.service.UniprotRemoteService;
+import uk.ac.ebi.intact.uniprot.service.SimpleUniprotRemoteService;
 import uk.ac.ebi.intact.uniprot.service.UniprotService;
 import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseType;
 
@@ -78,7 +78,7 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
         setReportsFactory(new DefaultReportsFactory());
         setResultsFactory(new DefaultResultsFactory());
         initialiseSetOfActions();
-        uniprotService = new UniprotRemoteService();
+        uniprotService = new SimpleUniprotRemoteService();
     }
 
     public IdentificationStrategyImpl(UniprotService uniprotService){
@@ -86,7 +86,7 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
         setReportsFactory(new DefaultReportsFactory());
         setResultsFactory(new DefaultResultsFactory());
         initialiseSetOfActions();
-        uniprotService = uniprotService != null ? uniprotService : new UniprotRemoteService();
+        uniprotService = uniprotService != null ? uniprotService : new SimpleUniprotRemoteService();
     }
 
     /**

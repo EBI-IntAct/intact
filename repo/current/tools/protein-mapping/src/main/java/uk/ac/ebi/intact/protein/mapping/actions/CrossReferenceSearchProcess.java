@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.intact.uniprot.service.SimpleUniprotRemoteService;
 import uk.ac.ebi.intact.uniprot.service.UniprotRemoteService;
 import uk.ac.ebi.intact.uniprot.service.UniprotService;
 import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.ReflectionCrossReferenceBuilder;
@@ -68,13 +69,13 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
     public CrossReferenceSearchProcess(ReportsFactory factory){
         super(factory);
         initialisePsiMIDatabaseToUniprot();
-        uniprotService = new UniprotRemoteService();
+        uniprotService = new SimpleUniprotRemoteService();
     }
 
     public CrossReferenceSearchProcess(ReportsFactory factory, UniprotService service){
         super(factory);
         initialisePsiMIDatabaseToUniprot();
-        uniprotService = service != null ? service : new UniprotRemoteService();
+        uniprotService = service != null ? service : new SimpleUniprotRemoteService();
     }
 
     /**
