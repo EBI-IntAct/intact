@@ -19,6 +19,34 @@ import java.util.Set;
  */
 
 public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implements IntactOntologyTermI {
+    protected static final String PMID = "PMID";
+
+    protected static final String PUBMED = "pubmed";
+    protected static final String PUBMED_MI_REF = "MI:0446";
+
+    protected static final String PRIMARY_REFERENCE = "primary-reference";
+    protected static final String PRIMARY_REFERENCE_MI_REF = "MI:0358";
+
+    protected static final String SEE_ALSO = "see-also";
+    protected static final String SEE_ALSO_MI_REF = "MI:0361";
+
+    protected static final String IDENTITY = "identity";
+    protected static final String IDENTITY_MI_REF = "MI:0356";
+
+    protected static final String RESID = "resid";
+    protected static final String RESID_MI_REF = "MI:0248";
+
+    protected static final int MAX_SHORT_LABEL_LEN = 256;
+    protected static final String LINE_BREAK = "\n";
+
+    protected static final String OBSOLETE = "obsolete";
+    protected static final String OBSOLETE_MI_REF = "MI:0431";
+
+    protected static final String URL = "url";
+    protected static final String URL_MI_REF = "MI:0614";
+
+    protected static final String METHOD_REFERENCE = "method reference";
+    protected static final String METHOD_REFERENCE_MI_REF = "MI:0357";
 
     protected String shortLabel;
     protected String fullName;
@@ -43,6 +71,12 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
     public abstract void loadTermFrom (Term term);
     public abstract void loadSynonymsFrom (Map metadata);
     public abstract void loadXrefsFrom (Map xrefs);
+
+    protected abstract void processSynonyms(Term term);
+    protected abstract void processShortLabel(Term term);
+    protected abstract void processXrefs(Term term);
+    protected abstract void processDefinition(Term term);
+    protected abstract void processAnnotations(Term term);
 
     @Override
     public String getShortLabel() {
