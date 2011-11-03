@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>bridges-master</artifactId>
+        <groupId>uk.ac.ebi.intact.bridges</groupId>
+        <version>2.1.5-SNAPSHOT</version>
+    </parent>
+    <groupId>uk.ac.ebi.intact.bridges.ontology_manager</groupId>
+    <artifactId>intact-ontology-manager</artifactId>
+    <version>2.1.5-SNAPSHOT</version>
+    <name>IntAct Bridges :: Ontology manager</name>
+    <url>http://maven.apache.org</url>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>psidev.psi.tools</groupId>
+            <artifactId>ontology-manager</artifactId>
+            <version>2.0.3-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>r06</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.geneontology</groupId>
+            <artifactId>obo</artifactId>
+            <version>2.000-beta38</version>
+        </dependency>
+
+        <!-- JAX-WS -->
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-tools</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- EBI repositories -->
+    <repositories>
+        <repository>
+            <id>intact.nexus</id>
+            <name>IntAct Nexus</name>
+            <url>http://www.ebi.ac.uk/intact/maven/nexus/content/groups/public</url>
+        </repository>
+    </repositories>
+</project>
