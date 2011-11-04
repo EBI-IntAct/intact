@@ -57,8 +57,12 @@ public class IntactMIOboLoader extends AbstractOboLoader<IntactOntologyTermI, In
     }
 
     @Override
-    protected IntactOntologyTermI createNewOntologyTerm(String identifier, String name) {
-        return new MiOntologyTerm( identifier, name );
+    protected IntactOntologyTermI createNewOntologyTerm(Term t) {
+        IntactOntologyTermI term = new MiOntologyTerm( t.getIdentifier(), t.getName() );
+
+        term.loadTermFrom(t);
+
+        return term;
     }
 
     @Override

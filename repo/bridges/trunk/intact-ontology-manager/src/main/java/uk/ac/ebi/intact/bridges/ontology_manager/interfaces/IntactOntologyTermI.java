@@ -27,10 +27,9 @@ public interface IntactOntologyTermI extends OntologyTermI {
     public String getURL();
     public String getSearchUrl();
     public String getXrefValidationRegexp();
-    public String getComment();
+    public Set<String> getComments();
     public Set<String> getAliases();
-
     public void loadTermFrom (Term term);
-    public void loadSynonymsFrom (Map metadata);
+    public void loadSynonymsFrom (Map metadata, boolean isObsolete);
     public void loadXrefsFrom (Map xrefs);
 }

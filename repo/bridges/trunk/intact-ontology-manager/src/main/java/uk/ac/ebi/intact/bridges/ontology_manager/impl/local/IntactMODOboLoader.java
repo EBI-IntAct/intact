@@ -4,9 +4,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import psidev.psi.tools.ontology_manager.impl.local.AbstractOboLoader;
-import uk.ac.ebi.intact.bridges.ontology_manager.impl.ModOntologyTerm;
+import uk.ac.ebi.intact.bridges.ontology_manager.impl.MiOntologyTerm;
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 import uk.ac.ebi.ols.loader.parser.OBOFormatParser;
+import uk.ac.ebi.ols.model.interfaces.Term;
 
 /**
  * iNTACT extension of OBOLoader for MOD ontology
@@ -48,7 +49,11 @@ public class IntactMODOboLoader extends AbstractOboLoader<IntactOntologyTermI, I
     }
 
     @Override
-    protected IntactOntologyTermI createNewOntologyTerm(String identifier, String name) {
-        return new ModOntologyTerm( identifier, name );
+    protected IntactOntologyTermI createNewOntologyTerm(Term t) {
+        IntactOntologyTermI term = new MiOntologyTerm( t.getIdentifier(), t.getName() );
+
+        term.loadTermFrom(t);
+
+        return term;
     }
 }
