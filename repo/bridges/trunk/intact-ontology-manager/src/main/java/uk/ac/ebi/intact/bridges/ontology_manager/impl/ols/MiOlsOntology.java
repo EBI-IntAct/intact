@@ -1,26 +1,26 @@
 package uk.ac.ebi.intact.bridges.ontology_manager.impl.ols;
 
 import psidev.psi.tools.ontology_manager.impl.local.OntologyLoaderException;
-import uk.ac.ebi.intact.bridges.ontology_manager.impl.ModOntologyTerm;
+import uk.ac.ebi.intact.bridges.ontology_manager.impl.MiOntologyTerm;
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 
 /**
- * Extension of IntactOls ontology for PSI-MOD
+ * Ols service for MI ontology
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
  * @since <pre>04/11/11</pre>
  */
 
-public class OlsMODOntology extends IntactOlsOntology {
+public class MiOlsOntology extends IntactOlsOntology{
 
-
-    public OlsMODOntology() throws OntologyLoaderException {
+    public MiOlsOntology() throws OntologyLoaderException {
         super();
     }
 
     @Override
     protected IntactOntologyTermI createNewOntologyTermInstance(String identifier, String name) {
-        return new ModOntologyTerm(identifier, name);
+
+        return new MiOntologyTerm(identifier, name);
     }
 }
