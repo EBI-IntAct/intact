@@ -9,9 +9,10 @@ import uk.ac.ebi.ols.model.interfaces.DbXref;
 import uk.ac.ebi.ols.model.interfaces.Term;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
- * Abstract class fo intact ontology term
+ * Abstract class fo intact ontology term.
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -60,17 +61,66 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
     protected static final int XREF_TYPE = 3;
     protected static final int XREF_DEFINITION_TYPE = 2;
 
+    protected final static Pattern MOD_REGEXP = Pattern.compile("MOD:[0-9]{5}");
+    protected final static Pattern MI_REGEXP = Pattern.compile("MI:[0-9]{4}");
+
+    /**
+     * Shortlabel of the cv object in intact
+     */
     protected String shortLabel;
+
+    /**
+     * Fullname of the cv in Intact
+     */
     protected String fullName;
+
+    /**
+     * Definition of the cv in intact
+     */
     protected String definition;
+
+    /**
+     * URL of the Cv
+     */
     protected String url;
+
+    /**
+     * Obsolete message
+     */
     protected String obsoleteMessage;
+
+    /**
+     * Search url
+     */
     protected String searchUrl;
+
+    /**
+     * The xref validation regexp
+     */
     protected String xrefValidationRegexp;
+
+    /**
+     * The comments
+     */
     protected Set<String> comments = new HashSet<String>();
+
+    /**
+     * The Cv xrefs
+     */
     protected Set<TermDbXref> dbXrefs = new HashSet<TermDbXref>();
+
+    /**
+     * The cv annotations
+     */
     protected Set<TermAnnotation> annotations = new HashSet<TermAnnotation>();
+
+    /**
+     * The cv aliases
+     */
     protected Set<String> aliases = new HashSet<String>();
+
+    protected String remappedTerm;
+    protected Set<String> possibleTermsToRemapTo = new HashSet<String>();
 
     public AbstractIntactOntologyTerm(String acc) {
         super(acc);
@@ -81,6 +131,9 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
     }
 
     @Override
+    /**
+     * This method will initialize the shortlabel, fullName, aliases, annotations, xrefs, etc from a Term object
+     */
     public void loadTermFrom(Term term) {
 
         // full name
@@ -103,8 +156,10 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
     }
 
     @Override
+    /**
+     * This method will initialise the synonyms, aliases, definition, comments, obsolete message, url from the map of metadata
+     */
     public void loadSynonymsFrom(Map metadata, boolean isObsolete) {
-
         for (Object key : metadata.keySet()){
             String keyName = (String) key;
 
@@ -112,12 +167,7 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
             if (DEFINITION_KEY.equalsIgnoreCase(keyName)){
                 String description = (String) metadata.get(keyName);
 
-                boolean hasObsoleteAnnotation = processDefinition(description);
-
-                if (!hasObsoleteAnnotation && isObsolete){
-                    TermAnnotation obsolete = new TermAnnotation(OBSOLETE, OBSOLETE_MI_REF, null);
-                    this.annotations.add(obsolete);
-                }
+                processDefinition(description);
             }
             // comment
             else if (COMMENT_KEY.equalsIgnoreCase(keyName) || keyName.startsWith(COMMENT_KEY + META_DATA_SEPARATOR)){
@@ -132,6 +182,9 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
     }
 
     @Override
+    /**
+     * This method will initialize the xrefs of this object from the map of xrefs
+     */
     public void loadXrefsFrom(Map xrefs) {
         Set<String> resIdRefs = new HashSet<String>(xrefs.size());
 
@@ -182,14 +235,40 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
         }
     }
 
+    /**
+     * Process a xref, given its database and accession
+     * @param db : database
+     * @param accession : database accession
+     */
     protected abstract void processXref(String db, String accession);
 
+    /**
+     * Process the xrefs which are in the definition.
+     * @param xref : the xref as a String
+     * @param database : the database
+     * @param accession : the accession
+     * @param resIdRefs : the resId xrefs
+     * @param pubmedPrimary : the pubmed primary ID
+     */
     protected abstract void processXrefDefinition(String xref, String database, String accession, Set<String> resIdRefs, String pubmedPrimary);
 
+    /**
+     * Process the synonyms of a term
+     * @param term
+     */
     protected abstract void processSynonyms(Term term);
 
+    /**
+     * Process the synonym, given its synonym type and value
+     * @param synonymName : synonym type
+     * @param synonym : synonym value
+     */
     protected abstract void processSynonym(String synonymName, String synonym);
 
+    /**
+     * Initialize the shortlabel of this object from a term
+     * @param term
+     */
     protected void processShortLabel(Term term) {
         if (shortLabel == null){
             if ( term.getName() != null && term.getName().length() <= MAX_SHORT_LABEL_LEN ) {
@@ -200,6 +279,10 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
         }
     }
 
+    /**
+     * Process the xrefs of a term
+     * @param term
+     */
     protected void processXrefs(Term term) {
         Collection<DbXref> dbXrefs = term.getXrefs();
         Set<String> resIdRefs = new HashSet<String>(dbXrefs.size());
@@ -228,21 +311,23 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
         }
     }
 
+    /**
+     * Process the definition of a term
+     * @param term
+     */
     protected void processDefinition(Term term) {
-        boolean hasObsoleteAnnotation = false;
 
         String definition = term.getDefinition();
 
-        hasObsoleteAnnotation = processDefinition(definition);
-
-        if (!hasObsoleteAnnotation && term.isObsolete()){
-            TermAnnotation obsolete = new TermAnnotation(OBSOLETE, OBSOLETE_MI_REF, null);
-            this.annotations.add(obsolete);
-        }
+        processDefinition(definition);
     }
 
-    protected boolean processDefinition(String definition) {
-        boolean hasObsolete = false;
+    /**
+     * Process the definition String
+     * @param definition
+     * @return
+     */
+    protected void processDefinition(String definition) {
         if ( definition.contains( LINE_BREAK ) ) {
             String[] defArray = definition.split( LINE_BREAK );
 
@@ -251,24 +336,50 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
             if ( defArray.length == 2 ) {
                 this.definition = defArray[0];
                 otherInfoString = defArray[1];
-                hasObsolete = processOtherInfoInDescription(definition, otherInfoString);
+                processInfoInDescription(definition, otherInfoString);
             } else if ( defArray.length > 2 ) {
                 this.definition = defArray[0];
 
                 for (int i = 1; i < defArray.length; i++){
                     otherInfoString = defArray[i];
-                    hasObsolete = processOtherInfoInDescription(definition, otherInfoString);
+                    processInfoInDescription(definition, otherInfoString);
                 }
             }
         }
         else {
             this.definition = definition;
         }
-        return hasObsolete;
     }
 
-    protected abstract boolean processOtherInfoInDescription(String definition, String otherInfoString);
+    /**
+     * Process the other information in the description
+     * @param definition
+     * @param otherInfoString
+     * @return true if an obsolete annotation has been added
+     */
+    protected void processInfoInDescription(String definition, String otherInfoString) {
 
+        // obsolete message
+        if ( otherInfoString.startsWith( OBSOLETE_DEF )) {
+
+            this.obsoleteMessage = otherInfoString;
+
+            if (otherInfoString != null){
+                processObsoleteMessage();
+            }
+        }
+        else {
+            processInfoInDescription(definition, otherInfoString);
+        }
+    }
+
+    protected abstract void processOtherInfoInDescription(String definition, String otherInfoString);
+    protected abstract void processObsoleteMessage();
+
+    /**
+     * Process the annotations of a term
+     * @param term
+     */
     protected void processAnnotations(Term term) {
         Collection<Annotation> annotations = term.getAnnotations();
 
@@ -333,5 +444,13 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
     @Override
     public Set<String> getAliases() {
         return this.aliases;
+    }
+
+    public String getRemappedTerm() {
+        return remappedTerm;
+    }
+
+    public Set<String> getPossibleTermsToRemapTo() {
+        return possibleTermsToRemapTo;
     }
 }

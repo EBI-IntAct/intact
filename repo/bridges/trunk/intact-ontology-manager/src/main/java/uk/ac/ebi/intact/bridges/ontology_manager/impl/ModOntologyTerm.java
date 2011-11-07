@@ -7,6 +7,7 @@ import uk.ac.ebi.ols.model.interfaces.TermSynonym;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.regex.Matcher;
 
 /**
  * Ontology term for PSI-MOD
@@ -31,14 +32,17 @@ public class ModOntologyTerm extends AbstractIntactOntologyTerm{
     private static final String UNIMOD_INTERIM_IDENTIFIER = "Interim label from UniMod";
     private static final String UNIPROT_FEATURE_IDENTIFIER = "Protein feature description from UniProtKB";
 
-    protected static final String UNIMOD = "unimod";
-    protected static final String UNIMOD_MI_REF = "MI:1015";
+    private static final String UNIMOD = "unimod";
+    private static final String UNIMOD_MI_REF = "MI:1015";
 
-    protected static final String DELTAMASS = "deltamass";
-    protected static final String DELTAMASS_MI_REF = "MI:1014";
+    private static final String DELTAMASS = "deltamass";
+    private static final String DELTAMASS_MI_REF = "MI:1014";
 
-    protected static final String CHEBI = "chebi";
-    protected static final String CHEBI_MI_REF = "MI:0474";
+    private static final String CHEBI = "chebi";
+    private static final String CHEBI_MI_REF = "MI:0474";
+
+    private static final String REMAP = "remap to";
+    private static final String MAP = "map to";
 
     public ModOntologyTerm(String acc, String name) {
         super(acc, name);
@@ -162,26 +166,59 @@ public class ModOntologyTerm extends AbstractIntactOntologyTerm{
         }
     }
 
-    protected boolean processOtherInfoInDescription(String definition, String otherInfoString) {
-        boolean hasObsolete = false;
+    protected void processOtherInfoInDescription(String definition, String otherInfoString) {
 
-        // obsolete message
-        if ( otherInfoString.startsWith( OBSOLETE_DEF )) {
-            hasObsolete = true;
-
-            TermAnnotation obsolete = new TermAnnotation(OBSOLETE, OBSOLETE_MI_REF, otherInfoString);
-            this.annotations.add(obsolete);
-
-        }
         // simple definition
+        if (definition.startsWith(otherInfoString)){
+            this.definition += otherInfoString;
+        }
         else {
-            if (definition.startsWith(otherInfoString)){
-                this.definition += otherInfoString;
+            this.definition += LINE_BREAK + otherInfoString;
+        }
+    }
+
+    @Override
+    protected void processObsoleteMessage() {
+        String lowerObsoleteMessage = this.obsoleteMessage.toLowerCase();
+        String remappingString = null;
+
+        if (lowerObsoleteMessage.contains(MAP)){
+            remappingString = lowerObsoleteMessage.substring(lowerObsoleteMessage.indexOf(MAP) + MAP.length());
+        }
+        else if (lowerObsoleteMessage.contains(REMAP)){
+            remappingString = lowerObsoleteMessage.substring(lowerObsoleteMessage.indexOf(REMAP) + REMAP.length());
+        }
+
+        if (remappingString != null){
+            Matcher miMatcher = MI_REGEXP.matcher(remappingString);
+            Matcher modMatcher = MOD_REGEXP.matcher(remappingString);
+
+            while (miMatcher.find()){
+                this.possibleTermsToRemapTo.add(miMatcher.group());
             }
-            else {
-                this.definition += LINE_BREAK + otherInfoString;
+
+            while (modMatcher.find()){
+                this.possibleTermsToRemapTo.add(modMatcher.group());
+            }
+
+            if (this.possibleTermsToRemapTo.size() == 1){
+                this.remappedTerm = this.possibleTermsToRemapTo.iterator().next();
+
+                // we do not need the remapped term to be kept twice
+                this.possibleTermsToRemapTo.clear();
             }
         }
-        return hasObsolete;
+        else {
+            Matcher miMatcher = MI_REGEXP.matcher(lowerObsoleteMessage);
+            Matcher modMatcher = MOD_REGEXP.matcher(lowerObsoleteMessage);
+
+            while (miMatcher.find()){
+                this.possibleTermsToRemapTo.add(miMatcher.group());
+            }
+
+            while (modMatcher.find()){
+                this.possibleTermsToRemapTo.add(modMatcher.group());
+            }
+        }
     }
 }
