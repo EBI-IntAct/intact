@@ -32,4 +32,6 @@ public interface IntactOntologyTermI extends OntologyTermI {
     public void loadTermFrom (Term term);
     public void loadSynonymsFrom (Map metadata, boolean isObsolete);
     public void loadXrefsFrom (Map xrefs);
+    public String getRemappedTerm();
+    public Set<String> getPossibleTermsToRemapTo();
 }

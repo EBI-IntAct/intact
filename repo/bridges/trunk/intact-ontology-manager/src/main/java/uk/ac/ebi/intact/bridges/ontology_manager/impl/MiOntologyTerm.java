@@ -7,6 +7,7 @@ import uk.ac.ebi.ols.model.interfaces.TermSynonym;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.regex.Matcher;
 
 /**
  * Ontology term for PSI-MI
@@ -36,6 +37,10 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
     private static final String SEARCH_URL = "search-url";
     private static final String SEARCH_URL_MI_REF = "MI:0615";
 
+    private static final String REMAP = "remap to";
+    private static final String MAP = "map to";
+    private static final String REPLACE = "replace by";
+
     public MiOntologyTerm(String acc) {
         super(acc);
     }
@@ -45,22 +50,12 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
         this.fullName = name;
     }
 
-    protected boolean processOtherInfoInDescription(String definition, String otherInfoString) {
-        boolean hasObsolete = false;
+    protected void processOtherInfoInDescription(String definition, String otherInfoString) {
 
-        // obsolete message
-        if ( otherInfoString.startsWith( OBSOLETE_DEF )) {
-            hasObsolete = true;
-
-            TermAnnotation obsolete = new TermAnnotation(OBSOLETE, OBSOLETE_MI_REF, otherInfoString);
-            this.annotations.add(obsolete);
-
-        }
         // URL
-        else if ( otherInfoString.startsWith( HTTP_DEF ) ) {
+        if ( otherInfoString.startsWith( HTTP_DEF ) ) {
 
-            TermAnnotation url = new TermAnnotation(URL, URL_MI_REF, otherInfoString);
-            this.annotations.add(url);
+            this.url = otherInfoString;
 
         }
         // simple definition
@@ -72,7 +67,54 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
                 this.definition += LINE_BREAK + otherInfoString;
             }
         }
-        return hasObsolete;
+    }
+
+    @Override
+    protected void processObsoleteMessage() {
+        String lowerObsoleteMessage = this.obsoleteMessage.toLowerCase();
+        String remappingString = null;
+
+        if (lowerObsoleteMessage.contains(MAP)){
+            remappingString = lowerObsoleteMessage.substring(lowerObsoleteMessage.indexOf(MAP) + MAP.length());
+        }
+        else if (lowerObsoleteMessage.contains(REMAP)){
+            remappingString = lowerObsoleteMessage.substring(lowerObsoleteMessage.indexOf(REMAP) + REMAP.length());
+        }
+        else if (lowerObsoleteMessage.contains(REPLACE)){
+            remappingString = lowerObsoleteMessage.substring(lowerObsoleteMessage.indexOf(REPLACE) + REPLACE.length());
+        }
+
+        if (remappingString != null){
+            Matcher miMatcher = MI_REGEXP.matcher(remappingString);
+            Matcher modMatcher = MOD_REGEXP.matcher(remappingString);
+
+            while (miMatcher.find()){
+                this.possibleTermsToRemapTo.add(miMatcher.group());
+            }
+
+            while (modMatcher.find()){
+                this.possibleTermsToRemapTo.add(modMatcher.group());
+            }
+
+            if (this.possibleTermsToRemapTo.size() == 1){
+                this.remappedTerm = this.possibleTermsToRemapTo.iterator().next();
+
+                // we do not need the remapped term to be kept twice
+                this.possibleTermsToRemapTo.clear();
+            }
+        }
+        else {
+            Matcher miMatcher = MI_REGEXP.matcher(lowerObsoleteMessage);
+            Matcher modMatcher = MOD_REGEXP.matcher(lowerObsoleteMessage);
+
+            while (miMatcher.find()){
+                this.possibleTermsToRemapTo.add(miMatcher.group());
+            }
+
+            while (modMatcher.find()){
+                this.possibleTermsToRemapTo.add(modMatcher.group());
+            }
+        }
     }
 
     protected void processSynonyms(Term term) {
@@ -151,5 +193,4 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
             this.dbXrefs.add(soRef);  // MI not MOD
         }
     }
-
 }
