@@ -53,7 +53,7 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
     protected static final String DEFINITION_KEY = "definition";
     protected static final String COMMENT_KEY = "comment";
     protected static final String EXACT_KEY = "exact";
-    protected static final String EXACT_SYNONYM_KEY = "exact-synonym";
+    protected static final String EXACT_SYNONYM_KEY = "exact_synonym";
     protected static final String XREF_DEFINITION_KEY = "xref_definition";
     protected static final String META_DATA_SEPARATOR = "_";
     protected static final String META_XREF_SEPARATOR = ":";
@@ -61,8 +61,8 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
     protected static final int XREF_TYPE = 3;
     protected static final int XREF_DEFINITION_TYPE = 2;
 
-    protected final static Pattern MOD_REGEXP = Pattern.compile("MOD:[0-9]{5}");
-    protected final static Pattern MI_REGEXP = Pattern.compile("MI:[0-9]{4}");
+    protected final static Pattern MOD_REGEXP = Pattern.compile("MOD:[0-9]{5}+");
+    protected final static Pattern MI_REGEXP = Pattern.compile("MI:[0-9]{4}+");
 
     /**
      * Shortlabel of the cv object in intact
@@ -88,16 +88,6 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
      * Obsolete message
      */
     protected String obsoleteMessage;
-
-    /**
-     * Search url
-     */
-    protected String searchUrl;
-
-    /**
-     * The xref validation regexp
-     */
-    protected String xrefValidationRegexp;
 
     /**
      * The comments
@@ -179,6 +169,10 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
                 processSynonym(keyName, synonym);
             }
         }
+
+        if (shortLabel == null){
+            processShortLabel();
+        }
     }
 
     @Override
@@ -212,25 +206,46 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
 
                     if (database != null && accession != null){
                         processXrefDefinition(xref, database, accession, resIdRefs, pubmedPrimary);
-
-                        if (resIdRefs.size() == 1){
-                            String residXref = resIdRefs.iterator().next();
-
-                            TermDbXref residIdentity = new TermDbXref(RESID, RESID_MI_REF, residXref, IDENTITY, IDENTITY_MI_REF);
-                            this.dbXrefs.add(residIdentity);
-                        }
-                        else if (resIdRefs.size() > 1){
-                            for (String ref : resIdRefs){
-                                TermDbXref resXref = new TermDbXref(RESID, RESID_MI_REF, ref, SEE_ALSO, SEE_ALSO_MI_REF);
-                                this.dbXrefs.add(resXref);
-                            }
-                        }
                     }
                 }
             }
             else {
-                String accession = (String) xrefs.get(keyName);
-                processXref(keyName, accession);
+                String xref = (String) xrefs.get(keyName);
+
+                if (xref.contains(META_XREF_SEPARATOR)){
+                    String [] xrefDef = xref.split(META_XREF_SEPARATOR);
+                    String database = null;
+                    String accession = null;
+
+                    if (xrefDef.length == 2){
+                        database = xrefDef[0];
+                        accession = xrefDef[1].trim();
+                    }
+                    else if (xrefDef.length > 2){
+                        database = xrefDef[0];
+                        accession = xref.substring(database.length()).trim();
+                    }
+
+                    if (database != null && accession != null){
+                        processXref(database, accession);
+                    }
+                }
+                else {
+                    processXref(null, xref);
+                }
+            }
+        }
+
+        if (resIdRefs.size() == 1){
+            String residXref = resIdRefs.iterator().next();
+
+            TermDbXref residIdentity = new TermDbXref(RESID, RESID_MI_REF, residXref, IDENTITY, IDENTITY_MI_REF);
+            this.dbXrefs.add(residIdentity);
+        }
+        else if (resIdRefs.size() > 1){
+            for (String ref : resIdRefs){
+                TermDbXref resXref = new TermDbXref(RESID, RESID_MI_REF, ref, SEE_ALSO, SEE_ALSO_MI_REF);
+                this.dbXrefs.add(resXref);
             }
         }
     }
@@ -279,34 +294,52 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
         }
     }
 
+    protected void processShortLabel() {
+        if (shortLabel == null){
+            if ( fullName != null && fullName.length() <= MAX_SHORT_LABEL_LEN ) {
+                this.shortLabel = fullName;
+            } else if ( fullName != null && fullName.length() > MAX_SHORT_LABEL_LEN ) {
+                this.shortLabel = fullName.substring( 0, MAX_SHORT_LABEL_LEN );
+            }
+        }
+    }
+
     /**
      * Process the xrefs of a term
      * @param term
      */
     protected void processXrefs(Term term) {
         Collection<DbXref> dbXrefs = term.getXrefs();
-        Set<String> resIdRefs = new HashSet<String>(dbXrefs.size());
-        String pubmedPrimary = null;
-        for (DbXref xref : dbXrefs){
 
-            if (xref.getXrefType() == XREF_TYPE){
-                processXref(xref.getDbName(), xref.getAccession());
+        if (dbXrefs != null){
+            Set<String> resIdRefs = new HashSet<String>(dbXrefs.size());
+            String pubmedPrimary = null;
+            for (DbXref xref : dbXrefs){
+
+                if (xref.getXrefType() == XREF_TYPE){
+                    if (xref.getAccession() == null){
+                        processXref(xref.getDbName(), xref.getDescription());
+                    }
+                    else {
+                        processXref(xref.getDbName(), xref.getAccession());
+                    }
+                }
+                else {
+                    processXrefDefinition(xref.toString(), xref.getDbName(), xref.getAccession(), resIdRefs, pubmedPrimary);
+                }
             }
-            else {
-                processXrefDefinition(xref.toString(), xref.getDbName(), xref.getAccession(), resIdRefs, pubmedPrimary);
+
+            if (resIdRefs.size() == 1){
+                String residXref = resIdRefs.iterator().next();
+
+                TermDbXref residIdentity = new TermDbXref(RESID, RESID_MI_REF, residXref, IDENTITY, IDENTITY_MI_REF);
+                this.dbXrefs.add(residIdentity);
             }
-        }
-
-        if (resIdRefs.size() == 1){
-            String residXref = resIdRefs.iterator().next();
-
-            TermDbXref residIdentity = new TermDbXref(RESID, RESID_MI_REF, residXref, IDENTITY, IDENTITY_MI_REF);
-            this.dbXrefs.add(residIdentity);
-        }
-        else if (resIdRefs.size() > 1){
-            for (String ref : resIdRefs){
-                TermDbXref resXref = new TermDbXref(RESID, RESID_MI_REF, ref, SEE_ALSO, SEE_ALSO_MI_REF);
-                this.dbXrefs.add(resXref);
+            else if (resIdRefs.size() > 1){
+                for (String ref : resIdRefs){
+                    TermDbXref resXref = new TermDbXref(RESID, RESID_MI_REF, ref, SEE_ALSO, SEE_ALSO_MI_REF);
+                    this.dbXrefs.add(resXref);
+                }
             }
         }
     }
@@ -369,7 +402,7 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
             }
         }
         else {
-            processInfoInDescription(definition, otherInfoString);
+            processOtherInfoInDescription(definition, otherInfoString);
         }
     }
 
@@ -383,10 +416,12 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
     protected void processAnnotations(Term term) {
         Collection<Annotation> annotations = term.getAnnotations();
 
-        for (Annotation annot : annotations){
-            // only one comment with type null
-            if (annot.getAnnotationType() == null){
-                this.comments.add(annot.getAnnotationStringValue());
+        if (annotations != null){
+            for (Annotation annot : annotations){
+                // only one comment with type null
+                if (annot.getAnnotationType() == null){
+                    this.comments.add(annot.getAnnotationStringValue());
+                }
             }
         }
     }
@@ -424,16 +459,6 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
     @Override
     public String getURL() {
         return this.url;
-    }
-
-    @Override
-    public String getSearchUrl() {
-        return this.searchUrl;
-    }
-
-    @Override
-    public String getXrefValidationRegexp() {
-        return this.xrefValidationRegexp;
     }
 
     @Override

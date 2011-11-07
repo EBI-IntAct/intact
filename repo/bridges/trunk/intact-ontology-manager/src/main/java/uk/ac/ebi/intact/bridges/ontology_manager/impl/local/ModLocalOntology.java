@@ -18,6 +18,6 @@ import java.io.File;
 public class ModLocalOntology extends AbstractLocalOntology<IntactOntologyTermI, IntactOntology, IntactMODOboLoader> implements OntologyAccessTemplate<IntactOntologyTermI> {
     @Override
     protected IntactMODOboLoader createNewOBOLoader(File ontologyDirectory) throws OntologyLoaderException {
-        return new IntactMODOboLoader();
+        return new IntactMODOboLoader(ontologyDirectory);
     }
 }

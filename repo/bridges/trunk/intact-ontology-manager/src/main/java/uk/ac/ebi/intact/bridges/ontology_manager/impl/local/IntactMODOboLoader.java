@@ -9,6 +9,8 @@ import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 import uk.ac.ebi.ols.loader.parser.OBOFormatParser;
 import uk.ac.ebi.ols.model.interfaces.Term;
 
+import java.io.File;
+
 /**
  * iNTACT extension of OBOLoader for MOD ontology
  *
@@ -24,8 +26,8 @@ public class IntactMODOboLoader extends AbstractOboLoader<IntactOntologyTermI, I
      */
     public static final Log log = LogFactory.getLog(IntactMODOboLoader.class);
 
-    public IntactMODOboLoader( ) {
-        super(null);
+    public IntactMODOboLoader( File ontologyDirectory ) {
+        super(ontologyDirectory);
     }
 
     /////////////////////////////

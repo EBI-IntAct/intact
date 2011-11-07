@@ -23,7 +23,7 @@ public class TermAnnotation {
         this.description = desc;
     }
 
-        public TermAnnotation(String topicId, String topic, String desc){
+        public TermAnnotation(String topic, String topicId, String desc){
         if (topicId == null){
             throw new NullPointerException("A term annotations must have a non null topic Id");
         }

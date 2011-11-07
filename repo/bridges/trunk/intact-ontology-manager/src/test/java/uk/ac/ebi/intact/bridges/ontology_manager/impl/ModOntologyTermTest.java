@@ -1,5 +1,7 @@
 package uk.ac.ebi.intact.bridges.ontology_manager.impl;
 
+import org.junit.Test;
+
 /**
  * Tester of ModOntologyTerm
  *
@@ -9,4 +11,9 @@ package uk.ac.ebi.intact.bridges.ontology_manager.impl;
  */
 
 public class ModOntologyTermTest {
+
+    @Test
+    public void test_LoadFromTerm(){
+
+    }
 }

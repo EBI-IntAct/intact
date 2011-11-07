@@ -77,7 +77,7 @@ public class ModOntologyTerm extends AbstractIntactOntologyTerm{
             this.dbXrefs.add(pubmedRef);
         }
         else if ( RESID.equalsIgnoreCase(database) ) {
-            resIdRefs.add(xref);
+            resIdRefs.add(accession);
         } else if ( UNIMOD.equalsIgnoreCase(database) ) {
             TermDbXref unimodRef = new TermDbXref(UNIMOD, UNIMOD_MI_REF, accession, IDENTITY, IDENTITY_MI_REF);
             this.dbXrefs.add(unimodRef); // MOD xref
@@ -125,7 +125,10 @@ public class ModOntologyTerm extends AbstractIntactOntologyTerm{
 
     @Override
     protected void processSynonym(String synonymName, String synonym) {
-        if (synonymName.startsWith(EXACT_SYNONYM_KEY + META_DATA_SEPARATOR) || EXACT_SYNONYM_KEY.equalsIgnoreCase(synonymName)){
+        if (synonymName.startsWith(SHORTLABEL_IDENTIFIER + META_DATA_SEPARATOR)){
+            this.shortLabel = synonym;
+        }
+        else if (synonymName.startsWith(EXACT_SYNONYM_KEY + META_DATA_SEPARATOR) || EXACT_SYNONYM_KEY.equalsIgnoreCase(synonymName)){
             this.aliases.add(synonym);
         }
         else if (synonymName.startsWith(DELTAMASS_ALIAS_IDENTIFIER + META_DATA_SEPARATOR) || DELTAMASS_ALIAS_IDENTIFIER.equalsIgnoreCase(synonymName)){
