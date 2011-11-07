@@ -37,9 +37,11 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
     private static final String SEARCH_URL = "search-url";
     private static final String SEARCH_URL_MI_REF = "MI:0615";
 
-    private static final String REMAP = "remap to";
-    private static final String MAP = "map to";
-    private static final String REPLACE = "replace by";
+    private static final String REMAP = "REMAP TO";
+    private static final String MAP = "MAP TO";
+    private static final String REPLACE = "REPLACE BY";
+
+    private static final String QUOTE = "&quot;";
 
     public MiOntologyTerm(String acc) {
         super(acc);
@@ -71,17 +73,17 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
 
     @Override
     protected void processObsoleteMessage() {
-        String lowerObsoleteMessage = this.obsoleteMessage.toLowerCase();
+        String upperObsoleteMessage = this.obsoleteMessage.toUpperCase();
         String remappingString = null;
 
-        if (lowerObsoleteMessage.contains(MAP)){
-            remappingString = lowerObsoleteMessage.substring(lowerObsoleteMessage.indexOf(MAP) + MAP.length());
+        if (upperObsoleteMessage.contains(MAP)){
+            remappingString = upperObsoleteMessage.substring(upperObsoleteMessage.indexOf(MAP) + MAP.length());
         }
-        else if (lowerObsoleteMessage.contains(REMAP)){
-            remappingString = lowerObsoleteMessage.substring(lowerObsoleteMessage.indexOf(REMAP) + REMAP.length());
+        else if (upperObsoleteMessage.contains(REMAP)){
+            remappingString = upperObsoleteMessage.substring(upperObsoleteMessage.indexOf(REMAP) + REMAP.length());
         }
-        else if (lowerObsoleteMessage.contains(REPLACE)){
-            remappingString = lowerObsoleteMessage.substring(lowerObsoleteMessage.indexOf(REPLACE) + REPLACE.length());
+        else if (upperObsoleteMessage.contains(REPLACE)){
+            remappingString = upperObsoleteMessage.substring(upperObsoleteMessage.indexOf(REPLACE) + REPLACE.length());
         }
 
         if (remappingString != null){
@@ -104,8 +106,8 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
             }
         }
         else {
-            Matcher miMatcher = MI_REGEXP.matcher(lowerObsoleteMessage);
-            Matcher modMatcher = MOD_REGEXP.matcher(lowerObsoleteMessage);
+            Matcher miMatcher = MI_REGEXP.matcher(upperObsoleteMessage);
+            Matcher modMatcher = MOD_REGEXP.matcher(upperObsoleteMessage);
 
             while (miMatcher.find()){
                 this.possibleTermsToRemapTo.add(miMatcher.group());
@@ -120,16 +122,18 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
     protected void processSynonyms(Term term) {
         Collection<TermSynonym> synonyms = term.getSynonyms();
 
-        for (TermSynonym synonym : synonyms){
-            Term synonymType = synonym.getSynonymType();
-            //PSI-MOD-label for MOD
-            if (synonymType != null){
-                if (SHORTLABEL_IDENTIFIER.equalsIgnoreCase(synonymType.getName())){
-                    this.shortLabel = synonym.getSynonym();
-                }
-                else if (ALIAS_IDENTIFIER.equalsIgnoreCase(synonymType.getName())
-                        || EXACT_KEY.equalsIgnoreCase(synonymType.getName())){
-                    this.aliases.add(synonym.getSynonym());
+        if (synonyms != null){
+            for (TermSynonym synonym : synonyms){
+                Term synonymType = synonym.getSynonymType();
+                //PSI-MOD-label for MOD
+                if (synonymType != null){
+                    if (SHORTLABEL_IDENTIFIER.equalsIgnoreCase(synonymType.getName())){
+                        this.shortLabel = synonym.getSynonym();
+                    }
+                    else if (ALIAS_IDENTIFIER.equalsIgnoreCase(synonymType.getName())
+                            || EXACT_KEY.equalsIgnoreCase(synonymType.getName())){
+                        this.aliases.add(synonym.getSynonym());
+                    }
                 }
             }
         }
@@ -138,7 +142,10 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
     @Override
     protected void processSynonym(String synonymName, String synonym) {
 
-        if (synonymName.startsWith(EXACT_SYNONYM_KEY + META_DATA_SEPARATOR) || EXACT_SYNONYM_KEY.equalsIgnoreCase(synonymName)){
+        if (synonymName.startsWith(SHORTLABEL_IDENTIFIER + META_DATA_SEPARATOR)){
+            this.shortLabel = synonym;
+        }
+        else if (synonymName.startsWith(EXACT_SYNONYM_KEY + META_DATA_SEPARATOR) || EXACT_SYNONYM_KEY.equalsIgnoreCase(synonymName)){
             this.aliases.add(synonym);
         }
         else if (synonymName.startsWith(ALIAS_IDENTIFIER + META_DATA_SEPARATOR) || ALIAS_IDENTIFIER.equalsIgnoreCase(synonymName)){
@@ -151,12 +158,44 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
         // xref validation regexp
         if (XREF_VALIDATION_REGEXP.equalsIgnoreCase(db)){
 
-            TermAnnotation validation = new TermAnnotation(XREF_VALIDATION_REGEXP, XREF_VALIDATION_REGEXP_MI_REF, accession.trim());  // MI xref
+            String annotationText = accession.trim();
+
+            if (annotationText.startsWith(QUOTE)){
+                annotationText = annotationText.substring(QUOTE.length());
+            }
+            if (annotationText.endsWith(QUOTE)){
+                annotationText = annotationText.substring(0, annotationText.indexOf(QUOTE));
+            }
+
+            TermAnnotation validation = new TermAnnotation(XREF_VALIDATION_REGEXP, XREF_VALIDATION_REGEXP_MI_REF, annotationText);  // MI xref
             this.annotations.add(validation);
         }
         // search url
-        else if (SEARCH_URL.equalsIgnoreCase(db)){
-            TermAnnotation validation = new TermAnnotation(SEARCH_URL, SEARCH_URL_MI_REF, accession);  // MI xref
+        else if (db == null && accession.startsWith(SEARCH_URL)){
+            String url = accession.substring(SEARCH_URL.length());
+
+            if (url.startsWith("\\")){
+                url = url.substring(1);
+            }
+            if (url.endsWith("\\")){
+                url = url.substring(0, url.length() - 1);
+            }
+
+            TermAnnotation validation = new TermAnnotation(SEARCH_URL, SEARCH_URL_MI_REF, url);  // MI xref
+            this.annotations.add(validation);
+        }
+        else if (db.startsWith(SEARCH_URL)){
+            String prefix = db.substring(SEARCH_URL.length());
+            String url = prefix + META_XREF_SEPARATOR + accession;
+
+            if (url.startsWith("\"")){
+                url = url.substring(1);
+            }
+            if (url.endsWith("\"")){
+                url = url.substring(0, url.length() - 1);
+            }
+
+            TermAnnotation validation = new TermAnnotation(SEARCH_URL, SEARCH_URL_MI_REF, url);  // MI xref
             this.annotations.add(validation);
         }
     }
@@ -176,10 +215,6 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
                 this.dbXrefs.add(pubmedRef);
             }
         }
-        else if ( PUBMED.equalsIgnoreCase(database) ) {
-            TermDbXref pubmedRef = new TermDbXref(PUBMED, PUBMED_MI_REF, accession, METHOD_REFERENCE, METHOD_REFERENCE_MI_REF);
-            this.dbXrefs.add(pubmedRef);
-        }
         else if ( PMID_APPLICATION.equalsIgnoreCase(database) ) {
             TermDbXref pubmedRef = new TermDbXref(PUBMED, PUBMED_MI_REF, accession, SEE_ALSO, SEE_ALSO_MI_REF);
             this.dbXrefs.add(pubmedRef); // MI not MOD
@@ -187,7 +222,7 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
             TermDbXref goRef = new TermDbXref(GO, GO_MI_REF, database + ":" + accession, IDENTITY, IDENTITY_MI_REF);
             this.dbXrefs.add(goRef); // MI not MOD
         } else if ( RESID.equalsIgnoreCase(database) ) {
-            resIdRefs.add(xref);
+            resIdRefs.add(accession);
         } else if ( SO.equalsIgnoreCase(database) ) {
             TermDbXref soRef = new TermDbXref(SO, SO_MI_REF, database + ":" + accession, IDENTITY, IDENTITY_MI_REF);
             this.dbXrefs.add(soRef);  // MI not MOD

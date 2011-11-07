@@ -19,6 +19,6 @@ public class MiLocalOntology extends AbstractLocalOntology<IntactOntologyTermI, 
 
     @Override
     protected IntactMIOboLoader createNewOBOLoader(File ontologyDirectory) throws OntologyLoaderException {
-        return new IntactMIOboLoader();
+        return new IntactMIOboLoader(ontologyDirectory);
     }
 }
