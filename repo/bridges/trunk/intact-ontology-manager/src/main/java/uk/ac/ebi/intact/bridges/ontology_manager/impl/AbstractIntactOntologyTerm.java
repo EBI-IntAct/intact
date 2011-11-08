@@ -206,7 +206,7 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
                     }
 
                     if (database != null && accession != null){
-                        processXrefDefinition(xref, database, accession, resIdRefs, pubmedPrimary);
+                        pubmedPrimary = processXrefDefinition(xref, database, accession, resIdRefs, pubmedPrimary);
                     }
                 }
             }
@@ -266,7 +266,7 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
      * @param resIdRefs : the resId xrefs
      * @param pubmedPrimary : the pubmed primary ID
      */
-    protected abstract void processXrefDefinition(String xref, String database, String accession, Set<String> resIdRefs, String pubmedPrimary);
+    protected abstract String processXrefDefinition(String xref, String database, String accession, Set<String> resIdRefs, String pubmedPrimary);
 
     /**
      * Process the synonyms of a term
@@ -288,9 +288,9 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
     protected void processShortLabel(Term term) {
         if (shortLabel == null){
             if ( term.getName() != null && term.getName().length() <= MAX_SHORT_LABEL_LEN ) {
-                this.shortLabel = term.getName();
+                this.shortLabel = term.getName().toLowerCase();
             } else if ( term.getName() != null && term.getName().length() > MAX_SHORT_LABEL_LEN ) {
-                this.shortLabel = term.getName().substring( 0, MAX_SHORT_LABEL_LEN );
+                this.shortLabel = term.getName().substring( 0, MAX_SHORT_LABEL_LEN ).toLowerCase();
             }
         }
     }
@@ -326,7 +326,7 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
                     }
                 }
                 else {
-                    processXrefDefinition(xref.toString(), xref.getDbName(), xref.getAccession(), resIdRefs, pubmedPrimary);
+                    pubmedPrimary = processXrefDefinition(xref.toString(), xref.getDbName(), xref.getAccession(), resIdRefs, pubmedPrimary);
                 }
             }
 

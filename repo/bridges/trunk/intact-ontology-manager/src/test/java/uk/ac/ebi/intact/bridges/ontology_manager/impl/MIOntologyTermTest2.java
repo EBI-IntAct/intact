@@ -35,7 +35,7 @@ public class MIOntologyTermTest2 {
 
         // term with alias exact and shortlabel defined in synonyms
         // this term also have 3 PMIDs
-        IntactOntologyTermI term1 = new MiOntologyTerm("MI:0018", "two hybrid");
+        MiOntologyTerm term1 = new MiOntologyTerm("MI:0018", "two hybrid");
         term1.loadXrefsFrom(olsClient.getTermXrefs("MI:0018", "MI"));
         term1.loadSynonymsFrom(olsClient.getTermMetadata("MI:0018", "MI"), olsClient.isObsolete("MI:0018", "MI"));
 
@@ -76,7 +76,7 @@ public class MIOntologyTermTest2 {
         Assert.assertEquals("The classical two-hybrid system is a method that uses transcriptional activity as a measure of protein-protein interaction. It relies on the modular nature of many site-specific transcriptional activators (GAL 4) , which consist of a DNA-binding domain and a transcriptional activation domain. The DNA-binding domain serves to target the activator to the specific genes that will be expressed, and the activation domain contacts other proteins of the transcriptional machinery to enable transcription to occur. The two-hybrid system is based on the observation that the two domains of the activator need to be non-covalently brought together by the interaction of any two proteins. The application of this system requires the expression of two hybrid. Generally this assay is performed in yeast cell, but it can also be carried out in other organism. The bait protein is fused to the DNA binding molecule, the prey to the transcriptional activator.", term1.getDefinition());
 
         // term with no alias shortlabel
-        IntactOntologyTermI term2 = new MiOntologyTerm("MI:0084", "phage display");
+        MiOntologyTerm term2 = new MiOntologyTerm("MI:0084", "phage display");
         term2.loadXrefsFrom(olsClient.getTermXrefs("MI:0084", "MI"));
         term2.loadSynonymsFrom(olsClient.getTermMetadata("MI:0084", "MI"), olsClient.isObsolete("MI:0084", "MI"));
 
@@ -91,7 +91,7 @@ public class MIOntologyTermTest2 {
         // term with id-validation-regexp and search URL
         // the term also have http in definition
         // the term does have a single PMID xref
-        IntactOntologyTermI term1 = new MiOntologyTerm("MI:0446");
+        MiOntologyTerm term1 = new MiOntologyTerm("MI:0446");
         term1.loadXrefsFrom(olsClient.getTermXrefs("MI:0446", "MI"));
         term1.loadSynonymsFrom(olsClient.getTermMetadata("MI:0446", "MI"), olsClient.isObsolete("MI:0446", "MI"));
 
@@ -138,7 +138,7 @@ public class MIOntologyTermTest2 {
     @Test
     public void test_Definition_Xrefs() throws RemoteException {
         // term with PMID application xref
-        IntactOntologyTermI term1 = new MiOntologyTerm("MI:0012");
+        MiOntologyTerm term1 = new MiOntologyTerm("MI:0012");
         term1.loadXrefsFrom(olsClient.getTermXrefs("MI:0012", "MI"));
         term1.loadSynonymsFrom(olsClient.getTermMetadata("MI:0012", "MI"), olsClient.isObsolete("MI:0012", "MI"));
 
@@ -162,7 +162,7 @@ public class MIOntologyTermTest2 {
         }
 
         // term with GO xref and several RESID xrefs
-        IntactOntologyTermI term2 = new MiOntologyTerm("MI:0192");
+        MiOntologyTerm term2 = new MiOntologyTerm("MI:0192");
         term2.loadXrefsFrom(olsClient.getTermXrefs("MI:0192", "MI"));
         term2.loadSynonymsFrom(olsClient.getTermMetadata("MI:0192", "MI"), olsClient.isObsolete("MI:0192", "MI"));
 
@@ -206,7 +206,7 @@ public class MIOntologyTermTest2 {
         }
 
         // term with SO xref
-        IntactOntologyTermI term3 = new MiOntologyTerm("MI:0318");
+        MiOntologyTerm term3 = new MiOntologyTerm("MI:0318");
         term3.loadXrefsFrom(olsClient.getTermXrefs("MI:0318", "MI"));
         term3.loadSynonymsFrom(olsClient.getTermMetadata("MI:0318", "MI"), olsClient.isObsolete("MI:0318", "MI"));
 
@@ -238,7 +238,7 @@ public class MIOntologyTermTest2 {
     @Test
     public void test_comment() throws RemoteException {
         // term with one comment
-        IntactOntologyTermI term1 = new MiOntologyTerm("MI:0108");
+        MiOntologyTerm term1 = new MiOntologyTerm("MI:0108");
         term1.loadXrefsFrom(olsClient.getTermXrefs("MI:0108", "MI"));
         term1.loadSynonymsFrom(olsClient.getTermMetadata("MI:0108", "MI"), olsClient.isObsolete("MI:0108", "MI"));
         Assert.assertNotNull(term1);
@@ -250,7 +250,7 @@ public class MIOntologyTermTest2 {
     @Test
     public void test_obsolete() throws RemoteException {
         // term having one obsolete 'remap to' and one RESID xref
-        IntactOntologyTermI term1 = new MiOntologyTerm("MI:0189");
+        MiOntologyTerm term1 = new MiOntologyTerm("MI:0189");
         term1.loadXrefsFrom(olsClient.getTermXrefs("MI:0189", "MI"));
         term1.loadSynonymsFrom(olsClient.getTermMetadata("MI:0189", "MI"), olsClient.isObsolete("MI:0189", "MI"));
 
@@ -284,7 +284,7 @@ public class MIOntologyTermTest2 {
         }
 
         // term having one obsolete 'map to'
-        IntactOntologyTermI term2 = new MiOntologyTerm("MI:0309");
+        MiOntologyTerm term2 = new MiOntologyTerm("MI:0309");
         term2.loadXrefsFrom(olsClient.getTermXrefs("MI:0309", "MI"));
         term2.loadSynonymsFrom(olsClient.getTermMetadata("MI:0309", "MI"), olsClient.isObsolete("MI:0309", "MI"));
 
@@ -294,7 +294,7 @@ public class MIOntologyTermTest2 {
         Assert.assertEquals("MI:0507", term2.getRemappedTerm());
 
         // term having one obsolete 'replace by'
-        IntactOntologyTermI term3 = new MiOntologyTerm("MI:0409");
+        MiOntologyTerm term3 = new MiOntologyTerm("MI:0409");
         term3.loadXrefsFrom(olsClient.getTermXrefs("MI:0409", "MI"));
         term3.loadSynonymsFrom(olsClient.getTermMetadata("MI:0409", "MI"), olsClient.isObsolete("MI:0409", "MI"));
 
@@ -305,7 +305,7 @@ public class MIOntologyTermTest2 {
         Assert.assertNull(term3.getRemappedTerm());
 
         // term having one obsolete and several choices
-        IntactOntologyTermI term4 = new MiOntologyTerm("MI:0021");
+        MiOntologyTerm term4 = new MiOntologyTerm("MI:0021");
         term4.loadXrefsFrom(olsClient.getTermXrefs("MI:0021", "MI"));
         term4.loadSynonymsFrom(olsClient.getTermMetadata("MI:0021", "MI"), olsClient.isObsolete("MI:0021", "MI"));
 
@@ -316,7 +316,7 @@ public class MIOntologyTermTest2 {
         Assert.assertNull(term4.getRemappedTerm());
 
         // term having one obsolete and no choices
-        IntactOntologyTermI term5 = new MiOntologyTerm("MI:0650");
+        MiOntologyTerm term5 = new MiOntologyTerm("MI:0650");
         term5.loadXrefsFrom(olsClient.getTermXrefs("MI:0650", "MI"));
         term5.loadSynonymsFrom(olsClient.getTermMetadata("MI:0650", "MI"), olsClient.isObsolete("MI:0650", "MI"));
 

@@ -128,7 +128,7 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
                 //PSI-MOD-label for MOD
                 if (synonymType != null){
                     if (SHORTLABEL_IDENTIFIER.equalsIgnoreCase(synonymType.getName())){
-                        this.shortLabel = synonym.getSynonym();
+                        this.shortLabel = synonym.getSynonym().toLowerCase();
                     }
                     else if (ALIAS_IDENTIFIER.equalsIgnoreCase(synonymType.getName())
                             || EXACT_KEY.equalsIgnoreCase(synonymType.getName())){
@@ -143,7 +143,7 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
     protected void processSynonym(String synonymName, String synonym) {
 
         if (synonymName.startsWith(SHORTLABEL_IDENTIFIER + META_DATA_SEPARATOR)){
-            this.shortLabel = synonym;
+            this.shortLabel = synonym.toLowerCase();
         }
         else if (synonymName.startsWith(EXACT_SYNONYM_KEY + META_DATA_SEPARATOR) || EXACT_SYNONYM_KEY.equalsIgnoreCase(synonymName)){
             this.aliases.add(synonym);
@@ -207,7 +207,7 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
     }
 
     @Override
-    protected void processXrefDefinition(String xref, String database, String accession, Set<String> resIdRefs, String pubmedPrimary) {
+    protected String processXrefDefinition(String xref, String database, String accession, Set<String> resIdRefs, String pubmedPrimary) {
 
         if ( PMID.equalsIgnoreCase(database) ) {
             if (pubmedPrimary == null){
@@ -233,5 +233,7 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
             TermDbXref soRef = new TermDbXref(SO, SO_MI_REF, database + ":" + accession, IDENTITY, IDENTITY_MI_REF);
             this.dbXrefs.add(soRef);  // MI not MOD
         }
+
+        return pubmedPrimary;
     }
 }
