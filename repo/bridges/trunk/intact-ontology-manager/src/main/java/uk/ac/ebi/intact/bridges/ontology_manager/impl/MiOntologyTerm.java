@@ -184,6 +184,12 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
             TermAnnotation validation = new TermAnnotation(SEARCH_URL, SEARCH_URL_MI_REF, url);  // MI xref
             this.annotations.add(validation);
         }
+        else if (db.equalsIgnoreCase(SEARCH_URL)){
+            String url = accession.trim();
+
+            TermAnnotation validation = new TermAnnotation(SEARCH_URL, SEARCH_URL_MI_REF, url);  // MI xref
+            this.annotations.add(validation);
+        }
         else if (db.startsWith(SEARCH_URL)){
             String prefix = db.substring(SEARCH_URL.length());
             String url = prefix + META_XREF_SEPARATOR + accession;

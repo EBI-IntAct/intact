@@ -1,13 +1,19 @@
 package uk.ac.ebi.intact.bridges.ontology_manager;
 
 import psidev.psi.tools.ontology_manager.OntologyManagerTemplate;
+import psidev.psi.tools.ontology_manager.client.OlsClient;
+import psidev.psi.tools.ontology_manager.impl.local.OntologyLoaderException;
 import psidev.psi.tools.ontology_manager.interfaces.OntologyAccessTemplate;
-import uk.ac.ebi.intact.bridges.ontology_manager.impl.local.MiLocalOntology;
-import uk.ac.ebi.intact.bridges.ontology_manager.impl.local.ModLocalOntology;
-import uk.ac.ebi.intact.bridges.ontology_manager.impl.ols.MiOlsOntology;
-import uk.ac.ebi.intact.bridges.ontology_manager.impl.ols.ModOlsOntology;
+import uk.ac.ebi.intact.bridges.ontology_manager.builders.IntactOntologyTermBuilder;
+import uk.ac.ebi.intact.bridges.ontology_manager.builders.MiOntologyTermBuilder;
+import uk.ac.ebi.intact.bridges.ontology_manager.builders.ModOntologyTermBuilder;
+import uk.ac.ebi.intact.bridges.ontology_manager.client.IntactFilterOlsClient;
+import uk.ac.ebi.intact.bridges.ontology_manager.impl.local.IntactLocalOntology;
+import uk.ac.ebi.intact.bridges.ontology_manager.impl.ols.IntactOlsOntology;
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 
+import javax.xml.rpc.ServiceException;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,41 +32,61 @@ public class IntactOntologyManager extends OntologyManagerTemplate<IntactOntolog
     private static final String MI = "MI";
     private static final String MOD = "MOD";
 
-    protected static final Map<String, Class> keyword2classFile = new HashMap<String, Class>();
-    protected static final Map<String, Class> keyword2classOLS = new HashMap<String, Class>();
+    protected final static Map<String, Class> keyword2class = new HashMap<String, Class>();
 
     static {
-        keyword2classFile.put( "MI", MiLocalOntology.class );
-        keyword2classFile.put( "MOD", ModLocalOntology.class );
-
-        keyword2classOLS.put( "MI", MiOlsOntology.class );
-        keyword2classOLS.put( "MOD", ModOlsOntology.class );
+        keyword2class.put( "MI", MiOntologyTermBuilder.class );
+        keyword2class.put( "MOD", ModOntologyTermBuilder.class );
     }
 
     @Override
-    protected Class findLoader(String loaderClass, String lcLoaderClass, String ontologyId) throws ClassNotFoundException {
-        Map<String, Class> keyword2class = null;
-        Class loader;
-
-        if (FILE_SOURCE.equalsIgnoreCase(ontologyId)){
-            keyword2class = keyword2classFile;
-        }
-        else if (OLS_SOURCE.equalsIgnoreCase(ontologyId)){
-            keyword2class = keyword2classOLS;
-        }
-        else {
-            loader = Class.forName( loaderClass );
-        }
+    protected OntologyAccessTemplate<IntactOntologyTermI> findOntologyAccess(String sourceURI, String ontologyId, String ontologyName, String ontologyVersion, String format, String loaderClass) throws ClassNotFoundException {
+        Class builderClass;
 
         if ( keyword2class.containsKey( ontologyId ) ) {
-            loader = keyword2class.get( ontologyId );
+            builderClass = keyword2class.get( ontologyId );
             if ( log.isDebugEnabled() ) {
-                log.debug( "the source '" + ontologyId + "' was converted to Class: " + loader );
+                log.debug( "the source '" + ontologyId + "' was converted to Class: " + builderClass );
+            }
+
+            try {
+                IntactOntologyTermBuilder termBuilder = (IntactOntologyTermBuilder) builderClass.newInstance();
+
+                if (FILE_SOURCE.equalsIgnoreCase(loaderClass)){
+                    IntactLocalOntology localOntology = new IntactLocalOntology(termBuilder);
+                    return localOntology;
+                }
+                else if (OLS_SOURCE.equalsIgnoreCase(loaderClass) && MI.equals(ontologyId)){
+                    OlsClient intactClient = new IntactFilterOlsClient();
+                    IntactOlsOntology olsOntology = new IntactOlsOntology(termBuilder, intactClient);
+
+                    return olsOntology;
+                }
+                else if (OLS_SOURCE.equalsIgnoreCase(loaderClass)){
+                    IntactOlsOntology olsOntology = new IntactOlsOntology(termBuilder);
+
+                    return olsOntology;
+                }
+                else {
+                    throw new IllegalArgumentException("The loader class in the configuration class must be file or ols.");
+                }
+
+            } catch (InstantiationException e) {
+                throw new ClassNotFoundException("Impossible to instantiate " + builderClass, e);
+            } catch (IllegalAccessException e) {
+                throw new ClassNotFoundException("Impossible to instantiate " + builderClass, e);
+            } catch (OntologyLoaderException e) {
+                e.printStackTrace();
+                return null;
+            } catch (ServiceException e) {
+                e.printStackTrace();
+                return null;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                return null;
             }
         } else {
-            loader = Class.forName( loaderClass );
+            throw new IllegalArgumentException("The ontology " + ontologyId + " is not used in Intact and does not have a ontology builder.");
         }
-
-        return loader;
     }
 }

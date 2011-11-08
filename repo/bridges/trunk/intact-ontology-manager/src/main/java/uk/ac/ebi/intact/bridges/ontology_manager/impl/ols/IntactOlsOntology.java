@@ -2,9 +2,11 @@ package uk.ac.ebi.intact.bridges.ontology_manager.impl.ols;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import psidev.psi.tools.ontology_manager.client.OlsClient;
 import psidev.psi.tools.ontology_manager.impl.local.OntologyLoaderException;
 import psidev.psi.tools.ontology_manager.impl.ols.AbstractOlsOntology;
 import psidev.psi.tools.ontology_manager.interfaces.OntologyAccessTemplate;
+import uk.ac.ebi.intact.bridges.ontology_manager.builders.IntactOntologyTermBuilder;
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 
 import java.rmi.RemoteException;
@@ -17,33 +19,44 @@ import java.rmi.RemoteException;
  * @since <pre>01/11/11</pre>
  */
 
-public abstract class IntactOlsOntology extends AbstractOlsOntology<IntactOntologyTermI> implements OntologyAccessTemplate<IntactOntologyTermI> {
+public class IntactOlsOntology extends AbstractOlsOntology<IntactOntologyTermI> implements OntologyAccessTemplate<IntactOntologyTermI> {
 
     public static final Log log = LogFactory.getLog(IntactOlsOntology.class);
 
-    public IntactOlsOntology() throws OntologyLoaderException {
+    protected IntactOntologyTermBuilder termBuilder;
+
+    public IntactOlsOntology(IntactOntologyTermBuilder termBuilder) throws OntologyLoaderException {
         super();
         // we don't need to load the synonyms, we will process them in another fashion
         this.useTermSynonyms = false;
+        if (termBuilder == null){
+            throw new IllegalArgumentException("The IntactOntologyTerm builder must be non null");
+        }
+        this.termBuilder = termBuilder;
+    }
+
+    public IntactOlsOntology(IntactOntologyTermBuilder termBuilder, OlsClient olsClient) throws OntologyLoaderException {
+        super();
+        // we don't need to load the synonyms, we will process them in another fashion
+        this.useTermSynonyms = false;
+        if (termBuilder == null){
+            throw new IllegalArgumentException("The IntactOntologyTerm builder must be non null");
+        }
+        this.termBuilder = termBuilder;
+
+        if (olsClient == null){
+            throw new IllegalArgumentException("The OlsClient must be non null");
+        }
+        this.olsClient = olsClient;
     }
 
     @Override
     protected IntactOntologyTermI createNewOntologyTerm(String identifier, String name){
-        IntactOntologyTermI term = createNewOntologyTermInstance(identifier, name);
-
         try {
-            // load metadata
-            term.loadSynonymsFrom(getAllTermSynonyms(identifier), olsClient.isObsolete(identifier, ontologyID));
-
-            // loadXref
-            term.loadXrefsFrom(getAllTermXrefs(identifier));
-
-            return term;
+            return termBuilder.createIntactOntologyTermFrom(identifier, name, getAllTermSynonyms(identifier), getAllTermXrefs(identifier), olsClient.isObsolete(identifier, ontologyID));
         } catch (RemoteException e) {
             e.printStackTrace();
             return null;
         }
     }
-
-    protected abstract IntactOntologyTermI createNewOntologyTermInstance(String identifier, String name);
 }

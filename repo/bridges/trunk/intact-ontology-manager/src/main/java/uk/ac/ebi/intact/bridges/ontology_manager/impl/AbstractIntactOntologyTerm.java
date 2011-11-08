@@ -4,6 +4,7 @@ import psidev.psi.tools.ontology_manager.impl.OntologyTermImpl;
 import uk.ac.ebi.intact.bridges.ontology_manager.TermAnnotation;
 import uk.ac.ebi.intact.bridges.ontology_manager.TermDbXref;
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
+import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.LoadableOntologyTerm;
 import uk.ac.ebi.ols.model.interfaces.Annotation;
 import uk.ac.ebi.ols.model.interfaces.DbXref;
 import uk.ac.ebi.ols.model.interfaces.Term;
@@ -19,7 +20,7 @@ import java.util.regex.Pattern;
  * @since <pre>01/11/11</pre>
  */
 
-public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implements IntactOntologyTermI {
+public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implements IntactOntologyTermI, LoadableOntologyTerm {
     protected static final String PMID = "PMID";
 
     protected static final String PUBMED = "pubmed";

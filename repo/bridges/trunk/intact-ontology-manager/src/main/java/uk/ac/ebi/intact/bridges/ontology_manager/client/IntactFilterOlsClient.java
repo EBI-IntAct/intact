@@ -16,8 +16,8 @@ import java.util.Map;
  * @since <pre>07/11/11</pre>
  */
 
-public class IntactOlsClient extends OlsClient{
-    public IntactOlsClient() throws MalformedURLException, ServiceException {
+public class IntactFilterOlsClient extends OlsClient{
+    public IntactFilterOlsClient() throws MalformedURLException, ServiceException {
         super();
     }
 

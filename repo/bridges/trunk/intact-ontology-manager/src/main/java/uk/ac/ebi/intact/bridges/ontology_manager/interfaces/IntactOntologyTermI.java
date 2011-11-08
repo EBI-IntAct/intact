@@ -3,9 +3,7 @@ package uk.ac.ebi.intact.bridges.ontology_manager.interfaces;
 import psidev.psi.tools.ontology_manager.interfaces.OntologyTermI;
 import uk.ac.ebi.intact.bridges.ontology_manager.TermAnnotation;
 import uk.ac.ebi.intact.bridges.ontology_manager.TermDbXref;
-import uk.ac.ebi.ols.model.interfaces.Term;
 
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -29,8 +27,4 @@ public interface IntactOntologyTermI extends OntologyTermI {
     public Set<String> getAliases();
     public String getRemappedTerm();
     public Set<String> getPossibleTermsToRemapTo();
-
-    public void loadTermFrom (Term term);
-    public void loadSynonymsFrom (Map metadata, boolean isObsolete);
-    public void loadXrefsFrom (Map xrefs);
 }
