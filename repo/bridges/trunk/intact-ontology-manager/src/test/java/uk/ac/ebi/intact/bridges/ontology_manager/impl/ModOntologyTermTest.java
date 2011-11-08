@@ -204,10 +204,12 @@ public class ModOntologyTermTest {
         }
 
         Assert.assertEquals("A protein modification that effectively converts an L-histidine residue to a phosphorylated L-histidine, such as pros-phosphohistidine, or tele-phosphohistidine.", term4.getDefinition());
+    }
 
-        // term with shortlabel defined in synonyms
-        // it contains 3 aliases
-        // this term also have 1 Unimod
+    @Test
+    public void test_xref_definition(){
+        // term with shortlabel not defined in synonyms
+        // it contains URL xref
         IntactOntologyTermI term5 = intactOntology.search("MOD:01603");
         Assert.assertNotNull(term5);
 
@@ -230,6 +232,6 @@ public class ModOntologyTermTest {
             }
         }
         Assert.assertEquals("http://www.sigmaaldrich.com/catalog/ProductDetail.do?N4=609021|ALDRICH&amp;N5=SEARCH_CONCAT_PNO|BRAND_KEY&amp;F=SPEC&amp;lang=en_US0.000000E+000", term5.getURL());
-        Assert.assertEquals("A protein modification that effectively converts an L-histidine residue to a phosphorylated L-histidine, such as pros-phosphohistidine, or tele-phosphohistidine.", term4.getDefinition());
+        Assert.assertEquals("A protein modification that effectively converts an L-lysine residue to 2x(15)N labeled L-lysine.", term5.getDefinition());
     }
 }
