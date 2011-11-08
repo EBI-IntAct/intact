@@ -6,7 +6,8 @@ import org.junit.Test;
 import psidev.psi.tools.ontology_manager.impl.local.OntologyLoaderException;
 import uk.ac.ebi.intact.bridges.ontology_manager.TermAnnotation;
 import uk.ac.ebi.intact.bridges.ontology_manager.TermDbXref;
-import uk.ac.ebi.intact.bridges.ontology_manager.impl.local.IntactMIOboLoader;
+import uk.ac.ebi.intact.bridges.ontology_manager.builders.MiOntologyTermBuilder;
+import uk.ac.ebi.intact.bridges.ontology_manager.impl.local.MIOboLoader;
 import uk.ac.ebi.intact.bridges.ontology_manager.impl.local.IntactOntology;
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 
@@ -25,7 +26,7 @@ public class MiOntologyTermTest {
 
     @Before
     public void parseOboTest() throws OntologyLoaderException {
-        IntactMIOboLoader parser = new IntactMIOboLoader(null);
+        MIOboLoader parser = new MIOboLoader(null, null, null, null, new MiOntologyTermBuilder());
 
         URL psiMiObo = MiOntologyTermTest.class.getResource("/psi-mi.obo");
         this.intactOntology = parser.parseOboFile(psiMiObo);

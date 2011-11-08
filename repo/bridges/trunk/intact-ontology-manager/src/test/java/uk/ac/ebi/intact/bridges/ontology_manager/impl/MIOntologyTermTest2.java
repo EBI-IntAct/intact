@@ -6,7 +6,7 @@ import org.junit.Test;
 import psidev.psi.tools.ontology_manager.client.OlsClient;
 import uk.ac.ebi.intact.bridges.ontology_manager.TermAnnotation;
 import uk.ac.ebi.intact.bridges.ontology_manager.TermDbXref;
-import uk.ac.ebi.intact.bridges.ontology_manager.client.IntactOlsClient;
+import uk.ac.ebi.intact.bridges.ontology_manager.client.IntactFilterOlsClient;
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 
 import javax.xml.rpc.ServiceException;
@@ -27,7 +27,7 @@ public class MIOntologyTermTest2 {
 
     @Before
     public void parseOboTest() throws MalformedURLException, ServiceException {
-        olsClient = new IntactOlsClient();
+        olsClient = new IntactFilterOlsClient();
     }
 
     @Test
