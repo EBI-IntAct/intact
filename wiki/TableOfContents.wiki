@@ -5,4 +5,8 @@
   * Developer information
     * [GettingStarted Getting started]
     * [DatabaseSchemaV240 Database architecture]
+    * [IntactContext]
+    * Persistence
+    * Indexing data (SOLR)
   * Tools and Services
+    * Editor (Standalone curation tool)
