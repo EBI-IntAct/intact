@@ -1,4 +1,4 @@
-package uk.ac.ebi.intact.bridges.ontology_manager.impl;
+package uk.ac.ebi.intact.bridges.ontology_manager.impl.impl;
 
 import org.junit.Assert;
 import org.junit.Before;

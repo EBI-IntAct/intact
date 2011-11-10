@@ -1,11 +1,11 @@
-package uk.ac.ebi.intact.bridges.ontology_manager.impl;
+package uk.ac.ebi.intact.bridges.ontology_manager.impl.impl;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import psidev.psi.tools.ontology_manager.client.OlsClient;
 import uk.ac.ebi.intact.bridges.ontology_manager.TermDbXref;
-import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
+import uk.ac.ebi.intact.bridges.ontology_manager.impl.ModOntologyTerm;
 
 import javax.xml.rpc.ServiceException;
 import java.net.MalformedURLException;
