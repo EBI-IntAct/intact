@@ -291,6 +291,70 @@ xref: TermSpec: "none"
 is_a: MOD:00843 ! (15)N labeled residue
 is_a: MOD:00912 ! modified L-lysine residue
 
+[Term]
+id: MOD:00815
+name: molybdopterin
+def: "OBSOLETE because redundant with MOD:00151. Remap to MOD:00151." [PubMed:14527393, PubMed:7878465, PubMed:9428520]
+xref: DiffAvg: "520.28"
+xref: DiffFormula: "C 10 H 11 Mo 1 N 5 O 8 P 1 S 2"
+xref: DiffMono: "521.884074"
+xref: Formula: "none"
+xref: MassAvg: "none"
+xref: MassMono: "none"
+xref: Origin: "C"
+xref: Source: "natural"
+xref: TermSpec: "none"
+is_obsolete: true
+
+[Term]
+id: MOD:01292
+name: dimethylation of proline residue
+def: "OBSOLETE because redundant and identical to MOD:00075. Map to MOD:00075." [UniMod:529]
+synonym: "Delta:H(5)C(2)" RELATED PSI-MS-label []
+synonym: "Dimethylation of proline residue" RELATED UniMod-description []
+xref: DiffAvg: "29.06"
+xref: DiffFormula: "C 2 H 5"
+xref: DiffMono: "29.039125"
+xref: Formula: "none"
+xref: MassAvg: "none"
+xref: MassMono: "none"
+xref: Origin: "P"
+xref: Source: "natural"
+xref: TermSpec: "none"
+is_obsolete: true
+
+[Term]
+id: MOD:00564
+name: Applied Biosystems iTRAQ(TM) multiplexed quantitation chemistry
+def: "Modification from UniMod Isotopic label. The UniMod term was extracted when it had not been approved. OBSOLETE because redundant to MOD:01505. Remap to MOD:01505, or one of the child terms MOD:01493 or MOD:01497." [UniMod:214, URL:http\://docs.appliedbiosystems.com/pebiodocs/04351918.pdf]
+synonym: "iTRAQ4plex" RELATED UniMod-interim []
+synonym: "Representative mass and accurate mass for 116 & 117" RELATED UniMod-description []
+xref: DiffAvg: "144.10"
+xref: DiffFormula: "(12)C 4 (13)C 3 H 12 (14)N 1 (15)N 1 O 1"
+xref: DiffMono: "144.102062"
+xref: Formula: "none"
+xref: MassAvg: "none"
+xref: MassMono: "none"
+xref: Origin: "X"
+xref: Source: "artifact"
+xref: TermSpec: "none"
+is_obsolete: true
+
+[Term]
+id: MOD:00632
+name: N-succinimide
+def: "OBSOLETE because this chemical derivative modification from UniMod 321 is deprecated." [UniMod:321]
+xref: DiffAvg: "-17.01"
+xref: DiffFormula: "H -1 O -1"
+xref: DiffMono: "-17.002740"
+xref: Formula: "none"
+xref: MassAvg: "none"
+xref: MassMono: "none"
+xref: Origin: "N"
+xref: Source: "artifact"
+xref: TermSpec: "none"
+is_obsolete: true
+
 [Typedef]
 id: contains
 name: contains

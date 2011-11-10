@@ -202,7 +202,7 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
                     }
                     else if (xrefDef.length > 2){
                         database = xrefDef[0];
-                        accession = xref.substring(database.length()).trim();
+                        accession = xref.substring(database.length() + 1).trim();
                     }
 
                     if (database != null && accession != null){
@@ -224,7 +224,7 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
                     }
                     else if (xrefDef.length > 2){
                         database = xrefDef[0];
-                        accession = xref.substring(database.length()).trim();
+                        accession = xref.substring(database.length() + 1).trim();
                     }
 
                     if (database != null && accession != null){
@@ -298,9 +298,9 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
     protected void processShortLabel() {
         if (shortLabel == null){
             if ( fullName != null && fullName.length() <= MAX_SHORT_LABEL_LEN ) {
-                this.shortLabel = fullName;
+                this.shortLabel = fullName.toLowerCase();
             } else if ( fullName != null && fullName.length() > MAX_SHORT_LABEL_LEN ) {
-                this.shortLabel = fullName.substring( 0, MAX_SHORT_LABEL_LEN );
+                this.shortLabel = fullName.substring( 0, MAX_SHORT_LABEL_LEN ).toLowerCase();
             }
         }
     }
@@ -380,8 +380,27 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
                 }
             }
         }
+        else if (definition.contains( OBSOLETE_DEF )){
+            String[] defArray = definition.split( OBSOLETE_DEF );
+
+            if ( defArray.length == 2 ) {
+                this.definition = defArray[0];
+                this.obsoleteMessage = OBSOLETE_DEF + defArray[1];
+
+                if (obsoleteMessage != null){
+                    processObsoleteMessage();
+                }
+            } else if ( defArray.length > 2 ) {
+                this.definition = defArray[0];
+                this.obsoleteMessage = definition.substring(this.definition.length());
+
+                if (obsoleteMessage != null){
+                    processObsoleteMessage();
+                }
+            }
+        }
         else {
-            this.definition = definition;
+            processInfoInDescription(definition, definition);
         }
     }
 
