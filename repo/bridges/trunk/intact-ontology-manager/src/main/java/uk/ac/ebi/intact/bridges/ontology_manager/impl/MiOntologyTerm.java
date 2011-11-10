@@ -60,10 +60,30 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
             this.url = otherInfoString;
 
         }
+        else if (otherInfoString.contains( HTTP_DEF )){
+            String[] defArray = otherInfoString.split( HTTP_DEF );
+            String def = null;
+
+            if ( defArray.length == 2 ) {
+                def = defArray[0];
+                this.url = HTTP_DEF + defArray[1];
+
+            } else if ( defArray.length > 2 ) {
+                def = defArray[0];
+                this.url = otherInfoString.substring(def.length());
+            }
+
+            if (this.definition == null){
+                this.definition = otherInfoString;
+            }
+            else {
+                this.definition += LINE_BREAK + def;
+            }
+        }
         // simple definition
         else {
             if (definition.startsWith(otherInfoString)){
-                this.definition += otherInfoString;
+                this.definition = otherInfoString;
             }
             else {
                 this.definition += LINE_BREAK + otherInfoString;

@@ -3,40 +3,40 @@ package uk.ac.ebi.intact.bridges.ontology_manager.impl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import psidev.psi.tools.ontology_manager.impl.local.OntologyLoaderException;
+import psidev.psi.tools.ontology_manager.client.OlsClient;
 import uk.ac.ebi.intact.bridges.ontology_manager.TermDbXref;
-import uk.ac.ebi.intact.bridges.ontology_manager.builders.ModOntologyTermBuilder;
-import uk.ac.ebi.intact.bridges.ontology_manager.impl.local.IntactOboLoader;
-import uk.ac.ebi.intact.bridges.ontology_manager.impl.local.IntactOntology;
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 
-import java.net.URL;
+import javax.xml.rpc.ServiceException;
+import java.net.MalformedURLException;
+import java.rmi.RemoteException;
 
 /**
- * Tester of ModOntologyTerm
+ * Second tester of Mod ontologyTerm
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
- * @since <pre>04/11/11</pre>
+ * @since <pre>10/11/11</pre>
  */
 
-public class ModOntologyTermTest {
-    private IntactOntology intactOntology;
+public class ModOntologyTermTest2 {
+
+    private OlsClient olsClient;
 
     @Before
-    public void parseOboTest() throws OntologyLoaderException {
-        IntactOboLoader parser = new IntactOboLoader(null, null, null, null, new ModOntologyTermBuilder());
-
-        URL psiMiObo = ModOntologyTermTest.class.getResource("/psi-mod.obo");
-        this.intactOntology = parser.parseOboFile(psiMiObo);
+    public void parseOboTest() throws MalformedURLException, ServiceException {
+        olsClient = new OlsClient();
     }
 
     @Test
-    public void test_synonyms(){
+    public void test_synonyms() throws RemoteException {
         // term with shortlabel defined in synonyms
         // it contains 2 aliases
         // this term also have 1 Pubmed and 1 Unimod
-        IntactOntologyTermI term1 = intactOntology.search("MOD:01161");
+        ModOntologyTerm term1 = new ModOntologyTerm("MOD:01161", "deoxygenated residue");
+        term1.loadXrefsFrom(olsClient.getTermXrefs("MOD:01161", "MOD"));
+        term1.loadSynonymsFrom(olsClient.getTermMetadata("MOD:01161", "MOD"), olsClient.isObsolete("MOD:01161", "MOD"));
+
         Assert.assertNotNull(term1);
 
         Assert.assertEquals("deoxygenated residue", term1.getFullName());
@@ -75,7 +75,10 @@ public class ModOntologyTermTest {
         Assert.assertEquals("A protein modification that effectively removes oxygen atoms from a residue without the removal of hydrogen atoms.", term1.getDefinition());
 
         // term with no alias shortlabel. This term has a comment. This term has also one pubmed xref
-        IntactOntologyTermI term2 = intactOntology.search("MOD:00003");
+        ModOntologyTerm term2 = new ModOntologyTerm("MOD:00003", "UniMod");
+        term2.loadXrefsFrom(olsClient.getTermXrefs("MOD:00003", "MOD"));
+        term2.loadSynonymsFrom(olsClient.getTermMetadata("MOD:00003", "MOD"), olsClient.isObsolete("MOD:00003", "MOD"));
+
         Assert.assertNotNull(term2);
 
         Assert.assertEquals("UniMod", term2.getFullName());
@@ -103,7 +106,10 @@ public class ModOntologyTermTest {
         // term with shortlabel defined in synonyms
         // it contains 15 aliases
         // this term also have 5 Pubmeds and 1 resid and 1 deltamass and 1 chebi
-        IntactOntologyTermI term3 = intactOntology.search("MOD:00014");
+        ModOntologyTerm term3 = new ModOntologyTerm("MOD:00014", "L-cysteine residue");
+        term3.loadXrefsFrom(olsClient.getTermXrefs("MOD:00014", "MOD"));
+        term3.loadSynonymsFrom(olsClient.getTermMetadata("MOD:00014", "MOD"), olsClient.isObsolete("MOD:00014", "MOD"));
+
         Assert.assertNotNull(term3);
 
         Assert.assertEquals("L-cysteine residue", term3.getFullName());
@@ -175,7 +181,9 @@ public class ModOntologyTermTest {
         // term with shortlabel defined in synonyms
         // it contains 3 aliases
         // this term also have 1 Unimod
-        IntactOntologyTermI term4 = intactOntology.search("MOD:00890");
+        ModOntologyTerm term4 = new ModOntologyTerm("MOD:00890", "phosphorylated L-histidine");
+        term4.loadXrefsFrom(olsClient.getTermXrefs("MOD:00890", "MOD"));
+        term4.loadSynonymsFrom(olsClient.getTermMetadata("MOD:00890", "MOD"), olsClient.isObsolete("MOD:00890", "MOD"));
         Assert.assertNotNull(term4);
 
         Assert.assertEquals("phosphorylated L-histidine", term4.getFullName());
@@ -192,7 +200,7 @@ public class ModOntologyTermTest {
         for (TermDbXref xref : term4.getDbXrefs()){
             if (xref.getDatabase().equals("unimod") && xref.getDatabaseId().equals("MI:1015")){
                 if (xref.getQualifier().equals("identity") && xref.getQualifierId().equals("MI:0356")){
-                    Assert.assertEquals("21", xref.getAccession());
+                    Assert.assertEquals("21\"site\"", xref.getAccession());
                 }
                 else{
                     Assert.assertTrue(false);
@@ -207,10 +215,12 @@ public class ModOntologyTermTest {
     }
 
     @Test
-    public void test_xref_definition(){
+    public void test_xref_definition() throws RemoteException {
         // term with shortlabel not defined in synonyms
         // it contains URL xref
-        IntactOntologyTermI term5 = intactOntology.search("MOD:01603");
+        ModOntologyTerm term5 = new ModOntologyTerm("MOD:01603", "2x(15)N labeled L-lysine");
+        term5.loadXrefsFrom(olsClient.getTermXrefs("MOD:01603", "MOD"));
+        term5.loadSynonymsFrom(olsClient.getTermMetadata("MOD:01603", "MOD"), olsClient.isObsolete("MOD:01603", "MOD"));
         Assert.assertNotNull(term5);
 
         Assert.assertEquals("2x(15)N labeled L-lysine", term5.getFullName());
@@ -236,9 +246,12 @@ public class ModOntologyTermTest {
     }
 
     @Test
-    public void test_obsolete(){
+    public void test_obsolete() throws RemoteException {
         // term having one obsolete 'remap to'
-        IntactOntologyTermI term1 = intactOntology.search("MOD:00815");
+        ModOntologyTerm term1 = new ModOntologyTerm("MOD:00815");
+        term1.loadXrefsFrom(olsClient.getTermXrefs("MOD:00815", "MOD"));
+        term1.loadSynonymsFrom(olsClient.getTermMetadata("MOD:00815", "MOD"), olsClient.isObsolete("MOD:00815", "MOD"));
+
         Assert.assertNotNull(term1);
 
         Assert.assertEquals("", term1.getDefinition());
@@ -247,7 +260,9 @@ public class ModOntologyTermTest {
         Assert.assertEquals("MOD:00151", term1.getRemappedTerm());
 
         // term having one obsolete 'map to'
-        IntactOntologyTermI term2 = intactOntology.search("MOD:01292");
+        ModOntologyTerm term2 = new ModOntologyTerm("MOD:01292");
+        term2.loadXrefsFrom(olsClient.getTermXrefs("MOD:01292", "MOD"));
+        term2.loadSynonymsFrom(olsClient.getTermMetadata("MOD:01292", "MOD"), olsClient.isObsolete("MOD:01292", "MOD"));
         Assert.assertNotNull(term2);
 
         Assert.assertEquals("", term2.getDefinition());
@@ -256,7 +271,10 @@ public class ModOntologyTermTest {
         Assert.assertEquals("MOD:00075", term2.getRemappedTerm());
 
         // term having one obsolete and several choices after map to
-        IntactOntologyTermI term4 = intactOntology.search("MOD:00564");
+        ModOntologyTerm term4 = new ModOntologyTerm("MOD:00564");
+        term4.loadXrefsFrom(olsClient.getTermXrefs("MOD:00564", "MOD"));
+        term4.loadSynonymsFrom(olsClient.getTermMetadata("MOD:00564", "MOD"), olsClient.isObsolete("MOD:00564", "MOD"));
+
         Assert.assertNotNull(term4);
 
         Assert.assertEquals("Modification from UniMod Isotopic label. The UniMod term was extracted when it had not been approved. ", term4.getDefinition());
@@ -270,7 +288,10 @@ public class ModOntologyTermTest {
         Assert.assertNull(term4.getRemappedTerm());
 
         // term having one obsolete and no choices
-        IntactOntologyTermI term5 = intactOntology.search("MOD:00632");
+        ModOntologyTerm term5 = new ModOntologyTerm("MOD:00632");
+        term5.loadXrefsFrom(olsClient.getTermXrefs("MOD:00632", "MOD"));
+        term5.loadSynonymsFrom(olsClient.getTermMetadata("MOD:00632", "MOD"), olsClient.isObsolete("MOD:00632", "MOD"));
+
         Assert.assertNotNull(term5);
 
         Assert.assertEquals("", term5.getDefinition());
@@ -278,5 +299,4 @@ public class ModOntologyTermTest {
         Assert.assertEquals(0, term5.getPossibleTermsToRemapTo().size());
         Assert.assertNull(term5.getRemappedTerm());
     }
-
 }

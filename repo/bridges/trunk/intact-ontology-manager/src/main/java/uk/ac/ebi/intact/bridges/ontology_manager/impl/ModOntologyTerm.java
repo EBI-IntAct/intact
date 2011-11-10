@@ -40,8 +40,8 @@ public class ModOntologyTerm extends AbstractIntactOntologyTerm{
     private static final String CHEBI = "chebi";
     private static final String CHEBI_MI_REF = "MI:0474";
 
-    private static final String REMAP = "remap to";
-    private static final String MAP = "map to";
+    private static final String REMAP = "REMAP TO";
+    private static final String MAP = "MAP TO";
 
     public ModOntologyTerm(String acc, String name) {
         super(acc, name);
@@ -171,7 +171,7 @@ public class ModOntologyTerm extends AbstractIntactOntologyTerm{
 
         // simple definition
         if (definition.startsWith(otherInfoString)){
-            this.definition += otherInfoString;
+            this.definition = otherInfoString;
         }
         else {
             this.definition += LINE_BREAK + otherInfoString;
@@ -180,14 +180,14 @@ public class ModOntologyTerm extends AbstractIntactOntologyTerm{
 
     @Override
     protected void processObsoleteMessage() {
-        String lowerObsoleteMessage = this.obsoleteMessage.toLowerCase();
+        String upperObsoleteMessage = this.obsoleteMessage.toUpperCase();
         String remappingString = null;
 
-        if (lowerObsoleteMessage.contains(MAP)){
-            remappingString = lowerObsoleteMessage.substring(lowerObsoleteMessage.indexOf(MAP) + MAP.length());
+        if (upperObsoleteMessage.contains(MAP)){
+            remappingString = upperObsoleteMessage.substring(upperObsoleteMessage.indexOf(MAP) + MAP.length());
         }
-        else if (lowerObsoleteMessage.contains(REMAP)){
-            remappingString = lowerObsoleteMessage.substring(lowerObsoleteMessage.indexOf(REMAP) + REMAP.length());
+        else if (upperObsoleteMessage.contains(REMAP)){
+            remappingString = upperObsoleteMessage.substring(upperObsoleteMessage.indexOf(REMAP) + REMAP.length());
         }
 
         if (remappingString != null){
@@ -210,8 +210,8 @@ public class ModOntologyTerm extends AbstractIntactOntologyTerm{
             }
         }
         else {
-            Matcher miMatcher = MI_REGEXP.matcher(lowerObsoleteMessage);
-            Matcher modMatcher = MOD_REGEXP.matcher(lowerObsoleteMessage);
+            Matcher miMatcher = MI_REGEXP.matcher(upperObsoleteMessage);
+            Matcher modMatcher = MOD_REGEXP.matcher(upperObsoleteMessage);
 
             while (miMatcher.find()){
                 this.possibleTermsToRemapTo.add(miMatcher.group());
