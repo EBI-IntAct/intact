@@ -4,5 +4,5 @@
   * Introduction
   * Developer information
     * [GettingStarted Getting started]
-    * Database architecture  
+    * [DatabaseSchemaV240 Database architecture]
   * Tools and Services
