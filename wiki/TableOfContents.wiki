@@ -1,5 +1,5 @@
 #summary Table of contents
-= Table of Contents =
+= IntAct =
 
   * Introduction
   * Developer information
