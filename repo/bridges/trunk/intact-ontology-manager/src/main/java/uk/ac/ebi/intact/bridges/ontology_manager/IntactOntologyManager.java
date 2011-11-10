@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.bridges.ontology_manager.impl.ols.IntactOlsOntology;
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 
 import javax.xml.rpc.ServiceException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +38,10 @@ public class IntactOntologyManager extends OntologyManagerTemplate<IntactOntolog
     static {
         keyword2class.put( "MI", MiOntologyTermBuilder.class );
         keyword2class.put( "MOD", ModOntologyTermBuilder.class );
+    }
+
+    public IntactOntologyManager(InputStream configFile) throws OntologyLoaderException {
+        super(configFile);
     }
 
     @Override
