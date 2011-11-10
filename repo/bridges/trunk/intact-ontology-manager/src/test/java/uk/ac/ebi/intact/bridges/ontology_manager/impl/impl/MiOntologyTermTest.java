@@ -316,7 +316,6 @@ public class MiOntologyTermTest {
 
     @Test
     public void test_exclude_mod(){
-        // term having one obsolete 'remap to' and one RESID xref
         IntactOntologyTermI term1 = intactOntology.search("MOD:00000");
         Assert.assertNull(term1);
     }
