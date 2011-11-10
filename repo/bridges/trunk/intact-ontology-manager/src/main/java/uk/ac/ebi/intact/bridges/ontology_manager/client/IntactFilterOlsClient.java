@@ -6,7 +6,9 @@ import javax.xml.rpc.ServiceException;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * OLS client for IntAct
@@ -53,7 +55,8 @@ public class IntactFilterOlsClient extends OlsClient{
         if (termAccession.startsWith(ontologyId)){
             Map parents = super.getTermParents(termAccession, ontologyId);
 
-            for (Object key : parents.keySet()){
+            Set<Object> keys = new HashSet<Object>(parents.keySet());
+            for (Object key : keys){
                 String term = (String) key;
 
                 if (!term.startsWith(ontologyId)){
@@ -72,7 +75,9 @@ public class IntactFilterOlsClient extends OlsClient{
         if (termAccession.startsWith(ontologyId)){
             Map children = super.getTermChildren(termAccession, ontologyId, level, relationships);
 
-            for (Object key : children.keySet()){
+            Set<Object> keys = new HashSet<Object>(children.keySet());
+
+            for (Object key : keys){
                 String term = (String) key;
 
                 if (!term.startsWith(ontologyId)){
@@ -86,16 +91,11 @@ public class IntactFilterOlsClient extends OlsClient{
     }
 
     @Override
-    public Map getRootTerms(String ontologyId) throws RemoteException {
-        return super.getRootTerms(ontologyId);    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
-    @Override
     public boolean isObsolete(String termAccession, String ontologyId) throws RemoteException {
         if (termAccession.startsWith(ontologyId)){
             return super.isObsolete(termAccession, ontologyId);
         }
 
-        return false;
+        return true;
     }
 }
