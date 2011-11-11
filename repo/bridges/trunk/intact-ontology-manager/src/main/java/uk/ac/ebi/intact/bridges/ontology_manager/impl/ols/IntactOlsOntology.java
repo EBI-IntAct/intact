@@ -5,8 +5,8 @@ import org.apache.commons.logging.LogFactory;
 import psidev.psi.tools.ontology_manager.client.OlsClient;
 import psidev.psi.tools.ontology_manager.impl.local.OntologyLoaderException;
 import psidev.psi.tools.ontology_manager.impl.ols.AbstractOlsOntology;
-import psidev.psi.tools.ontology_manager.interfaces.OntologyAccessTemplate;
 import uk.ac.ebi.intact.bridges.ontology_manager.builders.IntactOntologyTermBuilder;
+import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyAccess;
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 
 import java.rmi.RemoteException;
@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
  * @since <pre>01/11/11</pre>
  */
 
-public class IntactOlsOntology extends AbstractOlsOntology<IntactOntologyTermI> implements OntologyAccessTemplate<IntactOntologyTermI> {
+public class IntactOlsOntology extends AbstractOlsOntology<IntactOntologyTermI> implements IntactOntologyAccess {
 
     public static final Log log = LogFactory.getLog(IntactOlsOntology.class);
 
@@ -58,5 +58,20 @@ public class IntactOlsOntology extends AbstractOlsOntology<IntactOntologyTermI> 
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public String getOntologyID() {
+        return this.ontologyID;
+    }
+
+    @Override
+    public String getDatabaseIdentifier() {
+        return termBuilder.getDatabaseIdentifier();
+    }
+
+    @Override
+    public String getParentFromOtherOntology() {
+        return termBuilder.getParentFromOtherOntology();
     }
 }

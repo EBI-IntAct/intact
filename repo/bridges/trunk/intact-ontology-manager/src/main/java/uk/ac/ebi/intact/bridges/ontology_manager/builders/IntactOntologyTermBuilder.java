@@ -22,4 +22,8 @@ public interface IntactOntologyTermBuilder {
     public IntactOntologyTermI createIntactOntologyTermFrom(String accession, String name, Map metadata, Map xrefs, boolean isObsolete);
 
     public IntactOboLoader createIntactOboLoader(File ontologyDirectory);
+
+    public String getDatabaseIdentifier();
+
+    public String getParentFromOtherOntology();
 }

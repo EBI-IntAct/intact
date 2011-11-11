@@ -2,8 +2,8 @@ package uk.ac.ebi.intact.bridges.ontology_manager.impl.local;
 
 import psidev.psi.tools.ontology_manager.impl.local.AbstractLocalOntology;
 import psidev.psi.tools.ontology_manager.impl.local.OntologyLoaderException;
-import psidev.psi.tools.ontology_manager.interfaces.OntologyAccessTemplate;
 import uk.ac.ebi.intact.bridges.ontology_manager.builders.IntactOntologyTermBuilder;
+import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyAccess;
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 
 import java.io.File;
@@ -16,7 +16,7 @@ import java.io.File;
  * @since <pre>08/11/11</pre>
  */
 
-public class IntactLocalOntology extends AbstractLocalOntology<IntactOntologyTermI, IntactOntology, IntactOboLoader> implements OntologyAccessTemplate<IntactOntologyTermI> {
+public class IntactLocalOntology extends AbstractLocalOntology<IntactOntologyTermI, IntactOntology, IntactOboLoader> implements IntactOntologyAccess {
 
     protected IntactOntologyTermBuilder termBuilder;
 
@@ -30,5 +30,20 @@ public class IntactLocalOntology extends AbstractLocalOntology<IntactOntologyTer
     @Override
     protected IntactOboLoader createNewOBOLoader(File ontologyDirectory) throws OntologyLoaderException {
         return this.termBuilder.createIntactOboLoader(ontologyDirectory);
+    }
+
+    @Override
+    public String getOntologyID() {
+        return this.ontologyID;
+    }
+
+    @Override
+    public String getDatabaseIdentifier() {
+        return termBuilder.getDatabaseIdentifier();
+    }
+
+    @Override
+    public String getParentFromOtherOntology() {
+        return termBuilder.getParentFromOtherOntology();
     }
 }

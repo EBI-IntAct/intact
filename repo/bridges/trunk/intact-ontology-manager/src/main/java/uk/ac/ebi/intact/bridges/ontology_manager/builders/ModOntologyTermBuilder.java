@@ -22,6 +22,9 @@ public class ModOntologyTermBuilder implements IntactOntologyTermBuilder{
     private static final String MOD_FULL_NAME = "PSI Protein Modifications";
     private static final String MOD_SHORT_NAME = "PSI-MOD";
 
+    private static final String databaseIdentifier = "MI:0897";
+    private static final String MIParent = "MI:0252";
+
     @Override
     public IntactOntologyTermI createIntactOntologyTermFrom(Term term) {
         ModOntologyTerm modTerm = new ModOntologyTerm(term.getIdentifier(), term.getName());
@@ -42,5 +45,15 @@ public class ModOntologyTermBuilder implements IntactOntologyTermBuilder{
     @Override
     public IntactOboLoader createIntactOboLoader(File ontologyDirectory) {
         return new MIOboLoader(ontologyDirectory, MOD_ONTOLOGY_DEFINITION, MOD_FULL_NAME, MOD_SHORT_NAME, this);
+    }
+
+    @Override
+    public String getDatabaseIdentifier() {
+        return databaseIdentifier;
+    }
+
+    @Override
+    public String getParentFromOtherOntology() {
+        return MIParent;
     }
 }

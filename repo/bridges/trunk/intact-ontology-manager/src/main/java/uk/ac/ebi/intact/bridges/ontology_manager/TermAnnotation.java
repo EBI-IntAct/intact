@@ -23,14 +23,14 @@ public class TermAnnotation {
         this.description = desc;
     }
 
-        public TermAnnotation(String topic, String topicId, String desc){
+    public TermAnnotation(String topic, String topicId, String desc){
         if (topicId == null){
             throw new NullPointerException("A term annotations must have a non null topic Id");
         }
 
         this.topic = topic;
         this.description = desc;
-            this.topicId = topicId;
+        this.topicId = topicId;
     }
 
     public String getTopic() {
@@ -43,5 +43,57 @@ public class TermAnnotation {
 
     public String getTopicId() {
         return topicId;
+    }
+
+    @Override
+    public boolean equals(Object o){
+
+        if ( this == o ) {
+            return true;
+        }
+        if ( !( o instanceof TermAnnotation ) ) {
+            return false;
+        }
+
+        TermAnnotation termAnnotation = (TermAnnotation) o;
+
+        if (this.topic != null){
+            if (!this.topic.equalsIgnoreCase(termAnnotation.getTopic())){
+                return false;
+            }
+        }
+        else if (termAnnotation.getTopic() != null){
+             return false;
+        }
+
+        if (this.topicId != null){
+            if (!this.topicId.equalsIgnoreCase(termAnnotation.getTopicId())){
+                return false;
+            }
+        }
+        else if (termAnnotation.getTopicId() != null){
+             return false;
+        }
+
+        if (this.description != null){
+            if (!this.description.equalsIgnoreCase(termAnnotation.getDescription())){
+                return false;
+            }
+        }
+        else if (termAnnotation.getDescription() != null){
+             return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = this.topic != null ? this.topic.hashCode() : 0;
+
+        result = result * 31 + this.topicId != null ? this.topicId.hashCode() : 0;
+        result = result * 31 + this.description != null ? this.description.hashCode() : 0;
+
+        return result;
     }
 }

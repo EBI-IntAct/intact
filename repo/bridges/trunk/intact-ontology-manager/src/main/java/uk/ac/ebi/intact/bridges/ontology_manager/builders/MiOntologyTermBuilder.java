@@ -22,6 +22,8 @@ public class MiOntologyTermBuilder implements IntactOntologyTermBuilder{
     private static final String MI_FULL_NAME = "PSI Molecular Interactions";
     private static final String MI_SHORT_NAME = "PSI-MI";
 
+    private static final String databaseIdentifier = "MI:0488";
+
     @Override
     public IntactOntologyTermI createIntactOntologyTermFrom(Term term) {
         MiOntologyTerm miTerm = new MiOntologyTerm(term.getIdentifier(), term.getName());
@@ -43,5 +45,15 @@ public class MiOntologyTermBuilder implements IntactOntologyTermBuilder{
     @Override
     public IntactOboLoader createIntactOboLoader(File ontologyDirectory) {
         return new MIOboLoader(ontologyDirectory, MI_ONTOLOGY_DEFINITION, MI_FULL_NAME, MI_SHORT_NAME, this);
+    }
+
+    @Override
+    public String getDatabaseIdentifier() {
+        return databaseIdentifier;
+    }
+
+    @Override
+    public String getParentFromOtherOntology() {
+        return null;
     }
 }
