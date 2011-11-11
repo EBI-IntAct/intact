@@ -10,6 +10,8 @@ import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyAccess
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * abstract Intact extension for OlsOntology
@@ -73,5 +75,19 @@ public class IntactOlsOntology extends AbstractOlsOntology<IntactOntologyTermI> 
     @Override
     public String getParentFromOtherOntology() {
         return termBuilder.getParentFromOtherOntology();
+    }
+
+    @Override
+    public Collection<IntactOntologyTermI> getRootTerms() {
+        Collection<IntactOntologyTermI> roots = new ArrayList<IntactOntologyTermI>(rootAccs.size());
+
+        for (String acc : rootAccs){
+            IntactOntologyTermI term = getTermForAccession(acc);
+
+            if (term != null){
+                roots.add(term);
+            }
+        }
+        return roots;
     }
 }

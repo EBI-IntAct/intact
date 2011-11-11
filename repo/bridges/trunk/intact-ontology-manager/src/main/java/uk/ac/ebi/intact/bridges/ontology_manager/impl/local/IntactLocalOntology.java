@@ -7,6 +7,7 @@ import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyAccess
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 
 import java.io.File;
+import java.util.Collection;
 
 /**
  * Intact implementation of LocalOntology access
@@ -45,5 +46,10 @@ public class IntactLocalOntology extends AbstractLocalOntology<IntactOntologyTer
     @Override
     public String getParentFromOtherOntology() {
         return termBuilder.getParentFromOtherOntology();
+    }
+
+    @Override
+    public Collection<IntactOntologyTermI> getRootTerms() {
+        return this.ontology.getRoots();
     }
 }

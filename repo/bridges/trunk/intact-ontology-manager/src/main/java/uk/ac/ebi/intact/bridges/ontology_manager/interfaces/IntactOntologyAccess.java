@@ -2,6 +2,8 @@ package uk.ac.ebi.intact.bridges.ontology_manager.interfaces;
 
 import psidev.psi.tools.ontology_manager.interfaces.OntologyAccessTemplate;
 
+import java.util.Collection;
+
 /**
  * Extension of OntologyAcessTemplate for intact
  *
@@ -15,4 +17,5 @@ public interface IntactOntologyAccess extends OntologyAccessTemplate<IntactOntol
     public String getOntologyID();
     public String getDatabaseIdentifier();
     public String getParentFromOtherOntology();
+    public Collection<IntactOntologyTermI> getRootTerms();
 }
