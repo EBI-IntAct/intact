@@ -67,4 +67,76 @@ public class TermDbXref {
     public String getQualifierId() {
         return qualifierId;
     }
+
+    @Override
+    public boolean equals(Object o){
+
+        if ( this == o ) {
+            return true;
+        }
+        if ( !( o instanceof TermAnnotation ) ) {
+            return false;
+        }
+
+        TermDbXref termXref = (TermDbXref) o;
+
+        if (this.database != null){
+            if (!this.database.equalsIgnoreCase(termXref.getDatabase())){
+                return false;
+            }
+        }
+        else if (termXref.getDatabase()!= null){
+            return false;
+        }
+
+        if (this.databaseId != null){
+            if (!this.databaseId.equalsIgnoreCase(termXref.getDatabaseId())){
+                return false;
+            }
+        }
+        else if (termXref.getDatabaseId() != null){
+            return false;
+        }
+
+        if (this.accession != null){
+            if (!this.accession.equalsIgnoreCase(termXref.getAccession())){
+                return false;
+            }
+        }
+        else if (termXref.getAccession() != null){
+            return false;
+        }
+
+        if (this.qualifier != null){
+            if (!this.qualifier.equalsIgnoreCase(termXref.getQualifier())){
+                return false;
+            }
+        }
+        else if (termXref.getQualifier()!= null){
+            return false;
+        }
+
+        if (this.qualifierId != null){
+            if (!this.qualifierId.equalsIgnoreCase(termXref.getQualifierId())){
+                return false;
+            }
+        }
+        else if (termXref.getQualifierId() != null){
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = this.database != null ? this.database.hashCode() : 0;
+
+        result = result * 31 + this.databaseId != null ? this.databaseId.hashCode() : 0;
+        result = result * 31 + this.accession != null ? this.accession.hashCode() : 0;
+        result = result * 31 + this.qualifier != null ? this.qualifier.hashCode() : 0;
+        result = result * 31 + this.qualifierId != null ? this.qualifierId.hashCode() : 0;
+
+        return result;
+    }
 }

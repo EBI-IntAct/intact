@@ -3,13 +3,13 @@ package uk.ac.ebi.intact.bridges.ontology_manager;
 import psidev.psi.tools.ontology_manager.OntologyManagerTemplate;
 import psidev.psi.tools.ontology_manager.client.OlsClient;
 import psidev.psi.tools.ontology_manager.impl.local.OntologyLoaderException;
-import psidev.psi.tools.ontology_manager.interfaces.OntologyAccessTemplate;
 import uk.ac.ebi.intact.bridges.ontology_manager.builders.IntactOntologyTermBuilder;
 import uk.ac.ebi.intact.bridges.ontology_manager.builders.MiOntologyTermBuilder;
 import uk.ac.ebi.intact.bridges.ontology_manager.builders.ModOntologyTermBuilder;
 import uk.ac.ebi.intact.bridges.ontology_manager.client.IntactFilterOlsClient;
 import uk.ac.ebi.intact.bridges.ontology_manager.impl.local.IntactLocalOntology;
 import uk.ac.ebi.intact.bridges.ontology_manager.impl.ols.IntactOlsOntology;
+import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyAccess;
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 
 import javax.xml.rpc.ServiceException;
@@ -26,7 +26,7 @@ import java.util.Map;
  * @since <pre>01/11/11</pre>
  */
 
-public class IntactOntologyManager extends OntologyManagerTemplate<IntactOntologyTermI, OntologyAccessTemplate<IntactOntologyTermI>> {
+public class IntactOntologyManager extends OntologyManagerTemplate<IntactOntologyTermI, IntactOntologyAccess> {
 
     private static final String FILE_SOURCE = "file";
     private static final String OLS_SOURCE = "ols";
@@ -45,7 +45,7 @@ public class IntactOntologyManager extends OntologyManagerTemplate<IntactOntolog
     }
 
     @Override
-    protected OntologyAccessTemplate<IntactOntologyTermI> findOntologyAccess(String sourceURI, String ontologyId, String ontologyName, String ontologyVersion, String format, String loaderClass) throws ClassNotFoundException {
+    protected IntactOntologyAccess findOntologyAccess(String sourceURI, String ontologyId, String ontologyName, String ontologyVersion, String format, String loaderClass) throws ClassNotFoundException {
         Class builderClass;
 
         if ( keyword2class.containsKey( ontologyId ) ) {
