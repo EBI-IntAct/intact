@@ -8,6 +8,7 @@ import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.regex.Pattern;
 
 /**
  * Intact implementation of LocalOntology access
@@ -51,5 +52,10 @@ public class IntactLocalOntology extends AbstractLocalOntology<IntactOntologyTer
     @Override
     public Collection<IntactOntologyTermI> getRootTerms() {
         return this.ontology.getRoots();
+    }
+
+    @Override
+    public Pattern getDatabaseRegexp() {
+        return termBuilder.getDatabaseRegexp();
     }
 }

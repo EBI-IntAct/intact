@@ -6,6 +6,7 @@ import uk.ac.ebi.ols.model.interfaces.Term;
 
 import java.io.File;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Interface for IntactOntologyTerm builders
@@ -26,4 +27,6 @@ public interface IntactOntologyTermBuilder {
     public String getDatabaseIdentifier();
 
     public String getParentFromOtherOntology();
+
+    public Pattern getDatabaseRegexp();
 }

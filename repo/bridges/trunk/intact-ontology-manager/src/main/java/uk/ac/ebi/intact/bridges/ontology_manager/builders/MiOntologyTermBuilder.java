@@ -1,5 +1,6 @@
 package uk.ac.ebi.intact.bridges.ontology_manager.builders;
 
+import uk.ac.ebi.intact.bridges.ontology_manager.impl.AbstractIntactOntologyTerm;
 import uk.ac.ebi.intact.bridges.ontology_manager.impl.MiOntologyTerm;
 import uk.ac.ebi.intact.bridges.ontology_manager.impl.local.IntactOboLoader;
 import uk.ac.ebi.intact.bridges.ontology_manager.impl.local.MIOboLoader;
@@ -8,6 +9,7 @@ import uk.ac.ebi.ols.model.interfaces.Term;
 
 import java.io.File;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Builder for MI ontology term
@@ -55,5 +57,10 @@ public class MiOntologyTermBuilder implements IntactOntologyTermBuilder{
     @Override
     public String getParentFromOtherOntology() {
         return null;
+    }
+
+    @Override
+    public Pattern getDatabaseRegexp() {
+        return AbstractIntactOntologyTerm.MI_REGEXP;
     }
 }
