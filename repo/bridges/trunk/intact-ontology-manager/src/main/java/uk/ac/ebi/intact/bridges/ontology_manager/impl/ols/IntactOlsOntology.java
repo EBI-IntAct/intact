@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.regex.Pattern;
 
 /**
  * abstract Intact extension for OlsOntology
@@ -89,5 +90,10 @@ public class IntactOlsOntology extends AbstractOlsOntology<IntactOntologyTermI> 
             }
         }
         return roots;
+    }
+
+    @Override
+    public Pattern getDatabaseRegexp() {
+        return termBuilder.getDatabaseRegexp();
     }
 }

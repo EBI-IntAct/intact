@@ -62,8 +62,8 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
     protected static final int XREF_TYPE = 3;
     protected static final int XREF_DEFINITION_TYPE = 2;
 
-    protected final static Pattern MOD_REGEXP = Pattern.compile("MOD:[0-9]{5}+");
-    protected final static Pattern MI_REGEXP = Pattern.compile("MI:[0-9]{4}+");
+    public final static Pattern MOD_REGEXP = Pattern.compile("MOD:[0-9]{5}+");
+    public final static Pattern MI_REGEXP = Pattern.compile("MI:[0-9]{4}+");
 
     /**
      * Shortlabel of the cv object in intact
