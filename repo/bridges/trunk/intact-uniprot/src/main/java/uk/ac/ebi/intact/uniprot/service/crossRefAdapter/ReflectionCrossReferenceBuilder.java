@@ -97,6 +97,7 @@ public class ReflectionCrossReferenceBuilder {
 
                     if (methodName.endsWith("Id") ||
                         methodName.endsWith("Number") ||
+                        methodName.endsWith("KOIdentifier") ||
                         methodName.endsWith("GeneIdentifier") ||
                         methodName.endsWith("Accession") ||
                         methodName.endsWith("PortalIdentifier") ||
@@ -162,6 +163,7 @@ public class ReflectionCrossReferenceBuilder {
         String db = crossRef.getDatabase().toName();
 
         String id = null;
+
         Method method = findMethod( clazz, db );
         
         try {
