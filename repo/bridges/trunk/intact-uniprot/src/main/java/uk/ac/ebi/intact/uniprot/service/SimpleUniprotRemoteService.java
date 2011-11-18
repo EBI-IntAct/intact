@@ -211,26 +211,28 @@ public class SimpleUniprotRemoteService extends AbstractUniprotService {
     protected Iterator<UniProtEntry> getUniProtEntry( String ac ) {
         Iterator<UniProtEntry> iterator = null;
 
-        if ( IdentifierChecker.isSpliceVariantId( ac ) ) {
+        String upperCaseAc = ac.toUpperCase();
+
+        if ( IdentifierChecker.isSpliceVariantId( upperCaseAc ) ) {
 
             // we only use this search for splice variants
-            Query query = UniProtQueryBuilder.buildExactMatchIdentifierQuery(ac);
+            Query query = UniProtQueryBuilder.buildExactMatchIdentifierQuery(upperCaseAc);
             iterator = uniProtQueryService.getEntryIterator( query );
 
         }
-        else if (IdentifierChecker.isFeatureChainId( ac )){
-            String acFixed = ac;
+        else if (IdentifierChecker.isFeatureChainId( upperCaseAc )){
+            String acFixed = upperCaseAc;
 
-            int index = ac.indexOf(CHAIN_SEPARATOR);
+            int index = upperCaseAc.indexOf(CHAIN_SEPARATOR);
             if (index != -1){
-                acFixed = ac.substring(index);
+                acFixed = upperCaseAc.substring(index);
             }
             // we only use this search for feature chains
             Query query = UniProtQueryBuilder.buildFullTextSearch( FEATURE_CHAIN_FIELD + acFixed + " OR " + FEATURE_PEPTIDE_FIELD + acFixed + " OR " + FEATURE_PRO_PEPTIDE_FIELD + acFixed );
             iterator = uniProtQueryService.getEntryIterator( query );
         }
         else {
-            iterator = getUniProtEntryForProteinEntry( ac );
+            iterator = getUniProtEntryForProteinEntry( upperCaseAc );
         }
 
         return iterator;
