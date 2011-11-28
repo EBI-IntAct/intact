@@ -56,7 +56,7 @@ public class PicrClientTest {
             for (String upi : upis){
                 System.out.println(upi);
             }
-            Assert.assertEquals(10, upis.size());
+            Assert.assertEquals(16, upis.size());
         } catch (PicrClientException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -84,7 +84,7 @@ public class PicrClientTest {
             for (String upi : upis){
                 System.out.println(upi);
             }
-            Assert.assertEquals(10, upis.size());
+            Assert.assertEquals(16, upis.size());
         } catch (PicrClientException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
