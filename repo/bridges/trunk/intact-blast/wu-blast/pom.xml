@@ -14,16 +14,18 @@
 	<version>2.1.5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<properties>
-		<maven.test.failure.ignore>true</maven.test.failure.ignore>
-	</properties>
+        <scm>
+            <connection>scm:svn:https://intact.googlecode.com/svn/repo/bridges/trunk/intact-blast/wu-blast</connection>
+            <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/bridges/trunk/intact-blast/wu-blast</developerConnection>
+            <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/bridges/trunk/intact-blast/wu-blast</url>
+        </scm>
 
 	<build>
 		<plugins>
 			<plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxws-maven-plugin</artifactId>
-            </plugin>
+                           <groupId>org.codehaus.mojo</groupId>
+                          <artifactId>jaxws-maven-plugin</artifactId>
+                        </plugin>
 		</plugins>
 	</build>
 
