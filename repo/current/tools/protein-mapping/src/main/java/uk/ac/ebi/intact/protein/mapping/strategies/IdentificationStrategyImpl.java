@@ -233,6 +233,9 @@ public abstract class IdentificationStrategyImpl implements IdentificationStrate
             log.error("You must give a non null Uniprot accession");
         }
         else {
+            if (uniprotService == null){
+                uniprotService = new SimpleUniprotRemoteService();
+            }
             Collection<UniprotProtein> entries = uniprotService.retrieve(accession);
 
             if (entries.isEmpty()){
