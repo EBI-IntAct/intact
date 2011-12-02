@@ -13,7 +13,7 @@ This is an introduction to the core API of !IntAct (aka. intact-core), more spec
 
 == Description ==
 
- If there was only one object you should know about in the !IntAct API, [http://www.ebi.ac.uk/~intact/apidocs/intact-core/uk/ac/ebi/intact/core/context/IntactContext.html !IntactContext] would be the one as everything starts from it. It allows you to:
+ If there was only one object you should know about in the !IntAct API, [http://www.ebi.ac.uk/~intact/apidocs/intact-core/uk/ac/ebi/intact/core/context/IntactContext.html IntactContext] would be the one as everything starts from it. It allows you to:
   * get access to the !IntAct configuration
   * initialize the connection to the underlying database, 
   * get access to the stored data,
