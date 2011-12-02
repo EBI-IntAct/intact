@@ -4,6 +4,7 @@
 = Introduction =
 
 This is an introduction to the core API of !IntAct (aka. intact-core), more specifically introducing users to a central concept: !IntactContext.
+intact-core javadoc can be found [http://www.ebi.ac.uk/~intact/apidocs/intact-core/ here].
 
 = Table of Content =
 
