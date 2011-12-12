@@ -97,12 +97,18 @@ public class UniprotTaxonomyOntologyIterator extends LineOntologyIterator {
         String[] cols = line.split("\t");
 
         String childId = safeGet(cols, 0);
-        String childName = safeGet(cols, 2);
 
+        String scientificName = safeGet(cols, 2);
         String commonName = safeGet(cols, 3);
+        String synonym = safeGet(cols, 4);
+        String[] otherNames = split(safeGet(cols, 5));
 
+        String childName;
+        
         if (commonName != null && commonName.length() > 0) {
             childName = commonName;
+        } else {
+            childName = scientificName;
         }
 
         String parentId = safeGet(cols, 9);
@@ -117,7 +123,17 @@ public class UniprotTaxonomyOntologyIterator extends LineOntologyIterator {
         OntologyDocument doc = new OntologyDocument("uniprot taxonomy", parentId, parentName,
                 childId, childName, "OBO_REL:is_a", false);
 
+        doc.addChildSynonym(scientificName);
+        doc.addChildSynonym(synonym);
+        doc.addAllChildSynonyms(otherNames);
+
         return doc;
+    }
+
+    private String[] split(String s) {
+        if (s == null || s.isEmpty()) return new String[0];
+        
+        return s.split("; ");
     }
 
     private String safeGet(String[] cols, int index) {

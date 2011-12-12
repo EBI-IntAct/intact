@@ -74,7 +74,17 @@ public class OntologyHits {
 
         boolean cyclic = Boolean.valueOf(doc.getField(FieldName.RELATIONSHIP_CYCLIC).stringValue());
 
-        return new OntologyDocument(ontology, parentId, parentName, childrenId, childrenName, relationshipType, cyclic);
+        String parentSynonymsAsStr = doc.getField(FieldName.PARENT_SYNONYMS).stringValue();
+        String childSynonymsAsStr = doc.getField(FieldName.CHILDREN_SYNONYMS).stringValue();
+        
+        String[] parentSynonyms = parentSynonymsAsStr.split(OntologyIndexWriter.SYNONYM_SEPARATOR); 
+        String[] childSynonym = childSynonymsAsStr.split(OntologyIndexWriter.SYNONYM_SEPARATOR);
+        
+        final OntologyDocument ontologyDocument = new OntologyDocument(ontology, parentId, parentName, childrenId, childrenName, relationshipType, cyclic);
+        ontologyDocument.addAllParentSynonyms(parentSynonyms);
+        ontologyDocument.addAllChildSynonyms(childSynonym);
+
+        return ontologyDocument;
     }
 
     public float score(int i) throws IOException {

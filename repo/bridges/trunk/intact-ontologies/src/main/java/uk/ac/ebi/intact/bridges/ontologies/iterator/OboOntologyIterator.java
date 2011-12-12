@@ -23,6 +23,7 @@ import org.obo.datamodel.Link;
 import org.obo.datamodel.LinkedObject;
 import org.obo.datamodel.OBOSession;
 import org.obo.datamodel.impl.OBOClassImpl;
+import org.obo.datamodel.impl.SynonymImpl;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyDocument;
 
 import java.io.IOException;
@@ -76,6 +77,7 @@ public class OboOntologyIterator implements OntologyIterator {
         throw new UnsupportedOperationException("Cannot remove");
     }
 
+    @SuppressWarnings("unchecked")
     public boolean hasNext() {
         if (documentPoolIterator != null && documentPoolIterator.hasNext()) {
             return true;
@@ -86,31 +88,36 @@ public class OboOntologyIterator implements OntologyIterator {
 
             String id = oboClass.getID();
             String name = oboClass.getName();
+            
+            Set<SynonymImpl> oboSynonyms = oboClass.getSynonyms();
+            Set<String> synonyms = synonymsToString(oboSynonyms);
 
             // a root term?
-            if (oboClass.getParents().isEmpty()) {
-                OntologyDocument doc = new OntologyDocument(ontology, null, null, id, name, null, false);
+            if (isARootTerm(oboClass)) {
+                OntologyDocument doc = createRootRelationship(id, name, synonyms);
                 documentPool.add(doc);
-            }
+            } else {
+                // parents
+                for (Link link : oboClass.getParents()) {
+                    LinkedObject oboParent = link.getParent();
+    
+                    String parentId = oboParent.getID();
+                    String parentName = oboParent.getName();
+    
+                    String relationshipType = link.getType().getID();
+                    boolean cyclicRelationship = link.getType().isCyclic();
+                    
+                    Set<String> parentSynonyms = getSynonyms(oboParent);
 
-            // parents
-            for (Link link : oboClass.getParents()) {
-                LinkedObject oboParent = link.getParent();
-
-                String parentId = oboParent.getID();
-                String parentName = oboParent.getName();
-
-                String relationshipType = link.getType().getID();
-                boolean cyclicRelationship = link.getType().isCyclic();
-
-                OntologyDocument doc = new OntologyDocument(ontology, parentId, parentName, id, name, relationshipType, cyclicRelationship);
-                documentPool.add(doc);
-            }
-
-            // if it is a leaf, add itself to the index as parent with no children
-            if (oboClass.getChildren().isEmpty()) {
-                OntologyDocument doc = new OntologyDocument(ontology, id, name, null, null, null, false);
-                documentPool.add(doc);
+                    OntologyDocument doc = createParentChildRelationship(id, name, synonyms, parentId, parentName, parentSynonyms, relationshipType, cyclicRelationship);
+                    documentPool.add(doc);
+                }
+    
+                // if it is a leaf, add itself to the index as parent with no children
+                if (isALeafTerm(oboClass)) {
+                    OntologyDocument doc = createLeafRelationship(id, name, synonyms);
+                    documentPool.add(doc);
+                }
             }
 
             documentPoolIterator = documentPool.iterator();
@@ -118,5 +125,58 @@ public class OboOntologyIterator implements OntologyIterator {
            return true;
         }
         return false;
+    }
+
+
+
+    @SuppressWarnings("unchecked")
+    private Set<String> getSynonyms(LinkedObject oboParent) {
+        Set<String> parentSynonyms;
+        if (oboParent instanceof OBOClassImpl) {
+            OBOClassImpl parentOboClass = (OBOClassImpl) oboParent;
+            parentSynonyms = synonymsToString(parentOboClass.getSynonyms());
+        } else {
+            parentSynonyms = Collections.EMPTY_SET;
+        }
+
+        return parentSynonyms;
+    }
+
+    private Set<String> synonymsToString(Set<SynonymImpl> oboSynonyms) {
+        Set<String> synonyms = new HashSet<String>(oboSynonyms.size());
+
+        for (SynonymImpl oboSynonym : oboSynonyms) {
+            synonyms.add(oboSynonym.getText());
+        }
+
+        return synonyms;
+    }
+
+    private OntologyDocument createParentChildRelationship(String id, String name, Set<String> childSynonyms, 
+                                                           String parentId, String parentName, Set<String> parentSynonyms, 
+                                                           String relationshipType, boolean cyclicRelationship) {
+        final OntologyDocument ontologyDocument = new OntologyDocument(ontology, parentId, parentName, id, name, relationshipType, cyclicRelationship);
+        ontologyDocument.addAllChildSynonyms(childSynonyms);
+        ontologyDocument.addAllParentSynonyms(parentSynonyms);
+        
+        return ontologyDocument;
+    }
+
+    @SuppressWarnings("unchecked")
+    private OntologyDocument createLeafRelationship(String id, String name, Set<String> synonyms) {
+        return createParentChildRelationship(null, null, Collections.EMPTY_SET, id, name, synonyms, null, false);
+    }
+
+    @SuppressWarnings("unchecked")
+    private OntologyDocument createRootRelationship(String id, String name, Set<String> synonyms) {
+        return createParentChildRelationship(id, name, synonyms, null, null, Collections.EMPTY_SET, null, false);
+    }
+
+    private boolean isARootTerm(OBOClassImpl oboClass) {
+        return oboClass.getParents().isEmpty();
+    }
+
+    private boolean isALeafTerm(OBOClassImpl oboClass) {
+        return oboClass.getChildren().isEmpty();
     }
 }

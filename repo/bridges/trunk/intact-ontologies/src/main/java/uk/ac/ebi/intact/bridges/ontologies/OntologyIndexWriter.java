@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.intact.bridges.ontologies;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -30,6 +31,9 @@ import java.io.IOException;
  * @version $Id$
  */
 public class OntologyIndexWriter {
+
+    // do not use regular expression characters on the separator
+    public static final String SYNONYM_SEPARATOR = " ## ";
 
     private IndexWriter indexWriter;
 
@@ -61,6 +65,8 @@ public class OntologyIndexWriter {
         doc.add(new Field(FieldName.RELATIONSHIP_CYCLIC, String.valueOf(ontologyDoc.isCyclicRelationship()),
                           Field.Store.YES, Field.Index.UN_TOKENIZED));
 
+        doc.add(new Field(FieldName.PARENT_SYNONYMS, StringUtils.join(ontologyDoc.getParentSynonyms(), SYNONYM_SEPARATOR), Field.Store.YES, Field.Index.UN_TOKENIZED));
+        doc.add(new Field(FieldName.CHILDREN_SYNONYMS, StringUtils.join(ontologyDoc.getChildSynonyms(), SYNONYM_SEPARATOR), Field.Store.YES, Field.Index.UN_TOKENIZED));
 
         this.indexWriter.addDocument(doc);
     }

@@ -15,6 +15,9 @@
  */
 package uk.ac.ebi.intact.bridges.ontologies;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 /**
  * Represents a document in the lucene index for ontologies. It is just a convenience class that wraps the
  * access to documents by using the appropriate document fields. 
@@ -31,6 +34,8 @@ public final class OntologyDocument {
     private String childName;
     private String relationshipType;
     private boolean cyclicRelationship;
+    private Collection<String> childSynonyms;
+    private Collection<String> parentSynonyms;
 
     public OntologyDocument(String ontology,
                             String parentId,
@@ -46,6 +51,9 @@ public final class OntologyDocument {
         this.childName = childName;
         this.relationshipType = relationshipType;
         this.cyclicRelationship = cyclicRelationship;
+        
+        this.childSynonyms = new HashSet<String>();
+        this.parentSynonyms = new HashSet<String>();
     }
 
     public String getOntology() {
@@ -82,6 +90,46 @@ public final class OntologyDocument {
 
     public boolean isLeaf() {
         return (childId == null);
+    }
+    
+    public boolean addChildSynonym(String synonym) {
+        return childSynonyms.add(synonym);
+    }
+
+    public boolean addParentSynonym(String synonym) {
+        return parentSynonyms.add(synonym);
+    }
+    
+    public void addAllChildSynonyms(Collection<String> synonyms) {
+        for (String synonym : synonyms) {
+            addChildSynonym(synonym);
+        }
+    }
+
+    public void addAllParentSynonyms(Collection<String> synonyms) {
+        for (String synonym : synonyms) {
+            addParentSynonym(synonym);
+        }
+    }
+
+    public void addAllChildSynonyms(String[] synonyms) {
+        for (String synonym : synonyms) {
+            addChildSynonym(synonym);
+        }
+    }
+
+    public void addAllParentSynonyms(String[] synonyms) {
+        for (String synonym : synonyms) {
+            addParentSynonym(synonym);
+        }
+    }
+
+    public Collection<String> getChildSynonyms() {
+        return new HashSet<String> (childSynonyms);
+    }
+
+    public Collection<String> getParentSynonyms() {
+        return new HashSet<String> (parentSynonyms);
     }
 
     @Override
@@ -122,6 +170,7 @@ public final class OntologyDocument {
         sb.append('}');
         return sb.toString();
     }
+
 
 
 }

@@ -15,7 +15,6 @@
  */
 package uk.ac.ebi.intact.bridges.ontologies;
 
-import junit.framework.Assert;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
@@ -89,7 +88,6 @@ public class OntologyIndexSearcherTest {
         Assert.assertEquals("cell cycle", ontologyHits.doc(3).getChildName());
         Assert.assertEquals("cell differentiation", ontologyHits.doc(4).getChildName());
         Assert.assertEquals("GO:0016032", ontologyHits.doc(23).getChildId());
-
     }
 
     @Test
@@ -100,5 +98,15 @@ public class OntologyIndexSearcherTest {
         Assert.assertEquals("GO:0008150", ontologyHits.doc(0).getParentId());
         Assert.assertEquals("biological_process", ontologyHits.doc(0).getParentName());
 
+    }
+
+    @Test
+    public void searchByChild_checkSynonyms() throws Exception {
+        final OntologyHits ontologyHits = searcher.searchByChildId("GO:0007010", new Sort(FieldName.CHILDREN_NAME_SORTABLE));
+        Assert.assertEquals(1, ontologyHits.length());
+
+        OntologyDocument doc = ontologyHits.doc(0);
+
+        Assert.assertEquals(3, doc.getChildSynonyms().size());
     }
 }

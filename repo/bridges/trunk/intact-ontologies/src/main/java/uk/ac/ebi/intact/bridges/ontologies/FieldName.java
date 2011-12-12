@@ -8,13 +8,15 @@ package uk.ac.ebi.intact.bridges.ontologies;
  */
 public interface FieldName {
 
-    static final String ONTOLOGY = "ontology";
-    static final String PARENT_ID = "pid";
-    static final String PARENT_NAME = "pname";
-    static final String PARENT_NAME_SORTABLE = "pname_sort";
-    static final String CHILDREN_ID = "cid";
-    static final String CHILDREN_NAME = "cname"; 
-    static final String CHILDREN_NAME_SORTABLE = "cname_sort"; 
-    static final String RELATIONSHIP_TYPE = "reltype";
-    static final String RELATIONSHIP_CYCLIC = "cyclic"; 
+    String ONTOLOGY = "ontology";
+    String PARENT_ID = "pid";
+    String PARENT_NAME = "pname";
+    String PARENT_NAME_SORTABLE = "pname_sort";
+    String PARENT_SYNONYMS = "psynonyms";
+    String CHILDREN_ID = "cid";
+    String CHILDREN_NAME = "cname"; 
+    String CHILDREN_NAME_SORTABLE = "cname_sort"; 
+    String CHILDREN_SYNONYMS = "csynonyms"; 
+    String RELATIONSHIP_TYPE = "reltype";
+    String RELATIONSHIP_CYCLIC = "cyclic"; 
 }
