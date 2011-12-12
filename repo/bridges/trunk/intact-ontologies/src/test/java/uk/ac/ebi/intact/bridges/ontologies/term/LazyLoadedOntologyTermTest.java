@@ -153,7 +153,7 @@ public class LazyLoadedOntologyTermTest {
         //  c31  <- parents for this node
         //
 
-        OntologyDocument root = new OntologyDocument("test", null, null, "ROOT", "root", null, false);
+        OntologyDocument root = new OntologyDocument("test", null, null,  "ROOT", "root", null, false);
         OntologyDocument root_c11 = new OntologyDocument("test", "ROOT", "root", "C1-1", "children 1-1", "OBO_REL:is_a", false);
         OntologyDocument root_c21 = new OntologyDocument("test", "ROOT", "root", "C2-1", "children 2-1", "regulates", false);
         OntologyDocument root_c22 = new OntologyDocument("test", "ROOT", "root", "C2-2", "children 2-2", "OBO_REL:is_a", false);

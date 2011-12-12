@@ -30,7 +30,7 @@ public class UniprotTaxonomyOntologyIteratorTest {
 
     @Test
     public void testProcessLine() throws Exception {
-        String line = "218834\t\tPseudoryzomys simplex\tBrazilian false rice rat\t\t\tannotated\tSpecies\tEukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi; Mammalia; Eutheria; Euarchontoglires; Glires; Rodentia; Sciurognathi; Muroidea; Cricetidae; Sigmodontinae; Pseudoryzomys\t218833";
+        String line = "218834\tLALARAT\tPseudoryzomys simplex\tBrazilian false rice rat\tHappyRat\tUglyRat; DeadRat\tannotated\tSpecies\tEukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi; Mammalia; Eutheria; Euarchontoglires; Glires; Rodentia; Sciurognathi; Muroidea; Cricetidae; Sigmodontinae; Pseudoryzomys\t218833";
 
         UniprotTaxonomyOntologyIterator iterator = new UniprotTaxonomyOntologyIterator();
         OntologyDocument ontologyDocument = iterator.processLine(line);
@@ -39,6 +39,7 @@ public class UniprotTaxonomyOntologyIteratorTest {
         Assert.assertEquals("Brazilian false rice rat", ontologyDocument.getChildName());
         Assert.assertEquals("218833", ontologyDocument.getParentId());
         Assert.assertEquals("Pseudoryzomys", ontologyDocument.getParentName());
+        Assert.assertEquals(4, ontologyDocument.getChildSynonyms().size());
     }
 
     @Test
