@@ -40,9 +40,11 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
 
     private String id;
     private String name;
+    private Collection<String> parentSynonyms;
 
     private List<OntologyTerm> parents;
     private List<OntologyTerm> children;
+    private Set<OntologyTerm> synonyms;
 
     public LazyLoadedOntologyTerm(OntologyIndexSearcher searcher, String id) {
         this.searcher = searcher;
@@ -52,7 +54,9 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
             final OntologyHits ontologyHits = searcher.searchByParentId(id);
 
             if (ontologyHits.length() > 0) {
-                this.name = ontologyHits.doc(0).getParentName();
+                final OntologyDocument document = ontologyHits.doc(0);
+                this.name = document.getParentName();
+                this.parentSynonyms = document.getParentSynonyms();
             }
         } catch (IOException e) {
             throw new IllegalArgumentException("Problem loading name for term: "+id, e);
@@ -60,9 +64,15 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
     }
 
     public LazyLoadedOntologyTerm(OntologyIndexSearcher searcher, String id, String name) {
+        this(searcher, id);
+        this.name = name;
+    }
+
+    public LazyLoadedOntologyTerm(OntologyIndexSearcher searcher, String id, String name, Collection<String> synonyms) {
         this.searcher = searcher;
         this.id = id;
         this.name = name;
+        this.parentSynonyms = synonyms;
     }
 
     public String getId() {
@@ -115,6 +125,26 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
         return children;
     }
 
+    @Override
+    public Set<OntologyTerm> getSynonyms() {
+        if (synonyms != null) {
+            return synonyms;
+        }
+
+        synonyms = new HashSet<OntologyTerm>();
+
+        if (parentSynonyms == null || parentSynonyms.isEmpty()) {
+            return synonyms;
+        }
+        
+        for (String synonym : parentSynonyms) {
+            OntologyTerm ontologyTerm = new LazyLoadedOntologyTerm(searcher, id, synonym);
+            synonyms.add(ontologyTerm);
+        }
+        
+        return synonyms;
+    }
+
     private OntologyHits searchQuery(String idFieldName, boolean includeCyclic) throws IOException {
         BooleanQuery query = new BooleanQuery();
         query.add(new TermQuery(new Term(idFieldName, id)), BooleanClause.Occur.MUST);
@@ -131,15 +161,26 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
     }
 
     public Set<OntologyTerm> getAllParentsToRoot() {
-        return getAllParentsToRoot(this);
+        return getAllParentsToRoot(this, false);
     }
 
-    protected Set<OntologyTerm> getAllParentsToRoot(OntologyTerm ontologyTerm) {
+    @Override
+    public Set<OntologyTerm> getAllParentsToRoot(boolean includeSynonyms) {
+        return getAllParentsToRoot(this, includeSynonyms);
+    }
+
+    protected Set<OntologyTerm> getAllParentsToRoot(OntologyTerm ontologyTerm, boolean includeSynonyms) {
         Set<OntologyTerm> parents = new HashSet<OntologyTerm>();
 
         for (OntologyTerm parent : ontologyTerm.getParents()) {
             parents.add(parent);
-            parents.addAll(getAllParentsToRoot(parent));
+
+            if (includeSynonyms) {
+                Set<OntologyTerm> synonyms = parent.getSynonyms();
+                parents.addAll(synonyms);
+            }
+            
+            parents.addAll(getAllParentsToRoot(parent, includeSynonyms));
         }
 
         return parents;
@@ -174,7 +215,7 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
             final OntologyDocument document = ontologyHits.doc(i);
 
             if (document.getParentId() != null && !processedIds.contains(document.getParentId())) {
-                terms.add(newInternalOntologyTerm(searcher, document.getParentId(), document.getParentName()));
+                terms.add(newInternalOntologyTerm(searcher, document.getParentId(), document.getParentName(), document.getParentSynonyms()));
                 processedIds.add(document.getParentId());
             }
         }
@@ -192,7 +233,7 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
             final OntologyDocument document = ontologyHits.doc(i);
 
             if (document.getChildId() != null && !processedIds.contains(document.getChildId())) {
-                terms.add(newInternalOntologyTerm(searcher, document.getChildId(), document.getChildName()));
+                terms.add(newInternalOntologyTerm(searcher, document.getChildId(), document.getChildName(), document.getChildSynonyms()));
                 processedIds.add(document.getParentId());
             }
         }
@@ -200,8 +241,8 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
         return terms;
     }
 
-    protected OntologyTerm newInternalOntologyTerm(OntologyIndexSearcher searcher, String id, String name) {
-        return new LazyLoadedOntologyTerm(searcher, id, name);
+    protected OntologyTerm newInternalOntologyTerm(OntologyIndexSearcher searcher, String id, String name, Collection<String> synonyms) {
+        return new LazyLoadedOntologyTerm(searcher, id, name, synonyms);
     }
 
     @Override
