@@ -15,7 +15,6 @@
  */
 package uk.ac.ebi.intact.bridges.ontologies.term;
 
-import junit.framework.Assert;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.junit.*;
@@ -118,12 +117,33 @@ public class LazyLoadedOntologyTermTest {
         final Set<OntologyTerm> parents = term.getAllParentsToRoot();
 
         Assert.assertEquals(2, parents.size());
-        
+
         final Iterator<OntologyTerm> iterator = parents.iterator();
         Assert.assertEquals("GO:0008150", iterator.next().getId());
         Assert.assertEquals("GO:0008152", iterator.next().getId());
     }
-    
+
+    @Test
+    public void allParentsToRoot_includeSynonyms() throws Exception {
+        OntologyTerm term = new LazyLoadedOntologyTerm(searcher, "GO:0044238");
+
+        final Set<OntologyTerm> parents = term.getAllParentsToRoot(true);
+
+        Assert.assertEquals(2, parents.size());
+
+        final Iterator<OntologyTerm> iterator = parents.iterator();
+        Assert.assertEquals("GO:0008150", iterator.next().getId());
+        Assert.assertEquals("GO:0008152", iterator.next().getId());
+    }
+
+    @Test
+    public void synonymsForTerm() throws Exception {
+        OntologyTerm term = new LazyLoadedOntologyTerm(searcher, "GO:0044238");
+
+        Assert.assertEquals(1, term.getSynonyms().size());
+        Assert.assertEquals("primary metabolism", term.getSynonyms().iterator().next().getName());
+    }
+
     @Test
     public void childrenAtDepth() throws Exception {
         OntologyTerm term = new LazyLoadedOntologyTerm(searcher, "GO:0008150");

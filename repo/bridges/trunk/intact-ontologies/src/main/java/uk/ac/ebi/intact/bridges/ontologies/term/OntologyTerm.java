@@ -66,10 +66,23 @@ public interface OntologyTerm {
     List<OntologyTerm> getChildren(boolean includeCyclic);
 
     /**
+     * Gets the synonyms for this ontology term.
+     * @return the synonyms
+     */
+    Set<OntologyTerm> getSynonyms();
+
+    /**
      * Gets a set that contains all the parent terms until the root is reached. The root is included.
      * @return The set with the parents
      */
     Set<OntologyTerm> getAllParentsToRoot();
+
+    /**
+     * Gets a set that contains all the parent terms until the root is reached. The root is included.
+     * @param includeSynonyms
+     * @return The set with the parents
+     */
+    Set<OntologyTerm> getAllParentsToRoot(boolean includeSynonyms);
 
     /**
      * Gets the children at a certain level of depth. For instance, if we use depth 2 the collection
