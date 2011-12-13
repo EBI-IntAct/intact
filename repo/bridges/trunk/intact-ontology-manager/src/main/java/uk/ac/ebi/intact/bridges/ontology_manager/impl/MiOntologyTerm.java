@@ -6,7 +6,6 @@ import uk.ac.ebi.ols.model.interfaces.Term;
 import uk.ac.ebi.ols.model.interfaces.TermSynonym;
 
 import java.util.Collection;
-import java.util.Set;
 import java.util.regex.Matcher;
 
 /**
@@ -227,7 +226,7 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
     }
 
     @Override
-    protected String processXrefDefinition(String xref, String database, String accession, Set<String> resIdRefs, String pubmedPrimary) {
+    protected String processXrefDefinition(String xref, String database, String accession, String pubmedPrimary) {
 
         if ( PMID.equalsIgnoreCase(database) ) {
             if (pubmedPrimary == null){
@@ -245,12 +244,13 @@ public class MiOntologyTerm extends AbstractIntactOntologyTerm {
             TermDbXref pubmedRef = new TermDbXref(PUBMED, PUBMED_MI_REF, accession, SEE_ALSO, SEE_ALSO_MI_REF);
             this.dbXrefs.add(pubmedRef); // MI not MOD
         } else if ( GO.equalsIgnoreCase(database) ) {
-            TermDbXref goRef = new TermDbXref(GO, GO_MI_REF, database + ":" + accession, IDENTITY, IDENTITY_MI_REF);
+            TermDbXref goRef = new TermDbXref(GO, GO_MI_REF, database + ":" + accession, SEE_ALSO, SEE_ALSO_MI_REF);
             this.dbXrefs.add(goRef); // MI not MOD
         } else if ( RESID.equalsIgnoreCase(database) ) {
-            resIdRefs.add(accession);
+            TermDbXref resXref = new TermDbXref(RESID, RESID_MI_REF, accession, SEE_ALSO, SEE_ALSO_MI_REF);
+            this.dbXrefs.add(resXref);
         } else if ( SO.equalsIgnoreCase(database) ) {
-            TermDbXref soRef = new TermDbXref(SO, SO_MI_REF, database + ":" + accession, IDENTITY, IDENTITY_MI_REF);
+            TermDbXref soRef = new TermDbXref(SO, SO_MI_REF, database + ":" + accession, SEE_ALSO, SEE_ALSO_MI_REF);
             this.dbXrefs.add(soRef);  // MI not MOD
         }
 

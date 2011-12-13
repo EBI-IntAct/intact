@@ -60,7 +60,7 @@ public class ModOntologyTermTest {
                 }
             }
             else if (xref.getDatabase().equals("unimod") && xref.getDatabaseId().equals("MI:1015")){
-                if (xref.getQualifier().equals("identity") && xref.getQualifierId().equals("MI:0356")){
+                if (xref.getQualifier().equals("see-also") && xref.getQualifierId().equals("MI:0361")){
                     Assert.assertEquals("447", xref.getAccession());
                 }
                 else{
@@ -140,7 +140,7 @@ public class ModOntologyTermTest {
                 }
             }
             else if (xref.getDatabase().equals("deltamass") && xref.getDatabaseId().equals("MI:1014")){
-                if (xref.getQualifier().equals("identity") && xref.getQualifierId().equals("MI:0356")){
+                if (xref.getQualifier().equals("see-also") && xref.getQualifierId().equals("MI:0361")){
                     Assert.assertEquals("0", xref.getAccession());
                 }
                 else{
@@ -148,7 +148,7 @@ public class ModOntologyTermTest {
                 }
             }
             else if (xref.getDatabase().equals("chebi") && xref.getDatabaseId().equals("MI:0474")){
-                if (xref.getQualifier().equals("identity") && xref.getQualifierId().equals("MI:0356")){
+                if (xref.getQualifier().equals("see-also") && xref.getQualifierId().equals("MI:0361")){
                     Assert.assertEquals("29950", xref.getAccession());
                 }
                 else{
@@ -156,7 +156,7 @@ public class ModOntologyTermTest {
                 }
             }
             else if (xref.getDatabase().equals("resid") && xref.getDatabaseId().equals("MI:0248")){
-                if (xref.getQualifier().equals("identity") && xref.getQualifierId().equals("MI:0356")){
+                if (xref.getQualifier().equals("see-also") && xref.getQualifierId().equals("MI:0361")){
                     Assert.assertEquals("AA0005", xref.getAccession());
                 }
                 else{
@@ -191,7 +191,7 @@ public class ModOntologyTermTest {
         Assert.assertEquals(1, term4.getDbXrefs().size());
         for (TermDbXref xref : term4.getDbXrefs()){
             if (xref.getDatabase().equals("unimod") && xref.getDatabaseId().equals("MI:1015")){
-                if (xref.getQualifier().equals("identity") && xref.getQualifierId().equals("MI:0356")){
+                if (xref.getQualifier().equals("see-also") && xref.getQualifierId().equals("MI:0361")){
                     Assert.assertEquals("21", xref.getAccession());
                 }
                 else{

@@ -8,7 +8,6 @@ import uk.ac.ebi.intact.bridges.ontology_manager.TermAnnotation;
 import uk.ac.ebi.intact.bridges.ontology_manager.TermDbXref;
 import uk.ac.ebi.intact.bridges.ontology_manager.client.IntactFilterOlsClient;
 import uk.ac.ebi.intact.bridges.ontology_manager.impl.MiOntologyTerm;
-import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 
 import javax.xml.rpc.ServiceException;
 import java.net.MalformedURLException;
@@ -179,7 +178,7 @@ public class MIOntologyTermTest2 {
                 }
             }
             else if (xref.getDatabase().equals("go") && xref.getDatabaseId().equals("MI:0448")){
-                if (xref.getQualifier().equals("identity") && xref.getQualifierId().equals("MI:0356")){
+                if (xref.getQualifier().equals("see-also") && xref.getQualifierId().equals("MI:0361")){
                     Assert.assertEquals("GO:0006473", xref.getAccession());
                 }
                 else {
@@ -223,7 +222,7 @@ public class MIOntologyTermTest2 {
                 }
             }
             else if (xref.getDatabase().equals("so") && xref.getDatabaseId().equals("MI:0601")){
-                if (xref.getQualifier().equals("identity") && xref.getQualifierId().equals("MI:0356")){
+                if (xref.getQualifier().equals("see-also") && xref.getQualifierId().equals("MI:0361")){
                     Assert.assertEquals("SO:0000348", xref.getAccession());
                 }
                 else {
@@ -264,7 +263,7 @@ public class MIOntologyTermTest2 {
 
         for (TermDbXref xref : term1.getDbXrefs()){
             if (xref.getDatabase().equals("resid") && xref.getDatabaseId().equals("MI:0248")){
-                if (xref.getQualifier().equals("identity") && xref.getQualifierId().equals("MI:0356")){
+                if (xref.getQualifier().equals("see-also") && xref.getQualifierId().equals("MI:0361")){
                     Assert.assertEquals("AA0125", xref.getAccession());
                 }
                 else{
