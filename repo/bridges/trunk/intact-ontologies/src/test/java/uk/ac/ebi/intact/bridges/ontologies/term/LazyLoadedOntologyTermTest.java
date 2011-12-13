@@ -119,8 +119,8 @@ public class LazyLoadedOntologyTermTest {
         Assert.assertEquals(2, parents.size());
 
         final Iterator<OntologyTerm> iterator = parents.iterator();
-        Assert.assertEquals("GO:0008150", iterator.next().getId());
         Assert.assertEquals("GO:0008152", iterator.next().getId());
+        Assert.assertEquals("GO:0008150", iterator.next().getId());
     }
 
     @Test
@@ -129,11 +129,11 @@ public class LazyLoadedOntologyTermTest {
 
         final Set<OntologyTerm> parents = term.getAllParentsToRoot(true);
 
-        Assert.assertEquals(2, parents.size());
+        Assert.assertEquals(7, parents.size());
 
         final Iterator<OntologyTerm> iterator = parents.iterator();
-        Assert.assertEquals("GO:0008150", iterator.next().getId());
         Assert.assertEquals("GO:0008152", iterator.next().getId());
+        Assert.assertEquals("GO:0008150", iterator.next().getId());
     }
 
     @Test
