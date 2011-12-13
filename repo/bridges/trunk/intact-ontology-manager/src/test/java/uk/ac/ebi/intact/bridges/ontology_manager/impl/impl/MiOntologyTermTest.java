@@ -175,7 +175,7 @@ public class MiOntologyTermTest {
                 }
             }
             else if (xref.getDatabase().equals("go") && xref.getDatabaseId().equals("MI:0448")){
-                if (xref.getQualifier().equals("identity") && xref.getQualifierId().equals("MI:0356")){
+                if (xref.getQualifier().equals("see-also") && xref.getQualifierId().equals("MI:0361")){
                     Assert.assertEquals("GO:0006473", xref.getAccession());
                 }
                 else {
@@ -218,7 +218,7 @@ public class MiOntologyTermTest {
                 }
             }
             else if (xref.getDatabase().equals("so") && xref.getDatabaseId().equals("MI:0601")){
-                if (xref.getQualifier().equals("identity") && xref.getQualifierId().equals("MI:0356")){
+                if (xref.getQualifier().equals("see-also") && xref.getQualifierId().equals("MI:0361")){
                     Assert.assertEquals("SO:0000348", xref.getAccession());
                 }
                 else {
@@ -256,7 +256,7 @@ public class MiOntologyTermTest {
 
         for (TermDbXref xref : term1.getDbXrefs()){
             if (xref.getDatabase().equals("resid") && xref.getDatabaseId().equals("MI:0248")){
-                if (xref.getQualifier().equals("identity") && xref.getQualifierId().equals("MI:0356")){
+                if (xref.getQualifier().equals("see-also") && xref.getQualifierId().equals("MI:0361")){
                     Assert.assertEquals("AA0125", xref.getAccession());
                 }
                 else{

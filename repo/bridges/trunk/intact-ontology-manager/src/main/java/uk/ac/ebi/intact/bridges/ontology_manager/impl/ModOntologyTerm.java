@@ -5,7 +5,6 @@ import uk.ac.ebi.ols.model.interfaces.Term;
 import uk.ac.ebi.ols.model.interfaces.TermSynonym;
 
 import java.util.Collection;
-import java.util.Set;
 import java.util.regex.Matcher;
 
 /**
@@ -58,7 +57,7 @@ public class ModOntologyTerm extends AbstractIntactOntologyTerm{
     }
 
     @Override
-    protected String processXrefDefinition(String xref, String database, String accession, Set<String> resIdRefs, String pubmedPrimary) {
+    protected String processXrefDefinition(String xref, String database, String accession, String pubmedPrimary) {
         if ( PUBMED.equalsIgnoreCase(database) ) {
             if (pubmedPrimary == null){
                 pubmedPrimary = xref;
@@ -72,15 +71,16 @@ public class ModOntologyTerm extends AbstractIntactOntologyTerm{
             }
         }
         else if ( RESID.equalsIgnoreCase(database) ) {
-            resIdRefs.add(accession);
+            TermDbXref resXref = new TermDbXref(RESID, RESID_MI_REF, accession, SEE_ALSO, SEE_ALSO_MI_REF);
+            this.dbXrefs.add(resXref);
         } else if ( UNIMOD.equalsIgnoreCase(database) ) {
-            TermDbXref unimodRef = new TermDbXref(UNIMOD, UNIMOD_MI_REF, accession, IDENTITY, IDENTITY_MI_REF);
+            TermDbXref unimodRef = new TermDbXref(UNIMOD, UNIMOD_MI_REF, accession, SEE_ALSO, SEE_ALSO_MI_REF);
             this.dbXrefs.add(unimodRef); // MOD xref
         } else if ( DELTAMASS.equalsIgnoreCase(database) ) {
-            TermDbXref deltaMassRef = new TermDbXref(DELTAMASS, DELTAMASS_MI_REF, accession, IDENTITY, IDENTITY_MI_REF);
+            TermDbXref deltaMassRef = new TermDbXref(DELTAMASS, DELTAMASS_MI_REF, accession, SEE_ALSO, SEE_ALSO_MI_REF);
             this.dbXrefs.add(deltaMassRef);  // MOD xref
         } else if ( CHEBI.equalsIgnoreCase(database) ) {
-            TermDbXref chebiRef = new TermDbXref(CHEBI, CHEBI_MI_REF, accession, IDENTITY, IDENTITY_MI_REF);
+            TermDbXref chebiRef = new TermDbXref(CHEBI, CHEBI_MI_REF, accession, SEE_ALSO, SEE_ALSO_MI_REF);
             this.dbXrefs.add(chebiRef);  // MOD xref
         } else if ( URL.equalsIgnoreCase(database) ) {
             this.url = accession;

@@ -181,7 +181,6 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
      * This method will initialize the xrefs of this object from the map of xrefs
      */
     public void loadXrefsFrom(Map xrefs) {
-        Set<String> resIdRefs = new HashSet<String>(xrefs.size());
 
         for (Object key : xrefs.keySet()){
             String keyName = (String) key;
@@ -206,7 +205,7 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
                     }
 
                     if (database != null && accession != null){
-                        pubmedPrimary = processXrefDefinition(xref, database, accession, resIdRefs, pubmedPrimary);
+                        pubmedPrimary = processXrefDefinition(xref, database, accession, pubmedPrimary);
                     }
                 }
             }
@@ -236,19 +235,6 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
                 }
             }
         }
-
-        if (resIdRefs.size() == 1){
-            String residXref = resIdRefs.iterator().next();
-
-            TermDbXref residIdentity = new TermDbXref(RESID, RESID_MI_REF, residXref, IDENTITY, IDENTITY_MI_REF);
-            this.dbXrefs.add(residIdentity);
-        }
-        else if (resIdRefs.size() > 1){
-            for (String ref : resIdRefs){
-                TermDbXref resXref = new TermDbXref(RESID, RESID_MI_REF, ref, SEE_ALSO, SEE_ALSO_MI_REF);
-                this.dbXrefs.add(resXref);
-            }
-        }
     }
 
     /**
@@ -263,10 +249,9 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
      * @param xref : the xref as a String
      * @param database : the database
      * @param accession : the accession
-     * @param resIdRefs : the resId xrefs
      * @param pubmedPrimary : the pubmed primary ID
      */
-    protected abstract String processXrefDefinition(String xref, String database, String accession, Set<String> resIdRefs, String pubmedPrimary);
+    protected abstract String processXrefDefinition(String xref, String database, String accession, String pubmedPrimary);
 
     /**
      * Process the synonyms of a term
@@ -326,7 +311,7 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
                     }
                 }
                 else {
-                    pubmedPrimary = processXrefDefinition(xref.toString(), xref.getDbName(), xref.getAccession(), resIdRefs, pubmedPrimary);
+                    pubmedPrimary = processXrefDefinition(xref.toString(), xref.getDbName(), xref.getAccession(), pubmedPrimary);
                 }
             }
 
