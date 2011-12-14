@@ -15,10 +15,6 @@
 
     <name>IntAct Bridges :: Core Dependent</name>
 
-    <modules>
-       <module>intact-msd</module>
-    </modules>
-
     <dependencies>
         <dependency>
             <groupId>uk.ac.ebi.intact.core</groupId>
