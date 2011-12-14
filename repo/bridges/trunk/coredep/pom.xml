@@ -16,7 +16,6 @@
     <name>IntAct Bridges :: Core Dependent</name>
 
     <modules>
-       <module>intact-cdb</module>
        <module>intact-msd</module>
     </modules>
 
