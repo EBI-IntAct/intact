@@ -96,14 +96,15 @@ public class ReflectionCrossReferenceBuilder {
                         methodName.startsWith("get")) {
 
                     if (methodName.endsWith("Id") ||
-                        methodName.endsWith("Number") ||
-                        methodName.endsWith("KOIdentifier") ||
-                        methodName.endsWith("DMDMIdentifier") ||
-                        methodName.endsWith("GeneIdentifier") ||
-                        methodName.endsWith("Accession") ||
-                        methodName.endsWith("PortalIdentifier") ||
-                        methodName.endsWith("ProtIdentifier") ||
-                        methodName.endsWith("TreeIdentifier")) {
+                            methodName.endsWith("Number") ||
+                            methodName.endsWith("KOIdentifier") ||
+                            methodName.endsWith("DMDMIdentifier") ||
+                            methodName.endsWith("PATRICIdentifier") ||
+                            methodName.endsWith("GeneIdentifier") ||
+                            methodName.endsWith("Accession") ||
+                            methodName.endsWith("PortalIdentifier") ||
+                            methodName.endsWith("ProtIdentifier") ||
+                            methodName.endsWith("TreeIdentifier")) {
 
                         method = candidateMethod;
                         foundId = true;
@@ -166,7 +167,7 @@ public class ReflectionCrossReferenceBuilder {
         String id = null;
 
         Method method = findMethod( clazz, db );
-        
+
         try {
             if ( method != null ) {
                 Object o = method.invoke( crossRef, NO_PARAM );
