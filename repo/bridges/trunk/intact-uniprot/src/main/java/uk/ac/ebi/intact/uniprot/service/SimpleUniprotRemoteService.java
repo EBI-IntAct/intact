@@ -570,7 +570,11 @@ public class SimpleUniprotRemoteService extends AbstractUniprotService {
         Collection<UniprotCrossReference> convertedRefs = new ArrayList<UniprotCrossReference>();
         ReflectionCrossReferenceBuilder builder = new ReflectionCrossReferenceBuilder();
         for ( DatabaseCrossReference ref : refs ) {
-            convertedRefs.add( builder.build( ref ) );
+            UniprotCrossReference xref = builder.build(ref);
+
+            if (xref != null){
+                convertedRefs.add( xref );
+            }
         }
         return convertedRefs;
     }
