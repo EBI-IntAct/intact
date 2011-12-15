@@ -98,6 +98,7 @@ public class ReflectionCrossReferenceBuilder {
                     if (methodName.endsWith("Id") ||
                         methodName.endsWith("Number") ||
                         methodName.endsWith("KOIdentifier") ||
+                        methodName.endsWith("DMDMIdentifier") ||
                         methodName.endsWith("GeneIdentifier") ||
                         methodName.endsWith("Accession") ||
                         methodName.endsWith("PortalIdentifier") ||
