@@ -126,11 +126,12 @@ public class ReflectionCrossReferenceBuilder {
             }
 
             if (!foundId) {
-                throw new IllegalArgumentException("Cannot know the id from cross reference of type: "+clazz+" / db: "+db);
+                log.warn("Cannot know the id from cross reference of type: "+clazz+" / db: "+db);
             }
-
-            // cache it
-            methodCache.put( clazz.getName(), methodName );
+            else {
+                // cache it
+                methodCache.put( clazz.getName(), methodName );
+            }
         } else {
             if ( log.isDebugEnabled() ) {
                 log.debug( "Method found in cache." );
@@ -187,6 +188,9 @@ public class ReflectionCrossReferenceBuilder {
                         log.debug( method.getName() + " returned null" );
                     }
                 }
+            }
+            else {
+                return null;
             }
         } catch ( Exception e ) {
             throw new RuntimeUniprotServiceException("Problem getting xref id using reflection: "+crossRef+" / method: "+clazz.getName()+" "+method, e);
