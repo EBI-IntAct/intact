@@ -19,7 +19,7 @@ mvn clean -Pstandalone jetty:run -DprojectStage=Production
 }}}
 
 This will start up 2 things:
- * A stand alone database (H2) and the data will be stored in the current user's home directory
+ * A stand alone database (H2) and the data will be stored in the current user's home directory (you should find some file looking like editor-db.*)
  * A web server (Jetty) running on port 33445, the editor should be available at this address: http://localhost:33445/editor (please give the server a couple of minutes to start up and keep an eye on the logs for any unusual error messages)
 
 To stop the servers (database/web), just press CTRL+C in the terminal where you started it. Please remember that this is a demonstration system and any production grade application should be deployed on appropriate database, web server. The IntAct team is not liable for any data loss resulting of the use of this system.
