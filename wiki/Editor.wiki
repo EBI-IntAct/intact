@@ -10,7 +10,10 @@ This is the tool used to curate !IntAct information.
 = How to run a local instance =
 
 You can run a local instance of the editor on your machine by following this short guideline:
- * Download the source code by typing the following command (assuming you are running a Linux system and the Shell is bash):
+
+Before you get started, please make sure you have Java 6 and Maven 3 installed on the computer  you are planning to run the Editor on.
+
+These instruction assume that you are running a Linux system and using bash shell (if not you should be able to adapt it easily):
 {{{
 svn co https://intact.googlecode.com/svn/repo/service/trunk/editor editor-standalone
 cd editor-standalone
