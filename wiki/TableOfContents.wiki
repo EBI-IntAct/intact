@@ -9,4 +9,4 @@
     * Persistence
     * Indexing data (SOLR)
   * Tools and Services
-    * Editor (Standalone curation tool)
+    * [Editor Editor (Standalone curation tool)]
