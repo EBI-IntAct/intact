@@ -3,21 +3,32 @@
 
 = The Editor =
 
-This is the tool used to curate !IntAct information. A new version is being developed at the moment.
+This is the tool used to curate !IntAct information.
 
- * Current phase: Implementation.
- * The tool is currently live and usable for testing: [http://www.ebi.ac.uk/interpro/internal-tools/intactdev/editor/]
+ * Current phase: Production.
 
-= Specification =
+= How to run a local instance =
 
-We are currently in the specification phase and interactive mockups are available:
- * [http://intact.googlecode.com/svn/wiki/presentations/Editor-InteractiveMockups-MIMIx.ppt MIMIx curation]
- * [http://intact.googlecode.com/svn/wiki/presentations/Editor-InteractiveMockups-IMEx.ppt IMEx curation]
+You can run a local instance of the editor on your machine by following this short guideline:
+ * Download the source code by typing the following command (assuming you are running a Linux system and the Shell is bash):
+{{{
+svn co https://intact.googlecode.com/svn/repo/service/trunk/editor editor-standalone
+cd editor-standalone
+export MAVEN_OPTS="-XX:MaxPermSize=256m -Xmx1024m"
+mvn clean -Pstandalone jetty:run -DprojectStage=Production
+}}}
 
-How to use these presentations:
- * Slide 2 presents an overview of the curation workflow, enter the presentation mode and click on the various steps to see the corresponding screen mockup.
- * Whenever you are viewing a screen mockup, the top-left corner has a button 'back' which once clicked taked you back to the workflow overview.
- * At the bottom-right corner is a feedback link that (when clicked) will take you to a feedback form, ideal for leaving us your impressions, requests, ...
+This will start up 2 things:
+ * A stand alone database (H2) and the data will be stored in the current user's home directory
+ * A web server (Jetty) running on port 33445, the editor should be available at this address: http://localhost:33445/editor (please give the server a couple of minutes to start up and keep an eye on the logs for any unusual error messages)
+
+To stop the servers (database/web), just press CTRL+C in the terminal where you started it. Please remember that this is a demonstration system and any production grade application should be deployed on appropriate database, web server. The IntAct team is not liable for any data loss resulting of the use of this system.
+
+We have a preliminary [http://lala|user manual] that you may find useful to get started.
+
+Send you feedback/comments to our dev list: intact-developers@googlegroups.com
+
+
 
 = Issues and use cases =
 
