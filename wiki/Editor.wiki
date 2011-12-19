@@ -24,7 +24,7 @@ This will start up 2 things:
 
 To stop the servers (database/web), just press CTRL+C in the terminal where you started it. Please remember that this is a demonstration system and any production grade application should be deployed on appropriate database, web server. The IntAct team is not liable for any data loss resulting of the use of this system.
 
-We have a preliminary [http://lala|user manual] that you may find useful to get started.
+We have a preliminary [http://intact.googlecode.com/svn/wiki/documentation/editor-user_guide.pdf|User Manual] that you may find useful to get started.
 
 Send you feedback/comments to our dev list: intact-developers@googlegroups.com
 
