@@ -41,7 +41,6 @@
         <module>fasta-maven-plugin</module>
         <module>dbupdate-maven-plugin</module>
         <module>psimitab-maven-plugin</module>
-        <module>psixml-generator-maven-plugin</module>
         <module>reactome-maven-plugin</module>
         <module>uniprotexport-maven-plugin</module>
         <module>dataminer-export-maven-plugin</module>
