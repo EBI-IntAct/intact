@@ -73,13 +73,13 @@ public class ModOntologyTerm extends AbstractIntactOntologyTerm{
         else if ( RESID.equalsIgnoreCase(database) ) {
             TermDbXref resXref = new TermDbXref(RESID, RESID_MI_REF, accession, SEE_ALSO, SEE_ALSO_MI_REF);
             this.dbXrefs.add(resXref);
-        } else if ( UNIMOD.equalsIgnoreCase(database) ) {
+        } /*else if ( UNIMOD.equalsIgnoreCase(database) ) {
             TermDbXref unimodRef = new TermDbXref(UNIMOD, UNIMOD_MI_REF, accession, SEE_ALSO, SEE_ALSO_MI_REF);
             this.dbXrefs.add(unimodRef); // MOD xref
         } else if ( DELTAMASS.equalsIgnoreCase(database) ) {
             TermDbXref deltaMassRef = new TermDbXref(DELTAMASS, DELTAMASS_MI_REF, accession, SEE_ALSO, SEE_ALSO_MI_REF);
             this.dbXrefs.add(deltaMassRef);  // MOD xref
-        } else if ( CHEBI.equalsIgnoreCase(database) ) {
+        } */else if ( CHEBI.equalsIgnoreCase(database) ) {
             TermDbXref chebiRef = new TermDbXref(CHEBI, CHEBI_MI_REF, accession, SEE_ALSO, SEE_ALSO_MI_REF);
             this.dbXrefs.add(chebiRef);  // MOD xref
         } else if ( URL.equalsIgnoreCase(database) ) {
@@ -101,7 +101,16 @@ public class ModOntologyTerm extends AbstractIntactOntologyTerm{
                     if (SHORTLABEL_IDENTIFIER.equalsIgnoreCase(synonymType.getName())){
                         this.shortLabel = synonym.getSynonym().toLowerCase();
                     }
-                    else if (DELTAMASS_ALIAS_IDENTIFIER.equalsIgnoreCase(synonymType.getName())
+                    else if (MOD_ALIAS_IDENTIFIER.equalsIgnoreCase(synonymType.getName())
+                            || RESID_IDENTIFIER.equalsIgnoreCase(synonymType.getName())
+                            || RESID_MISNOMER_IDENTIFIER.equalsIgnoreCase(synonymType.getName())
+                            || RESID_NAME_IDENTIFIER.equalsIgnoreCase(synonymType.getName())
+                            || RESID_SYSTEMATIC_IDENTIFIER.equalsIgnoreCase(synonymType.getName())
+                            || UNIPROT_FEATURE_IDENTIFIER.equalsIgnoreCase(synonymType.getName())
+                            || EXACT_KEY.equalsIgnoreCase(synonymType.getName())){
+                        this.aliases.add(synonym.getSynonym());
+                    }
+                    /*else if (DELTAMASS_ALIAS_IDENTIFIER.equalsIgnoreCase(synonymType.getName())
                             || MOD_ALIAS_IDENTIFIER.equalsIgnoreCase(synonymType.getName())
                             || OMSSA_IDENTIFIER.equalsIgnoreCase(synonymType.getName())
                             || MS_IDENTIFIER.equalsIgnoreCase(synonymType.getName())
@@ -115,7 +124,7 @@ public class ModOntologyTerm extends AbstractIntactOntologyTerm{
                             || UNIPROT_FEATURE_IDENTIFIER.equalsIgnoreCase(synonymType.getName())
                             || EXACT_KEY.equalsIgnoreCase(synonymType.getName())){
                         this.aliases.add(synonym.getSynonym());
-                    }
+                    }*/
                 }
             }
         }
@@ -129,18 +138,18 @@ public class ModOntologyTerm extends AbstractIntactOntologyTerm{
         else if (synonymName.startsWith(EXACT_SYNONYM_KEY + META_DATA_SEPARATOR) || EXACT_SYNONYM_KEY.equalsIgnoreCase(synonymName)){
             this.aliases.add(synonym);
         }
-        else if (synonymName.startsWith(DELTAMASS_ALIAS_IDENTIFIER + META_DATA_SEPARATOR) || DELTAMASS_ALIAS_IDENTIFIER.equalsIgnoreCase(synonymName)){
+        /*else if (synonymName.startsWith(DELTAMASS_ALIAS_IDENTIFIER + META_DATA_SEPARATOR) || DELTAMASS_ALIAS_IDENTIFIER.equalsIgnoreCase(synonymName)){
             this.aliases.add(synonym);
-        }
+        }*/
         else if (synonymName.startsWith(MOD_ALIAS_IDENTIFIER + META_DATA_SEPARATOR) || MOD_ALIAS_IDENTIFIER.equalsIgnoreCase(synonymName)){
             this.aliases.add(synonym);
         }
-        else if (synonymName.startsWith(OMSSA_IDENTIFIER + META_DATA_SEPARATOR) || OMSSA_IDENTIFIER.equalsIgnoreCase(synonymName)){
+        /*else if (synonymName.startsWith(OMSSA_IDENTIFIER + META_DATA_SEPARATOR) || OMSSA_IDENTIFIER.equalsIgnoreCase(synonymName)){
             this.aliases.add(synonym);
         }
         else if (synonymName.startsWith(MS_IDENTIFIER + META_DATA_SEPARATOR) || MS_IDENTIFIER.equalsIgnoreCase(synonymName)){
             this.aliases.add(synonym);
-        }
+        }*/
         else if (synonymName.startsWith(RESID_IDENTIFIER + META_DATA_SEPARATOR) || RESID_IDENTIFIER.equalsIgnoreCase(synonymName)){
             this.aliases.add(synonym);
         }
@@ -153,7 +162,7 @@ public class ModOntologyTerm extends AbstractIntactOntologyTerm{
         else if (synonymName.startsWith(RESID_SYSTEMATIC_IDENTIFIER + META_DATA_SEPARATOR) || RESID_SYSTEMATIC_IDENTIFIER.equalsIgnoreCase(synonymName)){
             this.aliases.add(synonym);
         }
-        else if (synonymName.startsWith(UNIMOD_IDENTIFIER + META_DATA_SEPARATOR) || UNIMOD_IDENTIFIER.equalsIgnoreCase(synonymName)){
+        /*else if (synonymName.startsWith(UNIMOD_IDENTIFIER + META_DATA_SEPARATOR) || UNIMOD_IDENTIFIER.equalsIgnoreCase(synonymName)){
             this.aliases.add(synonym);
         }
         else if (synonymName.startsWith(UNIMOD_DESCRIPTION_IDENTIFIER + META_DATA_SEPARATOR) || UNIMOD_DESCRIPTION_IDENTIFIER.equalsIgnoreCase(synonymName)){
@@ -161,7 +170,7 @@ public class ModOntologyTerm extends AbstractIntactOntologyTerm{
         }
         else if (synonymName.startsWith(UNIMOD_INTERIM_IDENTIFIER + META_DATA_SEPARATOR) || UNIMOD_INTERIM_IDENTIFIER.equalsIgnoreCase(synonymName)){
             this.aliases.add(synonym);
-        }
+        }*/
         else if (synonymName.startsWith(UNIPROT_FEATURE_IDENTIFIER + META_DATA_SEPARATOR) || UNIPROT_FEATURE_IDENTIFIER.equalsIgnoreCase(synonymName)){
             this.aliases.add(synonym);
         }
