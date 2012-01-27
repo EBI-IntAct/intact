@@ -34,10 +34,13 @@ public class IntactOntologyManagerTest {
         Assert.assertNotNull(accessMI);
         Assert.assertTrue(accessMI instanceof IntactLocalOntology);
         Assert.assertNotNull(accessMI.getTermForAccession("MI:0018"));
+        Assert.assertNull(accessMI.getTermForAccession("MOD:01161"));
+
 
         OntologyAccessTemplate<IntactOntologyTermI> accessMOD = om.getOntologyAccess("MOD");
         Assert.assertNotNull(accessMOD);
         Assert.assertTrue(accessMOD instanceof IntactOlsOntology);
         Assert.assertNotNull(accessMOD.getTermForAccession("MOD:01161"));
+        Assert.assertNull(accessMOD.getTermForAccession("MI:0018"));
     }
 }
