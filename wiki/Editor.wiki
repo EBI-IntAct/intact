@@ -18,7 +18,7 @@ These instruction assume that you are running a Linux system and using bash shel
 svn co https://intact.googlecode.com/svn/repo/service/trunk/editor editor-standalone
 cd editor-standalone
 export MAVEN_OPTS="-XX:MaxPermSize=256m -Xmx1024m"
-mvn clean -Pstandalone jetty:run -DprojectStage=Production
+mvn clean -P standalone jetty:run -D projectStage=Production
 }}}
 
 This will start up 2 things:
