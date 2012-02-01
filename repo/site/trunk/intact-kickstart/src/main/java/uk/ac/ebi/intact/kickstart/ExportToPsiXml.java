@@ -42,7 +42,7 @@ public class ExportToPsiXml {
     public static void main(String[] args) throws Exception {
 
         // Initialize the IntactContext, using the default configuration found in the file hsql.spring.xml..
-        IntactContext.initContext(new String[] {"/META-INF/h2.spring.xml"});
+        IntactContext.initContext(new String[] {"/META-INF/kickstart.spring.xml"});
 
         // Once an IntactContext has been initialized, we can access to it by getting the current instance
         IntactContext intactContext = IntactContext.getCurrentInstance();

@@ -51,13 +51,13 @@
             <props>
                 <prop key="hibernate.generate_statistics">true</prop>
                 <prop key="hibernate.format_sql">false</prop>
-                <prop key="hibernate.hbm2ddl.auto">${db.hbm2ddl}</prop>
+                <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl}</prop>
             </props>
         </property>
 
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-                <property name="databasePlatform" value="${db.dialect}"/>
+                <property name="databasePlatform" value="${hibernate.dialect}"/>
                 <property name="showSql" value="false"/>
                 <property name="generateDdl" value="false"/>
             </bean>
@@ -66,10 +66,11 @@
     </bean>
 
     <bean id="kickstartDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${db.driver}"/>
-        <property name="url" value="${db.jdbcurl}"/>
-        <property name="username" value="${db.user}"/>
-        <property name="password" value="${db.password}"/>
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.user}"/>
+        <property name="password" value="${jdbc.password}"/>
     </bean>
+
 
 </beans>
