@@ -96,4 +96,11 @@ public class IntactOlsOntology extends AbstractOlsOntology<IntactOntologyTermI> 
     public Pattern getDatabaseRegexp() {
         return termBuilder.getDatabaseRegexp();
     }
+
+    @Override
+    public IntactOntologyTermBuilder getOntologyTermBuilder() {
+        return termBuilder;
+    }
+
+
 }
