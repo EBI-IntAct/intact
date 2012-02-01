@@ -28,6 +28,6 @@ import uk.ac.ebi.intact.core.context.IntactContext;
 public class CreateDatabase {
 
     public static void main(String[] args) throws Exception {
-        IntactContext.initContext(new String[] {"/META-INF/h2-create.spring.xml"});
+        IntactContext.initContext(new String[] {"/META-INF/kickstart-create.spring.xml"});
     }
 }
