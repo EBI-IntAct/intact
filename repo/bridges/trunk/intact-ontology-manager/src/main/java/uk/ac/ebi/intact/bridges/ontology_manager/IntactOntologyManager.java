@@ -3,6 +3,7 @@ package uk.ac.ebi.intact.bridges.ontology_manager;
 import psidev.psi.tools.ontology_manager.OntologyManagerTemplate;
 import psidev.psi.tools.ontology_manager.client.OlsClient;
 import psidev.psi.tools.ontology_manager.impl.local.OntologyLoaderException;
+import uk.ac.ebi.intact.bridges.ontology_manager.builders.DefaultOntologyTermBuilder;
 import uk.ac.ebi.intact.bridges.ontology_manager.builders.IntactOntologyTermBuilder;
 import uk.ac.ebi.intact.bridges.ontology_manager.builders.MiOntologyTermBuilder;
 import uk.ac.ebi.intact.bridges.ontology_manager.builders.ModOntologyTermBuilder;
@@ -55,7 +56,23 @@ public class IntactOntologyManager extends OntologyManagerTemplate<IntactOntolog
             }
 
             try {
-                IntactOntologyTermBuilder termBuilder = (IntactOntologyTermBuilder) builderClass.newInstance();
+                IntactOntologyTermBuilder termBuilder;
+
+                // specific MI and MOD builder
+                if (builderClass != null){
+                    termBuilder = (IntactOntologyTermBuilder) builderClass.newInstance();
+                }
+                // default builder
+                else {
+                    DefaultOntologyTermBuilder defaultTermBuilder = new DefaultOntologyTermBuilder();
+                    defaultTermBuilder.setOntology_definition(ontologyName);
+                    defaultTermBuilder.setShort_name(ontologyName);
+                    defaultTermBuilder.setFull_name(ontologyName);
+                    defaultTermBuilder.setmIParent(null);
+                    defaultTermBuilder.setDatabasePattern(null);
+
+                    termBuilder = defaultTermBuilder;
+                }
 
                 if (FILE_SOURCE.equalsIgnoreCase(loaderClass)){
                     IntactLocalOntology localOntology = new IntactLocalOntology(termBuilder);
