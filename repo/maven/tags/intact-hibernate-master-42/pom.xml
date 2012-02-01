@@ -1,0 +1,239 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.maven</groupId>
+        <artifactId>intact-master</artifactId>
+        <version>21</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.intact.maven</groupId>
+    <artifactId>intact-hibernate-master</artifactId>
+    <packaging>pom</packaging>
+    <version>42</version>
+
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
+    <name>Master POMs :: Master Hibernate POM</name>
+    <description>This is a master POM that contains the data access (hibernate) configuration</description>
+
+    <scm>
+        <connection>scm:svn:https://intact.googlecode.com/svn/repo/maven/tags/intact-hibernate-master-42</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/maven/tags/intact-hibernate-master-42</developerConnection>
+        <url>https://intact.googlecode.com/svn/repo/maven/tags/intact-hibernate-master-42</url>
+    </scm>
+
+    <properties>
+        <hibernate.scope>runtime</hibernate.scope>
+    </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>oracle</id>
+            <activation>
+                <property>
+                    <name>db</name>
+                    <value>oracle</value>
+                </property>
+            </activation>
+
+            <build>
+                <finalName>${artifactId}-${db.alias}-${version}</finalName>
+            </build>
+
+            <properties>
+                <db.platform>Oracle</db.platform>
+                <db.driver>oracle.jdbc.OracleDriver</db.driver>
+                <db.protocol>jdbc</db.protocol>
+                <db.subprotocol>oracle:thin:@${db.host}:${db.port}</db.subprotocol>
+                <db.dialect>org.hibernate.dialect.Oracle9iDialect</db.dialect>
+                <db.separator>:</db.separator>
+            </properties>
+
+            <dependencies>
+                <dependency>
+                    <groupId>com.oracle</groupId>
+                    <artifactId>oracle-thin</artifactId>
+                    <version>10.2.0.4</version>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>postgres</id>
+            <activation>
+                <property>
+                    <name>db</name>
+                    <value>postgres</value>
+                </property>
+            </activation>
+
+            <build>
+                <finalName>${artifactId}-${db.alias}-${version}</finalName>
+            </build>
+
+            <properties>
+                <db.platform>PostgreSQL</db.platform>
+                <db.driver>org.postgresql.Driver</db.driver>
+                <db.protocol>jdbc</db.protocol>
+                <db.subprotocol>postgresql://${db.host}:${db.port}</db.subprotocol>
+                <db.dialect>org.hibernate.dialect.PostgreSQLDialect</db.dialect>
+                <db.separator>/</db.separator>
+            </properties>
+
+            <dependencies>
+                <dependency>
+                    <groupId>postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                    <version>8.2-504.jdbc3</version>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>h2</id>
+            <activation>
+                <property>
+                    <name>db</name>
+                    <value>h2</value>
+                </property>
+            </activation>
+
+            <build>
+                <finalName>${artifactId}-${db.platform}-${version}</finalName>
+            </build>
+
+            <properties>
+                <db.platform>H2Database</db.platform>
+                <db.driver>org.h2.Driver</db.driver>
+                <db.protocol>jdbc</db.protocol>
+                <db.subprotocol>h2</db.subprotocol>
+                <db.dialect>org.hibernate.dialect.H2Dialect</db.dialect>
+            </properties>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.h2</groupId>
+                    <artifactId>h2</artifactId>
+                    <version>2006-07-14-beta</version>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>hsqldb</id>
+            <activation>
+                <property>
+                    <name>db</name>
+                    <value>hsqldb</value>
+                </property>
+            </activation>
+
+            <build>
+                <finalName>${artifactId}-${db.platform}-${version}</finalName>
+            </build>
+
+            <properties>
+                <db.platform>HSQLDB</db.platform>
+                <db.driver>org.hsqldb.jdbcDriver</db.driver>
+                <db.protocol>jdbc</db.protocol>
+                <db.subprotocol>hsqldb</db.subprotocol>
+                <db.dialect>org.hibernate.dialect.HSQLDialect</db.dialect>
+            </properties>
+
+            <dependencies>
+                <dependency>
+                    <groupId>hsqldb</groupId>
+                    <artifactId>hsqldb</artifactId>
+                    <version>1.8.0.7</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
+    <dependencies>
+
+        <!-- patched hibernate version -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>3.6.9-intact.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>3.6.9.Final</version>
+            <exclusions>
+                <!-- using the clib-nodep below, which includes dependencies such as asm -->
+                <exclusion>
+                    <groupId>cglib</groupId>
+                    <artifactId>cglib</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>4.1.0.Final</version>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.7.1.GA</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>c3p0</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.1.2</version>
+        </dependency>
+-->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.2.121</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+             <id>intact.nexus</id>
+             <name>IntAct Nexus</name>
+             <url>http://www.ebi.ac.uk/intact/maven/nexus/content/groups/public/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+              <id>intact.nexus</id>
+              <name>IntAct Nexus</name>
+              <url>http://www.ebi.ac.uk/intact/maven/nexus/content/groups/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/${artifactId}</url>
+        </site>
+    </distributionManagement>
+
+</project>
