@@ -298,7 +298,6 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
         Collection<DbXref> dbXrefs = term.getXrefs();
 
         if (dbXrefs != null){
-            Set<String> resIdRefs = new HashSet<String>(dbXrefs.size());
             String pubmedPrimary = null;
             for (DbXref xref : dbXrefs){
 
@@ -312,19 +311,6 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
                 }
                 else {
                     pubmedPrimary = processXrefDefinition(xref.toString(), xref.getDbName(), xref.getAccession(), pubmedPrimary);
-                }
-            }
-
-            if (resIdRefs.size() == 1){
-                String residXref = resIdRefs.iterator().next();
-
-                TermDbXref residIdentity = new TermDbXref(RESID, RESID_MI_REF, residXref, IDENTITY, IDENTITY_MI_REF);
-                this.dbXrefs.add(residIdentity);
-            }
-            else if (resIdRefs.size() > 1){
-                for (String ref : resIdRefs){
-                    TermDbXref resXref = new TermDbXref(RESID, RESID_MI_REF, ref, SEE_ALSO, SEE_ALSO_MI_REF);
-                    this.dbXrefs.add(resXref);
                 }
             }
         }
