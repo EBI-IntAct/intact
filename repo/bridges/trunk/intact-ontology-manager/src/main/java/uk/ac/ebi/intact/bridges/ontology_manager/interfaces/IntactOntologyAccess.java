@@ -1,6 +1,7 @@
 package uk.ac.ebi.intact.bridges.ontology_manager.interfaces;
 
 import psidev.psi.tools.ontology_manager.interfaces.OntologyAccessTemplate;
+import uk.ac.ebi.intact.bridges.ontology_manager.builders.IntactOntologyTermBuilder;
 
 import java.util.Collection;
 import java.util.regex.Pattern;
@@ -20,4 +21,5 @@ public interface IntactOntologyAccess extends OntologyAccessTemplate<IntactOntol
     public String getParentFromOtherOntology();
     public Collection<IntactOntologyTermI> getRootTerms();
     public Pattern getDatabaseRegexp();
+    public IntactOntologyTermBuilder getOntologyTermBuilder();
 }

@@ -58,4 +58,9 @@ public class IntactLocalOntology extends AbstractLocalOntology<IntactOntologyTer
     public Pattern getDatabaseRegexp() {
         return termBuilder.getDatabaseRegexp();
     }
+
+    @Override
+    public IntactOntologyTermBuilder getOntologyTermBuilder() {
+        return termBuilder;
+    }
 }
