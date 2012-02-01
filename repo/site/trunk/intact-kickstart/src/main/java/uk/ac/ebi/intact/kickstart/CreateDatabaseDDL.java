@@ -45,6 +45,7 @@ public class CreateDatabaseDDL {
         System.out.println("--***************** DDL ************************");
 
         for (String sql : sqlStatements) {
+            if (sql.contains("ia_application"))
             System.out.println(sql);
         }
     }
