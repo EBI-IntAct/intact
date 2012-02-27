@@ -410,7 +410,7 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
         if (annotations != null){
             for (Annotation annot : annotations){
                 // only one comment with type null
-                if (annot.getAnnotationType() == null){
+                if (annot.getAnnotationType() != null && COMMENT_KEY.equals(annot.getAnnotationType())){
                     this.comments.add(annot.getAnnotationStringValue());
                 }
             }

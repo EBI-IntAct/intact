@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 import psidev.psi.tools.ontology_manager.impl.local.AbstractOboLoader;
 import uk.ac.ebi.intact.bridges.ontology_manager.builders.IntactOntologyTermBuilder;
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
-import uk.ac.ebi.ols.loader.parser.OBOFormatParser;
+import uk.ac.ebi.ols.loader.parser.OBO2FormatParser;
 import uk.ac.ebi.ols.model.interfaces.Term;
 
 import java.io.File;
@@ -60,9 +60,14 @@ public class IntactOboLoader extends AbstractOboLoader<IntactOntologyTermI, Inta
     }
 
     @Override
-    protected void configure() {
+    protected void configure(String filePath) {
         logger = Logger.getLogger(IntactOboLoader.class);
-        parser = new OBOFormatParser();
+
+        try {
+            parser = new OBO2FormatParser(filePath);
+        } catch (Exception e) {
+            logger.fatal("Parse failed: " + e.getMessage(), e);
+        }
     }
 
     @Override
