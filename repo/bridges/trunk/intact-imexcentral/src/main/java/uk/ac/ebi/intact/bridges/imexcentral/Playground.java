@@ -1,9 +1,6 @@
 package uk.ac.ebi.intact.bridges.imexcentral;
 
-import edu.ucla.mbi.imex.central.ws.Publication;
-
-import java.io.File;
-import java.util.Date;
+import edu.ucla.mbi.imex.central.ws.v20.Publication;
 
 /**
  * Sample script to play with the client.
