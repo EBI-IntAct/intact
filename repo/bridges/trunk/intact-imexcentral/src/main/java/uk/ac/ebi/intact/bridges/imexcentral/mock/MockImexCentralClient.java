@@ -1,12 +1,14 @@
 package uk.ac.ebi.intact.bridges.imexcentral.mock;
 
-import edu.ucla.mbi.imex.central.ws.Identifier;
-import edu.ucla.mbi.imex.central.ws.Publication;
+import edu.ucla.mbi.imex.central.ws.v20.Identifier;
+import edu.ucla.mbi.imex.central.ws.v20.Publication;
+import edu.ucla.mbi.imex.central.ws.v20.PublicationList;
 import uk.ac.ebi.intact.bridges.imexcentral.ImexCentralClient;
 import uk.ac.ebi.intact.bridges.imexcentral.ImexCentralException;
 import uk.ac.ebi.intact.bridges.imexcentral.Operation;
 import uk.ac.ebi.intact.bridges.imexcentral.PublicationStatus;
 
+import javax.xml.ws.Holder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +60,7 @@ public class MockImexCentralClient implements ImexCentralClient {
         Publication p = new Publication();
         final Identifier id = new Identifier();
         id.setAc( identifier );
-        p.setIdentifier( id );
+        p.getIdentifier().add(id);
         p.setImexAccession( ( imexAccession == null ? "N/A" : imexAccession ) );
         p.setStatus( status );
         p.setOwner( owner );
@@ -72,45 +74,35 @@ public class MockImexCentralClient implements ImexCentralClient {
         return null;
     }
 
-    public List<Publication> getPublicationById( List<String> identifiers ) throws ImexCentralException {
-        List<Publication> publications = new ArrayList<Publication>( );
-        for ( Publication p : allPublications ) {
-           if( identifiers.contains( p.getIdentifier().getAc() ) ) {
-               publications.add( p );
-           }
-        }
-        return publications;
-    }
-
     public Publication getPublicationById( String identifier ) throws ImexCentralException {
         for ( Publication p : allPublications ) {
-           if( identifier.equals( p.getIdentifier().getAc() ) ) {
-               return p;
-           }
+           for (Identifier i : p.getIdentifier()){
+               if( identifier.equals( i.getAc() ) ) {
+                   return p;
+               }
+           }           
         }
         return null;
     }
 
-    public List<Publication> getPublicationByOwner( List<String> owners ) throws ImexCentralException {
+    public List<Publication> getPublicationByOwner( String owner, int first, int max, Holder<PublicationList> pubList, Holder<Long> number ) throws ImexCentralException {
         List<Publication> publications = new ArrayList<Publication>( );
-        for ( Publication p : allPublications ) {
-           if( owners.contains( p.getOwner() ) ) {
+        for ( int i = first; i <= max; i++ ) {
+            Publication p = allPublications.get(i);
+           if( owner.equals(p.getOwner()) ) {
                publications.add( p );
            }
         }
         return publications;
     }
 
-    public List<Publication> getPublicationByStatus( PublicationStatus... statuses ) throws ImexCentralException {
+    public List<Publication> getPublicationByStatus( String status, int first, int max, Holder<PublicationList> pubList, Holder<Long> number ) {
         List<Publication> publications = new ArrayList<Publication>( );
-        for ( Publication p : allPublications ) {
-            boolean stop = false;
-            for ( int i = 0; i < statuses.length && ! stop; i++ ) {
-                PublicationStatus status = statuses[i];
-                if( status.toString().equals( p.getStatus() ) ) {
-                    publications.add( p );
-                    stop = true;
-                }
+        for ( int j = first; j <= max; j++ ) {
+            Publication p = allPublications.get(j);
+            
+            if (p.getStatus().equalsIgnoreCase(status)){
+                publications.add( p );
             }
         }
         return publications;
@@ -136,6 +128,19 @@ public class MockImexCentralClient implements ImexCentralClient {
         // TODO when you figure out where to store this, do it. The publication object doesn't seem to hold it.
     }
 
+    @Override
+    public void updatePublicationIdentifier(String oldIdentifier, String newIdentifier) throws ImexCentralException {
+        final Publication p = getPublicationById( oldIdentifier );
+        if( p != null ) {
+            for (Identifier id : p.getIdentifier()){
+               if (oldIdentifier.equals(id.getAc())){
+                   id.setAc(id.getAc());
+                   id.setNs(id.getNs());
+               }
+            }
+        }
+    }
+
     public void createPublication( Publication publication ) throws ImexCentralException {
         allPublications.add( publication );
     }
@@ -144,7 +149,7 @@ public class MockImexCentralClient implements ImexCentralClient {
         Publication p = new Publication();
         final Identifier i = new Identifier();
         i.setAc( identifier );
-        p.setIdentifier( i );
+        p.getIdentifier().add(i);
         p.setImexAccession( "N/A" );
         allPublications.add( p );
         return p;

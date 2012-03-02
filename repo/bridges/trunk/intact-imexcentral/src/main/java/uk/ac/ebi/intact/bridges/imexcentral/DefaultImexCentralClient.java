@@ -1,6 +1,6 @@
 package uk.ac.ebi.intact.bridges.imexcentral;
 
-import edu.ucla.mbi.imex.central.ws.*;
+import edu.ucla.mbi.imex.central.ws.v20.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -10,7 +10,6 @@ import javax.xml.ws.Holder;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,8 +23,8 @@ public class DefaultImexCentralClient implements ImexCentralClient {
 
     private static final Log log = LogFactory.getLog( DefaultImexCentralClient.class );
 
-    public static final String IC_TEST = "https://imexcentral.org/icentraltest/ws";
-    public static final String IC_BETA = "https://imexcentral.org/icentralbeta/ws";
+    public static final String IC_TEST = "https://imexcentral.org/icentraltest/ws-v20";
+    public static final String IC_BETA = "https://imexcentral.org/icentralbeta/ws-v20";
     public static final String IC_PROD = IC_BETA;
 
     private IcentralService service;
@@ -39,9 +38,9 @@ public class DefaultImexCentralClient implements ImexCentralClient {
         try {
             URL url = new URL( endPoint + "?wsdl" );
             log.debug( "WSDL: " + endPoint + "?wsdl" );
-            QName qn = new QName( "http://imex.mbi.ucla.edu/icentral/ws", "ImexCentralService" );
+            QName qn = new QName( "http://imex.mbi.ucla.edu/icentral/ws", "ics20" );
             service = new IcentralService( url, qn );
-            port = service.getImexCentralPort();
+            port = service.getIcp20();
 
             ( ( BindingProvider ) port ).getRequestContext().put( BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endPoint );
             ( ( BindingProvider ) port ).getRequestContext().put( BindingProvider.USERNAME_PROPERTY, username );
@@ -91,18 +90,6 @@ public class DefaultImexCentralClient implements ImexCentralClient {
         return endPoint;
     }
 
-    public List<Publication> getPublicationById( List<String> identifiers ) throws ImexCentralException {
-        try {
-            final PublicationList list = port.getPublicationById( buildIdentifierList( identifiers ) );
-            if( list != null ) {
-                return list.getPublication();
-            }
-            return null;
-        } catch ( IcentralFault f ) {
-            throw new ImexCentralException( "Error while getting a publication by id: " + identifiers, f );
-        }
-    }
-
     /**
      *
      * @param identifier
@@ -111,19 +98,8 @@ public class DefaultImexCentralClient implements ImexCentralClient {
      */
     public Publication getPublicationById( String identifier ) throws ImexCentralException {
         try {
-            final PublicationList list = port.getPublicationById( buildIdentifierList( Arrays.asList( identifier ) ) );
-            if( list != null ) {
-                switch( list.getPublication().size() ) {
-                    case 0:
-                        return null;
-                    case 1:
-                        return list.getPublication().iterator().next();
-                    default:
-                        throw new ImexCentralException( list.getPublication().size() + " publications returned for " +
-                                                        "identifiers '"+identifier+"' when only one at most was " +
-                                                        "expected." );
-                }
-            }
+            final Publication pub = port.getPublicationById( buildIdentifier(identifier) );
+            return pub;
         } catch ( IcentralFault f ) {
             switch( f.getFaultInfo().getFaultCode() ) {
                 case 6:
@@ -133,37 +109,31 @@ public class DefaultImexCentralClient implements ImexCentralClient {
 
             throw new ImexCentralException( "Error while getting a publication by id: " + identifier, f );
         }
-        return null;
     }
 
-    public List<Publication> getPublicationByOwner( List<String> owners ) throws ImexCentralException {
+    public List<Publication> getPublicationByOwner( String owner, int first, int max, Holder<PublicationList> pubList, Holder<Long> number ) throws ImexCentralException {
         try {
-            final PublicationList publicationList = port.getPublicationByOwner( owners );
-            if( publicationList != null ) {
-                return publicationList.getPublication();
+            port.getPublicationByOwner( owner, first, max, pubList, number );
+            if( pubList != null ) {
+                return pubList.value.getPublication();
             }
             return null;
         } catch ( IcentralFault f ) {
-            throw new ImexCentralException( "Error while getting publications by owners: " + owners, f );
+            throw new ImexCentralException( "Error while getting publications by owner: " + owner, f );
         }
     }
 
-    public List<Publication> getPublicationByStatus( PublicationStatus... statuses ) throws ImexCentralException {
-
-        List<String> statusList = new ArrayList<String>();
-        for ( PublicationStatus s : statuses ) {
-            statusList.add( s.toString() );
-        }
+    public List<Publication> getPublicationByStatus( String status, int first, int max, Holder<PublicationList> pubList, Holder<Long> number ) throws ImexCentralException {
 
         try {
-            final PublicationList publicationList = port.getPublicationByStatus( statusList );
-            if( publicationList != null ) {
-                return publicationList.getPublication();
+            port.getPublicationByStatus( status, first, max, pubList, number );
+            if( pubList != null ) {
+                return pubList.value.getPublication();
             }
             return null;
 
         } catch ( IcentralFault f ) {
-            throw new ImexCentralException( "Error while getting publications by status: " + statusList, f );
+            throw new ImexCentralException( "Error while getting publications by status: " + status, f );
         }
     }
 
@@ -235,6 +205,26 @@ public class DefaultImexCentralClient implements ImexCentralClient {
         }
     }
 
+    @Override
+    public void updatePublicationIdentifier(String oldIdentifier, String newIdentifier) throws ImexCentralException {
+        try {
+            port.updatePublicationIdentifier( buildIdentifier(oldIdentifier ), buildIdentifier(newIdentifier) );
+        } catch ( IcentralFault f ) {
+
+            switch( f.getFaultInfo().getFaultCode() ) {
+                case 6:
+                    //  no data found
+                    throw new ImexCentralException( "Could not update publication '"+ oldIdentifier );
+            }
+
+            final String message = f.getFaultInfo().getMessage();
+            final int code = f.getFaultInfo().getFaultCode();
+
+            throw new ImexCentralException( "["+ code+" - "+ message +
+                    "] Error while attempting to update a publication identifier: ", f);
+        }
+    }
+
     public void createPublication( Publication publication ) throws ImexCentralException {
         try {
             port.createPublication( new Holder( publication ) );
@@ -269,7 +259,7 @@ public class DefaultImexCentralClient implements ImexCentralClient {
         }
 
         String localTrustStore = System.getProperty( "javax.net.ssl.trustStore" );
-        String localTrustStorePwd = System.getProperty( "Djavax.net.ssl.keyStorePassword" );
+        String localTrustStorePwd = System.getProperty( "javax.net.ssl.keyStorePassword" );
         if(localTrustStore==null) {
             System.out.println( "It appears you haven't setup a local trust store (other than the one embedded in the JDK)." +
                                 "\nShould you want to specify one, use: -Djavax.net.ssl.trustStore=<path.to.keystore> " +
@@ -314,7 +304,7 @@ public class DefaultImexCentralClient implements ImexCentralClient {
     }
 
     private static void print( Publication p ) {
-        System.out.println( "-- " + p.getIdentifier().getAc() + " ------------------------" );
+        System.out.println( "-- " + p.getIdentifier().size() + " identifiers ------------------------" );
         System.out.println( "Author: " + p.getAuthor() );
         System.out.println( "Title: " + p.getTitle() );
         System.out.println( "IMEx id: " + p.getImexAccession() );
