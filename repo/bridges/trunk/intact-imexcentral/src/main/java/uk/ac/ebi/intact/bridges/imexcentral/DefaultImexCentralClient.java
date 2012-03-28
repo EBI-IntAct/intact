@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Default IMEx Central Client.
@@ -30,6 +31,8 @@ public class DefaultImexCentralClient implements ImexCentralClient {
     private IcentralService service;
     private IcentralPort port;
     private String endPoint;
+    
+    private static Pattern pubmed_regexp = Pattern.compile("\\d+");
 
     public DefaultImexCentralClient( String username, String password, String endPoint ) throws ImexCentralException {
 
@@ -59,9 +62,12 @@ public class DefaultImexCentralClient implements ImexCentralClient {
         if( identifier.startsWith( "IM-" ) ) {
             // this will enable searching for publication by IMEx id ... not obvious but it works ...
             id.setNs( "imex" );
-        } else {
+        } else if (Pattern.matches(pubmed_regexp.toString(), identifier)) {
             // fallback namespace
-            id.setNs( "pmid" );
+            id.setNs( "doi" );
+        }
+        else {
+            id.setNs("pmid");
         }
         return id;
     }
@@ -98,7 +104,7 @@ public class DefaultImexCentralClient implements ImexCentralClient {
      */
     public Publication getPublicationById( String identifier ) throws ImexCentralException {
         try {
-            final Publication pub = port.getPublicationById( buildIdentifier(identifier) );
+            final Publication pub = port.getPublicationById(buildIdentifier(identifier));
             return pub;
         } catch ( IcentralFault f ) {
             switch( f.getFaultInfo().getFaultCode() ) {
