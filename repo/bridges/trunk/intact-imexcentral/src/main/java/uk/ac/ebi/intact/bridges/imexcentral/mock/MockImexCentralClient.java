@@ -1,8 +1,6 @@
 package uk.ac.ebi.intact.bridges.imexcentral.mock;
 
-import edu.ucla.mbi.imex.central.ws.v20.Identifier;
-import edu.ucla.mbi.imex.central.ws.v20.Publication;
-import edu.ucla.mbi.imex.central.ws.v20.PublicationList;
+import edu.ucla.mbi.imex.central.ws.v20.*;
 import uk.ac.ebi.intact.bridges.imexcentral.ImexCentralClient;
 import uk.ac.ebi.intact.bridges.imexcentral.ImexCentralException;
 import uk.ac.ebi.intact.bridges.imexcentral.Operation;
@@ -11,6 +9,7 @@ import uk.ac.ebi.intact.bridges.imexcentral.PublicationStatus;
 import javax.xml.ws.Holder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Dummy service that one can use to write test against.
@@ -27,6 +26,7 @@ public class MockImexCentralClient implements ImexCentralClient {
 
     private int imexIdSequence = 1;
     List<Publication> allPublications;
+    private static Pattern PUBMED_REGEXP = Pattern.compile("\\d+");
 
     /////////////////////////////
     // Service initialization
@@ -75,6 +75,7 @@ public class MockImexCentralClient implements ImexCentralClient {
     }
 
     public Publication getPublicationById( String identifier ) throws ImexCentralException {
+
         for ( Publication p : allPublications ) {
            for (Identifier i : p.getIdentifier()){
                if( identifier.equals( i.getAc() ) ) {
@@ -82,7 +83,13 @@ public class MockImexCentralClient implements ImexCentralClient {
                }
            }           
         }
-        return null;
+
+        // no publication record found, throw an exception (same behaviour as webservice)
+        ImexCentralFault imexFault = new ImexCentralFault();
+        imexFault.setFaultCode(6);
+
+        IcentralFault fault = new IcentralFault("identifier not found", imexFault);
+        throw new ImexCentralException(fault);
     }
 
     public List<Publication> getPublicationByOwner( String owner, int first, int max, Holder<PublicationList> pubList, Holder<Long> number ) throws ImexCentralException {
@@ -146,9 +153,19 @@ public class MockImexCentralClient implements ImexCentralClient {
     }
 
     public Publication createPublicationById( String identifier ) throws ImexCentralException {
+        if (!Pattern.matches(PUBMED_REGEXP.toString(), identifier)){
+            // no publication record created because not valid pubmed id, throw an exception (same behaviour as webservice)
+            ImexCentralFault imexFault = new ImexCentralFault();
+            imexFault.setFaultCode(7);
+
+            IcentralFault fault = new IcentralFault("publication not created", imexFault);
+            throw new ImexCentralException(fault);
+        }
+
         Publication p = new Publication();
         final Identifier i = new Identifier();
         i.setAc( identifier );
+        i.setNs("pmid");
         p.getIdentifier().add(i);
         p.setImexAccession( "N/A" );
         allPublications.add( p );
