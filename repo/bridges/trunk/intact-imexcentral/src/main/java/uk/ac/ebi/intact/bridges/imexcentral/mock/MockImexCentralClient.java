@@ -175,7 +175,7 @@ public class MockImexCentralClient implements ImexCentralClient {
     public Publication getPublicationImexAccession( String identifier, boolean create ) throws ImexCentralException {
         final Publication p = getPublicationById( identifier );
         if( create ) {
-            if( ! p.getImexAccession().equals("N/A")) {
+            if( p.getImexAccession() != null && ! p.getImexAccession().equals("N/A")) {
                 throw new IllegalStateException( "Publication already has an IMEx id: " + p.getImexAccession() );
             }
 
