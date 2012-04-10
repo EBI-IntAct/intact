@@ -33,6 +33,8 @@ public class MockImexCentralClient implements ImexCentralClient {
     private String intact_user = "intact";
     private String phantom_user = "phantom";
 
+    private static Pattern pubmed_regexp = Pattern.compile("\\d+");
+
     /////////////////////////////
     // Service initialization
 
@@ -184,6 +186,10 @@ public class MockImexCentralClient implements ImexCentralClient {
                    id.setNs(id.getNs());
                }
             }
+
+            if (p.getImexAccession() != null && p.getImexAccession().equalsIgnoreCase(oldIdentifier)){
+                p.getIdentifier().add(buildIdentifier(newIdentifier));
+            }
         }
     }
 
@@ -241,5 +247,21 @@ public class MockImexCentralClient implements ImexCentralClient {
         }
 
         return p;
+    }
+
+    protected static Identifier buildIdentifier( String identifier ) {
+        final Identifier id = new ObjectFactory().createIdentifier();
+        id.setAc( identifier );
+        if( identifier.startsWith( "IM-" ) ) {
+            // this will enable searching for publication by IMEx id ... not obvious but it works ...
+            id.setNs( "imex" );
+        } else if (Pattern.matches(pubmed_regexp.toString(), identifier)) {
+            // fallback namespace
+            id.setNs( "doi" );
+        }
+        else {
+            id.setNs("pmid");
+        }
+        return id;
     }
 }
