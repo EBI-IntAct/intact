@@ -30,6 +30,8 @@ public class MockImexCentralClient implements ImexCentralClient {
     
     private String INTACT_GROUP = "INTACT";
     private String MATRIXDB_GROUP = "MATRIXDB";
+    private String intact_user = "intact";
+    private String phantom_user = "phantom";
 
     /////////////////////////////
     // Service initialization
@@ -150,7 +152,22 @@ public class MockImexCentralClient implements ImexCentralClient {
     public void updatePublicationAdminUser( String identifier, Operation operation, String user ) throws ImexCentralException {
         Publication p = getPublicationImexAccession( identifier, false );
 
-        // TODO when you figure out where to store this, do it. The publication object doesn't seem to hold it.
+        if (p != null){
+            if (user != null && (user.equalsIgnoreCase(intact_user) || user.equalsIgnoreCase(phantom_user))){
+                if (p.getAdminUserList() == null){
+                    p.setAdminUserList(new Publication.AdminUserList());
+                }
+                p.getAdminUserList().getUser().add(user.toUpperCase());
+            }
+            // user not recognized, throw exception as in the real webservice
+            else {
+                ImexCentralFault imexFault = new ImexCentralFault();
+                imexFault.setFaultCode(10);
+
+                IcentralFault fault = new IcentralFault("User not recognized", imexFault);
+                throw new ImexCentralException(fault);
+            }
+        }
     }
 
     @Override
