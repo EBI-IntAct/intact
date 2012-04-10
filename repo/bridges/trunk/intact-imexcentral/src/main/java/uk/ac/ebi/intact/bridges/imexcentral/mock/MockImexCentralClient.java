@@ -27,6 +27,9 @@ public class MockImexCentralClient implements ImexCentralClient {
     private int imexIdSequence = 1;
     List<Publication> allPublications;
     private static Pattern PUBMED_REGEXP = Pattern.compile("\\d+");
+    
+    private String INTACT_GROUP = "INTACT";
+    private String MATRIXDB_GROUP = "MATRIXDB";
 
     /////////////////////////////
     // Service initialization
@@ -126,7 +129,19 @@ public class MockImexCentralClient implements ImexCentralClient {
     public void updatePublicationAdminGroup( String identifier, Operation operation, String group ) throws ImexCentralException {
         Publication p = getPublicationImexAccession( identifier, false );
 
-        // TODO when you figure out where to store this, do it. The publication object doesn't seem to hold it.
+        if (p != null){
+            if (group != null && (group.equalsIgnoreCase(INTACT_GROUP) || group.equalsIgnoreCase(MATRIXDB_GROUP))){
+                 p.getAdminGroupList().getGroup().add(group.toUpperCase());
+            }
+            // group not recognized, throw exception as in the real webservice
+            else {
+                ImexCentralFault imexFault = new ImexCentralFault();
+                imexFault.setFaultCode(11);
+
+                IcentralFault fault = new IcentralFault("Group not recognized", imexFault);
+                throw new ImexCentralException(fault);
+            }
+        }
     }
 
     public void updatePublicationAdminUser( String identifier, Operation operation, String user ) throws ImexCentralException {
