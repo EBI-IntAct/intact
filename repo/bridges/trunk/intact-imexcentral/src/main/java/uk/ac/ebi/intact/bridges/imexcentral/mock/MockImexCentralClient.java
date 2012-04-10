@@ -157,7 +157,7 @@ public class MockImexCentralClient implements ImexCentralClient {
                 if (p.getAdminUserList() == null){
                     p.setAdminUserList(new Publication.AdminUserList());
                 }
-                p.getAdminUserList().getUser().add(user.toUpperCase());
+                p.getAdminUserList().getUser().add(user.toLowerCase());
             }
             // user not recognized, throw exception as in the real webservice
             else {
