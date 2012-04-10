@@ -188,7 +188,7 @@ public class MockImexCentralClient implements ImexCentralClient {
 
         for ( Publication p : allPublications ) {
             for (Identifier i : p.getIdentifier()){
-                if( publication.getIdentifier().iterator().next().getAc().equals( i.getAc() ) ) {
+                if( !publication.getIdentifier().isEmpty() && publication.getIdentifier().iterator().next().getAc().equals( i.getAc() ) ) {
                     existingP = p;
                     break;
                 }
