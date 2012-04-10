@@ -131,6 +131,9 @@ public class MockImexCentralClient implements ImexCentralClient {
 
         if (p != null){
             if (group != null && (group.equalsIgnoreCase(INTACT_GROUP) || group.equalsIgnoreCase(MATRIXDB_GROUP))){
+                if (p.getAdminGroupList() == null){
+                   p.setAdminGroupList(new Publication.AdminGroupList());
+                }
                  p.getAdminGroupList().getGroup().add(group.toUpperCase());
             }
             // group not recognized, throw exception as in the real webservice
