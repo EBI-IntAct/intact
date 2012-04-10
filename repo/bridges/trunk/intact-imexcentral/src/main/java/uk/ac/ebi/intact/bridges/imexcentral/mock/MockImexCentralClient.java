@@ -167,7 +167,29 @@ public class MockImexCentralClient implements ImexCentralClient {
     }
 
     public void createPublication( Publication publication ) throws ImexCentralException {
-        allPublications.add( publication );
+        Publication existingP = null;
+        int index = 0;
+
+        for ( Publication p : allPublications ) {
+            for (Identifier i : p.getIdentifier()){
+                if( publication.getIdentifier().iterator().next().getAc().equals( i.getAc() ) ) {
+                    existingP = p;
+                    index ++;
+                    break;
+                }
+                else {
+                    index++;
+                }
+            }
+        }
+
+        if (existingP == null){
+            allPublications.add(publication);
+        }
+        else {
+            allPublications.remove(index);
+            allPublications.add(publication);
+        }
     }
 
     public Publication createPublicationById( String identifier ) throws ImexCentralException {
