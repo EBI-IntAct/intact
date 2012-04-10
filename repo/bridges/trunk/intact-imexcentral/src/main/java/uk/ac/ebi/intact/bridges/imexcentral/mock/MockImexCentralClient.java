@@ -86,7 +86,11 @@ public class MockImexCentralClient implements ImexCentralClient {
                if( identifier.equals( i.getAc() ) ) {
                    return p;
                }
-           }           
+           } 
+            
+            if (p.getImexAccession() != null && p.getImexAccession().equalsIgnoreCase(identifier)){
+                return p;
+            }
         }
 
         // no publication record found, throw an exception (same behaviour as webservice)
