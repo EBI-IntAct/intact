@@ -6,7 +6,6 @@ import uk.ac.ebi.intact.bridges.imexcentral.ImexCentralException;
 import uk.ac.ebi.intact.bridges.imexcentral.Operation;
 import uk.ac.ebi.intact.bridges.imexcentral.PublicationStatus;
 
-import javax.xml.ws.Holder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -27,7 +26,7 @@ public class MockImexCentralClient implements ImexCentralClient {
     private int imexIdSequence = 1;
     List<Publication> allPublications;
     private static Pattern PUBMED_REGEXP = Pattern.compile("\\d+");
-    
+
     private String INTACT_GROUP = "INTACT";
     private String MATRIXDB_GROUP = "MATRIXDB";
     private String intact_user = "intact";
@@ -84,41 +83,53 @@ public class MockImexCentralClient implements ImexCentralClient {
     public Publication getPublicationById( String identifier ) throws ImexCentralException {
 
         for ( Publication p : allPublications ) {
-           for (Identifier i : p.getIdentifier()){
-               if( identifier.equals( i.getAc() ) ) {
-                   return p;
-               }
-           } 
-            
+            for (Identifier i : p.getIdentifier()){
+                if( identifier.equals( i.getAc() ) ) {
+                    return p;
+                }
+            }
+
             if (p.getImexAccession() != null && p.getImexAccession().equalsIgnoreCase(identifier)){
                 return p;
             }
         }
 
-        // no publication record found, throw an exception (same behaviour as webservice)
-        ImexCentralFault imexFault = new ImexCentralFault();
-        imexFault.setFaultCode(6);
-
-        IcentralFault fault = new IcentralFault("identifier not found", imexFault);
-        throw new ImexCentralException(fault);
+        return null;
     }
 
-    public List<Publication> getPublicationByOwner( String owner, int first, int max, Holder<PublicationList> pubList, Holder<Long> number ) throws ImexCentralException {
+    public Publication getPublicationByPubmedId( String identifier ) throws ImexCentralException {
+
+        for ( Publication p : allPublications ) {
+            for (Identifier i : p.getIdentifier()){
+                if( "pmid".equalsIgnoreCase(i.getNs()) && identifier.equals( i.getAc() ) ) {
+                    return p;
+                }
+            }
+
+            if (p.getImexAccession() != null && p.getImexAccession().equalsIgnoreCase(identifier)){
+                return p;
+            }
+        }
+
+        return null;
+    }
+
+    public List<Publication> getPublicationByOwner( String owner, int first, int max) throws ImexCentralException {
         List<Publication> publications = new ArrayList<Publication>( );
         for ( int i = first; i <= max; i++ ) {
             Publication p = allPublications.get(i);
-           if( owner.equals(p.getOwner()) ) {
-               publications.add( p );
-           }
+            if( owner.equals(p.getOwner()) ) {
+                publications.add( p );
+            }
         }
         return publications;
     }
 
-    public List<Publication> getPublicationByStatus( String status, int first, int max, Holder<PublicationList> pubList, Holder<Long> number ) {
+    public List<Publication> getPublicationByStatus( String status, int first, int max) {
         List<Publication> publications = new ArrayList<Publication>( );
         for ( int j = first; j <= max; j++ ) {
             Publication p = allPublications.get(j);
-            
+
             if (p.getStatus().equalsIgnoreCase(status)){
                 publications.add( p );
             }
@@ -126,23 +137,50 @@ public class MockImexCentralClient implements ImexCentralClient {
         return publications;
     }
 
-    public Publication updatePublicationStatus( String identifier, PublicationStatus status, String message ) throws ImexCentralException {
-        final Publication p = getPublicationById( identifier );
+    public Publication updatePublicationStatus( String identifier, PublicationStatus status) throws ImexCentralException {
+        final Publication p = getPublicationByPubmedId( identifier );
+
+        if (!status.equals("NEW") && !status.equals("DISCARDED") && !status.equals("RESERVED")
+                && !status.equals("PROCESSED") && !status.equals("RELEASED") && !status.equals("INPROGRESS") &&
+                !status.equals("INCOMPLETE")){
+            ImexCentralFault imexFault = new ImexCentralFault();
+            imexFault.setFaultCode(8);
+
+            IcentralFault fault = new IcentralFault("Status not recognized", imexFault);
+            throw new ImexCentralException(fault);
+        }
+
         if( p != null ) {
             p.setStatus( status.toString() );
+        }
+        else {
+            if (!Pattern.matches(pubmed_regexp.toString(), identifier)){
+                ImexCentralFault imexFault = new ImexCentralFault();
+                imexFault.setFaultCode(5);
+
+                IcentralFault fault = new IcentralFault("Identifier not recognized", imexFault);
+                throw new ImexCentralException(fault);
+            }
+            else {
+                ImexCentralFault imexFault = new ImexCentralFault();
+                imexFault.setFaultCode(6);
+
+                IcentralFault fault = new IcentralFault("No publication record found", imexFault);
+                throw new ImexCentralException(fault);
+            }
         }
         return p;
     }
 
-    public void updatePublicationAdminGroup( String identifier, Operation operation, String group ) throws ImexCentralException {
-        Publication p = getPublicationImexAccession( identifier, false );
+    public Publication updatePublicationAdminGroup( String identifier, Operation operation, String group ) throws ImexCentralException {
+        Publication p = getPublicationByPubmedId( identifier );
 
         if (p != null){
             if (group != null && (group.equalsIgnoreCase(INTACT_GROUP) || group.equalsIgnoreCase(MATRIXDB_GROUP))){
                 if (p.getAdminGroupList() == null){
-                   p.setAdminGroupList(new Publication.AdminGroupList());
+                    p.setAdminGroupList(new Publication.AdminGroupList());
                 }
-                 p.getAdminGroupList().getGroup().add(group.toUpperCase());
+                p.getAdminGroupList().getGroup().add(group.toUpperCase());
             }
             // group not recognized, throw exception as in the real webservice
             else {
@@ -153,10 +191,28 @@ public class MockImexCentralClient implements ImexCentralClient {
                 throw new ImexCentralException(fault);
             }
         }
+        else {
+            if (!Pattern.matches(pubmed_regexp.toString(), identifier)){
+                ImexCentralFault imexFault = new ImexCentralFault();
+                imexFault.setFaultCode(5);
+
+                IcentralFault fault = new IcentralFault("Identifier not recognized", imexFault);
+                throw new ImexCentralException(fault);
+            }
+            else {
+                ImexCentralFault imexFault = new ImexCentralFault();
+                imexFault.setFaultCode(6);
+
+                IcentralFault fault = new IcentralFault("No publication record found", imexFault);
+                throw new ImexCentralException(fault);
+            }
+        }
+
+        return p;
     }
 
-    public void updatePublicationAdminUser( String identifier, Operation operation, String user ) throws ImexCentralException {
-        Publication p = getPublicationImexAccession( identifier, false );
+    public Publication updatePublicationAdminUser( String identifier, Operation operation, String user ) throws ImexCentralException {
+        Publication p = getPublicationByPubmedId( identifier );
 
         if (p != null){
             if (user != null && (user.equalsIgnoreCase(intact_user) || user.equalsIgnoreCase(phantom_user))){
@@ -174,23 +230,65 @@ public class MockImexCentralClient implements ImexCentralClient {
                 throw new ImexCentralException(fault);
             }
         }
+        else {
+            if (!Pattern.matches(pubmed_regexp.toString(), identifier)){
+                ImexCentralFault imexFault = new ImexCentralFault();
+                imexFault.setFaultCode(5);
+
+                IcentralFault fault = new IcentralFault("Identifier not recognized", imexFault);
+                throw new ImexCentralException(fault);
+            }
+            else {
+                ImexCentralFault imexFault = new ImexCentralFault();
+                imexFault.setFaultCode(6);
+
+                IcentralFault fault = new IcentralFault("No publication record found", imexFault);
+                throw new ImexCentralException(fault);
+            }
+        }
+        
+        return p;
     }
 
     @Override
-    public void updatePublicationIdentifier(String oldIdentifier, String newIdentifier) throws ImexCentralException {
+    public Publication updatePublicationIdentifier(String oldIdentifier, String newIdentifier) throws ImexCentralException {
+        Publication existingPub = getPublicationById(newIdentifier);
+
+        // if the new identifier is already in IMEx central, we don't update anything
+        if (existingPub != null){
+            ImexCentralFault imexFault = new ImexCentralFault();
+            imexFault.setFaultCode(3);
+
+            IcentralFault fault = new IcentralFault("New publication identifier " + newIdentifier + "already used in IMEx central.", imexFault);
+            throw new ImexCentralException( "Impossible to update the identifier of " + oldIdentifier, fault );
+        }
+        
         final Publication p = getPublicationById( oldIdentifier );
         if( p != null ) {
+            Identifier newId = buildIdentifier(newIdentifier);
+
+            boolean updated = false;
             for (Identifier id : p.getIdentifier()){
-               if (oldIdentifier.equals(id.getAc())){
-                   id.setAc(id.getAc());
-                   id.setNs(id.getNs());
-               }
+                // update the proper identifier in IMEx central
+                if (newId.getNs().equals(id.getNs())){
+                    id.setAc(id.getAc());
+                    updated = true;
+                }
             }
 
-            if (p.getImexAccession() != null && p.getImexAccession().equalsIgnoreCase(oldIdentifier)){
-                p.getIdentifier().add(buildIdentifier(newIdentifier));
+            if (!updated){
+                p.getIdentifier().add(newId);
             }
         }
+        else {
+            ImexCentralFault imexFault = new ImexCentralFault();
+            imexFault.setFaultCode(6);
+
+            IcentralFault fault = new IcentralFault("No publication record found", imexFault);
+            throw new ImexCentralException(fault);
+        }
+        
+        return p;
     }
 
     public void createPublication( Publication publication ) throws ImexCentralException {
@@ -235,15 +333,34 @@ public class MockImexCentralClient implements ImexCentralClient {
     }
 
     public Publication getPublicationImexAccession( String identifier, boolean create ) throws ImexCentralException {
-        final Publication p = getPublicationById( identifier );
-        if( create ) {
-            if( p.getImexAccession() != null && ! p.getImexAccession().equals("N/A")) {
-                throw new IllegalStateException( "Publication already has an IMEx id: " + p.getImexAccession() );
-            }
+        final Publication p = getPublicationByPubmedId( identifier );
+        
+        if (p != null){
+            if( create ) {
+                if( p.getImexAccession() != null || ! p.getImexAccession().equals("N/A")) {
+                    throw new IllegalStateException( "Publication already has an IMEx id: " + p.getImexAccession() );
+                }
 
-            // assigning new IMEx ID
-            p.setImexAccession( "IM-" + imexIdSequence );
-            imexIdSequence++;
+                // assigning new IMEx ID
+                p.setImexAccession( "IM-" + imexIdSequence );
+                imexIdSequence++;
+            }
+        }
+        else {
+            if (!Pattern.matches(pubmed_regexp.toString(), identifier)){
+                ImexCentralFault imexFault = new ImexCentralFault();
+                imexFault.setFaultCode(5);
+
+                IcentralFault fault = new IcentralFault("Identifier not recognized", imexFault);
+                throw new ImexCentralException(fault);
+            }
+            else {
+                ImexCentralFault imexFault = new ImexCentralFault();
+                imexFault.setFaultCode(6);
+
+                IcentralFault fault = new IcentralFault("No publication record found", imexFault);
+                throw new ImexCentralException(fault);
+            }
         }
 
         return p;

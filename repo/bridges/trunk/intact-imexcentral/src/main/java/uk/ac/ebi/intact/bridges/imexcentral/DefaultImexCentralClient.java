@@ -10,6 +10,7 @@ import javax.xml.ws.Holder;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -31,8 +32,21 @@ public class DefaultImexCentralClient implements ImexCentralClient {
     private IcentralService service;
     private IcentralPort port;
     private String endPoint;
-    
+
     private static Pattern pubmed_regexp = Pattern.compile("\\d+");
+
+    public final static int USER_NOT_AUTHORIZED = 2;
+    public final static int OPERATION_NOT_VALID = 3;
+    public final static int IDENTIFIER_MISSING = 4;
+    public final static int IDENTIFIER_UNKNOWN = 5;
+    public final static int NO_RECORD = 6;
+    public final static int NO_RECORD_CREATED = 7;
+    public final static int STATUS_UNKNOWN = 8;
+    public final static int NO_IMEX_ID = 9;
+    public final static int UNKNOWN_USER = 10;
+    public final static int UNKNOWN_GROUP = 11;
+    public final static int OPERATION_NOT_SUPPORTED = 98;
+    public final static int INTERNAL_SERVER_ERROR = 99;
 
     public DefaultImexCentralClient( String username, String password, String endPoint ) throws ImexCentralException {
 
@@ -116,37 +130,58 @@ public class DefaultImexCentralClient implements ImexCentralClient {
             return pub;
         } catch ( IcentralFault f ) {
             switch( f.getFaultInfo().getFaultCode() ) {
-                case 6:
+                case NO_RECORD:
                     // simply no data found, return null
                     return null;
             }
 
-            throw new ImexCentralException( "Error while getting a publication by id: " + identifier, f );
+            throw new ImexCentralException("Impossible to find the publication " + identifier, f);
         }
     }
 
-    public List<Publication> getPublicationByOwner( String owner, int first, int max, Holder<PublicationList> pubList, Holder<Long> number ) throws ImexCentralException {
+    public List<Publication> getPublicationByOwner( String owner, int first, int max) throws ImexCentralException {
         try {
+            // create holders for publication and last record
+            Holder<PublicationList> pubList = new Holder<PublicationList>();
+            Holder<Long> number = new Holder<Long>();
+
             port.getPublicationByOwner( owner, first, max, pubList, number );
-            if( pubList != null ) {
+            if( pubList.value != null) {
                 return pubList.value.getPublication();
             }
-            return null;
+            return Collections.EMPTY_LIST;
         } catch ( IcentralFault f ) {
+            switch( f.getFaultInfo().getFaultCode() ) {
+                case NO_RECORD:
+                    // simply no data found, return empty list
+                    return Collections.EMPTY_LIST;
+            }
+
             throw new ImexCentralException( "Error while getting publications by owner: " + owner, f );
         }
     }
 
-    public List<Publication> getPublicationByStatus( String status, int first, int max, Holder<PublicationList> pubList, Holder<Long> number ) throws ImexCentralException {
+    public List<Publication> getPublicationByStatus( String status, int first, int max) throws ImexCentralException {
 
         try {
+            // create holders for publication and last record
+            Holder<PublicationList> pubList = new Holder<PublicationList>();
+            Holder<Long> number = new Holder<Long>();
+
             port.getPublicationByStatus( status, first, max, pubList, number );
-            if( pubList != null ) {
+
+            if( pubList.value != null) {
                 return pubList.value.getPublication();
             }
-            return null;
+            return Collections.EMPTY_LIST;
 
         } catch ( IcentralFault f ) {
+            switch( f.getFaultInfo().getFaultCode() ) {
+                case NO_RECORD:
+                    // simply no data found, return empty list
+                    return Collections.EMPTY_LIST;
+            }
+
             throw new ImexCentralException( "Error while getting publications by status: " + status, f );
         }
     }
@@ -158,84 +193,56 @@ public class DefaultImexCentralClient implements ImexCentralClient {
      * @return an updated publication, null if not found.
      * @throws ImexCentralException
      */
-    public Publication updatePublicationStatus( String identifier, PublicationStatus status, String message ) throws ImexCentralException {
+    public Publication updatePublicationStatus( String identifier, PublicationStatus status) throws ImexCentralException {
         try {
-            return port.updatePublicationStatus( buildIdentifier( identifier ), status.toString(), message );
+            return port.updatePublicationStatus( buildIdentifier( identifier ), status.toString(), null );
         } catch ( IcentralFault f ) {
-
-            switch( f.getFaultInfo().getFaultCode() ) {
-                case 6:
-                    //  no data found
-                    throw new ImexCentralException( "Could not find publication '"+ identifier +
-                                                    "' on which we were attempting to upate the status to '"+
-                                                    status +"'", f );
-            }
 
             throw new ImexCentralException( "Error while attempting to update a publication status: " +
-                                            identifier + "/" + status, f );
+                    identifier + "/" + status, f );
         }
     }
 
-    public void updatePublicationAdminGroup( String identifier, Operation operation, String group ) throws ImexCentralException {
+    public Publication updatePublicationAdminGroup( String identifier, Operation operation, String group ) throws ImexCentralException {
         try {
-            port.updatePublicationAdminGroup( buildIdentifier(identifier ), operation.toString(), group );
+            return port.updatePublicationAdminGroup( buildIdentifier(identifier ), operation.toString(), group );
         } catch ( IcentralFault f ) {
 
-            switch( f.getFaultInfo().getFaultCode() ) {
-                case 6:
-                    //  no data found
-                    throw new ImexCentralException( "Could not find publication '"+ identifier +
-                                                    "' on which we were attempting to upate the admin group to '"+
-                                                    group +"'", f );
-            }
-
-            final String message = f.getFaultInfo().getMessage();
-            final int code = f.getFaultInfo().getFaultCode();
-            throw new ImexCentralException( "["+ code+" - "+ message +
-                                            "] Error while attempting to update a publication admin group: " +
-                                            identifier + "/" + group, f );
+            throw new ImexCentralException( "Error while attempting to upate the admin group to '"+
+                    group +"' for publication " + identifier, f );
         }
     }
 
-    public void updatePublicationAdminUser( String identifier, Operation operation, String user ) throws ImexCentralException {
+    public Publication updatePublicationAdminUser( String identifier, Operation operation, String user ) throws ImexCentralException {
         try {
-            port.updatePublicationAdminUser( buildIdentifier(identifier ), operation.toString(), user );
+            return port.updatePublicationAdminUser( buildIdentifier(identifier ), operation.toString(), user );
         } catch ( IcentralFault f ) {
 
-            switch( f.getFaultInfo().getFaultCode() ) {
-                case 6:
-                    //  no data found
-                    throw new ImexCentralException( "Could not find publication '"+ identifier +
-                                                    "' on which we were attempting to upate the admin user to '"+
-                                                    user +"'", f );
-            }
-
-            final String message = f.getFaultInfo().getMessage();
-            final int code = f.getFaultInfo().getFaultCode();
-
-            throw new ImexCentralException( "["+ code+" - "+ message +
-                                            "] Error while attempting to update a publication admin user: " +
-                                            identifier + "/" + user, f );
+            throw new ImexCentralException( "Error while attempting to upate the admin user to '"+
+                    user +"' for publication " + identifier, f );
         }
     }
 
     @Override
-    public void updatePublicationIdentifier(String oldIdentifier, String newIdentifier) throws ImexCentralException {
+    public Publication updatePublicationIdentifier(String oldIdentifier, String newIdentifier) throws ImexCentralException {
+
+        Publication existingPub = getPublicationById(newIdentifier);
+
+        // if the new identifier is already in IMEx central, we don't update anything
+        if (existingPub != null){
+            ImexCentralFault imexFault = new ImexCentralFault();
+            imexFault.setFaultCode(3);
+
+            IcentralFault fault = new IcentralFault("New publication identifier " + newIdentifier + "already used in IMEx central.", imexFault);
+            throw new ImexCentralException( "Impossible to update the identifier of " + oldIdentifier, fault );
+        }
+
         try {
-            port.updatePublicationIdentifier( buildIdentifier(oldIdentifier ), buildIdentifier(newIdentifier) );
+            return port.updatePublicationIdentifier( buildIdentifier(oldIdentifier ), buildIdentifier(newIdentifier) );
         } catch ( IcentralFault f ) {
 
-            switch( f.getFaultInfo().getFaultCode() ) {
-                case 6:
-                    //  no data found
-                    throw new ImexCentralException( "Could not update publication '"+ oldIdentifier );
-            }
-
-            final String message = f.getFaultInfo().getMessage();
-            final int code = f.getFaultInfo().getFaultCode();
-
-            throw new ImexCentralException( "["+ code+" - "+ message +
-                    "] Error while attempting to update a publication identifier: ", f);
+            throw new ImexCentralException( "Error while attempting to upate the identifier to '"+
+                    newIdentifier +"' for publication " + oldIdentifier, f );
         }
     }
 
@@ -276,8 +283,8 @@ public class DefaultImexCentralClient implements ImexCentralClient {
         String localTrustStorePwd = System.getProperty( "javax.net.ssl.keyStorePassword" );
         if(localTrustStore==null) {
             System.out.println( "It appears you haven't setup a local trust store (other than the one embedded in the JDK)." +
-                                "\nShould you want to specify one, use: -Djavax.net.ssl.trustStore=<path.to.keystore> " +
-                                "\nAnd if it is password protected, use: -Djavax.net.ssl.keyStorePassword=<password>" );
+                    "\nShould you want to specify one, use: -Djavax.net.ssl.trustStore=<path.to.keystore> " +
+                    "\nAnd if it is password protected, use: -Djavax.net.ssl.keyStorePassword=<password>" );
         } else {
             System.out.println( "Using local trust store: " + localTrustStore + (localTrustStorePwd == null ? " (no password set)" : " (with password set)" ) );
         }
