@@ -59,15 +59,23 @@ public class DefaultImexCentralClient implements ImexCentralClient {
     protected static Identifier buildIdentifier( String identifier ) {
         final Identifier id = new ObjectFactory().createIdentifier();
         id.setAc( identifier );
+        // IMEx identifier
         if( identifier.startsWith( "IM-" ) ) {
             // this will enable searching for publication by IMEx id ... not obvious but it works ...
             id.setNs( "imex" );
-        } else if (Pattern.matches(pubmed_regexp.toString(), identifier)) {
-            // fallback namespace
-            id.setNs( "doi" );
         }
+        // valid pubmed identifier
+        else if (Pattern.matches(pubmed_regexp.toString(), identifier)) {
+            // fallback namespace
+            id.setNs( "pubmed" );
+        }
+        // unassigned publication = internal identifier
+        else if (identifier.startsWith("unassigned")){
+            id.setNs( "jint" );
+        }
+        // doi number
         else {
-            id.setNs("pmid");
+            id.setNs("doi");
         }
         return id;
     }

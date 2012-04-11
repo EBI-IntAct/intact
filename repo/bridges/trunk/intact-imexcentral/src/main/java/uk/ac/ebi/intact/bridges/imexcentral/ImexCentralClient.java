@@ -17,6 +17,12 @@ public interface ImexCentralClient {
 
     String getEndpoint();
 
+    /**
+     *
+     * @param identifier : pubmed, doi, unassigned or imex
+     * @return the publication in IMEx central if it exists
+     * @throws ImexCentralException
+     */
     Publication getPublicationById( String identifier ) throws ImexCentralException;
 
     public List<Publication> getPublicationByOwner( String owner, int first, int max, Holder<PublicationList> pubList, Holder<Long> number ) throws ImexCentralException;
