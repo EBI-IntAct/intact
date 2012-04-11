@@ -81,7 +81,7 @@ public class DefaultImexCentralClient implements ImexCentralClient {
         // valid pubmed identifier
         else if (Pattern.matches(pubmed_regexp.toString(), identifier)) {
             // fallback namespace
-            id.setNs( "pubmed" );
+            id.setNs( "pmid" );
         }
         // unassigned publication = internal identifier
         else if (identifier.startsWith("unassigned")){
@@ -300,7 +300,7 @@ public class DefaultImexCentralClient implements ImexCentralClient {
         Publication publication;
         try {
             System.out.println( "Searching by PMID ..." );
-            publication = client.getPublicationById( "19249676" );
+            publication = client.getPublicationById( "19360080" );
             print( publication );
 
             System.out.println( "Searching by IMEx ID ..." );

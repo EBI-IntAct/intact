@@ -377,7 +377,7 @@ public class MockImexCentralClient implements ImexCentralClient {
         // valid pubmed identifier
         else if (Pattern.matches(pubmed_regexp.toString(), identifier)) {
             // fallback namespace
-            id.setNs( "pubmed" );
+            id.setNs( "pmid" );
         }
         // unassigned publication = internal identifier
         else if (identifier.startsWith("unassigned")){
