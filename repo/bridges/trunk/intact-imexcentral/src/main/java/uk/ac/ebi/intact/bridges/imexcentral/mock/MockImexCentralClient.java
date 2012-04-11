@@ -140,9 +140,9 @@ public class MockImexCentralClient implements ImexCentralClient {
     public Publication updatePublicationStatus( String identifier, PublicationStatus status) throws ImexCentralException {
         final Publication p = getPublicationByPubmedId( identifier );
 
-        if (!status.equals("NEW") && !status.equals("DISCARDED") && !status.equals("RESERVED")
-                && !status.equals("PROCESSED") && !status.equals("RELEASED") && !status.equals("INPROGRESS") &&
-                !status.equals("INCOMPLETE")){
+        if (!status.toString().equals("NEW") && !status.toString().equals("DISCARDED") && !status.toString().equals("RESERVED")
+                && !status.toString().equals("PROCESSED") && !status.toString().equals("RELEASED") && !status.toString().equals("INPROGRESS") &&
+                !status.toString().equals("INCOMPLETE")){
             ImexCentralFault imexFault = new ImexCentralFault();
             imexFault.setFaultCode(8);
 
