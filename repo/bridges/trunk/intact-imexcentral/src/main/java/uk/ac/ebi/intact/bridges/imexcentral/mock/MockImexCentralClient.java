@@ -138,7 +138,7 @@ public class MockImexCentralClient implements ImexCentralClient {
     }
 
     public Publication updatePublicationStatus( String identifier, PublicationStatus status) throws ImexCentralException {
-        final Publication p = getPublicationByPubmedId( identifier );
+        final Publication p = getPublicationById( identifier );
 
         if (!status.toString().equals("NEW") && !status.toString().equals("DISCARDED") && !status.toString().equals("RESERVED")
                 && !status.toString().equals("PROCESSED") && !status.toString().equals("RELEASED") && !status.toString().equals("INPROGRESS") &&
@@ -164,7 +164,7 @@ public class MockImexCentralClient implements ImexCentralClient {
     }
 
     public Publication updatePublicationAdminGroup( String identifier, Operation operation, String group ) throws ImexCentralException {
-        Publication p = getPublicationByPubmedId( identifier );
+        Publication p = getPublicationById( identifier );
 
         if (p != null){
             if (group != null && (group.equalsIgnoreCase(INTACT_GROUP) || group.equalsIgnoreCase(MATRIXDB_GROUP))){
@@ -194,7 +194,7 @@ public class MockImexCentralClient implements ImexCentralClient {
     }
 
     public Publication updatePublicationAdminUser( String identifier, Operation operation, String user ) throws ImexCentralException {
-        Publication p = getPublicationByPubmedId( identifier );
+        Publication p = getPublicationById( identifier );
 
         if (p != null){
             if (user != null && (user.equalsIgnoreCase(intact_user) || user.equalsIgnoreCase(phantom_user))){
@@ -298,7 +298,7 @@ public class MockImexCentralClient implements ImexCentralClient {
     }
 
     public Publication getPublicationImexAccession( String identifier, boolean create ) throws ImexCentralException {
-        final Publication p = getPublicationByPubmedId( identifier );
+        final Publication p = getPublicationById( identifier );
         
         if (p != null){
             if( create ) {
