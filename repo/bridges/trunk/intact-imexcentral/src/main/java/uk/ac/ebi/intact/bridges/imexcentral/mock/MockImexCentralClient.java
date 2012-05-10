@@ -154,20 +154,11 @@ public class MockImexCentralClient implements ImexCentralClient {
             p.setStatus( status.toString() );
         }
         else {
-            if (!Pattern.matches(pubmed_regexp.toString(), identifier)){
-                ImexCentralFault imexFault = new ImexCentralFault();
-                imexFault.setFaultCode(5);
+            ImexCentralFault imexFault = new ImexCentralFault();
+            imexFault.setFaultCode(6);
 
-                IcentralFault fault = new IcentralFault("Identifier not recognized", imexFault);
-                throw new ImexCentralException(fault);
-            }
-            else {
-                ImexCentralFault imexFault = new ImexCentralFault();
-                imexFault.setFaultCode(6);
-
-                IcentralFault fault = new IcentralFault("No publication record found", imexFault);
-                throw new ImexCentralException(fault);
-            }
+            IcentralFault fault = new IcentralFault("No publication record found", imexFault);
+            throw new ImexCentralException(fault);
         }
         return p;
     }
@@ -192,20 +183,11 @@ public class MockImexCentralClient implements ImexCentralClient {
             }
         }
         else {
-            if (!Pattern.matches(pubmed_regexp.toString(), identifier)){
-                ImexCentralFault imexFault = new ImexCentralFault();
-                imexFault.setFaultCode(5);
+            ImexCentralFault imexFault = new ImexCentralFault();
+            imexFault.setFaultCode(6);
 
-                IcentralFault fault = new IcentralFault("Identifier not recognized", imexFault);
-                throw new ImexCentralException(fault);
-            }
-            else {
-                ImexCentralFault imexFault = new ImexCentralFault();
-                imexFault.setFaultCode(6);
-
-                IcentralFault fault = new IcentralFault("No publication record found", imexFault);
-                throw new ImexCentralException(fault);
-            }
+            IcentralFault fault = new IcentralFault("No publication record found", imexFault);
+            throw new ImexCentralException(fault);
         }
 
         return p;
@@ -231,20 +213,11 @@ public class MockImexCentralClient implements ImexCentralClient {
             }
         }
         else {
-            if (!Pattern.matches(pubmed_regexp.toString(), identifier)){
-                ImexCentralFault imexFault = new ImexCentralFault();
-                imexFault.setFaultCode(5);
+            ImexCentralFault imexFault = new ImexCentralFault();
+            imexFault.setFaultCode(6);
 
-                IcentralFault fault = new IcentralFault("Identifier not recognized", imexFault);
-                throw new ImexCentralException(fault);
-            }
-            else {
-                ImexCentralFault imexFault = new ImexCentralFault();
-                imexFault.setFaultCode(6);
-
-                IcentralFault fault = new IcentralFault("No publication record found", imexFault);
-                throw new ImexCentralException(fault);
-            }
+            IcentralFault fault = new IcentralFault("No publication record found", imexFault);
+            throw new ImexCentralException(fault);
         }
         
         return p;
@@ -313,14 +286,6 @@ public class MockImexCentralClient implements ImexCentralClient {
     }
 
     public Publication createPublicationById( String identifier ) throws ImexCentralException {
-        if (!Pattern.matches(PUBMED_REGEXP.toString(), identifier)){
-            // no publication record created because not valid pubmed id, throw an exception (same behaviour as webservice)
-            ImexCentralFault imexFault = new ImexCentralFault();
-            imexFault.setFaultCode(7);
-
-            IcentralFault fault = new IcentralFault("publication not created", imexFault);
-            throw new ImexCentralException(fault);
-        }
 
         Publication p = new Publication();
         final Identifier i = new Identifier();
@@ -347,20 +312,11 @@ public class MockImexCentralClient implements ImexCentralClient {
             }
         }
         else {
-            if (!Pattern.matches(pubmed_regexp.toString(), identifier)){
-                ImexCentralFault imexFault = new ImexCentralFault();
-                imexFault.setFaultCode(5);
+            ImexCentralFault imexFault = new ImexCentralFault();
+            imexFault.setFaultCode(6);
 
-                IcentralFault fault = new IcentralFault("Identifier not recognized", imexFault);
-                throw new ImexCentralException(fault);
-            }
-            else {
-                ImexCentralFault imexFault = new ImexCentralFault();
-                imexFault.setFaultCode(6);
-
-                IcentralFault fault = new IcentralFault("No publication record found", imexFault);
-                throw new ImexCentralException(fault);
-            }
+            IcentralFault fault = new IcentralFault("No publication record found", imexFault);
+            throw new ImexCentralException(fault);
         }
 
         return p;
