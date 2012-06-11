@@ -8,7 +8,6 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.confidence.blastmapping.jaxb.EBIApplicationResult;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
@@ -84,13 +83,19 @@ public class BlastMappingReader {
 //        }
 
         try {
-            return ( EBIApplicationResult ) u.unmarshal( new FileInputStream( file ) );
+            FileInputStream inputStream = new FileInputStream( file );
+            EBIApplicationResult app = ( EBIApplicationResult ) u.unmarshal( inputStream );
+            inputStream.close();
+            return app;
         } catch (ClassCastException e){
             if (log.isWarnEnabled()){
                 log.warn("ClassCastException: file: " + file.getPath());
             }
-        }
-      //  return (EBIApplicationResult) ((JAXBElement)u.unmarshal(new FileInputStream(file))).getValue(); 
+        } catch (IOException e) {
+            if (log.isWarnEnabled()){
+                log.warn("IOException: file: " + file.getPath());
+            }        }
+        //  return (EBIApplicationResult) ((JAXBElement)u.unmarshal(new FileInputStream(file))).getValue();
         //( CVMappingType ) ( ( JAXBElement ) u.unmarshal( new FileInputStream( file ) ) ).getValue();
         return null;
     }
