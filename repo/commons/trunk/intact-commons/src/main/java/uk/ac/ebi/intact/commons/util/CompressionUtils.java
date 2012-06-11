@@ -139,6 +139,8 @@ public class CompressionUtils {
             while ((len = in.read(buf)) > 0) {
                 zip.write(buf, 0, len);
             }
+            
+            in.close();
         }
     }
 
@@ -190,6 +192,7 @@ public class CompressionUtils {
         out.close();
 
         zipin.close();
+        in.close();
     }
 
     /**

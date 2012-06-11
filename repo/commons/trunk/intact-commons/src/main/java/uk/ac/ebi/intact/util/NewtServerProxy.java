@@ -245,9 +245,11 @@ public class NewtServerProxy {
         }
         // The reader to read response from the server.
         BufferedReader reader = null;
+        InputStream stream = null;
         try {
+            stream = servletConnection.getInputStream();
             reader = new BufferedReader(
-                    new InputStreamReader(servletConnection.getInputStream()));
+                    new InputStreamReader(stream));
             // We are expcting a single line from the server.
             return reader.readLine();
         }
@@ -255,6 +257,13 @@ public class NewtServerProxy {
             if (reader != null) {
                 try {
                     reader.close();
+                }
+                catch (IOException ioe) {
+                }
+            }
+            if (stream != null) {
+                try {
+                    stream.close();
                 }
                 catch (IOException ioe) {
                 }
