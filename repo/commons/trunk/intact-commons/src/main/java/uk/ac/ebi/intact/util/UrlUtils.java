@@ -117,7 +117,8 @@ public class UrlUtils
                 }
             }
         }
-
+       r.close();
+       is.close();
        return urls;
    }
 

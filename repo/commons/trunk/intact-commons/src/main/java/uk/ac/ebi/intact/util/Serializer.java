@@ -60,7 +60,11 @@ public class Serializer {
         ObjectOutput serial = new ObjectOutputStream(byteStream);
         serial.writeObject(obj);
 
-        return byteStream.toByteArray();
+        byte[] byteResult = byteStream.toByteArray();
+
+        byteStream.close();
+        serial.close();
+        return byteResult;
     }
 
     /**

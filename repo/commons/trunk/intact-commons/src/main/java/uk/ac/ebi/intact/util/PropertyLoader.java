@@ -52,6 +52,7 @@ public class PropertyLoader {
             if (is != null) {
                 Properties properties = new Properties ();
                 properties.load (is);
+                is.close();
                 return properties;
             }
         } catch (IOException ioe) {}
