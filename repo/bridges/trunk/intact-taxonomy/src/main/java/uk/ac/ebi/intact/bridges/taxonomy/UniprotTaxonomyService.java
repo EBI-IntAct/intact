@@ -43,52 +43,54 @@ public class UniprotTaxonomyService implements TaxonomyService {
     private TaxonomyTerm buildTerm( final int taxid ) throws IOException {
 
         final InputStream is = getInputStream( taxid );
-
-        Model model = ModelFactory.createDefaultModel();
-        model.read(is, null);
+        TaxonomyTerm term = null;
+        try{
+            Model model = ModelFactory.createDefaultModel();
+            model.read(is, null);
 
 //        model.write(System.out);
 
-        TaxonomyTerm term;
+            // check first if it has been replaced by another record (would contain the replacedBy property)
+            Resource taxonomyResource = model.getResource(UNIPROT_TAXONOMY_NS + taxid);
+            Property replacedByProperty = model.getProperty(UNIPROT_NS, "replacedBy");
 
-        // check first if it has been replaced by another record (would contain the replacedBy property)
-        Resource taxonomyResource = model.getResource(UNIPROT_TAXONOMY_NS + taxid);
-        Property replacedByProperty = model.getProperty(UNIPROT_NS, "replacedBy");
+            boolean isReplaced = model.contains(taxonomyResource, replacedByProperty);
 
-        boolean isReplaced = model.contains(taxonomyResource, replacedByProperty);
+            if (isReplaced) {
+                Statement replacedStatement = model.getProperty(taxonomyResource, replacedByProperty);
+                String replacedUri = replacedStatement.getObject().asResource().getURI();
 
-        if (isReplaced) {
-            Statement replacedStatement = model.getProperty(taxonomyResource, replacedByProperty);
-            String replacedUri = replacedStatement.getObject().asResource().getURI();
+                String replacedByTaxidStr = replacedUri.replaceAll(UNIPROT_TAXONOMY_NS, "");
+                int replacledByTaxid = Integer.parseInt(replacedByTaxidStr);
 
-            String replacedByTaxidStr = replacedUri.replaceAll(UNIPROT_TAXONOMY_NS, "");
-            int replacledByTaxid = Integer.parseInt(replacedByTaxidStr);
+                if( log.isInfoEnabled() )
+                    log.info( "WARNING - the taxid replacement for " + taxid + " is " + replacledByTaxid );
 
-            if( log.isInfoEnabled() )
-                        log.info( "WARNING - the taxid replacement for " + taxid + " is " + replacledByTaxid );
+                term = buildTerm(replacledByTaxid);
+                term.setObsoleteTaxid(taxid);
 
-            term = buildTerm(replacledByTaxid);
-            term.setObsoleteTaxid(taxid);
+            } else {
+                term = new TaxonomyTerm( taxid );
+            }
 
-        } else {
-           term = new TaxonomyTerm( taxid );
+            // standard properties
+            String mnemonic = getLiteral(model, taxonomyResource, "mnemonic");
+            if (mnemonic != null) term.setMnemonic(mnemonic);
+
+            String commonName = getLiteral(model, taxonomyResource, "commonName");
+            if (commonName != null) term.setCommonName(commonName);
+
+            String scientificName = getLiteral(model, taxonomyResource, "scientificName");
+            if (scientificName != null) term.setScientificName(scientificName);
+
+            String synonym = getLiteral(model, taxonomyResource, "synonym");
+            if (synonym != null) term.getSynonyms().add(synonym);
         }
+        finally {
+            is.close();
 
-        // standard properties
-        String mnemonic = getLiteral(model, taxonomyResource, "mnemonic");
-        if (mnemonic != null) term.setMnemonic(mnemonic);
-
-        String commonName = getLiteral(model, taxonomyResource, "commonName");
-        if (commonName != null) term.setCommonName(commonName);
-
-        String scientificName = getLiteral(model, taxonomyResource, "scientificName");
-        if (scientificName != null) term.setScientificName(scientificName);
-
-        String synonym = getLiteral(model, taxonomyResource, "synonym");
-        if (synonym != null) term.getSynonyms().add(synonym);
-
-
-        return term;
+            return term;
+        }
     }
 
     private String getLiteral(Model model, Resource taxonomyResource, String propertyName) {
@@ -114,7 +116,7 @@ public class UniprotTaxonomyService implements TaxonomyService {
 
         if ( !TaxonomyUtils.isSupportedTaxid( taxid ) ) {
             throw new TaxonomyServiceException( "You must give a positive taxid or one of the exception supported " +
-                                                "by PSI-MI (-1, -2, -3, -4, -5): " + taxid );
+                    "by PSI-MI (-1, -2, -3, -4, -5): " + taxid );
         }
 
         TaxonomyTerm term = null;
