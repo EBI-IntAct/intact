@@ -54,59 +54,69 @@ public class SheetContent {
     public void loadSheetContentOf(InputStream proteinsToIdentify){
         BufferedReader reader = new BufferedReader(new InputStreamReader(proteinsToIdentify));
         this.sheetContent.clear();
-        this.columnNames.clear();;
+        this.columnNames.clear();
 
-        log.debug("Load protein sheet: ");
-        if (InputFileUtils.checkInputProteins(proteinsToIdentify)){
-            try {
-                String line = reader.readLine();
-                if (line.contains("\t")){
-                    ArrayList<String> columns = InputFileUtils.split(line, "\t");
-
-                    for (int i = 0; i < columns.size(); i++){
-                        ColumnNames columnName = getColumnNameFor(columns.get(i));
-
-                        if (!this.columnNames.containsKey(columnName)){
-                            columnNames.put(columnName, i);
-                        }
-                        else{
-                            log.warn("The column name " + columnName.toString() + " has been found twice : column " + this.columnNames.get(columnName) + " and column " + i + ". Only the first column will be taken into account.");
-                        }
-
-                    }
-                }
-                else {
-                    ColumnNames columnName = getColumnNameFor(line);
-                    columnNames.put(columnName, 0);
-                }
-
-                while((line=reader.readLine()) != null){
-                    String [] protein = new String [columnNames.size()];
-
+        try{
+            log.debug("Load protein sheet: ");
+            if (InputFileUtils.checkInputProteins(proteinsToIdentify)){
+                try {
+                    String line = reader.readLine();
                     if (line.contains("\t")){
                         ArrayList<String> columns = InputFileUtils.split(line, "\t");
 
-                        if (columns.size() > columnNames.size()){
-                            throw new InputFileException("The sheet contains columns without name. We can't process a protein identification without knowing what information is stored in each column.");
-                        }
-
                         for (int i = 0; i < columns.size(); i++){
-                            protein [i] = columns.get(i);
+                            ColumnNames columnName = getColumnNameFor(columns.get(i));
+
+                            if (!this.columnNames.containsKey(columnName)){
+                                columnNames.put(columnName, i);
+                            }
+                            else{
+                                log.warn("The column name " + columnName.toString() + " has been found twice : column " + this.columnNames.get(columnName) + " and column " + i + ". Only the first column will be taken into account.");
+                            }
+
                         }
                     }
                     else {
-                        protein[0] = line;
-                        sheetContent.add(protein);
+                        ColumnNames columnName = getColumnNameFor(line);
+                        columnNames.put(columnName, 0);
                     }
+
+                    while((line=reader.readLine()) != null){
+                        String [] protein = new String [columnNames.size()];
+
+                        if (line.contains("\t")){
+                            ArrayList<String> columns = InputFileUtils.split(line, "\t");
+
+                            if (columns.size() > columnNames.size()){
+                                throw new InputFileException("The sheet contains columns without name. We can't process a protein identification without knowing what information is stored in each column.");
+                            }
+
+                            for (int i = 0; i < columns.size(); i++){
+                                protein [i] = columns.get(i);
+                            }
+                        }
+                        else {
+                            protein[0] = line;
+                            sheetContent.add(protein);
+                        }
+                    }
+                    log.debug("Protein sheet loaded.");
+                } catch (IOException e) {
+                    log.error("We can't read the input file.", e);
                 }
-                log.debug("Protein sheet loaded.");
-            } catch (IOException e) {
-                log.error("We can't read the input file.", e);
+            }
+            else {
+                log.error("We can't load the input file. Check if there is a first line for the column names and if the file is a well formed tab file.");
             }
         }
-        else {
-            log.error("We can't load the input file. Check if there is a first line for the column names and if the file is a well formed tab file.");
+        finally {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
         }
+
     }
 
     private String getColumnValueOfProteinAt(int line, ColumnNames columnName){

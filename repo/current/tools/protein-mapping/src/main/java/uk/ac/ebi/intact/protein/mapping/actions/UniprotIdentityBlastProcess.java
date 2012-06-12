@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.protein.mapping.results.impl.DefaultBlastResults;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +92,16 @@ public class UniprotIdentityBlastProcess extends ActionNeedingBlastService {
 
         // Run a blast on uniprot and store the results in the Blast filter
         InputStream uniprotBlast = this.blastService.getResultsOfBlastOnUniprot(context.getSequence());
-        this.blastFilter.setResults(uniprotBlast);
+        try{
+            this.blastFilter.setResults(uniprotBlast);
+        }
+        finally {
+            try {
+                uniprotBlast.close();
+            } catch (IOException e) {
+                log.error("Impossible to close BLAST results", e);
+            }
+        }
 
         if (context.getOrganism() != null){
             // Filter the results on the 'minimumIdentityThreshold' and the organism

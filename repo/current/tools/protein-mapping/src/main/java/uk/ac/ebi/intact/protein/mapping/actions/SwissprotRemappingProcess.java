@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.protein.mapping.results.impl.DefaultBlastResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.IdentificationStrategyImpl;
 import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -451,7 +452,16 @@ public class SwissprotRemappingProcess extends ActionNeedingBlastService {
 
             // Run the blast on swissprot and keep the result in the Blast filter
             InputStream blastResults = this.blastService.getResultsOfBlastOnSwissprot(this.context.getSequence());
-            this.blastFilter.setResults(blastResults);
+            try{
+                this.blastFilter.setResults(blastResults);
+            }
+            finally {
+                try {
+                    blastResults.close();
+                } catch (IOException e) {
+                    log.error("Impossible to close BLAST results", e);
+                }
+            }
 
             if (this.context.getOrganism() != null){
                 // Filter the Blast results on the minimum threshold identity and the organism
