@@ -84,8 +84,13 @@ public class BlastMappingReader {
 
         try {
             FileInputStream inputStream = new FileInputStream( file );
-            EBIApplicationResult app = ( EBIApplicationResult ) u.unmarshal( inputStream );
-            inputStream.close();
+            EBIApplicationResult app = null;
+            try {
+                app = ( EBIApplicationResult ) u.unmarshal( inputStream );
+            }
+            finally {
+                inputStream.close();
+            }
             return app;
         } catch (ClassCastException e){
             if (log.isWarnEnabled()){
