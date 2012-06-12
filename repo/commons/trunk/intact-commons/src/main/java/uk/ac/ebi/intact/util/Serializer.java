@@ -58,12 +58,16 @@ public class Serializer {
 
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         ObjectOutput serial = new ObjectOutputStream(byteStream);
-        serial.writeObject(obj);
+        byte[] byteResult = null;
+        try{
+            serial.writeObject(obj);
+            byteResult = byteStream.toByteArray();
+        }
+        finally {
+            byteStream.close();
+            serial.close();
+        }
 
-        byte[] byteResult = byteStream.toByteArray();
-
-        byteStream.close();
-        serial.close();
         return byteResult;
     }
 

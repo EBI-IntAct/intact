@@ -208,14 +208,18 @@ public class MailSender {
             {
                out = new FileOutputStream(MAIL_FILE_NAME);
                p = new PrintStream( out );
-               p.print("Recipients: " + NEW_LINE);
-                for( int i = 0; i < recipients.length; i++ ) {
-                   p.print(recipients[i]);
-                }
-               p.print(NEW_LINE + NEW_LINE);
-               p.print("Subject: " + NEW_LINE + subject.toString() + NEW_LINE + NEW_LINE);
-               p.print("Message: " + NEW_LINE + message.toString()  + NEW_LINE + NEW_LINE);
-               p.close();
+               try{
+                   p.print("Recipients: " + NEW_LINE);
+                   for( int i = 0; i < recipients.length; i++ ) {
+                       p.print(recipients[i]);
+                   }
+                   p.print(NEW_LINE + NEW_LINE);
+                   p.print("Subject: " + NEW_LINE + subject.toString() + NEW_LINE + NEW_LINE);
+                   p.print("Message: " + NEW_LINE + message.toString()  + NEW_LINE + NEW_LINE);
+               }
+               finally {
+                   p.close();
+               }
             }
             catch (Exception e_writing_file)
             {

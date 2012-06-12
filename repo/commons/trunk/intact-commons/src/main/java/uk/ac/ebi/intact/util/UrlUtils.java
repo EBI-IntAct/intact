@@ -75,50 +75,55 @@ public class UrlUtils
        InputStream is = folderUrl.openStream();
 
        BufferedReader r = new BufferedReader(new InputStreamReader(is));
-       String line;
-        while ((line = r.readLine())!= null)
-        {
-            if (line.trim().length() > 0)
-            {
-                URL url = urlFromLine(folderUrl, line);
+       try{
+           String line;
+           while ((line = r.readLine())!= null)
+           {
+               if (line.trim().length() > 0)
+               {
+                   URL url = urlFromLine(folderUrl, line);
 
-                boolean isLocalDir = isLocal && new File(url.getFile()).isDirectory();
+                   boolean isLocalDir = isLocal && new File(url.getFile()).isDirectory();
 
-                if (isLocalDir || isRemoteDirectory(line))
-                {
-                    if (recursive)
-                    {
-                        URL childFolder = null;
+                   if (isLocalDir || isRemoteDirectory(line))
+                   {
+                       if (recursive)
+                       {
+                           URL childFolder = null;
 
-                        if (isLocal)
-                        {
-                            childFolder = new File(localFile, line).toURL();
-                        }
-                        else
-                        {
-                           childFolder = new URL(urlFromLine(folderUrl, line).toString()+"/");
-                        }
-                        urls.addAll(listFilesFromFolderUrl(childFolder, filter, recursive));
-                    }
-                }
-                else
-                {
-                    if (filter != null)
-                    {
-                        if (filter.accept(url))
-                        {
-                            urls.add(url);
-                        }
-                    }
-                    else
-                    {
-                        urls.add(url);
-                    }
-                }
-            }
-        }
-       r.close();
-       is.close();
+                           if (isLocal)
+                           {
+                               childFolder = new File(localFile, line).toURL();
+                           }
+                           else
+                           {
+                               childFolder = new URL(urlFromLine(folderUrl, line).toString()+"/");
+                           }
+                           urls.addAll(listFilesFromFolderUrl(childFolder, filter, recursive));
+                       }
+                   }
+                   else
+                   {
+                       if (filter != null)
+                       {
+                           if (filter.accept(url))
+                           {
+                               urls.add(url);
+                           }
+                       }
+                       else
+                       {
+                           urls.add(url);
+                       }
+                   }
+               }
+           }
+       }
+       finally {
+           r.close();
+           is.close();
+       }
+
        return urls;
    }
 

@@ -226,9 +226,10 @@ public class NewtServerProxy {
 
         // Write the taxid to the server.
         BufferedWriter writer = null;
+        OutputStream outputStream = servletConnection.getOutputStream();
         try {
             writer = new BufferedWriter(
-                    new OutputStreamWriter(servletConnection.getOutputStream()));
+                    new OutputStreamWriter(outputStream));
             // Send the query and flush it.
             writer.write(query);
             writer.flush();
@@ -242,12 +243,12 @@ public class NewtServerProxy {
                 catch (IOException ioe) {
                 }
             }
+            outputStream.close();
         }
         // The reader to read response from the server.
         BufferedReader reader = null;
-        InputStream stream = null;
+        InputStream stream = servletConnection.getInputStream();
         try {
-            stream = servletConnection.getInputStream();
             reader = new BufferedReader(
                     new InputStreamReader(stream));
             // We are expcting a single line from the server.
@@ -261,13 +262,7 @@ public class NewtServerProxy {
                 catch (IOException ioe) {
                 }
             }
-            if (stream != null) {
-                try {
-                    stream.close();
-                }
-                catch (IOException ioe) {
-                }
-            }
+            stream.close();
         }
     }
 }

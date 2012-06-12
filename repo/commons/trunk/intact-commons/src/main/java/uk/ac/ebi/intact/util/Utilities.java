@@ -52,8 +52,11 @@ public class Utilities {
         // get properties
         Properties properties = new Properties();
         FileInputStream in = new FileInputStream(System.getProperty(aParameterName));
-        properties.load(in);
-        in.close();
+        try{
+            properties.load(in);
+        }finally {
+            in.close();
+        }
 
         return properties;
     }
@@ -86,21 +89,23 @@ public class Utilities {
         // Open the input file
         FileInputStream in = new FileInputStream(sourceFile);
 
-        // Transfer bytes from the input file to the GZIP output stream
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
-        }
-        in.close();
+        try{
+            // Transfer bytes from the input file to the GZIP output stream
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            if (deleteOriginalFile)
+            {
+                sourceFile.delete();
+            }
 
-        // Complete the GZIP file
-        out.finish();
-        out.close();
-
-        if (deleteOriginalFile)
-        {
-            sourceFile.delete();
+        }finally {
+            in.close();
+            // Complete the GZIP file
+            out.finish();
+            out.close();
         }
     }
 
@@ -121,35 +126,39 @@ public class Utilities {
         // Create the ZIP file
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(destFile));
 
-        // Compress the files
-        for (File sourceFile : sourceFiles)
-        {
-            FileInputStream in = new FileInputStream(sourceFile);
-
-            // Add ZIP entry to output stream.
-            out.putNextEntry(new ZipEntry(sourceFile.toString()));
-
-            // Transfer bytes from the file to the ZIP file
-            int len;
-            while ((len = in.read(buf)) > 0)
-            {
-                out.write(buf, 0, len);
-            }
-
-            // Complete the entry
-            out.closeEntry();
-            in.close();
-        }
-
-        // Complete the ZIP file
-        out.close();
-
-        if (deleteOriginalFiles)
-        {
+        try {
+            // Compress the files
             for (File sourceFile : sourceFiles)
             {
-                sourceFile.delete();
+                FileInputStream in = new FileInputStream(sourceFile);
+                try{
+                    // Add ZIP entry to output stream.
+                    out.putNextEntry(new ZipEntry(sourceFile.toString()));
+
+                    // Transfer bytes from the file to the ZIP file
+                    int len;
+                    while ((len = in.read(buf)) > 0)
+                    {
+                        out.write(buf, 0, len);
+                    }
+
+                }finally {
+                    // Complete the entry
+                    out.closeEntry();
+                    in.close();
+                }
             }
+            if (deleteOriginalFiles)
+            {
+                for (File sourceFile : sourceFiles)
+                {
+                    sourceFile.delete();
+                }
+            }
+        }
+        finally {
+            // Complete the ZIP file
+            out.close();
         }
     }
 
@@ -169,12 +178,16 @@ public class Utilities {
 
         // decompress the file
         FileOutputStream out = new FileOutputStream(destinationFile);
-        int length;
-        while ((length = zipin.read(data, 0, buffer)) != -1)
-            out.write(data, 0, length);
-        out.close();
+        try{
+            int length;
+            while ((length = zipin.read(data, 0, buffer)) != -1)
+                out.write(data, 0, length);
 
-        zipin.close();
+        }finally {
+            out.close();
+
+            zipin.close();
+        }
     }
 
     /**
@@ -225,16 +238,19 @@ public class Utilities {
             FileOutputStream fos = new FileOutputStream(destFile);
             dest = new
                     BufferedOutputStream(fos, buffer);
-            while ((count = is.read(data, 0, buffer))
-                    != -1)
-            {
-                dest.write(data, 0, count);
-            }
-            dest.flush();
-            dest.close();
-            is.close();
+            try{
+                while ((count = is.read(data, 0, buffer))
+                        != -1)
+                {
+                    dest.write(data, 0, count);
+                }
 
-            unzippedFiles.add(destFile);
+                unzippedFiles.add(destFile);
+            }finally {
+                dest.flush();
+                dest.close();
+                is.close();
+            }
         }
 
         return unzippedFiles;
