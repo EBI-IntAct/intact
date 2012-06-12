@@ -13,16 +13,13 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
-import org.apache.velocity.runtime.resource.loader.JarResourceLoader;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
-import org.codehaus.plexus.util.FileUtils;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Properties;
 
 /**
@@ -236,7 +233,7 @@ public class HibernateConfigCreatorMojo
         // write the resulting file with velocity
         try
         {
-            Writer writer = new FileWriter(outputFile);
+            Writer writer = new BufferedWriter(new FileWriter(outputFile));
             template.merge(context, writer);
             writer.close();
         }
@@ -301,6 +298,9 @@ public class HibernateConfigCreatorMojo
             {
                 writer.write(line+"\n");
             }
+            
+            reader.close();
+            is.close();
         }
         catch (IOException e)
         {
