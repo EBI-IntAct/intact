@@ -1,7 +1,5 @@
 package uk.ac.ebi.intact.dbupdate.smallmolecules;
 
-import uk.ac.ebi.intact.model.SmallMolecule;
-
 import java.util.List;
 
 /**
