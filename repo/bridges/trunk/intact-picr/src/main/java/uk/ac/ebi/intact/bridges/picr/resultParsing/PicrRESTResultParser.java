@@ -78,11 +78,18 @@ public class PicrRESTResultParser {
             log.debug("unmarshal : " + file.getPath());
         }
 
+        FileInputStream inputStream = new FileInputStream( file );
         try {
-            return ( GetUPIForAccessionResponse ) u.unmarshal( new FileInputStream( file ) );
+            return ( GetUPIForAccessionResponse ) u.unmarshal( inputStream );
         } catch (ClassCastException e){
             if (log.isWarnEnabled()){
                 log.warn("ClassCastException: file: " + file.getPath());
+            }
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                log.error("Inpossible to close the resulting file input stream", e);
             }
         }
       //  return (EBIApplicationResult) ((JAXBElement)u.unmarshal(new FileInputStream(file))).getValue();
