@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.bridges.taxonomy;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
@@ -101,14 +102,20 @@ public class NewtTaxonomyService implements TaxonomyService {
 
         List<String> lines = new ArrayList<String>();
 
+        InputStream inputStream = url.openStream();
         // Read all the text returned by the server
-        BufferedReader in = new BufferedReader( new InputStreamReader( url.openStream() ) );
-        String str;
-        while ( ( str = in.readLine() ) != null ) {
-            // str is one line of text; readLine() strips the newline character(s)
-            lines.add( str );
+        BufferedReader in = new BufferedReader( new InputStreamReader( inputStream ) );
+        try{
+            String str;
+            while ( ( str = in.readLine() ) != null ) {
+                // str is one line of text; readLine() strips the newline character(s)
+                lines.add( str );
+            }
         }
-        in.close();
+        finally {
+            in.close();
+            inputStream.close();
+        }
 
         return lines;
     }
