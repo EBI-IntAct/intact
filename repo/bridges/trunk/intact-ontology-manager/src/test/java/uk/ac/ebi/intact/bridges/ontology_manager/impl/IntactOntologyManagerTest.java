@@ -27,6 +27,7 @@ public class IntactOntologyManagerTest {
 
         InputStream ontology = IntactOntologyManagerTest.class.getResource("/ontologies.xml").openStream();
         IntactOntologyManager om = new IntactOntologyManager(ontology);
+        ontology.close();
 
         Assert.assertEquals(2, om.getOntologyIDs().size());
 
