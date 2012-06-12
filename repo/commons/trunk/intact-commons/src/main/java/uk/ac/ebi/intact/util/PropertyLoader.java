@@ -46,13 +46,17 @@ public class PropertyLoader {
      * @return a set of property or null
      */
     public static Properties load (String propName) {
+        InputStream is = PropertyLoader.class.getResourceAsStream (propName);
 
         try {
-            InputStream is = PropertyLoader.class.getResourceAsStream (propName);
             if (is != null) {
                 Properties properties = new Properties ();
-                properties.load (is);
-                is.close();
+                try {
+                    properties.load (is);
+                }
+                finally {
+                    is.close();
+                }
                 return properties;
             }
         } catch (IOException ioe) {}

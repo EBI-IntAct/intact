@@ -45,17 +45,21 @@ public class CompressionUtils {
         // Open the input file
         FileInputStream in = new FileInputStream(sourceFile);
 
-        // Transfer bytes from the input file to the GZIP output stream
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
+        try{
+            // Transfer bytes from the input file to the GZIP output stream
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
         }
-        in.close();
+        finally {
+            in.close();
 
-        // Complete the GZIP file
-        out.finish();
-        out.close();
+            // Complete the GZIP file
+            out.finish();
+            out.close();
+        }
 
         if (deleteOriginalFile)
         {
@@ -85,44 +89,50 @@ public class CompressionUtils {
         // Create the ZIP file
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(destFile));
 
-        // Compress the files
-        for (File sourceFile : sourceFiles)
-        {
-            if (sourceFile.isDirectory()){
-                addFolderToZip("", sourceFile.getAbsolutePath(), out, includeFullPathName);
-            }
-            else {
-                FileInputStream in = new FileInputStream(sourceFile);
-
-                // Add ZIP entry to output stream.
-                if ( includeFullPathName ) {
-                    out.putNextEntry( new ZipEntry( sourceFile.toString() ) );
-                } else {
-                    out.putNextEntry( new ZipEntry( sourceFile.getName() ) );
-                }
-
-                // Transfer bytes from the file to the ZIP file
-                int len;
-                while ((len = in.read(buf)) > 0)
-                {
-                    out.write(buf, 0, len);
-                }
-
-                // Complete the entry
-                out.closeEntry();
-                in.close();
-            }
-        }
-
-        // Complete the ZIP file
-        out.close();
-
-        if (deleteOriginalFiles)
-        {
+        try{
+            // Compress the files
             for (File sourceFile : sourceFiles)
             {
-                sourceFile.delete();
+                if (sourceFile.isDirectory()){
+                    addFolderToZip("", sourceFile.getAbsolutePath(), out, includeFullPathName);
+                }
+                else {
+                    FileInputStream in = new FileInputStream(sourceFile);
+
+                    try{
+                        // Add ZIP entry to output stream.
+                        if ( includeFullPathName ) {
+                            out.putNextEntry( new ZipEntry( sourceFile.toString() ) );
+                        } else {
+                            out.putNextEntry( new ZipEntry( sourceFile.getName() ) );
+                        }
+
+                        // Transfer bytes from the file to the ZIP file
+                        int len;
+                        while ((len = in.read(buf)) > 0)
+                        {
+                            out.write(buf, 0, len);
+                        }
+                    }
+                    finally {
+                        // Complete the entry
+                        out.closeEntry();
+                        in.close();
+                    }
+                }
             }
+
+            if (deleteOriginalFiles)
+            {
+                for (File sourceFile : sourceFiles)
+                {
+                    sourceFile.delete();
+                }
+            }
+        }
+        finally {
+            // Complete the ZIP file
+            out.close();
         }
     }
 
@@ -135,12 +145,15 @@ public class CompressionUtils {
             byte[] buf = new byte[1024];
             int len;
             FileInputStream in = new FileInputStream(srcFile);
-            zip.putNextEntry(new ZipEntry(path + "/" + folder.getName()));
-            while ((len = in.read(buf)) > 0) {
-                zip.write(buf, 0, len);
+            try{
+                zip.putNextEntry(new ZipEntry(path + "/" + folder.getName()));
+                while ((len = in.read(buf)) > 0) {
+                    zip.write(buf, 0, len);
+                }
             }
-            
-            in.close();
+            finally {
+                in.close();
+            }
         }
     }
 
@@ -186,13 +199,18 @@ public class CompressionUtils {
 
         // decompress the file
         FileOutputStream out = new FileOutputStream(destinationFile);
-        int length;
-        while ((length = zipin.read(data, 0, buffer)) != -1)
-            out.write(data, 0, length);
-        out.close();
+        try{
+            int length;
+            while ((length = zipin.read(data, 0, buffer)) != -1)
+                out.write(data, 0, length);
+        }
+        finally {
+            out.close();
 
-        zipin.close();
-        in.close();
+            zipin.close();
+            in.close();
+        }
+
     }
 
     /**
@@ -247,16 +265,21 @@ public class CompressionUtils {
             FileOutputStream fos = new FileOutputStream(destFile);
             dest = new
                     BufferedOutputStream(fos, buffer);
-            while ((count = is.read(data, 0, buffer))
-                    != -1)
-            {
-                dest.write(data, 0, count);
-            }
-            dest.flush();
-            dest.close();
-            is.close();
+            try{
+                while ((count = is.read(data, 0, buffer))
+                        != -1)
+                {
+                    dest.write(data, 0, count);
+                }
 
-            unzippedFiles.add(destFile);
+
+                unzippedFiles.add(destFile);
+            }
+            finally {
+                dest.flush();
+                dest.close();
+                is.close();
+            }
         }
 
         return unzippedFiles;
