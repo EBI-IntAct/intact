@@ -234,8 +234,12 @@ public class HibernateConfigCreatorMojo
         try
         {
             Writer writer = new BufferedWriter(new FileWriter(outputFile));
-            template.merge(context, writer);
-            writer.close();
+            try{
+                template.merge(context, writer);
+            }
+            finally {
+                writer.close();
+            }
         }
         catch (IOException e)
         {
@@ -285,22 +289,25 @@ public class HibernateConfigCreatorMojo
         File temporaryFile = File.createTempFile("hibernateconfig",".vm");
         temporaryFile.deleteOnExit();
 
-        FileWriter writer = null;
+        Writer writer = null;
 
         try
         {
             InputStream is = getClass().getResourceAsStream(templateFilename);
-            writer = new FileWriter(temporaryFile);
+            writer = new BufferedWriter(new FileWriter(temporaryFile));
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            String line;
-            while ((line = reader.readLine()) != null)
-            {
-                writer.write(line+"\n");
+            try{
+                String line;
+                while ((line = reader.readLine()) != null)
+                {
+                    writer.write(line+"\n");
+                }
             }
-            
-            reader.close();
-            is.close();
+            finally {
+                reader.close();
+                is.close();
+            }
         }
         catch (IOException e)
         {
