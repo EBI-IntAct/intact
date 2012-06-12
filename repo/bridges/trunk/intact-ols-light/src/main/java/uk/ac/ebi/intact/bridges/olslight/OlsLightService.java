@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -85,13 +86,19 @@ public class OlsLightService implements OntologyService {
         try {
             final URL jsonUrl = new URL( url );
             final URLConnection olsConnection = jsonUrl.openConnection();
-            final BufferedReader in = new BufferedReader( new InputStreamReader( olsConnection.getInputStream() ) );
-            String inputLine;
-            while( (inputLine = in.readLine()) != null ) {
-                jsonBuffer.append( inputLine );
+            InputStream stream = olsConnection.getInputStream();
+            final BufferedReader in = new BufferedReader( new InputStreamReader( stream ) );
+            try{
+                String inputLine;
+                while( (inputLine = in.readLine()) != null ) {
+                    jsonBuffer.append( inputLine );
+                } 
             }
-            in.close();
-
+            finally {
+                in.close();
+                stream.close();
+            }
+            
         } catch( MalformedURLException e ){
             throw new OntologyServiceException( "Malformed URL: " + url, e );
         } catch( IOException e ){
