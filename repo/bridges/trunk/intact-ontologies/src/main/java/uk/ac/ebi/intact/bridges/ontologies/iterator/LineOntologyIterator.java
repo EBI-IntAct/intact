@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.bridges.ontologies.iterator;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyDocument;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ public abstract class LineOntologyIterator implements OntologyIterator{
 
     private LineIterator lineIterator;
     private String currentLine;
+    private Reader reader;
 
     public LineOntologyIterator(URL url) throws IOException {
         this(url.openStream());
@@ -45,6 +47,7 @@ public abstract class LineOntologyIterator implements OntologyIterator{
     }
 
     public LineOntologyIterator(Reader reader) {
+        this.reader = reader;
         lineIterator = IOUtils.lineIterator(reader);
     }
 
@@ -57,6 +60,13 @@ public abstract class LineOntologyIterator implements OntologyIterator{
             }
         }
 
+        if (reader != null){
+            try {
+                reader.close();
+            } catch (IOException e) {
+                System.out.println("Impossible to close the reader " + ExceptionUtils.getFullStackTrace(e));
+            }
+        }
         return false;
     }
 
