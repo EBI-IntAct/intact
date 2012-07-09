@@ -570,6 +570,12 @@ public class SimpleUniprotRemoteService extends AbstractUniprotService {
         Collection<UniprotCrossReference> convertedRefs = new ArrayList<UniprotCrossReference>();
         ReflectionCrossReferenceBuilder builder = new ReflectionCrossReferenceBuilder();
         for ( DatabaseCrossReference ref : refs ) {
+            String db = ref.getDatabase().toName();
+            if ( getCrossReferenceSelector() != null && !getCrossReferenceSelector().isSelected( db ) ) {
+                log.trace( getCrossReferenceSelector().getClass().getSimpleName() + " filtered out database: '" + db + "'." );
+                continue;
+            }
+
             UniprotCrossReference xref = builder.build(ref);
 
             if (xref != null){
@@ -593,11 +599,6 @@ public class SimpleUniprotRemoteService extends AbstractUniprotService {
             }
 
             String db = xref.getDatabase();
-
-            if ( getCrossReferenceSelector() != null && !getCrossReferenceSelector().isSelected( db ) ) {
-                log.trace( getCrossReferenceSelector().getClass().getSimpleName() + " filtered out database: '" + db + "'." );
-                continue;
-            }
 
             String desc = xref.getDescription(); // TODO There is so far no straight forward way to process all cross refrence and extract descriptions. We could at least provide specific handlers in case we know we need to process specific databases.
 

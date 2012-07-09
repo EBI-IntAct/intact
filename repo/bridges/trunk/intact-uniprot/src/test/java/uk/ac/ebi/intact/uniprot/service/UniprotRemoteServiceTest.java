@@ -296,7 +296,7 @@ public class UniprotRemoteServiceTest {
         assertEquals( 8, protein.getKeywords().size() );
 
         // cross references
-        assertEquals( 44, protein.getCrossReferences().size() );
+        assertEquals( 45, protein.getCrossReferences().size() );
 
         // splice variants
         assertEquals( 0, protein.getSpliceVariants().size() );
