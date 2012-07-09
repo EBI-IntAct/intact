@@ -104,6 +104,8 @@ public class ReflectionCrossReferenceBuilder {
                             methodName.endsWith("Accession") ||
                             methodName.endsWith("PortalIdentifier") ||
                             methodName.endsWith("ProtIdentifier") ||
+                            methodName.endsWith("EvolutionaryTraceIdentifier") ||
+                            methodName.endsWith("DNASUIdentifier") ||
                             methodName.endsWith("TreeIdentifier")) {
 
                         method = candidateMethod;
