@@ -41,7 +41,7 @@ public class IntactFilterOlsClientTest {
         for (Object key : children.keySet()){
             String id = (String) key;
 
-            if (!id.equals("MI:0117") && !id.equals("MI:0118") && !id.equals("MI:0828")){
+            if (!id.equals("MI:0117") && !id.equals("MI:0118") && !id.equals("MI:0828") && !id.equals("MI:1175") ){
                 Assert.assertFalse(true);
             }
         }
