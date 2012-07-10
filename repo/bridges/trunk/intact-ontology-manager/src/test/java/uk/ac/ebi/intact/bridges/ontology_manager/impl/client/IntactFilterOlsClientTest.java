@@ -36,7 +36,7 @@ public class IntactFilterOlsClientTest {
     public void test_filter_children() throws RemoteException {
         Map children = olsClient.getTermChildren("MI:0252", "MI", 1, null);
 
-        Assert.assertEquals(3, children.size());
+        Assert.assertEquals(4, children.size());
 
         for (Object key : children.keySet()){
             String id = (String) key;
