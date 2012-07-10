@@ -57,7 +57,7 @@ public class PICRSearchProcessWithAccessionTest {
 
             Assert.assertNotNull(ac);
             Assert.assertEquals(true, reports.get(0) instanceof DefaultPICRReport);
-            Assert.assertEquals("Q3ZC13", ac);
+            Assert.assertEquals("P84092", ac);
 
         } catch (ActionProcessingException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
