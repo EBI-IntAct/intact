@@ -39,12 +39,12 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.bridges</groupId>
             <artifactId>blast-mapping-parser</artifactId>
-            <version>${pom.parent.version}</version>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>${pom.groupId}</groupId>
+            <groupId>uk.ac.ebi.intact.bridges</groupId>
             <artifactId>intact-uniprot</artifactId>
-            <version>${pom.parent.version}</version>
+            <version>${pom.version}</version>
         </dependency>
 
         <!-- 3rd party -->

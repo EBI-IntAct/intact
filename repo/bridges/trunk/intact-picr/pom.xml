@@ -6,7 +6,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-
+    <groupId>uk.ac.ebi.intact.bridges</groupId>
     <artifactId>intact-picr</artifactId>
 
     <name>IntAct Bridges :: PICR</name>
@@ -46,9 +46,9 @@
     <dependencies>
         <!-- IntAct -->
         <dependency>
-            <groupId>${pom.groupId}</groupId>
+            <groupId>uk.ac.ebi.intact.bridges</groupId>
             <artifactId>intact-uniprot</artifactId>
-            <version>${pom.parent.version}</version>
+            <version>${pom.version}</version>
         </dependency>
 
         <!-- JAX-WS -->
