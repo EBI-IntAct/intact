@@ -1,0 +1,46 @@
+1. Use Spring to configure the type of adapter to be used.
+    - YaspAdapter
+    - Remote API Adapter
+    - WS Adapter
+
+------------------------------------------------------------------------------------------------------------
+
+Search by ID, AC, SV ID, Feature chain ID
+
+------------------------------------------------------------------------------------------------------------
+
+2. Configurable DR line usage
+
+    > note: CvDatabase have to exist beforehand (go, interpro, omim...)
+
+------------------------------------------------------------------------------------------------------------
+
+3. the last part is about assigning  an taxonomy annotation to the protein, (mammalian, yeast, worm, fly, virus)
+
+------------------------------------------------------------------------------------------------------------
+
+2. Configurable GN line usage
+
+    > note: CvAliasType have to exist beforehand (gene-name, orf-name...)
+
+------------------------------------------------------------------------------------------------------------
+
+5. Configurable COMMENT extraction
+
+    > note: CvTopic have to be existing already
+
+------------------------------------------------------------------------------------------------------------
+
+Once the UniProt object server is in production mode, the adapter tests could use the same code whether the
+UniprotProtein comes from Yasp or Remote API.
+
+
+
+Splice variant processing
+
+    some splice variants have more than one ID:  http://www.ebi.uniprot.org/entry/CDC42_MOUSE
+                                                 ie. P60766-1, P21181-1
+    some splice variant have external sequences: http://www.ebi.uniprot.org/entry/Q24208
+                                                 ie. in P45975-1
+    some splice variant have synonyms:           http://www.ebi.uniprot.org/entry/Q24208
+    some splice variant have a note:

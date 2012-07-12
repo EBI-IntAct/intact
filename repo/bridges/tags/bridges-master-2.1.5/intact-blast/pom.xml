@@ -1,0 +1,52 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+		<artifactId>bridges-master</artifactId>
+		<groupId>uk.ac.ebi.intact.bridges</groupId>
+		<version>2.1.5</version>
+	</parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>intact-blast</artifactId>
+    <packaging>pom</packaging>
+	<name>IntAct Bridges :: Blast</name>
+	<version>2.1.5</version>
+
+    <description>Blast Master POM</description>
+
+    <properties>
+        <currentVersion>${version}</currentVersion>
+    </properties>
+
+    <modules>
+        <module>wu-blast</module>
+        <module>ncbi-blast</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- EBI repositories -->
+    <repositories>
+        <repository>
+            <id>intact.nexus</id>
+            <name>IntAct Nexus</name>
+            <url>http://www.ebi.ac.uk/intact/maven/nexus/content/groups/public</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/bridges</url>
+        </site>
+    </distributionManagement>
+</project>
