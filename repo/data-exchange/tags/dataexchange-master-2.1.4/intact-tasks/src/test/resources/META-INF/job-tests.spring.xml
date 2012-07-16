@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:uti="http://www.springframework.org/schema/util"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/sprint-aop-2.5.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+           http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd">
+
+    <!-- beans -->
+    <bean id="intactToMitabWriter" class="uk.ac.ebi.intact.task.mitab.MitabCollectionCompositeWriter">
+        <property name="delegates">
+            <list>
+                <ref bean="mitabWriter"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="SimpleInteractionExpansionCompositeItemProcessor"
+          class="uk.ac.ebi.intact.task.mitab.InteractionExpansionCompositeProcessor">
+    </bean>
+
+    <bean id="nonClusteredMitabReader" class="uk.ac.ebi.intact.task.mitab.MitabItemReader">
+        <property name="documentDefinition">
+            <bean class="uk.ac.ebi.intact.psimitab.IntactDocumentDefinition"/>
+        </property>
+        <property name="resource" value="classpath:/mitab.txt"/>
+    </bean>
+
+    <bean id="solrMitabReader" class="uk.ac.ebi.intact.task.mitab.MitabItemReader">
+        <property name="documentDefinition">
+            <bean class="uk.ac.ebi.intact.psimitab.IntactDocumentDefinition"/>
+        </property>
+        <property name="resource" value="classpath:/resulting_mitab_score.txt"/>
+    </bean>
+
+    <bean id="mitabClusteredProcessor" class="uk.ac.ebi.intact.task.mitab.clustering.MitabClusterScoreItemProcessor">
+        <property name="miScoreLabel" value="intact-miscore"/>
+        <property name="hasHeader" value="true"/>
+        <property name="clusteredMitabFile" value="classpath:/mitab-clustered.txt"/>
+        <property name="databasesForUniqIdentifier">
+            <list>
+                <value>uniprotkb</value>
+                <value>intact</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean name="clusterScoreTasklet" class="uk.ac.ebi.intact.task.mitab.clustering.ClusterScoreTasklet">
+        <constructor-arg value="src/test/resources/mitab/mitab.txt"/>
+        <constructor-arg value="target/mitab-clustered.txt"/>
+        <property name="header" value="false"/>
+        <property name="scoreName" value="intact-miscore"/>
+    </bean>
+
+
+    <!-- Export from the database to mitab and enriching mitab -->
+    <batch:step id="databaseMitabExport" parent="intactBatchStep">
+        <batch:tasklet>
+            <batch:chunk reader="interactionReaderExcludeNegative"
+                         processor="SimpleInteractionExpansionCompositeItemProcessor"
+                         writer="intactToMitabWriter"
+                         skip-limit="10000">
+                <batch:streams>
+                    <batch:stream ref="interactionReaderExcludeNegative"/>
+                    <batch:stream ref="mitabWriter"/>
+                </batch:streams>
+
+                <batch:skippable-exception-classes>
+                    <batch:include class="uk.ac.ebi.intact.task.mitab.InteractionExpansionException"/>
+                </batch:skippable-exception-classes>
+            </batch:chunk>
+        </batch:tasklet>
+    </batch:step>
+
+    <!-- Cluster & score mitab files into clustered mitab files -->
+
+    <batch:step id="clusterScore" parent="intactBatchStep">
+        <batch:tasklet ref="clusterScoreTasklet" />
+    </batch:step>
+
+    <!-- Retrieve computed score from the clustered mitab and update the non clustered mitab file-->
+    <batch:step id="updateMitabWithClusterScore" parent="intactBatchStep">
+        <batch:tasklet>
+            <batch:chunk reader="nonClusteredMitabReader"
+                         processor="mitabClusteredProcessor"
+                         writer="mitabWriter">
+                <batch:streams>
+                    <batch:stream ref="nonClusteredMitabReader"/>
+                    <batch:stream ref="mitabClusteredProcessor"/>
+                    <batch:stream ref="mitabWriter"/>
+                </batch:streams>
+            </batch:chunk>
+        </batch:tasklet>
+    </batch:step>
+
+    <!-- Read the MITAB file and index in SOLR-->
+    <batch:step id="indexSolr" parent="intactBatchStep">
+        <batch:tasklet>
+            <batch:chunk reader="solrMitabReader"
+                         writer="solrMitabWriter">
+                <batch:streams>
+                    <batch:stream ref="solrMitabReader"/>
+                    <batch:stream ref="solrMitabWriter"/>
+                </batch:streams>
+            </batch:chunk>
+        </batch:tasklet>
+    </batch:step>
+
+    <!-- job tests -->
+    <batch:job id="mitabExportJob" job-repository="intactJobRepository">
+        <batch:step id="exportMitabStep" parent="databaseMitabExport"/>
+    </batch:job>
+
+    <batch:job id="clusterScoreJob" job-repository="intactJobRepository">
+        <batch:step id="clusterScoreStep" parent="clusterScore"/>
+    </batch:job>
+
+    <batch:job id="mitabScoreUpdateJob" job-repository="intactJobRepository">
+        <batch:step id="updateScoreStep" parent="updateMitabWithClusterScore"/>
+    </batch:job>
+
+    <batch:job id="mitabSolrIndexJob" job-repository="intactJobRepository">
+        <batch:step id="indexSolrStep" parent="indexSolr"/>
+    </batch:job>
+
+</beans>
