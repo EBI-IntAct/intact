@@ -51,4 +51,48 @@ public class RigDataModel {
     public void setTaxid( String taxid ) {
         this.taxid = taxid;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if ( this == o ) {
+            return true;
+        }
+        if ( !( o instanceof RigDataModel ) ) {
+            return false;
+        }
+
+        RigDataModel model = (RigDataModel) o;
+
+        if (sequence == null && model.getSequence() != null){
+            return false;
+        }
+        else if (sequence != null && model.getSequence() == null){
+            return false;
+        }
+        else if (sequence != null && model.getSequence() != null && !sequence.equals(model.getSequence())){
+            return false;
+        }
+        else {
+            if (taxid == null && model.getTaxid() != null){
+                return false;
+            }
+            else if (taxid != null && model.getTaxid() == null){
+                return false;
+            }
+            else if (taxid != null && model.getTaxid() != null && !taxid.equals(model.getTaxid())){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int code = 29;
+        code = 29 * code + sequence != null ? sequence.hashCode() : 0;
+        code = 29 * code + taxid != null ? taxid.hashCode() : 0;
+
+        return code;
+    }
 }
