@@ -17,7 +17,7 @@
     <description>UniProt Service, will allow IntAct to retreive UniProt protein objects.</description>
 
     <properties>
-        <spring.version>3.0.5.RELEASE</spring.version>
+        <spring.version>3.1.2.RELEASE</spring.version>
     </properties>
 
 
@@ -86,7 +86,7 @@
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
-            <version>1.2.4RC</version>
+            <version>1.4.1</version>
         </dependency>
     </dependencies>
 
