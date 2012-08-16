@@ -35,12 +35,12 @@ public class BasicBlastProcess extends ActionNeedingBlastService{
     /**
      * The minimum sequence coverage for match sequence : below this identity percent, we don't look at the BLAST results
      */
-    private float minimumMatchSequenceCoverage = (float) 95;
+    private float minimumMatchSequenceCoverage = (float) 80;
 
     /**
      * The minimum sequence coverage for match sequence : below this identity percent, we don't look at the BLAST results
      */
-    private float minimumQuerySequenceCoverage = (float) 95;
+    private float minimumQuerySequenceCoverage = (float) 80;
 
     /**
      * Create the process
