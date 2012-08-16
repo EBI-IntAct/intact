@@ -5,7 +5,9 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.bridges.ncbiblast.BlastResultFilter;
 import uk.ac.ebi.intact.bridges.ncbiblast.BlastServiceException;
 import uk.ac.ebi.intact.bridges.ncbiblast.ProteinNCBIBlastService;
+import uk.ac.ebi.intact.bridges.ncbiblast.model.BlastProtein;
 import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
+import uk.ac.ebi.intact.protein.mapping.model.contexts.BlastContext;
 
 /**
  * this class is the class to extend if the action needs a BlastService
@@ -54,5 +56,29 @@ public abstract class ActionNeedingBlastService extends IdentificationActionImpl
         } catch (BlastServiceException e) {
             log.error("Problem instantiating the blast client.",e);
         }
+    }
+
+    /**
+     *
+     * @param protein : the blast protein
+     * @return the sequence coverage of the alignment for the query sequence
+     */
+    protected float getQuerySequenceCoveragePercentFor(BlastProtein protein, BlastContext context){
+        if (protein == null){
+            return 0;
+        }
+        return ((float) (protein.getEndQuery() - protein.getStartQuery() + 1)) / (float) context.getSequence().length() * 100;
+    }
+
+    /**
+     *
+     * @param protein : the blast protein
+     * @return the sequence coverage of the alignment for the match sequence
+     */
+    protected float getMatchSequenceCoveragePercentFor(BlastProtein protein){
+        if (protein == null){
+            return 0;
+        }
+        return ((float) (protein.getEndMatch() - protein.getStartMatch() + 1)) / (float) protein.getSequence().length() * 100;
     }
 }
