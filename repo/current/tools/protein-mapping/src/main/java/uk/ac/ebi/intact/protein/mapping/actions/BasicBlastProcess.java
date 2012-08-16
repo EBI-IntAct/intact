@@ -8,6 +8,7 @@ import uk.ac.ebi.intact.protein.mapping.actions.status.Status;
 import uk.ac.ebi.intact.protein.mapping.actions.status.StatusLabel;
 import uk.ac.ebi.intact.protein.mapping.factories.ReportsFactory;
 import uk.ac.ebi.intact.protein.mapping.model.actionReport.BlastReport;
+import uk.ac.ebi.intact.protein.mapping.model.contexts.BlastContext;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.protein.mapping.results.impl.DefaultBlastResults;
 
@@ -32,6 +33,16 @@ public class BasicBlastProcess extends ActionNeedingBlastService{
     public static final Log log = LogFactory.getLog( BasicBlastProcess.class );
 
     /**
+     * The minimum sequence coverage for match sequence : below this identity percent, we don't look at the BLAST results
+     */
+    private float minimumMatchSequenceCoverage = (float) 95;
+
+    /**
+     * The minimum sequence coverage for match sequence : below this identity percent, we don't look at the BLAST results
+     */
+    private float minimumQuerySequenceCoverage = (float) 95;
+
+    /**
      * Create the process
      */
     public BasicBlastProcess(ReportsFactory factory){
@@ -46,6 +57,7 @@ public class BasicBlastProcess extends ActionNeedingBlastService{
      * @throws uk.ac.ebi.intact.protein.mapping.actions.exception.ActionProcessingException
      */
     public String runAction(IdentificationContext context) throws ActionProcessingException {
+        BlastContext blastContext = (BlastContext) context;
 
         // always clear the list of reports from previous actions
         this.listOfReports.clear();
@@ -89,10 +101,13 @@ public class BasicBlastProcess extends ActionNeedingBlastService{
             // Add the results of the blast but not more than the maximum number of BlastProtein we want to keep in memory
             for (BlastProtein b : blastProteins){
 
-                if (blastProteins.indexOf(b) > maxNumberOfBlastProteins){
+                float queryCoverage = getQuerySequenceCoveragePercentFor(b, blastContext);
+                float matchCoverage = getMatchSequenceCoveragePercentFor(b);
+
+                if (report.getBlastMatchingProteins().size() > maxNumberOfBlastProteins){
                     break;
                 }
-                else {
+                else if (queryCoverage >= minimumQuerySequenceCoverage && matchCoverage >= minimumMatchSequenceCoverage) {
                     report.addBlastMatchingProtein(new DefaultBlastResults(b));
                 }
             }
@@ -102,5 +117,21 @@ public class BasicBlastProcess extends ActionNeedingBlastService{
         }
 
         return null;
+    }
+
+    public float getMinimumMatchSequenceCoverage() {
+        return minimumMatchSequenceCoverage;
+    }
+
+    public void setMinimumMatchSequenceCoverage(float minimumMatchSequenceCoverage) {
+        this.minimumMatchSequenceCoverage = minimumMatchSequenceCoverage;
+    }
+
+    public float getMinimumQuerySequenceCoverage() {
+        return minimumQuerySequenceCoverage;
+    }
+
+    public void setMinimumQuerySequenceCoverage(float minimumQuerySequenceCoverage) {
+        this.minimumQuerySequenceCoverage = minimumQuerySequenceCoverage;
     }
 }
