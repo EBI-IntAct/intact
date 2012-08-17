@@ -45,6 +45,14 @@ public abstract class AbstractUniprotService implements UniprotService {
      */
     private CrossReferenceFilter crossReferenceFilter;
 
+    public AbstractUniprotService(){
+        this.crossReferenceFilter = new DefaultCrossReferenceFilter();
+    }
+
+    public AbstractUniprotService(CrossReferenceFilter filter){
+        this.crossReferenceFilter = filter != null ? filter : new DefaultCrossReferenceFilter();
+    }
+
     public Map<String, UniprotServiceReport> getErrors() {
         return errors;
     }

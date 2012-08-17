@@ -7,20 +7,15 @@ package uk.ac.ebi.intact.uniprot.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.uniprot.model.Organism;
-import uk.ac.ebi.intact.uniprot.model.*;
-import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.ReflectionCrossReferenceBuilder;
-import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.UniprotCrossReference;
-import uk.ac.ebi.kraken.interfaces.uniprot.*;
-import uk.ac.ebi.kraken.interfaces.uniprot.comments.*;
-import uk.ac.ebi.kraken.interfaces.uniprot.description.Field;
-import uk.ac.ebi.kraken.interfaces.uniprot.description.FieldType;
-import uk.ac.ebi.kraken.interfaces.uniprot.description.Name;
-import uk.ac.ebi.kraken.interfaces.uniprot.features.*;
-import uk.ac.ebi.kraken.interfaces.uniprot.genename.GeneNameSynonym;
-import uk.ac.ebi.kraken.interfaces.uniprot.genename.ORFName;
-import uk.ac.ebi.kraken.interfaces.uniprot.genename.OrderedLocusName;
-import uk.ac.ebi.kraken.uuw.services.remoting.*;
+import uk.ac.ebi.intact.uniprot.model.UniprotFeatureChain;
+import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.intact.uniprot.model.UniprotSpliceVariant;
+import uk.ac.ebi.intact.uniprot.service.referenceFilter.CrossReferenceFilter;
+import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
+import uk.ac.ebi.kraken.uuw.services.remoting.EntryIterator;
+import uk.ac.ebi.kraken.uuw.services.remoting.UniProtJAPI;
+import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryBuilder;
+import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryService;
 
 import java.util.*;
 
@@ -42,6 +37,11 @@ public class UniprotRemoteService extends SimpleUniprotRemoteService {
 
     public UniprotRemoteService() {
         super();
+        retrievalCache = new WeakHashMap<String,Collection<UniprotProtein>>();
+    }
+
+    public UniprotRemoteService(CrossReferenceFilter filter) {
+        super(filter);
         retrievalCache = new WeakHashMap<String,Collection<UniprotProtein>>();
     }
 

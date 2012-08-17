@@ -56,6 +56,7 @@ public class CachedUniprotService extends AbstractUniprotService implements Unip
     private UniprotService service;
 
     public CachedUniprotService( UniprotService service ) {
+        super();
         if ( service == null ) {
             throw new NullPointerException( "UniprotService must not be null." );
         }

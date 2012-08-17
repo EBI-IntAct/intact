@@ -6,6 +6,7 @@ import uk.ac.ebi.intact.uniprot.model.*;
 import uk.ac.ebi.intact.uniprot.model.Organism;
 import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.ReflectionCrossReferenceBuilder;
 import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.UniprotCrossReference;
+import uk.ac.ebi.intact.uniprot.service.referenceFilter.CrossReferenceFilter;
 import uk.ac.ebi.kraken.interfaces.uniprot.*;
 import uk.ac.ebi.kraken.interfaces.uniprot.comments.*;
 import uk.ac.ebi.kraken.interfaces.uniprot.description.Field;
@@ -41,7 +42,12 @@ public class SimpleUniprotRemoteService extends AbstractUniprotService {
     protected final static String FEATURE_PRO_PEPTIDE_FIELD = "feature.propep:";
 
     public SimpleUniprotRemoteService() {
+        super();
+        uniProtQueryService = UniProtJAPI.factory.getUniProtQueryService();
+    }
 
+    public SimpleUniprotRemoteService(CrossReferenceFilter filter) {
+        super(filter);
         uniProtQueryService = UniProtJAPI.factory.getUniProtQueryService();
     }
 
