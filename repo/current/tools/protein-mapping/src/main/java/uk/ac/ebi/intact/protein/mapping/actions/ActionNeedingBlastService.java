@@ -37,7 +37,7 @@ public abstract class ActionNeedingBlastService extends IdentificationActionImpl
     /**
      * The maximum number of BlastProtein instances we allow to keep in memory
      */
-    protected static final int maxNumberOfBlastProteins = 10;
+    protected static final int maxNumberOfBlastProteins = 5;
 
     /**
      * The minimum identity : below this identity percent, we don't look at the BLAST results
