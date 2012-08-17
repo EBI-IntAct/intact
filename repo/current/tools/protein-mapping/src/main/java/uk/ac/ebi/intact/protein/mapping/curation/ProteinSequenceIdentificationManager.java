@@ -26,10 +26,11 @@ public class ProteinSequenceIdentificationManager {
     private File outputFile;
     private String taxId;
     private ProteinSequenceResultsWriter resultsWriter;
+    private final static int maxNumberOfLinesPerFile = 5000;
 
     private StrategyWithSequence identificationStrategy;
 
-    public ProteinSequenceIdentificationManager(String inputFile, String outputFile, String taxId) throws FileNotFoundException {
+    public ProteinSequenceIdentificationManager(String inputFile, String outputFile, String taxId) throws IOException {
         if (inputFile == null){
             throw new IllegalArgumentException("The input file containing the sequences is mandatory");
         }
@@ -80,6 +81,11 @@ public class ProteinSequenceIdentificationManager {
 
     public void runIdentificationJob() throws IOException {
 
+        this.resultsWriter.writeHeader();
+
+        int chunkIndex = 1;
+        int numberOfLines = 1;
+
         while (this.fastaSequenceIterator.hasNext()){
             FastaSequence fastaSequence = this.fastaSequenceIterator.next();
 
@@ -87,6 +93,22 @@ public class ProteinSequenceIdentificationManager {
             IdentificationContext context = new IdentificationContext();
             context.setSequence(fastaSequence.getSequence());
             context.setOrganism(new BioSource(taxId, taxId));
+
+            // create a new file with results if current one is too big;
+            if (numberOfLines >= this.maxNumberOfLinesPerFile){
+                chunkIndex++;
+                numberOfLines = 0;
+
+                String parentDirectory = this.outputFile.getParent();
+                String currentName = this.outputFile.getName();
+                String extension = currentName.contains(".") ? currentName.substring(currentName.indexOf(".")) : "";
+                File newFile = new File(parentDirectory, currentName.replaceAll(extension, "")+"_"+chunkIndex+extension);
+
+                this.outputFile = newFile;
+                this.resultsWriter = new ProteinSequenceResultsWriter(outputFile);
+
+                this.resultsWriter.writeHeader();
+            }
 
             try {
                 IdentificationResults<? extends MappingReport> results = identificationStrategy.identifyProtein(context);
@@ -96,8 +118,34 @@ public class ProteinSequenceIdentificationManager {
                 e.printStackTrace();
                 this.resultsWriter.writeEmptyResults(fastaSequence);
             } catch (IOException e) {
+                e.printStackTrace();
                 this.resultsWriter.writeEmptyResults(fastaSequence);
             }
+
+            numberOfLines++;
+        }
+            }
+
+    public static void main(String[] args){
+
+        //if (args.length != 3){
+        //    System.err.println( "Usage: ProteinSequenceIdentificationManager <input file name> <output file name> <taxid of the sequences>" );
+        //    System.exit( 1 );
+        //}
+
+        String inputFile = "/home/marine/Desktop/proteins_seq_nomet.txt"; //args[0];
+        String outputFile = "/home/marine/Desktop/proteins_seq_results.txt"; //args[1];
+        String taxId = "9606";//args[2];
+
+        try {
+            ProteinSequenceIdentificationManager sequenceManager = new ProteinSequenceIdentificationManager(inputFile, outputFile, taxId);
+
+            sequenceManager.runIdentificationJob();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

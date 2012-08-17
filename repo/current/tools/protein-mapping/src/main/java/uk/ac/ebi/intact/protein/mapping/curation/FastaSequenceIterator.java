@@ -20,13 +20,16 @@ public class FastaSequenceIterator extends UnmodifiableIterator<FastaSequence> {
     private String lastLine;
     private FastaSequence lastFastaSequence;
 
-    public FastaSequenceIterator(String fileName) throws FileNotFoundException {
+    public FastaSequenceIterator(String fileName) throws IOException {
 
         if (fileName == null){
             throw new IllegalArgumentException("The fast file should not be empty");
         }
 
         this.fastaReader = new BufferedReader(new FileReader(fileName));
+
+        // read first fasta sequence
+        readNextFastaSequence();
     }
 
     public FastaSequenceIterator(File file) throws IOException {
@@ -57,7 +60,7 @@ public class FastaSequenceIterator extends UnmodifiableIterator<FastaSequence> {
             return;
         }
 
-        String identifier = lastLine.substring(lastLine.indexOf(identifierDelimiter));
+        String identifier = lastLine.substring(Math.min(lastLine.length()-1,lastLine.indexOf(identifierDelimiter)+1));
         StringBuffer sequenceBuffer = new StringBuffer();
 
         // read sequence
@@ -102,6 +105,12 @@ public class FastaSequenceIterator extends UnmodifiableIterator<FastaSequence> {
             throw new NoSuchElementException("The fast file does not contain any fasta sequences");
         }
 
-        return lastFastaSequence;
+        FastaSequence currentSequence = lastFastaSequence;
+        try {
+            readNextFastaSequence();
+        } catch (IOException e) {
+            throw new RuntimeException("Impossible to read next fasta sequence", e);
+        }
+        return currentSequence;
     }
 }

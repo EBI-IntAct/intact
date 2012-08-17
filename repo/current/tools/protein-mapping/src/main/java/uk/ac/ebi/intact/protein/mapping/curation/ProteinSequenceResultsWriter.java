@@ -84,6 +84,10 @@ public class ProteinSequenceResultsWriter {
                     writeEmpytBlastResults(writer, fastaSequence);
                 }
             }
+            // no swissprot remapping to review
+            else {
+                writeEmpytBlastResults(writer, fastaSequence);
+            }
         }
         else {
 
@@ -114,24 +118,33 @@ public class ProteinSequenceResultsWriter {
                     && report instanceof BlastReport) {
                  BlastReport<BlastResults> blastReport = (BlastReport<BlastResults>) report;
 
-                for (BlastResults blastResult : blastReport.getBlastMatchingProteins()){
-                    // fasta identifier
-                    writer.write(fastaSequence.getIdentifier());
-
-                    // no unique uniprot id
-                    writer.write(NEW_COLUMN);
-                    writer.write(EMPTY);
-
-                    // no other possible uniprot ids from PICR
-                    writer.write(NEW_COLUMN);
-                    writer.write(EMPTY);
-
-                    // possible uniprot from PICR
-                    writer.write(NEW_COLUMN);
-                    writer.write(EMPTY);
-
-                    writeBlastResults(writer, blastResult, fastaSequence);
+                if (blastReport.getBlastMatchingProteins().isEmpty()){
+                    writeEmptyResults(fastaSequence);
                 }
+                else {
+                    for (BlastResults blastResult : blastReport.getBlastMatchingProteins()){
+                        // fasta identifier
+                        writer.write(fastaSequence.getIdentifier());
+
+                        // no unique uniprot id
+                        writer.write(NEW_COLUMN);
+                        writer.write(EMPTY);
+
+                        // no other possible uniprot ids from PICR
+                        writer.write(NEW_COLUMN);
+                        writer.write(EMPTY);
+
+                        // possible uniprot from PICR
+                        writer.write(NEW_COLUMN);
+                        writer.write(EMPTY);
+
+                        writeBlastResults(writer, blastResult, fastaSequence);
+                    }
+                }
+            }
+            // no blast results
+            else {
+                writeEmptyResults(fastaSequence);
             }
         }
         writer.close();

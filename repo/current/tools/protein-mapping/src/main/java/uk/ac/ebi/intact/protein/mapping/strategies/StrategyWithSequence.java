@@ -85,8 +85,12 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
      */
     private void processLastAction(IdentificationContext context, IdentificationResults result) throws ActionProcessingException {
 
+        // create a blast context
+        BlastContext blastContext = new BlastContext(context);
+        blastContext.setSequence(context.getSequence());
+
         // run the blast. We don't expect any swissprot accession as we just want to have the blast results in a report
-        this.listOfActions.get(3).runAction(context);
+        this.listOfActions.get(3).runAction(blastContext);
         // add the reports
         this.listOfReports.addAll(this.listOfActions.get(3).getListOfActionReports());
     }
