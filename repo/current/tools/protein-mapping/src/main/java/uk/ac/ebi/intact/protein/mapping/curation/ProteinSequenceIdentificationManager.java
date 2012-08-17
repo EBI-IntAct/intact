@@ -128,14 +128,14 @@ public class ProteinSequenceIdentificationManager {
 
     public static void main(String[] args){
 
-        //if (args.length != 3){
-        //    System.err.println( "Usage: ProteinSequenceIdentificationManager <input file name> <output file name> <taxid of the sequences>" );
-        //    System.exit( 1 );
-        //}
+        if (args.length != 3){
+            System.err.println( "Usage: ProteinSequenceIdentificationManager <input file name> <output file name> <taxid of the sequences>" );
+            System.exit( 1 );
+        }
 
-        String inputFile = "/home/marine/Desktop/proteins_seq_nomet.txt"; //args[0];
-        String outputFile = "/home/marine/Desktop/proteins_seq_results.txt"; //args[1];
-        String taxId = "9606";//args[2];
+        String inputFile = args[0];
+        String outputFile = args[1];
+        String taxId = args[2];
 
         try {
             ProteinSequenceIdentificationManager sequenceManager = new ProteinSequenceIdentificationManager(inputFile, outputFile, taxId);
