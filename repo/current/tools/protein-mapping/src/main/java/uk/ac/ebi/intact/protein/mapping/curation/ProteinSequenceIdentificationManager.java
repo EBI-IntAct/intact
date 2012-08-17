@@ -122,6 +122,7 @@ public class ProteinSequenceIdentificationManager {
                 this.resultsWriter.writeEmptyResults(fastaSequence);
             }
 
+            System.out.println("Processing fasta sequence " + fastaSequence.getIdentifier());
             numberOfLines++;
         }
             }
