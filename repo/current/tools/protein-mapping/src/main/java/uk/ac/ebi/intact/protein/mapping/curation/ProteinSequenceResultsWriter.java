@@ -103,10 +103,6 @@ public class ProteinSequenceResultsWriter {
                 writer.write(NEW_COLUMN);
                 writer.write(EMPTY);
 
-                // no other possible uniprot ids from PICR
-                writer.write(NEW_COLUMN);
-                writer.write(EMPTY);
-
                 // possible uniprot from PICR
                 writer.write(NEW_COLUMN);
                 writer.write(StringUtils.join(report.getPossibleAccessions(), ", "));
@@ -134,10 +130,6 @@ public class ProteinSequenceResultsWriter {
                         writer.write(NEW_COLUMN);
                         writer.write(EMPTY);
 
-                        // possible uniprot from PICR
-                        writer.write(NEW_COLUMN);
-                        writer.write(EMPTY);
-
                         writeBlastResults(writer, blastResult, fastaSequence);
                     }
                 }
@@ -147,6 +139,9 @@ public class ProteinSequenceResultsWriter {
                 writeEmptyResults(fastaSequence);
             }
         }
+
+        writer.flush();
+
         writer.close();
     }
 
@@ -168,13 +163,13 @@ public class ProteinSequenceResultsWriter {
 
         // write start/end
         writer.write(NEW_COLUMN);
-        writer.write(blastResult.getStartQuery());
+        writer.write(Integer.toString(blastResult.getStartQuery()));
         writer.write("-");
-        writer.write(blastResult.getEndQuery());
+        writer.write(Integer.toString(blastResult.getEndQuery()));
         writer.write(NEW_COLUMN);
-        writer.write(blastResult.getStartMatch());
+        writer.write(Integer.toString(blastResult.getStartMatch()));
         writer.write("-");
-        writer.write(blastResult.getEndMatch());
+        writer.write(Integer.toString(blastResult.getEndMatch()));
 
         // write query sequence
         writer.write(NEW_COLUMN);
@@ -186,6 +181,8 @@ public class ProteinSequenceResultsWriter {
         writer.write(NEW_COLUMN);
         writer.write(blastResult.getSequence());
         writer.write(NEW_LINE);
+
+        writer.flush();
     }
 
     private void writeEmpytBlastResults(Writer writer, FastaSequence fastaSequence) throws IOException {
@@ -220,6 +217,8 @@ public class ProteinSequenceResultsWriter {
         writer.write(NEW_COLUMN);
         writer.write(EMPTY);
         writer.write(NEW_LINE);
+
+        writer.flush();
     }
 
     public static float getQueryCoveragePercentFor(BlastResults protein, String sequence){
@@ -269,6 +268,8 @@ public class ProteinSequenceResultsWriter {
         writer.write("match sequence");
         writer.write(NEW_LINE);
 
+        writer.flush();
+
         writer.close();
     }
 
@@ -299,6 +300,8 @@ public class ProteinSequenceResultsWriter {
         writer.write(NEW_COLUMN);
         writer.write(EMPTY);
         writer.write(NEW_LINE);
+
+        writer.flush();
 
         writer.close();
     }
