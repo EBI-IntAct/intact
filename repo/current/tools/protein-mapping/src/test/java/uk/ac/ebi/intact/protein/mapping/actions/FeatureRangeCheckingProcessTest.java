@@ -105,7 +105,7 @@ public class FeatureRangeCheckingProcessTest extends IntactBasicTestCase{
         this.context.setIntactAccession(acToFind);
         this.context.setOrganism(null);
         this.context.setSequence(sequence);
-        String tremblAccession = "Q8R3H6";
+        String tremblAccession = "P01867";
         BlastProtein swissprot = new BlastProtein();
         swissprot.setAccession("P01867");
         swissprot.setDatabase("SP");
