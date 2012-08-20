@@ -5,7 +5,6 @@ import uk.ac.ebi.intact.protein.mapping.model.actionReport.MappingReport;
 import uk.ac.ebi.intact.protein.mapping.model.contexts.IdentificationContext;
 import uk.ac.ebi.intact.protein.mapping.results.IdentificationResults;
 import uk.ac.ebi.intact.protein.mapping.strategies.StrategyWithSequence;
-import uk.ac.ebi.intact.protein.mapping.strategies.exceptions.StrategyException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -114,10 +113,7 @@ public class ProteinSequenceIdentificationManager {
                 IdentificationResults<? extends MappingReport> results = identificationStrategy.identifyProtein(context);
 
                 this.resultsWriter.writeResults(fastaSequence, results);
-            } catch (StrategyException e) {
-                e.printStackTrace();
-                this.resultsWriter.writeEmptyResults(fastaSequence);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 this.resultsWriter.writeEmptyResults(fastaSequence);
             }
@@ -125,7 +121,7 @@ public class ProteinSequenceIdentificationManager {
             System.out.println("Processing fasta sequence " + fastaSequence.getIdentifier());
             numberOfLines++;
         }
-            }
+    }
 
     public static void main(String[] args){
 
