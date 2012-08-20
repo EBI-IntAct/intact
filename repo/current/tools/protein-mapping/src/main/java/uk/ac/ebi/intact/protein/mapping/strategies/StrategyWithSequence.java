@@ -92,7 +92,12 @@ public class StrategyWithSequence extends IdentificationStrategyImpl implements 
         // run the blast. We don't expect any swissprot accession as we just want to have the blast results in a report
         this.listOfActions.get(3).runAction(blastContext);
         // add the reports
-        result.getListOfActions().addAll(this.listOfActions.get(3).getListOfActionReports());
+        if (result != null){
+            result.getListOfActions().addAll(this.listOfActions.get(3).getListOfActionReports());
+        }
+        else {
+            this.listOfReports.addAll(this.listOfActions.get(3).getListOfActionReports());
+        }
     }
 
     /**
