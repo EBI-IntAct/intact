@@ -69,14 +69,16 @@ public class BasicBlastProcess extends ActionNeedingBlastService{
         // Run the blast on Uniprot and save the results in the BLAST filter
         InputStream uniprotBlast = this.blastService.getResultsOfBlastOnUniprot(context.getSequence());
 
-        try{
-            this.blastFilter.setResults(uniprotBlast);
-        }
-        finally {
-            try {
-                uniprotBlast.close();
-            } catch (IOException e) {
-                log.error("Impossible to close BLAST results", e);
+        if (uniprotBlast != null){
+            try{
+                this.blastFilter.setResults(uniprotBlast);
+            }
+            finally {
+                try {
+                    uniprotBlast.close();
+                } catch (IOException e) {
+                    log.error("Impossible to close BLAST results", e);
+                }
             }
         }
 
