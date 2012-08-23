@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
-import org.hupo.psi.mi.psicquic.registry.client.PsicquicRegistryClientException;
 import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.model.CrossReference;
 import uk.ac.ebi.intact.model.CvInteractorType;
+import uk.ac.ebi.intact.view.webapp.application.OntologyInteractorTypeConfig;
 import uk.ac.ebi.intact.view.webapp.controller.ContextController;
 import uk.ac.ebi.intact.view.webapp.controller.JpaBaseController;
 import uk.ac.ebi.intact.view.webapp.controller.browse.BrowseController;
@@ -23,7 +23,6 @@ import uk.ac.ebi.intact.view.webapp.controller.moleculeview.MoleculeViewControll
 import uk.ac.ebi.intact.view.webapp.model.InteractorSearchResultDataModel;
 import uk.ac.ebi.intact.view.webapp.model.InteractorWrapper;
 import uk.ac.ebi.intact.view.webapp.model.LazySearchResultDataModel;
-import uk.ac.ebi.intact.view.webapp.util.MitabFunctions;
 
 import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
@@ -59,7 +58,7 @@ public class SearchController extends JpaBaseController {
     private int interactorTotalResults;
     private int proteinTotalResults;
     private int smallMoleculeTotalResults;
-
+    private int geneTotalResults;
     private int nucleicAcidTotalResults;
 
     private int unfilteredTotalCount;
@@ -70,11 +69,15 @@ public class SearchController extends JpaBaseController {
 
     private boolean expandedView;
 
+    private final static String[] PROTEIN_TYPES = new String[]{CvInteractorType.PROTEIN_MI_REF, CvInteractorType.PEPTIDE_MI_REF};
+    private final static String[] COMPOUND_TYPES = new String[]{CvInteractorType.SMALL_MOLECULE_MI_REF, "MI:1100", "MI:0904"};
+
     // results
     private LazySearchResultDataModel results;
     private InteractorSearchResultDataModel proteinResults;
     private InteractorSearchResultDataModel smallMoleculeResults;
     private InteractorSearchResultDataModel nucleicAcidResults;
+    private InteractorSearchResultDataModel geneResults;
 
     // io
     private String exportFormat;
@@ -234,27 +237,36 @@ public class SearchController extends JpaBaseController {
     }
 
     public void doInteractorsSearch() {
-        doProteinsSearch();
-        doSmallMoleculeSearch();
-        doNucleicAcidSearch();
+
+        OntologyInteractorTypeConfig typeConfig = (OntologyInteractorTypeConfig) getBean("ontologyInteractorTypeConfig");
+
+        doProteinsSearch(typeConfig);
+        doSmallMoleculeSearch(typeConfig);
+        doNucleicAcidSearch(typeConfig);
+        doGeneSearch(typeConfig);
 
         interactorTotalResults = smallMoleculeTotalResults + proteinTotalResults + nucleicAcidTotalResults;
 
     }
 
-    private void doProteinsSearch() {
-        proteinResults = doInteractorSearch(new String[] {CvInteractorType.PROTEIN_MI_REF, CvInteractorType.PEPTIDE_MI_REF});
+    private void doProteinsSearch(OntologyInteractorTypeConfig typeConfig) {
+        proteinResults = doInteractorSearch(typeConfig.getProteinTypes());
         proteinTotalResults = proteinResults.getRowCount();
     }
 
-    private void doSmallMoleculeSearch() {
-        smallMoleculeResults = doInteractorSearch(CvInteractorType.SMALL_MOLECULE_MI_REF);
+    private void doSmallMoleculeSearch(OntologyInteractorTypeConfig typeConfig) {
+        smallMoleculeResults = doInteractorSearch(typeConfig.getCompoundTypes());
         smallMoleculeTotalResults = smallMoleculeResults.getRowCount();
     }
 
-    private void doNucleicAcidSearch() {
-        nucleicAcidResults = doInteractorSearch(new String[] {CvInteractorType.DNA_MI_REF, CvInteractorType.RNA_MI_REF});
+    private void doNucleicAcidSearch(OntologyInteractorTypeConfig typeConfig) {
+        nucleicAcidResults = doInteractorSearch(typeConfig.getNucleicAcidTypes());
         nucleicAcidTotalResults = nucleicAcidResults.getRowCount();
+    }
+
+    private void doGeneSearch(OntologyInteractorTypeConfig typeConfig) {
+        geneResults = doInteractorSearch(typeConfig.getGeneTypes());
+        geneTotalResults = geneResults.getRowCount();
     }
 
     public InteractorSearchResultDataModel doInteractorSearch(String interactorTypeMi) {
@@ -301,6 +313,10 @@ public class SearchController extends JpaBaseController {
         doSearchInteractionsFromListSelection((InteractorListController) getBean("compoundListController"));
     }
 
+    public void doSearchInteractionsFromGeneListSelection(ActionEvent evt) {
+        doSearchInteractionsFromListSelection((InteractorListController) getBean("geneListController"));
+    }
+
     public void doSearchInteractionsFromProteinListSelection(ActionEvent evt) {
         doSearchInteractionsFromListSelection((InteractorListController) getBean("proteinListController"));
     }
@@ -322,7 +338,7 @@ public class SearchController extends JpaBaseController {
         for (Iterator<InteractorWrapper> iterator = selected.iterator(); iterator.hasNext();) {
             InteractorWrapper interactorWrapper = iterator.next();
 
-            sb.append(interactorWrapper.getInteractor().getAc());
+            sb.append(interactorWrapper.getAc());
 
             if (iterator.hasNext()) {
                 sb.append(" ");

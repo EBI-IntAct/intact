@@ -51,13 +51,18 @@
 
         <p:column>
             <f:facet name="header"><h:outputText value="#{messages['list.names']}"/></f:facet>
-            <h:outputText value="#{interactorWrapper.interactor.shortLabel}"/>
+            <h:outputText value="#{interactorWrapper.shortLabel}"/>
+        </p:column>
+
+        <p:column>
+            <f:facet name="header"><h:outputText value="Type"/></f:facet>
+            <h:outputText value="#{interactorWrapper.interactorTypeLabel}"/>
         </p:column>
 
         <p:column>
             <f:facet name="header"><h:outputText value="Interactions"/></f:facet>
             <p:commandLink action="#{searchBean.doBinarySearchAction}" value="#{interactorWrapper.count}" ajax="false">
-                <f:setPropertyActionListener value="(#{userQuery.searchQuery}) AND #{interactorWrapper.interactor.ac}"
+                <f:setPropertyActionListener value="(#{userQuery.searchQuery}) AND #{interactorWrapper.ac}"
                                              target="#{userQuery.searchQuery}"/>
             </p:commandLink>
         </p:column>
@@ -65,7 +70,7 @@
         <p:column>
             <f:facet name="header"><h:outputText value="#{messages['list.links']}"/></f:facet>
 
-            <ui:repeat var="xref" value="#{interactorWrapper.interactor.xrefs}"
+            <ui:repeat var="xref" value="#{interactorWrapper.xrefs}"
                        varStatus="rowStatus">
                 <h:panelGroup rendered="#{xref.cvDatabase.shortLabel == 'uniprotkb'}">
                     <h:panelGroup rendered="#{xref.cvXrefQualifier.identifier == 'MI:0356'}">
@@ -88,7 +93,7 @@
             </ui:repeat>
 
             <h:panelGroup>
-                <iax:goMoleculeView query="#{interactorWrapper.interactor.ac}" onlyLogo="true"/>
+                <iax:goMoleculeView query="#{interactorWrapper.ac}" onlyLogo="true"/>
 
                 <!--<p:commandLink action="#{moleculeViewBean.open(interactorWrapper.interactor.ac)}" ajax="false"-->
                         <!--value="#{interactorWrapper.interactor.ac}">-->
@@ -101,18 +106,18 @@
 
         <p:column>
             <f:facet name="header"><h:outputText value="#{messages['list.species']}"/></f:facet>
-            <iax:goOls query="#{interactorWrapper.interactor.bioSource.taxId}"
-                       termName="#{interactorWrapper.interactor.bioSource.shortLabel}"/>
+            <iax:goOls query="#{interactorWrapper.organismTaxId}"
+                       termName="#{interactorWrapper.organismShortLabel}"/>
         </p:column>
 
         <p:column>
             <f:facet name="header"><h:outputText value="#{messages['list.accessionnumber']}"/></f:facet>
-            <h:outputText value="#{interactorWrapper.interactor.ac}"/>
+            <h:outputText value="#{interactorWrapper.ac}"/>
         </p:column>
 
         <p:column>
             <f:facet name="header"><h:outputText value="#{messages['list.description']}"/></f:facet>
-            <h:outputText value="#{interactorWrapper.interactor.fullName}"/>
+            <h:outputText value="#{interactorWrapper.fullName}"/>
         </p:column>
 
     </p:dataTable>

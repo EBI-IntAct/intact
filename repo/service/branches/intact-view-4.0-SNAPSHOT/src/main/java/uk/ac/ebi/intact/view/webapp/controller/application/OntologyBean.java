@@ -26,6 +26,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
 import uk.ac.ebi.intact.view.webapp.controller.BaseController;
 import uk.ac.ebi.intact.view.webapp.controller.SearchWebappException;
 import uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration;
@@ -50,6 +51,8 @@ public class OntologyBean extends BaseController {
     private Directory ontologyIndexDirectory;
 
     private OntologiesIndexSearcher ontologiesIndexSearcher;
+
+    private OntologySearcher ontologySearcher;
 
     @Autowired
     private IntactViewConfiguration intactViewConfiguration;
@@ -99,6 +102,7 @@ public class OntologyBean extends BaseController {
         int count = -1;
 
         try {
+            count = ontologiesIndexSearcher.
             IndexSearcher searcher = new IndexSearcher(ontologyIndexDirectory, true);
             count = searcher.getIndexReader().maxDoc();
             searcher.close();

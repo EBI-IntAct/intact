@@ -19,8 +19,15 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.http.HttpHost;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ebi.intact.view.webapp.IntactViewException;
@@ -116,10 +123,8 @@ public class IntactViewConfiguration extends BaseController implements Initializ
     private String psicquicViewUrl;
     private String imexViewUrl;
 
-    private CommonsHttpSolrServer solrServer;
-    private CommonsHttpSolrServer ontologySolrServer;
-    private HttpClient httpClientWithProxy;
-    private HttpClient httpClientWithoutProxy;
+    private HttpSolrServer solrServer;
+    private HttpSolrServer ontologySolrServer;
     private HttpClient psicquicHttpClient;
     
     private List<String> databaseNamesUsingSameSolr;
@@ -235,6 +240,18 @@ public class IntactViewConfiguration extends BaseController implements Initializ
         os.close();
     }
 
+
+    public void shutDownServers(){
+
+        if (solrServer != null){
+            solrServer.shutdown();
+            solrServer = null;
+        }
+        if (ontologySolrServer != null){
+            ontologySolrServer.shutdown();
+            ontologySolrServer = null;
+        }
+    }
     private void addProperty(Properties properties, String key, String value) {
         if (isValueSet(value)) {
             properties.setProperty(key, value);
@@ -429,7 +446,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
 
     public String getWebappBuildNumber() { return webappBuildNumber; }
 
-    public SolrServer getInteractionSolrServer() {
+    public HttpSolrServer getInteractionSolrServer() {
         if (solrInteractionsUrl != null) {
             if (solrServer == null) {
                 try {
@@ -446,7 +463,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
         return null;
     }
 
-    public SolrServer getOntologySolrServer() {
+    public HttpSolrServer getOntologySolrServer() {
         if (solrOntologiesUrl != null) {
             if (ontologySolrServer == null) {
                 try {
@@ -462,47 +479,45 @@ public class IntactViewConfiguration extends BaseController implements Initializ
         return null;
     }
 
-    private CommonsHttpSolrServer createSolrServer(String solrUrl) throws MalformedURLException {
-        HttpClient httpClient = getHttpClientBasedOnUrl(solrUrl);
+    private HttpSolrServer createSolrServer(String solrUrl) throws MalformedURLException {
+        org.apache.http.client.HttpClient httpClient = getHttpClientBasedOnUrl(solrUrl);
 
-        CommonsHttpSolrServer solrServer = new CommonsHttpSolrServer(solrUrl, httpClient);
-        solrServer.setMaxTotalConnections(128);
-        solrServer.setDefaultMaxConnectionsPerHost(32);
-
+        HttpSolrServer solrServer = new HttpSolrServer(solrUrl, httpClient);
+        solrServer.setAllowCompression(true);
+        solrServer.setConnectionTimeout(5000);
+        solrServer.setConnectionTimeout(5000);
 
         return solrServer;
     }
 
-    public HttpClient getHttpClientBasedOnUrl(String url) {
+    private org.apache.http.client.HttpClient getHttpClientBasedOnUrl(String url) {
+        SchemeRegistry schemeRegistry = new SchemeRegistry();
+        schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory
+                .getSocketFactory()));
+        schemeRegistry.register(new Scheme("https", 443, SSLSocketFactory
+                .getSocketFactory()));
+
+        PoolingClientConnectionManager cm = new PoolingClientConnectionManager(schemeRegistry);
+        cm.setMaxTotal(128);
+        cm.setDefaultMaxPerRoute(32);
+
+        org.apache.http.client.HttpClient httpClient = new DefaultHttpClient(cm);
+
         if (url.contains("localhost") || url.contains("127.0.0.1")) {
-            return getHttpClientWithoutProxy();
+            return httpClient;
         }
-        return getHttpClientWithProxy();
-    }
 
-    protected HttpClient getHttpClientWithProxy() {
-        if (httpClientWithProxy == null) {
-            httpClientWithProxy = new HttpClient(new MultiThreadedHttpConnectionManager());
-
-            if (isValueSet(proxyHost) && isValueSet(proxyPort)) {
-                httpClientWithProxy.getHostConfiguration().setProxy(proxyHost, Integer.valueOf(proxyPort));
-
-                log.info("Setting HTTPClient using proxy: " + proxyHost + ":" + proxyPort);
-            } else {
-                log.info("Setting HTTPClient using proxy with NO PROXY");
+        if (isValueSet(proxyHost) && proxyHost.trim().length() > 0 &&
+                isValueSet(proxyPort) && proxyPort.trim().length() > 0) {
+            try{
+                HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
+                httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
             }
-
+            catch (Exception e){
+                log.error("Impossible to create proxy host:"+proxyHost+", port:"+proxyPort,e);
+            }
         }
-
-        return httpClientWithProxy;
-    }
-
-    protected HttpClient getHttpClientWithoutProxy() {
-        if (httpClientWithoutProxy == null) {
-            httpClientWithoutProxy = new HttpClient(new MultiThreadedHttpConnectionManager());
-        }
-
-        return httpClientWithoutProxy;
+        return httpClient;
     }
 
     public HttpClient getPsicquicHttpClient() {

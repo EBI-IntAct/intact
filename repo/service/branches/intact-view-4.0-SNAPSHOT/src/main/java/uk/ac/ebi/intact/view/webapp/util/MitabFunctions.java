@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import psidev.psi.mi.tab.model.CrossReference;
+import psidev.psi.mi.tab.model.Interactor;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.model.Annotation;
@@ -57,19 +58,19 @@ public final class MitabFunctions {
     private MitabFunctions() {
     }
 
-    public static boolean isProtein( ExtendedInteractor interactor ) {
+    public static boolean isProtein( Interactor interactor ) {
 
-        if ( interactor.getInteractorType() != null ) {
-            return ( PROTEIN_MI_REF.equals( interactor.getInteractorType().getIdentifier() ) );
+        if ( interactor.getInteractorTypes() != null && !interactor.getInteractorTypes().isEmpty()) {
+            return ( PROTEIN_MI_REF.equals( interactor.getInteractorTypes().iterator().next().getIdentifier() ) );
         }
 
         return false;
     }
 
-    public static boolean isSmallMolecule( ExtendedInteractor interactor ) {
+    public static boolean isSmallMolecule( Interactor interactor ) {
 
-        if ( interactor.getInteractorType() != null ) {
-            return ( SMALLMOLECULE_MI_REF.equals( interactor.getInteractorType().getIdentifier() ) );
+        if ( interactor.getInteractorTypes() != null && !interactor.getInteractorTypes().isEmpty() ) {
+            return ( SMALLMOLECULE_MI_REF.equals( interactor.getInteractorTypes().iterator().next().getIdentifier() ) );
         }
 
         return false;
@@ -77,12 +78,14 @@ public final class MitabFunctions {
 
    
 
-    public static String[] getInitialForMoleculeType( ExtendedInteractor interactor ) {
+    public static String[] getInitialForMoleculeType( Interactor interactor ) {
 
         String[] typeAndDesc = new String[2];
-        if ( interactor.getInteractorType() != null ) {
-            typeAndDesc[0] = getFirstLetterofEachToken( interactor.getInteractorType().getText() );
-            typeAndDesc[1] = typeAndDesc[0] + " = " + interactor.getInteractorType().getText();
+        if (  interactor.getInteractorTypes() != null && !interactor.getInteractorTypes().isEmpty() ) {
+            String text = interactor.getInteractorTypes().iterator().next().getText();
+
+            typeAndDesc[0] = getFirstLetterofEachToken( text );
+            typeAndDesc[1] = typeAndDesc[0] + " = " + text;
         } else {
             typeAndDesc[0] = "-";
             typeAndDesc[1] = "-";
@@ -224,7 +227,7 @@ public final class MitabFunctions {
     }
 
 
-    public static String getInteractorDisplayName( ExtendedInteractor interactor ) {
+    public static String getInteractorDisplayName( Interactor interactor ) {
         IntactBinaryInteraction ibi = new IntactBinaryInteraction(interactor, interactor);
         return IntactPsimitabUtils.getInteractorAName(ibi);
     }
