@@ -16,8 +16,8 @@
 package uk.ac.ebi.intact.view.webapp.application.converter;
 
 import uk.ac.ebi.intact.core.context.IntactContext;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.InteractionOntologyTerm;
 import uk.ac.ebi.intact.view.webapp.controller.application.OntologyBean;
-import uk.ac.ebi.intact.view.webapp.util.OntologyTerm;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -29,7 +29,7 @@ import javax.faces.convert.FacesConverter;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-@FacesConverter( value = "ontologyTermConverter", forClass = OntologyTerm.class )
+@FacesConverter( value = "ontologyTermConverter", forClass = InteractionOntologyTerm.class )
 public class OntologyTermConverter implements Converter {
 
     public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
@@ -47,8 +47,8 @@ public class OntologyTermConverter implements Converter {
             return null;
         }
 
-        if (value instanceof OntologyTerm) {
-           return ((OntologyTerm) value).getIdentifier();
+        if (value instanceof InteractionOntologyTerm) {
+           return ((InteractionOntologyTerm) value).getIdentifier();
         } else {
             throw new IllegalArgumentException("An OntologyTerm class was expected but an illegal class passed to converter: "+value.getClass().getName());
         }

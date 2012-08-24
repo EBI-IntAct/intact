@@ -82,6 +82,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
     private static final String IMEX_VIEW_URL = "imex.view.url";
     private static final String MAX_SIZE_XML_EXPORT = "intact.maxsize.xml";
     private static final String MAX_SIZE_XGMML_EXPORT = "intact.maxsize.xgmml";
+    private static final String ONTOLOGY_LUCENE_DIRECTORY = "intact.ontologies.lucene.directory";
 
     @Autowired
     private EntityManagerFactory entityManagerFactory;
@@ -128,6 +129,8 @@ public class IntactViewConfiguration extends BaseController implements Initializ
     private HttpClient psicquicHttpClient;
     
     private List<String> databaseNamesUsingSameSolr;
+
+    private String ontologyLuceneDirectory;
 
     public IntactViewConfiguration() {
     }
@@ -198,6 +201,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
         imexViewUrl = properties.getProperty(IMEX_VIEW_URL, imexViewUrl);
         maxSizeXmlExport = Integer.parseInt(properties.getProperty(MAX_SIZE_XML_EXPORT, String.valueOf(maxSizeXmlExport)));
         maxSizeXgmmlExport = Integer.parseInt(properties.getProperty(MAX_SIZE_XGMML_EXPORT, String.valueOf(maxSizeXgmmlExport)));
+        this.ontologyLuceneDirectory = properties.getProperty(ONTOLOGY_LUCENE_DIRECTORY, ontologyLuceneDirectory);
     }
 
     public void storeConfiguration() throws IOException {
@@ -233,6 +237,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
         addProperty(properties, IMEX_VIEW_URL, imexViewUrl);
         addProperty(properties, MAX_SIZE_XML_EXPORT, String.valueOf(maxSizeXmlExport));
         addProperty(properties, MAX_SIZE_XGMML_EXPORT, String.valueOf(maxSizeXgmmlExport));
+        addProperty(properties, ONTOLOGY_LUCENE_DIRECTORY, ontologyLuceneDirectory);
 
         final FileOutputStream os = new FileOutputStream( configFile );
         properties.store( os, webappName+ " configuration");
@@ -619,5 +624,13 @@ public class IntactViewConfiguration extends BaseController implements Initializ
 
     public void setDatabaseNamesUsingSameSolr(List<String> databaseNamesUsingSameSolr) {
         this.databaseNamesUsingSameSolr = databaseNamesUsingSameSolr;
+    }
+
+    public String getOntologyLuceneDirectory() {
+        return ontologyLuceneDirectory;
+    }
+
+    public void setOntologyLuceneDirectory(String ontologyLuceneDirectory) {
+        this.ontologyLuceneDirectory = ontologyLuceneDirectory;
     }
 }
