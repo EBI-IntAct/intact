@@ -28,11 +28,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.InteractionOntologyTerm;
 import uk.ac.ebi.intact.view.webapp.controller.BaseController;
 import uk.ac.ebi.intact.view.webapp.controller.browse.OntologyTermWrapper;
 import uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration;
 import uk.ac.ebi.intact.view.webapp.util.JsfUtils;
-import uk.ac.ebi.intact.view.webapp.util.OntologyTerm;
 
 import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
@@ -74,7 +74,7 @@ public class UserQuery extends BaseController {
     private String ontologySearchQuery;
     private String urlFriendlyQuery;
 
-    private OntologyTerm ontologyTerm;
+    private InteractionOntologyTerm ontologyTerm;
 
     private List<QueryToken> queryTokenList;
 
@@ -236,7 +236,7 @@ public class UserQuery extends BaseController {
 
     public void prepareFromOntologySearch(ActionEvent evt) {
         if (ontologyTerm != null) {
-            String query = ontologyTerm.getFieldName()+":\""+ontologyTerm.getIdentifier()+"\"";
+            String query = ontologyTerm.getResults().getSearchField()+":\""+ontologyTerm.getIdentifier()+"\"";
             setSearchQuery(query);
         } else {
             setSearchQuery(buildSolrOntologyQuery(ontologySearchQuery));
@@ -707,11 +707,11 @@ public class UserQuery extends BaseController {
         this.searchBrowseName = searchBrowseName;
     }
 
-    public OntologyTerm getOntologyTerm() {
+    public InteractionOntologyTerm getOntologyTerm() {
         return ontologyTerm;
     }
 
-    public void setOntologyTerm(OntologyTerm ontologyTerm) {
+    public void setOntologyTerm(InteractionOntologyTerm ontologyTerm) {
         this.ontologyTerm = ontologyTerm;
     }
 
