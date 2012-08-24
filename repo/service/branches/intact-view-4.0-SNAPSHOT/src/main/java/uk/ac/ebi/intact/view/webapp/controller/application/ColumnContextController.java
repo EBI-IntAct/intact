@@ -59,6 +59,10 @@ public class ColumnContextController {
     private static String MOLECULE_A_LINKS = "moleculeA.links";
     private static String MOLECULE_B_NAME = "moleculeB.name";
     private static String MOLECULE_B_LINKS = "moleculeB.links";
+    private static String MOLECULE_A_ID = "moleculeA.uniqueId";
+    private static String MOLECULE_A_ALTID = "moleculeA.alternativeId";
+    private static String MOLECULE_B_ID = "moleculeB.uniqueId";
+    private static String MOLECULE_B_ALTID = "moleculeB.alternativeId";
     private static String MOLECULE_A_ALIASES = "moleculeA.aliases";
     private static String MOLECULE_B_ALIASES = "moleculeB.aliases";
     private static String MOLECULE_A_SPECIES = "moleculeA.species";
@@ -70,17 +74,33 @@ public class ColumnContextController {
     private static String SOURCE_DATABASE = "interaction.sourcedb";
     private static String INTERACTION_AC = "interaction.ac";
     private static String CONFIDENCE_VALUE = "interaction.confidencevalue";
-    private static String MOLECULE_A_EXPERIMENTAL_ROLE = "moleculeA.exprole";
-    private static String MOLECULE_B_EXPERIMENTAL_ROLE = "moleculeB.exprole";
+    private static String EXPANSION_METHOD = "interaction.expansionmethod";
     private static String MOLECULE_A_BIOLOGICAL_ROLE = "moleculeA.biorole";
     private static String MOLECULE_B_BIOLOGICAL_ROLE = "moleculeB.biorole";
-    private static String MOLECULE_A_PROPERTIES = "moleculeA.properties";
-    private static String MOLECULE_B_PROPERTIES = "moleculeB.properties";
+    private static String MOLECULE_A_EXPERIMENTAL_ROLE = "moleculeA.exprole";
+    private static String MOLECULE_B_EXPERIMENTAL_ROLE = "moleculeB.exprole";
     private static String MOLECULE_A_INTERACTOR_TYPE = "moleculeA.interactortype";
     private static String MOLECULE_B_INTERACTOR_TYPE = "moleculeB.interactortype";
+    private static String MOLECULE_A_XREFS = "moleculeA.xrefs";
+    private static String MOLECULE_B_XREFS = "moleculeB.xrefs";
+    private static String INTERACTION_XREFS = "interaction.xrefs";
+    private static String MOLECULE_A_ANNOTATION = "moleculeA.annotations";
+    private static String MOLECULE_B_ANNOTATION = "moleculeB.annotations";
+    private static String INTERACTION_ANNOTATION = "interaction.annotations";
     private static String HOST_ORGANISM = "interaction.hostorganism";
-    private static String EXPANSION_METHOD = "interaction.expansionmethod";
-    private static String DATASET = "interaction.dataset";
+    private static String PARAMETERS_INTERACTION = "interaction.parameters";
+    private static String CREATED_DATE = "created.date";
+    private static String UPDATE_DATE = "update.date";
+    private static String MOLECULE_A_CHECKSUM = "moleculeA.checksum";
+    private static String MOLECULE_B_CHECKSUM = "moleculeB.checksum";
+    private static String INTERACTION_CHECKSUM = "interaction.checksum";
+    private static String NEGATIVE = "interaction.negative";
+    private static String MOLECULE_A_FEATURE = "moleculeA.feature";
+    private static String MOLECULE_B_FEATURE = "moleculeB.feature";
+    private static String MOLECULE_A_STOICHIOMETRY = "moleculeA.stoichiometry";
+    private static String MOLECULE_B_STOICHIOMETRY = "moleculeB.stoichiometry";
+    private static String MOLECULE_A_IDENTIFICATION = "moleculeA.pmethod";
+    private static String MOLECULE_B_IDENTIFICATION = "moleculeB.pmethod";
 
     private boolean showTypeRoleIcons;
 
@@ -156,12 +176,14 @@ public class ColumnContextController {
 
     private String[] getExpandedColumns() {
         return new String[] {
-                MOLECULE_A_NAME, MOLECULE_A_LINKS, MOLECULE_B_NAME, MOLECULE_B_LINKS, MOLECULE_A_ALIASES,
-                MOLECULE_B_ALIASES, MOLECULE_A_SPECIES, MOLECULE_B_SPECIES, FIRST_AUTHOR, PUBMED_IDENTIFIER,
-                INTERACTION_DETECTION_METHOD, INTERACTION_AC, EXPANSION_METHOD, INTERACTION_TYPE, SOURCE_DATABASE,
-                CONFIDENCE_VALUE, MOLECULE_A_EXPERIMENTAL_ROLE, MOLECULE_B_EXPERIMENTAL_ROLE, MOLECULE_A_BIOLOGICAL_ROLE,
-                MOLECULE_B_BIOLOGICAL_ROLE, MOLECULE_A_PROPERTIES, MOLECULE_B_PROPERTIES, MOLECULE_A_INTERACTOR_TYPE,
-                MOLECULE_B_INTERACTOR_TYPE, HOST_ORGANISM, DATASET
+                MOLECULE_A_NAME, MOLECULE_A_LINKS, MOLECULE_B_NAME, MOLECULE_B_LINKS,
+                MOLECULE_A_SPECIES, MOLECULE_B_SPECIES,INTERACTION_TYPE, CONFIDENCE_VALUE, PUBMED_IDENTIFIER,
+                INTERACTION_DETECTION_METHOD, INTERACTION_AC, EXPANSION_METHOD, MOLECULE_A_BIOLOGICAL_ROLE, MOLECULE_B_BIOLOGICAL_ROLE,
+                MOLECULE_A_EXPERIMENTAL_ROLE, MOLECULE_B_EXPERIMENTAL_ROLE, MOLECULE_A_INTERACTOR_TYPE, MOLECULE_B_INTERACTOR_TYPE,
+                MOLECULE_A_XREFS, MOLECULE_B_XREFS, INTERACTION_XREFS, MOLECULE_A_ANNOTATION, MOLECULE_B_ANNOTATION, INTERACTION_ANNOTATION,
+                HOST_ORGANISM, PARAMETERS_INTERACTION, CREATED_DATE, UPDATE_DATE, MOLECULE_A_CHECKSUM, MOLECULE_B_CHECKSUM, INTERACTION_CHECKSUM,
+                NEGATIVE, MOLECULE_A_FEATURE, MOLECULE_B_FEATURE, MOLECULE_A_STOICHIOMETRY, MOLECULE_B_STOICHIOMETRY, MOLECULE_A_IDENTIFICATION,
+                MOLECULE_B_IDENTIFICATION
         };
     }
 
