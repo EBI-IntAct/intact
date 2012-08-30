@@ -56,6 +56,13 @@ td.compoundStructure {
 
 }
 
+.negativeInteractionRow {
+    border-top: 0 !important;
+    border-left: 1px solid #CDCDCD !important;
+    border-right: 1px solid #CDCDCD !important;
+    border-bottom: 0 !important;
+}
+
 /** Overriden **/
 #mainPanels {
     background: white !important;

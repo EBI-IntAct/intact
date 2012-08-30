@@ -18,17 +18,15 @@ package uk.ac.ebi.intact.view.webapp.util;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import psidev.psi.mi.tab.model.CrossReference;
-import psidev.psi.mi.tab.model.Interactor;
+import org.hupo.psi.calimocho.tab.model.BinaryInteraction;
+import psidev.psi.mi.tab.model.*;
 import uk.ac.ebi.intact.core.context.IntactContext;
-import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
-import uk.ac.ebi.intact.psimitab.model.Annotation;
-import uk.ac.ebi.intact.psimitab.model.ExtendedInteractor;
-import uk.ac.ebi.intact.psimitab.util.IntactPsimitabUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -226,12 +224,109 @@ public final class MitabFunctions {
         return null;
     }
 
-
-    public static String getInteractorDisplayName( Interactor interactor ) {
-        IntactBinaryInteraction ibi = new IntactBinaryInteraction(interactor, interactor);
-        return IntactPsimitabUtils.getInteractorAName(ibi);
+    public static String getIdentifierFromCrossReferences(Collection xrefs, String databaseLabel) {
+        for (CrossReference xref : (Collection<CrossReference>) xrefs) {
+            if (databaseLabel.equals(xref.getDatabase())) {
+                return xref.getIdentifier();
+            }
+        }
+        return null;
     }
 
+    public static String getInteractorDisplayName( Interactor interactor ) {
+        if (interactor == null){
+            return "N/A";
+        }
+
+        if (interactor.getAliases() != null && !interactor.getAliases().isEmpty()){
+            String displayShort = null;
+            String displayLong = null;
+
+            for (Alias alias : interactor.getAliases()){
+                if (alias.getAliasType() != null && alias.getAliasType().equals("display_short")){
+                    displayShort = alias.getName();
+                }
+                else if (alias.getAliasType() != null && alias.getAliasType().equals("display_long")){
+                    displayLong = alias.getName();
+                }
+            }
+
+            if (displayShort != null){
+                return displayShort;
+            }
+            else if (displayLong != null){
+                return displayLong;
+            }
+        }
+        else if (interactor.getIdentifiers() != null && !interactor.getIdentifiers().isEmpty()){
+            return interactor.getIdentifiers().iterator().next().getIdentifier();
+        }
+        else if (interactor.getAlternativeIdentifiers() != null && !interactor.getAlternativeIdentifiers().isEmpty()){
+            return interactor.getAlternativeIdentifiers().iterator().next().getIdentifier();
+        }
+        return "N/A";
+    }
+
+    public static boolean hasOrganism(Interactor interactor){
+       if (interactor == null){
+           return false;
+       }
+
+        return interactor.getOrganism() != null;
+    }
+
+    public static String getExpansionName(psidev.psi.mi.tab.model.BinaryInteraction binary){
+        if (binary == null){
+            return "N/A";
+        }
+
+        if (!binary.getComplexExpansion().isEmpty()){
+            CrossReference ref = (CrossReference) binary.getComplexExpansion().iterator().next();
+            return ref.getText() != null ? ref.getText() : ref.getIdentifier();
+        }
+
+        return "N/A";
+    }
+
+    public static String formatDate(Date date){
+        if (date == null){
+            return "N/A";
+        }
+
+        DateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+
+        return format.format(date);
+    }
+
+    public static String getParameterValue(Parameter param){
+        if (param == null){
+            return "N/A";
+        }
+
+        StringBuffer buffer = new StringBuffer();
+
+        if (param.getFactor() != null){
+           buffer.append(Double.toString(param.getFactor()));
+            if (param.getBase() != null){
+                buffer.append("x").append(Integer.toString(param.getBase()));
+            }
+        }
+        else if (param.getBase() != null){
+            buffer.append(Integer.toString(param.getBase()));
+        }
+
+        if (param.getExponent() != null){
+            buffer.append("^").append(param.getExponent());
+        }
+        if (param.getUncertainty() != null){
+            buffer.append(" ~").append(param.getUncertainty());
+        }
+
+        if (buffer.length() > 0){
+            return buffer.toString();
+        }
+        return "N/A";
+    }
 
     public static boolean isApprovedDrug( String drugType ) {
         if ( drugType != null ) {
@@ -243,10 +338,10 @@ public final class MitabFunctions {
     }
 
 
-    public static String getDrugStatus( ExtendedInteractor interactor ) {
+    public static String getDrugStatus( Interactor interactor ) {
         if ( interactor.getAnnotations() != null ) {
             for ( Annotation annotation : interactor.getAnnotations() ) {
-                if ("drug type".equals(annotation.getType()) && annotation.getText() != null) {
+                if ("drug type".equals(annotation.getTopic()) && annotation.getText() != null) {
                     return annotation.getText();
                 }
             }
@@ -288,6 +383,19 @@ public final class MitabFunctions {
                  &&
                  (textFilter != null && !textFilter.equals( xref.getText() ) ) ) {
                 filteredList.add( xref );
+            }
+        }
+        return filteredList;
+    }
+
+    public static Collection getExclusionFilteredAliases( Collection aliases ) {
+
+        List<Alias> filteredList = new ArrayList<Alias>();
+
+        for ( Alias alias : ( Collection<Alias> ) aliases ) {
+            if ( alias.getAliasType() == null ||
+                    (alias.getAliasType() != null && !alias.getAliasType().equals("display_short") && !alias.getAliasType().equals("display_long")) ) {
+                filteredList.add( alias );
             }
         }
         return filteredList;

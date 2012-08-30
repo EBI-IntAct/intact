@@ -28,6 +28,7 @@ import org.hupo.psi.mi.rdf.RdfFormat;
 import psidev.psi.mi.tab.PsimiTabWriter;
 import psidev.psi.mi.tab.converter.tab2xml.Tab2Xml;
 import psidev.psi.mi.tab.model.BinaryInteraction;
+import psidev.psi.mi.tab.model.builder.PsimiTabVersion;
 import psidev.psi.mi.xml.PsimiXmlVersion;
 import psidev.psi.mi.xml.PsimiXmlWriter;
 import psidev.psi.mi.xml.converter.ConverterException;
@@ -60,8 +61,9 @@ public class BinaryInteractionsExporter {
     private SolrServer solrServer;
     public static final String XML_2_53 = "xml_2_53";
     public static final String XML_2_54 = "xml_2_54";
-    public static final String MITAB = "mitab";
-    public static final String MITAB_INTACT = "mitab_intact";
+    public static final String MITAB_25 = "mitab_25";
+    public static final String MITAB_26 = "mitab_26";
+    public static final String MITAB_27 = "mitab_27";
     public static final String XML_HTML = "xml_html";
     public static final String BIOPAX_L2 = "biopax_l2";
     public static final String BIOPAX_L3 = "biopax_l3";
@@ -78,17 +80,14 @@ public class BinaryInteractionsExporter {
     }
 
     public String searchAndExport( OutputStream os, SolrQuery searchQuery, String format) throws IOException, IllegalRowException {
-        if ( MITAB.equals( format ) ) {
-            exportToMiTab( os, searchQuery );
-            return "text/plain";
-        } else if ( MITAB_INTACT.equals( format ) ) {
-            exportToMiTabIntact( os, searchQuery );
+        if ( MITAB_25.equals( format ) || MITAB_26.equals( format ) || MITAB_27.equals( format ) ) {
+            exportToMiTab( os, searchQuery, format );
             return "text/plain";
         } else if ( XML_2_53.equals( format ) || XML_2_54.equals( format ) ) {
-            exportToMiXml( os, searchQuery, format );
+            exportToMiXml(os, searchQuery, format);
             return "application/xml";
         } else if ( XML_HTML.equals( format ) ) {
-            exportToMiXmlTransformed( os, searchQuery );
+            exportToMiXmlTransformed(os, searchQuery);
             return "text/html";
         } else if ( BIOPAX_L2.equals(format)) {
             exportToRdf(os, searchQuery, RdfFormat.BIOPAX_L2);
@@ -123,8 +122,16 @@ public class BinaryInteractionsExporter {
 
     }
 
-    public void exportToMiTab(OutputStream os, SolrQuery searchQuery) throws IOException {
-        PsimiTabWriter writer = new PsimiTabWriter();
+    public void exportToMiTab(OutputStream os, SolrQuery searchQuery, String format) throws IOException {
+        PsimiTabVersion verison = PsimiTabVersion.v2_7;
+        if (MITAB_25.equals(format)){
+           verison = PsimiTabVersion.v2_5;
+        }
+        else if (MITAB_26.equals(format)){
+            verison = PsimiTabVersion.v2_6;
+        }
+
+        PsimiTabWriter writer = new PsimiTabWriter(verison);
         Writer out = new BufferedWriter(new OutputStreamWriter(os));
         try{
             writeMitab(out, writer, searchQuery);
