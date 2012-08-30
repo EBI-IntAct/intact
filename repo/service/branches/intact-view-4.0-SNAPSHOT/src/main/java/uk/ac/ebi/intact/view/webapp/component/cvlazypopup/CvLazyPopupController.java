@@ -19,6 +19,7 @@ import org.primefaces.event.CloseEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.view.webapp.controller.application.CvObjectService;
 
@@ -39,6 +40,7 @@ public class CvLazyPopupController {
        // this.cvObjectMap = new HashMap<String, CvObject>();
     }
 
+    @Transactional(readOnly = true)
     public CvObject fetch(String className, String identifier) {
        return cvObjectService.loadByIdentifier(className, identifier);
     }
