@@ -131,7 +131,7 @@ public class ExportServlet extends HttpServlet {
     }
 
     public String getExtension( String format ) throws IOException {
-        if ( BinaryInteractionsExporter.MITAB.equals( format ) || BinaryInteractionsExporter.MITAB_INTACT.equals( format ) || BinaryInteractionsExporter.RDF_N3.equals(format) || BinaryInteractionsExporter.RDF_N3_PP.equals(format)
+        if ( BinaryInteractionsExporter.MITAB_25.equals( format ) || BinaryInteractionsExporter.MITAB_26.equals( format ) || BinaryInteractionsExporter.MITAB_27.equals( format ) || BinaryInteractionsExporter.RDF_N3.equals(format) || BinaryInteractionsExporter.RDF_N3_PP.equals(format)
                 || BinaryInteractionsExporter.RDF_TRIPLE.equals(format) || BinaryInteractionsExporter.RDF_TURTLE.equals(format)) {
             return "txt";
         } else if ( BinaryInteractionsExporter.XML_2_53.equals( format ) || BinaryInteractionsExporter.XML_2_54.equals( format ) || BinaryInteractionsExporter.BIOPAX_L2.equals(format) || BinaryInteractionsExporter.BIOPAX_L3.equals(format) || BinaryInteractionsExporter.RDF_XML.equals(format)

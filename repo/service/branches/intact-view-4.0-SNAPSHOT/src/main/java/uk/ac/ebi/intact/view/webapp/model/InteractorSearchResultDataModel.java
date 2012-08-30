@@ -16,6 +16,7 @@
 package uk.ac.ebi.intact.view.webapp.model;
 
 import com.google.common.collect.Multimap;
+import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -55,6 +56,8 @@ public class InteractorSearchResultDataModel extends LazyDataModel<InteractorWra
 
     private IntactSolrSearcher solrSearcher;
 
+    private LRUMap interactorCache;
+
     public InteractorSearchResultDataModel(SolrServer solrServer, SolrQuery solrQuery, String interactorTypeMi)  {
         this(solrServer, solrQuery, new String[] {interactorTypeMi});
     }
@@ -66,6 +69,7 @@ public class InteractorSearchResultDataModel extends LazyDataModel<InteractorWra
         this.interactorTypeMis = interactorTypeMis;
 
         idCounts = new ArrayList<InteractorWrapper>();
+        this.interactorCache = new LRUMap();
 
         countTotalResults();
     }
@@ -100,7 +104,7 @@ public class InteractorSearchResultDataModel extends LazyDataModel<InteractorWra
 
         idCounts.clear();
 
-        wrap(idCountMultimap.values());
+        wrap(idCountMultimap.values(), first, pageSize);
 
         return idCounts;
     }
@@ -126,28 +130,37 @@ public class InteractorSearchResultDataModel extends LazyDataModel<InteractorWra
         return idCount;
     }
 
-    private void wrap(Collection<InteractorIdCount> idCount) {
+    private void wrap(Collection<InteractorIdCount> idCount, int first, int pageSize) {
 
-        IntactContext context=IntactContext.getCurrentInstance();
-        DataContext dataContext = context.getDataContext();
-        DaoFactory factory = context.getDaoFactory();
 
-        TransactionStatus transactionStatus = dataContext.beginTransaction();
-
-        Map<String, Long> idCountMap = new HashMap<String, Long>(idCount.size());
-        for (InteractorIdCount count : idCount){
-            idCountMap.put(count.getAc(), count.getCount());
+        String key = first+"_"+pageSize;
+        if (this.interactorCache.containsKey(key)){
+            this.idCounts.addAll((List) this.interactorCache.get(key));
         }
+        else {
+            IntactContext context=IntactContext.getCurrentInstance();
+            DataContext dataContext = context.getDataContext();
+            DaoFactory factory = context.getDaoFactory();
 
-        List<InteractorImpl> interactors = factory.getInteractorDao().getByAc(idCountMap.keySet());
+            TransactionStatus transactionStatus = dataContext.beginTransaction();
 
-        for (InteractorImpl interactor : interactors){
-            InteractorWrapper wrapper = new InteractorWrapper(interactor, idCountMap.get(interactor.getAc()));
+            Map<String, Long> idCountMap = new HashMap<String, Long>(idCount.size());
+            for (InteractorIdCount count : idCount){
+                idCountMap.put(count.getAc(), count.getCount());
+            }
 
-            this.idCounts.add(wrapper);
+            List<InteractorImpl> interactors = factory.getInteractorDao().getByAc(idCountMap.keySet());
+
+            for (InteractorImpl interactor : interactors){
+                InteractorWrapper wrapper = new InteractorWrapper(interactor, idCountMap.get(interactor.getAc()));
+
+                this.idCounts.add(wrapper);
+            }
+
+            dataContext.commitTransaction(transactionStatus);
+
+            this.interactorCache.put(key, new ArrayList<InteractorWrapper>(this.idCounts));
         }
-
-        dataContext.commitTransaction(transactionStatus);
     }
 
     public Object getWrappedData() {

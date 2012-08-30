@@ -32,6 +32,7 @@ import psidev.psi.mi.tab.model.Interactor;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrSearchResult;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrSearcher;
+import uk.ac.ebi.intact.view.webapp.util.MitabFunctions;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -50,7 +51,7 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
 
     private static final Log log = LogFactory.getLog(LazySearchResultDataModel.class);
 
-    private static String DEFAULT_SORT_COLUMN = FieldNames.INTERACTION_ID_FACET;
+    private static String DEFAULT_SORT_COLUMN = FieldNames.INTACT_SCORE_NAME;
 
     private SolrQuery solrQuery;
     private SolrServer solrServer;
@@ -59,7 +60,7 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
 
     private List<BinaryInteraction> binaryInteractions;
 
-     public LazySearchResultDataModel(SolrServer solrServer, SolrQuery solrQuery) {
+    public LazySearchResultDataModel(SolrServer solrServer, SolrQuery solrQuery) {
          this.solrServer = solrServer;
          this.solrQuery = solrQuery != null ? solrQuery.getCopy() : null;
     }
@@ -90,8 +91,9 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
             // we know that we have only 4 type of expansion methods : spoke expanded, no expansion, matrix or bipartite
             solrQuery.setFacetLimit(4);
 
+            // sort by intact mi score desc
             if (solrQuery.getSortField() == null) {
-                solrQuery.setSortField(DEFAULT_SORT_COLUMN, SolrQuery.ORDER.asc);
+                solrQuery.setSortField(DEFAULT_SORT_COLUMN, SolrQuery.ORDER.desc);
             }
 
             if (log.isDebugEnabled()) {
@@ -201,5 +203,28 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
 
     public SolrQuery getSearchQuery() {
         return solrQuery;
+    }
+
+    public boolean isSameThanPrevious() {
+        if (getRowIndex() > 0) {
+            final BinaryInteraction previousInteraction = getInteraction(getRowIndex() - 1);
+            final BinaryInteraction currentInteraction = getInteraction(getRowIndex());
+
+            final String previousInteractorAName = MitabFunctions.getIntactIdentifierFromCrossReferences(previousInteraction.getInteractorA().getIdentifiers());
+            final String previousInteractorBName = MitabFunctions.getIntactIdentifierFromCrossReferences(previousInteraction.getInteractorB().getIdentifiers());
+            final String currentInteractorAName = MitabFunctions.getIntactIdentifierFromCrossReferences(currentInteraction.getInteractorA().getIdentifiers());
+            final String currentInteractorBName = MitabFunctions.getIntactIdentifierFromCrossReferences(currentInteraction.getInteractorB().getIdentifiers());
+
+            return previousInteractorAName.equalsIgnoreCase(currentInteractorAName) &&
+                    previousInteractorBName.equalsIgnoreCase(currentInteractorBName);
+
+        }
+
+        return false;
+    }
+
+    private BinaryInteraction getInteraction(int rowIndex) {
+        final BinaryInteraction binaryInteraction = binaryInteractions.get(rowIndex);
+        return binaryInteraction;
     }
 }

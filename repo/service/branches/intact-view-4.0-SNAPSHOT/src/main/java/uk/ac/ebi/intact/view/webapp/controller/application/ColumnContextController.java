@@ -46,12 +46,12 @@ public class ColumnContextController {
     private static final Log log = LogFactory.getLog( ColumnContextController.class );
 
     private static String COOKIE_COLS_NAME = "intact.cols.view";
-    private static String COOKIE_SHOWICONS_NAME = "intact.icons.show";
 
     private static String COOKIE_MINIMAL_VALUE = "min cols";
     private static String COOKIE_BASIC_VALUE = "basic cols";
     private static String COOKIE_STANDARD_VALUE = "std cols";
     private static String COOKIE_EXPANDED_VALUE = "ext cols";
+    private static String COOKIE_COMPLETE_VALUE = "comp cols";
 
     private String[] selectedColumns;
     private List<SelectItem> columnsSelectItems;
@@ -95,14 +95,12 @@ public class ColumnContextController {
     private static String MOLECULE_B_CHECKSUM = "moleculeB.checksum";
     private static String INTERACTION_CHECKSUM = "interaction.checksum";
     private static String NEGATIVE = "interaction.negative";
-    private static String MOLECULE_A_FEATURE = "moleculeA.feature";
-    private static String MOLECULE_B_FEATURE = "moleculeB.feature";
+    private static String MOLECULE_A_FEATURE = "moleculeA.features";
+    private static String MOLECULE_B_FEATURE = "moleculeB.features";
     private static String MOLECULE_A_STOICHIOMETRY = "moleculeA.stoichiometry";
     private static String MOLECULE_B_STOICHIOMETRY = "moleculeB.stoichiometry";
     private static String MOLECULE_A_IDENTIFICATION = "moleculeA.pmethod";
     private static String MOLECULE_B_IDENTIFICATION = "moleculeB.pmethod";
-
-    private boolean showTypeRoleIcons;
 
     public ColumnContextController() {
     }
@@ -123,14 +121,6 @@ public class ColumnContextController {
             }
         } else {
             selectStandardColumns();
-        }
-
-        String showIconsCookie = readCookie(COOKIE_SHOWICONS_NAME);
-
-        if (showIconsCookie != null) {
-            showTypeRoleIcons = Boolean.valueOf(showIconsCookie);
-        } else {
-            setShowIcons(true);
         }
     }
 
@@ -163,14 +153,14 @@ public class ColumnContextController {
         return new String[] {
             MOLECULE_A_NAME, MOLECULE_A_LINKS, MOLECULE_B_NAME, MOLECULE_B_LINKS,
             MOLECULE_A_SPECIES, MOLECULE_B_SPECIES,INTERACTION_TYPE, CONFIDENCE_VALUE, PUBMED_IDENTIFIER,
-            INTERACTION_DETECTION_METHOD, INTERACTION_AC, EXPANSION_METHOD
+            INTERACTION_DETECTION_METHOD, INTERACTION_AC, EXPANSION_METHOD, NEGATIVE
         };
     }
 
     private String[] getBasicColumns() {
         return new String[] {
                 MOLECULE_A_NAME, MOLECULE_A_LINKS, MOLECULE_B_NAME, MOLECULE_B_LINKS,
-                INTERACTION_DETECTION_METHOD, INTERACTION_AC
+                INTERACTION_DETECTION_METHOD, INTERACTION_AC, NEGATIVE
         };
     }
 
@@ -180,10 +170,22 @@ public class ColumnContextController {
                 MOLECULE_A_SPECIES, MOLECULE_B_SPECIES,INTERACTION_TYPE, CONFIDENCE_VALUE, PUBMED_IDENTIFIER,
                 INTERACTION_DETECTION_METHOD, INTERACTION_AC, EXPANSION_METHOD, MOLECULE_A_BIOLOGICAL_ROLE, MOLECULE_B_BIOLOGICAL_ROLE,
                 MOLECULE_A_EXPERIMENTAL_ROLE, MOLECULE_B_EXPERIMENTAL_ROLE, MOLECULE_A_INTERACTOR_TYPE, MOLECULE_B_INTERACTOR_TYPE,
-                MOLECULE_A_XREFS, MOLECULE_B_XREFS, INTERACTION_XREFS, MOLECULE_A_ANNOTATION, MOLECULE_B_ANNOTATION, INTERACTION_ANNOTATION,
-                HOST_ORGANISM, PARAMETERS_INTERACTION, CREATED_DATE, UPDATE_DATE, MOLECULE_A_CHECKSUM, MOLECULE_B_CHECKSUM, INTERACTION_CHECKSUM,
-                NEGATIVE, MOLECULE_A_FEATURE, MOLECULE_B_FEATURE, MOLECULE_A_STOICHIOMETRY, MOLECULE_B_STOICHIOMETRY, MOLECULE_A_IDENTIFICATION,
+                MOLECULE_A_XREFS, MOLECULE_B_XREFS, INTERACTION_XREFS,
+                HOST_ORGANISM, PARAMETERS_INTERACTION, NEGATIVE, MOLECULE_A_FEATURE, MOLECULE_B_FEATURE, MOLECULE_A_STOICHIOMETRY, MOLECULE_B_STOICHIOMETRY, MOLECULE_A_IDENTIFICATION,
                 MOLECULE_B_IDENTIFICATION
+        };
+    }
+
+    private String[] getCompleteColumns() {
+        return new String[] {
+                MOLECULE_A_ID, MOLECULE_B_ID, MOLECULE_A_ALTID, MOLECULE_A_ALTID,
+                MOLECULE_A_ALIASES, MOLECULE_B_ALIASES,INTERACTION_DETECTION_METHOD, FIRST_AUTHOR, PUBMED_IDENTIFIER,
+                MOLECULE_A_SPECIES, MOLECULE_B_SPECIES, INTERACTION_TYPE, SOURCE_DATABASE, INTERACTION_AC,
+                CONFIDENCE_VALUE, EXPANSION_METHOD, MOLECULE_A_BIOLOGICAL_ROLE, MOLECULE_A_BIOLOGICAL_ROLE,
+                MOLECULE_A_EXPERIMENTAL_ROLE, MOLECULE_B_EXPERIMENTAL_ROLE, MOLECULE_A_INTERACTOR_TYPE, MOLECULE_B_INTERACTOR_TYPE, MOLECULE_A_XREFS, MOLECULE_B_XREFS,
+                INTERACTION_XREFS, MOLECULE_A_ANNOTATION, MOLECULE_B_ANNOTATION, INTERACTION_ANNOTATION, HOST_ORGANISM, PARAMETERS_INTERACTION, CREATED_DATE,
+                UPDATE_DATE, MOLECULE_A_CHECKSUM, MOLECULE_B_CHECKSUM, INTERACTION_CHECKSUM, NEGATIVE, MOLECULE_A_FEATURE, MOLECULE_B_FEATURE,
+                MOLECULE_A_STOICHIOMETRY, MOLECULE_B_STOICHIOMETRY, MOLECULE_A_IDENTIFICATION, MOLECULE_B_IDENTIFICATION
         };
     }
 
@@ -199,6 +201,11 @@ public class ColumnContextController {
     public void selectExpandedColumns() {
         selectedColumns = getExpandedColumns();
         writeCookie(COOKIE_COLS_NAME, COOKIE_EXPANDED_VALUE);
+    }
+
+    public void selectCompleteColumns() {
+        selectedColumns = getCompleteColumns();
+        writeCookie(COOKIE_COLS_NAME, COOKIE_COMPLETE_VALUE);
     }
 
     public void selectBasicColumns() {
@@ -242,15 +249,5 @@ public class ColumnContextController {
             columnsSelectItems = createSelectItems();
         }
         return columnsSelectItems;
-    }
-
-    public boolean isShowIcons() {
-        return showTypeRoleIcons;
-    }
-
-    public void setShowIcons(boolean showTypeRoleIcons) {
-        this.showTypeRoleIcons = showTypeRoleIcons;
-
-        writeCookie(COOKIE_SHOWICONS_NAME, String.valueOf(showTypeRoleIcons));
     }
 }
