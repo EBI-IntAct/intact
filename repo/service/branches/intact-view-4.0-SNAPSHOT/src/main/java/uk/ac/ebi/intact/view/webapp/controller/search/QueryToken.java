@@ -87,16 +87,20 @@ public class QueryToken {
     }
 
     public String toQuerySyntax(boolean excludeOperand) {
-        String operandStr;
+        StringBuffer queryString = new StringBuffer();
 
         if (excludeOperand) {
-            operandStr = isNotQuery() ? "NOT " : "";
+            queryString.append(isNotQuery() ? "NOT " : "");
         } else {
-           operandStr = (operand == BooleanOperand.AND) ? (isNotQuery() ? "AND NOT " : "AND ") : (isNotQuery() ? "OR NOT " : "OR ");
+           queryString.append((operand == BooleanOperand.AND) ? (isNotQuery() ? "AND NOT " : "AND ") : (isNotQuery() ? "OR NOT " : "OR "));
         }
 
-        return operandStr
-                +(field != null? field+":" : "")+surroundByQuotesIfNecessary(query);
+        queryString.append((field != null? field+":" : "")+surroundByQuotesIfNecessary(query));
+        // close any opened parenthesis in field name. For instance : interaction_id:"GO
+        if (field.contains("\"")){
+            queryString.append("\"");
+        }
+        return queryString.toString();
     }
 
     @Override

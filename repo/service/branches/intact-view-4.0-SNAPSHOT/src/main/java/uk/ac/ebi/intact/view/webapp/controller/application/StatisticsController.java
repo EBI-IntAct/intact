@@ -21,12 +21,11 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrSearchResult;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrSearcher;
-import uk.ac.ebi.intact.dataexchange.psimi.solr.SolrSearchResult;
 import uk.ac.ebi.intact.view.webapp.controller.BaseController;
 import uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 /**
@@ -58,7 +57,6 @@ public class StatisticsController extends BaseController {
 
     }
 
-    @PostConstruct
     @Transactional(readOnly = true)
     public void calculateStats() throws IOException {
         if (log.isInfoEnabled()) log.info("Calculating statistics");
@@ -76,14 +74,19 @@ public class StatisticsController extends BaseController {
         interactorsWithNoInteractions = interactorCount - interactionCount;
     }
 
-    @Transactional(readOnly = true)
     public int countBinaryInteractionsFromIndex() {
         SolrServer solrServer = intactViewConfiguration.getInteractionSolrServer();
         IntactSolrSearcher searcher = new IntactSolrSearcher(solrServer);
 
-        final SolrSearchResult result = searcher.search("*:*", 0, 0);
-        int count = Long.valueOf(result.getTotalCount()).intValue();
-        return count;
+        final IntactSolrSearchResult result;
+        try {
+            result = searcher.search("*:*", 0, 0);
+            int count = Long.valueOf(result.getNumberResults()).intValue();
+            return count;
+        } catch (Exception e) {
+            log.error("Impossible to check statistics in solr", e);
+            return 0;
+        }
     }
 
     public int getCvTermsCount() {
