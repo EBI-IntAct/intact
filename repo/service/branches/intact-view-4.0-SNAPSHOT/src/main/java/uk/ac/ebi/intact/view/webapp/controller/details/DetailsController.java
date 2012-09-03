@@ -40,7 +40,7 @@ import uk.ac.ebi.intact.view.webapp.controller.details.complex.TableHeaderContro
 import uk.ac.ebi.intact.view.webapp.controller.search.SearchController;
 import uk.ac.ebi.intact.view.webapp.controller.search.UserQuery;
 
-import javax.faces.context.FacesContext;
+import javax.persistence.Query;
 import java.util.*;
 
 /**
@@ -102,18 +102,17 @@ public class DetailsController extends JpaBaseController {
             setInteractionAc( interactionAc );
 
             // Update interaction search
-            userQuery.reset();
+            /*userQuery.reset();
             userQuery.setSearchQuery( "interaction_id:" + interactionAc );
             SolrQuery solrQuery = userQuery.createSolrQuery();
-            searchController.doBinarySearch( solrQuery );
+            searchController.doBinarySearch( solrQuery );*/
 
         } else if ( experimentAc != null ) {
 
             if ( log.isDebugEnabled() ) log.debug( "Parameter " + EXPERIMENT_AC_PARAM + " was specified" );
             setExperimentAc( experimentAc );
 
-            // TODO Update interaction search when experiment ACs are integrated in the Solr index
-            userQuery.reset();
+            /*userQuery.reset();*/
         }
 
         if (binary != null) {
@@ -210,9 +209,7 @@ public class DetailsController extends JpaBaseController {
             exp = experiment;
         }
 
-        // TODO handle multiple experiment (so far we don't have that kind of data in IntAct).
-        // fall back on the experiment of the interaction loaded.
-        if( interaction != null ) {
+        if( interaction != null && !interaction.getExperiments().isEmpty() ) {
             exp = interaction.getExperiments().iterator().next();
         }
         return exp;
@@ -222,16 +219,8 @@ public class DetailsController extends JpaBaseController {
         final Experiment experiment = getExperiment();
         Collection<Annotation> selectedAnnotations = new ArrayList<Annotation>( experiment.getAnnotations().size() );
         for ( Annotation annotation : experiment.getAnnotations() ) {
-            boolean found = false;
             
-            for (Annotation pubAnnotation : experiment.getPublication().getAnnotations()) {
-                if ( pubAnnotation.getCvTopic().getIdentifier().equals(annotation.getCvTopic().getIdentifier()) ) {
-                    found = true;
-                    break;
-                }
-            }
-            
-            if (!found) {
+            if (!publicationTopics.contains( annotation.getCvTopic().getIdentifier() ) ) {
                 selectedAnnotations.add( annotation );
             }
         }
@@ -243,7 +232,7 @@ public class DetailsController extends JpaBaseController {
         Collection<Annotation> selectedAnnotations = new ArrayList<Annotation>( publication.getAnnotations().size() );
         
         for ( Annotation annotation : publication.getAnnotations() ) {
-            if ( !publicationTopics.contains( annotation.getCvTopic().getIdentifier() ) ) {
+            if ( publicationTopics.contains( annotation.getCvTopic().getIdentifier() ) ) {
                 selectedAnnotations.add( annotation );
             }
         }
@@ -252,26 +241,29 @@ public class DetailsController extends JpaBaseController {
     }
 
     public String getAuthorList() {
-        return getAnnotationTextByMi( getExperiment(), AUTHOR_LIST );
+        return getAnnotationTextByMi( getExperiment().getPublication(), AUTHOR_LIST );
     }
 
     public String getJournal() {
-        return getAnnotationTextByMi( getExperiment(), JOURNAL );
+        return getAnnotationTextByMi( getExperiment().getPublication(), JOURNAL );
     }
 
     public String getPublicationYear() {
-        return getAnnotationTextByMi( getExperiment(), PUBLICATION_YEAR );
+        return getAnnotationTextByMi( getExperiment().getPublication(), PUBLICATION_YEAR );
     }
 
     public String getContactEmail() {
-        return getAnnotationTextByMi( getExperiment(), CONTACT_EMAIL );
+        return getAnnotationTextByMi( getExperiment().getPublication(), CONTACT_EMAIL );
     }
 
     public boolean isFeaturesAvailable(){
         boolean featuresAvailable = false;
         Interaction interaction = getInteraction();
         for(Component component : interaction.getComponents()){
-            featuresAvailable = featuresAvailable || (component.getBindingDomains().size() > 0);
+            featuresAvailable = featuresAvailable || (component.getFeatures().size() > 0);
+            if (featuresAvailable){
+                break;
+            }
         }
         return featuresAvailable;
     }
@@ -305,68 +297,46 @@ public class DetailsController extends JpaBaseController {
             matrix = null;
         }
 
-        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
-        final InteractionDao interactionDao = daoFactory.getInteractionDao();
         final long start = System.currentTimeMillis();
 
-        if ( log.isDebugEnabled() ) {
-            StringBuilder sb = new StringBuilder( 512 );
-            for ( Component component : interaction.getComponents() ) {
-                sb.append( component.getInteractor().getShortLabel() ).append( "   " );
-            }
-            log.debug( "It has " + interaction.getComponents().size() + " participants [" + sb.toString().trim() + "]" );
-        }
+        DaoFactory factory = IntactContext.getCurrentInstance().getDaoFactory();
+        InteractionDao interactionDao = factory.getInteractionDao();
+        Query query = factory.getEntityManager().
+                createQuery("select distinct i.ac from InteractionImpl i join i.components as comp join comp.interactor as inter where i.ac <> :interactionAc and " +
+                        "inter.ac in (select inter2.ac from Component comp2 join comp2.interaction as i2 join comp2.interactor as inter2 where i2.ac = :interactionAc)");
 
-        final Set<SimpleInteractor> referenceMembers = prepareMembers( interaction );
+        query.setParameter("interactionAc", interaction.getAc());
 
-        Map<String, SimilarInteraction> map = Maps.newHashMap();
-
-        for ( Component component : interaction.getComponents() ) {
-            final Interactor interactor = component.getInteractor();
-            final List<Interaction> interactions = interactionDao.getInteractionsByInteractorAc( interactor.getAc() );
-
-            for ( Interaction i : interactions ) {
-
-                if ( i.getAc().equals( interaction.getAc() ) ) {
-                    continue; // skipping this interaction
-                }
-
-                SimilarInteraction si = null;
-                final String key = i.getAc();
-                if ( map.containsKey( key ) ) {
-                    si = map.get( key );
-                } else {
-                    si = new SimilarInteraction( i.getAc(), i.getShortLabel(), i.getComponents().size() );
-                    map.put( key, si );
-                }
-
-                // update si
-                Set<SimpleInteractor> members = prepareMembers( i );
-                for ( SimpleInteractor member : members ) {
-                    if ( referenceMembers.contains( member ) ) {
-                        si.addMember( member );
-                    } else {
-                        si.addOthers( member );
-                    }
-                }
-            }
-        }
-
-        // sort interaction by decreasing order of member interactors
-        List<SimilarInteraction> similarInteractions = Lists.newArrayList( map.values() );
-        Collections.sort( similarInteractions, new Comparator<SimilarInteraction>() {
+        List<String> similarInteractionAcs = query.getResultList();
+        TreeSet<SimilarInteraction> similarInteractionTreeSet = new TreeSet<SimilarInteraction>(new Comparator<SimilarInteraction>() {
             public int compare( SimilarInteraction i1, SimilarInteraction i2 ) {
                 return i2.getMemberCount() - i1.getMemberCount();
             }
-        } );
+        });
+
+        final TreeSet<SimpleInteractor> referenceMembers = prepareMembers( interaction );
+
+        for ( String ac : similarInteractionAcs ) {
+
+            InteractionImpl i = interactionDao.getByAc(ac);
+
+            SimilarInteraction si = new SimilarInteraction( i.getAc(), i.getShortLabel(), i.getComponents().size() );
+            similarInteractionTreeSet.add(si);
+
+            // update si
+            TreeSet<SimpleInteractor> members = prepareMembers( i );
+            for ( SimpleInteractor member : members ) {
+                si.addMember( member );
+            }
+        }
 
         final long stop = System.currentTimeMillis();
 
         if ( log.isDebugEnabled() ) {
             log.debug( "Time elapsed: " + ( stop - start ) + "ms" );
-            log.debug( "Results collected (" + map.size() + " interactions):" );
+            log.debug( "Results collected (" + similarInteractionTreeSet.size() + " interactions):" );
 
-            for ( SimilarInteraction si : similarInteractions ) {
+            for ( SimilarInteraction si : similarInteractionTreeSet ) {
 
                 log.debug( StringUtils.rightPad( si.getShortLabel(), 20 ) + " " +
                            StringUtils.rightPad( si.getMemberCount() + "/" + si.getTotalParticipantCount(), 10 ) + "\t[" +
@@ -374,21 +344,13 @@ public class DetailsController extends JpaBaseController {
             }
         }
 
-        // ordering reference members alphabetically
-        List<SimpleInteractor> orderedReferenceMembers = Lists.newArrayList( referenceMembers );
-        Collections.sort(  orderedReferenceMembers, new Comparator<SimpleInteractor>() {
-            public int compare( SimpleInteractor o1, SimpleInteractor o2 ) {
-                return o1.getShortLabel().compareTo( o2.getShortLabel() );
-            }
-        } );
-
         matrix = new SimilarInteractionsMatrix( new SimpleInteractor( interaction.getAc(),
                                                                       interaction.getShortLabel(),
                                                                       interaction.getFullName() ),
-                                                similarInteractions,
-                                                orderedReferenceMembers );
+                                                similarInteractionTreeSet,
+                                                referenceMembers );
 
-        tableHeaderController.setLabels( orderedReferenceMembers );
+        tableHeaderController.setLabels( referenceMembers );
 
         return matrix;
     }
@@ -401,8 +363,13 @@ public class DetailsController extends JpaBaseController {
         return sb.toString().trim();
     }
 
-    private Set<SimpleInteractor> prepareMembers( Interaction interaction ) {
-        Set<SimpleInteractor> members = Sets.newHashSet();
+    private TreeSet<SimpleInteractor> prepareMembers( Interaction interaction ) {
+        TreeSet<SimpleInteractor> members = new TreeSet<SimpleInteractor>(new Comparator<SimpleInteractor>() {
+            public int compare( SimpleInteractor o1, SimpleInteractor o2 ) {
+                return o1.getShortLabel().compareTo( o2.getShortLabel() );
+            }
+        } );
+
         for ( Component component : interaction.getComponents() ) {
             final Interactor interactor = component.getInteractor();
             members.add( new SimpleInteractor( interactor.getAc(), interactor.getShortLabel() ) );
