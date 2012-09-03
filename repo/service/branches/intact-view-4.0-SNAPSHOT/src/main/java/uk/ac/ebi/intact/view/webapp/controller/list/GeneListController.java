@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 /**
- * TODO comment this
+ * Controller for gene view
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
