@@ -77,6 +77,7 @@ public class UserQuery extends BaseController {
     private InteractionOntologyTerm ontologyTerm;
 
     private List<QueryToken> queryTokenList;
+    private List<String> queryFilterList;
 
     private Map<String,String> longQueriesMap;
 
@@ -113,6 +114,7 @@ public class UserQuery extends BaseController {
     public UserQuery() {
         this.queryTokenList = new ArrayList<QueryToken>();
         this.longQueriesMap = new HashMap<String, String>();
+        this.queryFilterList = new ArrayList<String>();
     }
 
     @PostConstruct
@@ -137,29 +139,38 @@ public class UserQuery extends BaseController {
         goTerms = new String[0];
         termMap.clear();
         queryTokenList.clear();
+        queryFilterList.clear();
     }
 
     private void initSearchFields() {
         searchFields = new SearchField[]{
                 new SearchField("", "All"),
-                new SearchField(FieldNames.IDENTIFIER, "Participant Id"),
+                new SearchField(FieldNames.IDENTIFIER, "Participant Id or Alias"),
                 new SearchField(FieldNames.INTERACTION_ID, "Interaction Id"),
                 new SearchField(FieldNames.GENE_NAME, "Gene name"),
                 new SearchField(FieldNames.DETMETHOD, "Interaction detection method", "detectionMethodBrowser"),
                 new SearchField(FieldNames.TYPE, "Interaction type", "interactionTypeBrowser"),
-                new SearchField("species", "Organism", "taxonomyBrowser"),
+                new SearchField(FieldNames.INTERACTOR_TYPE, "Interactor type", "interactorTypeBrowser"),
+                new SearchField(FieldNames.INTERACTOR_DET_METHOD, "Participant identification method", "participantIdentificationMethodBrowser"),
+                new SearchField(FieldNames.INTERACTION_ANNOTATIONS, "Interaction annotations", "annotationTopicBrowser"),
+                new SearchField(FieldNames.INTERACTOR_FEATURE, "Participant Features", "featureTypeBrowser"),
+                new SearchField(FieldNames.SPECIES, "Organism", "taxonomyBrowser"),
                 new SearchField(FieldNames.PUBID, "Pubmed Id"),
                 new SearchField(FieldNames.PUBAUTH, "Author"),
-                new SearchField("biologicalRole", "Biological role", "biologicalRoleBrowser"),
-                new SearchField("experimentalRole", "Experimental role", "experimentalRoleBrowser"),
-                new SearchField("go_expanded_id", "GO", "goBrowser"),
-                new SearchField("chebi_expanded_id", "ChEBI", "chebiBrowser"),
-                new SearchField("intepro_expanded_id", "Interpro"),
-                new SearchField("properties", "Participant cross-reference"),
-                new SearchField(FieldNames.EXPANSION, "Expansion algorithm", filterPopulator.getExpansionSelectItems()),
+                new SearchField(FieldNames.BIOLOGICAL_ROLE, "Biological role", "biologicalRoleBrowser"),
+                new SearchField(FieldNames.INTERACTOR_XREF+":\"go", "Interactor GO references", "goBrowser"),
+                new SearchField(FieldNames.INTERACTION_XREF+":\"go", "Interaction GO references", "interactionGoBrowser"),
+                new SearchField(FieldNames.ID+":\"chebi", "ChEBI", "chebiBrowser"),
+                new SearchField(FieldNames.INTERACTOR_XREF+":\"interpro", "Interpro"),
+                new SearchField(FieldNames.INTERACTOR_XREF, "Participant cross-reference"),
+                new SearchField(FieldNames.INTERACTION_XREF, "Interaction cross-reference"),
+                new SearchField(FieldNames.COMPLEX_EXPANSION, "Expansion algorithm", filterPopulator.getExpansionSelectItems()),
                 new SearchField(FieldNames.SOURCE, "Source", filterPopulator.getSourceSelectItems()),
-                new SearchField(FieldNames.DATASET, "Dataset", filterPopulator.getDatasetSelectItems()),
-                new SearchField(FieldNames.RIGID, "RIGID")
+                new SearchField(FieldNames.UPDATE_DATE, "Last update date (Ex : 20110524)"),
+                new SearchField(FieldNames.NEGATIVE, "Negative interactions", filterPopulator.getNegative()),
+                new SearchField(FieldNames.INTERACTOR_STOICHIOMETRY, "Stoichiometry", filterPopulator.getStoichiometry()),
+                new SearchField(FieldNames.INTERACTION_PARAMETERS, "Interaction parameters", filterPopulator.getParameters()),
+                new SearchField(FieldNames.INTERACTION_ANNOTATIONS+":\"dataset", "Dataset", filterPopulator.getDatasetSelectItems()),
         };
 
         searchFieldSelectItems = new ArrayList<SelectItem>(searchFields.length);
@@ -442,6 +453,15 @@ public class UserQuery extends BaseController {
         doAddFieldToQuery(new QueryToken(query, field, BooleanOperand.valueOf(operand)));
     }
 
+    public void doAddFilterToQuery(String field, String query) {
+        String filterQuery = field+":\""+query+"\"";
+        if (!this.queryFilterList.contains(filterQuery)){
+            this.queryFilterList.add(filterQuery);
+        }
+
+        hideAddFieldsPanel();
+    }
+
     public void doAddParamOntologyTermToQuery(ActionEvent evt) {
         String term = (String)JsfUtils.getParameterValue( "term", evt);
 
@@ -575,7 +595,7 @@ public class UserQuery extends BaseController {
     public void setDatasets(String[] datasets) {
         this.datasets = datasets;
 
-        addToTokenList(FieldNames.DATASET, datasets);
+        //addToTokenList(FieldNames.DATASET, datasets);
     }
 
     public String[] getExpansions() {
@@ -585,7 +605,7 @@ public class UserQuery extends BaseController {
     public void setExpansions(String[] expansions) {
         this.expansions = expansions;
 
-        addToTokenList(FieldNames.DATASET, datasets);
+        //addToTokenList(FieldNames.DATASET, datasets);
     }
 
     public static boolean containsNotSpecified(String[] values) {
@@ -677,6 +697,14 @@ public class UserQuery extends BaseController {
 
     public List<QueryToken> getQueryTokenList() {
         return queryTokenList;
+    }
+
+    public List<String> getQueryFilterList() {
+        return queryFilterList;
+    }
+
+    public void setQueryFilterList(List<String> queryFilterList) {
+        this.queryFilterList = queryFilterList;
     }
 
     public void setQueryTokenList(List<QueryToken> queryTokenList) {

@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.view.webapp.controller.browse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.bridges.ontologies.term.OntologyTerm;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
 import uk.ac.ebi.intact.view.webapp.util.RootTerm;
 
@@ -33,7 +34,7 @@ import uk.ac.ebi.intact.view.webapp.util.RootTerm;
 @Scope( "request" )
 public class ChebiBrowserController extends OntologyBrowserController {
 
-    public static final String FIELD_NAME = "chebi_expanded_id";
+    public static final String FIELD_NAME = FieldNames.ID;
 
     @Override
     protected OntologyTerm createRootTerm(OntologySearcher ontologySearcher) {
