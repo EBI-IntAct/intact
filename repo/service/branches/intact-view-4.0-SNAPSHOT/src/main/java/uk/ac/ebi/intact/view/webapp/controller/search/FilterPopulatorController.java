@@ -19,7 +19,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.intact.core.context.DataContext;
+import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.model.CvTopic;
 
 import javax.annotation.PostConstruct;
@@ -42,18 +45,20 @@ public class FilterPopulatorController {
     private static final Log log = LogFactory.getLog( FilterPopulatorController.class );
 
     public static final String NOT_SPECIFIED_VALUE = "Not specified";
-    public static final String EXPANSION_SPOKE_VALUE = "Spoke";
+    public static final String EXPANSION_SPOKE_VALUE = "MI:1060";
 
     private List<String> datasets;
     private List<String> sources;
-
     private List<String> expansions;
-    private List<SelectItem> stoichiometry;
-    private List<SelectItem> negative;
-    private List<SelectItem> parameters;
+    private List<String> stoichiometry;
+    private List<String> parameters;
+    private List<String> negative;
+
+    private List<SelectItem> stoichiometrySelectItems;
+    private List<SelectItem> negativeSelectItems;
+    private List<SelectItem> parametersSelectItems;
     private List<SelectItem> datasetSelectItems;
     private List<SelectItem> sourceSelectItems;
-
     private List<SelectItem> expansionSelectItems;
 
     @Autowired
@@ -81,9 +86,9 @@ public class FilterPopulatorController {
 
         expansionSelectItems = listExpansionSelectItems();
         expansions = getValues(expansionSelectItems);
-        negative = listNegativeSelectItems();
-        parameters = listParametersSelectItems();
-        stoichiometry = listStoichiometrySelectItems();
+        negativeSelectItems = listNegativeSelectItems();
+        parametersSelectItems = listParametersSelectItems();
+        stoichiometrySelectItems = listStoichiometrySelectItems();
     }
 
     private List<String> getValues(Collection<SelectItem> selectItems) {
@@ -96,8 +101,11 @@ public class FilterPopulatorController {
         return values;
     }
 
-    @Transactional(readOnly = true)
     public List<SelectItem> listDatasets() {
+        DataContext context = IntactContext.getCurrentInstance().getDataContext();
+
+        TransactionStatus status = context.beginTransaction();
+
         Query query = entityManagerFactory.createEntityManager()
                 .createQuery("select distinct a.annotationText " +
                              "from Annotation a " +
@@ -125,11 +133,14 @@ public class FilterPopulatorController {
             datasets.add(new SelectItem(dataset, value, description));
         }
 
+        context.commitTransaction(status);
         return datasets;
     }
 
-    @Transactional
     public List<SelectItem> listSources() {
+        DataContext context = IntactContext.getCurrentInstance().getDataContext();
+        TransactionStatus status = context.beginTransaction();
+
         Query query = entityManagerFactory.createEntityManager().createQuery("select distinct i.owner.shortLabel from InteractionImpl i");
         List<String> sourceResults = query.getResultList();
 
@@ -139,6 +150,7 @@ public class FilterPopulatorController {
             sources.add(new SelectItem(source));
         }
 
+        context.commitTransaction(status);
         return sources;
     }
 
@@ -151,22 +163,22 @@ public class FilterPopulatorController {
 
     private List<SelectItem> listNegativeSelectItems() {
         List<SelectItem> negativeItems = new ArrayList<SelectItem>(2);
-        negativeItems.add(new SelectItem("true", "Only negative interactions"));
-        negativeItems.add(new SelectItem("false", "Excludes negative interactions"));
+        negativeItems.add(new SelectItem("true", "Only negativeSelectItems interactions"));
+        negativeItems.add(new SelectItem("false", "Excludes negativeSelectItems interactions"));
         return negativeItems;
     }
 
     private List<SelectItem> listParametersSelectItems() {
         List<SelectItem> parameters = new ArrayList<SelectItem>(2);
-        parameters.add(new SelectItem("true", "Only interactions having parameters available"));
-        parameters.add(new SelectItem("false", "Excludes interactions having parameters available"));
+        parameters.add(new SelectItem("true", "Only interactions having parametersSelectItems available"));
+        parameters.add(new SelectItem("false", "Excludes interactions having parametersSelectItems available"));
         return parameters;
     }
 
     private List<SelectItem> listStoichiometrySelectItems() {
         List<SelectItem> stoichiometry = new ArrayList<SelectItem>(2);
-        stoichiometry.add(new SelectItem("true", "Only interactions having stoichiometry information"));
-        stoichiometry.add(new SelectItem("false", "Excludes interactions having stoichiometry information"));
+        stoichiometry.add(new SelectItem("true", "Only interactions having stoichiometrySelectItems information"));
+        stoichiometry.add(new SelectItem("false", "Excludes interactions having stoichiometrySelectItems information"));
         return stoichiometry;
     }
 
@@ -194,20 +206,44 @@ public class FilterPopulatorController {
         this.sources = sources;
     }
 
+    public List<String> getStoichiometry() {
+        return stoichiometry;
+    }
+
+    public void setStoichiometry(List<String> stoichiometry) {
+        this.stoichiometry = stoichiometry;
+    }
+
+    public List<String> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(List<String> parameters) {
+        this.parameters = parameters;
+    }
+
+    public List<String> getNegative() {
+        return negative;
+    }
+
+    public void setNegative(List<String> negative) {
+        this.negative = negative;
+    }
+
     public List<String> getExpansions() {
         return new ArrayList<String>(expansions);
     }
 
-    public List<SelectItem> getStoichiometry() {
-        return new ArrayList<SelectItem>(stoichiometry);
+    public List<SelectItem> getStoichiometrySelectItems() {
+        return new ArrayList<SelectItem>(stoichiometrySelectItems);
     }
 
-    public List<SelectItem> getParameters() {
-        return new ArrayList<SelectItem>(parameters);
+    public List<SelectItem> getParametersSelectItems() {
+        return new ArrayList<SelectItem>(parametersSelectItems);
     }
 
-    public List<SelectItem> getNegative() {
-        return new ArrayList<SelectItem>(negative);
+    public List<SelectItem> getNegativeSelectItems() {
+        return new ArrayList<SelectItem>(negativeSelectItems);
     }
 
     public void setExpansions(List<String> expansions) {

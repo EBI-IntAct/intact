@@ -15,13 +15,7 @@
  */
 package uk.ac.ebi.intact.view.webapp.controller.search;
 
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpMethodRetryHandler;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
@@ -29,6 +23,7 @@ import org.hupo.psi.mi.psicquic.registry.ServiceType;
 import org.hupo.psi.mi.psicquic.registry.client.PsicquicRegistryClientException;
 import org.hupo.psi.mi.psicquic.registry.client.registry.DefaultPsicquicRegistryClient;
 import org.hupo.psi.mi.psicquic.registry.client.registry.PsicquicRegistryClient;
+import org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -36,11 +31,9 @@ import uk.ac.ebi.intact.view.webapp.application.PsicquicThreadConfig;
 import uk.ac.ebi.intact.view.webapp.controller.BaseController;
 import uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration;
 
-import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ComponentSystemEvent;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,14 +65,7 @@ public class PsicquicController extends BaseController {
     private int nonRespondingImexDatabases = -1;
     private int threadTimeOut = 5;
 
-    private HttpClient psicquicHttpClient;
-
     public PsicquicController() {
-    }
-
-    @PostConstruct
-    public void initializePsicquicClient(){
-        psicquicHttpClient = intactViewConfiguration.getPsicquicHttpClient();
     }
 
     private boolean isImexService(ServiceType service){
@@ -130,6 +116,8 @@ public class PsicquicController extends BaseController {
                 }
 
                 for (final ServiceType service : services) {
+                    final PsicquicSimpleClient client = intactViewConfiguration.getPsicquicClient(service.getRestUrl());
+
                     if (!areImexServicesInitialized){
 
                         if (isImexService(service)){
@@ -144,7 +132,7 @@ public class PsicquicController extends BaseController {
                     Callable<PsicquicCountResults> runnable = new Callable<PsicquicCountResults>() {
                         public PsicquicCountResults call() {
 
-                            return processPsicquicQueries(service, psicquicQuery);
+                            return processPsicquicQueries(service, psicquicQuery, client);
                         }
                     };
 
@@ -221,20 +209,20 @@ public class PsicquicController extends BaseController {
         runningTasks.clear();
     }
 
-    private PsicquicCountResults processPsicquicQueries(ServiceType service, String query){
+    private PsicquicCountResults processPsicquicQueries(ServiceType service, String query, PsicquicSimpleClient client){
         PsicquicCountResults results = new PsicquicCountResults();
 
         if (isImexService(service)){
             results.setImex(true);
-            collectCountFromImexService(service, query, results);
+            collectCountFromImexService(service, query, results, client);
         }
 
-        collectCountFromPsicquicService(service, query, results);
+        collectCountFromPsicquicService(service, query, results, client);
 
         return results;
     }
 
-    private void collectCountFromPsicquicService(ServiceType service, String query, PsicquicCountResults results) {
+    private void collectCountFromPsicquicService(ServiceType service, String query, PsicquicCountResults results, PsicquicSimpleClient client) {
 
         String url = null;
         HttpMethod method = null;
@@ -243,34 +231,11 @@ public class PsicquicController extends BaseController {
             String encoded = URLEncoder.encode(query, "UTF-8");
             encoded = encoded.replaceAll("\\+", "%20");
 
-            url = service.getRestUrl()+"query/"+ encoded +"?format=count";
+            long count = client.countByQuery(encoded);
 
+            results.setPsicquicCount((int) count);
+            results.setServiceResponding(true);
 
-            HttpClient httpClient = psicquicHttpClient;
-
-            method = createHttpMethodWithoutRetry(url);
-
-            final int returnCode = httpClient.executeMethod(method);
-
-            if (returnCode != 200) {
-                log.error("HTTP Error " + returnCode + " connecting to PSICQUIC service '" + service.getName() + "': " + url + " / proxy " + intactViewConfiguration.getProxyHost() + ":" + intactViewConfiguration.getProxyPort());
-                method.releaseConnection();
-
-                results.setServiceResponding(false);
-
-            } else {
-                results.setServiceResponding(true);
-
-                final InputStream input = method.getResponseBodyAsStream();
-                try{
-                    String strCount = IOUtils.toString(input);
-                    results.setPsicquicCount(Integer.parseInt(strCount));
-                }
-                finally {
-                    input.close();
-                    method.releaseConnection();
-                }
-            }
         } catch (IOException e) {
             log.error("Problem connecting to PSICQUIC service '"+service.getName()+"': "+url+" / proxy "+intactViewConfiguration.getProxyHost()+":"+intactViewConfiguration.getProxyPort(), e);
 
@@ -280,129 +245,27 @@ public class PsicquicController extends BaseController {
 
             results.setServiceResponding(false);
         }
-
-        /*HttpURLConnection connection = null;
-        String countUrl = null;
-        try {
-            String encoded = URLEncoder.encode(query, "UTF-8");
-            encoded = encoded.replaceAll("\\+", "%20");
-
-            String separator = (service.getRestUrl().endsWith( "/" ) ? "" : "/" );
-            countUrl = service.getRestUrl() + separator + "query/" + encoded + "?format=count";
-
-            URL url = new URL(countUrl);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
-
-            connection.connect();
-
-            results.setServiceResponding(true);
-            String strCount = IOUtils.toString(connection.getInputStream());
-            results.setPsicquicCount(Integer.parseInt(strCount));
-
-        } catch (SocketTimeoutException se) {
-            log.error("Problem connecting to PSICQUIC service '"+service.getName()+"': "+countUrl, se);
-
-            results.setServiceResponding(false);
-        } catch (IOException e) {
-            log.error("Problem connecting to PSICQUIC service '"+service.getName()+"': "+countUrl, e);
-
-            results.setServiceResponding(false);
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
-        }*/
     }
 
-    private void collectCountFromImexService(ServiceType service, String query, PsicquicCountResults results) {
+    private void collectCountFromImexService(ServiceType service, String query, PsicquicCountResults results, PsicquicSimpleClient client) {
         final String imexQuery = createImexQuery(query);
         results.setImex(true);
 
-        String url = null;
-        HttpMethod method = null;
         try {
 
             String encoded = URLEncoder.encode(imexQuery, "UTF-8");
             encoded = encoded.replaceAll("\\+", "%20");
 
-            url = service.getRestUrl()+"query/"+ encoded +"?format=count";
+            long count = client.countByQuery(encoded);
 
-            HttpClient httpClient = psicquicHttpClient;
+            results.setImexCount((int) count);
+            results.setImexResponding(true);
 
-            method = createHttpMethodWithoutRetry(url);
-
-            final int returnCode = httpClient.executeMethod(method);
-
-            if (returnCode != 200) {
-                log.error("HTTP Error " + returnCode + " connecting to IMEx service '" + service.getName() + "': " + url + " / proxy " + intactViewConfiguration.getProxyHost() + ":" + intactViewConfiguration.getProxyPort());
-                method.releaseConnection();
-
-                results.setImexResponding(false);
-            } else {
-                results.setImexResponding(true);
-
-                final InputStream input = method.getResponseBodyAsStream();
-                String strCount = IOUtils.toString(input);
-                input.close();
-                results.setImexCount(Integer.parseInt(strCount));
-
-                method.releaseConnection();
-            }
         } catch (IOException e) {
-            log.error("Problem connecting to PSICQUIC service '"+service.getName()+"': "+url+" / proxy "+intactViewConfiguration.getProxyHost()+":"+intactViewConfiguration.getProxyPort(), e);
-
-            if (method != null){
-                method.releaseConnection();
-            }
+            log.error("Problem connecting to PSICQUIC service '"+service.getName()+"': / proxy "+intactViewConfiguration.getProxyHost()+":"+intactViewConfiguration.getProxyPort(), e);
 
             results.setImexResponding(false);
         }
-
-        /*HttpURLConnection connection = null;
-        String countUrl = null;
-        try {
-            String encoded = URLEncoder.encode(imexQuery, "UTF-8");
-            encoded = encoded.replaceAll("\\+", "%20");
-
-            String separator = (service.getRestUrl().endsWith( "/" ) ? "" : "/" );
-            countUrl = service.getRestUrl() + separator + "query/" + encoded + "?format=count";
-
-            URL url = new URL(countUrl);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(10000);
-            connection.setReadTimeout(10000);
-
-            connection.connect();
-
-            results.setImexResponding(true);
-            String strCount = IOUtils.toString(connection.getInputStream());
-            results.setImexCount(Integer.parseInt(strCount));
-
-        } catch (SocketTimeoutException se) {
-            log.error("Problem connecting to IMEx service '"+service.getName()+"': "+countUrl, se);
-
-            results.setImexResponding(false);
-        } catch (IOException e) {
-            log.error("Problem connecting to IMEx service '"+service.getName()+"': "+countUrl, e);
-
-            results.setImexResponding(false);
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
-        }*/
-    }
-
-    private HttpMethod createHttpMethodWithoutRetry(String url) {
-        HttpMethod method = new GetMethod(url);
-        HttpMethodRetryHandler handler = new DefaultHttpMethodRetryHandler(0, false);
-        HttpMethodParams params = new HttpMethodParams();
-        params.setParameter(HttpMethodParams.RETRY_HANDLER, handler);
-        method.setParams(params);
-
-        return method;
     }
 
     private String createImexQuery(String query) {

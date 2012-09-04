@@ -20,7 +20,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.intact.core.context.DataContext;
+import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.view.webapp.controller.JpaBaseController;
 import uk.ac.ebi.intact.view.webapp.controller.config.ColourPalette;
 
@@ -62,9 +65,11 @@ public class IconGeneratorImpl extends JpaBaseController implements IconGenerato
         prepareColours();
     }
 
-    @Transactional(readOnly = true)
     public void prepareColours() {
         if (log.isInfoEnabled()) log.info("Preparing simple icons for CVs");
+
+        DataContext context = IntactContext.getCurrentInstance().getDataContext();
+        TransactionStatus status = context.beginTransaction();
 
         final List<Object[]> proteinTypeLabels = listProteinTypeLabels();
         //Collections.sort(proteinTypeLabels);
@@ -101,6 +106,8 @@ public class IconGeneratorImpl extends JpaBaseController implements IconGenerato
 
             bioRoleColourMap.put(label, new ColouredCv(label, colour, description));
         }
+
+        context.commitTransaction(status);
     }
 
     public Map<String, ColouredCv> getTypeColourMap() {

@@ -167,9 +167,9 @@ public class UserQuery extends BaseController {
                 new SearchField(FieldNames.COMPLEX_EXPANSION, "Expansion algorithm", filterPopulator.getExpansionSelectItems()),
                 new SearchField(FieldNames.SOURCE, "Source", filterPopulator.getSourceSelectItems()),
                 new SearchField(FieldNames.UPDATE_DATE, "Last update date (Ex : 20110524)"),
-                new SearchField(FieldNames.NEGATIVE, "Negative interactions", filterPopulator.getNegative()),
-                new SearchField(FieldNames.INTERACTOR_STOICHIOMETRY, "Stoichiometry", filterPopulator.getStoichiometry()),
-                new SearchField(FieldNames.INTERACTION_PARAMETERS, "Interaction parameters", filterPopulator.getParameters()),
+                new SearchField(FieldNames.NEGATIVE, "Negative interactions", filterPopulator.getNegativeSelectItems()),
+                new SearchField(FieldNames.INTERACTOR_STOICHIOMETRY, "Stoichiometry", filterPopulator.getStoichiometrySelectItems()),
+                new SearchField(FieldNames.INTERACTION_PARAMETERS, "Interaction parameters", filterPopulator.getParametersSelectItems()),
                 new SearchField(FieldNames.INTERACTION_ANNOTATIONS+":\"dataset", "Dataset", filterPopulator.getDatasetSelectItems()),
         };
 

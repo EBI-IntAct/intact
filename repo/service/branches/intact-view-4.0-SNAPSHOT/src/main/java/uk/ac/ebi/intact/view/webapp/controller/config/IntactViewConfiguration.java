@@ -15,8 +15,6 @@
  */
 package uk.ac.ebi.intact.view.webapp.controller.config;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpHost;
@@ -28,6 +26,7 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ebi.intact.view.webapp.IntactViewException;
@@ -35,7 +34,10 @@ import uk.ac.ebi.intact.view.webapp.controller.BaseController;
 
 import javax.persistence.EntityManagerFactory;
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
+import java.net.Proxy;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -117,6 +119,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
     private String dastyUrl;
     private String proxyHost;
     private String proxyPort;
+    private Proxy proxy;
     private int maxSizeXmlExport;
     private int maxSizeXgmmlExport;
 
@@ -126,22 +129,21 @@ public class IntactViewConfiguration extends BaseController implements Initializ
 
     private HttpSolrServer solrServer;
     private HttpSolrServer ontologySolrServer;
-    private HttpClient psicquicHttpClient;
-    
+
     private List<String> databaseNamesUsingSameSolr;
 
     private String ontologyLuceneDirectory;
 
     public IntactViewConfiguration() {
     }
-    
+
     public void afterPropertiesSet() throws Exception {
         storeIfNew();
         if (databaseNamesUsingSameSolr == null){
             databaseNamesUsingSameSolr = new ArrayList<String>();
         }
     }
-    
+
     public void storeIfNew() {
         if (new File(configFile).exists()) {
             try {
@@ -310,7 +312,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
     public void setFtpUrl( String ftpUrl ) {
         this.ftpUrl = ftpUrl;
     }
-    
+
     public String getFaqUrl() {
         return faqUrl;
     }
@@ -525,25 +527,29 @@ public class IntactViewConfiguration extends BaseController implements Initializ
         return httpClient;
     }
 
-    public HttpClient getPsicquicHttpClient() {
-        if (psicquicHttpClient == null) {
-            psicquicHttpClient = new HttpClient(new MultiThreadedHttpConnectionManager());
+    public PsicquicSimpleClient getPsicquicClient(String rest) {
+        PsicquicSimpleClient simpleClient;
+
+        if (proxyPort != null){
+            try{
+                int port = Integer.parseInt(proxyPort);
+                SocketAddress address = new InetSocketAddress(proxyHost, port);
+                this.proxy = new Proxy(Proxy.Type.HTTP, address);
+            }
+            catch(Exception e){
+                log.error("Cannot create proxy using port " + proxyPort);
+            }
         }
 
-        if (isValueSet(proxyHost) && isValueSet(proxyPort)) {
-            psicquicHttpClient.getHostConfiguration().setProxy(proxyHost, Integer.valueOf(proxyPort));
+        if (proxy != null) {
+            simpleClient = new PsicquicSimpleClient(rest, proxy);
 
-            log.info("Setting PSICQUIC httpClient using proxy: " + proxyHost + ":" + proxyPort);
         } else {
             log.info("Setting PSICQUIC httpClient using proxy with NO PROXY");
+            simpleClient = new PsicquicSimpleClient(rest);
         }
 
-        psicquicHttpClient.getParams().setParameter("http.socket.timeout", 5000);
-        psicquicHttpClient.getParams().setParameter("http.connection.timeout", 5000);
-        psicquicHttpClient.getParams().setParameter("http.connection-manager.timeout", new Long(5000));
-        psicquicHttpClient.getParams().setParameter("http.protocol.head-body-timeout", 5000);
-
-        return psicquicHttpClient;
+        return simpleClient;
     }
 
     public void setSolrOntologiesUrl(String solrOntologiesUrl) {

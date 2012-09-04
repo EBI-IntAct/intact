@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.model.CrossReference;
-import uk.ac.ebi.intact.model.CvInteractorType;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 import uk.ac.ebi.intact.view.webapp.application.OntologyInteractorTypeConfig;
 import uk.ac.ebi.intact.view.webapp.controller.ContextController;
 import uk.ac.ebi.intact.view.webapp.controller.JpaBaseController;
@@ -49,9 +49,6 @@ public class SearchController extends JpaBaseController {
     private IntactViewConfiguration intactViewConfiguration;
 
     @Autowired
-    private SearchCache searchCache;
-
-    @Autowired
     private ContextController contextController;
 
     private int totalResults;
@@ -69,9 +66,6 @@ public class SearchController extends JpaBaseController {
 
     private boolean expandedView;
 
-    private final static String[] PROTEIN_TYPES = new String[]{CvInteractorType.PROTEIN_MI_REF, CvInteractorType.PEPTIDE_MI_REF};
-    private final static String[] COMPOUND_TYPES = new String[]{CvInteractorType.SMALL_MOLECULE_MI_REF, "MI:1100", "MI:0904"};
-
     // results
     private LazySearchResultDataModel results;
     private InteractorSearchResultDataModel proteinResults;
@@ -83,8 +77,8 @@ public class SearchController extends JpaBaseController {
     private String exportFormat;
 
     //sorting
-    private static final String DEFAULT_SORT_COLUMN = "rigid";
-    private static final boolean DEFAULT_SORT_ORDER = true;
+    private static final String DEFAULT_SORT_COLUMN = FieldNames.INTACT_SCORE_NAME;
+    private static final boolean DEFAULT_SORT_ORDER = false;
 
     private String userSortColumn = DEFAULT_SORT_COLUMN;
     //as the Sort constructor is Sort(String field, boolean reverse)
@@ -225,9 +219,6 @@ public class SearchController extends JpaBaseController {
 
 
     private LazySearchResultDataModel createInteractionDataModel(SolrQuery query) {
-        if (searchCache.containsInteractionKey(query)) {
-            return searchCache.getInteractionModel(query);
-        }
 
         SolrServer solrServer = intactViewConfiguration.getInteractionSolrServer();
 
@@ -245,7 +236,7 @@ public class SearchController extends JpaBaseController {
         doNucleicAcidSearch(typeConfig);
         doGeneSearch(typeConfig);
 
-        interactorTotalResults = smallMoleculeTotalResults + proteinTotalResults + nucleicAcidTotalResults;
+        interactorTotalResults = smallMoleculeTotalResults + proteinTotalResults + nucleicAcidTotalResults + geneTotalResults;
 
     }
 
@@ -276,10 +267,6 @@ public class SearchController extends JpaBaseController {
     public InteractorSearchResultDataModel doInteractorSearch(String[] interactorTypeMis) {
         UserQuery userQuery = getUserQuery();
         final SolrQuery solrQuery = userQuery.createSolrQuery();
-
-        if (searchCache.containsInteractorKey(solrQuery, interactorTypeMis)) {
-            return searchCache.getInteractorModel(solrQuery, interactorTypeMis);
-        }
 
         if (log.isDebugEnabled()) log.debug("Searching interactors of type ("+ Arrays.toString(interactorTypeMis)+") for query: " + solrQuery);
 
@@ -495,8 +482,20 @@ public class SearchController extends JpaBaseController {
         this.nucleicAcidTotalResults = nucleicAcidTotalResults;
     }
 
+    public int getGeneTotalResults() {
+        return geneTotalResults;
+    }
+
+    public void setGeneTotalResults(int geneTotalResults) {
+        this.geneTotalResults = geneTotalResults;
+    }
+
     public InteractorSearchResultDataModel getNucleicAcidResults() {
         return nucleicAcidResults;
+    }
+
+    public InteractorSearchResultDataModel getGeneResults() {
+        return geneResults;
     }
 
     public int getUnfilteredTotalCount() {
