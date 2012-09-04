@@ -20,32 +20,29 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.hupo.psi.calimocho.io.IllegalRowException;
 import org.hupo.psi.calimocho.tab.util.MitabDocumentDefinitionFactory;
 import org.hupo.psi.calimocho.xgmml.XgmmlStreamingGrapBuilder;
+import org.hupo.psi.mi.psicquic.model.PsicquicSolrException;
 import org.hupo.psi.mi.rdf.PsimiRdfConverter;
 import org.hupo.psi.mi.rdf.RdfFormat;
+import psidev.psi.mi.tab.PsimiTabException;
 import psidev.psi.mi.tab.PsimiTabWriter;
-import psidev.psi.mi.tab.converter.tab2xml.Tab2Xml;
-import psidev.psi.mi.tab.model.BinaryInteraction;
+import psidev.psi.mi.tab.converter.tab2xml.XmlConversionException;
 import psidev.psi.mi.tab.model.builder.PsimiTabVersion;
 import psidev.psi.mi.xml.PsimiXmlVersion;
 import psidev.psi.mi.xml.PsimiXmlWriter;
-import psidev.psi.mi.xml.converter.ConverterException;
 import psidev.psi.mi.xml.model.EntrySet;
 import psidev.psi.mi.xml.stylesheets.XslTransformException;
 import psidev.psi.mi.xml.stylesheets.XslTransformerUtils;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrSearchResult;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrSearcher;
-import uk.ac.ebi.intact.dataexchange.psimi.solr.SolrSearchResult;
-import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
-import uk.ac.ebi.intact.psimitab.IntactPsimiTabWriter;
-import uk.ac.ebi.intact.psimitab.IntactTab2Xml;
 import uk.ac.ebi.intact.view.webapp.IntactViewException;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -58,7 +55,7 @@ public class BinaryInteractionsExporter {
 
     private static final Log log = LogFactory.getLog( BinaryInteractionsExporter.class );
 
-    private SolrServer solrServer;
+    private IntactSolrSearcher solrSearcher;
     public static final String XML_2_53 = "xml_2_53";
     public static final String XML_2_54 = "xml_2_54";
     public static final String MITAB_25 = "mitab_25";
@@ -76,7 +73,7 @@ public class BinaryInteractionsExporter {
     public static final String XGMML = "xgmml";
 
     public BinaryInteractionsExporter(SolrServer solrServer) {
-        this.solrServer = solrServer;
+        this.solrSearcher = new IntactSolrSearcher(solrServer);
     }
 
     public String searchAndExport( OutputStream os, SolrQuery searchQuery, String format) throws IOException, IllegalRowException {
@@ -142,24 +139,12 @@ public class BinaryInteractionsExporter {
         }
     }
 
-    private void exportToMiTabIntact(OutputStream os, SolrQuery searchQuery) throws IOException, IntactViewException {
-        PsimiTabWriter writer = new IntactPsimiTabWriter();
-        Writer out = new BufferedWriter(new OutputStreamWriter(os));
-        try{
-            writeMitab(out, writer, searchQuery);
-        }
-        finally {
-
-            // close writer
-            out.close();
-        }
-    }
-
     private void writeMitab(Writer out, PsimiTabWriter writer, SolrQuery query) throws IOException {
         Integer firstResult = 0;
         Integer maxResults = 200;
 
-        boolean headerEnabled = true;
+        // write header first
+        writer.writeMitabHeader(out);
 
         Collection interactions;
 
@@ -167,22 +152,23 @@ public class BinaryInteractionsExporter {
             query.setStart(firstResult);
             query.setRows(maxResults);
 
-            IntactSolrSearcher searcher = new IntactSolrSearcher(solrServer);
-            SolrSearchResult result = searcher.search(query);
-
-            interactions = result.getBinaryInteractionList();
-            writer.setHeaderEnabled(headerEnabled);
+            IntactSolrSearchResult result = null;
             try {
+                result = solrSearcher.search(query);
+                interactions = result.getBinaryInteractionList();
+
                 writer.write(interactions, out);
-            } catch (ConverterException e) {
-                throw new IntactViewException("Problem exporting interactions", e);
+
+                firstResult = firstResult + maxResults;
+                out.flush();
+
+            } catch (PsicquicSolrException e) {
+                throw new IntactViewException("Impossible to find the results of this query " + query.getQuery(), e);
+            } catch (SolrServerException e) {
+                throw new IntactViewException("Impossible to find the results of this query " + query.getQuery(), e);
+            } catch (PsimiTabException e) {
+                throw new IntactViewException("Impossible to convert the results of this query " + query.getQuery(), e);
             }
-
-            headerEnabled = false;
-
-            firstResult = firstResult + maxResults;
-
-            out.flush();
 
         } while (!interactions.isEmpty() && interactions.size() == maxResults);
     }
@@ -201,27 +187,36 @@ public class BinaryInteractionsExporter {
                 query.setStart(firstResult);
                 query.setRows(maxResults);
 
-                IntactSolrSearcher searcher = new IntactSolrSearcher(solrServer);
-                SolrSearchResult result = searcher.search(query);
-
-                if (!started){
-                    started = true;
-                    graphBuilder.open(out, (int) result.getTotalCount());
-                }
-
-                interactions = result.getLineList();
-
-                InputStream is = new ByteArrayInputStream(StringUtils.join(interactions, System.getProperty("line.separator")).getBytes());
-
+                IntactSolrSearchResult result = null;
                 try {
-                    graphBuilder.writeNodesAndEdgesFromMitab(is, MitabDocumentDefinitionFactory.mitab25Intact());
-                }finally {
-                    is.close();
+                    result = solrSearcher.search(query);
+
+                    if (!started){
+                        started = true;
+                        graphBuilder.open(out, (int) result.getNumberResults());
+                    }
+
+                    interactions = result.getBinaryInteractionList();
+
+                    InputStream is = new ByteArrayInputStream(StringUtils.join(interactions, System.getProperty("line.separator")).getBytes());
+
+                    try {
+                        graphBuilder.writeNodesAndEdgesFromMitab(is, MitabDocumentDefinitionFactory.mitab25Intact());
+                    }finally {
+                        is.close();
+                    }
+
+                    firstResult = firstResult + maxResults;
+
+                    out.flush();
+
+                } catch (PsicquicSolrException e) {
+                    throw new IntactViewException("Impossible to find the results of this query " + query.getQuery(), e);
+                } catch (SolrServerException e) {
+                    throw new IntactViewException("Impossible to find the results of this query " + query.getQuery(), e);
+                } catch (PsimiTabException e) {
+                    throw new IntactViewException("Impossible to convert the results of this query " + query.getQuery(), e);
                 }
-
-                firstResult = firstResult + maxResults;
-
-                out.flush();
 
             } while (!interactions.isEmpty() && interactions.size() == maxResults);
         } catch (JAXBException e) {
@@ -318,37 +313,30 @@ public class BinaryInteractionsExporter {
     }
 
     private EntrySet createEntrySet(SolrQuery solrQuery) {
-        Collection<IntactBinaryInteraction> interactions = findBinaryInteractions(solrQuery);
-
-        Tab2Xml tab2Xml = new IntactTab2Xml();
-
-        final EntrySet entrySet;
+        IntactSolrSearchResult result1 = null;
         try {
-            entrySet = tab2Xml.convert(new ArrayList<BinaryInteraction>(interactions));
-        } catch (Exception e) {
-            throw new IntactViewException("Problem converting interactions from MITAB to XML", e);
+            result1 = solrSearcher.search(solrQuery);
+            if (result1.getNumberResults() > 5000) {
+                throw new IntactViewException("Too many interactions to export to XML. Maximum is 5000");
+            }
+
+            EntrySet entrySet = result1.createEntrySet();
+
+            return entrySet;
+
+        } catch (PsicquicSolrException e) {
+            throw new IntactViewException("Impossible to find the results of this query " + solrQuery.getQuery(), e);
+        } catch (SolrServerException e) {
+            throw new IntactViewException("Impossible to find the results of this query " + solrQuery.getQuery(), e);
+        } catch (IOException e) {
+            throw new IntactViewException("Impossible to convert the xml results of this query " + solrQuery.getQuery(), e);
+        } catch (IllegalAccessException e) {
+            throw new IntactViewException("Impossible to convert the xml results of this query " + solrQuery.getQuery(), e);
+        } catch (XmlConversionException e) {
+            throw new IntactViewException("Impossible to convert the xml results of this query " + solrQuery.getQuery(), e);
+        } catch (PsimiTabException e) {
+            throw new IntactViewException("Impossible to convert the xml results of this query " + solrQuery.getQuery(), e);
         }
-        return entrySet;
     }
-
-    private Collection<IntactBinaryInteraction> findBinaryInteractions(SolrQuery solrQuery) {
-        SolrSearchResult result = findResult(solrQuery);
-        return result.getBinaryInteractionList();
-    }
-
-    private SolrSearchResult findResult(SolrQuery solrQuery) {
-        IntactSolrSearcher searcher = new IntactSolrSearcher(solrServer);
-
-        SolrSearchResult result1 = searcher.search(solrQuery);
-
-        if (result1.getTotalCount() > 5000) {
-            throw new IntactViewException("Too many interactions to export to XML. Maximum is 5000");
-        }
-
-        //SolrSearchResult result = searcher.search(searchQuery, null, null);
-        solrQuery.setRows(Integer.MAX_VALUE);
-        return searcher.search(solrQuery);
-    }
-
 
 }

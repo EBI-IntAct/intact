@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.view.webapp.controller.config;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpHost;
@@ -129,6 +131,9 @@ public class IntactViewConfiguration extends BaseController implements Initializ
 
     private HttpSolrServer solrServer;
     private HttpSolrServer ontologySolrServer;
+
+    private HttpClient httpClientWithProxy;
+    private HttpClient httpClientWithoutProxy;
 
     private List<String> databaseNamesUsingSameSolr;
 
@@ -497,7 +502,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
         return solrServer;
     }
 
-    private org.apache.http.client.HttpClient getHttpClientBasedOnUrl(String url) {
+    public org.apache.http.client.HttpClient getHttpClientBasedOnUrl(String url) {
         SchemeRegistry schemeRegistry = new SchemeRegistry();
         schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory
                 .getSocketFactory()));
@@ -525,6 +530,38 @@ public class IntactViewConfiguration extends BaseController implements Initializ
             }
         }
         return httpClient;
+    }
+
+    public HttpClient getCommonsHttpClientBasedOnUrl(String url) {
+        if (url.contains("localhost") || url.contains("127.0.0.1")) {
+            return getHttpClientWithoutProxy();
+        }
+        return getHttpClientWithProxy();
+    }
+
+    protected HttpClient getHttpClientWithProxy() {
+        if (httpClientWithProxy == null) {
+            httpClientWithProxy = new HttpClient(new MultiThreadedHttpConnectionManager());
+
+            if (isValueSet(proxyHost) && isValueSet(proxyPort)) {
+                httpClientWithProxy.getHostConfiguration().setProxy(proxyHost, Integer.valueOf(proxyPort));
+
+                log.info("Setting HTTPClient using proxy: " + proxyHost + ":" + proxyPort);
+            } else {
+                log.info("Setting HTTPClient using proxy with NO PROXY");
+            }
+
+        }
+
+        return httpClientWithProxy;
+    }
+
+    protected HttpClient getHttpClientWithoutProxy() {
+        if (httpClientWithoutProxy == null) {
+            httpClientWithoutProxy = new HttpClient(new MultiThreadedHttpConnectionManager());
+        }
+
+        return httpClientWithoutProxy;
     }
 
     public PsicquicSimpleClient getPsicquicClient(String rest) {

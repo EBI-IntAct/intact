@@ -18,7 +18,6 @@ package uk.ac.ebi.intact.view.webapp.util;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hupo.psi.calimocho.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.model.*;
 import uk.ac.ebi.intact.core.context.IntactContext;
 
@@ -213,15 +212,6 @@ public final class MitabFunctions {
 
     public static String getChebiIdentifierFromCrossReferences(Collection xrefs) {
         return getIdentifierFromCrossReferences(xrefs, "chebi");
-    }
-
-    public static String getIdentifierFromCrossReferences(Collection xrefs, String databaseLabel) {
-        for (CrossReference xref : (Collection<CrossReference>) xrefs) {
-            if (databaseLabel.equals(xref.getDatabase())) {
-                return xref.getIdentifier();
-            }
-        }
-        return null;
     }
 
     public static String getIdentifierFromCrossReferences(Collection xrefs, String databaseLabel) {
