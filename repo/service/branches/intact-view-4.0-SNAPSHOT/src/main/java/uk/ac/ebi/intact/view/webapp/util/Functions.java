@@ -19,7 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.core.persister.IntactCore;
@@ -39,7 +39,7 @@ import java.util.Map;
  * @version $Id$
  */
 @Controller
-public final class Functions {
+public class Functions {
 
     private static final Log log = LogFactory.getLog( Functions.class );
 
@@ -51,7 +51,7 @@ public final class Functions {
     private static final String OLD_NEWT_URL = "http://www.ebi.ac.uk/newt/display?search=${ac}";
     private static final String NEW_NEWT_URL = "http://www.uniprot.org/taxonomy/${ac}";
 
-    private Functions() {
+    public Functions() {
     }
 
     /**
@@ -158,6 +158,7 @@ public final class Functions {
      * @param ac Accession to use in the URL
      * @return
      */
+    @Transactional(readOnly = true)
     public static String calculateXrefUrl(CvDatabase db, String ac) {
         String xrefUrl = null;
 
@@ -168,14 +169,9 @@ public final class Functions {
                 annotation = AnnotatedObjectUtils.findAnnotationByTopicMiOrLabel(db, CvTopic.SEARCH_URL);
             } else {
 
-                    TransactionStatus transaction = IntactContext.getCurrentInstance().getDataContext().beginTransaction();
-
                     CvDatabase reloadedDb = IntactContext.getCurrentInstance().getDaoFactory().getCvObjectDao(CvDatabase.class)
                             .getByAc(db.getAc());
                     annotation = AnnotatedObjectUtils.findAnnotationByTopicMiOrLabel(reloadedDb, CvTopic.SEARCH_URL);
-
-
-                    IntactContext.getCurrentInstance().getDataContext().commitTransaction(transaction);
 
             }
 

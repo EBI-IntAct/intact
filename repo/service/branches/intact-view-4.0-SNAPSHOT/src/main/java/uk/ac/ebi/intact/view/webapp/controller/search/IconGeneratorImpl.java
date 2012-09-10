@@ -24,6 +24,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.context.DataContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
+import uk.ac.ebi.intact.view.webapp.application.SpringInitializedService;
 import uk.ac.ebi.intact.view.webapp.controller.JpaBaseController;
 import uk.ac.ebi.intact.view.webapp.controller.config.ColourPalette;
 
@@ -40,7 +41,7 @@ import java.util.Map;
  * @version $Id$
  */
 @Controller
-public class IconGeneratorImpl extends JpaBaseController implements IconGenerator, InitializingBean {
+public class IconGeneratorImpl extends SpringInitializedService implements IconGenerator {
 
     private static final Log log = LogFactory.getLog( IconGeneratorImpl.class );
 
@@ -60,16 +61,13 @@ public class IconGeneratorImpl extends JpaBaseController implements IconGenerato
         bioRoleColourMap = new HashMap<String,ColouredCv>(24);
     }
 
-
-    public void afterPropertiesSet() throws Exception {
+    @Override
+    public void initialize() {
         prepareColours();
     }
 
     public void prepareColours() {
         if (log.isInfoEnabled()) log.info("Preparing simple icons for CVs");
-
-        DataContext context = IntactContext.getCurrentInstance().getDataContext();
-        TransactionStatus status = context.beginTransaction();
 
         final List<Object[]> proteinTypeLabels = listProteinTypeLabels();
         //Collections.sort(proteinTypeLabels);
@@ -106,8 +104,6 @@ public class IconGeneratorImpl extends JpaBaseController implements IconGenerato
 
             bioRoleColourMap.put(label, new ColouredCv(label, colour, description));
         }
-
-        context.commitTransaction(status);
     }
 
     public Map<String, ColouredCv> getTypeColourMap() {

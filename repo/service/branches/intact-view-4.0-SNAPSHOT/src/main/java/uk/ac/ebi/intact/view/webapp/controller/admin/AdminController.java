@@ -53,7 +53,7 @@ public class AdminController {
         CvObjectService cvObjectService = (CvObjectService) applicationContext.getBean("cvObjectService");
         FilterPopulatorController filterPopulatorController = (FilterPopulatorController) applicationContext.getBean("filterPopulator");
 
-        filterPopulatorController.loadFilters();
+        filterPopulatorController.initialize();
         statisticsController.calculateStats();
         cvObjectService.clear();
     }

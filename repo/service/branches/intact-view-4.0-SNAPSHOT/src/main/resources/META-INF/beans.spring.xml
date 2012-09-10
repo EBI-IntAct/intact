@@ -66,7 +66,7 @@
                 <value>MBInfo</value>
             </list>
         </property>
-        <property name="ontologyLuceneDirectory" value="${intact.ontologies.lucene.directory}"/>
+        <property name="ontologyLuceneDirectory" value="${ontologies.lucene.directory}"/>
     </bean>
 
         <!-- this bean must not be lazily initialized if the exporting is to happen -->

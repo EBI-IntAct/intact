@@ -59,7 +59,7 @@ public class UserQuery extends BaseController {
     public static final String SESSION_SOLR_QUERY_KEY = "UserQuery.SOLR_QUERY";
 
     private static final String TERM_NAME_PARAM = "termName";
-    public static final String STAR_QUERY = "*:*";
+    public static final String STAR_QUERY = "*";
 
     @Autowired
     private FilterPopulatorController filterPopulator;
@@ -91,7 +91,7 @@ public class UserQuery extends BaseController {
     private Map<String, String> termMap = Maps.newHashMap();
 
     //for sorting and ordering
-    private static final String DEFAULT_SORT_COLUMN = "rigid";
+    private static final String DEFAULT_SORT_COLUMN = FieldNames.INTACT_SCORE_NAME;
     private static final boolean DEFAULT_SORT_ORDER = true;
 
     private String userSortColumn = DEFAULT_SORT_COLUMN;
@@ -206,7 +206,7 @@ public class UserQuery extends BaseController {
         autoQuoteWhenNecessary();
 
         SolrQuery query = new SolrQuery( searchQuery );
-        query.setSortField(userSortColumn, (userSortOrder)? SolrQuery.ORDER.asc : SolrQuery.ORDER.desc);
+        query.setSortField(userSortColumn, (userSortOrder)? SolrQuery.ORDER.desc : SolrQuery.ORDER.asc);
 
         // store it in the HTTP Session - so it can be used by servlets (e.g. ExportServlet)
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(SESSION_SOLR_QUERY_KEY, query.toString());
