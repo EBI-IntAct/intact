@@ -1,5 +1,7 @@
 package uk.ac.ebi.intact.view.webapp.application;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.InitializingBean;
@@ -17,6 +19,8 @@ import java.util.List;
 
 /**
  * This controller will load ontology terms for different interactor types.
+ * It will be used by the searcher to know what are the different types for proteins, nucleic acids, genes
+ * and small molecules
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -25,6 +29,8 @@ import java.util.List;
 @Controller
 @ApplicationScoped
 public class OntologyInteractorTypeConfig implements InitializingBean{
+
+    private static final Log log = LogFactory.getLog(OntologyInteractorTypeConfig.class);
 
     @Autowired
     private IntactViewConfiguration intactViewConfiguration;
@@ -41,15 +47,19 @@ public class OntologyInteractorTypeConfig implements InitializingBean{
         OntologySearcher ontologySearcher = new OntologySearcher(ontologySolrServer);
 
         // load proteins
+        log.info("Loading protein types...");
         loadProteins(ontologySearcher);
 
         // load nucleic acids
+        log.info("Loading nucleic acid types...");
         loadNucleicAcids(ontologySearcher);
 
         // load compounds
+        log.info("Loading compounds types...");
         loadCompounds(ontologySearcher);
 
         // load gene
+        log.info("Loading gene types...");
         loadGenes(ontologySearcher);
 
         intactViewConfiguration.shutDownServers();
@@ -150,19 +160,11 @@ public class OntologyInteractorTypeConfig implements InitializingBean{
 
         List<OntologyTerm> totalChildren = new ArrayList<OntologyTerm>(term.getChildren());
 
-        boolean hasFoundChild = !totalChildren.isEmpty();
+        for (OntologyTerm child : term.getChildren()){
+            List<OntologyTerm> children2 = loadChildrenFor(child);
 
-        while (hasFoundChild){
-
-            hasFoundChild = false;
-
-            for (OntologyTerm child : totalChildren){
-                List<OntologyTerm> children2 = loadChildrenFor(child);
-
-                if (!children2.isEmpty()){
-                    hasFoundChild = true;
-                    totalChildren.addAll(children2);
-                }
+            if (!children2.isEmpty()){
+                totalChildren.addAll(children2);
             }
         }
 

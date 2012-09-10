@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.context.DataContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.view.webapp.application.SpringInitializedService;
 
 import javax.annotation.PostConstruct;
 import javax.faces.model.SelectItem;
@@ -40,7 +41,7 @@ import java.util.List;
  * @version $Id$
  */
 @Controller("filterPopulator")
-public class FilterPopulatorController {
+public class FilterPopulatorController extends SpringInitializedService{
 
     private static final Log log = LogFactory.getLog( FilterPopulatorController.class );
 
@@ -68,8 +69,8 @@ public class FilterPopulatorController {
 
     }
 
-    @PostConstruct
-    public void loadFilters() {
+    @Override
+    public void initialize(){
         if (log.isInfoEnabled()) log.info("Preloading filters");
 
         if (log.isDebugEnabled()) log.debug("\tPreloading datasets");
@@ -82,7 +83,7 @@ public class FilterPopulatorController {
         sourceSelectItems = listSources();
         sources = getValues(sourceSelectItems);
 
-         if (log.isDebugEnabled()) log.debug("\tPreloading expansions");
+        if (log.isDebugEnabled()) log.debug("\tPreloading expansions");
 
         expansionSelectItems = listExpansionSelectItems();
         expansions = getValues(expansionSelectItems);
@@ -102,9 +103,6 @@ public class FilterPopulatorController {
     }
 
     public List<SelectItem> listDatasets() {
-        DataContext context = IntactContext.getCurrentInstance().getDataContext();
-
-        TransactionStatus status = context.beginTransaction();
 
         Query query = entityManagerFactory.createEntityManager()
                 .createQuery("select distinct a.annotationText " +
@@ -133,13 +131,10 @@ public class FilterPopulatorController {
             datasets.add(new SelectItem(dataset, value, description));
         }
 
-        context.commitTransaction(status);
         return datasets;
     }
 
     public List<SelectItem> listSources() {
-        DataContext context = IntactContext.getCurrentInstance().getDataContext();
-        TransactionStatus status = context.beginTransaction();
 
         Query query = entityManagerFactory.createEntityManager().createQuery("select distinct i.owner.shortLabel from InteractionImpl i");
         List<String> sourceResults = query.getResultList();
@@ -150,7 +145,6 @@ public class FilterPopulatorController {
             sources.add(new SelectItem(source));
         }
 
-        context.commitTransaction(status);
         return sources;
     }
 
