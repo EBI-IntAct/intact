@@ -27,6 +27,7 @@ import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.view.webapp.application.SpringInitializedService;
 
 import javax.annotation.PostConstruct;
+import javax.faces.bean.ApplicationScoped;
 import javax.faces.model.SelectItem;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
@@ -41,6 +42,7 @@ import java.util.List;
  * @version $Id$
  */
 @Controller("filterPopulator")
+@ApplicationScoped
 public class FilterPopulatorController extends SpringInitializedService{
 
     private static final Log log = LogFactory.getLog( FilterPopulatorController.class );
@@ -49,11 +51,6 @@ public class FilterPopulatorController extends SpringInitializedService{
     public static final String EXPANSION_SPOKE_VALUE = "MI:1060";
 
     private List<String> datasets;
-    private List<String> sources;
-    private List<String> expansions;
-    private List<String> stoichiometry;
-    private List<String> parameters;
-    private List<String> negative;
 
     private List<SelectItem> stoichiometrySelectItems;
     private List<SelectItem> negativeSelectItems;
@@ -70,7 +67,7 @@ public class FilterPopulatorController extends SpringInitializedService{
     }
 
     @Override
-    public void initialize(){
+    public synchronized void initialize(){
         if (log.isInfoEnabled()) log.info("Preloading filters");
 
         if (log.isDebugEnabled()) log.debug("\tPreloading datasets");
@@ -81,14 +78,15 @@ public class FilterPopulatorController extends SpringInitializedService{
         if (log.isDebugEnabled()) log.debug("\tPreloading sources");
 
         sourceSelectItems = listSources();
-        sources = getValues(sourceSelectItems);
 
         if (log.isDebugEnabled()) log.debug("\tPreloading expansions");
 
         expansionSelectItems = listExpansionSelectItems();
-        expansions = getValues(expansionSelectItems);
+        if (log.isDebugEnabled()) log.debug("\tPreloading negative values");
         negativeSelectItems = listNegativeSelectItems();
+        if (log.isDebugEnabled()) log.debug("\tPreloading parameter values");
         parametersSelectItems = listParametersSelectItems();
+        if (log.isDebugEnabled()) log.debug("\tPreloading stoichiometry values");
         stoichiometrySelectItems = listStoichiometrySelectItems();
     }
 
@@ -102,7 +100,7 @@ public class FilterPopulatorController extends SpringInitializedService{
         return values;
     }
 
-    public List<SelectItem> listDatasets() {
+    private List<SelectItem> listDatasets() {
 
         Query query = entityManagerFactory.createEntityManager()
                 .createQuery("select distinct a.annotationText " +
@@ -134,7 +132,7 @@ public class FilterPopulatorController extends SpringInitializedService{
         return datasets;
     }
 
-    public List<SelectItem> listSources() {
+    private List<SelectItem> listSources() {
 
         Query query = entityManagerFactory.createEntityManager().createQuery("select distinct i.owner.shortLabel from InteractionImpl i");
         List<String> sourceResults = query.getResultList();
@@ -185,63 +183,19 @@ public class FilterPopulatorController extends SpringInitializedService{
     }
 
     public List<String> getDatasets() {
-        return new ArrayList<String>(datasets);
-    }
-
-    public void setDatasets(List<String> datasets) {
-        this.datasets = datasets;
-    }
-
-    public List<String> getSources() {
-        return new ArrayList<String>(sources);
-    }
-
-    public void setSources(List<String> sources) {
-        this.sources = sources;
-    }
-
-    public List<String> getStoichiometry() {
-        return stoichiometry;
-    }
-
-    public void setStoichiometry(List<String> stoichiometry) {
-        this.stoichiometry = stoichiometry;
-    }
-
-    public List<String> getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(List<String> parameters) {
-        this.parameters = parameters;
-    }
-
-    public List<String> getNegative() {
-        return negative;
-    }
-
-    public void setNegative(List<String> negative) {
-        this.negative = negative;
-    }
-
-    public List<String> getExpansions() {
-        return new ArrayList<String>(expansions);
+        return datasets;
     }
 
     public List<SelectItem> getStoichiometrySelectItems() {
-        return new ArrayList<SelectItem>(stoichiometrySelectItems);
+        return stoichiometrySelectItems;
     }
 
     public List<SelectItem> getParametersSelectItems() {
-        return new ArrayList<SelectItem>(parametersSelectItems);
+        return parametersSelectItems;
     }
 
     public List<SelectItem> getNegativeSelectItems() {
-        return new ArrayList<SelectItem>(negativeSelectItems);
-    }
-
-    public void setExpansions(List<String> expansions) {
-        this.expansions = expansions;
+        return negativeSelectItems;
     }
 
     public List<SelectItem> getExpansionSelectItems() {

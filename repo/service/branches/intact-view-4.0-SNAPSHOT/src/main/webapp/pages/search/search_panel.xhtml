@@ -41,11 +41,13 @@
                              disabled="#{userQuery.showNewFieldPanel}"/>
             &#160;
             <p:commandLink id="addFieldBtn" value="Show Advanced Fields »"
-                           onclick="_gaq.push(['_trackEvent', 'SearchPanel', 'Show advanced', '#{userQuery.searchQuery}'])"
-                           style="font-weight:bold" process="searchPanel"
+                           style="font-weight:bold"
                            actionListener="#{userQuery.doShowAddFieldPanel}"
+                           process="searchPanel"
                            disabled="#{userQuery.showNewFieldPanel}"
-                           update="searchPanelDetails,searchPanel" />
+                           update="searchPanelDetails,searchPanel"
+                           onstart="statusDialog.show()"
+                           oncomplete="statusDialog.hide()"/>
 
         </h:panelGroup>
 
@@ -127,7 +129,9 @@
                 &#160;
                 <p:commandButton id="cancelFieldBtn" value="Cancel" process="cancelFieldBtn"
                                  actionListener="#{userQuery.doCancelAddField}"
-                                 update="searchPanel,searchPanelDetails"/>
+                                 update="searchPanel,searchPanelDetails"
+                                 onstart="statusDialog.show()"
+                                 oncomplete="statusDialog.hide()"/>
 
             </h:panelGroup>
         </p:panel>
