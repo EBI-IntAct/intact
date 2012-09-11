@@ -19,7 +19,7 @@
     <bean id="ontologyBean" class="uk.ac.ebi.intact.view.webapp.controller.application.OntologyBean" lazy-init="true"/>
 
     <bean id="intactViewConfiguration"
-          class="uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration" lazy-init="true">
+          class="uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration">
         <property name="webappName" value="${webapp.name}"/>
         <property name="webappLogoUrl" value="${webapp.logo.url}"/>
         <property name="appRoot" value="${intact.view.approot}"/>
