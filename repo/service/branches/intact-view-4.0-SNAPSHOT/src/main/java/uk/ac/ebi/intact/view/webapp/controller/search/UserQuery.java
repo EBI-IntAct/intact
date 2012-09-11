@@ -88,7 +88,7 @@ public class UserQuery extends BaseController {
     private String[] goTerms;
     private String[] chebiTerms;
 
-    private Map<String, String> termMap = Maps.newHashMap();
+    private Map<String, String> termMap;
 
     //for sorting and ordering
     private static final String DEFAULT_SORT_COLUMN = FieldNames.INTACT_SCORE_NAME;
@@ -115,9 +115,16 @@ public class UserQuery extends BaseController {
         this.queryTokenList = new ArrayList<QueryToken>();
         this.longQueriesMap = new HashMap<String, String>();
         this.queryFilterList = new ArrayList<String>();
+        termMap = Maps.newHashMap();
     }
 
     @PostConstruct
+    public void initializeSearchFieldsAndFilters() {
+        reset();
+
+        initSearchFields();
+    }
+
     public void reset() {
         this.searchQuery = null;
         this.ontologySearchQuery = null;
@@ -125,10 +132,6 @@ public class UserQuery extends BaseController {
         this.userSortOrder = DEFAULT_SORT_ORDER;
 
         clearFilters();
-
-        initSearchFields();
-
-
     }
 
     public void clearFilters() {
@@ -140,6 +143,8 @@ public class UserQuery extends BaseController {
         termMap.clear();
         queryTokenList.clear();
         queryFilterList.clear();
+
+        newQueryToken = null;
     }
 
     private void initSearchFields() {
@@ -276,6 +281,7 @@ public class UserQuery extends BaseController {
 
     public void doShowAddFieldPanel(ActionEvent evt) {
         showAddFieldsPanel();
+
         newQueryToken = new QueryToken("");
     }
 
