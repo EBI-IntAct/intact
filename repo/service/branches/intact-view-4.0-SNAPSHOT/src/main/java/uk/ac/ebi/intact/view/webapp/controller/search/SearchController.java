@@ -58,13 +58,13 @@ public class SearchController extends JpaBaseController {
     private int geneTotalResults;
     private int nucleicAcidTotalResults;
 
-    private int unfilteredTotalCount;
-
     private boolean showProperties;
     private boolean showAlternativeIds;
     private boolean showBrandNames;
 
     private boolean expandedView;
+
+    private UserQuery userQuery;
 
     // results
     private LazySearchResultDataModel results;
@@ -90,11 +90,11 @@ public class SearchController extends JpaBaseController {
 
     @PostConstruct
     public void initialSearch() {
-        if (!FacesContext.getCurrentInstance().isPostback()) {
+        /*if (!FacesContext.getCurrentInstance().isPostback()) {
             UserQuery userQuery = getUserQuery();
             SolrQuery solrQuery = userQuery.createSolrQuery();
             doBinarySearch( solrQuery );
-        }
+        }*/
     }
 
     public void searchOnLoad(ComponentSystemEvent evt) {
@@ -173,7 +173,6 @@ public class SearchController extends JpaBaseController {
             results = createInteractionDataModel( solrQuery );
 
             totalResults = results.getRowCount();
-            unfilteredTotalCount = countUnfilteredInteractions();
 
             if ( log.isDebugEnabled() ) log.debug( "\tResults: " + results.getRowCount() );
 
@@ -188,14 +187,6 @@ public class SearchController extends JpaBaseController {
                                  "Please do reformat your query." );
             }
         }
-
-        /*PsicquicController psicquicController = (PsicquicController) getBean("psicquicController");
-        try {
-            psicquicController.countResultsInOtherDatabases();
-        } catch (PsicquicRegistryClientException e) {
-            addErrorMessage("Problem counting results in other databases", "Registry not available");
-            e.printStackTrace();
-        }*/
 
         contextController.clearLoadedTabs();
     }
@@ -285,7 +276,7 @@ public class SearchController extends JpaBaseController {
             return totalResults;
         }
 
-        final SolrQuery solrQuery = userQuery.createSolrQuery( false );
+        final SolrQuery solrQuery = userQuery.createSolrQuery( );
         solrQuery.setRows( 0 );
 
         if ( log.isDebugEnabled() ) {
@@ -498,12 +489,11 @@ public class SearchController extends JpaBaseController {
         return geneResults;
     }
 
-    public int getUnfilteredTotalCount() {
-        return unfilteredTotalCount;
-    }
-
     private UserQuery getUserQuery() {
-        return (UserQuery) getBean("userQuery");
+        if (userQuery == null){
+           userQuery = (UserQuery) getBean("userQuery");
+        }
+        return userQuery;
     }
 
 
