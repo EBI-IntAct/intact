@@ -96,6 +96,7 @@ public class QueryToken {
         }
 
         queryString.append((field != null? field+":" : "")+surroundByQuotesIfNecessary(query));
+
         // close any opened parenthesis in field name. For instance : interaction_id:"GO
         if (field.contains("\"")){
             queryString.append("\"");

@@ -130,6 +130,7 @@ public class UserQuery extends BaseController {
         this.ontologySearchQuery = null;
         this.userSortColumn = DEFAULT_SORT_COLUMN;
         this.userSortOrder = DEFAULT_SORT_ORDER;
+        this.selectedSearchTerm = null;
 
         clearFilters();
     }
@@ -197,11 +198,7 @@ public class UserQuery extends BaseController {
         clearFilters();
     }
 
-    public SolrQuery createSolrQuery() {
-        return createSolrQuery( true ); // by default include filters.
-    }
-
-    public SolrQuery createSolrQuery( final boolean includeFilters ) {
+    public SolrQuery createSolrQuery( ) {
 
         if( searchQuery == null || searchQuery.trim().length() == 0 ||
                     searchQuery.equals("*") || searchQuery.equals("?")) {
@@ -234,9 +231,10 @@ public class UserQuery extends BaseController {
 
             for (String qtoken : qtokens) {
                 qtoken = qtoken.trim();
-
-                if (qtoken.startsWith("MI:") ||
-                        qtoken.startsWith("GO:")) {
+                String qtokenLowerCase = qtoken.toLowerCase();
+                if (qtokenLowerCase.startsWith("MI:") ||
+                        qtokenLowerCase.startsWith("GO:") ||
+                        qtokenLowerCase.startsWith("CHEBI:")) {
                     qtoken = "\""+qtoken+"\"";
                 }
 
@@ -244,9 +242,6 @@ public class UserQuery extends BaseController {
             }
 
             searchQuery = sb.toString().trim();
-
-            searchQuery = searchQuery.replaceAll("\\( ", "(");
-            searchQuery = searchQuery.replaceAll(" \\)", ")");
         }
     }
 
@@ -290,15 +285,16 @@ public class UserQuery extends BaseController {
     }
 
     public void doAddFieldToQuery(QueryToken queryToken) {
-        searchQuery = surroundByBracesIfNecessary(searchQuery);
 
         if (!isWildcardQuery(queryToken.getQuery())) {
-
+            // the new field is the new query
             if (isWildcardQuery(searchQuery)) {
                 final boolean excludeOperand = true;
                 searchQuery = queryToken.toQuerySyntax(excludeOperand);
-            } else {
-                searchQuery = searchQuery + " " + queryToken.toQuerySyntax();
+            }
+            // add the new field in the query
+            else {
+                searchQuery =  surroundByBraces(searchQuery) + " " + queryToken.toQuerySyntax();
             }
         }
 
@@ -327,7 +323,7 @@ public class UserQuery extends BaseController {
     }
 
     private boolean isWildcardQuery(String query) {
-        return (query.trim().length() == 0 || "*".equals(query) || "*:*".equals(query));
+        return (query == null || query.trim().length() == 0 || "*".equals(query) || "*:*".equals(query));
     }
 
     private String surroundByBracesIfNecessary(String query) {
@@ -341,6 +337,14 @@ public class UserQuery extends BaseController {
         }
 
         return query;
+    }
+
+    private String surroundByBraces(String query) {
+
+        if (query == null){
+            return null;
+        }
+        return "("+query+")";
     }
 
     public void doCancelAddField(ActionEvent evt) {
@@ -359,7 +363,7 @@ public class UserQuery extends BaseController {
 
     private SolrQuery createSolrQueryForHierarchView() {
         // export all available rows
-        return createSolrQuery( true ).setRows(0);
+        return createSolrQuery( ).setRows(0);
     }
 
     /**
@@ -367,7 +371,7 @@ public class UserQuery extends BaseController {
      * @return a non null string.
      */
     public String getSolrQueryString() {
-        return getSolrQueryString(createSolrQuery(true).setRows(0));
+        return getSolrQueryString(createSolrQuery().setRows(0));
     }
 
     private String getSolrQueryString( SolrQuery query ) {
@@ -423,7 +427,7 @@ public class UserQuery extends BaseController {
     }
 
     public boolean isUsingFilters() {
-        final String[] filterQueries = createSolrQuery( true ).getFilterQueries();
+        final String[] filterQueries = createSolrQuery( ).getFilterQueries();
         return (filterQueries != null && filterQueries.length > 0);
     }
 

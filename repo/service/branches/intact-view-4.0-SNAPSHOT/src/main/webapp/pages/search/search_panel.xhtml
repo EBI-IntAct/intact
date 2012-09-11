@@ -32,7 +32,9 @@
                              onclick="queryTxt = document.getElementById('queryTxt'); _gaq.push(['_trackEvent', 'SearchPanel', 'Search', queryTxt.value])"
                              value="Search" process="queryTxt"
                              disabled="#{userQuery.showNewFieldPanel}"
-                             action="#{searchBean.doBinarySearchAction}">
+                             action="#{searchBean.doBinarySearchAction}"
+                             onstart="statusDialog.show()"
+                             oncomplete="statusDialog.hide()">
                 <f:setPropertyActionListener value="2" target="#{contextController.activeTabIndex}"/>
             </p:commandButton>
             &#160;
@@ -63,7 +65,7 @@
                                  disabled="#{userQuery.wildcardQuery}">
                     <f:selectItem itemValue="AND" itemLabel="AND"/>
                     <f:selectItem itemValue="OR" itemLabel="OR" itemDisabled="#{empty userQuery.searchQuery or
-                                                                                    userQuery.searchQuery eq '*:*'}"/>
+                                                                                    userQuery.searchQuery eq '*'}"/>
                 </h:selectOneMenu>
                 &#160;
                 <h:outputText value="NOT"/>
@@ -102,7 +104,7 @@
                                     selectionMode="single" selection="#{userQuery.selectedSearchTerm}"
                                     dynamic="true" cache="true"
                                     style="width:50%;">
-                                <p:ajax event="select" listener="#{userQuery.doSelectCvTerm}" oncomplete="browseCvDialog.hide()" update="@form" />
+                                <p:ajax event="select" listener="#{userQuery.doSelectCvTerm}" oncomplete="browseCvDialog.hide()" update=":intactForm:newQuerytxt" />
 
                                 <p:treeNode id="ontologyTreeNode">
                                     <h:outputText id="termTxt" value="#{otw.term.name} - (#{otw.interactionCount} interactions)"/>
@@ -121,11 +123,13 @@
 
                 &#160;
 
-                <h:commandButton id="addAndSearchBtn" value="Add &amp; Search"
+                <p:commandButton id="addAndSearchBtn" value="Add &amp; Search"
                                  actionListener="#{userQuery.doAddFieldToQuery}"
-                                 action="#{searchBean.doNewBinarySearch}">
+                                 action="#{searchBean.doBinarySearchAction}"
+                                 onstart="statusDialog.show()"
+                                 oncomplete="statusDialog.hide()">
                     <f:setPropertyActionListener value="2" target="#{contextController.activeTabIndex}"/>
-                </h:commandButton>
+                </p:commandButton>
                 &#160;
                 <p:commandButton id="cancelFieldBtn" value="Cancel" process="cancelFieldBtn"
                                  actionListener="#{userQuery.doCancelAddField}"
