@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 import uk.ac.ebi.intact.view.webapp.application.OntologyInteractorTypeConfig;
 import uk.ac.ebi.intact.view.webapp.controller.ContextController;
 import uk.ac.ebi.intact.view.webapp.controller.JpaBaseController;
+import uk.ac.ebi.intact.view.webapp.controller.application.StatisticsController;
 import uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration;
 import uk.ac.ebi.intact.view.webapp.controller.details.DetailsController;
 import uk.ac.ebi.intact.view.webapp.controller.list.InteractorListController;
@@ -89,9 +90,9 @@ public class SearchController extends JpaBaseController {
 
     @PostConstruct
     public void initialSearch() {
-        UserQuery userQuery = getUserQuery();
-        SolrQuery solrQuery = userQuery.createSolrQuery();
-        doBinarySearch( solrQuery );
+        StatisticsController statisticsController = (StatisticsController) getBean("statisticsController");
+        this.totalResults = statisticsController.getBinaryInteractionCount();
+
         /*if (!FacesContext.getCurrentInstance().isPostback()) {
             UserQuery userQuery = getUserQuery();
             SolrQuery solrQuery = userQuery.createSolrQuery();

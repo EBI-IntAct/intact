@@ -23,9 +23,11 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrSearchResult;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrSearcher;
-import uk.ac.ebi.intact.view.webapp.controller.BaseController;
+import uk.ac.ebi.intact.view.webapp.application.SpringInitializedService;
 import uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration;
 
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ApplicationScoped;
 import java.io.IOException;
 
 /**
@@ -34,12 +36,13 @@ import java.io.IOException;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class StatisticsController extends BaseController {
+@ApplicationScoped
+public class StatisticsController extends SpringInitializedService {
 
     private static final Log log = LogFactory.getLog( StatisticsController.class );
 
     @Autowired
-    private IntactViewConfiguration intactViewConfiguration;
+    private IntactViewConfiguration viewConfiguration;
 
     @Autowired
     private DaoFactory daoFactory;
@@ -53,12 +56,14 @@ public class StatisticsController extends BaseController {
     private int interactionCount;
     private int interactorsWithNoInteractions;
 
+    private IntactSolrSearcher searcher;
+
     public StatisticsController() {
 
     }
 
-    @Transactional(readOnly = true)
-    public void calculateStats() throws IOException {
+    @Override
+    public void initialize(){
         if (log.isInfoEnabled()) log.info("Calculating statistics");
 
         // index stats
@@ -74,9 +79,21 @@ public class StatisticsController extends BaseController {
         interactorsWithNoInteractions = interactorCount - interactionCount;
     }
 
+    @PostConstruct
+    public void createSolrIntactSearcher(){
+
+        SolrServer solrServer = viewConfiguration.getInteractionSolrServer();
+        this.searcher = new IntactSolrSearcher(solrServer);
+    }
+
+    @Transactional(readOnly = true)
+    public synchronized void calculateStats() throws IOException {
+        if (log.isInfoEnabled()) log.info("Calculating statistics");
+
+        initialize();
+    }
+
     public int countBinaryInteractionsFromIndex() {
-        SolrServer solrServer = intactViewConfiguration.getInteractionSolrServer();
-        IntactSolrSearcher searcher = new IntactSolrSearcher(solrServer);
 
         final IntactSolrSearchResult result;
         try {
