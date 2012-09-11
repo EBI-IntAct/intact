@@ -83,12 +83,12 @@
         </h:panelGroup>
 
 
-        <!--<ui:include src="pages/search/search_panel.xhtml"/>
+        <ui:include src="pages/search/search_panel.xhtml"/>
 
 
         <p:tabView id="mainPanels" activeIndex="#{contextController.activeTabIndex}" dynamic="true"
-                   widgetVar="mainTabsWidget" onTabChange="_gaq.push(['_trackEvent', 'Navigation', 'Tab change', index])">
-            <p:ajax event="tabChange" listener="#{searchBean.onTabChanged}"/>
+                   widgetVar="mainTabsWidget">
+        <p:ajax event="tabChange" listener="#{searchBean.onTabChanged}" onstart="statusDialog.show()" oncomplete="statusDialog.hide()"/>
 
             <p:tab id="homeTab" title="Home">
                         <p:messages/>
@@ -100,7 +100,7 @@
                         <ui:insert name="searchTabContent"/>
             </p:tab>
 
-            <p:tab id="interactionsTab" title="Interactions (#{searchBean.totalResults})" disabled="#{searchBean.totalResults == 0}">
+            <!--<p:tab id="interactionsTab" title="Interactions (#{searchBean.totalResults})" disabled="#{searchBean.totalResults == 0}">
                         <p:messages/>
                         <ui:insert name="interactionsTabContent"/>
             </p:tab>
@@ -134,9 +134,9 @@
                 <h:panelGroup rendered="#{searchBean.totalResults != 0 and searchBean.totalResults le intactViewConfiguration.graphMaxInteractionCount }">
                         <ui:insert name="graphTabContent"/>
                 </h:panelGroup>
-            </p:tab>
+            </p:tab>-->
 
-        </p:tabView>-->
+        </p:tabView>
 
     </ui:define>
 
