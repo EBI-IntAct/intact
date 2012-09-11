@@ -29,11 +29,13 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ebi.intact.view.webapp.IntactViewException;
 import uk.ac.ebi.intact.view.webapp.controller.BaseController;
 
+import javax.faces.bean.ApplicationScoped;
 import javax.persistence.EntityManagerFactory;
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -50,7 +52,8 @@ import java.util.Properties;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class IntactViewConfiguration extends BaseController implements InitializingBean {
+@ApplicationScoped
+public class IntactViewConfiguration extends BaseController implements InitializingBean, DisposableBean {
 
     private static final Log log = LogFactory.getLog( IntactViewConfiguration.class );
 
@@ -458,7 +461,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
 
     public String getWebappBuildNumber() { return webappBuildNumber; }
 
-    public HttpSolrServer getInteractionSolrServer() {
+    public synchronized HttpSolrServer getInteractionSolrServer() {
         if (solrInteractionsUrl != null) {
             if (solrServer == null) {
                 try {
@@ -475,7 +478,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
         return null;
     }
 
-    public HttpSolrServer getOntologySolrServer() {
+    public synchronized HttpSolrServer getOntologySolrServer() {
         if (solrOntologiesUrl != null) {
             if (ontologySolrServer == null) {
                 try {
@@ -502,7 +505,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
         return solrServer;
     }
 
-    public org.apache.http.client.HttpClient getHttpClientBasedOnUrl(String url) {
+    public synchronized org.apache.http.client.HttpClient getHttpClientBasedOnUrl(String url) {
         SchemeRegistry schemeRegistry = new SchemeRegistry();
         schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory
                 .getSocketFactory()));
@@ -532,7 +535,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
         return httpClient;
     }
 
-    public HttpClient getCommonsHttpClientBasedOnUrl(String url) {
+    public synchronized HttpClient getCommonsHttpClientBasedOnUrl(String url) {
         if (url.contains("localhost") || url.contains("127.0.0.1")) {
             return getHttpClientWithoutProxy();
         }
@@ -548,7 +551,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
 
                 log.info("Setting HTTPClient using proxy: " + proxyHost + ":" + proxyPort);
             } else {
-                log.info("Setting HTTPClient using proxy with NO PROXY");
+                log.info("Setting HTTPClient with NO PROXY");
             }
 
         }
@@ -564,10 +567,10 @@ public class IntactViewConfiguration extends BaseController implements Initializ
         return httpClientWithoutProxy;
     }
 
-    public PsicquicSimpleClient getPsicquicClient(String rest) {
+    public synchronized PsicquicSimpleClient getPsicquicClient(String rest) {
         PsicquicSimpleClient simpleClient;
 
-        if (proxyPort != null){
+        if (proxyPort != null && proxyPort.length() > 0){
             try{
                 int port = Integer.parseInt(proxyPort);
                 SocketAddress address = new InetSocketAddress(proxyHost, port);
@@ -675,5 +678,10 @@ public class IntactViewConfiguration extends BaseController implements Initializ
 
     public void setOntologyLuceneDirectory(String ontologyLuceneDirectory) {
         this.ontologyLuceneDirectory = ontologyLuceneDirectory;
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        shutDownServers();
     }
 }

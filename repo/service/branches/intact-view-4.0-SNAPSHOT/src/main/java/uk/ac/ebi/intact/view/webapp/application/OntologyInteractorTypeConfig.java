@@ -33,7 +33,7 @@ public class OntologyInteractorTypeConfig implements InitializingBean{
     private static final Log log = LogFactory.getLog(OntologyInteractorTypeConfig.class);
 
     @Autowired
-    private IntactViewConfiguration intactViewConfiguration;
+    private IntactViewConfiguration viewConfiguration;
 
     private String [] proteinTypes;
     private String [] compoundTypes;
@@ -43,7 +43,7 @@ public class OntologyInteractorTypeConfig implements InitializingBean{
     @Override
     public void afterPropertiesSet() throws Exception {
 
-        final SolrServer ontologySolrServer = intactViewConfiguration.getOntologySolrServer();
+        final SolrServer ontologySolrServer = viewConfiguration.getOntologySolrServer();
         OntologySearcher ontologySearcher = new OntologySearcher(ontologySolrServer);
 
         // load proteins
@@ -61,8 +61,6 @@ public class OntologyInteractorTypeConfig implements InitializingBean{
         // load gene
         log.info("Loading gene types...");
         loadGenes(ontologySearcher);
-
-        intactViewConfiguration.shutDownServers();
     }
 
     private void loadProteins(OntologySearcher ontologySearcher){
