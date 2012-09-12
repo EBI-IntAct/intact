@@ -155,22 +155,22 @@ public class FilterPopulatorController extends SpringInitializedService{
 
     private List<SelectItem> listNegativeSelectItems() {
         List<SelectItem> negativeItems = new ArrayList<SelectItem>(2);
-        negativeItems.add(new SelectItem("true", "Only negativeSelectItems interactions"));
-        negativeItems.add(new SelectItem("false", "Excludes negativeSelectItems interactions"));
+        negativeItems.add(new SelectItem("true", "Only negative interactions"));
+        negativeItems.add(new SelectItem("false", "Excludes negative interactions"));
         return negativeItems;
     }
 
     private List<SelectItem> listParametersSelectItems() {
         List<SelectItem> parameters = new ArrayList<SelectItem>(2);
-        parameters.add(new SelectItem("true", "Only interactions having parametersSelectItems available"));
-        parameters.add(new SelectItem("false", "Excludes interactions having parametersSelectItems available"));
+        parameters.add(new SelectItem("true", "Only interactions having parameters available"));
+        parameters.add(new SelectItem("false", "Excludes interactions having parameters available"));
         return parameters;
     }
 
     private List<SelectItem> listStoichiometrySelectItems() {
         List<SelectItem> stoichiometry = new ArrayList<SelectItem>(2);
-        stoichiometry.add(new SelectItem("true", "Only interactions having stoichiometrySelectItems information"));
-        stoichiometry.add(new SelectItem("false", "Excludes interactions having stoichiometrySelectItems information"));
+        stoichiometry.add(new SelectItem("true", "Only interactions having stoichiometry information"));
+        stoichiometry.add(new SelectItem("false", "Excludes interactions having stoichiometry information"));
         return stoichiometry;
     }
 
