@@ -90,6 +90,7 @@ public class SearchController extends JpaBaseController {
 
     @PostConstruct
     public void initialSearch() {
+
         StatisticsController statisticsController = (StatisticsController) getBean("statisticsController");
         this.totalResults = statisticsController.getBinaryInteractionCount();
 

@@ -27,6 +27,7 @@ public class QueryToken {
     private String query;
     private BooleanOperand operand;
     private boolean notQuery;
+    private String booleanString;
 
     public QueryToken(String query) {
         this(query, null);
@@ -64,6 +65,7 @@ public class QueryToken {
 
     public void setOperand(BooleanOperand operand) {
         this.operand = operand;
+        this.booleanString = operand.toString();
     }
 
     public boolean isNotQuery() {
@@ -75,10 +77,11 @@ public class QueryToken {
     }
 
     public String getOperandStr() {
-        return operand.toString();
+        return booleanString;
     }
 
     public void setOperandStr(String booleanStr) {
+        this.booleanString = booleanStr;
         operand = BooleanOperand.valueOf(booleanStr);
     }
 

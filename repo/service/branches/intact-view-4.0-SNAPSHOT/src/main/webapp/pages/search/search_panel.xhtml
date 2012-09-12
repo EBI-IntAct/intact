@@ -30,7 +30,7 @@
             &#160;
             <p:commandButton id="quickSearchBtn" ajax="false"
                              onclick="queryTxt = document.getElementById('queryTxt'); _gaq.push(['_trackEvent', 'SearchPanel', 'Search', queryTxt.value])"
-                             value="Search" process="queryTxt"
+                             value="Search"
                              disabled="#{userQuery.showNewFieldPanel}"
                              action="#{searchBean.doBinarySearchAction}"
                              onstart="statusDialog.show()"
@@ -45,11 +45,12 @@
             <p:commandLink id="addFieldBtn" value="Show Advanced Fields »"
                            style="font-weight:bold"
                            actionListener="#{userQuery.doShowAddFieldPanel}"
-                           process="searchPanel"
                            disabled="#{userQuery.showNewFieldPanel}"
                            update="searchPanelDetails,searchPanel"
                            onstart="statusDialog.show()"
-                           oncomplete="statusDialog.hide()"/>
+                           oncomplete="statusDialog.hide()"
+                           partialSubmit="true"
+                           process="@this"/>
 
         </h:panelGroup>
 
@@ -127,15 +128,18 @@
                                  actionListener="#{userQuery.doAddFieldToQuery}"
                                  action="#{searchBean.doBinarySearchAction}"
                                  onstart="statusDialog.show()"
-                                 oncomplete="statusDialog.hide()">
+                                 oncomplete="statusDialog.hide()"
+                                 ajax="false">
                     <f:setPropertyActionListener value="2" target="#{contextController.activeTabIndex}"/>
                 </p:commandButton>
                 &#160;
-                <p:commandButton id="cancelFieldBtn" value="Cancel" process="cancelFieldBtn"
+                <p:commandButton id="cancelFieldBtn" value="Cancel"
+                                 process="@this"
                                  actionListener="#{userQuery.doCancelAddField}"
                                  update="searchPanel,searchPanelDetails"
                                  onstart="statusDialog.show()"
-                                 oncomplete="statusDialog.hide()"/>
+                                 oncomplete="statusDialog.hide()"
+                                 partialSubmit="true"/>
 
             </h:panelGroup>
         </p:panel>
