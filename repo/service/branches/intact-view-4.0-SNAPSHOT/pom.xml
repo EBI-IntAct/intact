@@ -439,6 +439,12 @@
             <groupId>uk.ac.ebi.intact.dataexchange</groupId>
             <artifactId>intact-cvutils</artifactId>
             <version>${dataexchange.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>lucene</groupId>
+                    <artifactId>lucene</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
