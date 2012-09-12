@@ -107,7 +107,7 @@ public class ColumnContextController {
 
     @PostConstruct
     public void loadColumns() {
-        String colsCookie = readCookie(COOKIE_COLS_NAME);
+       String colsCookie = readCookie(COOKIE_COLS_NAME);
 
         if (colsCookie != null) {
             if (COOKIE_MINIMAL_VALUE.equals(colsCookie)) {

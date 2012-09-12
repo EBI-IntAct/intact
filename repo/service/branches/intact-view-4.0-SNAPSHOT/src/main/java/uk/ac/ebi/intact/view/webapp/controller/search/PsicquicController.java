@@ -31,8 +31,6 @@ import uk.ac.ebi.intact.view.webapp.application.PsicquicThreadConfig;
 import uk.ac.ebi.intact.view.webapp.controller.BaseController;
 import uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration;
 
-import javax.faces.context.FacesContext;
-import javax.faces.event.ComponentSystemEvent;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -72,80 +70,76 @@ public class PsicquicController extends BaseController {
         return service.getTags().contains("MI:0959");
     }
 
-    public void countResultsInOtherDatabases(ComponentSystemEvent event) {
-        if (!FacesContext.getCurrentInstance().isPostback()) {
-            try {
-                final String psicquicRegistryUrl = intactViewConfiguration.getPsicquicRegistryUrl();
+    public void countResultsInOtherDatabases(String query) {
+        try {
+            final String psicquicRegistryUrl = intactViewConfiguration.getPsicquicRegistryUrl();
 
-                if (psicquicRegistryUrl == null || psicquicRegistryUrl.length() == 0) {
-                    return;
-                }
-
-                boolean areImexServicesInitialized = true;
-
-                if (services == null) {
-                    PsicquicRegistryClient registryClient = new DefaultPsicquicRegistryClient(psicquicRegistryUrl);
-                    services = registryClient.listActiveServices();
-                }
-
-                resetPsicquicCounts();
-
-                if (imexServices == null){
-                    imexServices = new ArrayList<ServiceType>(services.size());
-
-                    areImexServicesInitialized = false;
-                }
-
-                String query = getUserQuery().getSearchQuery();
-
-                if (query == null || query.length() == 0) {
-                    query = "*";
-                }
-
-                final String psicquicQuery = query;
-
-                PsicquicThreadConfig threadConfig = (PsicquicThreadConfig) getBean("psicquicThreadConfig");
-
-                ExecutorService executorService = threadConfig.getExecutorService();
-
-                if (runningTasks == null){
-                    runningTasks = new ArrayList<Future>();
-                }
-                else {
-                    runningTasks.clear();
-                }
-
-                for (final ServiceType service : services) {
-                    final PsicquicSimpleClient client = intactViewConfiguration.getPsicquicClient(service.getRestUrl());
-
-                    if (!areImexServicesInitialized){
-
-                        if (isImexService(service)){
-                            imexServices.add(service);
-                        }
-                    }
-
-                    if (intactViewConfiguration.getWebappName().contains(service.getName()) || intactViewConfiguration.getDatabaseNamesUsingSameSolr().contains(service.getName())) {
-                        continue;
-                    }
-
-                    Callable<PsicquicCountResults> runnable = new Callable<PsicquicCountResults>() {
-                        public PsicquicCountResults call() {
-
-                            return processPsicquicQueries(service, psicquicQuery, client);
-                        }
-                    };
-
-                    Future<PsicquicCountResults> f = executorService.submit(runnable);
-                    runningTasks.add(f);
-                }
-
-                checkAndResumePsicquicTasks();
-
-            } catch (PsicquicRegistryClientException e) {
-                addErrorMessage("Problem counting results in other databases", "Registry not available");
-                e.printStackTrace();
+            if (psicquicRegistryUrl == null || psicquicRegistryUrl.length() == 0) {
+                return;
             }
+
+            boolean areImexServicesInitialized = true;
+
+            if (services == null) {
+                PsicquicRegistryClient registryClient = new DefaultPsicquicRegistryClient(psicquicRegistryUrl);
+                services = registryClient.listActiveServices();
+            }
+
+            resetPsicquicCounts();
+
+            if (imexServices == null){
+                imexServices = new ArrayList<ServiceType>(services.size());
+
+                areImexServicesInitialized = false;
+            }
+
+            if (query == null || query.length() == 0) {
+                query = UserQuery.STAR_QUERY;
+            }
+
+            final String psicquicQuery = query;
+
+            PsicquicThreadConfig threadConfig = (PsicquicThreadConfig) getBean("psicquicThreadConfig");
+
+            ExecutorService executorService = threadConfig.getExecutorService();
+
+            if (runningTasks == null){
+                runningTasks = new ArrayList<Future>();
+            }
+            else {
+                runningTasks.clear();
+            }
+
+            for (final ServiceType service : services) {
+                final PsicquicSimpleClient client = intactViewConfiguration.getPsicquicClient(service.getRestUrl());
+
+                if (!areImexServicesInitialized){
+
+                    if (isImexService(service)){
+                        imexServices.add(service);
+                    }
+                }
+
+                if (intactViewConfiguration.getWebappName().contains(service.getName()) || intactViewConfiguration.getDatabaseNamesUsingSameSolr().contains(service.getName())) {
+                    continue;
+                }
+
+                Callable<PsicquicCountResults> runnable = new Callable<PsicquicCountResults>() {
+                    public PsicquicCountResults call() {
+
+                        return processPsicquicQueries(service, psicquicQuery, client);
+                    }
+                };
+
+                Future<PsicquicCountResults> f = executorService.submit(runnable);
+                runningTasks.add(f);
+            }
+
+            checkAndResumePsicquicTasks();
+
+        } catch (PsicquicRegistryClientException e) {
+            addErrorMessage("Problem counting results in other databases", "Registry not available");
+            e.printStackTrace();
         }
     }
 

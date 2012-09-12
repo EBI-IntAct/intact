@@ -18,7 +18,7 @@
         <h:selectOneMenu id="exportFormatSelect"
                          value="#{searchBean.exportFormat}">
             <p:ajax event="change" onstart="document.getElementById('mainPanels:exportBtn').disabled=true"
-                    update="exportBtn"/>
+                    update="exportBtn" process="@this" partialSubmit="true"/>
             <f:selectItem itemLabel="-- Select format to Download --" itemValue="#{null}"/>
             <f:selectItem itemLabel="MI-TAB 2.5" itemValue="mitab_25"
                           onclick="_gaq.push(['_trackEvent', 'Export', 'MI-TAB', ''])"/>
@@ -49,15 +49,15 @@
 
         <p:dialog id="updateColumns" header="Columns displayed" widgetVar="columnsDialog" width="300" height="450">
             Select:
-            <p:commandLink id="selectMinimalColumns" value="Minimal" actionListener="#{columnContext.selectMininumColumns()}" update="columnSelection" process="updateColumns"/>
+            <p:commandLink id="selectMinimalColumns" value="Minimal" actionListener="#{columnContext.selectMininumColumns()}" update="columnSelection" process="@this" partialSubmit="true"/>
             &#160;|&#160;
-            <p:commandLink id="selectBasicColumns" value="Basic" actionListener="#{columnContext.selectBasicColumns()}" update="columnSelection" process="updateColumns"/>
+            <p:commandLink id="selectBasicColumns" value="Basic" actionListener="#{columnContext.selectBasicColumns()}" update="columnSelection" process="@this" partialSubmit="true"/>
             &#160;|&#160;
-            <p:commandLink id="selectStandardColumns" value="Standard" actionListener="#{columnContext.selectStandardColumns()}" update="columnSelection" process="updateColumns"/>
+            <p:commandLink id="selectStandardColumns" value="Standard" actionListener="#{columnContext.selectStandardColumns()}" update="columnSelection" process="@this" partialSubmit="true"/>
             &#160;|&#160;
-            <p:commandLink id="selectExpandedColumns" value="Expanded" actionListener="#{columnContext.selectExpandedColumns()}" update="columnSelection" process="updateColumns"/>
+            <p:commandLink id="selectExpandedColumns" value="Expanded" actionListener="#{columnContext.selectExpandedColumns()}" update="columnSelection" process="@this" partialSubmit="true"/>
             &#160;|&#160;
-            <p:commandLink id="selectCompleteColumns" value="Complete" actionListener="#{columnContext.selectCompleteColumns()}" update="columnSelection" process="updateColumns"/>
+            <p:commandLink id="selectCompleteColumns" value="Complete" actionListener="#{columnContext.selectCompleteColumns()}" update="columnSelection" process="@this" partialSubmit="true"/>
             <hr/>
 
             <div style="height:300px; width: 100%;overflow-x: auto;">
@@ -67,9 +67,9 @@
             </div>
             <hr/>
             <p:commandButton id="updateColumnSelection" value="Update"
-                             update="resultsTable"
+                             update=":intactForm:resultsTable"
                              oncomplete="columnsDialog.hide()"
-                             process="updateColumns" ajax="true"/>
+                             process="@this" ajax="true"/>
         </p:dialog>
 
     </p:toolbarGroup>

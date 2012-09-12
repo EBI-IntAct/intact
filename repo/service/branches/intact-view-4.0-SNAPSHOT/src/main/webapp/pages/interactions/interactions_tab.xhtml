@@ -44,12 +44,7 @@
     <p:commandLink onclick="complexExpansionDialog.show()">spoke expanded co-complexes
         <h:graphicImage alt="helpIcon" url="/images/help.png"/>
     </p:commandLink> and you may want to&#160;
-    <h:commandLink value="filter" action="#{searchBean.doBinarySearchAction}" actionListener="#{userQuery.doAddTermToQuery}">
-        <f:param name="token_operand" value="AND"/>
-        <f:param name="token_not" value="not"/>
-        <f:param name="token_query" value="spoke"/>
-        <f:param name="token_field" value="expansion"/>
-    </h:commandLink>
+    <h:commandLink value="filter" action="#{searchBean.doBinarySearchActionFilterSpokeExpanded}"/>
     &#160;them.
 
 </h:panelGroup>
