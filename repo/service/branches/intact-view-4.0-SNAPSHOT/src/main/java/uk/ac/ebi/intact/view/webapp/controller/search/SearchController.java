@@ -13,7 +13,6 @@ import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.model.CrossReference;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 import uk.ac.ebi.intact.view.webapp.application.OntologyInteractorTypeConfig;
-import uk.ac.ebi.intact.view.webapp.controller.ContextController;
 import uk.ac.ebi.intact.view.webapp.controller.JpaBaseController;
 import uk.ac.ebi.intact.view.webapp.controller.application.StatisticsController;
 import uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration;
@@ -48,9 +47,6 @@ public class SearchController extends JpaBaseController {
     @Autowired
     private IntactViewConfiguration intactViewConfiguration;
 
-    @Autowired
-    private ContextController contextController;
-
     private int totalResults;
     private int interactorTotalResults;
     private int proteinTotalResults;
@@ -62,9 +58,9 @@ public class SearchController extends JpaBaseController {
     private boolean showAlternativeIds;
     private boolean showBrandNames;
 
-    private boolean expandedView;
-
     private UserQuery userQuery;
+
+    private String currentQuery;
 
     // results
     private LazySearchResultDataModel results;
@@ -83,7 +79,9 @@ public class SearchController extends JpaBaseController {
     private String userSortColumn = DEFAULT_SORT_COLUMN;
     //as the Sort constructor is Sort(String field, boolean reverse)
     private boolean ascending = DEFAULT_SORT_ORDER;
-    private String getAccession;
+
+    @Autowired
+    private PsicquicController psicquicController;
 
     public SearchController() {
     }
@@ -93,6 +91,7 @@ public class SearchController extends JpaBaseController {
 
         StatisticsController statisticsController = (StatisticsController) getBean("statisticsController");
         this.totalResults = statisticsController.getBinaryInteractionCount();
+        this.currentQuery = null;
 
         /*if (!FacesContext.getCurrentInstance().isPostback()) {
             UserQuery userQuery = getUserQuery();
@@ -111,6 +110,13 @@ public class SearchController extends JpaBaseController {
         }
     }
 
+    public void searchBinaryInteractions(ComponentSystemEvent evt) {
+        UserQuery userQuery = getUserQuery();
+        SolrQuery solrQuery = userQuery.createSolrQuery();
+
+        doBinarySearch(solrQuery);
+    }
+
     public String doBinarySearchAction() {
         UserQuery userQuery = getUserQuery();
         SolrQuery solrQuery = userQuery.createSolrQuery();
@@ -123,6 +129,18 @@ public class SearchController extends JpaBaseController {
     public String doBinarySearchActionFromOntologySearch() {
         UserQuery userQuery = getUserQuery();
         SolrQuery solrQuery = userQuery.createSolrQueryForOntologySearch();
+
+        doBinarySearch(solrQuery);
+
+        return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
+    }
+
+    public String doBinarySearchActionFilterSpokeExpanded() {
+        UserQuery userQuery = getUserQuery();
+        SolrQuery solrQuery = userQuery.createSolrQuery();
+
+        // the true binary interactions have - in the complex expansion column
+        solrQuery.addFilterQuery(FieldNames.COMPLEX_EXPANSION+":\"-\"");
 
         doBinarySearch(solrQuery);
 
@@ -189,6 +207,12 @@ public class SearchController extends JpaBaseController {
 
             if ( log.isDebugEnabled() ) log.debug( "\tResults: " + results.getRowCount() );
 
+            // store the current query
+            this.currentQuery = solrQuery.getQuery();
+
+            // query psicquic
+            psicquicController.countResultsInOtherDatabases(this.currentQuery);
+
         } catch ( uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrException solrException ) {
 
             final String query = solrQuery.getQuery();
@@ -200,8 +224,6 @@ public class SearchController extends JpaBaseController {
                                  "Please do reformat your query." );
             }
         }
-
-        contextController.clearLoadedTabs();
     }
 
     public String doClearSearchAndGoHome() {
@@ -212,6 +234,13 @@ public class SearchController extends JpaBaseController {
 
 
     public void onTabChanged(TabChangeEvent evt) {
+        // load interactions if necessary
+        if (evt.getTab() != null && "interactionsTab".equals(evt.getTab().getId())){
+            UserQuery userQuery = getUserQuery();
+            if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery)){
+                doBinarySearch(userQuery.createSolrQuery());
+            }
+        }
         /*if (evt.getTab() != null && "listsTab".equals(evt.getTab().getId())) {
             doInteractorsSearch();
 
@@ -408,14 +437,6 @@ public class SearchController extends JpaBaseController {
 
     public void setShowBrandNames( boolean showBrandNames ) {
         this.showBrandNames = showBrandNames;
-    }
-
-    public boolean isExpandedView() {
-        return expandedView;
-    }
-
-    public void setExpandedView( boolean expandedView ) {
-        this.expandedView = expandedView;
     }
 
     public String getExportFormat() {
