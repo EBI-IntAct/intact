@@ -40,6 +40,14 @@
     <!-- MyFaces -->
 
     <context-param>
+        <description>
+            This affects the value of the Expires response header that will be sent for a resource.
+        </description>
+        <param-name>com.sun.faces.defaultResourceMaxAge</param-name>
+        <param-value>1209600000</param-value>
+    </context-param>
+
+    <context-param>
         <description>State saving method: "client" or "server" (= default)
             See JSF Specification 2.5.3
         </description>
@@ -325,19 +333,6 @@
     <filter-mapping>
         <filter-name>orchestraFilter</filter-name>
         <servlet-name>Faces Servlet</servlet-name>
-    </filter-mapping>
-
-    <!-- filter resources -->
-    <filter>
-        <filter-name>resource_caching</filter-name>
-        <filter-class>uk.ac.ebi.intact.view.webapp.filter.ResourceCacheFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>resource_caching</filter-name>
-        <servlet-name>Faces Servlet</servlet-name>
-        <url-pattern>*.png</url-pattern>
-        <url-pattern>*.css</url-pattern>
-        <url-pattern>*.js</url-pattern>
     </filter-mapping>
 
     <!-- compress pages -->
