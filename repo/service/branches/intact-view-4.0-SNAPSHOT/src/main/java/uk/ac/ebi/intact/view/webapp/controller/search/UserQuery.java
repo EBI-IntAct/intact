@@ -525,9 +525,6 @@ public class UserQuery extends BaseController {
     }
 
     public String getSearchQuery() {
-        if ("*:*".equals(searchQuery)) {
-            searchQuery = "";
-        }
         return searchQuery;
     }
     
