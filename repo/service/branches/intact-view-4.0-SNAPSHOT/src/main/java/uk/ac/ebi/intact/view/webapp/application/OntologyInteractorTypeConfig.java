@@ -63,6 +63,27 @@ public class OntologyInteractorTypeConfig implements InitializingBean{
         loadGenes(ontologySearcher);
     }
 
+    public void refreshTypes(){
+        final SolrServer ontologySolrServer = viewConfiguration.getOntologySolrServer();
+        OntologySearcher ontologySearcher = new OntologySearcher(ontologySolrServer);
+
+        // load proteins
+        log.info("Loading protein types...");
+        loadProteins(ontologySearcher);
+
+        // load nucleic acids
+        log.info("Loading nucleic acid types...");
+        loadNucleicAcids(ontologySearcher);
+
+        // load compounds
+        log.info("Loading compounds types...");
+        loadCompounds(ontologySearcher);
+
+        // load gene
+        log.info("Loading gene types...");
+        loadGenes(ontologySearcher);
+    }
+
     private void loadProteins(OntologySearcher ontologySearcher){
         try{
             OntologyTerm proteinTerm = new LazyLoadedOntologyTerm( ontologySearcher, CvInteractorType.PROTEIN_MI_REF, CvInteractorType.PROTEIN );

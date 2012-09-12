@@ -13,16 +13,6 @@
                 xmlns:iam="http://intact.ebi.ac.uk/miscel"
                 xmlns:o="http://myfaces.apache.org/orchestra" >
 
-<!--<div style="float:right;">-->
-    <!--<h:commandLink action="dialog:faq.whatis.search"-->
-                   <!--partialSubmit="true" useWindow="true"-->
-                   <!--windowWidth="700" windowHeight="500"-->
-                   <!--immediate="true">-->
-        <!--What is this view-->
-        <!--<h:graphicImage alt="helpIcon" url="/images/help.png"/>-->
-    <!--</h:commandLink>-->
-<!--</div>-->
-
     <div style="float:right">
         <p:commandLink onclick="whatIsSearchDialog.show()">
             What is this view
@@ -45,7 +35,7 @@
                                     <li>
                                     <h:panelGroup>
                                         Protein accession number: e.g.&#160;
-                                        <h:commandLink value="P20053" action="#{searchBean.doNewBinarySearch}">
+                                        <h:commandLink value="P20053" action="#{searchBean.doBinarySearchActionFromOntologySearch}">
                                             <f:setPropertyActionListener value="P20053"
                                                                          target="#{userQuery.searchQuery}"/>
                                         </h:commandLink>
@@ -53,7 +43,7 @@
                                         </li><li>
                                     <h:panelGroup>
                                         Drug name: e.g.&#160;
-                                        <h:commandLink value="imatinib" action="#{searchBean.doNewBinarySearch}">
+                                        <h:commandLink value="imatinib" action="#{searchBean.doBinarySearchActionFromOntologySearch}">
                                             <f:setPropertyActionListener value="imatinib"
                                                                          target="#{userQuery.searchQuery}"/>
                                         </h:commandLink>
@@ -61,7 +51,7 @@
                                      </li><li>
                                     <h:panelGroup>
                                         Gene name: e.g.&#160;
-                                        <h:commandLink value="DDR1" action="#{searchBean.doNewBinarySearch}">
+                                        <h:commandLink value="DDR1" action="#{searchBean.doBinarySearchActionFromOntologySearch}">
                                             <f:setPropertyActionListener value="DDR1"
                                                                          target="#{userQuery.searchQuery}"/>
                                         </h:commandLink>
@@ -70,7 +60,7 @@
                                     <h:panelGroup>
                                         Phrases (surrounded by quotes): e.g.
                                         <ui:param name="expr" value="#{iam:surroundByQuotesIfMissing('NADH dehydrogenase')}"/>
-                                        <h:commandLink action="#{searchBean.doNewBinarySearch}">
+                                        <h:commandLink action="#{searchBean.doBinarySearchActionFromOntologySearch}">
                                             <f:setPropertyActionListener
                                                     value="#{expr}"
                                                     target="#{userQuery.searchQuery}"/>
@@ -86,7 +76,7 @@
                         <f:facet name="end">
                             <h:commandButton id="searchBtn"
                                               value="Search"
-                                              action="#{searchBean.doNewBinarySearch}"/>
+                                              action="#{searchBean.doBinarySearchActionFromOntologySearch}"/>
                         </f:facet>
 
                         <h:inputText id="searchInTabTxt" size="40"
@@ -117,7 +107,7 @@
                                         var="term" itemLabel="#{term.label}" itemValue="#{term}"
                                         typeAhead="true" completeMethod="#{ontologyBean.fillAutocomplete}"
                                         autoHighlight="true" forceSelection="true"
-                                        maxResults="20" size="30"/>
+                                        maxResults="20" size="30" process="@this"/>
 
                         <f:facet name="help">
                             <h:panelGroup>
@@ -126,7 +116,7 @@
                                         <h:outputText value="Term name: "/>
                                         <h:commandLink value="mammalia"
                                                         actionListener="#{userQuery.doAddParamOntologyTermToQuery}"
-                                                        action="#{searchBean.doBinarySearchAction}">
+                                                        action="#{searchBean.doBinarySearchActionFromOntologySearch}">
                                             <f:param name="term" value="mammalia"/>
                                         </h:commandLink>
                                     </h:panelGroup>
@@ -135,23 +125,11 @@
                                         <h:outputText value="Term name: "/>
                                         <h:commandLink value="two hybrid"
                                                         actionListener="#{userQuery.doAddParamOntologyTermToQuery}"
-                                                        action="#{searchBean.doBinarySearchAction}">
+                                                        action="#{searchBean.doBinarySearchActionFromOntologySearch}">
                                             <f:param name="term" value="two hybrid"/>
                                         </h:commandLink>
                                     </h:panelGroup>
                                     </li>
-                                    <!--<li>-->
-                                    <!--<h:panelGroup>-->
-                                        <!--<h:outputText value="Term identifier: "/>-->
-                                        <!--<h:commandLink value="MI:0019"-->
-                                                        <!--actionListener="#{userQuery.doAddParamOntologyTermToQuery}"-->
-                                                        <!--action="#{searchBean.doBinarySearchAction}">-->
-                                            <!--<f:param name="term" value="MI:0019"/>-->
-                                        <!--</h:commandLink>-->
-                                        <!--&#160;-->
-                                        <!--<h:outputText value="(coimmunoprecipitation)"/>-->
-                                    <!--</h:panelGroup>-->
-                                <!--</li>-->
                                 </ul>
                             </h:panelGroup>
                         </f:facet>
@@ -159,7 +137,7 @@
                             <h:commandButton id="ontologySearchBtn"
                                               value="Search"
                                               actionListener="#{userQuery.prepareFromOntologySearch}"
-                                              action="#{searchBean.doBinarySearchAction}">
+                                              action="#{searchBean.doBinarySearchActionFromOntologySearch}">
                             </h:commandButton>
                         </f:facet>
                     </iv:panelLabelAndMessage>

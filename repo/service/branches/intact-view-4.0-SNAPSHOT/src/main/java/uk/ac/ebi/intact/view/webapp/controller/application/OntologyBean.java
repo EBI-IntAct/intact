@@ -30,6 +30,7 @@ import uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 /**
  * Backing bean for Ontology Search and Autocomplete feature
@@ -46,13 +47,19 @@ public class OntologyBean extends BaseController implements InitializingBean {
 
     private InteractionOntologyLuceneSearcher ontologiesIndexSearcher;
 
+    private int maxOntologySuggestion;
+
     @Autowired
-    private IntactViewConfiguration intactViewConfiguration;
+    private IntactViewConfiguration viewConfiguration;
 
     public OntologyBean() {
     }
 
     public InteractionOntologyTerm findByIdentifier(String id) {
+        if (ontologiesIndexSearcher == null){
+           return new InteractionOntologyTerm("", id);
+        }
+
         final InteractionOntologyTerm term;
         try {
             term = ontologiesIndexSearcher.findById(id);
@@ -73,6 +80,9 @@ public class OntologyBean extends BaseController implements InitializingBean {
     //for Autocomplete box
 
     public List<InteractionOntologyTerm> fillAutocomplete( String query ) {
+        if (ontologiesIndexSearcher == null){
+           return Collections.EMPTY_LIST;
+        }
         String formattedQuery = prepareOntologyQueryForLucene( query, true );
 
         if ( log.isDebugEnabled() ) {
@@ -84,10 +94,10 @@ public class OntologyBean extends BaseController implements InitializingBean {
             List<InteractionOntologyTerm> result = search( formattedQuery );
             List<InteractionOntologyTerm> otherResult;
 
-            if (result.size() > intactViewConfiguration.getMaxOntologySuggestions()) {
-                final int furtherTermCount = result.size() - intactViewConfiguration.getMaxOntologySuggestions();
-                otherResult = result.subList(intactViewConfiguration.getMaxOntologySuggestions()-1,result.size()  );
-                result = result.subList(0, intactViewConfiguration.getMaxOntologySuggestions()-1);
+            if (result.size() > maxOntologySuggestion) {
+                final int furtherTermCount = result.size() - maxOntologySuggestion;
+                otherResult = result.subList(maxOntologySuggestion-1,result.size()  );
+                result = result.subList(0, maxOntologySuggestion-1);
 
                 long otherCount =0;
                 for ( InteractionOntologyTerm ontologyTerm : otherResult ) {
@@ -137,13 +147,16 @@ public class OntologyBean extends BaseController implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (intactViewConfiguration.getOntologyLuceneDirectory() == null) {
+
+        if (viewConfiguration.getOntologyLuceneDirectory() == null) {
             if (log.isErrorEnabled()) log.error("Cannot load ontologies as the ontology lucene directory is not configured");
             return;
         }
         if (log.isInfoEnabled()) log.info("Loading and indexing ontologies");
 
-        this.ontologyIndexDirectory = new File(intactViewConfiguration.getOntologyLuceneDirectory());
+        this.ontologyIndexDirectory = new File(viewConfiguration.getOntologyLuceneDirectory());
         this.ontologiesIndexSearcher = new InteractionOntologyLuceneSearcher(this.ontologyIndexDirectory);
+
+        this.maxOntologySuggestion = viewConfiguration.getMaxOntologySuggestions();
     }
 }

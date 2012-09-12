@@ -120,6 +120,15 @@ public class SearchController extends JpaBaseController {
         return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
     }
 
+    public String doBinarySearchActionFromOntologySearch() {
+        UserQuery userQuery = getUserQuery();
+        SolrQuery solrQuery = userQuery.createSolrQueryForOntologySearch();
+
+        doBinarySearch(solrQuery);
+
+        return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
+    }
+
     public String doNewBinarySearch() {
         resetDetailControllers();
 
