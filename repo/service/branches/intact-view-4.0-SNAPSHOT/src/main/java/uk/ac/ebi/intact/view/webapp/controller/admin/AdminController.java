@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
+import uk.ac.ebi.intact.view.webapp.application.OntologyInteractorTypeConfig;
 import uk.ac.ebi.intact.view.webapp.controller.application.CvObjectService;
 import uk.ac.ebi.intact.view.webapp.controller.application.StatisticsController;
 import uk.ac.ebi.intact.view.webapp.controller.search.FilterPopulatorController;
@@ -52,10 +53,12 @@ public class AdminController {
         StatisticsController statisticsController = (StatisticsController) applicationContext.getBean("statisticsController");
         CvObjectService cvObjectService = (CvObjectService) applicationContext.getBean("cvObjectService");
         FilterPopulatorController filterPopulatorController = (FilterPopulatorController) applicationContext.getBean("filterPopulator");
+        OntologyInteractorTypeConfig interactorTypeConfig = (OntologyInteractorTypeConfig) applicationContext.getBean("ontologyInteractorTypeConfig");
 
         filterPopulatorController.initialize();
         statisticsController.calculateStats();
         cvObjectService.clear();
+        interactorTypeConfig.refreshTypes();
     }
 
 }

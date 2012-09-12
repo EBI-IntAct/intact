@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import psidev.psi.mi.calimocho.solr.converter.SolrFieldName;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.InteractionOntologyTerm;
 import uk.ac.ebi.intact.view.webapp.controller.BaseController;
@@ -218,6 +219,8 @@ public class UserQuery extends BaseController {
         return query;
     }
 
+
+
     private void autoQuoteWhenNecessary() {
         searchQuery = searchQuery.trim();
 
@@ -250,7 +253,7 @@ public class UserQuery extends BaseController {
             String query = ontologyTerm.getResults().getSearchField()+":\""+ontologyTerm.getIdentifier()+"\"";
             setSearchQuery(query);
         } else {
-            setSearchQuery(buildSolrOntologyQuery(ontologySearchQuery));
+            setSearchQuery(JsfUtils.surroundByQuotesIfMissing(ontologySearchQuery));
         }
     }
 
@@ -265,13 +268,6 @@ public class UserQuery extends BaseController {
             query = query + " (" + termMap.get( query ) + ")";
         }
         return query;
-    }
-
-    private String buildSolrOntologyQuery( String q ) {
-        if (q == null) return "*:*";
-
-        q = JsfUtils.surroundByQuotesIfMissing(q);
-        return "detmethod:" + q + " OR type:" + q + " OR properties:" + q + " OR species:"+ q ;
     }
 
     public void doShowAddFieldPanel(ActionEvent evt) {
@@ -364,6 +360,17 @@ public class UserQuery extends BaseController {
     private SolrQuery createSolrQueryForHierarchView() {
         // export all available rows
         return createSolrQuery( ).setRows(0);
+    }
+
+    public SolrQuery createSolrQueryForOntologySearch() {
+        // export all available rows
+        SolrQuery query = createSolrQuery();
+
+        query.setParam("qf", SolrFieldName.identifier.toString()+" "+SolrFieldName.xref.toString()+" "+SolrFieldName.pxref.toString()+" "+SolrFieldName.species.toString()+" "+SolrFieldName.detmethod.toString()+" "+SolrFieldName.type.toString()+" "+SolrFieldName.pbiorole.toString()
+                +" "+SolrFieldName.ptype.toString()+" "+SolrFieldName.ftype.toString()+" "+SolrFieldName.pmethod.toString()+" "+SolrFieldName.annot.toString());
+        query.setParam("defType", "edismax");
+
+        return query;
     }
 
     /**

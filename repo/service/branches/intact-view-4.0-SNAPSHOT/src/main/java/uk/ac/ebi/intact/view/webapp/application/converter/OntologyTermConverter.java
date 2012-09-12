@@ -32,12 +32,15 @@ import javax.faces.convert.FacesConverter;
 @FacesConverter( value = "ontologyTermConverter", forClass = InteractionOntologyTerm.class )
 public class OntologyTermConverter implements Converter {
 
+    private OntologyBean ontologyBean;
+
     public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
         if (value == null || value.isEmpty()) {
             return null;
         }
-
-        OntologyBean ontologyBean = (OntologyBean) IntactContext.getCurrentInstance().getSpringContext().getBean("ontologyBean");
+        if (this.ontologyBean == null){
+            this.ontologyBean = (OntologyBean) IntactContext.getCurrentInstance().getSpringContext().getBean("ontologyBean");
+        }
 
         return ontologyBean.findByIdentifier(value);
     }
