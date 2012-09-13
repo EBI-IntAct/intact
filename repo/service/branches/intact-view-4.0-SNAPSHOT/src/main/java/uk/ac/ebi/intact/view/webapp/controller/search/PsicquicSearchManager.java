@@ -18,17 +18,11 @@ package uk.ac.ebi.intact.view.webapp.controller.search;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.hupo.psi.mi.psicquic.registry.ServiceType;
 import org.hupo.psi.mi.psicquic.registry.client.PsicquicRegistryClientException;
 import org.hupo.psi.mi.psicquic.registry.client.registry.DefaultPsicquicRegistryClient;
 import org.hupo.psi.mi.psicquic.registry.client.registry.PsicquicRegistryClient;
 import org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
-import uk.ac.ebi.intact.view.webapp.application.PsicquicThreadConfig;
-import uk.ac.ebi.intact.view.webapp.controller.BaseController;
 import uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration;
 
 import java.io.IOException;
@@ -41,15 +35,9 @@ import java.util.concurrent.*;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-@Controller
-@Scope("conversation.access")
-@ConversationName("general")
-public class PsicquicController extends BaseController {
+public class PsicquicSearchManager {
 
-    private static final Log log = LogFactory.getLog(PsicquicController.class);
-
-    @Autowired
-    private IntactViewConfiguration intactViewConfiguration;
+    private static final Log log = LogFactory.getLog(PsicquicSearchManager.class);
 
     // psicquic
     private List<ServiceType> services;
@@ -63,7 +51,53 @@ public class PsicquicController extends BaseController {
     private int nonRespondingImexDatabases = -1;
     private int threadTimeOut = 5;
 
-    public PsicquicController() {
+    private ExecutorService executorService;
+    private IntactViewConfiguration intactViewConfiguration;
+
+    public PsicquicSearchManager(ExecutorService executorService, IntactViewConfiguration intactViewConfiguration) throws PsicquicRegistryClientException {
+        if (executorService == null){
+            throw new NullPointerException("The psicquicController needs an executorService.");
+        }
+        if (intactViewConfiguration == null){
+            throw new NullPointerException("The psicquicController needs an intactViewConfiguration.");
+        }
+        this.executorService = executorService;
+        this.intactViewConfiguration = intactViewConfiguration;
+
+        initializeServices();
+    }
+
+    public void initializeServices() throws PsicquicRegistryClientException {
+
+        final String psicquicRegistryUrl = intactViewConfiguration.getPsicquicRegistryUrl();
+
+        if (psicquicRegistryUrl == null || psicquicRegistryUrl.length() == 0) {
+            return;
+        }
+
+        if (services == null) {
+            PsicquicRegistryClient registryClient = new DefaultPsicquicRegistryClient(psicquicRegistryUrl);
+            services = registryClient.listActiveServices();
+        }
+
+        if (imexServices == null){
+            imexServices = new ArrayList<ServiceType>(services.size());
+
+            for (final ServiceType service : services) {
+                if (isImexService(service)){
+                    imexServices.add(service);
+                }
+
+                // initialise psicquic services
+                if (!intactViewConfiguration.getPsicquicClientMap().containsKey(service.getRestUrl())){
+                    intactViewConfiguration.getPsicquicClient(service.getRestUrl());
+                }
+            }
+        }
+
+        if (runningTasks == null){
+            runningTasks = new ArrayList<Future>();
+        }
     }
 
     private boolean isImexService(ServiceType service){
@@ -71,75 +105,32 @@ public class PsicquicController extends BaseController {
     }
 
     public void countResultsInOtherDatabases(String query) {
-        try {
-            final String psicquicRegistryUrl = intactViewConfiguration.getPsicquicRegistryUrl();
+        resetPsicquicCounts();
 
-            if (psicquicRegistryUrl == null || psicquicRegistryUrl.length() == 0) {
-                return;
+        if (query == null || query.length() == 0) {
+            query = UserQuery.STAR_QUERY;
+        }
+
+        final String psicquicQuery = query;
+
+        runningTasks.clear();
+
+        for (final ServiceType service : services) {
+            final PsicquicSimpleClient client = intactViewConfiguration.getPsicquicClient(service.getRestUrl());
+
+            if (intactViewConfiguration.getWebappName().contains(service.getName()) || intactViewConfiguration.getDatabaseNamesUsingSameSolr().contains(service.getName())) {
+                continue;
             }
 
-            boolean areImexServicesInitialized = true;
+            Callable<PsicquicCountResults> runnable = new Callable<PsicquicCountResults>() {
+                public PsicquicCountResults call() {
 
-            if (services == null) {
-                PsicquicRegistryClient registryClient = new DefaultPsicquicRegistryClient(psicquicRegistryUrl);
-                services = registryClient.listActiveServices();
-            }
-
-            resetPsicquicCounts();
-
-            if (imexServices == null){
-                imexServices = new ArrayList<ServiceType>(services.size());
-
-                areImexServicesInitialized = false;
-            }
-
-            if (query == null || query.length() == 0) {
-                query = UserQuery.STAR_QUERY;
-            }
-
-            final String psicquicQuery = query;
-
-            PsicquicThreadConfig threadConfig = (PsicquicThreadConfig) getBean("psicquicThreadConfig");
-
-            ExecutorService executorService = threadConfig.getExecutorService();
-
-            if (runningTasks == null){
-                runningTasks = new ArrayList<Future>();
-            }
-            else {
-                runningTasks.clear();
-            }
-
-            for (final ServiceType service : services) {
-                final PsicquicSimpleClient client = intactViewConfiguration.getPsicquicClient(service.getRestUrl());
-
-                if (!areImexServicesInitialized){
-
-                    if (isImexService(service)){
-                        imexServices.add(service);
-                    }
+                    return processPsicquicQueries(service, psicquicQuery, client);
                 }
+            };
 
-                if (intactViewConfiguration.getWebappName().contains(service.getName()) || intactViewConfiguration.getDatabaseNamesUsingSameSolr().contains(service.getName())) {
-                    continue;
-                }
-
-                Callable<PsicquicCountResults> runnable = new Callable<PsicquicCountResults>() {
-                    public PsicquicCountResults call() {
-
-                        return processPsicquicQueries(service, psicquicQuery, client);
-                    }
-                };
-
-                Future<PsicquicCountResults> f = executorService.submit(runnable);
-                runningTasks.add(f);
-            }
-
-            checkAndResumePsicquicTasks();
-
-        } catch (PsicquicRegistryClientException e) {
-            addErrorMessage("Problem counting results in other databases", "Registry not available");
-            e.printStackTrace();
+            Future<PsicquicCountResults> f = executorService.submit(runnable);
+            runningTasks.add(f);
         }
     }
 
@@ -153,9 +144,10 @@ public class PsicquicController extends BaseController {
         nonRespondingImexDatabases = 0;
     }
 
-    private void checkAndResumePsicquicTasks() {
+    public void checkAndResumePsicquicTasks() {
+        List<Future> currentRunningTasks = new ArrayList<Future>(runningTasks);
 
-        for (Future<PsicquicCountResults> f : runningTasks){
+        for (Future<PsicquicCountResults> f : currentRunningTasks){
             try {
                 PsicquicCountResults results = f.get(threadTimeOut, TimeUnit.SECONDS);
 
@@ -176,31 +168,33 @@ public class PsicquicController extends BaseController {
                 else if (!results.isServiceResponding()){
                     nonRespondingDatabases ++;
                 }
+
+                runningTasks.remove(f);
             } catch (InterruptedException e) {
                 log.error("The psicquic task was interrupted, we cancel the task.", e);
-                f.cancel(true);
                 this.nonRespondingDatabases ++;
                 this.nonRespondingImexDatabases ++;
                 if (!f.isCancelled()){
                     f.cancel(true);
                 }
+                runningTasks.remove(f);
             } catch (ExecutionException e) {
                 log.error("The psicquic task could not be executed, we cancel the task.", e);
                 if (!f.isCancelled()){
                     f.cancel(true);
                 }
+                runningTasks.remove(f);
             } catch (TimeoutException e) {
                 log.error("Service task stopped because of time out " + threadTimeOut + "seconds.", e);
                 this.nonRespondingDatabases ++;
                 this.nonRespondingImexDatabases ++;
 
                 if (!f.isCancelled()){
-                   f.cancel(true);
+                    f.cancel(true);
                 }
+                runningTasks.remove(f);
             }
         }
-
-        runningTasks.clear();
     }
 
     private PsicquicCountResults processPsicquicQueries(ServiceType service, String query, PsicquicSimpleClient client){
@@ -270,10 +264,6 @@ public class PsicquicController extends BaseController {
         } else {
             return filter;
         }
-    }
-
-    private UserQuery getUserQuery() {
-        return (UserQuery) getBean("userQuery");
     }
 
     public int getCountInOtherDatabases() {
@@ -369,4 +359,7 @@ public class PsicquicController extends BaseController {
         }
     }
 
+    public List<Future> getRunningTasks() {
+        return runningTasks;
+    }
 }

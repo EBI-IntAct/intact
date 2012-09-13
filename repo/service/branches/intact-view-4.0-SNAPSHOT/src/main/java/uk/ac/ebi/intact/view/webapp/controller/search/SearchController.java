@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
+import org.hupo.psi.mi.psicquic.registry.client.PsicquicRegistryClientException;
 import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -13,6 +14,7 @@ import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.model.CrossReference;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 import uk.ac.ebi.intact.view.webapp.application.OntologyInteractorTypeConfig;
+import uk.ac.ebi.intact.view.webapp.application.PsicquicThreadConfig;
 import uk.ac.ebi.intact.view.webapp.controller.JpaBaseController;
 import uk.ac.ebi.intact.view.webapp.controller.application.StatisticsController;
 import uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration;
@@ -30,6 +32,7 @@ import javax.faces.event.ComponentSystemEvent;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * Search controller.
@@ -80,8 +83,14 @@ public class SearchController extends JpaBaseController {
     //as the Sort constructor is Sort(String field, boolean reverse)
     private boolean ascending = DEFAULT_SORT_ORDER;
 
+    private int threadTimeOut = 10;
+
+    private ExecutorService executorService;
+
     @Autowired
-    private PsicquicController psicquicController;
+    private PsicquicThreadConfig psicquicThreadConfig;
+
+    private PsicquicSearchManager psicquicController;
 
     public SearchController() {
     }
@@ -92,6 +101,18 @@ public class SearchController extends JpaBaseController {
         StatisticsController statisticsController = (StatisticsController) getBean("statisticsController");
         this.totalResults = statisticsController.getBinaryInteractionCount();
         this.currentQuery = null;
+
+        if (executorService == null){
+
+            executorService = psicquicThreadConfig.getExecutorService();
+        }
+
+        try {
+            this.psicquicController = new PsicquicSearchManager(this.executorService, this.intactViewConfiguration);
+        } catch (PsicquicRegistryClientException e) {
+            addErrorMessage("Problem counting results in other databases", "Registry not available");
+            e.printStackTrace();
+        }
 
         /*if (!FacesContext.getCurrentInstance().isPostback()) {
             UserQuery userQuery = getUserQuery();
@@ -142,8 +163,7 @@ public class SearchController extends JpaBaseController {
         // the true binary interactions have - in the complex expansion column
         solrQuery.addFilterQuery(FieldNames.COMPLEX_EXPANSION+":\"-\"");
 
-        doBinarySearch(solrQuery);
-
+        doBinarySearchOnly(solrQuery);
         return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
     }
 
@@ -198,10 +218,53 @@ public class SearchController extends JpaBaseController {
     }
 
     public void doBinarySearch(SolrQuery solrQuery) {
+
         try {
             if ( log.isDebugEnabled() ) {log.debug( "\tSolrQuery:  "+ solrQuery.getQuery() );}
 
-            results = createInteractionDataModel( solrQuery );
+            final SolrQuery solrQueryCopy = solrQuery;
+            final SolrServer solrServer = intactViewConfiguration.getInteractionSolrServer();
+            final int pageSize = getUserQuery().getPageSize();
+            final PsicquicSearchManager psicquicController = this.psicquicController;
+            final String query = solrQuery.getQuery();
+
+            // prepare solr search
+            Callable<Integer> intactRunnable = createIntactSearchRunnable(solrQueryCopy, solrServer, pageSize);
+
+            Future<Integer> intactFuture = executorService.submit(intactRunnable);
+
+            // count psicquic results while searching in Intact
+            psicquicController.countResultsInOtherDatabases(query);
+
+            // resume tasks
+            checkAndResumeSearchTasks(intactFuture);
+            psicquicController.checkAndResumePsicquicTasks();
+
+            if ( log.isDebugEnabled() ) log.debug( "\tResults: " + totalResults );
+
+
+        } catch ( uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrException solrException ) {
+
+            final String query = solrQuery.getQuery();
+            if ( query != null && ( query.startsWith( "*" ) || query.startsWith( "?" ) ) ) {
+                getUserQuery().setSearchQuery( "*:*" );
+                addErrorMessage( "Your query '"+ query +"' is not correctly formatted",
+                        "Currently we do not support queries prefixed with wildcard characters such as '*' or '?'. " +
+                                "However, wildcard characters can be used anywhere else in one's query (eg. g?vin or gav* for gavin). " +
+                                "Please do reformat your query." );
+            }
+        }
+    }
+
+    public void doBinarySearchOnly(SolrQuery solrQuery) {
+        try {
+            if ( log.isDebugEnabled() ) {log.debug( "\tSolrQuery:  "+ solrQuery.getQuery() );}
+
+            final SolrQuery solrQueryCopy = solrQuery;
+            final SolrServer solrServer = intactViewConfiguration.getInteractionSolrServer();
+            final int pageSize = getUserQuery().getPageSize();
+
+            results = createInteractionDataModel( solrQueryCopy, solrServer, pageSize );
 
             totalResults = results.getRowCount();
 
@@ -210,20 +273,56 @@ public class SearchController extends JpaBaseController {
             // store the current query
             this.currentQuery = solrQuery.getQuery();
 
-            // query psicquic
-            psicquicController.countResultsInOtherDatabases(this.currentQuery);
-
         } catch ( uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrException solrException ) {
 
             final String query = solrQuery.getQuery();
             if ( query != null && ( query.startsWith( "*" ) || query.startsWith( "?" ) ) ) {
                 getUserQuery().setSearchQuery( "*:*" );
                 addErrorMessage( "Your query '"+ query +"' is not correctly formatted",
-                                 "Currently we do not support queries prefixed with wildcard characters such as '*' or '?'. " +
-                                 "However, wildcard characters can be used anywhere else in one's query (eg. g?vin or gav* for gavin). " +
-                                 "Please do reformat your query." );
+                        "Currently we do not support queries prefixed with wildcard characters such as '*' or '?'. " +
+                                "However, wildcard characters can be used anywhere else in one's query (eg. g?vin or gav* for gavin). " +
+                                "Please do reformat your query." );
             }
         }
+    }
+
+    private void checkAndResumeSearchTasks(Future<Integer> intactFuture) {
+
+        try {
+            this.totalResults = intactFuture.get(threadTimeOut, TimeUnit.SECONDS);
+
+        } catch (InterruptedException e) {
+            log.error("The intact search was interrupted, we cancel the task.", e);
+            if (!intactFuture.isCancelled()){
+                intactFuture.cancel(true);
+            }
+        } catch (ExecutionException e) {
+            log.error("The intact search could not be executed, we cancel the task.", e);
+            if (!intactFuture.isCancelled()){
+                intactFuture.cancel(true);
+            }
+        } catch (TimeoutException e) {
+            log.error("The intact search stopped because of time out " + threadTimeOut + "seconds.", e);
+
+            if (!intactFuture.isCancelled()){
+                intactFuture.cancel(true);
+            }
+        }
+    }
+
+    private Callable<Integer> createIntactSearchRunnable(final SolrQuery solrQueryCopy, final SolrServer solrServer,
+                                                         final int pageSize) {
+        return new Callable<Integer>() {
+                    public Integer call() {
+
+                        results = createInteractionDataModel( solrQueryCopy, solrServer, pageSize );
+
+                        // store the current query
+                        currentQuery = solrQueryCopy.getQuery();
+
+                        return results.getRowCount();
+                    }
+                };
     }
 
     public String doClearSearchAndGoHome() {
@@ -251,12 +350,10 @@ public class SearchController extends JpaBaseController {
     }
 
 
-    private LazySearchResultDataModel createInteractionDataModel(SolrQuery query) {
-
-        SolrServer solrServer = intactViewConfiguration.getInteractionSolrServer();
+    private LazySearchResultDataModel createInteractionDataModel(SolrQuery query, SolrServer solrServer, int pageSize) {
 
         final LazySearchResultDataModel resultDataModel = new LazySearchResultDataModel(solrServer, query);
-        resultDataModel.setPageSize(getUserQuery().getPageSize());
+        resultDataModel.setPageSize(pageSize);
         return resultDataModel;
     }
 
@@ -309,24 +406,6 @@ public class SearchController extends JpaBaseController {
                                                       interactorTypeMis);
         interactorResults.setPageSize(getUserQuery().getPageSize());
         return interactorResults;
-    }
-
-    private int countUnfilteredInteractions() {
-        UserQuery userQuery = getUserQuery();
-
-        if( !userQuery.isUsingFilters() ) {
-            return totalResults;
-        }
-
-        final SolrQuery solrQuery = userQuery.createSolrQuery( );
-        solrQuery.setRows( 0 );
-
-        if ( log.isDebugEnabled() ) {
-            log.debug( "getCountUnfilteredInteractions: '"+ solrQuery.toString() +"'" );
-        }
-
-        final LazySearchResultDataModel tempResults = createInteractionDataModel( solrQuery );
-        return tempResults.getRowCount();
     }
 
     public void doSearchInteractionsFromCompoundListSelection(ActionEvent evt) {
@@ -530,5 +609,7 @@ public class SearchController extends JpaBaseController {
         return userQuery;
     }
 
-
+    public PsicquicSearchManager getPsicquicSearchManager() {
+        return psicquicController;
+    }
 }

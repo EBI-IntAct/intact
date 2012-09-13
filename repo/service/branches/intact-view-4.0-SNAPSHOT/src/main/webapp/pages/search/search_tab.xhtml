@@ -144,22 +144,18 @@
 
                     <iv:panelLabelAndMessage label="Note: ">
                         <h:outputText value="Currently the following ontologies are supported : "/>
-                        <h:outputLink value="http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=GO"
-                                 target="_blank">Gene Ontology</h:outputLink>
-                        <h:outputText value=", "/>
-                        <h:outputLink value="http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI"
-                                 target="_blank">PSI-MI (interaction detection methods, interaction types, biological roles, interactor types, feature types, annotation topics and participant identification methods)</h:outputLink>
-                        <h:outputText value=", "/>
-                        <h:outputLink value="http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=CHEBI"
-                                 target="_blank">ChEBI</h:outputLink>
-                        <h:outputText value=", "/>
-                        <h:outputLink value="http://www.uniprot.org/taxonomy"
-                                 target="_blank">UniProt Taxonomy</h:outputLink>
-                        <h:outputText value=", "/>
-                        <h:outputText value=" and "/>
-                        <h:outputLink value="http://www.ebi.ac.uk/interpro/"
-                                 target="_blank">InterPro</h:outputLink>
-                        <h:outputText value=", "/>
+                        <ul>
+                            <li><h:outputLink value="http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=GO"
+                                              target="_blank">Gene Ontology</h:outputLink></li>
+                            <li><h:outputLink value="http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI"
+                                              target="_blank">PSI-MI (interaction detection methods, interaction types, biological roles, interactor types, feature types, annotation topics and participant identification methods)</h:outputLink></li>
+                            <li><h:outputLink value="http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=CHEBI"
+                                              target="_blank">ChEBI</h:outputLink></li>
+                            <li><h:outputLink value="http://www.uniprot.org/taxonomy"
+                                              target="_blank">UniProt Taxonomy</h:outputLink></li>
+                            <li><h:outputLink value="http://www.ebi.ac.uk/interpro/"
+                                              target="_blank">InterPro</h:outputLink></li>
+                        </ul>
 
                     </iv:panelLabelAndMessage>
 
