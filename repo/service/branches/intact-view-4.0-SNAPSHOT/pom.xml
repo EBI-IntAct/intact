@@ -29,7 +29,7 @@
         <core.version>2.6.1-SNAPSHOT</core.version>
         <dataexchange.version>2.1.5-SNAPSHOT</dataexchange.version>
         <spring.version>3.1.2.RELEASE</spring.version>
-        
+
         <debug>false</debug>
         <projectStage>Production</projectStage>
 
@@ -41,7 +41,7 @@
         <db.jndi>jdbc/IntactDS</db.jndi>
         <db.url>${db.protocol}:${db.subprotocol}${db.separator}${db.alias}</db.url>
         <db.hbm2ddl>none</db.hbm2ddl>
-        
+
         <!-- Webapp default config -->
         <intact.instance.name>default</intact.instance.name>
 
@@ -123,8 +123,15 @@
                             <value>500000</value>
                         </systemProperty>
                     </systemProperties>
+                    <!-- configure the container                 -->
+                    <jettyConfig>${build.outputDirectory}/META-INF/jetty.xml</jettyConfig>
                 </configuration>
                 <dependencies>
+                    <dependency>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-servlets</artifactId>
+                        <version>7.2.0.RC0</version>
+                    </dependency>
                     <dependency>
                         <groupId>javax.servlet.jsp</groupId>
                         <artifactId>jsp-api</artifactId>
@@ -164,7 +171,7 @@
 
 
             <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>1.6</source>
@@ -172,14 +179,14 @@
                 </configuration>
             </plugin>
 
-           <!-- Conversion of XML Schema into Java source code using JAXB-XJC -->
+            <!-- Conversion of XML Schema into Java source code using JAXB-XJC -->
             <plugin>
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
-	            <artifactId>maven-jaxb2-plugin</artifactId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
                 <configuration>
                     <schemaDirectory>src/main/resources/META-INF/schema</schemaDirectory>
                     <schemaIncludes>
-		        <include>dotm*.xsd</include>
+                        <include>dotm*.xsd</include>
                         <include>news*.xsd</include>
                         <include>faq*.xsd</include>
                     </schemaIncludes>
@@ -196,15 +203,15 @@
                 </executions>
             </plugin>
             <plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-eclipse-plugin</artifactId>
-		<version>2.9</version>
-		<configuration>
-		    <downloadSources>false</downloadSources>
-		    <wtpversion>1.5</wtpversion>
-		</configuration>
-	    </plugin>
-	    
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <downloadSources>false</downloadSources>
+                    <wtpversion>1.5</wtpversion>
+                </configuration>
+            </plugin>
+
         </plugins>
 
     </build>
@@ -334,15 +341,15 @@
                                 <jettyEnvXml>${project.build.testOutputDirectory}/META-INF/jetty-env-test.xml</jettyEnvXml>
                             </webAppConfig>
                             <systemProperties>
-                                  <systemProperty>
+                                <systemProperty>
                                     <name>solr.solr.home</name>
                                     <value>${basedir}/target/solr/home</value>
-                                  </systemProperty>
+                                </systemProperty>
                             </systemProperties>
                             <contextHandlers>
                                 <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
-                                  <war>${basedir}/target/solr/solr.war</war>
-                                  <contextPath>/solr</contextPath>
+                                    <war>${basedir}/target/solr/solr.war</war>
+                                    <contextPath>/solr</contextPath>
                                 </contextHandler>
                             </contextHandlers>
                             <stopPort>9969</stopPort>
@@ -369,6 +376,11 @@
                         </executions>
 
                         <dependencies>
+                            <dependency>
+                                <groupId>org.eclipse.jetty</groupId>
+                                <artifactId>jetty-servlets</artifactId>
+                                <version>7.2.0.RC0</version>
+                            </dependency>
                             <dependency>
                                 <groupId>javax.servlet.jsp</groupId>
                                 <artifactId>jsp-api</artifactId>
@@ -451,22 +463,22 @@
             <groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>
             <artifactId>intact-psixml-exchange</artifactId>
             <version>${dataexchange.version}</version>
-             <exclusions>
-                 <exclusion>
-                     <groupId>cpdetector</groupId>
-                     <artifactId>cpdetector</artifactId>
-                 </exclusion>
-                 <!-- The following exclusions are meant to prevent maven
-                      from trying to find 2.0 from the deprecated java.net repo -->
-                 <exclusion>
-                     <groupId>com.sun.xml.ws</groupId>
-                     <artifactId>jaxws-tools</artifactId>
-                 </exclusion>
-                 <exclusion>
-                     <groupId>com.sun.xml.ws</groupId>
-                     <artifactId>jaxws-rt</artifactId>
-                 </exclusion>
-             </exclusions>
+            <exclusions>
+                <exclusion>
+                    <groupId>cpdetector</groupId>
+                    <artifactId>cpdetector</artifactId>
+                </exclusion>
+                <!-- The following exclusions are meant to prevent maven
+      from trying to find 2.0 from the deprecated java.net repo -->
+                <exclusion>
+                    <groupId>com.sun.xml.ws</groupId>
+                    <artifactId>jaxws-tools</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.xml.ws</groupId>
+                    <artifactId>jaxws-rt</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
@@ -479,9 +491,13 @@
             <artifactId>intact-solr</artifactId>
             <version>${dataexchange.version}</version>
             <exclusions>
-                 <exclusion>
+                <exclusion>
                     <groupId>woodstox</groupId>
                     <artifactId>wstx-asl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.mortbay.jetty:jetty</groupId>
+                    <artifactId>jetty</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -499,18 +515,18 @@
         </dependency>
 
         <!-- psidev -->
-         <dependency>
+        <dependency>
             <groupId>psidev.psi.mi</groupId>
             <artifactId>psi25-xml-rdf</artifactId>
             <version>1.8.1-SNAPSHOT</version>
-             <exclusions>
-                 <exclusion>
-                     <groupId>woodstox</groupId>
-                     <artifactId>wstx-asl</artifactId>
-                 </exclusion>
-             </exclusions>
-         </dependency>
-         <dependency>
+            <exclusions>
+                <exclusion>
+                    <groupId>woodstox</groupId>
+                    <artifactId>wstx-asl</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>psidev.psi.mi</groupId>
             <artifactId>psimitab</artifactId>
             <version>1.8.1-SNAPSHOT</version>
@@ -584,7 +600,7 @@
             <artifactId>lucene-highlighter</artifactId>
             <version>3.6.0</version>
         </dependency>
-        
+
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
@@ -647,7 +663,7 @@
             <artifactId>spring-orm</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>antlr</groupId>
             <artifactId>antlr</artifactId>
