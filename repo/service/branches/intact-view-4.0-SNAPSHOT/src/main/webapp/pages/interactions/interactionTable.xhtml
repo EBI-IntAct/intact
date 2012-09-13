@@ -24,28 +24,29 @@
                           onclick="_gaq.push(['_trackEvent', 'Export', 'MI-TAB', ''])"/>
             <f:selectItem itemLabel="MI-TAB 2.6" itemValue="mitab_26"/>
             <f:selectItem itemLabel="MI-TAB 2.7" itemValue="mitab_27"/>
-            <f:selectItem itemLabel="MI-XML 2.5.3" itemValue="xml_2_53" itemDisabled="#{searchBean.results.rowCount ge intactViewConfiguration.maxSizeXmlExport}"/>
-            <f:selectItem itemLabel="MI-XML 2.5.4" itemValue="xml_2_54" itemDisabled="#{searchBean.results.rowCount ge intactViewConfiguration.maxSizeXmlExport}"/>
+            <f:selectItem itemLabel="MI-XML 2.5.3" itemValue="xml_2_53" itemDisabled="#{searchBean.totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
+            <f:selectItem itemLabel="MI-XML 2.5.4" itemValue="xml_2_54" itemDisabled="#{searchBean.totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
             <f:selectItem itemLabel="MI-XML 2.5(HTML view)" itemValue="xml_html"
-                          itemDisabled="#{searchBean.results.rowCount ge intactViewConfiguration.maxSizeXmlExport}"/>
-            <f:selectItem itemLabel="BioPAX (Level 3)" itemValue="biopax_l3" itemDisabled="#{searchBean.results.rowCount ge intactViewConfiguration.maxSizeXmlExport}"/>
-            <f:selectItem itemLabel="BioPAX (Level 2)" itemValue="biopax_l2" itemDisabled="#{searchBean.results.rowCount ge intactViewConfiguration.maxSizeXmlExport}"/>
-            <f:selectItem itemLabel="RDF/XML" itemValue="rdf_xml" itemDisabled="#{searchBean.results.rowCount ge intactViewConfiguration.maxSizeXmlExport}"/>
-            <f:selectItem itemLabel="RDF/XML (Abbrev)" itemValue="rdf_xml_abbrev" itemDisabled="#{searchBean.results.rowCount ge intactViewConfiguration.maxSizeXmlExport}"/>
-            <f:selectItem itemLabel="RDF (N3)" itemValue="rdf_n3" itemDisabled="#{searchBean.results.rowCount ge intactViewConfiguration.maxSizeXmlExport}"/>
-            <f:selectItem itemLabel="RDF (N-Triples)" itemValue="rdf_triple" itemDisabled="#{searchBean.results.rowCount ge intactViewConfiguration.maxSizeXmlExport}"/>
-            <f:selectItem itemLabel="RDF (Turtle)" itemValue="rdf_turtle" itemDisabled="#{searchBean.results.rowCount ge intactViewConfiguration.maxSizeXmlExport}"/>
-            <f:selectItem itemLabel="XGMML (Cytoscape)" itemValue="xgmml" itemDisabled="#{searchBean.results.rowCount ge intactViewConfiguration.maxSizeXgmmlExport}"/>
+                          itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
+            <f:selectItem itemLabel="BioPAX (Level 3)" itemValue="biopax_l3" itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
+            <f:selectItem itemLabel="BioPAX (Level 2)" itemValue="biopax_l2" itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
+            <f:selectItem itemLabel="RDF/XML" itemValue="rdf_xml" itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
+            <f:selectItem itemLabel="RDF/XML (Abbrev)" itemValue="rdf_xml_abbrev" itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
+            <f:selectItem itemLabel="RDF (N3)" itemValue="rdf_n3" itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
+            <f:selectItem itemLabel="RDF (N-Triples)" itemValue="rdf_triple" itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
+            <f:selectItem itemLabel="RDF (Turtle)" itemValue="rdf_turtle" itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
+            <f:selectItem itemLabel="XGMML (Cytoscape)" itemValue="xgmml" itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXgmmlExport}"/>
         </h:selectOneMenu>
 
 
         <p:commandButton type="button" id="exportBtn" value="Download"
                          disabled="#{searchBean.exportFormat == null}"
+                         process="@this"
                          onclick="var selector = document.getElementById('mainPanels:exportFormatSelect');_gaq.push(['_trackEvent', 'Export', selector.options[selector.selectedIndex].text,'#{userQuery.searchQuery}']); var newWindow = window.open('#{requestConfigBean.absoluteContextPath}/export?format=#{searchBean.exportFormat}', '_blank'); newWindow.focus()"/>
 
         <p:separator/>
 
-        <p:commandButton id="customizedViewButton" type="button" value="Customize view" onclick="columnsDialog.show(); _gaq.push(['_trackEvent', 'Interactions table', 'Customize view', '#{userQuery.searchQuery}'])" />
+        <p:commandButton process="@this" id="customizedViewButton" type="button" value="Customize view" onclick="columnsDialog.show(); _gaq.push(['_trackEvent', 'Interactions table', 'Customize view', '#{userQuery.searchQuery}'])" />
 
         <p:dialog id="updateColumns" header="Columns displayed" widgetVar="columnsDialog" width="300" height="450">
             Select:
@@ -69,7 +70,7 @@
             <p:commandButton id="updateColumnSelection" value="Update"
                              update=":intactForm:resultsTable"
                              oncomplete="columnsDialog.hide()"
-                             process="@this" ajax="true"/>
+                             process="@this" ajax="true" partialSubmit="true"/>
         </p:dialog>
 
     </p:toolbarGroup>
@@ -82,7 +83,7 @@
 <p:dataTable id="resultsTable" var="binaryInteraction" value="#{searchBean.results}"
              rows="#{userQuery.pageSize}"
              dynamic="true" rowIndexVar="row" paginatorPosition="both"
-             paginator="#{searchBean.results.rowCount gt userQuery.pageSize}"
+             paginator="#{searchBean.totalResults gt userQuery.pageSize}"
              rowStyleClass="#{not searchBean.results.sameThanPrevious? 'newInteractionRow' : 'sameInteractionRow'}" rendered="#{searchBean.totalResults > 0}">
 <p:column>
     <h:outputLink value="#{request.contextPath}/interaction/#{searchBean.getMainAccessionXref(binaryInteraction).identifier}" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Interaction details','#{detailsBean.interactionAc}'])">

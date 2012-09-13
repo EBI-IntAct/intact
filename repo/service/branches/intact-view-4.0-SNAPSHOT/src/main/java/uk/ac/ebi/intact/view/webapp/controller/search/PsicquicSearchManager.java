@@ -15,7 +15,6 @@
  */
 package uk.ac.ebi.intact.view.webapp.controller.search;
 
-import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hupo.psi.mi.psicquic.registry.ServiceType;
@@ -26,7 +25,6 @@ import org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient;
 import uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -212,24 +210,15 @@ public class PsicquicSearchManager {
 
     private void collectCountFromPsicquicService(ServiceType service, String query, PsicquicCountResults results, PsicquicSimpleClient client) {
 
-        String url = null;
-        HttpMethod method = null;
         try {
 
-            String encoded = URLEncoder.encode(query, "UTF-8");
-            encoded = encoded.replaceAll("\\+", "%20");
-
-            long count = client.countByQuery(encoded);
+            long count = client.countByQuery(query);
 
             results.setPsicquicCount((int) count);
             results.setServiceResponding(true);
 
         } catch (IOException e) {
-            log.error("Problem connecting to PSICQUIC service '"+service.getName()+"': "+url+" / proxy "+intactViewConfiguration.getProxyHost()+":"+intactViewConfiguration.getProxyPort(), e);
-
-            if (method != null){
-                method.releaseConnection();
-            }
+            log.error("Problem connecting to PSICQUIC service '"+service.getName()+"': "+service.getRestUrl()+" / proxy "+intactViewConfiguration.getProxyHost()+":"+intactViewConfiguration.getProxyPort(), e);
 
             results.setServiceResponding(false);
         }
@@ -241,10 +230,7 @@ public class PsicquicSearchManager {
 
         try {
 
-            String encoded = URLEncoder.encode(imexQuery, "UTF-8");
-            encoded = encoded.replaceAll("\\+", "%20");
-
-            long count = client.countByQuery(encoded);
+            long count = client.countByQuery(imexQuery);
 
             results.setImexCount((int) count);
             results.setImexResponding(true);
