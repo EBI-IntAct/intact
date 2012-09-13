@@ -42,9 +42,7 @@ import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.SocketAddress;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * IntactView configuration bean.
@@ -137,6 +135,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
 
     private HttpClient httpClientWithProxy;
     private HttpClient httpClientWithoutProxy;
+    private Map<String, PsicquicSimpleClient> psicquicClientMap;
 
     private List<String> databaseNamesUsingSameSolr;
 
@@ -149,6 +148,9 @@ public class IntactViewConfiguration extends BaseController implements Initializ
         storeIfNew();
         if (databaseNamesUsingSameSolr == null){
             databaseNamesUsingSameSolr = new ArrayList<String>();
+        }
+        if (psicquicClientMap == null){
+            psicquicClientMap = new HashMap<String, PsicquicSimpleClient>(26);
         }
     }
 
@@ -567,7 +569,16 @@ public class IntactViewConfiguration extends BaseController implements Initializ
         return httpClientWithoutProxy;
     }
 
+    public Map<String, PsicquicSimpleClient> getPsicquicClientMap() {
+        return psicquicClientMap;
+    }
+
     public synchronized PsicquicSimpleClient getPsicquicClient(String rest) {
+
+        if (this.psicquicClientMap.containsKey(rest)){
+            return this.psicquicClientMap.get(rest);
+        }
+
         PsicquicSimpleClient simpleClient;
 
         if (proxyPort != null && proxyPort.length() > 0){
@@ -588,6 +599,8 @@ public class IntactViewConfiguration extends BaseController implements Initializ
             log.info("Setting PSICQUIC httpClient using proxy with NO PROXY");
             simpleClient = new PsicquicSimpleClient(rest);
         }
+
+        this.psicquicClientMap.put(rest, simpleClient);
 
         return simpleClient;
     }
