@@ -10,6 +10,30 @@
 
                 xmlns:iv="http://java.sun.com/jsf/composite/intactview">
 
+<p:dialog id="updateColumns" header="Columns displayed" widgetVar="columnsDialog" width="300" height="450">
+    Select:
+    <p:commandLink id="selectMinimalColumns" value="Minimal" actionListener="#{columnContext.selectMininumColumns()}" update="columnSelection" process="@this" partialSubmit="true" onstart="statusDialog.show()" oncomplete="statusDialog.hide()"/>
+    &#160;|&#160;
+    <p:commandLink id="selectBasicColumns" value="Basic" actionListener="#{columnContext.selectBasicColumns()}" update="columnSelection" process="@this" partialSubmit="true" onstart="statusDialog.show()" oncomplete="statusDialog.hide()"/>
+    &#160;|&#160;
+    <p:commandLink id="selectStandardColumns" value="Standard" actionListener="#{columnContext.selectStandardColumns()}" update="columnSelection" process="@this" partialSubmit="true" onstart="statusDialog.show()" oncomplete="statusDialog.hide()"/>
+    &#160;|&#160;
+    <p:commandLink id="selectExpandedColumns" value="Expanded" actionListener="#{columnContext.selectExpandedColumns()}" update="columnSelection" process="@this" partialSubmit="true" onstart="statusDialog.show()" oncomplete="statusDialog.hide()"/>
+    &#160;|&#160;
+    <p:commandLink id="selectCompleteColumns" value="Complete" actionListener="#{columnContext.selectCompleteColumns()}" update="columnSelection" process="@this" partialSubmit="true" onstart="statusDialog.show()" oncomplete="statusDialog.hide()"/>
+    <hr/>
+
+    <div style="height:300px; width: 100%;overflow-x: auto;">
+        <h:selectManyCheckbox id="columnSelection" value="#{columnContext.selectedColumns}" layout="pageDirection">
+            <f:selectItems value="#{columnContext.columnsSelectItems}"/>
+        </h:selectManyCheckbox>
+    </div>
+    <hr/>
+    <p:commandButton id="updateColumnSelection" value="Update"
+                     update="resultsTable"
+                     oncomplete="columnsDialog.hide()"
+                     process="@this" ajax="true" partialSubmit="true"/>
+</p:dialog>
 
 <p:toolbar rendered="#{searchBean.totalResults > 0}">
 
@@ -17,9 +41,9 @@
 
         <h:selectOneMenu id="exportFormatSelect"
                          value="#{searchBean.exportFormat}">
-            <p:ajax event="change" onstart="document.getElementById('mainPanels:exportBtn').disabled=true"
-                    update="exportBtn" process="@this" partialSubmit="true"/>
-            <f:selectItem itemLabel="-- Select format to Download --" itemValue="#{null}"/>
+            <p:ajax event="change" onstart="statusDialog.show()"
+                    update="exportBtn" oncomplete="statusDialog.hide()"/>
+            <f:selectItem itemLabel=" Select format to Download " itemValue="#{null}"/>
             <f:selectItem itemLabel="MI-TAB 2.5" itemValue="mitab_25"
                           onclick="_gaq.push(['_trackEvent', 'Export', 'MI-TAB', ''])"/>
             <f:selectItem itemLabel="MI-TAB 2.6" itemValue="mitab_26"/>
@@ -27,15 +51,15 @@
             <f:selectItem itemLabel="MI-XML 2.5.3" itemValue="xml_2_53" itemDisabled="#{searchBean.totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
             <f:selectItem itemLabel="MI-XML 2.5.4" itemValue="xml_2_54" itemDisabled="#{searchBean.totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
             <f:selectItem itemLabel="MI-XML 2.5(HTML view)" itemValue="xml_html"
-                          itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
-            <f:selectItem itemLabel="BioPAX (Level 3)" itemValue="biopax_l3" itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
-            <f:selectItem itemLabel="BioPAX (Level 2)" itemValue="biopax_l2" itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
-            <f:selectItem itemLabel="RDF/XML" itemValue="rdf_xml" itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
-            <f:selectItem itemLabel="RDF/XML (Abbrev)" itemValue="rdf_xml_abbrev" itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
-            <f:selectItem itemLabel="RDF (N3)" itemValue="rdf_n3" itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
+                          itemDisabled="#{searchBean.totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
+            <f:selectItem itemLabel="BioPAX (Level 3)" itemValue="biopax_l3" itemDisabled="#{searchBean.totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
+            <f:selectItem itemLabel="BioPAX (Level 2)" itemValue="biopax_l2" itemDisabled="#{searchBean.totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
+            <f:selectItem itemLabel="RDF/XML" itemValue="rdf_xml" itemDisabled="#{searchBean.totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
+            <f:selectItem itemLabel="RDF/XML (Abbrev)" itemValue="rdf_xml_abbrev" itemDisabled="#{searchBean.totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
+            <f:selectItem itemLabel="RDF (N3)" itemValue="rdf_n3" itemDisabled="#{searchBean.totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
             <f:selectItem itemLabel="RDF (N-Triples)" itemValue="rdf_triple" itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
-            <f:selectItem itemLabel="RDF (Turtle)" itemValue="rdf_turtle" itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
-            <f:selectItem itemLabel="XGMML (Cytoscape)" itemValue="xgmml" itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXgmmlExport}"/>
+            <f:selectItem itemLabel="RDF (Turtle)" itemValue="rdf_turtle" itemDisabled="#{searchBean.totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
+            <f:selectItem itemLabel="XGMML (Cytoscape)" itemValue="xgmml" itemDisabled="#{searchBean.totalResults ge intactViewConfiguration.maxSizeXgmmlExport}"/>
         </h:selectOneMenu>
 
 
@@ -47,36 +71,12 @@
         <p:separator/>
 
         <p:commandButton process="@this" id="customizedViewButton" type="button" value="Customize view" onclick="columnsDialog.show(); _gaq.push(['_trackEvent', 'Interactions table', 'Customize view', '#{userQuery.searchQuery}'])" />
-
-        <p:dialog id="updateColumns" header="Columns displayed" widgetVar="columnsDialog" width="300" height="450">
-            Select:
-            <p:commandLink id="selectMinimalColumns" value="Minimal" actionListener="#{columnContext.selectMininumColumns()}" update="columnSelection" process="@this" partialSubmit="true"/>
-            &#160;|&#160;
-            <p:commandLink id="selectBasicColumns" value="Basic" actionListener="#{columnContext.selectBasicColumns()}" update="columnSelection" process="@this" partialSubmit="true"/>
-            &#160;|&#160;
-            <p:commandLink id="selectStandardColumns" value="Standard" actionListener="#{columnContext.selectStandardColumns()}" update="columnSelection" process="@this" partialSubmit="true"/>
-            &#160;|&#160;
-            <p:commandLink id="selectExpandedColumns" value="Expanded" actionListener="#{columnContext.selectExpandedColumns()}" update="columnSelection" process="@this" partialSubmit="true"/>
-            &#160;|&#160;
-            <p:commandLink id="selectCompleteColumns" value="Complete" actionListener="#{columnContext.selectCompleteColumns()}" update="columnSelection" process="@this" partialSubmit="true"/>
-            <hr/>
-
-            <div style="height:300px; width: 100%;overflow-x: auto;">
-                <h:selectManyCheckbox id="columnSelection" value="#{columnContext.selectedColumns}" layout="pageDirection">
-                    <f:selectItems value="#{columnContext.columnsSelectItems}"/>
-                </h:selectManyCheckbox>
-            </div>
-            <hr/>
-            <p:commandButton id="updateColumnSelection" value="Update"
-                             update=":intactForm:resultsTable"
-                             oncomplete="columnsDialog.hide()"
-                             process="@this" ajax="true" partialSubmit="true"/>
-        </p:dialog>
-
     </p:toolbarGroup>
 </p:toolbar>
 
-<br/>
+<h:outputText id="resultsTable" value="Coucou"/>
+
+<!--<br/>
 
 <iv:cvLazyDialog dialogVar="cvInfoDialog"/>
 
@@ -260,9 +260,9 @@
     <f:facet name="header"><h:outputText value="#{messages['interaction.firstauthor']}"/></f:facet>
 
     <ui:repeat var="author" value="#{binaryInteraction.authors}">
-                <span style="display:block">
-                        <h:outputText value="#{author.name}" style="white-space:nowrap;"/>
-                </span>
+                        <span style="display:block">
+                                <h:outputText value="#{author.name}" style="white-space:nowrap;"/>
+                        </span>
     </ui:repeat>
 </p:column>
 
@@ -339,9 +339,9 @@
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.confidencevalue']}"/></f:facet>
     <ui:repeat var="confidence" value="#{binaryInteraction.confidenceValues}" rows="0">
-                    <span style="display:block">
-                            <h:outputText value="#{confidence.type}:#{confidence.value}" style="white-space:nowrap"/>
-                    </span>
+                            <span style="display:block">
+                                    <h:outputText value="#{confidence.type}:#{confidence.value}" style="white-space:nowrap"/>
+                            </span>
     </ui:repeat>
 </p:column>
 
@@ -486,9 +486,9 @@
     <f:facet name="header"><h:outputText value="#{messages['moleculeA.annotations']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorA != null}">
         <ui:repeat var="annot" value="#{binaryInteraction.interactorA.annotations}" rows="0">
-                    <span style="display:block">
-                            <h:outputText value="#{annot.topic}:#{annot.text}" style="white-space:nowrap"/>
-                    </span>
+                            <span style="display:block">
+                                    <h:outputText value="#{annot.topic}:#{annot.text}" style="white-space:nowrap"/>
+                            </span>
         </ui:repeat>
     </h:panelGroup>
 
@@ -502,9 +502,9 @@
     <f:facet name="header"><h:outputText value="#{messages['moleculeB.annotations']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorB != null}">
         <ui:repeat var="annot" value="#{binaryInteraction.interactorB.annotations}" rows="0">
-                    <span style="display:block">
-                            <h:outputText value="#{annot.topic}:#{annot.text}" style="white-space:nowrap"/>
-                    </span>
+                            <span style="display:block">
+                                    <h:outputText value="#{annot.topic}:#{annot.text}" style="white-space:nowrap"/>
+                            </span>
         </ui:repeat>
     </h:panelGroup>
     <h:panelGroup rendered="#{binaryInteraction.interactorB == null}">
@@ -516,9 +516,9 @@
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.annotations']}"/></f:facet>
     <ui:repeat var="annot" value="#{binaryInteraction.annotations}" rows="0">
-                   <span style="display:block">
-                            <h:outputText value="#{annot.topic}:#{annot.text}" style="white-space:nowrap"/>
-                    </span>
+                           <span style="display:block">
+                                    <h:outputText value="#{annot.topic}:#{annot.text}" style="white-space:nowrap"/>
+                            </span>
     </ui:repeat>
 </p:column>
 
@@ -535,9 +535,9 @@
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.parameters']}"/></f:facet>
     <ui:repeat var="param" value="#{binaryInteraction.parameters}" rows="0">
-                   <span style="display:block">
-                            <h:outputText value="#{param.type}:#{iamf:getParameterValue(param)}" style="white-space:nowrap"/>
-                    </span>
+                           <span style="display:block">
+                                    <h:outputText value="#{param.type}:#{iamf:getParameterValue(param)}" style="white-space:nowrap"/>
+                            </span>
     </ui:repeat>
 </p:column>
 
@@ -545,9 +545,9 @@
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.created']}"/></f:facet>
     <ui:repeat var="created" value="#{binaryInteraction.creationDate}">
-                    <span style="display:block">
-                            <h:outputText value="#{iamf:formatDate(created)}" style="white-space:nowrap"/>
-                    </span>
+                            <span style="display:block">
+                                    <h:outputText value="#{iamf:formatDate(created)}" style="white-space:nowrap"/>
+                            </span>
     </ui:repeat>
 </p:column>
 
@@ -555,9 +555,9 @@
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.updated']}"/></f:facet>
     <ui:repeat var="updated" value="#{binaryInteraction.updateDate}">
-                    <span style="display:block">
-                            <h:outputText value="#{iamf:formatDate(updated)}" style="white-space:nowrap"/>
-                    </span>
+                            <span style="display:block">
+                                    <h:outputText value="#{iamf:formatDate(updated)}" style="white-space:nowrap"/>
+                            </span>
     </ui:repeat>
 </p:column>
 
@@ -566,9 +566,9 @@
     <f:facet name="header"><h:outputText value="#{messages['moleculeA.checksums']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorA != null}">
         <ui:repeat var="checksum" value="#{binaryInteraction.interactorA.checksums}" rows="0">
-                   <span style="display:block">
-                            <h:outputText value="#{checksum.methodName}:#{checksum.checksum}" style="white-space:nowrap"/>
-                    </span>
+                           <span style="display:block">
+                                    <h:outputText value="#{checksum.methodName}:#{checksum.checksum}" style="white-space:nowrap"/>
+                            </span>
         </ui:repeat>
     </h:panelGroup>
 
@@ -582,9 +582,9 @@
     <f:facet name="header"><h:outputText value="#{messages['moleculeB.checksums']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorB != null}">
         <ui:repeat var="checksum" value="#{binaryInteraction.interactorB.checksums}" rows="0">
-                   <span style="display:block">
-                            <h:outputText value="#{checksum.methodName}:#{checksum.checksum}" style="white-space:nowrap"/>
-                    </span>
+                           <span style="display:block">
+                                    <h:outputText value="#{checksum.methodName}:#{checksum.checksum}" style="white-space:nowrap"/>
+                            </span>
         </ui:repeat>
     </h:panelGroup>
 
@@ -597,9 +597,9 @@
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.checksums']}"/></f:facet>
     <ui:repeat var="checksum" value="#{binaryInteraction.checksums}" rows="0">
-                   <span style="display:block">
-                            <h:outputText value="#{checksum.methodName}:#{checksum.checksum}" style="white-space:nowrap"/>
-                    </span>
+                           <span style="display:block">
+                                    <h:outputText value="#{checksum.methodName}:#{checksum.checksum}" style="white-space:nowrap"/>
+                            </span>
     </ui:repeat>
 </p:column>
 
@@ -614,9 +614,9 @@
     <f:facet name="header"><h:outputText value="#{messages['moleculeA.features']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorA != null}">
         <ui:repeat var="feature" value="#{binaryInteraction.interactorA.features}" rows="0">
-                   <span style="display:block">
-                            <h:outputText value="#{feature.featureType}:#{checksum.checksum}" style="white-space:nowrap"/>
-                    </span>
+                           <span style="display:block">
+                                    <h:outputText value="#{feature.featureType}:#{checksum.checksum}" style="white-space:nowrap"/>
+                            </span>
         </ui:repeat>
     </h:panelGroup>
 
@@ -630,9 +630,9 @@
     <f:facet name="header"><h:outputText value="#{messages['moleculeB.features']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorB != null}">
         <ui:repeat var="feature" value="#{binaryInteraction.interactorB.features}" rows="0">
-                   <span style="display:block">
-                            <h:outputText value="#{feature.featureType}:#{checksum.checksum}" style="white-space:nowrap"/>
-                    </span>
+                           <span style="display:block">
+                                    <h:outputText value="#{feature.featureType}:#{checksum.checksum}" style="white-space:nowrap"/>
+                            </span>
         </ui:repeat>
     </h:panelGroup>
     <h:panelGroup rendered="#{binaryInteraction.interactorB == null}">
@@ -689,6 +689,6 @@
     </h:panelGroup>
 </p:column>
 
-</p:dataTable>
+</p:dataTable> -->
 
 </ui:composition>
