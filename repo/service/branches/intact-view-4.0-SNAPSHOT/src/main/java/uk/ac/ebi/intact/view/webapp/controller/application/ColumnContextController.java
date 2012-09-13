@@ -97,10 +97,20 @@ public class ColumnContextController {
     private static String NEGATIVE = "interaction.negative";
     private static String MOLECULE_A_FEATURE = "moleculeA.features";
     private static String MOLECULE_B_FEATURE = "moleculeB.features";
-    private static String MOLECULE_A_STOICHIOMETRY = "moleculeA.stoichiometry";
-    private static String MOLECULE_B_STOICHIOMETRY = "moleculeB.stoichiometry";
+    private static String MOLECULE_A_STOICHIOMETRY = "moleculeA.stc";
+    private static String MOLECULE_B_STOICHIOMETRY = "moleculeB.stc";
     private static String MOLECULE_A_IDENTIFICATION = "moleculeA.pmethod";
     private static String MOLECULE_B_IDENTIFICATION = "moleculeB.pmethod";
+
+    private String[] simpleColumns;
+
+    private String[] basicColumns;
+
+    private String[] expandedColumns;
+
+    private String[] completeColumns;
+
+    private String[] minimumColumns;
 
     public ColumnContextController() {
     }
@@ -118,6 +128,9 @@ public class ColumnContextController {
                 selectStandardColumns();
             } else if (COOKIE_EXPANDED_VALUE.equals(colsCookie)) {
                 selectExpandedColumns();
+            }
+            else if (COOKIE_COMPLETE_VALUE.equals(colsCookie)) {
+                selectCompleteColumns();
             }
         } else {
             selectStandardColumns();
@@ -150,43 +163,55 @@ public class ColumnContextController {
     }
 
     private String[] getSimpleColumns() {
-        return new String[] {
-            MOLECULE_A_NAME, MOLECULE_A_LINKS, MOLECULE_B_NAME, MOLECULE_B_LINKS,
-            MOLECULE_A_SPECIES, MOLECULE_B_SPECIES,INTERACTION_TYPE, CONFIDENCE_VALUE, PUBMED_IDENTIFIER,
-            INTERACTION_DETECTION_METHOD, INTERACTION_AC, EXPANSION_METHOD, NEGATIVE
-        };
+        if (this.simpleColumns == null){
+            simpleColumns = new String[] {
+                    MOLECULE_A_NAME, MOLECULE_A_LINKS, MOLECULE_B_NAME, MOLECULE_B_LINKS,
+                    MOLECULE_A_SPECIES, MOLECULE_B_SPECIES,INTERACTION_TYPE, CONFIDENCE_VALUE, PUBMED_IDENTIFIER,
+                    INTERACTION_DETECTION_METHOD, INTERACTION_AC, EXPANSION_METHOD, NEGATIVE
+            };
+        }
+        return simpleColumns;
     }
 
     private String[] getBasicColumns() {
-        return new String[] {
-                MOLECULE_A_NAME, MOLECULE_A_LINKS, MOLECULE_B_NAME, MOLECULE_B_LINKS,
-                INTERACTION_DETECTION_METHOD, INTERACTION_AC, NEGATIVE
-        };
+        if (basicColumns == null){
+            basicColumns =new String[] {
+                    MOLECULE_A_NAME, MOLECULE_A_LINKS, MOLECULE_B_NAME, MOLECULE_B_LINKS,
+                    INTERACTION_DETECTION_METHOD, INTERACTION_AC, NEGATIVE
+            };
+        }
+        return basicColumns;
     }
 
     private String[] getExpandedColumns() {
-        return new String[] {
-                MOLECULE_A_NAME, MOLECULE_A_LINKS, MOLECULE_B_NAME, MOLECULE_B_LINKS,
-                MOLECULE_A_SPECIES, MOLECULE_B_SPECIES,INTERACTION_TYPE, CONFIDENCE_VALUE, PUBMED_IDENTIFIER,
-                INTERACTION_DETECTION_METHOD, INTERACTION_AC, EXPANSION_METHOD, MOLECULE_A_BIOLOGICAL_ROLE, MOLECULE_B_BIOLOGICAL_ROLE,
-                MOLECULE_A_EXPERIMENTAL_ROLE, MOLECULE_B_EXPERIMENTAL_ROLE, MOLECULE_A_INTERACTOR_TYPE, MOLECULE_B_INTERACTOR_TYPE,
-                MOLECULE_A_XREFS, MOLECULE_B_XREFS, INTERACTION_XREFS,
-                HOST_ORGANISM, PARAMETERS_INTERACTION, NEGATIVE, MOLECULE_A_FEATURE, MOLECULE_B_FEATURE, MOLECULE_A_STOICHIOMETRY, MOLECULE_B_STOICHIOMETRY, MOLECULE_A_IDENTIFICATION,
-                MOLECULE_B_IDENTIFICATION
-        };
+        if (expandedColumns == null){
+            expandedColumns =new String[] {
+                    MOLECULE_A_NAME, MOLECULE_A_LINKS, MOLECULE_B_NAME, MOLECULE_B_LINKS,
+                    MOLECULE_A_SPECIES, MOLECULE_B_SPECIES,INTERACTION_TYPE, CONFIDENCE_VALUE, PUBMED_IDENTIFIER,
+                    INTERACTION_DETECTION_METHOD, INTERACTION_AC, EXPANSION_METHOD, MOLECULE_A_BIOLOGICAL_ROLE, MOLECULE_B_BIOLOGICAL_ROLE,
+                    MOLECULE_A_EXPERIMENTAL_ROLE, MOLECULE_B_EXPERIMENTAL_ROLE, MOLECULE_A_INTERACTOR_TYPE, MOLECULE_B_INTERACTOR_TYPE,
+                    MOLECULE_A_XREFS, MOLECULE_B_XREFS, INTERACTION_XREFS,
+                    HOST_ORGANISM, PARAMETERS_INTERACTION, NEGATIVE, MOLECULE_A_FEATURE, MOLECULE_B_FEATURE, MOLECULE_A_STOICHIOMETRY, MOLECULE_B_STOICHIOMETRY, MOLECULE_A_IDENTIFICATION,
+                    MOLECULE_B_IDENTIFICATION
+            };
+        }
+        return expandedColumns;
     }
 
     private String[] getCompleteColumns() {
-        return new String[] {
-                MOLECULE_A_ID, MOLECULE_B_ID, MOLECULE_A_ALTID, MOLECULE_A_ALTID,
-                MOLECULE_A_ALIASES, MOLECULE_B_ALIASES,INTERACTION_DETECTION_METHOD, FIRST_AUTHOR, PUBMED_IDENTIFIER,
-                MOLECULE_A_SPECIES, MOLECULE_B_SPECIES, INTERACTION_TYPE, SOURCE_DATABASE, INTERACTION_AC,
-                CONFIDENCE_VALUE, EXPANSION_METHOD, MOLECULE_A_BIOLOGICAL_ROLE, MOLECULE_A_BIOLOGICAL_ROLE,
-                MOLECULE_A_EXPERIMENTAL_ROLE, MOLECULE_B_EXPERIMENTAL_ROLE, MOLECULE_A_INTERACTOR_TYPE, MOLECULE_B_INTERACTOR_TYPE, MOLECULE_A_XREFS, MOLECULE_B_XREFS,
-                INTERACTION_XREFS, MOLECULE_A_ANNOTATION, MOLECULE_B_ANNOTATION, INTERACTION_ANNOTATION, HOST_ORGANISM, PARAMETERS_INTERACTION, CREATED_DATE,
-                UPDATE_DATE, MOLECULE_A_CHECKSUM, MOLECULE_B_CHECKSUM, INTERACTION_CHECKSUM, NEGATIVE, MOLECULE_A_FEATURE, MOLECULE_B_FEATURE,
-                MOLECULE_A_STOICHIOMETRY, MOLECULE_B_STOICHIOMETRY, MOLECULE_A_IDENTIFICATION, MOLECULE_B_IDENTIFICATION
-        };
+        if (completeColumns == null){
+            completeColumns = new String[] {
+                    MOLECULE_A_ID, MOLECULE_B_ID, MOLECULE_A_ALTID, MOLECULE_A_ALTID,
+                    MOLECULE_A_ALIASES, MOLECULE_B_ALIASES,INTERACTION_DETECTION_METHOD, FIRST_AUTHOR, PUBMED_IDENTIFIER,
+                    MOLECULE_A_SPECIES, MOLECULE_B_SPECIES, INTERACTION_TYPE, SOURCE_DATABASE, INTERACTION_AC,
+                    CONFIDENCE_VALUE, EXPANSION_METHOD, MOLECULE_A_BIOLOGICAL_ROLE, MOLECULE_A_BIOLOGICAL_ROLE,
+                    MOLECULE_A_EXPERIMENTAL_ROLE, MOLECULE_B_EXPERIMENTAL_ROLE, MOLECULE_A_INTERACTOR_TYPE, MOLECULE_B_INTERACTOR_TYPE, MOLECULE_A_XREFS, MOLECULE_B_XREFS,
+                    INTERACTION_XREFS, MOLECULE_A_ANNOTATION, MOLECULE_B_ANNOTATION, INTERACTION_ANNOTATION, HOST_ORGANISM, PARAMETERS_INTERACTION, CREATED_DATE,
+                    UPDATE_DATE, MOLECULE_A_CHECKSUM, MOLECULE_B_CHECKSUM, INTERACTION_CHECKSUM, NEGATIVE, MOLECULE_A_FEATURE, MOLECULE_B_FEATURE,
+                    MOLECULE_A_STOICHIOMETRY, MOLECULE_B_STOICHIOMETRY, MOLECULE_A_IDENTIFICATION, MOLECULE_B_IDENTIFICATION
+            };
+        }
+        return completeColumns;
     }
 
     private String[] getMinimumColumns() {
