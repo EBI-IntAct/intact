@@ -166,6 +166,15 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
         } else if (!matchesA && matchesB) {
             binaryInteraction.flip();
         }
+        else {
+            String id1 = interactorA != null ? (!interactorA.getIdentifiers().isEmpty()  ? interactorA.getIdentifiers().iterator().next().getIdentifier() : "") : "";
+            String id2 = interactorB != null ? (!interactorB.getIdentifiers().isEmpty()  ? interactorB.getIdentifiers().iterator().next().getIdentifier() : "") : "";
+
+            int comp = id1.compareTo(id2);
+            if (comp > 0){
+                binaryInteraction.flip();
+            }
+        }
     }
 
     private boolean matchesQuery(Interactor interactor) {
@@ -231,7 +240,8 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
 
 
             return areEquals(previousInteractorAName, currentInteractorAName) &&
-                    areEquals(previousInteractorBName, currentInteractorBName);
+                    areEquals(previousInteractorBName, currentInteractorBName)
+                    ;
 
         }
 
