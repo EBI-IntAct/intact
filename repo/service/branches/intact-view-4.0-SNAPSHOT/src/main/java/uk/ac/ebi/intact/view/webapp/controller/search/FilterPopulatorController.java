@@ -68,6 +68,34 @@ public class FilterPopulatorController extends SpringInitializedService{
 
     @Override
     public synchronized void initialize(){
+        if (datasetSelectItems == null || datasets == null
+                || stoichiometrySelectItems == null || negativeSelectItems == null
+                || sourceSelectItems == null || expansionSelectItems == null){
+
+            if (log.isInfoEnabled()) log.info("Preloading filters");
+
+            if (log.isDebugEnabled()) log.debug("\tPreloading datasets");
+
+            datasetSelectItems = listDatasets();
+            datasets = getValues(datasetSelectItems);
+
+            if (log.isDebugEnabled()) log.debug("\tPreloading sources");
+
+            sourceSelectItems = listSources();
+
+            if (log.isDebugEnabled()) log.debug("\tPreloading expansions");
+
+            expansionSelectItems = listExpansionSelectItems();
+            if (log.isDebugEnabled()) log.debug("\tPreloading negative values");
+            negativeSelectItems = listNegativeSelectItems();
+            if (log.isDebugEnabled()) log.debug("\tPreloading parameter values");
+            parametersSelectItems = listParametersSelectItems();
+            if (log.isDebugEnabled()) log.debug("\tPreloading stoichiometry values");
+            stoichiometrySelectItems = listStoichiometrySelectItems();
+        }
+    }
+
+    public synchronized void reload(){
         if (log.isInfoEnabled()) log.info("Preloading filters");
 
         if (log.isDebugEnabled()) log.debug("\tPreloading datasets");
@@ -104,8 +132,8 @@ public class FilterPopulatorController extends SpringInitializedService{
 
         Query query = entityManagerFactory.createEntityManager()
                 .createQuery("select distinct a.annotationText " +
-                             "from Annotation a " +
-                             "where a.cvTopic.identifier = :datasetMi");
+                        "from Annotation a " +
+                        "where a.cvTopic.identifier = :datasetMi");
 
         query.setParameter("datasetMi", CvTopic.DATASET_MI_REF);
 

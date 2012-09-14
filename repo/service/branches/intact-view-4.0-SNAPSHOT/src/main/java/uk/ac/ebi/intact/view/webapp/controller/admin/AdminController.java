@@ -55,8 +55,8 @@ public class AdminController {
         FilterPopulatorController filterPopulatorController = (FilterPopulatorController) applicationContext.getBean("filterPopulator");
         OntologyInteractorTypeConfig interactorTypeConfig = (OntologyInteractorTypeConfig) applicationContext.getBean("ontologyInteractorTypeConfig");
 
-        filterPopulatorController.initialize();
-        statisticsController.calculateStats();
+        filterPopulatorController.reload();
+        statisticsController.reload();
         cvObjectService.clear();
         interactorTypeConfig.refreshTypes();
     }

@@ -215,7 +215,10 @@ public class ColumnContextController {
     }
 
     private String[] getMinimumColumns() {
-        return new String[] { MOLECULE_A_NAME, MOLECULE_B_NAME, INTERACTION_AC};
+        if (minimumColumns == null){
+           minimumColumns = new String[] { MOLECULE_A_NAME, MOLECULE_B_NAME, INTERACTION_AC, NEGATIVE};
+        }
+        return minimumColumns;
     }
 
     public void selectStandardColumns() {

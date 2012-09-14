@@ -92,6 +92,8 @@ public class SearchController extends JpaBaseController {
 
     private PsicquicSearchManager psicquicController;
 
+    private String acPrefix;
+
     public SearchController() {
     }
 
@@ -462,13 +464,21 @@ public class SearchController extends JpaBaseController {
 
     public CrossReference getMainAccessionXref(BinaryInteraction<?> binaryInteraction) {
 
+        if (acPrefix == null){
+            acPrefix = getIntactContext().getConfig().getAcPrefix();
+        }
+        CrossReference intactXref = null;
+
         for (CrossReference xref : binaryInteraction.getInteractionAcs()) {
-            if (xref.getIdentifier().startsWith(getIntactContext().getConfig().getAcPrefix())) {
+            if (xref.getIdentifier().startsWith(acPrefix)) {
                 return xref;
+            }
+            else if ("intact".equals(xref.getDatabase())) {
+                intactXref = xref;
             }
         }
 
-        return getIntactAcXref(binaryInteraction);
+        return intactXref;
     }
 
     public CrossReference getIntactAcXref(BinaryInteraction<?> binaryInteraction) {
