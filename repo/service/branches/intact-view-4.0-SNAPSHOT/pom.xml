@@ -30,8 +30,8 @@
         <dataexchange.version>2.1.5-SNAPSHOT</dataexchange.version>
         <spring.version>3.1.2.RELEASE</spring.version>
 
-        <debug>true</debug>
-        <projectStage>Development</projectStage>
+        <debug>false</debug>
+        <projectStage>Production</projectStage>
 
         <jetty.port>9095</jetty.port>
         <jetty.contextPath>/intact</jetty.contextPath>
@@ -71,7 +71,7 @@
 
         <!-- ChEBI -->
         <chebi.url>http://www.ebi.ac.uk/chebi</chebi.url>
-        <chebi.search.enabled>false</chebi.search.enabled>
+        <chebi.search.enabled>true</chebi.search.enabled>
 
         <!-- Das -->
         <das.annotationserver.intact.url>${appRoot}/das-intact/das/</das.annotationserver.intact.url>
