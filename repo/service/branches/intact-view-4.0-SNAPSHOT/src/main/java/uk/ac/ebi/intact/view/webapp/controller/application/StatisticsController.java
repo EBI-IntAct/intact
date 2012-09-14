@@ -19,7 +19,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrSearchResult;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrSearcher;
@@ -28,7 +27,6 @@ import uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ApplicationScoped;
-import java.io.IOException;
 
 /**
  * Container for the application statistics (e.g. database counts)
@@ -47,14 +45,14 @@ public class StatisticsController extends SpringInitializedService {
     @Autowired
     private DaoFactory daoFactory;
 
-    private int binaryInteractionCount;
-    private int proteinCount;
-    private int experimentCount;
-    private int publicationCount;
-    private int cvTermsCount;
-    private int interactorCount;
-    private int interactionCount;
-    private int interactorsWithNoInteractions;
+    private int binaryInteractionCount = 0;
+    private int proteinCount = 0;
+    private int experimentCount = 0;
+    private int publicationCount = 0;
+    private int cvTermsCount = 0;
+    private int interactorCount = 0;
+    private int interactionCount = 0;
+    private int interactorsWithNoInteractions = 0;
 
     private IntactSolrSearcher searcher;
 
@@ -64,6 +62,32 @@ public class StatisticsController extends SpringInitializedService {
 
     @Override
     public void initialize(){
+        if (binaryInteractionCount == 0 || proteinCount == 0 || experimentCount == 0 || publicationCount == 0
+                || cvTermsCount == 0 || interactorCount == 0 || interactionCount == 0 || interactorsWithNoInteractions == 0){
+            if (log.isInfoEnabled()) log.info("Calculating statistics");
+
+            // index stats
+            binaryInteractionCount = countBinaryInteractionsFromIndex();
+
+            // database stats
+            proteinCount = daoFactory.getProteinDao().countAll();
+            experimentCount = daoFactory.getExperimentDao().countAll();
+            publicationCount = daoFactory.getPublicationDao().countAll();
+            cvTermsCount = daoFactory.getCvObjectDao().countAll();
+            interactionCount = daoFactory.getInteractionDao().countAll();
+            interactorCount = daoFactory.getInteractorDao().countAll();
+            interactorsWithNoInteractions = interactorCount - interactionCount;
+        }
+    }
+
+    @PostConstruct
+    public void createSolrIntactSearcher(){
+
+        SolrServer solrServer = viewConfiguration.getInteractionSolrServer();
+        this.searcher = new IntactSolrSearcher(solrServer);
+    }
+
+    public synchronized void reload() {
         if (log.isInfoEnabled()) log.info("Calculating statistics");
 
         // index stats
@@ -77,20 +101,6 @@ public class StatisticsController extends SpringInitializedService {
         interactionCount = daoFactory.getInteractionDao().countAll();
         interactorCount = daoFactory.getInteractorDao().countAll();
         interactorsWithNoInteractions = interactorCount - interactionCount;
-    }
-
-    @PostConstruct
-    public void createSolrIntactSearcher(){
-
-        SolrServer solrServer = viewConfiguration.getInteractionSolrServer();
-        this.searcher = new IntactSolrSearcher(solrServer);
-    }
-
-    @Transactional(readOnly = true)
-    public synchronized void calculateStats() throws IOException {
-        if (log.isInfoEnabled()) log.info("Calculating statistics");
-
-        initialize();
     }
 
     public int countBinaryInteractionsFromIndex() {

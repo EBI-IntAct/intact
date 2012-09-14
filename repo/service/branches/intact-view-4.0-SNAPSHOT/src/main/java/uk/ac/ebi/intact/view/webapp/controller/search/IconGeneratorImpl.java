@@ -63,10 +63,48 @@ public class IconGeneratorImpl extends SpringInitializedService implements IconG
 
     @Override
     public void initialize() {
-        prepareColours();
+        if (typeColourMap.isEmpty() || expRoleColourMap.isEmpty() || bioRoleColourMap.isEmpty()){
+            if (log.isInfoEnabled()) log.info("Preparing simple icons for CVs");
+
+            final List<Object[]> proteinTypeLabels = listProteinTypeLabels();
+            //Collections.sort(proteinTypeLabels);
+
+            for (Object[] protType : proteinTypeLabels) {
+                String colour = colourPalette.getNextGrey();
+
+                String label = protType[1].toString();
+                String description = protType[0].toString();
+
+                typeColourMap.put(label, new ColouredCv(label, colour, description));
+            }
+
+            final List<Object[]> expRoleLabels = listExpRoleLabels();
+            //Collections.sort(expRoleLabels);
+
+            for (Object[] expRole : expRoleLabels) {
+                String colour = colourPalette.getNextRed();
+
+                String label = expRole[1].toString();
+                String description = expRole[0].toString();
+
+                expRoleColourMap.put(label, new ColouredCv(label, colour, description));
+            }
+
+            final List<Object[]> bioRoleLabels = listBioRoleLabels();
+            //Collections.sort(expRoleLabels);
+
+            for (Object[] bioRole : bioRoleLabels) {
+                String colour = colourPalette.getNextGreen();
+
+                String label = bioRole[1].toString();
+                String description = bioRole[0].toString();
+
+                bioRoleColourMap.put(label, new ColouredCv(label, colour, description));
+            }
+        }
     }
 
-    public void prepareColours() {
+    public synchronized void reload() {
         if (log.isInfoEnabled()) log.info("Preparing simple icons for CVs");
 
         final List<Object[]> proteinTypeLabels = listProteinTypeLabels();
