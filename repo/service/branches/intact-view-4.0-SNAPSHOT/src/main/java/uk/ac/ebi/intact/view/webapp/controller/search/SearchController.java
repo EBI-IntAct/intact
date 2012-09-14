@@ -291,7 +291,7 @@ public class SearchController extends JpaBaseController {
     private void checkAndResumeSearchTasks(Future<Integer> intactFuture) {
 
         try {
-            this.totalResults = intactFuture.get(threadTimeOut, TimeUnit.SECONDS);
+            this.totalResults = intactFuture.get();
 
         } catch (InterruptedException e) {
             log.error("The intact search was interrupted, we cancel the task.", e);
@@ -300,12 +300,6 @@ public class SearchController extends JpaBaseController {
             }
         } catch (ExecutionException e) {
             log.error("The intact search could not be executed, we cancel the task.", e);
-            if (!intactFuture.isCancelled()){
-                intactFuture.cancel(true);
-            }
-        } catch (TimeoutException e) {
-            log.error("The intact search stopped because of time out " + threadTimeOut + "seconds.", e);
-
             if (!intactFuture.isCancelled()){
                 intactFuture.cancel(true);
             }

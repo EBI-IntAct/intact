@@ -74,16 +74,14 @@
     </p:toolbarGroup>
 </p:toolbar>
 
-<h:outputText id="resultsTable" value="Coucou"/>
-
-<!--<br/>
+<br/>
 
 <iv:cvLazyDialog dialogVar="cvInfoDialog"/>
 
 <p:dataTable id="resultsTable" var="binaryInteraction" value="#{searchBean.results}"
              rows="#{userQuery.pageSize}"
              dynamic="true" rowIndexVar="row" paginatorPosition="both"
-             paginator="#{searchBean.totalResults gt userQuery.pageSize}"
+             paginator="#{searchBean.results.rowCount gt userQuery.pageSize}"
              rowStyleClass="#{not searchBean.results.sameThanPrevious? 'newInteractionRow' : 'sameInteractionRow'}" rendered="#{searchBean.totalResults > 0}">
 <p:column>
     <h:outputLink value="#{request.contextPath}/interaction/#{searchBean.getMainAccessionXref(binaryInteraction).identifier}" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Interaction details','#{detailsBean.interactionAc}'])">
@@ -689,6 +687,6 @@
     </h:panelGroup>
 </p:column>
 
-</p:dataTable> -->
+</p:dataTable>
 
 </ui:composition>
