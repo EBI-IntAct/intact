@@ -38,31 +38,19 @@
                                 <ul style="margin-top:0px">
                                     <li>
                                         <h:outputText value="Gene name: e.g. "/>
-                                        <h:commandLink id="geneNameExlink" value="BRCA2" action="#{searchBean.doBinarySearchAction}">
-                                            <f:setPropertyActionListener value="BRCA2"
-                                                                         target="#{userQuery.searchQuery}"/>
-                                        </h:commandLink>
+                                        <h:commandLink id="geneNameExlink" value="#{userQuery.geneQuery}" action="#{searchBean.doBinarySearchBRCA2Action}"/>
                                     </li>
                                     <li>
                                         <h:outputText value="UniProtKB Ac: e.g. "/>
-                                        <h:commandLink id="uniprotAcExlink" value="Q06609" action="#{searchBean.doBinarySearchAction}">
-                                            <f:setPropertyActionListener value="Q06609"
-                                                                         target="#{userQuery.searchQuery}"/>
-                                        </h:commandLink>
+                                        <h:commandLink id="uniprotAcExlink" value="#{userQuery.uniprotAcQuery}" action="#{searchBean.doBinarySearchUniprotAcAction}"/>
                                     </li>
                                     <li>
                                         <h:outputText value="UniProtKB Id: e.g. "/>
-                                        <h:commandLink id="uniprotGeneExlink" value="dmc1" action="#{searchBean.doBinarySearchAction}">
-                                            <f:setPropertyActionListener value="dmc1"
-                                                                         target="#{userQuery.searchQuery}"/>
-                                        </h:commandLink>
+                                        <h:commandLink id="uniprotGeneExlink" value="#{userQuery.uniprotGeneQuery}" action="#{searchBean.doBinarySearchUniprotGeneAction}"/>
                                     </li>
                                     <li>
                                         <h:outputText value=" Pubmed Id: e.g. "/>
-                                        <h:commandLink id="pubmedExlink" value="10831611" action="#{searchBean.doBinarySearchAction}">
-                                            <f:setPropertyActionListener value="10831611"
-                                                                         target="#{userQuery.searchQuery}"/>
-                                        </h:commandLink>
+                                        <h:commandLink id="pubmedExlink" value="#{userQuery.pubmedQuery}" action="#{searchBean.doBinarySearchPubmedAction}"/>
                                     </li>
                                 </ul>
                             </iv:panelLabelAndMessage>

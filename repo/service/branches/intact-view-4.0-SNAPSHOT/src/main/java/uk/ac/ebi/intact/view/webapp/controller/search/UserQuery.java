@@ -112,6 +112,11 @@ public class UserQuery extends BaseController {
 
     private TreeNode selectedSearchTerm;
 
+    private String geneQuery = "BRCA2";
+    private String uniprotAcquery = "Q06609";
+    private String uniprotGeneQuery = "dmc1";
+    private String pubmedQuery = "10831611";
+
     public UserQuery() {
         this.queryTokenList = new ArrayList<QueryToken>();
         this.longQueriesMap = new HashMap<String, String>();
@@ -763,5 +768,21 @@ public class UserQuery extends BaseController {
 
     public void setSelectedSearchTerm(TreeNode selectedSearchTerm) {
         this.selectedSearchTerm = selectedSearchTerm;
+    }
+
+    public String getGeneQuery() {
+        return geneQuery;
+    }
+
+    public String getUniprotAcQuery() {
+        return uniprotAcquery;
+    }
+
+    public String getUniprotGeneQuery() {
+        return uniprotGeneQuery;
+    }
+
+    public String getPubmedQuery() {
+        return pubmedQuery;
     }
 }
