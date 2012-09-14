@@ -149,6 +149,46 @@ public class SearchController extends JpaBaseController {
         return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
     }
 
+    public String doBinarySearchBRCA2Action() {
+        UserQuery userQuery = getUserQuery();
+        userQuery.setSearchQuery(userQuery.getGeneQuery());
+        SolrQuery solrQuery = userQuery.createSolrQuery();
+
+        doBinarySearch(solrQuery);
+
+        return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
+    }
+
+    public String doBinarySearchUniprotAcAction() {
+        UserQuery userQuery = getUserQuery();
+        userQuery.setSearchQuery(userQuery.getUniprotAcQuery());
+        SolrQuery solrQuery = userQuery.createSolrQuery();
+
+        doBinarySearch(solrQuery);
+
+        return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
+    }
+
+    public String doBinarySearchUniprotGeneAction() {
+        UserQuery userQuery = getUserQuery();
+        userQuery.setSearchQuery(userQuery.getUniprotGeneQuery());
+        SolrQuery solrQuery = userQuery.createSolrQuery();
+
+        doBinarySearch(solrQuery);
+
+        return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
+    }
+
+    public String doBinarySearchPubmedAction() {
+        UserQuery userQuery = getUserQuery();
+        userQuery.setSearchQuery(userQuery.getPubmedQuery());
+        SolrQuery solrQuery = userQuery.createSolrQuery();
+
+        doBinarySearch(solrQuery);
+
+        return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
+    }
+
     public String doBinarySearchActionFromOntologySearch() {
         UserQuery userQuery = getUserQuery();
         SolrQuery solrQuery = userQuery.createSolrQueryForOntologySearch();

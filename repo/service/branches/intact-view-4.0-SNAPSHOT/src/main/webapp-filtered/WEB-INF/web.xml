@@ -38,11 +38,6 @@
     </context-param>
 
     <!-- MyFaces -->
-    <!-- hack to be able to have the links loaded the first time in the home page-->
-    <context-param>
-        <param-name>javax.faces.FULL_STATE_SAVING_VIEW_IDS</param-name>
-        <param-value>/main.xhtml</param-value>
-    </context-param>
 
     <context-param>
         <description>
