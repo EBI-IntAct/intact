@@ -50,4 +50,22 @@ public class SpringInitializedService implements ApplicationListener<ContextRefr
     }
     public void initialize(){
     }
+
+    public synchronized void onReload(){
+        tt.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                try{
+                    reload();
+                }
+                catch (Exception ex){
+                    log.error("Error during initialization",ex);
+                    status.setRollbackOnly();
+                }
+            }
+        });
+    }
+
+    public synchronized void reload(){
+    }
 }
