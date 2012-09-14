@@ -38,9 +38,15 @@
                 <f:setPropertyActionListener value="2" target="#{contextController.activeTabIndex}"/>
             </p:commandButton>
             &#160;
-            <p:commandButton type="button" id="clearSearchBtn" value="Clear"
-                             onclick="queryTxt = document.getElementById('queryTxt'); queryTxt.value = ''; queryTxt.focus(); _gaq.push(['_trackEvent', 'SearchPanel', 'Clear', ''])"
-                             disabled="#{userQuery.showNewFieldPanel}"/>
+            <p:commandButton id="clearSearchBtn" value="Clear"
+                             actionListener="#{userQuery.doClearSearchField}"
+                             onclick="_gaq.push(['_trackEvent', 'SearchPanel', 'Clear', ''])"
+                             disabled="#{userQuery.showNewFieldPanel}"
+                             onstart="statusDialog.show()"
+                             oncomplete="statusDialog.hide()"
+                             update="searchPanel"
+                             process="@this"
+                             partialSubmit="true"/>
             &#160;
             <p:commandLink id="addFieldBtn" value="Show Advanced Fields »"
                            style="font-weight:bold"
@@ -75,7 +81,8 @@
                 &#160;
                 <h:outputText value="Field: "/>
                 <h:selectOneMenu id="newQueryField" title="Field: " value="#{userQuery.newQueryToken.field}">
-                    <p:ajax event="change" update="newQueryPanel" process="newQueryField"/>
+                    <p:ajax event="change" update="newQueryPanel" process="@this" onstart="statusDialog.show()"
+                            oncomplete="statusDialog.hide()"/>
                     <f:selectItems value="#{userQuery.searchFieldSelectItems}"/>
                 </h:selectOneMenu>
                 &#160;

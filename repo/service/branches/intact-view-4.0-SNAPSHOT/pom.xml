@@ -30,8 +30,8 @@
         <dataexchange.version>2.1.5-SNAPSHOT</dataexchange.version>
         <spring.version>3.1.2.RELEASE</spring.version>
 
-        <debug>false</debug>
-        <projectStage>Production</projectStage>
+        <debug>true</debug>
+        <projectStage>Development</projectStage>
 
         <jetty.port>9095</jetty.port>
         <jetty.contextPath>/intact</jetty.contextPath>
