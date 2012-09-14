@@ -146,15 +146,77 @@ public class IntactViewConfiguration extends BaseController implements Initializ
 
     public void afterPropertiesSet() throws Exception {
         storeIfNew();
-        if (databaseNamesUsingSameSolr == null){
-            databaseNamesUsingSameSolr = new ArrayList<String>();
+
+        initializeDatabaseNamesUsingSameSolr();
+
+        initializePsicquicClientMap();
+
+        initializeSolrServer();
+
+        initializeOntologyServer();
+
+        initializeHttpClients();
+
+    }
+
+    private void initializeHttpClients() {
+        // initialise http clients
+        if (httpClientWithProxy == null) {
+            httpClientWithProxy = new HttpClient(new MultiThreadedHttpConnectionManager());
+
+            if (isValueSet(proxyHost) && isValueSet(proxyPort)) {
+                httpClientWithProxy.getHostConfiguration().setProxy(proxyHost, Integer.valueOf(proxyPort));
+
+                log.info("Setting HTTPClient using proxy: " + proxyHost + ":" + proxyPort);
+            } else {
+                log.info("Setting HTTPClient with NO PROXY");
+            }
         }
+        if (httpClientWithoutProxy == null) {
+            httpClientWithoutProxy = new HttpClient(new MultiThreadedHttpConnectionManager());
+        }
+    }
+
+    private void initializeOntologyServer() {
+        // initialize ontology solr server
+        if (solrOntologiesUrl != null) {
+            if (ontologySolrServer == null) {
+                try {
+                    ontologySolrServer = createSolrServer(solrOntologiesUrl);
+                } catch (MalformedURLException e) {
+                    throw new IntactViewException("Malformed Solr URL: "+ solrOntologiesUrl, e);
+                }
+            }
+        }
+    }
+
+    private void initializeSolrServer() {
+        // initialize solr interaction servers
+        if (solrInteractionsUrl != null) {
+            if (solrServer == null) {
+                try {
+                    solrServer = createSolrServer(solrInteractionsUrl);
+                } catch (MalformedURLException e) {
+                    throw new IntactViewException("Malformed Solr URL: " + solrInteractionsUrl, e);
+                }
+
+            }
+        }
+    }
+
+    private void initializePsicquicClientMap() {
         if (psicquicClientMap == null){
             psicquicClientMap = new HashMap<String, PsicquicSimpleClient>(26);
         }
     }
 
-    public void storeIfNew() {
+    private void initializeDatabaseNamesUsingSameSolr() {
+        if (databaseNamesUsingSameSolr == null){
+            databaseNamesUsingSameSolr = new ArrayList<String>();
+        }
+    }
+
+    public synchronized void storeIfNew() {
         if (new File(configFile).exists()) {
             try {
                 FileInputStream inputStream = new FileInputStream(configFile);
@@ -177,7 +239,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
         }
     }
 
-    public void loadConfiguration(InputStream is) throws IOException {
+    public synchronized void loadConfiguration(InputStream is) throws IOException {
         if (log.isInfoEnabled()) log.info("Loading properties from: "+configFile);
 
         Properties properties = new Properties();
@@ -216,7 +278,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
         this.ontologyLuceneDirectory = properties.getProperty(ONTOLOGY_LUCENE_DIRECTORY, ontologyLuceneDirectory);
     }
 
-    public void storeConfiguration() throws IOException {
+    public synchronized void storeConfiguration() throws IOException {
         if (log.isInfoEnabled()) log.info("Storing properties at: "+configFile);
 
         Properties properties = new Properties();
@@ -258,7 +320,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
     }
 
 
-    public void shutDownServers(){
+    public synchronized void shutDownServers(){
 
         if (solrServer != null){
             solrServer.shutdown();
@@ -267,6 +329,9 @@ public class IntactViewConfiguration extends BaseController implements Initializ
         if (ontologySolrServer != null){
             ontologySolrServer.shutdown();
             ontologySolrServer = null;
+        }
+        if (entityManagerFactory != null){
+            entityManagerFactory.close();
         }
     }
     private void addProperty(Properties properties, String key, String value) {
@@ -279,7 +344,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
         return value != null && !value.startsWith("$") && value.length() > 0;
     }
 
-    public void closeEntityManagerFactory() {
+    private void closeEntityManagerFactory() {
         entityManagerFactory.close();
     }
 
@@ -463,37 +528,13 @@ public class IntactViewConfiguration extends BaseController implements Initializ
 
     public String getWebappBuildNumber() { return webappBuildNumber; }
 
-    public synchronized HttpSolrServer getInteractionSolrServer() {
-        if (solrInteractionsUrl != null) {
-            if (solrServer == null) {
-                try {
-                    solrServer = createSolrServer(solrInteractionsUrl);
-                } catch (MalformedURLException e) {
-                    throw new IntactViewException("Malformed Solr URL: " + solrInteractionsUrl, e);
-                }
-
-            }
-
-            return solrServer;
-        }
-
-        return null;
+    public HttpSolrServer getInteractionSolrServer() {
+        return solrServer;
     }
 
-    public synchronized HttpSolrServer getOntologySolrServer() {
-        if (solrOntologiesUrl != null) {
-            if (ontologySolrServer == null) {
-                try {
-                    ontologySolrServer = createSolrServer(solrOntologiesUrl);
-                } catch (MalformedURLException e) {
-                    throw new IntactViewException("Malformed Solr URL: "+ solrOntologiesUrl, e);
-                }
-            }
+    public HttpSolrServer getOntologySolrServer() {
 
-            return ontologySolrServer;
-        }
-
-        return null;
+        return ontologySolrServer;
     }
 
     private HttpSolrServer createSolrServer(String solrUrl) throws MalformedURLException {
@@ -507,7 +548,7 @@ public class IntactViewConfiguration extends BaseController implements Initializ
         return solrServer;
     }
 
-    public synchronized org.apache.http.client.HttpClient getHttpClientBasedOnUrl(String url) {
+    private org.apache.http.client.HttpClient getHttpClientBasedOnUrl(String url) {
         SchemeRegistry schemeRegistry = new SchemeRegistry();
         schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory
                 .getSocketFactory()));
@@ -545,26 +586,11 @@ public class IntactViewConfiguration extends BaseController implements Initializ
     }
 
     protected HttpClient getHttpClientWithProxy() {
-        if (httpClientWithProxy == null) {
-            httpClientWithProxy = new HttpClient(new MultiThreadedHttpConnectionManager());
-
-            if (isValueSet(proxyHost) && isValueSet(proxyPort)) {
-                httpClientWithProxy.getHostConfiguration().setProxy(proxyHost, Integer.valueOf(proxyPort));
-
-                log.info("Setting HTTPClient using proxy: " + proxyHost + ":" + proxyPort);
-            } else {
-                log.info("Setting HTTPClient with NO PROXY");
-            }
-
-        }
 
         return httpClientWithProxy;
     }
 
     protected HttpClient getHttpClientWithoutProxy() {
-        if (httpClientWithoutProxy == null) {
-            httpClientWithoutProxy = new HttpClient(new MultiThreadedHttpConnectionManager());
-        }
 
         return httpClientWithoutProxy;
     }
