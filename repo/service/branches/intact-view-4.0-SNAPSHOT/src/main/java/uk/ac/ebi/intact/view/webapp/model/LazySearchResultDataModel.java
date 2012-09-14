@@ -55,14 +55,14 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
     private static String DEFAULT_SORT_COLUMN = FieldNames.INTACT_SCORE_NAME;
 
     private SolrQuery solrQuery;
-    private SolrServer solrServer;
+    private IntactSolrSearcher solrSearcher;
 
     private IntactSolrSearchResult result;
 
     private List<BinaryInteraction> binaryInteractions;
 
     public LazySearchResultDataModel(SolrServer solrServer, SolrQuery solrQuery) {
-         this.solrServer = solrServer;
+         this.solrSearcher = new IntactSolrSearcher(solrServer);
          this.solrQuery = solrQuery != null ? solrQuery.getCopy() : null;
     }
 
@@ -83,9 +83,8 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
             solrQuery.setStart(first)
                     .setRows(pageSize)
                     .setFacet(true)
-                    .setFacetMissing(true)
-                    .addFacetField(FieldNames.COMPLEX_EXPANSION_FACET)
-                    .addFacetField(FieldNames.INTERACTOR_TYPE_A_FACET);
+                    .setFacetMissing(false)
+                    .addFacetField(FieldNames.COMPLEX_EXPANSION_FACET);
 
             // add default parameters if nor already there
             String [] dismaxParameters = solrQuery.getParams("qf");
@@ -100,8 +99,13 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
             solrQuery.setFacetLimit(4);
 
             // sort by intact mi score desc
-            if (solrQuery.getSortField() == null) {
-                solrQuery.setSortField(DEFAULT_SORT_COLUMN, SolrQuery.ORDER.desc);
+            if (solrQuery.getSortField() == null && sortField != null) {
+                if (sortOrder.equals(SortOrder.ASCENDING)){
+                    solrQuery.setSortField(sortField, SolrQuery.ORDER.asc);
+                }
+                else if (sortOrder.equals(SortOrder.DESCENDING)){
+                    solrQuery.setSortField(sortField, SolrQuery.ORDER.desc);
+                }
             }
 
             if (log.isDebugEnabled()) {
@@ -112,9 +116,8 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
                 }
             }
 
-            IntactSolrSearcher searcher = new IntactSolrSearcher(solrServer);
             try {
-                result = searcher.search(solrQuery);
+                result = solrSearcher.search(solrQuery);
             } catch (PsicquicSolrException e) {
                 log.fatal("Impossible to retrieve results for query " + solrQuery.getQuery(), e);
                 result = null;
@@ -137,6 +140,9 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
                     log.fatal("Impossible to retrieve results for query " + solrQuery.getQuery(), e);
                 }
             }
+
+            this.binaryInteractions = interactions;
+
             return interactions;
         }
     }
@@ -218,14 +224,26 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
             final BinaryInteraction previousInteraction = getInteraction(getRowIndex() - 1);
             final BinaryInteraction currentInteraction = getInteraction(getRowIndex());
 
-            final String previousInteractorAName = MitabFunctions.getIntactIdentifierFromCrossReferences(previousInteraction.getInteractorA().getIdentifiers());
-            final String previousInteractorBName = MitabFunctions.getIntactIdentifierFromCrossReferences(previousInteraction.getInteractorB().getIdentifiers());
-            final String currentInteractorAName = MitabFunctions.getIntactIdentifierFromCrossReferences(currentInteraction.getInteractorA().getIdentifiers());
-            final String currentInteractorBName = MitabFunctions.getIntactIdentifierFromCrossReferences(currentInteraction.getInteractorB().getIdentifiers());
+            final String previousInteractorAName = MitabFunctions.getIntactIdentifierFromCrossReferences(previousInteraction.getInteractorA().getAlternativeIdentifiers());
+            final String previousInteractorBName = MitabFunctions.getIntactIdentifierFromCrossReferences(previousInteraction.getInteractorB().getAlternativeIdentifiers());
+            final String currentInteractorAName = MitabFunctions.getIntactIdentifierFromCrossReferences(currentInteraction.getInteractorA().getAlternativeIdentifiers());
+            final String currentInteractorBName = MitabFunctions.getIntactIdentifierFromCrossReferences(currentInteraction.getInteractorB().getAlternativeIdentifiers());
 
-            return previousInteractorAName.equalsIgnoreCase(currentInteractorAName) &&
-                    previousInteractorBName.equalsIgnoreCase(currentInteractorBName);
 
+            return areEquals(previousInteractorAName, currentInteractorAName) &&
+                    areEquals(previousInteractorBName, currentInteractorBName);
+
+        }
+
+        return false;
+    }
+
+    private boolean areEquals(String name1, String name2){
+        if (name1 == null && name2 == null){
+            return true;
+        }
+        else if (name1 != null && name2 != null){
+            return name1.equalsIgnoreCase(name2);
         }
 
         return false;

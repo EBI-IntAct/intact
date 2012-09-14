@@ -39,13 +39,13 @@
 
     <!-- MyFaces -->
 
-    <context-param>
+    <!--<context-param>
         <description>
             This affects the value of the Expires response header that will be sent for a resource.
         </description>
         <param-name>com.sun.faces.defaultResourceMaxAge</param-name>
         <param-value>1209600000</param-value>
-    </context-param>
+    </context-param>-->
 
     <context-param>
         <description>State saving method: "client" or "server" (= default)
