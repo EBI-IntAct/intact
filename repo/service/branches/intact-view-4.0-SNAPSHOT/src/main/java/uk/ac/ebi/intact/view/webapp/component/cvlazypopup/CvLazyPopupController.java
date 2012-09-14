@@ -37,7 +37,6 @@ public class CvLazyPopupController {
     private CvObjectService cvObjectService;
 
     public CvLazyPopupController() {
-       // this.cvObjectMap = new HashMap<String, CvObject>();
     }
 
     @Transactional(readOnly = true)
