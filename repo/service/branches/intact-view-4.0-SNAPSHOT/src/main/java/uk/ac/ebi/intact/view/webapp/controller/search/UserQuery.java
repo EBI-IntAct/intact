@@ -157,7 +157,7 @@ public class UserQuery extends BaseController {
     private void initSearchFields() {
         searchFields = new SearchField[]{
                 new SearchField("", "All"),
-                new SearchField(FieldNames.IDENTIFIER, "Participant Id or Alias"),
+                new SearchField(FieldNames.IDENTIFIER, "Participant Id/Alias"),
                 new SearchField(FieldNames.INTERACTION_ID, "Interaction Id"),
                 new SearchField(FieldNames.GENE_NAME, "Gene name"),
                 new SearchField(FieldNames.DETMETHOD, "Interaction detection method", "detectionMethodBrowser"),
@@ -350,6 +350,10 @@ public class UserQuery extends BaseController {
 
     public void doCancelAddField(ActionEvent evt) {
         hideAddFieldsPanel();
+    }
+
+    public void doClearSearchField(ActionEvent evt) {
+        setSearchQuery("");
     }
 
     private void showAddFieldsPanel() {
