@@ -35,7 +35,6 @@ public class AnnotationTopicBrowser extends OntologyBrowserController {
         rootTerm.addChild("MI:0664", "interaction attribute name");
         // not real interaction attributes in the ontology but are used as interaction annotation topics
         rootTerm.addChild("MI:1045", "curation content");
-        rootTerm.addChild("MI:0955", "curation depth");
         rootTerm.addChild("MI:0954", "curation quality");
 
         // annotations normally at the level of publication but are copied to interaction
