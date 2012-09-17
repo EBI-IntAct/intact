@@ -54,6 +54,9 @@ public abstract class OntologyBrowserController extends BaseController {
     private TreeNode ontologyTreeNode;
 
     private TreeNode selectedNode;
+    private SearchController searchController;
+
+    protected boolean useName = false;
 
     public OntologyBrowserController() {
     }
@@ -77,7 +80,7 @@ public abstract class OntologyBrowserController extends BaseController {
 
         OntologyTermWrapper otwRoot = null;
         try {
-            otwRoot = new OntologyTermWrapper(rootTerm, solrServer, query, facetField, false);
+            otwRoot = new OntologyTermWrapper(rootTerm, solrServer, query, facetField, false, this.useName);
         } catch (SolrServerException e) {
             addErrorMessage("Problem counting ontology terms: ", e.getMessage());
             e.printStackTrace();
@@ -89,8 +92,15 @@ public abstract class OntologyBrowserController extends BaseController {
         return treeNode;
     }
 
+    protected void resetTreeNode(){
+        OntologyTermWrapper otwRoot = (OntologyTermWrapper) ontologyTreeNode.getData();
+        ontologyTreeNode = createRootTreeNode(otwRoot);
+    }
+
     public void onNodeSelect(NodeSelectEvent evt) {
-        SearchController searchController = (SearchController) getBean("searchBean");
+        if (searchController == null){
+            searchController = (SearchController) getBean("searchBean");
+        }
 
         final OntologyTermWrapper otw = (OntologyTermWrapper) evt.getTreeNode().getData();
 
@@ -98,6 +108,13 @@ public abstract class OntologyBrowserController extends BaseController {
 
         FacesContext.getCurrentInstance().getApplication().getNavigationHandler()
                 .handleNavigation(FacesContext.getCurrentInstance(), null, searchController.doBinarySearchAction());
+    }
+
+    public void doSelectCvTerm(NodeSelectEvent evt) {
+        // update user query with selected term
+        userQuery.doSelectCvTerm(evt);
+        // reset tree node
+        resetTreeNode();
     }
 
     protected TreeNode createRootTreeNode(OntologyTermWrapper otwRoot) {

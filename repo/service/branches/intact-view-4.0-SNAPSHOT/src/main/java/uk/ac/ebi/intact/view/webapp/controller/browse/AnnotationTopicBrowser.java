@@ -1,5 +1,6 @@
 package uk.ac.ebi.intact.view.webapp.controller.browse;
 
+import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.bridges.ontologies.term.OntologyTerm;
@@ -15,10 +16,16 @@ import uk.ac.ebi.intact.view.webapp.util.RootTerm;
  * @since <pre>03/09/12</pre>
  */
 @Controller("annotationTopicBrowser")
-@Scope("request")
+@Scope("conversation.access")
+@ConversationName("general")
 public class AnnotationTopicBrowser extends OntologyBrowserController {
 
     public static final String FIELD_NAME = FieldNames.INTERACTION_ANNOTATIONS;
+
+    public AnnotationTopicBrowser(){
+        super();
+        this.useName = true;
+    }
 
     @Override
     // give the first root term because we need to add terms which are not considered as children of interaction attributes
@@ -28,6 +35,7 @@ public class AnnotationTopicBrowser extends OntologyBrowserController {
         rootTerm.addChild("MI:0664", "interaction attribute name");
         // not real interaction attributes in the ontology but are used as interaction annotation topics
         rootTerm.addChild("MI:1045", "curation content");
+        rootTerm.addChild("MI:0955", "curation depth");
         rootTerm.addChild("MI:0954", "curation quality");
 
         // annotations normally at the level of publication but are copied to interaction
