@@ -17,7 +17,7 @@ import uk.ac.ebi.intact.view.webapp.util.RootTerm;
  */
 @Controller("interactionGoBrowser")
 @Scope("conversation.access")
-@ConversationName("browse")
+@ConversationName("general")
 public class InteractionGoBrowserController extends OntologyBrowserController{
 
     public static final String FIELD_NAME = FieldNames.INTERACTION_XREF;

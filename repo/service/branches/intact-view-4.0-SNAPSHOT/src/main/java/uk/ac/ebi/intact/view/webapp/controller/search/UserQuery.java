@@ -523,7 +523,12 @@ public class UserQuery extends BaseController {
     public void doSelectCvTerm(NodeSelectEvent evt) {
         final OntologyTermWrapper data = (OntologyTermWrapper) evt.getTreeNode().getData();
 
-        newQueryToken.setQuery(data.getTerm().getId());
+        if (data.isUseName()){
+            newQueryToken.setQuery(data.getTerm().getName());
+        }
+        else {
+            newQueryToken.setQuery(data.getTerm().getId());
+        }
     }
 
     private void addToTokenList(String fieldName, String value) {

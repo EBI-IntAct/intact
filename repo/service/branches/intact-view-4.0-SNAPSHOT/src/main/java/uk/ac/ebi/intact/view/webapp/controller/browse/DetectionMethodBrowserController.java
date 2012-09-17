@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.intact.view.webapp.controller.browse;
 
+import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -30,7 +31,8 @@ import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
  * @version $Id$
  */
 @Controller("detectionMethodBrowser")
-@Scope("request")
+@Scope("conversation.access")
+@ConversationName("general")
 public class DetectionMethodBrowserController extends OntologyBrowserController {
 
     public static final String FIELD_NAME = FieldNames.DETMETHOD;

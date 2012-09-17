@@ -98,11 +98,15 @@ public class QueryToken {
            queryString.append((operand == BooleanOperand.AND) ? (isNotQuery() ? "AND NOT " : "AND ") : (isNotQuery() ? "OR NOT " : "OR "));
         }
 
-        queryString.append((field != null? field+":" : "")+surroundByQuotesIfNecessary(query));
-
         // close any opened parenthesis in field name. For instance : interaction_id:"GO
         if (field.contains("\"")){
+            queryString.append((field != null? field+":" : ""));
+            queryString.append(query);
             queryString.append("\"");
+        }
+        else {
+            queryString.append((field != null? field+":" : ""));
+            queryString.append(surroundByQuotesIfNecessary(query));
         }
         return queryString.toString();
     }

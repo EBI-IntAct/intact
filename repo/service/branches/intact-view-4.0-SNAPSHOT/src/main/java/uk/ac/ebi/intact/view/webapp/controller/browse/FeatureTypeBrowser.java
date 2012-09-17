@@ -1,5 +1,6 @@
 package uk.ac.ebi.intact.view.webapp.controller.browse;
 
+import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.bridges.ontologies.term.OntologyTerm;
@@ -15,15 +16,22 @@ import uk.ac.ebi.intact.view.webapp.util.RootTerm;
  * @since <pre>03/09/12</pre>
  */
 @Controller("featureTypeBrowser")
-@Scope("request")
+@Scope("conversation.access")
+@ConversationName("general")
 public class FeatureTypeBrowser extends OntologyBrowserController {
 
     public static final String FIELD_NAME = FieldNames.INTERACTOR_FEATURE;
 
+    public FeatureTypeBrowser(){
+        super();
+        this.useName = true;
+    }
+
     @Override
     // give the first root term because we need to add terms which are not considered as children of feature types
     protected OntologyTerm createRootTerm(OntologySearcher ontologySearcher) {
-        final RootTerm rootTerm = new RootTerm( ontologySearcher, "Feature types" );
+        final RootTerm rootTerm = new RootTerm( ontologySearcher, "Feature type" );
+        rootTerm.setIdentifier("MI:0116");
 
         // mi terms for feature types
         rootTerm.addChild("MI:0505", "experimental feature");

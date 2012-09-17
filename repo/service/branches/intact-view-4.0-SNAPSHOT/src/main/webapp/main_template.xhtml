@@ -19,54 +19,53 @@
         </p:dialog>
 
         <p:dialog header="What is this view?" widgetVar="whatIsInteractionsDialog"
-                  width="700" height="500" modal="true">
+                  width="700" height="500" modal="true" draggable="true" closable="true">
             <div style="width:670px; overflow:auto;">
                 <ui:include src="/pages/documentation/contextual/whatis_interactions.xhtml"/>
             </div>
         </p:dialog>
 
         <p:dialog header="What is this view?" widgetVar="whatIsBrowseDialog"
-                  width="700" height="500">
+                  width="700" height="500" draggable="true" closable="true">
             <div style="width:670px; overflow:auto;">
                 <ui:include src="/pages/documentation/contextual/whatis_browser.xhtml"/>
             </div>
         </p:dialog>
 
         <p:dialog header="What is this view?" widgetVar="whatIsSearchDialog"
-                  width="700" height="500">
+                  width="700" height="500" draggable="true" closable="true">
             <div style="width:670px; overflow:auto;">
                 <ui:include src="/pages/documentation/contextual/whatis_search.xhtml"/>
             </div>
         </p:dialog>
 
         <p:dialog header="Complex Expansion" widgetVar="complexExpansionDialog"
-                  width="700" height="500" modal="true">
+                  width="700" height="500" modal="true" draggable="true" closable="true">
             <div style="width:670px; overflow:auto;">
                 <ui:include src="/pages/documentation/contextual/complex_expansion.xhtml"/>
             </div>
         </p:dialog>
 
         <p:dialog header="PSICQUIC" widgetVar="psicquicDialog"
-                  width="700" height="500" modal="true">
+                  width="700" height="500" modal="true" draggable="true" closable="true">
             <div style="width:670px; overflow:auto;">
                 <ui:include src="/pages/documentation/contextual/psicquic.xhtml"/>
             </div>
         </p:dialog>
 
         <p:dialog header="IMEx" widgetVar="psicquicImexDialog"
-                  width="700" height="500" modal="true">
+                  width="700" height="500" modal="true" draggable="true" closable="true">
             <div style="width:670px; overflow:auto;">
                 <ui:include src="/pages/documentation/contextual/psicquic_imex.xhtml"/>
             </div>
         </p:dialog>
 
         <p:dialog header="What is this view?" widgetVar="whatIsFeaturesDialog"
-                  width="700" height="500">
+                  width="700" height="500" draggable="true" closable="true">
             <div style="width:670px; overflow:auto;">
                 <ui:include src="/pages/documentation/contextual/whatis_features.xhtml"/>
             </div>
         </p:dialog>
-
     </ui:define>
 
     <ui:define name="content">
@@ -100,12 +99,12 @@
                         <ui:insert name="searchTabContent"/>
             </p:tab>
 
-            <!--<p:tab id="interactionsTab" title="Interactions (#{searchBean.totalResults})" disabled="#{searchBean.totalResults == 0}">
+            <p:tab id="interactionsTab" title="Interactions (#{searchBean.totalResults})" disabled="#{searchBean.totalResults == 0}">
                         <p:messages/>
                         <ui:insert name="interactionsTabContent"/>
             </p:tab>
 
-            <p:tab id="browseTab" title="Browse" disabled="#{searchBean.totalResults == 0}">
+            <!--<p:tab id="browseTab" title="Browse" disabled="#{searchBean.totalResults == 0}">
                         <p:messages/>
                         <ui:insert name="browseTabContent"/>
             </p:tab>
