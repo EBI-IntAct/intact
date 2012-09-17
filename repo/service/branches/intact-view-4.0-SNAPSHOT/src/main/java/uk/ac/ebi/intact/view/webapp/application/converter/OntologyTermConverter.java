@@ -42,7 +42,11 @@ public class OntologyTermConverter implements Converter {
             this.ontologyBean = (OntologyBean) IntactContext.getCurrentInstance().getSpringContext().getBean("ontologyBean");
         }
 
-        return ontologyBean.findByIdentifier(value);
+        Object object = ontologyBean.findByIdentifier(value);
+        if (object == null){
+            object = ontologyBean.findByName(value);
+        }
+        return object;
     }
 
     public String getAsString(FacesContext context, UIComponent component, Object value) throws ConverterException {
@@ -51,9 +55,15 @@ public class OntologyTermConverter implements Converter {
         }
 
         if (value instanceof InteractionOntologyTerm) {
-           return ((InteractionOntologyTerm) value).getIdentifier();
+            InteractionOntologyTerm term = (InteractionOntologyTerm) value;
+            if (term.getIdentifier() != null ){
+                return term.getIdentifier();
+            }
+            else {
+                return term.getName();
+            }
         } else {
-            throw new IllegalArgumentException("An OntologyTerm class was expected but an illegal class passed to converter: "+value.getClass().getName());
+            throw new ConverterException("An OntologyTerm class was expected but an illegal class passed to converter: "+value.getClass().getName());
         }
     }
 }
