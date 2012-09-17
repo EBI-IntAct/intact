@@ -47,7 +47,7 @@ public class FilterPopulatorController extends SpringInitializedService{
 
     private static final Log log = LogFactory.getLog( FilterPopulatorController.class );
 
-    public static final String NOT_SPECIFIED_VALUE = "Not specified";
+    public static final String NOT_SPECIFIED_VALUE = "-";
     public static final String EXPANSION_SPOKE_VALUE = "MI:1060";
 
     private List<String> datasets;

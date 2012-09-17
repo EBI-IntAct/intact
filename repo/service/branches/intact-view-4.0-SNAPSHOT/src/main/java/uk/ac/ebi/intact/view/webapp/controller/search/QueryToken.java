@@ -95,18 +95,18 @@ public class QueryToken {
         if (excludeOperand) {
             queryString.append(isNotQuery() ? "NOT " : "");
         } else {
-           queryString.append((operand == BooleanOperand.AND) ? (isNotQuery() ? "AND NOT " : "AND ") : (isNotQuery() ? "OR NOT " : "OR "));
+            queryString.append((operand == BooleanOperand.AND) ? (isNotQuery() ? "AND NOT " : "AND ") : (isNotQuery() ? "OR NOT " : "OR "));
         }
+
+        queryString.append((field != null? field+":" : ""));
 
         // close any opened parenthesis in field name. For instance : interaction_id:"GO
         if (field.contains("\"")){
-            queryString.append((field != null? field+":" : ""));
-            queryString.append(query);
-            queryString.append("\"");
+
+            queryString.append(query).append("\"");
         }
         else {
-            queryString.append((field != null? field+":" : ""));
-            queryString.append(surroundByQuotesIfNecessary(query));
+            surroundByQuotesIfNecessary(query, queryString);
         }
         return queryString.toString();
     }
@@ -116,17 +116,45 @@ public class QueryToken {
         return toQuerySyntax();
     }
 
-    public String surroundByQuotesIfNecessary(String query) {
-        if (query.contains(" ") ||
+    public void surroundByQuotesIfNecessary(String query, StringBuffer queryString) {
+
+        // range query, do nothing
+        if (query.startsWith("[") && query.endsWith("]")){
+            queryString.append(query);
+        }
+        else if (query.contains(" ") ||
                 query.contains(":") ||
                 query.contains("(") ||
                 query.contains(")") ||
                 query.contains("-") ||
                 query.contains("+")) {
-            query = "\""+query+"\"";
-        }
 
-        return query;
+            // deal with wild search
+            if (query.contains("*")){
+                queryString.append(query.toLowerCase()
+                        .replaceAll(" ", "\\ ")
+                        .replaceAll(":", "\\:")
+                        .replaceAll("\\(", "\\\\(")
+                        .replaceAll("\\)", "\\\\)")
+                        .replaceAll("-", "\\-")
+                        .replaceAll("\\+", "\\\\+"));
+            }
+            else {
+                queryString.append(query
+                        .replaceAll(" ", "\\ ")
+                        .replaceAll(":", "\\:")
+                        .replaceAll("\\(", "\\\\(")
+                        .replaceAll("\\)", "\\\\)")
+                        .replaceAll("-", "\\-")
+                        .replaceAll("\\+", "\\\\+"));
+            }
+        }
+        else if (query.contains("*")){
+            queryString.append(query.toLowerCase());
+        }
+        else {
+            queryString.append(query);
+        }
     }
 
     @Override

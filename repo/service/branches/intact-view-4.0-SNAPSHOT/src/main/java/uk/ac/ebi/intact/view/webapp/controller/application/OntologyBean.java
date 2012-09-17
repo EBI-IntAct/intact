@@ -68,6 +68,20 @@ public class OntologyBean extends BaseController implements InitializingBean {
         }
         return term;
     }
+    public InteractionOntologyTerm findByName(String id) {
+        if (ontologiesIndexSearcher == null){
+            return new InteractionOntologyTerm(id, "");
+        }
+
+        final InteractionOntologyTerm term;
+        try {
+            term = ontologiesIndexSearcher.findByName(id);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Problem loading term: "+id, e);
+        }
+        return term;
+    }
+
 
     public List<InteractionOntologyTerm> search(String strQuery) throws IOException, ParseException {
         return ontologiesIndexSearcher.search(strQuery);
