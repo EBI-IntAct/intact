@@ -201,10 +201,10 @@ public class ColumnContextController {
     private String[] getCompleteColumns() {
         if (completeColumns == null){
             completeColumns = new String[] {
-                    MOLECULE_A_ID, MOLECULE_B_ID, MOLECULE_A_ALTID, MOLECULE_A_ALTID,
+                    MOLECULE_A_ID, MOLECULE_B_ID, MOLECULE_A_ALTID, MOLECULE_B_ALTID,
                     MOLECULE_A_ALIASES, MOLECULE_B_ALIASES,INTERACTION_DETECTION_METHOD, FIRST_AUTHOR, PUBMED_IDENTIFIER,
                     MOLECULE_A_SPECIES, MOLECULE_B_SPECIES, INTERACTION_TYPE, SOURCE_DATABASE, INTERACTION_AC,
-                    CONFIDENCE_VALUE, EXPANSION_METHOD, MOLECULE_A_BIOLOGICAL_ROLE, MOLECULE_A_BIOLOGICAL_ROLE,
+                    CONFIDENCE_VALUE, EXPANSION_METHOD, MOLECULE_A_BIOLOGICAL_ROLE, MOLECULE_B_BIOLOGICAL_ROLE,
                     MOLECULE_A_EXPERIMENTAL_ROLE, MOLECULE_B_EXPERIMENTAL_ROLE, MOLECULE_A_INTERACTOR_TYPE, MOLECULE_B_INTERACTOR_TYPE, MOLECULE_A_XREFS, MOLECULE_B_XREFS,
                     INTERACTION_XREFS, MOLECULE_A_ANNOTATION, MOLECULE_B_ANNOTATION, INTERACTION_ANNOTATION, HOST_ORGANISM, PARAMETERS_INTERACTION, CREATED_DATE,
                     UPDATE_DATE, MOLECULE_A_CHECKSUM, MOLECULE_B_CHECKSUM, INTERACTION_CHECKSUM, NEGATIVE, MOLECULE_A_FEATURE, MOLECULE_B_FEATURE,
@@ -255,7 +255,13 @@ public class ColumnContextController {
 
         List<SelectItem> selectItems = new ArrayList<SelectItem>();
 
-        for ( String columnKey : getExpandedColumns()) {
+        // add molecule name and links, then relies on complete columns of mitab 2.7
+        selectItems.add( new SelectItem(MOLECULE_A_NAME, rb.getString(MOLECULE_A_NAME).trim()) );
+        selectItems.add( new SelectItem(MOLECULE_A_LINKS, rb.getString(MOLECULE_A_LINKS).trim()) );
+        selectItems.add( new SelectItem(MOLECULE_B_NAME, rb.getString(MOLECULE_B_NAME).trim()) );
+        selectItems.add( new SelectItem(MOLECULE_B_LINKS, rb.getString(MOLECULE_B_LINKS).trim()) );
+
+        for ( String columnKey : getCompleteColumns()) {
             selectItems.add( new SelectItem(columnKey, rb.getString(columnKey).trim()) );
         }
 
