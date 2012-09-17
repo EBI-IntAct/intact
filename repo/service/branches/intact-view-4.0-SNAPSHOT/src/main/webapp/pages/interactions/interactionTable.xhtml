@@ -32,7 +32,7 @@
     <p:commandButton id="updateColumnSelection" value="Update"
                      update="resultsTable"
                      oncomplete="columnsDialog.hide()"
-                     process="@this" ajax="true" partialSubmit="true"/>
+                     process="columnSelection" ajax="true" partialSubmit="true"/>
 </p:dialog>
 
 <p:toolbar rendered="#{searchBean.totalResults > 0}">
@@ -57,7 +57,7 @@
             <f:selectItem itemLabel="RDF/XML" itemValue="rdf_xml" itemDisabled="#{searchBean.totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
             <f:selectItem itemLabel="RDF/XML (Abbrev)" itemValue="rdf_xml_abbrev" itemDisabled="#{searchBean.totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
             <f:selectItem itemLabel="RDF (N3)" itemValue="rdf_n3" itemDisabled="#{searchBean.totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
-            <f:selectItem itemLabel="RDF (N-Triples)" itemValue="rdf_triple" itemDisabled="#{totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
+            <f:selectItem itemLabel="RDF (N-Triples)" itemValue="rdf_triple" itemDisabled="#{searchBean.totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
             <f:selectItem itemLabel="RDF (Turtle)" itemValue="rdf_turtle" itemDisabled="#{searchBean.totalResults ge intactViewConfiguration.maxSizeXmlExport}"/>
             <f:selectItem itemLabel="XGMML (Cytoscape)" itemValue="xgmml" itemDisabled="#{searchBean.totalResults ge intactViewConfiguration.maxSizeXgmmlExport}"/>
         </h:selectOneMenu>
@@ -434,7 +434,7 @@
 
 <p:column rendered="#{columnContext.isColumnVisible('moleculeA.xrefs')}"
           styleClass="cellTextCompound">
-    <f:facet name="header"><h:outputText value="#{messages['moleculeA.properties']}"/></f:facet>
+    <f:facet name="header"><h:outputText value="#{messages['moleculeA.xrefs']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorA != null}">
         <iam:collapsibleIterator  disclosed="#{searchBean.showProperties}"
                                   value="#{binaryInteraction.interactorA.xrefs}"
@@ -541,7 +541,7 @@
 
 <p:column rendered="#{columnContext.isColumnVisible('created.date')}"
           styleClass="cellTextInteraction">
-    <f:facet name="header"><h:outputText value="#{messages['interaction.created']}"/></f:facet>
+    <f:facet name="header"><h:outputText value="#{messages['created.date']}"/></f:facet>
     <ui:repeat var="created" value="#{binaryInteraction.creationDate}">
                             <span style="display:block">
                                     <h:outputText value="#{iamf:formatDate(created)}" style="white-space:nowrap"/>
@@ -551,7 +551,7 @@
 
 <p:column rendered="#{columnContext.isColumnVisible('updated.date')}"
           styleClass="cellTextInteraction">
-    <f:facet name="header"><h:outputText value="#{messages['interaction.updated']}"/></f:facet>
+    <f:facet name="header"><h:outputText value="#{messages['update.date']}"/></f:facet>
     <ui:repeat var="updated" value="#{binaryInteraction.updateDate}">
                             <span style="display:block">
                                     <h:outputText value="#{iamf:formatDate(updated)}" style="white-space:nowrap"/>
@@ -559,9 +559,9 @@
     </ui:repeat>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeA.checksums')}"
+<p:column rendered="#{columnContext.isColumnVisible('moleculeA.checksum')}"
           styleClass="cellTextInteraction">
-    <f:facet name="header"><h:outputText value="#{messages['moleculeA.checksums']}"/></f:facet>
+    <f:facet name="header"><h:outputText value="#{messages['moleculeA.checksum']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorA != null}">
         <ui:repeat var="checksum" value="#{binaryInteraction.interactorA.checksums}" rows="0">
                            <span style="display:block">
@@ -575,9 +575,9 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeB.checksums')}"
+<p:column rendered="#{columnContext.isColumnVisible('moleculeB.checksum')}"
           styleClass="cellTextInteraction">
-    <f:facet name="header"><h:outputText value="#{messages['moleculeB.checksums']}"/></f:facet>
+    <f:facet name="header"><h:outputText value="#{messages['moleculeB.checksum']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorB != null}">
         <ui:repeat var="checksum" value="#{binaryInteraction.interactorB.checksums}" rows="0">
                            <span style="display:block">
@@ -591,9 +591,9 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('interaction.checksums')}"
+<p:column rendered="#{columnContext.isColumnVisible('interaction.checksum')}"
           styleClass="cellTextInteraction">
-    <f:facet name="header"><h:outputText value="#{messages['interaction.checksums']}"/></f:facet>
+    <f:facet name="header"><h:outputText value="#{messages['interaction.checksum']}"/></f:facet>
     <ui:repeat var="checksum" value="#{binaryInteraction.checksums}" rows="0">
                            <span style="display:block">
                                     <h:outputText value="#{checksum.methodName}:#{checksum.checksum}" style="white-space:nowrap"/>
@@ -638,7 +638,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeA.stoichiometry')}"
+<p:column rendered="#{columnContext.isColumnVisible('moleculeA.stc')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['moleculeA.stc']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorA != null}">
@@ -649,7 +649,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeB.stoichiometry')}"
+<p:column rendered="#{columnContext.isColumnVisible('moleculeB.stc')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['moleculeB.stc']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorB != null}">
