@@ -31,7 +31,8 @@
     <hr/>
     <p:commandButton id="updateColumnSelection" value="Update"
                      update="resultsTable"
-                     oncomplete="columnsDialog.hide()"
+                     oncomplete="columnsDialog.hide(); statusDialog.hide()"
+                     onstart="statusDialog.show()"
                      process="columnSelection" ajax="true" partialSubmit="true"/>
 </p:dialog>
 
@@ -83,19 +84,19 @@
              dynamic="true" rowIndexVar="row" paginatorPosition="both"
              paginator="#{searchBean.results.rowCount gt userQuery.pageSize}"
              rowStyleClass="#{not searchBean.results.sameThanPrevious? 'newInteractionRow' : 'sameInteractionRow'} #{searchBean.results.negative? ', negativeInteractionRow' : ''}" rendered="#{searchBean.totalResults > 0}">
-<p:column>
+<p:column id="detailCol">
     <h:outputLink value="#{request.contextPath}/interaction/#{searchBean.getMainAccessionXref(binaryInteraction).identifier}" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Interaction details','#{detailsBean.interactionAc}'])">
         <h:graphicImage url="/images/magnify.png" alt="details" />
     </h:outputLink>
 </p:column>
-<p:column>
+<p:column id="numberRowCol">
     <f:facet name="header">
         <h:outputText value="#"/>
     </f:facet>
     <h:outputText value="#{row + 1}"/>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeA.name')}">
+<p:column id="moleculeACol" rendered="#{columnContext.isColumnVisible('moleculeA.name')}">
     <f:facet name="header">
         <h:outputText value="#{messages['moleculeA.name']}"/>
     </f:facet>
@@ -104,7 +105,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeA.links')}">
+<p:column id="linksACol" rendered="#{columnContext.isColumnVisible('moleculeA.links')}">
     <f:facet name="header">
         <h:outputText value="#{messages['moleculeA.links']}"/>
     </f:facet>
@@ -117,7 +118,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeB.name')}">
+<p:column id="moleculeBCol" rendered="#{columnContext.isColumnVisible('moleculeB.name')}">
     <f:facet name="header">
         <h:outputText value="#{messages['moleculeB.name']}"/>
     </f:facet>
@@ -127,7 +128,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column styleClass="cellTextCompound"
+<p:column id="linksBCol" styleClass="cellTextCompound"
           rendered="#{columnContext.isColumnVisible('moleculeB.links')}">
     <f:facet name="header">
         <h:outputText value="#{messages['moleculeB.links']}"/>
@@ -141,7 +142,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeA.uniqueId')}">
+<p:column id="uniqueIdACol" rendered="#{columnContext.isColumnVisible('moleculeA.uniqueId')}">
     <f:facet name="header">
         <h:outputText value="#{messages['moleculeA.uniqueId']}"/>
     </f:facet>
@@ -157,7 +158,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeB.uniqueId')}">
+<p:column id="uniqueIdBCol" rendered="#{columnContext.isColumnVisible('moleculeB.uniqueId')}">
     <f:facet name="header">
         <h:outputText value="#{messages['moleculeB.uniqueId']}"/>
     </f:facet>
@@ -173,14 +174,14 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeA.alternativeId')}">
+<p:column id="altidACol" rendered="#{columnContext.isColumnVisible('moleculeA.alternativeId')}">
     <f:facet name="header">
         <h:outputText value="#{messages['moleculeA.alternativeId']}"/>
     </f:facet>
     <h:panelGroup rendered="#{not searchBean.results.sameThanPrevious and binaryInteraction.interactorA != null}">
-        <iam:collapsibleIterator disclosed="true"
+        <iam:collapsibleIterator disclosed="false"
                                  value="#{binaryInteraction.interactorA.alternativeIdentifiers}"
-                                 maxShown="1">
+                                 maxShown="3">
             <h:outputText value="#{item.identifier}" style="white-space:nowrap;"/>
         </iam:collapsibleIterator>
     </h:panelGroup>
@@ -189,14 +190,14 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeB.alternativeId')}">
+<p:column id="altidBCol" rendered="#{columnContext.isColumnVisible('moleculeB.alternativeId')}">
     <f:facet name="header">
         <h:outputText value="#{messages['moleculeB.alternativeId']}"/>
     </f:facet>
     <h:panelGroup rendered="#{not searchBean.results.sameThanPrevious and binaryInteraction.interactorB != null}">
-        <iam:collapsibleIterator disclosed="true"
+        <iam:collapsibleIterator disclosed="false"
                                  value="#{binaryInteraction.interactorB.alternativeIdentifiers}"
-                                 maxShown="1">
+                                 maxShown="3">
             <h:outputText value="#{item.identifier}" style="white-space:nowrap;"/>
         </iam:collapsibleIterator>
     </h:panelGroup>
@@ -205,12 +206,12 @@
     </h:panelGroup>
 </p:column>
 
-<p:column styleClass="cellTextCompound"
+<p:column id="aliasesACol" styleClass="cellTextCompound"
           rendered="#{columnContext.isColumnVisible('moleculeA.aliases')}">
     <f:facet name="header"><h:outputText value="#{messages['moleculeA.aliases']}"/></f:facet>
 
     <h:panelGroup rendered="#{not searchBean.results.sameThanPrevious and binaryInteraction.interactorA != null}">
-        <iam:collapsibleIterator disclosed="#{searchBean.showAlternativeIds}"
+        <iam:collapsibleIterator disclosed="false"
                                  value="#{iamf:getExclusionFilteredAliases(binaryInteraction.interactorA.aliases)}"
                                  maxShown="3">
             <h:outputText value="#{item.name}" style="white-space:nowrap;"/>
@@ -221,12 +222,12 @@
     </h:panelGroup>
 </p:column>
 
-<p:column styleClass="cellTextCompound"
+<p:column id="aliasesBCol" styleClass="cellTextCompound"
           rendered="#{columnContext.isColumnVisible('moleculeB.aliases')}">
     <f:facet name="header"><h:outputText value="#{messages['moleculeB.aliases']}"/></f:facet>
 
     <h:panelGroup rendered="#{not searchBean.results.sameThanPrevious and binaryInteraction.interactorB != null}">
-        <iam:collapsibleIterator disclosed="#{searchBean.showAlternativeIds}"
+        <iam:collapsibleIterator disclosed="false"
                                  value="#{iamf:getExclusionFilteredAliases(binaryInteraction.interactorB.aliases)}"
                                  maxShown="3">
             <h:outputText value="#{item.name}" style="white-space:nowrap;"/>
@@ -237,7 +238,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('interaction.detectionmethod')}"
+<p:column id="dethMethodCol" rendered="#{columnContext.isColumnVisible('interaction.detectionmethod')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.detectionmethod']}"/></f:facet>
     <iv:cvLazyPopup text="#{binaryInteraction.detectionMethods[0].text}" dialogVar="cvInfoDialog"
@@ -245,7 +246,7 @@
                     cvIdentifier="#{binaryInteraction.detectionMethods[0].identifier}"/>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('interaction.firstauthor')}"
+<p:column id="pubAuthCol" rendered="#{columnContext.isColumnVisible('interaction.firstauthor')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.firstauthor']}"/></f:facet>
 
@@ -256,13 +257,13 @@
     </ui:repeat>
 </p:column>
 
-<p:column  rendered="#{columnContext.isColumnVisible('interaction.pubmedid')}"
+<p:column  id="pubIdCol" rendered="#{columnContext.isColumnVisible('interaction.pubmedid')}"
            styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.pubmedid']}"/></f:facet>
     <iav:xrefDataList value="#{binaryInteraction.publications}" itemPerLine="true"/>
 </p:column>
 
-<p:column styleClass="cellTextCompound"
+<p:column id="speciesACol" styleClass="cellTextCompound"
           rendered="#{columnContext.isColumnVisible('moleculeA.species')}">
     <f:facet name="header"><h:outputText value="#{messages['moleculeA.species']}"/></f:facet>
 
@@ -278,7 +279,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column styleClass="cellTextCompound"
+<p:column id="speciesBCol" styleClass="cellTextCompound"
           rendered="#{columnContext.isColumnVisible('moleculeB.species')}">
     <f:facet name="header"><h:outputText value="#{messages['moleculeB.species']}"/></f:facet>
 
@@ -294,7 +295,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('interaction.interactiontype')}"
+<p:column id="typeCol" rendered="#{columnContext.isColumnVisible('interaction.interactiontype')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.interactiontype']}"/></f:facet>
     <iv:cvLazyPopup text="#{binaryInteraction.interactionTypes[0].text}" dialogVar="cvInfoDialog"
@@ -302,13 +303,13 @@
                     cvIdentifier="#{binaryInteraction.interactionTypes[0].identifier}"/>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('interaction.sourcedb')}"
+<p:column id="sourceCol" rendered="#{columnContext.isColumnVisible('interaction.sourcedb')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.sourcedb']}"/></f:facet>
     <iav:xrefDataList value="#{binaryInteraction.sourceDatabases}" itemPerLine="true" onlyText="true"/>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('interaction.ac')}">
+<p:column id="interactionAcCol" rendered="#{columnContext.isColumnVisible('interaction.ac')}">
     <f:facet name="header"><h:outputText value="#{messages['interaction.ac']}"/></f:facet>
 
     <h:outputLink value="#{request.contextPath}/interaction/#{searchBean.getMainAccessionXref(binaryInteraction).identifier}" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Interaction details','#{detailsBean.interactionAc}'])">
@@ -325,7 +326,7 @@
     </ui:repeat>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('interaction.confidencevalue')}"
+<p:column id="confCol" rendered="#{columnContext.isColumnVisible('interaction.confidencevalue')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.confidencevalue']}"/></f:facet>
     <ui:repeat var="confidence" value="#{binaryInteraction.confidenceValues}" rows="0">
@@ -335,13 +336,13 @@
     </ui:repeat>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('interaction.expansionmethod')}"
+<p:column id="expansionCol" rendered="#{columnContext.isColumnVisible('interaction.expansionmethod')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.expansionmethod']}"/></f:facet>
     <p:commandLink type="button" onclick="complexExpansionDialog.show()" value="#{iamf:getExpansionName(binaryInteraction)}"/>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeA.biorole')}"
+<p:column id="bioroleACol" rendered="#{columnContext.isColumnVisible('moleculeA.biorole')}"
           styleClass="cellTextCompound">
     <f:facet name="header"><h:outputText value="#{messages['moleculeA.biorole']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorA != null}">
@@ -354,7 +355,7 @@
         <h:outputText value="N/A"/>
     </h:panelGroup>
 </p:column>
-<p:column rendered="#{columnContext.isColumnVisible('moleculeB.biorole')}"
+<p:column id="bioroleBCol" rendered="#{columnContext.isColumnVisible('moleculeB.biorole')}"
           styleClass="cellTextCompound">
     <f:facet name="header"><h:outputText value="#{messages['moleculeB.biorole']}"/></f:facet>
 
@@ -368,7 +369,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeA.exprole')}"
+<p:column id="exproleACol" rendered="#{columnContext.isColumnVisible('moleculeA.exprole')}"
           styleClass="cellTextCompound">
     <f:facet name="header"><h:outputText value="#{messages['moleculeA.exprole']}"/></f:facet>
 
@@ -382,7 +383,7 @@
         <h:outputText value="N/A"/>
     </h:panelGroup>
 </p:column>
-<p:column rendered="#{columnContext.isColumnVisible('moleculeB.exprole')}"
+<p:column id="exproleBCol" rendered="#{columnContext.isColumnVisible('moleculeB.exprole')}"
           styleClass="cellTextCompound">
     <f:facet name="header"><h:outputText value="#{messages['moleculeB.exprole']}"/></f:facet>
 
@@ -396,7 +397,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeA.interactortype')}"
+<p:column id="typeACol" rendered="#{columnContext.isColumnVisible('moleculeA.interactortype')}"
           styleClass="cellTextCompound">
     <f:facet name="header"><h:outputText value="#{messages['moleculeA.interactortype']}"/></f:facet>
 
@@ -410,7 +411,7 @@
         <h:outputText value="N/A"/>
     </h:panelGroup>
 </p:column>
-<p:column rendered="#{columnContext.isColumnVisible('moleculeB.interactortype')}"
+<p:column id="typeBCol" rendered="#{columnContext.isColumnVisible('moleculeB.interactortype')}"
           styleClass="cellTextCompound">
     <f:facet name="header"><h:outputText value="#{messages['moleculeB.interactortype']}"/></f:facet>
 
@@ -424,11 +425,11 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeA.xrefs')}"
+<p:column id="xrefACol" rendered="#{columnContext.isColumnVisible('moleculeA.xrefs')}"
           styleClass="cellTextCompound">
     <f:facet name="header"><h:outputText value="#{messages['moleculeA.xrefs']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorA != null}">
-        <iam:collapsibleIterator  disclosed="#{searchBean.showProperties}"
+        <iam:collapsibleIterator  disclosed="false"
                                   value="#{binaryInteraction.interactorA.xrefs}"
                                   maxShown="5">
             <ui:param name="xrefUrl" value="#{iav:xrefUrl(appConfigBean.linkContext, item)}"/>
@@ -442,11 +443,11 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeB.xrefs')}"
+<p:column id="xrefBCol" rendered="#{columnContext.isColumnVisible('moleculeB.xrefs')}"
           styleClass="cellTextCompound">
     <f:facet name="header"><h:outputText value="#{messages['moleculeB.xrefs']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorB != null}">
-        <iam:collapsibleIterator  disclosed="#{searchBean.showProperties}"
+        <iam:collapsibleIterator  disclosed="false"
                                   value="#{binaryInteraction.interactorB.xrefs}"
                                   maxShown="5">
             <ui:param name="xrefUrl" value="#{iav:xrefUrl(appConfigBean.linkContext, item)}"/>
@@ -459,10 +460,10 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('interaction.xrefs')}"
+<p:column id="xrefsCol" rendered="#{columnContext.isColumnVisible('interaction.xrefs')}"
           styleClass="cellTextCompound">
     <f:facet name="header"><h:outputText value="#{messages['interaction.xrefs']}"/></f:facet>
-    <iam:collapsibleIterator disclosed="#{searchBean.showProperties}"
+    <iam:collapsibleIterator disclosed="false"
                              value="#{binaryInteraction.xrefs}"
                              maxShown="5">
         <ui:param name="xrefUrl" value="#{iav:xrefUrl(appConfigBean.linkContext, item)}"/>
@@ -471,7 +472,7 @@
     </iam:collapsibleIterator>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeA.annotations')}"
+<p:column id="annotACol" rendered="#{columnContext.isColumnVisible('moleculeA.annotations')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['moleculeA.annotations']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorA != null}">
@@ -487,7 +488,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeB.annotations')}"
+<p:column id="annotBCol" rendered="#{columnContext.isColumnVisible('moleculeB.annotations')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['moleculeB.annotations']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorB != null}">
@@ -502,7 +503,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('interaction.annotations')}"
+<p:column id="annotsCol" rendered="#{columnContext.isColumnVisible('interaction.annotations')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.annotations']}"/></f:facet>
     <ui:repeat var="annot" value="#{binaryInteraction.annotations}" rows="0">
@@ -512,7 +513,7 @@
     </ui:repeat>
 </p:column>
 
-<p:column styleClass="cellTextCompound"
+<p:column id="hostCol" styleClass="cellTextCompound"
           rendered="#{columnContext.isColumnVisible('interaction.hostorganism')}">
     <f:facet name="header"><h:outputText value="#{messages['interaction.hostorganism']}"/></f:facet>
 
@@ -521,7 +522,7 @@
     </ui:include>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('interaction.parameters')}"
+<p:column id="parametersCol" rendered="#{columnContext.isColumnVisible('interaction.parameters')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.parameters']}"/></f:facet>
     <ui:repeat var="parameter" value="#{binaryInteraction.parameters}" rows="0">
@@ -531,7 +532,7 @@
     </ui:repeat>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('created.date')}"
+<p:column id="createdDateCol" rendered="#{columnContext.isColumnVisible('created.date')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['created.date']}"/></f:facet>
     <ui:repeat var="created" value="#{binaryInteraction.creationDate}">
@@ -541,7 +542,7 @@
     </ui:repeat>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('updated.date')}"
+<p:column id="updateDateCol" rendered="#{columnContext.isColumnVisible('updated.date')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['update.date']}"/></f:facet>
     <ui:repeat var="updated" value="#{binaryInteraction.updateDate}">
@@ -551,7 +552,7 @@
     </ui:repeat>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeA.checksum')}"
+<p:column id="checksumACol" rendered="#{columnContext.isColumnVisible('moleculeA.checksum')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['moleculeA.checksum']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorA != null}">
@@ -567,7 +568,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeB.checksum')}"
+<p:column id="checksumBCol" rendered="#{columnContext.isColumnVisible('moleculeB.checksum')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['moleculeB.checksum']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorB != null}">
@@ -583,7 +584,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('interaction.checksum')}"
+<p:column id="checksumCol" rendered="#{columnContext.isColumnVisible('interaction.checksum')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.checksum']}"/></f:facet>
     <ui:repeat var="checksum" value="#{binaryInteraction.checksums}" rows="0">
@@ -593,13 +594,13 @@
     </ui:repeat>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('interaction.negative')}"
+<p:column id="nnegativeCol" rendered="#{columnContext.isColumnVisible('interaction.negative')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.negative']}"/></f:facet>
     <h:outputText value="#{interaction.negative}" style="white-space:nowrap"/>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeA.features')}"
+<p:column id="featureACol" rendered="#{columnContext.isColumnVisible('moleculeA.features')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['moleculeA.features']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorA != null}">
@@ -615,7 +616,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeB.features')}"
+<p:column id="featureBCol" rendered="#{columnContext.isColumnVisible('moleculeB.features')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['moleculeB.features']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorB != null}">
@@ -630,7 +631,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeA.stc')}"
+<p:column id="stcACol" rendered="#{columnContext.isColumnVisible('moleculeA.stc')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['moleculeA.stc']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorA != null}">
@@ -641,7 +642,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeB.stc')}"
+<p:column id="stcBCol" rendered="#{columnContext.isColumnVisible('moleculeB.stc')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['moleculeB.stc']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorB != null}">
@@ -652,7 +653,7 @@
     </h:panelGroup>
 </p:column>
 
-<p:column rendered="#{columnContext.isColumnVisible('moleculeA.pmethod')}"
+<p:column id="pmethodACol" rendered="#{columnContext.isColumnVisible('moleculeA.pmethod')}"
           styleClass="cellTextCompound">
     <f:facet name="header"><h:outputText value="#{messages['moleculeA.pmethod']}"/></f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorA != null}">
@@ -665,7 +666,7 @@
         <h:outputText value="N/A"/>
     </h:panelGroup>
 </p:column>
-<p:column rendered="#{columnContext.isColumnVisible('moleculeB.pmethod')}"
+<p:column id="pmethodBCol" rendered="#{columnContext.isColumnVisible('moleculeB.pmethod')}"
           styleClass="cellTextCompound">
     <f:facet name="header"><h:outputText value="#{messages['moleculeB.pmethod']}"/></f:facet>
 
