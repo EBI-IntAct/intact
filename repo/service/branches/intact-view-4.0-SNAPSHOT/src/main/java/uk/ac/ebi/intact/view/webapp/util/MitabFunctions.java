@@ -289,7 +289,7 @@ public final class MitabFunctions {
         return format.format(date);
     }
 
-    public static String getParameterValue(Parameter param){
+    public static String getParameter(Parameter param){
         if (param == null){
             return "N/A";
         }
@@ -298,18 +298,18 @@ public final class MitabFunctions {
 
         if (param.getFactor() != null){
            buffer.append(Double.toString(param.getFactor()));
-            if (param.getBase() != null){
+            if (param.getBase() != null && param.getBase() > 0){
                 buffer.append("x").append(Integer.toString(param.getBase()));
             }
         }
-        else if (param.getBase() != null){
+        else if (param.getBase() != null && param.getBase() > 0){
             buffer.append(Integer.toString(param.getBase()));
         }
 
-        if (param.getExponent() != null){
+        if (param.getExponent() != null && param.getExponent() > 0){
             buffer.append("^").append(param.getExponent());
         }
-        if (param.getUncertainty() != null){
+        if (param.getUncertainty() != null && param.getUncertainty() > 0){
             buffer.append(" ~").append(param.getUncertainty());
         }
 

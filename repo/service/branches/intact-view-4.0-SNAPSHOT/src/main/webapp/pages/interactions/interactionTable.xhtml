@@ -524,9 +524,9 @@
 <p:column rendered="#{columnContext.isColumnVisible('interaction.parameters')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.parameters']}"/></f:facet>
-    <ui:repeat var="param" value="#{binaryInteraction.parameters}" rows="0">
+    <ui:repeat var="parameter" value="#{binaryInteraction.parameters}" rows="0">
                            <span style="display:block">
-                                    <h:outputText value="#{param.type}:#{iamf:getParameterValue(param)}" style="white-space:nowrap"/>
+                                    <h:outputText value="#{parameter.type}:#{iamf:getParameter(parameter)}" style="white-space:nowrap"/>
                             </span>
     </ui:repeat>
 </p:column>
