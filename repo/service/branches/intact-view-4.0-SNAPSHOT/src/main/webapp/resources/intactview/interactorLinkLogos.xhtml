@@ -24,29 +24,23 @@
             <ui:repeat var="xref" value="#{cc.attrs.interactor.identifiers}" varStatus="rowStatus">
                 <h:panelGroup rendered="#{xref.database == 'uniprotkb'}">
                     <iax:goUniprot query="#{xref.identifier}" onlyLogo="false"/>
-                    <br/>
-                    <iax:goMoleculeView query="#{iamf:getMainIdentifierFromCrossReferences(cc.attrs.interactor.alternativeIdentifiers)}" onlyLogo="false"
-                                        useUrl="true"/>
                 </h:panelGroup>
                 <h:panelGroup rendered="#{xref.database == 'chebi'}">
                     <iax:goChebi query="#{xref.identifier}" onlyLogo="false"/>
-                    <br/>
-                    <iax:goMoleculeView query="#{iamf:getMainIdentifierFromCrossReferences(cc.attrs.interactor.alternativeIdentifiers)}" onlyLogo="false"
-                                        useUrl="true"/>
                 </h:panelGroup>
                 <h:panelGroup rendered="#{xref.database == 'drugbank'}">
                     <iax:goDrugbank query="#{xref.identifier}" onlyLogo="false"/>
                     <br/>
                     <iax:goDrugPortChemicalView query="#{xref.identifier}" onlyLogo="false" renderDrugPort="#{iamf:isApprovedDrug(iamf:getDrugStatus(cc.attrs.interactor))}"/>
-                    <br/>
-                    <iax:goMoleculeView query="#{iamf:getMainIdentifierFromCrossReferences(cc.attrs.interactor.alternativeIdentifiers)}" onlyLogo="false"
-                                        useUrl="true"/>
                 </h:panelGroup>
                 <h:panelGroup rendered="#{xref.database == 'intact'}">
                     <iax:goMoleculeView query="#{xref.identifier}" onlyLogo="false"
                                         useUrl="true"/>
                 </h:panelGroup>
             </ui:repeat>
+            <br/>
+            <iax:goMoleculeView query="#{iamf:getMainIdentifierFromCrossReferences(cc.attrs.interactor.alternativeIdentifiers)}" onlyLogo="false"
+                                useUrl="true"/>
         </h:panelGroup>
 
     </composite:implementation>
