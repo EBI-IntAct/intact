@@ -120,9 +120,15 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
             try {
                 result = solrSearcher.search(solrQuery);
             } catch (PsicquicSolrException e) {
+                FacesContext context = FacesContext.getCurrentInstance();
+                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to retrieve results", solrQuery.getQuery());
+                context.addMessage(null, facesMessage);
                 log.fatal("Impossible to retrieve results for query " + solrQuery.getQuery(), e);
                 result = null;
             } catch (SolrServerException e) {
+                FacesContext context = FacesContext.getCurrentInstance();
+                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to retrieve results", solrQuery.getQuery());
+                context.addMessage(null, facesMessage);
                 log.fatal("Impossible to retrieve results for query " + solrQuery.getQuery(), e);
                 result = null;
             }
@@ -136,8 +142,14 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
                         interactions.add(ibi);
                     }
                 } catch (PsimiTabException e) {
+                    FacesContext context = FacesContext.getCurrentInstance();
+                    FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to retrieve results", solrQuery.getQuery());
+                    context.addMessage(null, facesMessage);
                     log.fatal("Impossible to retrieve results for query " + solrQuery.getQuery(), e);
                 } catch (IOException e) {
+                    FacesContext context = FacesContext.getCurrentInstance();
+                    FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to retrieve results", solrQuery.getQuery());
+                    context.addMessage(null, facesMessage);
                     log.fatal("Impossible to retrieve results for query " + solrQuery.getQuery(), e);
                 }
             }

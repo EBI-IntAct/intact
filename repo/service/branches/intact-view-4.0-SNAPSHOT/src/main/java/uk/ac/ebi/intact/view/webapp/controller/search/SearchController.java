@@ -57,10 +57,6 @@ public class SearchController extends JpaBaseController {
     private int geneTotalResults;
     private int nucleicAcidTotalResults;
 
-    private boolean showProperties;
-    private boolean showAlternativeIds;
-    private boolean showBrandNames;
-
     private UserQuery userQuery;
 
     private String currentQuery;
@@ -528,30 +524,6 @@ public class SearchController extends JpaBaseController {
 
     public void setResults( LazySearchResultDataModel results ) {
         this.results = results;
-    }
-
-    public boolean isShowProperties() {
-        return showProperties;
-    }
-
-    public void setShowProperties( boolean showProperties ) {
-        this.showProperties = showProperties;
-    }
-
-    public boolean isShowAlternativeIds() {
-        return showAlternativeIds;
-    }
-
-    public void setShowAlternativeIds( boolean showAlternativeIds ) {
-        this.showAlternativeIds = showAlternativeIds;
-    }
-
-    public boolean isShowBrandNames() {
-        return showBrandNames;
-    }
-
-    public void setShowBrandNames( boolean showBrandNames ) {
-        this.showBrandNames = showBrandNames;
     }
 
     public String getExportFormat() {
