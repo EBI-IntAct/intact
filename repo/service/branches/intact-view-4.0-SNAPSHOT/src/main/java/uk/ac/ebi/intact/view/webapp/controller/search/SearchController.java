@@ -94,6 +94,9 @@ public class SearchController extends JpaBaseController {
 
     private String acPrefix;
 
+    private boolean filterNegative=false;
+    private boolean filterSpoke=false;
+
     public SearchController() {
     }
 
@@ -144,45 +147,8 @@ public class SearchController extends JpaBaseController {
         UserQuery userQuery = getUserQuery();
         SolrQuery solrQuery = userQuery.createSolrQuery();
 
-        doBinarySearch(solrQuery);
-
-        return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
-    }
-
-    public String doBinarySearchBRCA2Action() {
-        UserQuery userQuery = getUserQuery();
-        userQuery.setSearchQuery(userQuery.getGeneQuery());
-        SolrQuery solrQuery = userQuery.createSolrQuery();
-
-        doBinarySearch(solrQuery);
-
-        return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
-    }
-
-    public String doBinarySearchUniprotAcAction() {
-        UserQuery userQuery = getUserQuery();
-        userQuery.setSearchQuery(userQuery.getUniprotAcQuery());
-        SolrQuery solrQuery = userQuery.createSolrQuery();
-
-        doBinarySearch(solrQuery);
-
-        return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
-    }
-
-    public String doBinarySearchUniprotGeneAction() {
-        UserQuery userQuery = getUserQuery();
-        userQuery.setSearchQuery(userQuery.getUniprotGeneQuery());
-        SolrQuery solrQuery = userQuery.createSolrQuery();
-
-        doBinarySearch(solrQuery);
-
-        return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
-    }
-
-    public String doBinarySearchPubmedAction() {
-        UserQuery userQuery = getUserQuery();
-        userQuery.setSearchQuery(userQuery.getPubmedQuery());
-        SolrQuery solrQuery = userQuery.createSolrQuery();
+        this.filterNegative=false;
+        this.filterSpoke=false;
 
         doBinarySearch(solrQuery);
 
@@ -193,21 +159,47 @@ public class SearchController extends JpaBaseController {
         UserQuery userQuery = getUserQuery();
         SolrQuery solrQuery = userQuery.createSolrQueryForOntologySearch();
 
+        this.filterNegative=false;
+        this.filterSpoke=false;
+
         doBinarySearch(solrQuery);
 
         return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
     }
 
+    public String doBinarySearchActionFilterNegative() {
+        UserQuery userQuery = getUserQuery();
+        SolrQuery solrQuery = userQuery.createSolrQuery();
+
+        // the true binary interactions have - in the complex expansion column
+        solrQuery.addFilterQuery(FieldNames.NEGATIVE+":false");
+        filterNegative = true;
+
+        // add spoke filter if necessary
+        if (filterSpoke){
+            solrQuery.addFilterQuery(FieldNames.COMPLEX_EXPANSION+":\"-\"");
+        }
+
+        doBinarySearchOnly(solrQuery);
+        return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
+    }
     public String doBinarySearchActionFilterSpokeExpanded() {
         UserQuery userQuery = getUserQuery();
         SolrQuery solrQuery = userQuery.createSolrQuery();
 
         // the true binary interactions have - in the complex expansion column
         solrQuery.addFilterQuery(FieldNames.COMPLEX_EXPANSION+":\"-\"");
+        filterSpoke = true;
+
+        // add spoke filter if necessary
+        if (filterNegative){
+            solrQuery.addFilterQuery(FieldNames.NEGATIVE+":false");
+        }
 
         doBinarySearchOnly(solrQuery);
         return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
     }
+
 
     public String doNewBinarySearch() {
         resetDetailControllers();

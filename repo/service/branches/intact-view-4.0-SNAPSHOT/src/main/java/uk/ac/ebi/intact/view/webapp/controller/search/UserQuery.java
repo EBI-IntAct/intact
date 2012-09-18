@@ -112,11 +112,6 @@ public class UserQuery extends BaseController {
 
     private TreeNode selectedSearchTerm;
 
-    private String geneQuery = "BRCA2";
-    private String uniprotAcquery = "Q06609";
-    private String uniprotGeneQuery = "dmc1";
-    private String pubmedQuery = "10831611";
-
     public UserQuery() {
         this.queryTokenList = new ArrayList<QueryToken>();
         this.longQueriesMap = new HashMap<String, String>();
@@ -157,15 +152,15 @@ public class UserQuery extends BaseController {
     private void initSearchFields() {
         searchFields = new SearchField[]{
                 new SearchField("", "All"),
-                new SearchField(FieldNames.IDENTIFIER, "Participant Id/Alias"),
+                new SearchField(FieldNames.IDENTIFIER, "Interactor Id/Alias"),
                 new SearchField(FieldNames.INTERACTION_ID, "Interaction Id"),
                 new SearchField(FieldNames.GENE_NAME, "Gene name"),
                 new SearchField(FieldNames.DETMETHOD, "Interaction detection method", "detectionMethodBrowser"),
                 new SearchField(FieldNames.TYPE, "Interaction type", "interactionTypeBrowser"),
                 new SearchField(FieldNames.INTERACTOR_TYPE, "Interactor type", "interactorTypeBrowser"),
-                new SearchField(FieldNames.INTERACTOR_DET_METHOD, "Participant identification method", "participantIdentificationMethodBrowser"),
+                new SearchField(FieldNames.INTERACTOR_DET_METHOD, "Interactor identification method", "participantIdentificationMethodBrowser"),
                 new SearchField(FieldNames.INTERACTION_ANNOTATIONS, "Interaction annotations", "annotationTopicBrowser"),
-                new SearchField(FieldNames.INTERACTOR_FEATURE, "Participant Features", "featureTypeBrowser"),
+                new SearchField(FieldNames.INTERACTOR_FEATURE, "Interactor Features", "featureTypeBrowser"),
                 new SearchField(FieldNames.SPECIES, "Organism", "taxonomyBrowser"),
                 new SearchField(FieldNames.PUBID, "Pubmed Id"),
                 new SearchField(FieldNames.PUBAUTH, "Author"),
@@ -174,11 +169,12 @@ public class UserQuery extends BaseController {
                 new SearchField(FieldNames.INTERACTION_XREF+":\"go", "Interaction GO references", "interactionGoBrowser"),
                 new SearchField(FieldNames.ID+":\"chebi", "ChEBI", "chebiBrowser"),
                 new SearchField(FieldNames.INTERACTOR_XREF+":\"interpro", "Interpro"),
-                new SearchField(FieldNames.INTERACTOR_XREF, "Participant cross-reference"),
+                new SearchField(FieldNames.INTERACTOR_XREF, "Interactor cross-reference"),
                 new SearchField(FieldNames.INTERACTION_XREF, "Interaction cross-reference"),
                 new SearchField(FieldNames.COMPLEX_EXPANSION, "Expansion algorithm", filterPopulator.getExpansionSelectItems()),
                 new SearchField(FieldNames.SOURCE, "Source", filterPopulator.getSourceSelectItems()),
                 new SearchField(FieldNames.UPDATE_DATE, "Last update date (Ex : [20110524 TO 20120202])"),
+                new SearchField(FieldNames.INTACT_SCORE_NAME, "Intact MI score (Ex : [0.5 TO 1])"),
                 new SearchField(FieldNames.NEGATIVE, "Negative interactions", filterPopulator.getNegativeSelectItems()),
                 new SearchField(FieldNames.INTERACTOR_STOICHIOMETRY, "Stoichiometry", filterPopulator.getStoichiometrySelectItems()),
                 new SearchField(FieldNames.INTERACTION_PARAMETERS, "Interaction parameters", filterPopulator.getParametersSelectItems()),
@@ -777,21 +773,5 @@ public class UserQuery extends BaseController {
 
     public void setSelectedSearchTerm(TreeNode selectedSearchTerm) {
         this.selectedSearchTerm = selectedSearchTerm;
-    }
-
-    public String getGeneQuery() {
-        return geneQuery;
-    }
-
-    public String getUniprotAcQuery() {
-        return uniprotAcquery;
-    }
-
-    public String getUniprotGeneQuery() {
-        return uniprotGeneQuery;
-    }
-
-    public String getPubmedQuery() {
-        return pubmedQuery;
     }
 }
