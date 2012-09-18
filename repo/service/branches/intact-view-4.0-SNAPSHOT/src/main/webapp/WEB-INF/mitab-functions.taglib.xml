@@ -67,9 +67,9 @@
     </function>
 
     <function>
-        <function-name>getParameterValue</function-name>
+        <function-name>getParameter</function-name>
         <function-class>uk.ac.ebi.intact.view.webapp.util.MitabFunctions</function-class>
-        <function-signature>java.lang.String getParameterValue(psidev.psi.mi.tab.model.Parameter)</function-signature>
+        <function-signature>java.lang.String getParameter(psidev.psi.mi.tab.model.Parameter)</function-signature>
     </function>
 
     <function>
