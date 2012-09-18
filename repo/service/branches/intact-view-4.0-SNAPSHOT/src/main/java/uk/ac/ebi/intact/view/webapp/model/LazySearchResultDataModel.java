@@ -249,6 +249,12 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
         return false;
     }
 
+    public boolean isNegative() {
+        final BinaryInteraction currentInteraction = getInteraction(getRowIndex());
+
+        return currentInteraction.isNegativeInteraction();
+    }
+
     private boolean areEquals(String name1, String name2){
         if (name1 == null && name2 == null){
             return true;

@@ -82,7 +82,7 @@
              rows="#{userQuery.pageSize}"
              dynamic="true" rowIndexVar="row" paginatorPosition="both"
              paginator="#{searchBean.results.rowCount gt userQuery.pageSize}"
-             rowStyleClass="#{not searchBean.results.sameThanPrevious? 'newInteractionRow' : 'sameInteractionRow'}" rendered="#{searchBean.totalResults > 0}">
+             rowStyleClass="#{not searchBean.results.sameThanPrevious? 'newInteractionRow' : 'sameInteractionRow'} #{searchBean.results.negative? ', negativeInteractionRow' : ''}" rendered="#{searchBean.totalResults > 0}">
 <p:column>
     <h:outputLink value="#{request.contextPath}/interaction/#{searchBean.getMainAccessionXref(binaryInteraction).identifier}" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Interaction details','#{detailsBean.interactionAc}'])">
         <h:graphicImage url="/images/magnify.png" alt="details" />
