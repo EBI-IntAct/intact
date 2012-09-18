@@ -24,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrSearchResult;
 import uk.ac.ebi.intact.view.webapp.controller.search.facet.ExpansionCount;
+import uk.ac.ebi.intact.view.webapp.controller.search.facet.NegativeCount;
 import uk.ac.ebi.intact.view.webapp.model.LazySearchResultDataModel;
 
 /**
@@ -48,6 +49,11 @@ public class FacetController {
     public ExpansionCount getExpansionCount() {
         FacetField facetField = getFacetField(FieldNames.COMPLEX_EXPANSION_FACET);
         return new ExpansionCount(facetField);
+    }
+
+    public NegativeCount getNegativeCount() {
+        FacetField facetField = getFacetField(FieldNames.NEGATIVES_FACET);
+        return new NegativeCount(facetField);
     }
 
     private FacetField getFacetField(String field) {

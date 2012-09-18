@@ -34,20 +34,35 @@
         <f:convertNumber pattern="#,###"/>
     </h:outputText></strong> binary interaction#{searchBean.totalResults != 1? 's were' : ' was'} found in #{intactViewConfiguration.webappName}.
 
-    <h:panelGroup rendered="#{facetController.expansionCount.spokeCount > 0}"
-                  inlineStyle="margin-top:-10px; margin-left: 10px; margin-bottom:30px">
-        <strong><h:outputText value="#{facetController.expansionCount.spokeCount}">
-            <f:convertNumber pattern="#,###"/>
-        </h:outputText>
-        </strong> of them are originated
-        from&#160;
-        <p:commandLink onclick="complexExpansionDialog.show()">spoke expanded co-complexes
-            <h:graphicImage alt="helpIcon" url="/images/help.png"/>
-        </p:commandLink> and you may want to&#160;
-        <h:commandLink value="filter" action="#{searchBean.doBinarySearchActionFilterSpokeExpanded}"/>
-        &#160;them.
+    <ul>
+        <h:panelGroup rendered="#{facetController.expansionCount.spokeCount > 0}"
+                inlineStyle="margin-top:-10px; margin-left: 10px; margin-bottom:30px">
+            <li>
+                <strong><h:outputText value="#{facetController.expansionCount.spokeCount}">
+                    <f:convertNumber pattern="#,###"/>
+                </h:outputText>
+                </strong> of them are originated
+                from&#160;
+                <p:commandLink onclick="complexExpansionDialog.show()">spoke expanded co-complexes
+                    <h:graphicImage alt="helpIcon" url="/images/help.png"/>
+                </p:commandLink> and you may want to&#160;
+                <h:commandLink value="filter" action="#{searchBean.doBinarySearchActionFilterSpokeExpanded}"/>
+                &#160;them out.
+            </li>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{facetController.negativeCount.negativeCount > 0}"
+                      inlineStyle="margin-top:-10px; margin-left: 10px; margin-bottom:30px">
+            <li>
+                <strong><h:outputText value="#{facetController.negativeCount.negativeCount}">
+                    <f:convertNumber pattern="#,###"/>
+                </h:outputText>
+                </strong> of them are negative interactions and you may want to&#160;
+                <h:commandLink value="filter" action="#{searchBean.doBinarySearchActionFilterNegative}"/>
+                &#160;them out.
 
-    </h:panelGroup>
+            </li>
+        </h:panelGroup>
+    </ul>
 
     <h:panelGroup id="countedPsicquic"
                   style="margin-top:-10px; margin-left: 10px; margin-bottom:30px">
@@ -103,8 +118,8 @@
 
     </h:panelGroup>
 
-  <hr/>
+    <hr/>
 
-  <ui:include src="interactionTable.xhtml"/>
+    <ui:include src="interactionTable.xhtml"/>
 
 </ui:composition>

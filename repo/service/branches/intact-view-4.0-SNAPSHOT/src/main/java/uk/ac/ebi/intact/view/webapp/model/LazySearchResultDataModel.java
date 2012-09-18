@@ -84,7 +84,8 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
                     .setRows(pageSize)
                     .setFacet(true)
                     .setFacetMissing(false)
-                    .addFacetField(FieldNames.COMPLEX_EXPANSION_FACET);
+                    .addFacetField(FieldNames.COMPLEX_EXPANSION_FACET)
+                    .addFacetField(FieldNames.NEGATIVES_FACET);
 
             // add default parameters if nor already there
             String [] dismaxParameters = solrQuery.getParams("qf");
