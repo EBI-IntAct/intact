@@ -108,14 +108,6 @@
     <f:facet name="header">
         <h:outputText value="#{messages['moleculeA.links']}"/>
     </f:facet>
-    <iv:interactorLinkLogos interactor="#{binaryInteraction.interactorA}"
-                            display="#{not searchBean.results.sameThanPrevious}"/>
-</p:column>
-
-<p:column rendered="#{columnContext.isColumnVisible('moleculeA.links')}">
-    <f:facet name="header">
-        <h:outputText value="#{messages['moleculeA.links']}"/>
-    </f:facet>
     <h:panelGroup rendered="#{binaryInteraction.interactorA != null}">
         <iv:interactorLinkLogos interactor="#{binaryInteraction.interactorA}"
                                 display="#{not searchBean.results.sameThanPrevious}"/>

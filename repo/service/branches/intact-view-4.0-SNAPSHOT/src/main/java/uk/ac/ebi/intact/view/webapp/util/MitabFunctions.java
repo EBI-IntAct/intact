@@ -235,6 +235,7 @@ public final class MitabFunctions {
             for (Alias alias : interactor.getAliases()){
                 if (alias.getAliasType() != null && alias.getAliasType().equals("display_short")){
                     displayShort = alias.getName();
+                    break;
                 }
                 else if (alias.getAliasType() != null && alias.getAliasType().equals("display_long")){
                     displayLong = alias.getName();
