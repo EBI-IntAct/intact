@@ -238,6 +238,38 @@
     </h:panelGroup>
 </p:column>
 
+<p:column id="speciesACol" styleClass="cellTextCompound"
+          rendered="#{columnContext.isColumnVisible('moleculeA.species')}">
+    <f:facet name="header"><h:outputText value="#{messages['moleculeA.species']}"/></f:facet>
+
+    <h:panelGroup rendered="#{not searchBean.results.sameThanPrevious}">
+        <h:panelGroup rendered="#{iamf:hasOrganism(binaryInteraction.interactorA)}">
+            <ui:include src="/pages/interactions/organismXrefs.xhtml">
+                <ui:param name="xref" value="#{iamf:getUniqueOrganismXref(binaryInteraction.interactorA.organism.identifiers)}"/>
+            </ui:include>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{not iamf:hasOrganism(binaryInteraction.interactorA)}">
+            N/A
+        </h:panelGroup>
+    </h:panelGroup>
+</p:column>
+
+<p:column id="speciesBCol" styleClass="cellTextCompound"
+          rendered="#{columnContext.isColumnVisible('moleculeB.species')}">
+    <f:facet name="header"><h:outputText value="#{messages['moleculeB.species']}"/></f:facet>
+
+    <h:panelGroup rendered="#{not searchBean.results.sameThanPrevious}">
+        <h:panelGroup rendered="#{iamf:hasOrganism(binaryInteraction.interactorB)}">
+            <ui:include src="/pages/interactions/organismXrefs.xhtml">
+                <ui:param name="xref" value="#{iamf:getUniqueOrganismXref(binaryInteraction.interactorB.organism.identifiers)}"/>
+            </ui:include>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{not iamf:hasOrganism(binaryInteraction.interactorB)}">
+            N/A
+        </h:panelGroup>
+    </h:panelGroup>
+</p:column>
+
 <p:column id="dethMethodCol" rendered="#{columnContext.isColumnVisible('interaction.detectionmethod')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.detectionmethod']}"/></f:facet>
@@ -261,38 +293,6 @@
            styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['interaction.pubmedid']}"/></f:facet>
     <iav:xrefDataList value="#{binaryInteraction.publications}" itemPerLine="true"/>
-</p:column>
-
-<p:column id="speciesACol" styleClass="cellTextCompound"
-          rendered="#{columnContext.isColumnVisible('moleculeA.species')}">
-    <f:facet name="header"><h:outputText value="#{messages['moleculeA.species']}"/></f:facet>
-
-    <h:panelGroup rendered="#{not searchBean.results.sameThanPrevious}">
-        <h:panelGroup rendered="#{iamf:hasOrganism(binaryInteraction.interactorB)}">
-            <ui:include src="/pages/interactions/organism.xhtml">
-                <ui:param name="organism" value="#{binaryInteraction.interactorA.organism}"/>
-            </ui:include>
-        </h:panelGroup>
-        <h:panelGroup rendered="#{not iamf:hasOrganism(binaryInteraction.interactorB)}">
-            N/A
-        </h:panelGroup>
-    </h:panelGroup>
-</p:column>
-
-<p:column id="speciesBCol" styleClass="cellTextCompound"
-          rendered="#{columnContext.isColumnVisible('moleculeB.species')}">
-    <f:facet name="header"><h:outputText value="#{messages['moleculeB.species']}"/></f:facet>
-
-    <h:panelGroup rendered="#{not searchBean.results.sameThanPrevious}">
-        <h:panelGroup rendered="#{iamf:hasOrganism(binaryInteraction.interactorB)}">
-            <ui:include src="/pages/interactions/organism.xhtml">
-                <ui:param name="organism" value="#{binaryInteraction.interactorB.organism}"/>
-            </ui:include>
-        </h:panelGroup>
-        <h:panelGroup rendered="#{not iamf:hasOrganism(binaryInteraction.interactorB)}">
-            N/A
-        </h:panelGroup>
-    </h:panelGroup>
 </p:column>
 
 <p:column id="typeCol" rendered="#{columnContext.isColumnVisible('interaction.interactiontype')}"
@@ -517,9 +517,9 @@
           rendered="#{columnContext.isColumnVisible('interaction.hostorganism')}">
     <f:facet name="header"><h:outputText value="#{messages['interaction.hostorganism']}"/></f:facet>
 
-    <ui:include src="/pages/interactions/organism.xhtml">
-        <ui:param name="organism" value="#{binaryInteraction.interactorA.organism}"/>
-    </ui:include>
+    <!--<ui:include src="/pages/interactions/organismXrefs.xhtml">
+        <ui:param name="organism" value="#{binaryInteraction.hostorganism}"/>
+    </ui:include>-->
 </p:column>
 
 <p:column id="parametersCol" rendered="#{columnContext.isColumnVisible('interaction.parameters')}"

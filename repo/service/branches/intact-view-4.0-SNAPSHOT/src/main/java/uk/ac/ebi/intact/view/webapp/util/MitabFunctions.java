@@ -73,7 +73,7 @@ public final class MitabFunctions {
         return false;
     }
 
-   
+
 
     public static String[] getInitialForMoleculeType( Interactor interactor ) {
 
@@ -150,7 +150,7 @@ public final class MitabFunctions {
         } else {
             Set<String> rolesSymbol = new HashSet<String>();
             Set<String> rolesDesc = new HashSet<String>();
-           
+
             for ( CrossReference crossReference : crossReferences ) {
                 if ( crossReference.getText() != null && !"unspecified role".equals( crossReference.getText() ) ) {
                     String symbol = getFirstLetterofEachToken( crossReference.getText());
@@ -206,7 +206,7 @@ public final class MitabFunctions {
         return null;
     }
 
-     public static String getUniprotIdentifierFromCrossReferences(Collection xrefs) {
+    public static String getUniprotIdentifierFromCrossReferences(Collection xrefs) {
         return getIdentifierFromCrossReferences(xrefs, "uniprotkb");
     }
 
@@ -259,9 +259,9 @@ public final class MitabFunctions {
     }
 
     public static boolean hasOrganism(Interactor interactor){
-       if (interactor == null){
-           return false;
-       }
+        if (interactor == null){
+            return false;
+        }
 
         return interactor.getOrganism() != null;
     }
@@ -297,7 +297,7 @@ public final class MitabFunctions {
         StringBuffer buffer = new StringBuffer();
 
         if (param.getFactor() != null){
-           buffer.append(Double.toString(param.getFactor()));
+            buffer.append(Double.toString(param.getFactor()));
             if (param.getBase() != null && param.getBase() > 0){
                 buffer.append("x").append(Integer.toString(param.getBase()));
             }
@@ -371,8 +371,8 @@ public final class MitabFunctions {
 
         for ( CrossReference xref : ( Collection<CrossReference> ) xrefs ) {
             if ( (databaseFilter != null && !databaseFilter.equals( xref.getDatabase() ))
-                 &&
-                 (textFilter != null && !textFilter.equals( xref.getText() ) ) ) {
+                    &&
+                    (textFilter != null && !textFilter.equals( xref.getText() ) ) ) {
                 filteredList.add( xref );
             }
         }
@@ -392,13 +392,28 @@ public final class MitabFunctions {
         return filteredList;
     }
 
+    public static CrossReference getUniqueOrganismXref(Collection identifiers) {
+        CrossReference currentCrossReference = null;
+        for (CrossReference identifier : ( Collection<CrossReference> ) identifiers){
+
+            if (currentCrossReference == null){
+                currentCrossReference = identifier;
+            }
+            if (identifier.getText() != null && currentCrossReference.getText().length() < identifier.getText().length()){
+                currentCrossReference = identifier;
+            }
+        }
+
+        return currentCrossReference;
+    }
+
     public static boolean getSelectedFromMap( Map columnMap, String columnName ) {
 
         if ( columnMap.containsKey( columnName ) ) {
             return ( Boolean ) columnMap.get( columnName );
         }
-         return false;
-     }
+        return false;
+    }
 
     public static String encodeURL( String toEncode ) throws UnsupportedEncodingException {
         String s = "";

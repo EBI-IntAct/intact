@@ -32,7 +32,10 @@ import javax.faces.event.ComponentSystemEvent;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 /**
  * Search controller.
@@ -98,7 +101,6 @@ public class SearchController extends JpaBaseController {
 
     @PostConstruct
     public void initialSearch() {
-
         StatisticsController statisticsController = (StatisticsController) getBean("statisticsController");
         this.totalResults = statisticsController.getBinaryInteractionCount();
         this.currentQuery = null;

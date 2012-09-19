@@ -103,6 +103,18 @@
     </function>
 
     <function>
+        <function-name>getExclusionFilteredAliases</function-name>
+        <function-class>uk.ac.ebi.intact.view.webapp.util.MitabFunctions</function-class>
+        <function-signature>java.util.Collection getExclusionFilteredAliases(java.util.Collection)</function-signature>
+    </function>
+
+    <function>
+        <function-name>getUniqueOrganismXref</function-name>
+        <function-class>uk.ac.ebi.intact.view.webapp.util.MitabFunctions</function-class>
+        <function-signature>psidev.psi.mi.tab.model.CrossReference getUniqueOrganismXref(java.util.Collection)</function-signature>
+    </function>
+
+    <function>
         <function-name>hasOrganism</function-name>
         <function-class>uk.ac.ebi.intact.view.webapp.util.MitabFunctions</function-class>
         <function-signature>boolean hasOrganism(psidev.psi.mi.tab.model.Interactor)</function-signature>
