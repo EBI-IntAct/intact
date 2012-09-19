@@ -61,6 +61,8 @@ public class CvObjectService {
             cvObject = cvObjectsByAc.get(ac);
         } else {
             cvObject = daoFactory.getCvObjectDao().getByAc(ac);
+            Hibernate.initialize(cvObject.getXrefs());
+            Hibernate.initialize(cvObject.getAnnotations());
             cvObjectsByAc.put(ac, cvObject);
         }
 
