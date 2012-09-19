@@ -547,7 +547,7 @@
     </ui:repeat>
 </p:column>
 
-<p:column id="updateDateCol" rendered="#{columnContext.isColumnVisible('updated.date')}"
+<p:column id="updateDateCol" rendered="#{columnContext.isColumnVisible('update.date')}"
           styleClass="cellTextInteraction">
     <f:facet name="header"><h:outputText value="#{messages['update.date']}"/></f:facet>
     <ui:repeat var="updated" value="#{binaryInteraction.updateDate}">
