@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.view.webapp.application.OntologyInteractorTypeConfig;
 import uk.ac.ebi.intact.view.webapp.application.PsicquicThreadConfig;
 import uk.ac.ebi.intact.view.webapp.controller.JpaBaseController;
 import uk.ac.ebi.intact.view.webapp.controller.application.StatisticsController;
+import uk.ac.ebi.intact.view.webapp.controller.browse.BrowseController;
 import uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration;
 import uk.ac.ebi.intact.view.webapp.controller.details.DetailsController;
 import uk.ac.ebi.intact.view.webapp.controller.list.InteractorListController;
@@ -26,7 +27,6 @@ import uk.ac.ebi.intact.view.webapp.model.InteractorWrapper;
 import uk.ac.ebi.intact.view.webapp.model.LazySearchResultDataModel;
 
 import javax.annotation.PostConstruct;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
 import java.util.Arrays;
@@ -64,6 +64,9 @@ public class SearchController extends JpaBaseController {
 
     private String currentQuery;
 
+    private boolean hasLoadedSearchControllerResults=false;
+    private boolean hasLoadedBrowseControllerResults=false;
+
     // results
     private LazySearchResultDataModel results;
     private InteractorSearchResultDataModel proteinResults;
@@ -90,6 +93,8 @@ public class SearchController extends JpaBaseController {
     private PsicquicThreadConfig psicquicThreadConfig;
 
     private PsicquicSearchManager psicquicController;
+    private BrowseController browseController;
+    private OntologyInteractorTypeConfig typeConfig;
 
     private String acPrefix;
 
@@ -125,12 +130,9 @@ public class SearchController extends JpaBaseController {
     }
 
     public void searchOnLoad(ComponentSystemEvent evt) {
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        String statusParam = context.getExternalContext().getRequestParameterMap().get("status");
-
-        if (statusParam != null && "exp".equals(statusParam)) {
-            addWarningMessage("Session expired", "The user session was expired due to intactivity or the server being restarted");
+        UserQuery userQuery = getUserQuery();
+        if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedSearchControllerResults){
+            doBinarySearch(userQuery.createSolrQuery());
         }
     }
 
@@ -263,6 +265,10 @@ public class SearchController extends JpaBaseController {
             // prepare solr search
             Callable<Integer> intactRunnable = createIntactSearchRunnable(solrQueryCopy, solrServer, pageSize);
 
+            // we are doing a new search so we reset browser
+            hasLoadedSearchControllerResults = true;
+            hasLoadedBrowseControllerResults = false;
+
             Future<Integer> intactFuture = executorService.submit(intactRunnable);
 
             // count psicquic results while searching in Intact
@@ -304,6 +310,9 @@ public class SearchController extends JpaBaseController {
 
             // store the current query
             this.currentQuery = solrQuery.getQuery();
+            // we are doing a new search so we reset browser
+            hasLoadedSearchControllerResults = true;
+            hasLoadedBrowseControllerResults = false;
 
         } catch ( uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrException solrException ) {
 
@@ -362,16 +371,22 @@ public class SearchController extends JpaBaseController {
         // load interactions if necessary
         if (evt.getTab() != null && "interactionsTab".equals(evt.getTab().getId())){
             UserQuery userQuery = getUserQuery();
-            if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery)){
+            if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedSearchControllerResults){
                 doBinarySearch(userQuery.createSolrQuery());
+            }
+        }
+        else if ("browseTab".equals(evt.getTab().getId())){
+            if (browseController == null){
+                browseController = (BrowseController) getBean("browseBean");
+            }
+            if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedBrowseControllerResults){
+                browseController.createListOfIdentifiers();
+                doInteractorsSearch();
             }
         }
         /*if (evt.getTab() != null && "listsTab".equals(evt.getTab().getId())) {
             doInteractorsSearch();
 
-        } else if ("browseTab".equals(evt.getTab().getId())){
-            BrowseController browseController = (BrowseController) getBean("browseBean");
-            browseController.createListOfIdentifiers();
         }*/
     }
 
@@ -385,7 +400,10 @@ public class SearchController extends JpaBaseController {
 
     public void doInteractorsSearch() {
 
-        OntologyInteractorTypeConfig typeConfig = (OntologyInteractorTypeConfig) getBean("ontologyInteractorTypeConfig");
+        if (typeConfig == null){
+            typeConfig = (OntologyInteractorTypeConfig) getBean("ontologyInteractorTypeConfig");
+
+        }
 
         doProteinsSearch(typeConfig);
         doSmallMoleculeSearch(typeConfig);
