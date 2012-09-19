@@ -60,6 +60,12 @@ td.compoundStructure {
 }
 
 /** Overriden **/
+
+/** fix to have dialogs that appear wherever we are on the page and not at the top**/
+.ui-dialog {
+    position:fixed !important;
+}
+
 #mainPanels {
     background: white !important;
 }
