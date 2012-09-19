@@ -17,9 +17,9 @@ package uk.ac.ebi.intact.view.webapp.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Hibernate;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.core.persister.IntactCore;
@@ -158,7 +158,6 @@ public class Functions {
      * @param ac Accession to use in the URL
      * @return
      */
-    @Transactional(readOnly = true)
     public static String calculateXrefUrl(CvDatabase db, String ac) {
         String xrefUrl = null;
 
@@ -169,12 +168,9 @@ public class Functions {
                 annotation = AnnotatedObjectUtils.findAnnotationByTopicMiOrLabel(db, CvTopic.SEARCH_URL);
             } else {
 
-                    CvDatabase reloadedDb = IntactContext.getCurrentInstance().getDaoFactory().getCvObjectDao(CvDatabase.class)
-                            .getByAc(db.getAc());
-                    annotation = AnnotatedObjectUtils.findAnnotationByTopicMiOrLabel(reloadedDb, CvTopic.SEARCH_URL);
-
+                Hibernate.initialize(db.getAnnotations());
+                annotation = AnnotatedObjectUtils.findAnnotationByTopicMiOrLabel(db, CvTopic.SEARCH_URL);
             }
-
 
             if (annotation != null) {
                 xrefUrl = annotation.getAnnotationText();
