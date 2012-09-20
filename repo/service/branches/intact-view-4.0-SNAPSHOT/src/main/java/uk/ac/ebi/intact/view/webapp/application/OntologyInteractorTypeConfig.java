@@ -120,7 +120,7 @@ public class OntologyInteractorTypeConfig implements InitializingBean{
 
             this.compoundTypes = new String[1+compoundChildren.size()];
 
-            this.proteinTypes[0] = bioActiveEntity.getId();
+            this.compoundTypes[0] = bioActiveEntity.getId();
 
             int index = 1;
             for (OntologyTerm term : compoundChildren){
@@ -150,7 +150,7 @@ public class OntologyInteractorTypeConfig implements InitializingBean{
             }
         }
         catch (SolrServerException e){
-            compoundTypes = new String[]{"MI:0318",CvInteractorType.DNA_MI_REF,CvInteractorType.RNA_MI_REF};
+            nucleicAcidTypes = new String[]{"MI:0318",CvInteractorType.DNA_MI_REF,CvInteractorType.RNA_MI_REF};
         }
     }
 

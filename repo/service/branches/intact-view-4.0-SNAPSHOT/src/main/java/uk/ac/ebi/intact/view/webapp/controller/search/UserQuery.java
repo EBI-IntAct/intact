@@ -112,6 +112,15 @@ public class UserQuery extends BaseController {
 
     private TreeNode selectedSearchTerm;
 
+    private static final String ONTOLOGY_QUERY_PARAMETER_NAME = "ontologyQuery";
+    private static final String FILTER_NEGATIVE_PARAMETER_NAME = "filterNegative";
+    private static final String FILTER_SPOKE_PARAMETER_NAME = "filterSpoke";
+    private static final String QUERY_PARAMETER_NAME = "query";
+
+    private boolean filterNegative=false;
+    private boolean filterSpoke=false;
+    private boolean isOntologyQuery=false;
+
     public UserQuery() {
         this.queryTokenList = new ArrayList<QueryToken>();
         this.longQueriesMap = new HashMap<String, String>();
@@ -203,7 +212,7 @@ public class UserQuery extends BaseController {
     public SolrQuery createSolrQuery( ) {
 
         if( searchQuery == null || searchQuery.trim().length() == 0 ||
-                    searchQuery.equals("*") || searchQuery.equals("?")) {
+                searchQuery.equals("*") || searchQuery.equals("?")) {
             searchQuery = STAR_QUERY;
         }
 
@@ -211,6 +220,22 @@ public class UserQuery extends BaseController {
 
         SolrQuery query = new SolrQuery( searchQuery );
         query.setSortField(userSortColumn, (userSortOrder)? SolrQuery.ORDER.desc : SolrQuery.ORDER.asc);
+
+        if (filterNegative){
+            query.addFilterQuery(FieldNames.NEGATIVE+":false");
+        }
+        if (filterSpoke){
+            query.addFilterQuery(FieldNames.COMPLEX_EXPANSION+":\"-\"");
+        }
+        if (isOntologyQuery){
+            // add default parameters if nor already there
+            query.setParam("defType", "edismax");
+            query.setParam("qf", SolrFieldName.identifier.toString()+" "+SolrFieldName.xref.toString()+" "+SolrFieldName.pxref.toString()+" "+SolrFieldName.species.toString()+" "+SolrFieldName.detmethod.toString()+" "+SolrFieldName.type.toString()+" "+SolrFieldName.pbiorole.toString()
+                    +" "+SolrFieldName.ptype.toString()+" "+SolrFieldName.ftype.toString()+" "+SolrFieldName.pmethod.toString()+" "+SolrFieldName.annot.toString());
+        }
+        else {
+            query.setParam("qf", SolrFieldName.identifier.toString()+" "+SolrFieldName.pubid.toString()+" "+SolrFieldName.pubauth.toString()+" "+SolrFieldName.species.toString()+" "+SolrFieldName.detmethod.toString()+" "+SolrFieldName.type.toString()+" "+SolrFieldName.interaction_id.toString());
+        }
 
         // store it in the HTTP Session - so it can be used by servlets (e.g. ExportServlet)
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(SESSION_SOLR_QUERY_KEY, query.toString());
@@ -254,6 +279,7 @@ public class UserQuery extends BaseController {
             String query = ontologyTerm.getResults().getSearchField()+":\""+ontologyTerm.getIdentifier()+"\"";
             setSearchQuery(query);
         } else {
+            isOntologyQuery=true;
             setSearchQuery(JsfUtils.surroundByQuotesIfMissing(ontologySearchQuery));
         }
     }
@@ -365,17 +391,6 @@ public class UserQuery extends BaseController {
     private SolrQuery createSolrQueryForHierarchView() {
         // export all available rows
         return createSolrQuery( ).setRows(0);
-    }
-
-    public SolrQuery createSolrQueryForOntologySearch() {
-        // export all available rows
-        SolrQuery query = createSolrQuery();
-
-        query.setParam("qf", SolrFieldName.identifier.toString()+" "+SolrFieldName.xref.toString()+" "+SolrFieldName.pxref.toString()+" "+SolrFieldName.species.toString()+" "+SolrFieldName.detmethod.toString()+" "+SolrFieldName.type.toString()+" "+SolrFieldName.pbiorole.toString()
-                +" "+SolrFieldName.ptype.toString()+" "+SolrFieldName.ftype.toString()+" "+SolrFieldName.pmethod.toString()+" "+SolrFieldName.annot.toString());
-        query.setParam("defType", "edismax");
-
-        return query;
     }
 
     /**
@@ -537,15 +552,15 @@ public class UserQuery extends BaseController {
 
     private void addToTokenList(String fieldName, String[] values) {
         for (String value : values) {
-           addToTokenList(fieldName, value);
+            addToTokenList(fieldName, value);
         }
     }
 
     public String getSearchQuery() {
         return searchQuery;
     }
-    
-    
+
+
 
     public void setSearchQuery(String searchQuery) {
 
@@ -560,7 +575,7 @@ public class UserQuery extends BaseController {
     public String getUrlFriendlyQuery() {
         return urlFriendlyQuery;
     }
-    
+
     public void setUrlFriendlyQuery(String query) {
         urlFriendlyQuery = prepareUrlFriendlyQuery(query);
 
@@ -700,6 +715,23 @@ public class UserQuery extends BaseController {
         return selectItems;
     }
 
+    public void setUpQueryParameters(ActionEvent event) {
+        for (Map.Entry<String, Object> entry : event.getComponent().getAttributes().entrySet()){
+            if (QUERY_PARAMETER_NAME.equals(entry.getKey())){
+                setSearchQuery((String) entry.getValue());
+            }
+            else if (FILTER_NEGATIVE_PARAMETER_NAME.equals(entry.getKey())){
+                setFilterNegative(Boolean.parseBoolean((String) entry.getValue()));
+            }
+            else if (FILTER_SPOKE_PARAMETER_NAME.equals(entry.getKey())){
+                setFilterSpoke(Boolean.parseBoolean((String) entry.getValue()));
+            }
+            else if (ONTOLOGY_QUERY_PARAMETER_NAME.equals(entry.getKey())){
+                setOntologyQuery(Boolean.parseBoolean((String) entry.getValue()));
+            }
+        }
+    }
+
     public Map<String, String> getTermMap() {
         return termMap;
     }
@@ -708,7 +740,7 @@ public class UserQuery extends BaseController {
         this.termMap = termMap;
     }
 
-       public List<SelectItem> getSearchFieldSelectItems() {
+    public List<SelectItem> getSearchFieldSelectItems() {
         return searchFieldSelectItems;
     }
 
@@ -766,5 +798,45 @@ public class UserQuery extends BaseController {
 
     public void setSelectedSearchTerm(TreeNode selectedSearchTerm) {
         this.selectedSearchTerm = selectedSearchTerm;
+    }
+
+    public boolean isFilterNegative() {
+        return filterNegative;
+    }
+
+    public void setFilterNegative(boolean filterNegative) {
+        this.filterNegative = filterNegative;
+    }
+
+    public boolean isFilterSpoke() {
+        return filterSpoke;
+    }
+
+    public void setFilterSpoke(boolean filterSpoke) {
+        this.filterSpoke = filterSpoke;
+    }
+
+    public boolean isOntologyQuery() {
+        return isOntologyQuery;
+    }
+
+    public void setOntologyQuery(boolean ontologyQuery) {
+        isOntologyQuery = ontologyQuery;
+    }
+
+    public String getOntologyQueryParameterName() {
+        return ONTOLOGY_QUERY_PARAMETER_NAME;
+    }
+
+    public String getFilterNegativeParameterName() {
+        return FILTER_NEGATIVE_PARAMETER_NAME;
+    }
+
+    public String getFilterSpokeParameterName() {
+        return FILTER_SPOKE_PARAMETER_NAME;
+    }
+
+    public String getQueryParameterName() {
+        return QUERY_PARAMETER_NAME;
     }
 }

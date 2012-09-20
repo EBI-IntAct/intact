@@ -35,35 +35,30 @@
                                     <li>
                                     <h:panelGroup>
                                         Protein accession number: e.g.&#160;
-                                        <h:commandLink value="P20053" action="#{searchBean.doBinarySearchActionFromOntologySearch}">
-                                            <f:setPropertyActionListener value="P20053"
-                                                                         target="#{userQuery.searchQuery}"/>
+                                        <h:commandLink value="P20053" actionListener="#{userQuery.setUpQueryParameters}" action="#{searchBean.doBinarySearchAction}">
+                                            <f:attribute name="#{userQuery.queryParameterName}" value="P20053" />
                                         </h:commandLink>
                                     </h:panelGroup>
                                         </li><li>
                                     <h:panelGroup>
                                         Drug name: e.g.&#160;
-                                        <h:commandLink value="imatinib" action="#{searchBean.doBinarySearchActionFromOntologySearch}">
-                                            <f:setPropertyActionListener value="imatinib"
-                                                                         target="#{userQuery.searchQuery}"/>
+                                        <h:commandLink value="imatinib" actionListener="#{userQuery.setUpQueryParameters}" action="#{searchBean.doBinarySearchAction}">
+                                            <f:attribute name="#{userQuery.queryParameterName}" value="imatinib" />
                                         </h:commandLink>
                                     </h:panelGroup>
                                      </li><li>
                                     <h:panelGroup>
                                         Gene name: e.g.&#160;
-                                        <h:commandLink value="DDR1" action="#{searchBean.doBinarySearchActionFromOntologySearch}">
-                                            <f:setPropertyActionListener value="DDR1"
-                                                                         target="#{userQuery.searchQuery}"/>
+                                        <h:commandLink value="DDR1" actionListener="#{userQuery.setUpQueryParameters}" action="#{searchBean.doBinarySearchAction}">
+                                            <f:attribute name="#{userQuery.queryParameterName}" value="DDR1" />
                                         </h:commandLink>
                                     </h:panelGroup>
                                      </li><li>
                                     <h:panelGroup>
                                         Phrases (surrounded by quotes): e.g.
                                         <ui:param name="expr" value="#{iam:surroundByQuotesIfMissing('NADH dehydrogenase')}"/>
-                                        <h:commandLink action="#{searchBean.doBinarySearchActionFromOntologySearch}">
-                                            <f:setPropertyActionListener
-                                                    value="#{expr}"
-                                                    target="#{userQuery.searchQuery}"/>
+                                        <h:commandLink actionListener="#{userQuery.setUpQueryParameters}" action="#{searchBean.doBinarySearchAction}">
+                                            <f:attribute name="#{userQuery.queryParameterName}" value="#{expr}" />
                                             "NADH dehydrogenase"
                                         </h:commandLink>
 
@@ -76,7 +71,8 @@
                         <f:facet name="end">
                             <h:commandButton id="searchBtn"
                                               value="Search"
-                                              action="#{searchBean.doBinarySearchActionFromOntologySearch}"/>
+                                              action="#{searchBean.doBinarySearchAction}">
+                             </h:commandButton>
                         </f:facet>
 
                         <h:inputText id="searchInTabTxt" size="40"
@@ -116,7 +112,7 @@
                                         <h:outputText value="Term name: "/>
                                         <h:commandLink value="mammalia"
                                                         actionListener="#{userQuery.doAddParamOntologyTermToQuery}"
-                                                        action="#{searchBean.doBinarySearchActionFromOntologySearch}">
+                                                        action="#{searchBean.doBinarySearchAction}">
                                             <f:param name="term" value="mammalia"/>
                                         </h:commandLink>
                                     </h:panelGroup>
@@ -125,7 +121,7 @@
                                         <h:outputText value="Term name: "/>
                                         <h:commandLink value="two hybrid"
                                                         actionListener="#{userQuery.doAddParamOntologyTermToQuery}"
-                                                        action="#{searchBean.doBinarySearchActionFromOntologySearch}">
+                                                        action="#{searchBean.doBinarySearchAction}">
                                             <f:param name="term" value="two hybrid"/>
                                         </h:commandLink>
                                     </h:panelGroup>
@@ -137,7 +133,7 @@
                             <h:commandButton id="ontologySearchBtn"
                                               value="Search"
                                               actionListener="#{userQuery.prepareFromOntologySearch}"
-                                              action="#{searchBean.doBinarySearchActionFromOntologySearch}">
+                                              action="#{searchBean.doBinarySearchAction}">
                             </h:commandButton>
                         </f:facet>
                     </iv:panelLabelAndMessage>

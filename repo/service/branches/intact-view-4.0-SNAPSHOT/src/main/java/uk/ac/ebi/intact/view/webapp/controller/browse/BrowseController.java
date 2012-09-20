@@ -29,6 +29,7 @@ import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrSearchResult;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrSearcher;
 import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.view.webapp.IntactViewException;
 import uk.ac.ebi.intact.view.webapp.application.PsicquicThreadConfig;
 import uk.ac.ebi.intact.view.webapp.controller.JpaBaseController;
 import uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration;
@@ -36,10 +37,7 @@ import uk.ac.ebi.intact.view.webapp.controller.search.SearchController;
 import uk.ac.ebi.intact.view.webapp.controller.search.UserQuery;
 
 import javax.annotation.PostConstruct;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -74,11 +72,13 @@ public class BrowseController extends JpaBaseController {
     private String mRNAExpressionIdentifierList;
     private String[] reactomeIdentifierList;
 
+    @Autowired
     private UserQuery userQuery;
     private IntactViewConfiguration intactViewConfiguration;
     private IntactSolrSearcher solrSearcher;
 
     private String currentQuery;
+    @Autowired
     private SearchController searchController;
     private ExecutorService executorService;
 
@@ -109,15 +109,8 @@ public class BrowseController extends JpaBaseController {
 
     private void buildListOfIdentifiers() {
 
-        if (userQuery == null){
-            userQuery = (UserQuery) getBean("userQuery");
-        }
-        if (searchController == null){
-            searchController = (SearchController) getBean("searchBean");
-        }
-
         if (hasLoadedUniprotAcs()){
-            Callable<Set<String>> uniprotAcsRunnable = createBrowserInteractorListRunnable(userQuery, getSolrSearcher());
+            Callable<Set<String>> uniprotAcsRunnable = createBrowserInteractorListRunnable(userQuery.getSearchQuery(), getSolrSearcher(), userQuery.isFilterSpoke(), userQuery.isFilterNegative());
             Future<Set<String>> uniprotAcsFuture = executorService.submit(uniprotAcsRunnable);
 
             if (!searchController.hasLoadedCurrentQuery()){
@@ -129,11 +122,11 @@ public class BrowseController extends JpaBaseController {
         }
     }
 
-    public Callable<Set<String>> createBrowserInteractorListRunnable(final UserQuery userQuery, final IntactSolrSearcher solrSearcher) {
+    public Callable<Set<String>> createBrowserInteractorListRunnable(final String userQuery, final IntactSolrSearcher solrSearcher, final boolean filterSpoke, final boolean filterNegative) {
         return new Callable<Set<String>>() {
             public Set<String> call() {
 
-                return collectUniprotAcs(userQuery, solrSearcher);
+                return collectUniprotAcs(userQuery, solrSearcher, filterSpoke, filterNegative);
             }
         };
     }
@@ -176,42 +169,67 @@ public class BrowseController extends JpaBaseController {
         }
     }
 
-    public Set<String> collectUniprotAcs(final UserQuery userQuery, final IntactSolrSearcher solrSearcher) {
+    public Set<String> collectUniprotAcs(final String userQuery, final IntactSolrSearcher solrSearcher, final boolean filterSpoke, final boolean filterNegative) {
         int numberUniprotProcessed = 0;
         int first = 0;
         Set<String> uniprotAcs = new HashSet<String>();
         final String uniprotFieldNameA = FieldNames.ID_A_FACET;
         final String uniprotFieldNameB = FieldNames.ID_B_FACET;
 
-        while (numberUniprotProcessed < maxSize){
+        boolean hasMoreAcs = true;
+        while (hasMoreAcs && numberUniprotProcessed < maxSize){
             try {
                 String [] facetFields = buildFacetFields(uniprotFieldNameA, uniprotFieldNameB, numberUniprotProcessed);
+                String query = userQuery != null ? userQuery : UserQuery.STAR_QUERY;
 
-                IntactSolrSearchResult result = solrSearcher.searchWithFacets(userQuery.getSearchQuery(), 0, 0, PsicquicSolrServer.RETURN_TYPE_COUNT, new String[] {FieldNames.ID_FACET+":\"uniprotkb:*\""}, facetFields, first, maxSize);
+                String [] queryFilters = null;
+                if (filterNegative && filterSpoke){
+                    queryFilters = new String[]{FieldNames.ID_FACET+":uniprotkb\\:*", FieldNames.NEGATIVE+":false", FieldNames.COMPLEX_EXPANSION+":\"-\""};
+                }
+                else if (filterNegative){
+                    queryFilters = new String[]{FieldNames.ID_FACET+":uniprotkb\\:*", FieldNames.NEGATIVE+":false"};
+                }
+                else if (filterSpoke){
+                    queryFilters = new String[]{FieldNames.ID_FACET+":uniprotkb\\:*", FieldNames.COMPLEX_EXPANSION+":\"-\""};
+                }
+                else{
+                    queryFilters = new String[]{FieldNames.ID_FACET+":uniprotkb\\:*"};
+                }
+
+                IntactSolrSearchResult result = solrSearcher.searchWithFacets(query, 0, 0, PsicquicSolrServer.RETURN_TYPE_COUNT, queryFilters, facetFields, first, maxSize);
 
                 List<FacetField> facetFieldList = result.getFacetFieldList();
                 if (facetFieldList == null || facetFieldList.isEmpty()){
-                    break;
+                    hasMoreAcs = false;
                 }
 
                 for (FacetField facet : facetFieldList){
-                    // collect uniprot ids
-                    for (FacetField.Count count : facet.getValues()){
-                        if (numberUniprotProcessed < maxSize){
-                            String uniprotkbPrefix= CvDatabase.UNIPROT+":";
-                            // only process uniprot ids
-                            if (count.getName().startsWith(uniprotkbPrefix)){
-                                if (uniprotAcs.add(count.getName().substring(uniprotkbPrefix.length()+1))){
-                                    numberUniprotProcessed++;
+                    if (facet.getValueCount() > 0){
+                        // collect uniprot ids
+                        for (FacetField.Count count : facet.getValues()){
+                            if (numberUniprotProcessed < maxSize){
+                                String uniprotkbPrefix= CvDatabase.UNIPROT+":";
+                                // only process uniprot ids
+                                if (count.getName().startsWith(uniprotkbPrefix)){
+                                    if (uniprotAcs.add(count.getName().substring(uniprotkbPrefix.length()+1))){
+                                        numberUniprotProcessed++;
+                                    }
                                 }
                             }
                         }
                     }
+                    else {
+                        hasMoreAcs = false;
+                    }
                 }
+
+                first+=maxSize;
+
             } catch (Exception e) {
-                addErrorMessage("Problem loading uniprot ACs", e.getMessage());
-                e.printStackTrace();
-                break;
+                log.error("Problem loading uniprot ACs",e);
+
+                initializeAllLists(new HashSet<String>());
+                throw new IntactViewException("Problem loading uniprot ACs", e);
             }
         }
 
