@@ -46,7 +46,9 @@
                 <p:commandLink onclick="complexExpansionDialog.show()">spoke expanded co-complexes
                     <h:graphicImage alt="helpIcon" url="/images/help.png"/>
                 </p:commandLink> and you may want to&#160;
-                <h:commandLink value="filter" action="#{searchBean.doBinarySearchActionFilterSpokeExpanded}"/>
+                <h:commandLink value="filter" actionListener="#{userQuery.setUpQueryParameters}" action="#{searchBean.doBinarySearchAction}">
+                    <f:attribute name="#{userQuery.filterSpokeParameterName}" value="true" />
+                </h:commandLink>
                 &#160;them out.
             </li>
         </h:panelGroup>
@@ -57,7 +59,9 @@
                     <f:convertNumber pattern="#,###"/>
                 </h:outputText>
                 </strong> of them are negative interactions (<strong>pink row</strong>) and you may want to&#160;
-                <h:commandLink value="filter" action="#{searchBean.doBinarySearchActionFilterNegative}"/>
+                <h:commandLink value="filter" actionListener="#{userQuery.setUpQueryParameters}" action="#{searchBean.doBinarySearchAction}">
+                    <f:attribute name="#{userQuery.filterNegativeParameterName}" value="true" />
+                </h:commandLink>
                 &#160;them out.
 
             </li>

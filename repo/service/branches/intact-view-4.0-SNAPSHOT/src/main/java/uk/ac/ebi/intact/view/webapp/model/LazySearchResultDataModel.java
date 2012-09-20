@@ -24,7 +24,6 @@ import org.apache.solr.common.params.FacetParams;
 import org.hupo.psi.mi.psicquic.model.PsicquicSolrException;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
-import psidev.psi.mi.calimocho.solr.converter.SolrFieldName;
 import psidev.psi.mi.tab.PsimiTabException;
 import psidev.psi.mi.tab.model.Alias;
 import psidev.psi.mi.tab.model.BinaryInteraction;
@@ -86,13 +85,6 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
                     .setFacetMissing(false)
                     .addFacetField(FieldNames.COMPLEX_EXPANSION_FACET)
                     .addFacetField(FieldNames.NEGATIVES_FACET);
-
-            // add default parameters if nor already there
-            String [] dismaxParameters = solrQuery.getParams("qf");
-            if (dismaxParameters == null || dismaxParameters.length == 0){
-                solrQuery.setParam("qf", SolrFieldName.identifier.toString()+" "+SolrFieldName.pubid.toString()+" "+SolrFieldName.pubauth.toString()+" "+SolrFieldName.species.toString()+" "+SolrFieldName.detmethod.toString()+" "+SolrFieldName.type.toString()+" "+SolrFieldName.interaction_id.toString());
-                solrQuery.setParam("defType", "edismax");
-            }
 
             // add some limit to faceting for performances improvement
             solrQuery.set(FacetParams.FACET_OFFSET, 0);

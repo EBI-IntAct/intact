@@ -65,8 +65,6 @@ public class SearchController extends JpaBaseController {
     private int geneTotalResults;
     private int nucleicAcidTotalResults;
 
-    private UserQuery userQuery;
-
     private String currentQuery;
 
     private boolean hasLoadedSearchControllerResults=false;
@@ -96,14 +94,14 @@ public class SearchController extends JpaBaseController {
     private PsicquicThreadConfig psicquicThreadConfig;
 
     private PsicquicSearchManager psicquicController;
-    private BrowseController browseController;
     private OntologyInteractorTypeConfig typeConfig;
 
     private String acPrefix;
 
-    private boolean filterNegative=false;
-    private boolean filterSpoke=false;
-    private boolean isOntologyQuery=false;
+    @Autowired
+    private BrowseController browseController;
+    @Autowired
+    private UserQuery userQuery;
 
     public SearchController() {
     }
@@ -132,9 +130,6 @@ public class SearchController extends JpaBaseController {
             UserQuery userQuery = getUserQuery();
             if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedSearchControllerResults){
                 doBinarySearch(userQuery.createSolrQuery());
-                isOntologyQuery = false;
-                filterNegative = false;
-                filterSpoke = false;
             }
         }
     }
@@ -143,58 +138,8 @@ public class SearchController extends JpaBaseController {
         UserQuery userQuery = getUserQuery();
         SolrQuery solrQuery = userQuery.createSolrQuery();
 
-        this.filterNegative=false;
-        this.filterSpoke=false;
-        this.isOntologyQuery=false;
-
         doBinarySearch(solrQuery);
 
-        return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
-    }
-
-    public String doBinarySearchActionFromOntologySearch() {
-        UserQuery userQuery = getUserQuery();
-        SolrQuery solrQuery = userQuery.createSolrQueryForOntologySearch();
-
-        this.filterNegative=false;
-        this.filterSpoke=false;
-        this.isOntologyQuery=true;
-
-        doBinarySearch(solrQuery);
-
-        return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
-    }
-
-    public String doBinarySearchActionFilterNegative() {
-        UserQuery userQuery = getUserQuery();
-        SolrQuery solrQuery = userQuery.createSolrQuery();
-
-        // the true binary interactions have - in the complex expansion column
-        solrQuery.addFilterQuery(FieldNames.NEGATIVE+":false");
-        filterNegative = true;
-
-        // add spoke filter if necessary
-        if (filterSpoke){
-            solrQuery.addFilterQuery(FieldNames.COMPLEX_EXPANSION+":\"-\"");
-        }
-        this.isOntologyQuery=false;
-        doBinarySearchOnly(solrQuery);
-        return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
-    }
-    public String doBinarySearchActionFilterSpokeExpanded() {
-        UserQuery userQuery = getUserQuery();
-        SolrQuery solrQuery = userQuery.createSolrQuery();
-
-        // the true binary interactions have - in the complex expansion column
-        solrQuery.addFilterQuery(FieldNames.COMPLEX_EXPANSION+":\"-\"");
-        filterSpoke = true;
-
-        // add spoke filter if necessary
-        if (filterNegative){
-            solrQuery.addFilterQuery(FieldNames.NEGATIVE+":false");
-        }
-
-        doBinarySearchOnly(solrQuery);
         return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
     }
 
@@ -303,16 +248,16 @@ public class SearchController extends JpaBaseController {
     private Callable<Integer> createIntactSearchRunnable(final SolrQuery solrQueryCopy, final SolrServer solrServer,
                                                          final int pageSize) {
         return new Callable<Integer>() {
-                    public Integer call() {
+            public Integer call() {
 
-                        results = createInteractionDataModel( solrQueryCopy, solrServer, pageSize );
+                results = createInteractionDataModel( solrQueryCopy, solrServer, pageSize );
 
-                        // store the current query
-                        currentQuery = solrQueryCopy.getQuery();
+                // store the current query
+                currentQuery = solrQueryCopy.getQuery();
 
-                        return results.getRowCount();
-                    }
-                };
+                return results.getRowCount();
+            }
+        };
     }
 
     public String doClearSearchAndGoHome() {
@@ -330,9 +275,7 @@ public class SearchController extends JpaBaseController {
             }
         }
         else if ("browseTab".equals(evt.getTab().getId())){
-            if (browseController == null){
-                browseController = (BrowseController) getBean("browseBean");
-            }
+
             if (!browseController.hasLoadedUniprotAcs()){
                 doBrowserSearch();
             }
@@ -344,7 +287,7 @@ public class SearchController extends JpaBaseController {
     }
 
     public void doBrowserSearch() {
-        Callable<Set<String>> uniprotAcsRunnable = browseController.createBrowserInteractorListRunnable(getUserQuery(), browseController.getSolrSearcher());
+        Callable<Set<String>> uniprotAcsRunnable = browseController.createBrowserInteractorListRunnable(getUserQuery().getSearchQuery(), browseController.getSolrSearcher(), userQuery.isFilterSpoke(), userQuery.isFilterNegative());
         Future<Set<String>> uniprotAcsFuture = executorService.submit(uniprotAcsRunnable);
 
         if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedInteractorResults){
@@ -423,7 +366,7 @@ public class SearchController extends JpaBaseController {
         return new Callable<InteractorSearchResultDataModel>() {
             public InteractorSearchResultDataModel call() {
 
-                return doInteractorSearch(typeConfig.getNucleicAcidTypes(), solrQuery, solrServer, pageSize);
+                return doInteractorSearch(typeConfig.getGeneTypes(), solrQuery, solrServer, pageSize);
             }
         };
     }
@@ -511,8 +454,8 @@ public class SearchController extends JpaBaseController {
 
         final InteractorSearchResultDataModel interactorResults
                 = new InteractorSearchResultDataModel(intactViewConfiguration.getInteractionSolrServer(),
-                                                      solrQuery,
-                                                      interactorTypeMis);
+                solrQuery,
+                interactorTypeMis);
         interactorResults.setPageSize(pageSize);
         return interactorResults;
     }
@@ -696,9 +639,6 @@ public class SearchController extends JpaBaseController {
     }
 
     private UserQuery getUserQuery() {
-        if (userQuery == null){
-           userQuery = (UserQuery) getBean("userQuery");
-        }
         return userQuery;
     }
 
@@ -713,21 +653,9 @@ public class SearchController extends JpaBaseController {
         return true;
     }
 
-    public boolean isOntologyQuery() {
-        return isOntologyQuery;
-    }
-
-    public boolean isFilterNegative() {
-        return filterNegative;
-    }
-
-    public boolean isFilterSpoke() {
-        return filterSpoke;
-    }
-
     public String getExportQueryParameters(){
         try {
-            return "format="+exportFormat+"&query="+ URLEncoder.encode(getUserQuery().getSearchQuery(), "UTF-8").replaceAll("\\+", "%20")+"&negative="+filterNegative+"&spoke="+filterSpoke+"&ontology="+isOntologyQuery+"&sort="+userSortColumn+"&asc="+ascending;
+            return "format="+exportFormat+"&query="+ URLEncoder.encode(getUserQuery().getSearchQuery(), "UTF-8").replaceAll("\\+", "%20")+"&negative="+getUserQuery().isFilterNegative()+"&spoke="+getUserQuery().isFilterSpoke()+"&ontology="+getUserQuery().isOntologyQuery()+"&sort="+userSortColumn+"&asc="+ascending;
         } catch (UnsupportedEncodingException e) {
             throw new IntactViewException("Invalid query", e);
         }
