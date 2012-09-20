@@ -22,21 +22,28 @@ import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.hupo.psi.mi.psicquic.model.PsicquicSolrServer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrSearchResult;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrSearcher;
 import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.view.webapp.application.PsicquicThreadConfig;
 import uk.ac.ebi.intact.view.webapp.controller.JpaBaseController;
 import uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration;
 import uk.ac.ebi.intact.view.webapp.controller.search.SearchController;
 import uk.ac.ebi.intact.view.webapp.controller.search.UserQuery;
 
+import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 /**
  * Controller for the browse tab.
@@ -67,9 +74,29 @@ public class BrowseController extends JpaBaseController {
     private String mRNAExpressionIdentifierList;
     private String[] reactomeIdentifierList;
 
+    private UserQuery userQuery;
+    private IntactViewConfiguration intactViewConfiguration;
+    private IntactSolrSearcher solrSearcher;
+
+    private String currentQuery;
+    private SearchController searchController;
+    private ExecutorService executorService;
+
+    @Autowired
+    private PsicquicThreadConfig psicquicThreadConfig;
+
     public BrowseController() {
     }
 
+    @PostConstruct
+    public void initialSearch() {
+        this.currentQuery = null;
+
+        if (executorService == null){
+
+            executorService = psicquicThreadConfig.getExecutorService();
+        }
+    }
 
     public String createListofIdentifiersAndBrowse() {
         createListOfIdentifiers();
@@ -78,23 +105,84 @@ public class BrowseController extends JpaBaseController {
 
     public void createListOfIdentifiers() {
         buildListOfIdentifiers();
-        SearchController searchController = (SearchController) getBean("searchBean");
-        searchController.doInteractorsSearch();
     }
 
     private void buildListOfIdentifiers() {
-        uniprotAcs = new HashSet<String>(maxSize);
 
+        if (userQuery == null){
+            userQuery = (UserQuery) getBean("userQuery");
+        }
+        if (searchController == null){
+            searchController = (SearchController) getBean("searchBean");
+        }
+
+        if (hasLoadedUniprotAcs()){
+            Callable<Set<String>> uniprotAcsRunnable = createBrowserInteractorListRunnable(userQuery, getSolrSearcher());
+            Future<Set<String>> uniprotAcsFuture = executorService.submit(uniprotAcsRunnable);
+
+            if (!searchController.hasLoadedCurrentQuery()){
+                searchController.doInteractorsSearch();
+            }
+            checkAndResumeBrowserInteractorListTasks(uniprotAcsFuture);
+
+            this.currentQuery = userQuery.getSearchQuery();
+        }
+    }
+
+    public Callable<Set<String>> createBrowserInteractorListRunnable(final UserQuery userQuery, final IntactSolrSearcher solrSearcher) {
+        return new Callable<Set<String>>() {
+            public Set<String> call() {
+
+                return collectUniprotAcs(userQuery, solrSearcher);
+            }
+        };
+    }
+
+    public void checkAndResumeBrowserInteractorListTasks(Future<Set<String>> uniprotAcsFuture) {
+
+        try {
+            Set<String> uniprotAcs = uniprotAcsFuture.get();
+            initializeAllLists(uniprotAcs);
+
+        } catch (InterruptedException e) {
+            log.error("The intact browser search was interrupted, we cancel the task.", e);
+            if (!uniprotAcsFuture.isCancelled()){
+                uniprotAcsFuture.cancel(true);
+            }
+        } catch (ExecutionException e) {
+            log.error("The intact browser search could not be executed, we cancel the task.", e);
+            if (!uniprotAcsFuture.isCancelled()){
+                uniprotAcsFuture.cancel(true);
+            }
+        }
+    }
+
+    public IntactSolrSearcher getSolrSearcher() {
+        if (solrSearcher == null){
+            if (intactViewConfiguration == null){
+                intactViewConfiguration = (IntactViewConfiguration) getBean("intactViewConfiguration");
+                final SolrServer solrServer = intactViewConfiguration.getInteractionSolrServer();
+                solrSearcher = new IntactSolrSearcher(solrServer);
+            }
+        }
+        return  solrSearcher;
+    }
+
+    public void initializeAllLists(Set<String> uniprotAcs) {
+        if (uniprotAcs != null){
+            this.uniprotAcs = uniprotAcs;
+
+            initializeAllListsFromUniprotAcs();
+        }
+    }
+
+    public Set<String> collectUniprotAcs(final UserQuery userQuery, final IntactSolrSearcher solrSearcher) {
+        int numberUniprotProcessed = 0;
+        int first = 0;
+        Set<String> uniprotAcs = new HashSet<String>();
         final String uniprotFieldNameA = FieldNames.ID_A_FACET;
         final String uniprotFieldNameB = FieldNames.ID_B_FACET;
 
-        UserQuery userQuery = (UserQuery) getBean("userQuery");
-        IntactViewConfiguration intactViewConfig = (IntactViewConfiguration) getBean("intactViewConfiguration");
-        final SolrServer solrServer = intactViewConfig.getInteractionSolrServer();
-        IntactSolrSearcher solrSearcher = new IntactSolrSearcher(solrServer);
-
-        int numberUniprotProcessed = 0;
-        int first = 0;
         while (numberUniprotProcessed < maxSize){
             try {
                 String [] facetFields = buildFacetFields(uniprotFieldNameA, uniprotFieldNameB, numberUniprotProcessed);
@@ -110,7 +198,7 @@ public class BrowseController extends JpaBaseController {
                     // collect uniprot ids
                     for (FacetField.Count count : facet.getValues()){
                         if (numberUniprotProcessed < maxSize){
-                            String uniprotkbPrefix=CvDatabase.UNIPROT+":";
+                            String uniprotkbPrefix= CvDatabase.UNIPROT+":";
                             // only process uniprot ids
                             if (count.getName().startsWith(uniprotkbPrefix)){
                                 if (uniprotAcs.add(count.getName().substring(uniprotkbPrefix.length()+1))){
@@ -127,6 +215,10 @@ public class BrowseController extends JpaBaseController {
             }
         }
 
+        return uniprotAcs;
+    }
+
+    private void initializeAllListsFromUniprotAcs() {
         if (log.isDebugEnabled()) log.debug("Browse uniprot ACs: "+uniprotAcs);
 
         this.interproIdentifierList = appendIdentifiers( uniprotAcs, INTERPRO_SEPERATOR);
@@ -194,5 +286,12 @@ public class BrowseController extends JpaBaseController {
 
     public int getMaxSize() {
         return maxSize;
+    }
+
+    public boolean hasLoadedUniprotAcs() {
+        if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery)){
+            return false;
+        }
+        return true;
     }
 }

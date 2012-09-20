@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.model.CrossReference;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
+import uk.ac.ebi.intact.view.webapp.IntactViewException;
 import uk.ac.ebi.intact.view.webapp.application.OntologyInteractorTypeConfig;
 import uk.ac.ebi.intact.view.webapp.application.PsicquicThreadConfig;
 import uk.ac.ebi.intact.view.webapp.controller.JpaBaseController;
@@ -27,11 +28,15 @@ import uk.ac.ebi.intact.view.webapp.model.InteractorWrapper;
 import uk.ac.ebi.intact.view.webapp.model.LazySearchResultDataModel;
 
 import javax.annotation.PostConstruct;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -65,7 +70,7 @@ public class SearchController extends JpaBaseController {
     private String currentQuery;
 
     private boolean hasLoadedSearchControllerResults=false;
-    private boolean hasLoadedBrowseControllerResults=false;
+    private boolean hasLoadedInteractorResults=false;
 
     // results
     private LazySearchResultDataModel results;
@@ -85,8 +90,6 @@ public class SearchController extends JpaBaseController {
     //as the Sort constructor is Sort(String field, boolean reverse)
     private boolean ascending = DEFAULT_SORT_ORDER;
 
-    private int threadTimeOut = 10;
-
     private ExecutorService executorService;
 
     @Autowired
@@ -100,6 +103,7 @@ public class SearchController extends JpaBaseController {
 
     private boolean filterNegative=false;
     private boolean filterSpoke=false;
+    private boolean isOntologyQuery=false;
 
     public SearchController() {
     }
@@ -121,26 +125,18 @@ public class SearchController extends JpaBaseController {
             addErrorMessage("Problem counting results in other databases", "Registry not available");
             e.printStackTrace();
         }
-
-        /*if (!FacesContext.getCurrentInstance().isPostback()) {
-            UserQuery userQuery = getUserQuery();
-            SolrQuery solrQuery = userQuery.createSolrQuery();
-            doBinarySearch( solrQuery );
-        }*/
     }
 
     public void searchOnLoad(ComponentSystemEvent evt) {
-        UserQuery userQuery = getUserQuery();
-        if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedSearchControllerResults){
-            doBinarySearch(userQuery.createSolrQuery());
+        if (!FacesContext.getCurrentInstance().isPostback()) {
+            UserQuery userQuery = getUserQuery();
+            if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedSearchControllerResults){
+                doBinarySearch(userQuery.createSolrQuery());
+                isOntologyQuery = false;
+                filterNegative = false;
+                filterSpoke = false;
+            }
         }
-    }
-
-    public void searchBinaryInteractions(ComponentSystemEvent evt) {
-        UserQuery userQuery = getUserQuery();
-        SolrQuery solrQuery = userQuery.createSolrQuery();
-
-        doBinarySearch(solrQuery);
     }
 
     public String doBinarySearchAction() {
@@ -149,6 +145,7 @@ public class SearchController extends JpaBaseController {
 
         this.filterNegative=false;
         this.filterSpoke=false;
+        this.isOntologyQuery=false;
 
         doBinarySearch(solrQuery);
 
@@ -161,6 +158,7 @@ public class SearchController extends JpaBaseController {
 
         this.filterNegative=false;
         this.filterSpoke=false;
+        this.isOntologyQuery=true;
 
         doBinarySearch(solrQuery);
 
@@ -179,7 +177,7 @@ public class SearchController extends JpaBaseController {
         if (filterSpoke){
             solrQuery.addFilterQuery(FieldNames.COMPLEX_EXPANSION+":\"-\"");
         }
-
+        this.isOntologyQuery=false;
         doBinarySearchOnly(solrQuery);
         return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
     }
@@ -198,49 +196,6 @@ public class SearchController extends JpaBaseController {
 
         doBinarySearchOnly(solrQuery);
         return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
-    }
-
-
-    public String doNewBinarySearch() {
-        resetDetailControllers();
-
-        UserQuery userQuery = getUserQuery();
-        userQuery.setOntologySearchQuery(null);
-
-        return doBinarySearchAction();
-    }
-
-    public void doBinarySearch(ActionEvent evt) {
-        doBinarySearchAction();
-    }
-
-    public void doClearFilterAndSearch(ActionEvent evt) {
-        UserQuery userQuery = getUserQuery();
-        userQuery.clearFilters();
-        doBinarySearch(evt);
-    }
-
-    public String doOntologySearchAction() {
-        UserQuery userQuery = getUserQuery();
-        final String query = userQuery.getOntologySearchQuery();
-
-        if ( query == null) {
-            addErrorMessage("The ontology query box was empty", "No search was submitted");
-            return "search";
-        }
-
-        SolrQuery solrQuery = userQuery.createSolrQuery();
-
-        doBinarySearch( solrQuery );
-
-        return "interactions";
-    }
-
-    public String doNewOntologySearch() {
-        UserQuery userQuery = getUserQuery();
-        userQuery.resetSearchQuery();
-        resetDetailControllers();
-        return doOntologySearchAction();
     }
 
     private void resetDetailControllers() {
@@ -267,7 +222,7 @@ public class SearchController extends JpaBaseController {
 
             // we are doing a new search so we reset browser
             hasLoadedSearchControllerResults = true;
-            hasLoadedBrowseControllerResults = false;
+            hasLoadedInteractorResults = false;
 
             Future<Integer> intactFuture = executorService.submit(intactRunnable);
 
@@ -312,7 +267,7 @@ public class SearchController extends JpaBaseController {
             this.currentQuery = solrQuery.getQuery();
             // we are doing a new search so we reset browser
             hasLoadedSearchControllerResults = true;
-            hasLoadedBrowseControllerResults = false;
+            hasLoadedInteractorResults = false;
 
         } catch ( uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrException solrException ) {
 
@@ -366,7 +321,6 @@ public class SearchController extends JpaBaseController {
         return "/main?forces-redirect=true";
     }
 
-
     public void onTabChanged(TabChangeEvent evt) {
         // load interactions if necessary
         if (evt.getTab() != null && "interactionsTab".equals(evt.getTab().getId())){
@@ -379,15 +333,24 @@ public class SearchController extends JpaBaseController {
             if (browseController == null){
                 browseController = (BrowseController) getBean("browseBean");
             }
-            if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedBrowseControllerResults){
-                browseController.createListOfIdentifiers();
-                doInteractorsSearch();
+            if (!browseController.hasLoadedUniprotAcs()){
+                doBrowserSearch();
             }
         }
         /*if (evt.getTab() != null && "listsTab".equals(evt.getTab().getId())) {
             doInteractorsSearch();
 
         }*/
+    }
+
+    public void doBrowserSearch() {
+        Callable<Set<String>> uniprotAcsRunnable = browseController.createBrowserInteractorListRunnable(getUserQuery(), browseController.getSolrSearcher());
+        Future<Set<String>> uniprotAcsFuture = executorService.submit(uniprotAcsRunnable);
+
+        if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedInteractorResults){
+            doInteractorsSearch();
+        }
+        browseController.checkAndResumeBrowserInteractorListTasks(uniprotAcsFuture);
     }
 
 
@@ -405,42 +368,144 @@ public class SearchController extends JpaBaseController {
 
         }
 
-        doProteinsSearch(typeConfig);
-        doSmallMoleculeSearch(typeConfig);
-        doNucleicAcidSearch(typeConfig);
-        doGeneSearch(typeConfig);
+        final OntologyInteractorTypeConfig config = typeConfig;
+        final SolrQuery solrQuery = userQuery.createSolrQuery();
+        final SolrServer solrServer = intactViewConfiguration.getInteractionSolrServer();
+        final int pageSize = getUserQuery().getPageSize();
+
+        Callable<InteractorSearchResultDataModel> proteinRunnable = createProteinSearchRunnable(config, solrQuery, solrServer, pageSize);
+        Callable<InteractorSearchResultDataModel> compoundRunnable = createSmallMoleculeSearchRunnable(config, solrQuery, solrServer, pageSize);
+        Callable<InteractorSearchResultDataModel> nucleicAcidRunnable = createNucleicAcidSearchRunnable(config, solrQuery, solrServer, pageSize);
+        Callable<InteractorSearchResultDataModel> geneRunnable = createGeneSearchRunnable(config, solrQuery, solrServer, pageSize);
+
+        Future<InteractorSearchResultDataModel> proteinFuture = executorService.submit(proteinRunnable);
+        Future<InteractorSearchResultDataModel> compoundFuture = executorService.submit(compoundRunnable);
+        Future<InteractorSearchResultDataModel> nucleicAcidFuture = executorService.submit(nucleicAcidRunnable);
+        Future<InteractorSearchResultDataModel> geneFuture = executorService.submit(geneRunnable);
+
+        checkAndResumeInteractorTasks(proteinFuture, compoundFuture, nucleicAcidFuture, geneFuture);
 
         interactorTotalResults = smallMoleculeTotalResults + proteinTotalResults + nucleicAcidTotalResults + geneTotalResults;
 
+        // loaded browse results
+        hasLoadedInteractorResults = true;
+        if(this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery)){
+            hasLoadedSearchControllerResults = false;
+        }
+        this.currentQuery = userQuery.getSearchQuery();
     }
 
-    private void doProteinsSearch(OntologyInteractorTypeConfig typeConfig) {
-        proteinResults = doInteractorSearch(typeConfig.getProteinTypes());
-        proteinTotalResults = proteinResults.getRowCount();
+    private Callable<InteractorSearchResultDataModel> createProteinSearchRunnable(final OntologyInteractorTypeConfig typeConfig, final SolrQuery solrQuery, final SolrServer solrServer, final int pageSize) {
+        return new Callable<InteractorSearchResultDataModel>() {
+            public InteractorSearchResultDataModel call() {
+
+                return doInteractorSearch(typeConfig.getProteinTypes(), solrQuery, solrServer, pageSize);
+            }
+        };
+    }
+    private Callable<InteractorSearchResultDataModel> createSmallMoleculeSearchRunnable(final OntologyInteractorTypeConfig typeConfig, final SolrQuery solrQuery, final SolrServer solrServer, final int pageSize) {
+        return new Callable<InteractorSearchResultDataModel>() {
+            public InteractorSearchResultDataModel call() {
+
+                return doInteractorSearch(typeConfig.getCompoundTypes(), solrQuery, solrServer, pageSize);
+            }
+        };
+    }
+    private Callable<InteractorSearchResultDataModel> createNucleicAcidSearchRunnable(final OntologyInteractorTypeConfig typeConfig, final SolrQuery solrQuery, final SolrServer solrServer, final int pageSize) {
+        return new Callable<InteractorSearchResultDataModel>() {
+            public InteractorSearchResultDataModel call() {
+
+                return doInteractorSearch(typeConfig.getNucleicAcidTypes(), solrQuery, solrServer, pageSize);
+            }
+        };
+    }
+    private Callable<InteractorSearchResultDataModel> createGeneSearchRunnable(final OntologyInteractorTypeConfig typeConfig, final SolrQuery solrQuery, final SolrServer solrServer, final int pageSize) {
+        return new Callable<InteractorSearchResultDataModel>() {
+            public InteractorSearchResultDataModel call() {
+
+                return doInteractorSearch(typeConfig.getNucleicAcidTypes(), solrQuery, solrServer, pageSize);
+            }
+        };
     }
 
-    private void doSmallMoleculeSearch(OntologyInteractorTypeConfig typeConfig) {
-        smallMoleculeResults = doInteractorSearch(typeConfig.getCompoundTypes());
-        smallMoleculeTotalResults = smallMoleculeResults.getRowCount();
-    }
+    private void checkAndResumeInteractorTasks(Future<InteractorSearchResultDataModel> proteinFuture, Future<InteractorSearchResultDataModel> compoundFuture,
+                                               Future<InteractorSearchResultDataModel> nucleicAcidFuture, Future<InteractorSearchResultDataModel> geneFuture) {
 
-    private void doNucleicAcidSearch(OntologyInteractorTypeConfig typeConfig) {
-        nucleicAcidResults = doInteractorSearch(typeConfig.getNucleicAcidTypes());
-        nucleicAcidTotalResults = nucleicAcidResults.getRowCount();
-    }
+        try {
+            this.proteinResults = proteinFuture.get();
+            this.proteinTotalResults = proteinResults.getRowCount();
 
-    private void doGeneSearch(OntologyInteractorTypeConfig typeConfig) {
-        geneResults = doInteractorSearch(typeConfig.getGeneTypes());
-        geneTotalResults = geneResults.getRowCount();
+        } catch (InterruptedException e) {
+            log.error("The intact protein search was interrupted, we cancel the task.", e);
+            if (!proteinFuture.isCancelled()){
+                proteinFuture.cancel(true);
+            }
+        } catch (ExecutionException e) {
+            log.error("The intact protein search could not be executed, we cancel the task.", e);
+            if (!proteinFuture.isCancelled()){
+                proteinFuture.cancel(true);
+            }
+        }
+
+        try {
+            this.smallMoleculeResults = compoundFuture.get();
+            this.smallMoleculeTotalResults = smallMoleculeResults.getRowCount();
+
+        } catch (InterruptedException e) {
+            log.error("The intact compound search was interrupted, we cancel the task.", e);
+            if (!compoundFuture.isCancelled()){
+                compoundFuture.cancel(true);
+            }
+        } catch (ExecutionException e) {
+            log.error("The intact compound search could not be executed, we cancel the task.", e);
+            if (!compoundFuture.isCancelled()){
+                compoundFuture.cancel(true);
+            }
+        }
+
+        try {
+            this.nucleicAcidResults = nucleicAcidFuture.get();
+            this.nucleicAcidTotalResults = nucleicAcidResults.getRowCount();
+
+        } catch (InterruptedException e) {
+            log.error("The intact nucleic acid search was interrupted, we cancel the task.", e);
+            if (!nucleicAcidFuture.isCancelled()){
+                nucleicAcidFuture.cancel(true);
+            }
+        } catch (ExecutionException e) {
+            log.error("The intact nucleic acid search could not be executed, we cancel the task.", e);
+            if (!nucleicAcidFuture.isCancelled()){
+                nucleicAcidFuture.cancel(true);
+            }
+        }
+
+        try {
+            this.geneResults = geneFuture.get();
+            this.geneTotalResults = geneResults.getRowCount();
+
+        } catch (InterruptedException e) {
+            log.error("The intact gene interactor was interrupted, we cancel the task.", e);
+            if (!nucleicAcidFuture.isCancelled()){
+                nucleicAcidFuture.cancel(true);
+            }
+        } catch (ExecutionException e) {
+            log.error("The intact gene interactor could not be executed, we cancel the task.", e);
+            if (!nucleicAcidFuture.isCancelled()){
+                nucleicAcidFuture.cancel(true);
+            }
+        }
     }
 
     public InteractorSearchResultDataModel doInteractorSearch(String interactorTypeMi) {
-        return doInteractorSearch(new String[] {interactorTypeMi});
+        final SolrQuery solrQuery = getUserQuery().createSolrQuery();
+        final String [] interactorTypeMiArray = new String[] {interactorTypeMi};
+        final SolrServer solrServer = intactViewConfiguration.getInteractionSolrServer();
+        final int pageSize = getUserQuery().getPageSize();
+
+        return doInteractorSearch(interactorTypeMiArray, solrQuery, solrServer, pageSize);
     }
 
-    public InteractorSearchResultDataModel doInteractorSearch(String[] interactorTypeMis) {
-        UserQuery userQuery = getUserQuery();
-        final SolrQuery solrQuery = userQuery.createSolrQuery();
+    public InteractorSearchResultDataModel doInteractorSearch(final String[] interactorTypeMis, final SolrQuery solrQuery, final SolrServer solrServer, final int pageSize) {
 
         if (log.isDebugEnabled()) log.debug("Searching interactors of type ("+ Arrays.toString(interactorTypeMis)+") for query: " + solrQuery);
 
@@ -448,7 +513,7 @@ public class SearchController extends JpaBaseController {
                 = new InteractorSearchResultDataModel(intactViewConfiguration.getInteractionSolrServer(),
                                                       solrQuery,
                                                       interactorTypeMis);
-        interactorResults.setPageSize(getUserQuery().getPageSize());
+        interactorResults.setPageSize(pageSize);
         return interactorResults;
     }
 
@@ -639,5 +704,32 @@ public class SearchController extends JpaBaseController {
 
     public PsicquicSearchManager getPsicquicSearchManager() {
         return psicquicController;
+    }
+
+    public boolean hasLoadedCurrentQuery() {
+        if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery)){
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isOntologyQuery() {
+        return isOntologyQuery;
+    }
+
+    public boolean isFilterNegative() {
+        return filterNegative;
+    }
+
+    public boolean isFilterSpoke() {
+        return filterSpoke;
+    }
+
+    public String getExportQueryParameters(){
+        try {
+            return "format="+exportFormat+"&query="+ URLEncoder.encode(getUserQuery().getSearchQuery(), "UTF-8").replaceAll("\\+", "%20")+"&negative="+filterNegative+"&spoke="+filterSpoke+"&ontology="+isOntologyQuery+"&sort="+userSortColumn+"&asc="+ascending;
+        } catch (UnsupportedEncodingException e) {
+            throw new IntactViewException("Invalid query", e);
+        }
     }
 }
