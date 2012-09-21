@@ -161,32 +161,34 @@ public class UserQuery extends BaseController {
     private void initSearchFields() {
         searchFields = new SearchField[]{
                 new SearchField("", "All"),
-                new SearchField(FieldNames.IDENTIFIER, "Interactor Id/Alias"),
-                new SearchField(FieldNames.INTERACTION_ID, "Interaction Id"),
-                new SearchField(FieldNames.GENE_NAME, "Gene name"),
-                new SearchField(FieldNames.DETMETHOD, "Interaction detection method", "detectionMethodBrowser"),
-                new SearchField(FieldNames.TYPE, "Interaction type", "interactionTypeBrowser"),
-                new SearchField(FieldNames.INTERACTOR_TYPE, "Interactor type", "interactorTypeBrowser"),
-                new SearchField(FieldNames.INTERACTOR_DET_METHOD, "Interactor identification method", "participantIdentificationMethodBrowser"),
-                new SearchField(FieldNames.INTERACTION_ANNOTATIONS, "Interaction annotations", "annotationTopicBrowser"),
-                new SearchField(FieldNames.INTERACTOR_FEATURE, "Interactor Features", "featureTypeBrowser"),
-                new SearchField(FieldNames.SPECIES, "Organism", "taxonomyBrowser"),
-                new SearchField(FieldNames.PUBID, "Pubmed Id"),
-                new SearchField(FieldNames.PUBAUTH, "Author"),
-                new SearchField(FieldNames.BIOLOGICAL_ROLE, "Biological role", "biologicalRoleBrowser"),
-                new SearchField(FieldNames.INTERACTOR_XREF+":\"go", "Interactor GO references", "goBrowser"),
-                new SearchField(FieldNames.INTERACTION_XREF+":\"go", "Interaction GO references", "interactionGoBrowser"),
+                new SearchField(FieldNames.ID, "Interactor id (Ex: P74565)"),
+                new SearchField(FieldNames.ALIAS, "Interactor alias (Ex: KHDRBS1)"),
+                new SearchField(FieldNames.IDENTIFIER, "Interactor id or alias"),
+                new SearchField(FieldNames.INTERACTION_ID, "Interaction id (Ex: EBI-761050)"),
+                new SearchField(FieldNames.GENE_NAME, "Gene name (Ex: BRCA2)"),
+                new SearchField(FieldNames.DETMETHOD, "Interaction detection method (Ex: pull down)", "detectionMethodBrowser"),
+                new SearchField(FieldNames.TYPE, "Interaction type (Ex: physical interaction)", "interactionTypeBrowser"),
+                new SearchField(FieldNames.INTERACTOR_TYPE, "Interactor type (Ex: protein)", "interactorTypeBrowser"),
+                new SearchField(FieldNames.INTERACTOR_DET_METHOD, "Interactor identification method (Ex: western blot)", "participantIdentificationMethodBrowser"),
+                new SearchField(FieldNames.INTERACTION_ANNOTATIONS, "Interaction annotation (Ex: imex curation)", "annotationTopicBrowser"),
+                new SearchField(FieldNames.INTERACTOR_FEATURE, "Interactor feature (Ex: binding site)", "featureTypeBrowser"),
+                new SearchField(FieldNames.SPECIES, "Organism (Ex: human)", "taxonomyBrowser"),
+                new SearchField(FieldNames.PUBID, "Publication id (Ex: 10837477)"),
+                new SearchField(FieldNames.PUBAUTH, "Author (Ex: scott)"),
+                new SearchField(FieldNames.BIOLOGICAL_ROLE, "Biological role (Ex : enzyme)", "biologicalRoleBrowser"),
+                new SearchField(FieldNames.INTERACTOR_XREF+":\"go", "Interactor GO xref", "goBrowser"),
+                new SearchField(FieldNames.INTERACTION_XREF+":\"go", "Interaction GO xref", "interactionGoBrowser"),
                 new SearchField(FieldNames.ID+":\"chebi", "ChEBI", "chebiBrowser"),
                 new SearchField(FieldNames.INTERACTOR_XREF+":\"interpro", "Interpro"),
-                new SearchField(FieldNames.INTERACTOR_XREF, "Interactor cross-reference"),
-                new SearchField(FieldNames.INTERACTION_XREF, "Interaction cross-reference"),
-                new SearchField(FieldNames.COMPLEX_EXPANSION, "Expansion algorithm", filterPopulator.getExpansionSelectItems()),
-                new SearchField(FieldNames.SOURCE, "Source", filterPopulator.getSourceSelectItems()),
-                new SearchField(FieldNames.UPDATE_DATE, "Last update date (Ex : [20110524 TO 20120202])"),
-                new SearchField(FieldNames.INTACT_SCORE_NAME, "Intact MI score (Ex : [0.5 TO 1])"),
-                new SearchField(FieldNames.NEGATIVE, "Negative interactions", filterPopulator.getNegativeSelectItems()),
+                new SearchField(FieldNames.INTERACTOR_XREF, "Interactor xref (Ex: GO:0005794)"),
+                new SearchField(FieldNames.INTERACTION_XREF, "Interaction xref (Ex: GO:0005634)"),
+                new SearchField(FieldNames.COMPLEX_EXPANSION, "Complex expansion", filterPopulator.getExpansionSelectItems()),
+                new SearchField(FieldNames.SOURCE, "Source (Ex: i2d)", filterPopulator.getSourceSelectItems()),
+                new SearchField(FieldNames.UPDATE_DATE, "Last update date (Ex: [YYYYMMDD TO YYYYMMDD])"),
+                new SearchField(FieldNames.INTACT_SCORE_NAME, "Intact MI score (Ex: [0.5 TO 1])"),
+                new SearchField(FieldNames.NEGATIVE, "Negative interaction", filterPopulator.getNegativeSelectItems()),
                 new SearchField(FieldNames.INTERACTOR_STOICHIOMETRY, "Stoichiometry", filterPopulator.getStoichiometrySelectItems()),
-                new SearchField(FieldNames.INTERACTION_PARAMETERS, "Interaction parameters", filterPopulator.getParametersSelectItems()),
+                new SearchField(FieldNames.INTERACTION_PARAMETERS, "Interaction parameter", filterPopulator.getParametersSelectItems()),
                 new SearchField(FieldNames.INTERACTION_ANNOTATIONS+":\"dataset", "Dataset", filterPopulator.getDatasetSelectItems()),
         };
 
@@ -227,9 +229,10 @@ public class UserQuery extends BaseController {
         if (filterSpoke){
             query.addFilterQuery(FieldNames.COMPLEX_EXPANSION+":\"-\"");
         }
+
+        // add default parameters if nor already there
+        query.setParam("defType", "edismax");
         if (isOntologyQuery){
-            // add default parameters if nor already there
-            query.setParam("defType", "edismax");
             query.setParam("qf", SolrFieldName.identifier.toString()+" "+SolrFieldName.xref.toString()+" "+SolrFieldName.pxref.toString()+" "+SolrFieldName.species.toString()+" "+SolrFieldName.detmethod.toString()+" "+SolrFieldName.type.toString()+" "+SolrFieldName.pbiorole.toString()
                     +" "+SolrFieldName.ptype.toString()+" "+SolrFieldName.ftype.toString()+" "+SolrFieldName.pmethod.toString()+" "+SolrFieldName.annot.toString());
         }
