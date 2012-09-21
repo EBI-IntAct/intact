@@ -63,6 +63,7 @@ public class BrowseController extends JpaBaseController {
     public static final String EXPRESSION_SEPERATOR = "+";
 
     private int maxSize = 200;
+    private int maxSizeRNAExpression = 125;
 
     private Set<String> uniprotAcs;
 
@@ -238,10 +239,23 @@ public class BrowseController extends JpaBaseController {
     private void initializeAllListsFromUniprotAcs() {
         if (log.isDebugEnabled()) log.debug("Browse uniprot ACs: "+uniprotAcs);
 
+        Set<String> uniprotAcsFormRNAExpression = createSubsetUniprotAcsForRNAExpression();
+
         this.interproIdentifierList = appendIdentifiers( uniprotAcs, INTERPRO_SEPERATOR);
         this.chromosomalLocationIdentifierList = appendIdentifiers( uniprotAcs, CHROMOSOME_SEPERATOR);
-        this.mRNAExpressionIdentifierList = appendIdentifiers( uniprotAcs, EXPRESSION_SEPERATOR);
+        this.mRNAExpressionIdentifierList = appendIdentifiers( uniprotAcsFormRNAExpression, EXPRESSION_SEPERATOR);
         this.reactomeIdentifierList =  uniprotAcs.toArray( new String[uniprotAcs.size()] );
+    }
+
+    private Set<String> createSubsetUniprotAcsForRNAExpression() {
+        Set<String> uniprotAcsFormRNAExpression = new HashSet<String>(maxSizeRNAExpression);
+        int numberProcessed = 0;
+        Iterator<String> uniprotAcsIterator = uniprotAcs.iterator();
+        while (numberProcessed < maxSizeRNAExpression && uniprotAcsIterator.hasNext()){
+            uniprotAcsFormRNAExpression.add(uniprotAcsIterator.next());
+            numberProcessed++;
+        }
+        return uniprotAcsFormRNAExpression;
     }
 
     private String[] buildFacetFields(String uniprotFieldNameA, String uniprotFieldNameB, int numberUniprotProcessed) {
