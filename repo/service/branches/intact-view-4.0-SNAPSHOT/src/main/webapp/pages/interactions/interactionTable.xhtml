@@ -108,11 +108,11 @@
     <f:facet name="header">
         <h:outputText value="#{messages['moleculeA.links']}"/>
     </f:facet>
-    <h:panelGroup rendered="#{binaryInteraction.interactorA != null}">
+    <h:panelGroup rendered="#{binaryInteraction.interactorA != null and not searchBean.results.sameThanPrevious}">
         <iv:interactorLinkLogos interactor="#{binaryInteraction.interactorA}"
                                 display="#{not searchBean.results.sameThanPrevious}"/>
     </h:panelGroup>
-    <h:panelGroup rendered="#{binaryInteraction.interactorA == null}">
+    <h:panelGroup rendered="#{binaryInteraction.interactorA == null and not searchBean.results.sameThanPrevious}">
         <h:outputText value="N/A"/>
     </h:panelGroup>
 </p:column>
@@ -132,11 +132,11 @@
     <f:facet name="header">
         <h:outputText value="#{messages['moleculeB.links']}"/>
     </f:facet>
-    <h:panelGroup rendered="#{binaryInteraction.interactorB != null}">
+    <h:panelGroup rendered="#{binaryInteraction.interactorB != null and not searchBean.results.sameThanPrevious}">
         <iv:interactorLinkLogos interactor="#{binaryInteraction.interactorB}"
                                 display="#{not searchBean.results.sameThanPrevious}"/>
     </h:panelGroup>
-    <h:panelGroup rendered="#{binaryInteraction.interactorB == null}">
+    <h:panelGroup rendered="#{binaryInteraction.interactorB == null and not searchBean.results.sameThanPrevious}">
         <h:outputText value="N/A"/>
     </h:panelGroup>
 </p:column>
