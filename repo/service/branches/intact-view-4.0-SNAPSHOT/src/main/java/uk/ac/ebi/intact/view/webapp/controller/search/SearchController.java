@@ -293,7 +293,7 @@ public class SearchController extends JpaBaseController {
         if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedInteractorResults){
             doInteractorsSearch();
         }
-        browseController.checkAndResumeBrowserInteractorListTasks(uniprotAcsFuture);
+        browseController.checkAndResumeBrowserInteractorListTasks(uniprotAcsFuture, userQuery.getSearchQuery());
     }
 
 
