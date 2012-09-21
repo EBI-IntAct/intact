@@ -238,10 +238,10 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
             final BinaryInteraction previousInteraction = getInteraction(getRowIndex() - 1);
             final BinaryInteraction currentInteraction = getInteraction(getRowIndex());
 
-            final String previousInteractorAName = MitabFunctions.getIntactIdentifierFromCrossReferences(previousInteraction.getInteractorA().getAlternativeIdentifiers());
-            final String previousInteractorBName = MitabFunctions.getIntactIdentifierFromCrossReferences(previousInteraction.getInteractorB().getAlternativeIdentifiers());
-            final String currentInteractorAName = MitabFunctions.getIntactIdentifierFromCrossReferences(currentInteraction.getInteractorA().getAlternativeIdentifiers());
-            final String currentInteractorBName = MitabFunctions.getIntactIdentifierFromCrossReferences(currentInteraction.getInteractorB().getAlternativeIdentifiers());
+            String previousInteractorAName = previousInteraction.getInteractorA() != null ? MitabFunctions.getIntactIdentifierFromCrossReferences(previousInteraction.getInteractorA().getAlternativeIdentifiers()) : null;
+            String previousInteractorBName = previousInteraction.getInteractorB() != null ? MitabFunctions.getIntactIdentifierFromCrossReferences(previousInteraction.getInteractorB().getAlternativeIdentifiers()) : null;
+            String currentInteractorAName = previousInteraction.getInteractorB() != null ? MitabFunctions.getIntactIdentifierFromCrossReferences(currentInteraction.getInteractorA().getAlternativeIdentifiers()) : null;
+            String currentInteractorBName = previousInteraction.getInteractorB() != null ? MitabFunctions.getIntactIdentifierFromCrossReferences(currentInteraction.getInteractorB().getAlternativeIdentifiers()) : null;
 
 
             return areEquals(previousInteractorAName, currentInteractorAName) &&
