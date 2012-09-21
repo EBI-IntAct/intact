@@ -319,6 +319,10 @@ public class BrowseController extends JpaBaseController {
         return maxSize;
     }
 
+    public int getMaxSizeRNAExpression() {
+        return maxSizeRNAExpression;
+    }
+
     public boolean hasLoadedUniprotAcs() {
         if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery)){
             return false;
