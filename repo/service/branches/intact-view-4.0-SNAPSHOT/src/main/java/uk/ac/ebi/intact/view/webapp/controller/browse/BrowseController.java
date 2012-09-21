@@ -109,16 +109,14 @@ public class BrowseController extends JpaBaseController {
 
     private void buildListOfIdentifiers() {
 
-        if (hasLoadedUniprotAcs()){
+        if (!hasLoadedUniprotAcs()){
             Callable<Set<String>> uniprotAcsRunnable = createBrowserInteractorListRunnable(userQuery.getSearchQuery(), getSolrSearcher(), userQuery.isFilterSpoke(), userQuery.isFilterNegative());
             Future<Set<String>> uniprotAcsFuture = executorService.submit(uniprotAcsRunnable);
 
             if (!searchController.hasLoadedCurrentQuery()){
                 searchController.doInteractorsSearch();
             }
-            checkAndResumeBrowserInteractorListTasks(uniprotAcsFuture);
-
-            this.currentQuery = userQuery.getSearchQuery();
+            checkAndResumeBrowserInteractorListTasks(uniprotAcsFuture, userQuery.getSearchQuery());
         }
     }
 
@@ -131,11 +129,12 @@ public class BrowseController extends JpaBaseController {
         };
     }
 
-    public void checkAndResumeBrowserInteractorListTasks(Future<Set<String>> uniprotAcsFuture) {
+    public void checkAndResumeBrowserInteractorListTasks(Future<Set<String>> uniprotAcsFuture, String query) {
 
         try {
             Set<String> uniprotAcs = uniprotAcsFuture.get();
             initializeAllLists(uniprotAcs);
+            this.currentQuery = query;
 
         } catch (InterruptedException e) {
             log.error("The intact browser search was interrupted, we cancel the task.", e);
@@ -211,7 +210,7 @@ public class BrowseController extends JpaBaseController {
                                 String uniprotkbPrefix= CvDatabase.UNIPROT+":";
                                 // only process uniprot ids
                                 if (count.getName().startsWith(uniprotkbPrefix)){
-                                    if (uniprotAcs.add(count.getName().substring(uniprotkbPrefix.length()+1))){
+                                    if (uniprotAcs.add(count.getName().substring(uniprotkbPrefix.length()))){
                                         numberUniprotProcessed++;
                                     }
                                 }
