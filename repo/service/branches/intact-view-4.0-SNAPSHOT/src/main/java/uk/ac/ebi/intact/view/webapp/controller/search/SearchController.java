@@ -275,9 +275,11 @@ public class SearchController extends JpaBaseController {
             }
         }
         else if (evt.getTab() != null && "browseTab".equals(evt.getTab().getId())){
-
-            if (!browseController.hasLoadedUniprotAcs()){
-                doBrowserSearch();
+            if (browseController == null){
+                this.browseController = (BrowseController) getBean("browseBean");
+            }
+            if (!browseController.hasLoadedUniprotAcs(getUserQuery())){
+                doBrowserSearch(getUserQuery());
             }
         }
         if (evt.getTab() != null && "listsTab".equals(evt.getTab().getId())) {
@@ -288,7 +290,7 @@ public class SearchController extends JpaBaseController {
         }
     }
 
-    public void doBrowserSearch() {
+    public void doBrowserSearch(UserQuery userQuery) {
         Callable<Set<String>> uniprotAcsRunnable = browseController.createBrowserInteractorListRunnable(getUserQuery().getSearchQuery(), browseController.getSolrSearcher(), userQuery.isFilterSpoke(), userQuery.isFilterNegative());
         Future<Set<String>> uniprotAcsFuture = executorService.submit(uniprotAcsRunnable);
 
@@ -314,7 +316,7 @@ public class SearchController extends JpaBaseController {
         }
 
         final OntologyInteractorTypeConfig config = typeConfig;
-        final SolrQuery solrQuery = userQuery.createSolrQuery();
+        final SolrQuery solrQuery = getUserQuery().createSolrQuery();
         final SolrServer solrServer = intactViewConfiguration.getInteractionSolrServer();
         final int pageSize = getUserQuery().getPageSize();
 
@@ -334,10 +336,10 @@ public class SearchController extends JpaBaseController {
 
         // loaded browse results
         hasLoadedInteractorResults = true;
-        if(this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery)){
+        if(this.currentQuery == null || !getUserQuery().getSearchQuery().equals(this.currentQuery)){
             hasLoadedSearchControllerResults = false;
         }
-        this.currentQuery = userQuery.getSearchQuery();
+        this.currentQuery = getUserQuery().getSearchQuery();
     }
 
     private Callable<InteractorSearchResultDataModel> createProteinSearchRunnable(final OntologyInteractorTypeConfig typeConfig, final SolrQuery solrQuery, final SolrServer solrServer, final int pageSize) {
@@ -652,7 +654,7 @@ public class SearchController extends JpaBaseController {
     }
 
     public boolean hasLoadedCurrentQuery() {
-        if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery)){
+        if (this.currentQuery == null || !getUserQuery().getSearchQuery().equals(this.currentQuery)){
             return false;
         }
         return true;
