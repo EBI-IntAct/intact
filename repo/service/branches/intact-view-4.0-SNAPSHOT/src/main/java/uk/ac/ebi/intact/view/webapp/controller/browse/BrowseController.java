@@ -108,7 +108,7 @@ public class BrowseController extends JpaBaseController {
             userQuery = (UserQuery) getBean("userQuery");
         }
         if (searchController == null){
-            searchController = (SearchController) getBean("searchController");
+            searchController = (SearchController) getBean("searchBean");
         }
         if (!FacesContext.getCurrentInstance().isPostback()) {
 
@@ -118,7 +118,7 @@ public class BrowseController extends JpaBaseController {
 
     private void buildListOfIdentifiers() {
 
-        if (!hasLoadedUniprotAcs()){
+        if (!hasLoadedUniprotAcs(userQuery)){
 
             Callable<Set<String>> uniprotAcsRunnable = createBrowserInteractorListRunnable(userQuery.getSearchQuery(), getSolrSearcher(), userQuery.isFilterSpoke(), userQuery.isFilterNegative());
             Future<Set<String>> uniprotAcsFuture = executorService.submit(uniprotAcsRunnable);
@@ -332,7 +332,8 @@ public class BrowseController extends JpaBaseController {
         return maxSizeRNAExpression;
     }
 
-    public boolean hasLoadedUniprotAcs() {
+    public boolean hasLoadedUniprotAcs(UserQuery userQuery) {
+
         if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery)){
             return false;
         }

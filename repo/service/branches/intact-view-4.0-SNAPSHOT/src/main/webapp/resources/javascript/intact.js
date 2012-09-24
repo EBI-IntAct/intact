@@ -27,7 +27,7 @@ function ia_submitToReactome(selectedIds) {
     reactomeForm.target='_blank';
 
     var inputQuery = ia_createHiddenInput('QUERY', ids);
-    var inputDb = ia_createHiddenInput('DB', 'test_reactome_42');
+    var inputDb = ia_createHiddenInput('DB', 'reactome_42');
     var inputSubmit = ia_createHiddenInput('SUBMIT', 'Paint!');
     reactomeForm.appendChild(inputQuery);
     reactomeForm.appendChild(inputDb);

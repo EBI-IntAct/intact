@@ -19,6 +19,14 @@
         </p:commandLink>
     </div>
 
+    <h2>Browse All (#{searchBean.interactorTotalResults})</h2>
+
+    <h:panelGroup style="text-align:left; vertical-align:top">
+
+        <p:commandLink style="text-align: center" value="By UniProt Taxonomy" action="/pages/browse/taxonomybrowser?faces-redirect=true&amp;includeViewParams=true" ajax="false"/>
+
+    </h:panelGroup>
+
     <h2>Proteins (#{searchBean.proteinTotalResults})</h2>
 
     <p:panel header="Numerous interactors available"
@@ -42,15 +50,6 @@
                 </td>
                 <td>
                     <p:commandLink value="List All" action="/pages/list/protein_list?faces-redirect=true&amp;includeViewParams=true" ajax="false"/>
-                </td>
-            </tr>
-
-            <tr>
-                <td style="text-align: center" width="15">
-
-                </td>
-                <td>
-                    <p:commandLink value="By UniProt Taxonomy" action="/pages/browse/taxonomybrowser?faces-redirect=true&amp;includeViewParams=true" ajax="false"/>
                 </td>
             </tr>
 
