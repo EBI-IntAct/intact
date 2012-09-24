@@ -45,7 +45,6 @@ public abstract class OntologyBrowserController extends BaseController {
 
     private static final Log log = LogFactory.getLog( OntologyBrowserController.class );
 
-    @Autowired
     private UserQuery userQuery;
 
     @Autowired
@@ -73,6 +72,8 @@ public abstract class OntologyBrowserController extends BaseController {
     }
 
     protected TreeNode createOntologyTreeModel(OntologyTerm rootTerm) {
+        userQuery = (UserQuery) getBean("userQuery");
+
         final SolrQuery query = userQuery.createSolrQuery();
         final String facetField = getFieldName();
 
@@ -98,19 +99,28 @@ public abstract class OntologyBrowserController extends BaseController {
     }
 
     public void onNodeSelect(NodeSelectEvent evt) {
-        if (searchController == null){
-            searchController = (SearchController) getBean("searchBean");
-        }
+        searchController = (SearchController) getBean("searchBean");
 
         final OntologyTermWrapper otw = (OntologyTermWrapper) evt.getTreeNode().getData();
 
-        userQuery.doAddFilterToQuery(getFieldName(), otw.getTerm().getId());
+        userQuery = (UserQuery) getBean("userQuery");
+
+        if (otw.isUseName()){
+            userQuery.doAddParamToQuery("AND", getFieldName(), otw.getTerm().getName());
+        }
+        else {
+            userQuery.doAddParamToQuery("AND", getFieldName(), otw.getTerm().getId());
+        }
+        // reset tree node
+        resetTreeNode();
 
         FacesContext.getCurrentInstance().getApplication().getNavigationHandler()
                 .handleNavigation(FacesContext.getCurrentInstance(), null, searchController.doBinarySearchAction());
     }
 
     public void doSelectCvTerm(NodeSelectEvent evt) {
+        userQuery = (UserQuery) getBean("userQuery");
+
         // update user query with selected term
         userQuery.doSelectCvTerm(evt);
         // reset tree node

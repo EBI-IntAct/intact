@@ -50,8 +50,6 @@ public class FilterPopulatorController extends SpringInitializedService{
     public static final String NOT_SPECIFIED_VALUE = "-";
     public static final String EXPANSION_SPOKE_VALUE = "MI:1060";
 
-    private List<String> datasets;
-
     private List<SelectItem> stoichiometrySelectItems;
     private List<SelectItem> negativeSelectItems;
     private List<SelectItem> parametersSelectItems;
@@ -68,7 +66,7 @@ public class FilterPopulatorController extends SpringInitializedService{
 
     @Override
     public synchronized void initialize(){
-        if (datasetSelectItems == null || datasets == null
+        if (datasetSelectItems == null
                 || stoichiometrySelectItems == null || negativeSelectItems == null
                 || sourceSelectItems == null || expansionSelectItems == null){
 
@@ -77,7 +75,6 @@ public class FilterPopulatorController extends SpringInitializedService{
             if (log.isDebugEnabled()) log.debug("\tPreloading datasets");
 
             datasetSelectItems = listDatasets();
-            datasets = getValues(datasetSelectItems);
 
             if (log.isDebugEnabled()) log.debug("\tPreloading sources");
 
@@ -101,7 +98,6 @@ public class FilterPopulatorController extends SpringInitializedService{
         if (log.isDebugEnabled()) log.debug("\tPreloading datasets");
 
         datasetSelectItems = listDatasets();
-        datasets = getValues(datasetSelectItems);
 
         if (log.isDebugEnabled()) log.debug("\tPreloading sources");
 
@@ -116,16 +112,6 @@ public class FilterPopulatorController extends SpringInitializedService{
         parametersSelectItems = listParametersSelectItems();
         if (log.isDebugEnabled()) log.debug("\tPreloading stoichiometry values");
         stoichiometrySelectItems = listStoichiometrySelectItems();
-    }
-
-    private List<String> getValues(Collection<SelectItem> selectItems) {
-        List<String> values = new ArrayList<String>();
-
-        for (SelectItem selectItem : selectItems) {
-            values.add((String)selectItem.getValue());
-        }
-
-        return values;
     }
 
     private List<SelectItem> listDatasets() {
@@ -208,10 +194,6 @@ public class FilterPopulatorController extends SpringInitializedService{
 
     public List<SelectItem> getSourceSelectItems() {
         return sourceSelectItems;
-    }
-
-    public List<String> getDatasets() {
-        return datasets;
     }
 
     public List<SelectItem> getStoichiometrySelectItems() {

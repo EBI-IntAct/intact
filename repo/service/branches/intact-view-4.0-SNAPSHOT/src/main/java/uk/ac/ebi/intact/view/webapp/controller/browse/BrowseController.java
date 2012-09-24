@@ -37,6 +37,8 @@ import uk.ac.ebi.intact.view.webapp.controller.search.SearchController;
 import uk.ac.ebi.intact.view.webapp.controller.search.UserQuery;
 
 import javax.annotation.PostConstruct;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ComponentSystemEvent;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -73,13 +75,11 @@ public class BrowseController extends JpaBaseController {
     private String mRNAExpressionIdentifierList;
     private String[] reactomeIdentifierList;
 
-    @Autowired
     private UserQuery userQuery;
     private IntactViewConfiguration intactViewConfiguration;
     private IntactSolrSearcher solrSearcher;
 
     private String currentQuery;
-    @Autowired
     private SearchController searchController;
     private ExecutorService executorService;
 
@@ -99,18 +99,27 @@ public class BrowseController extends JpaBaseController {
         }
     }
 
-    public String createListofIdentifiersAndBrowse() {
-        createListOfIdentifiers();
-        return "/pages/browse/browse?faces-redirect=true&includeViewParams=true";
-    }
-
     public void createListOfIdentifiers() {
         buildListOfIdentifiers();
+    }
+
+    public void searchOnLoad(ComponentSystemEvent evt) {
+        if (userQuery == null){
+            userQuery = (UserQuery) getBean("userQuery");
+        }
+        if (searchController == null){
+            searchController = (SearchController) getBean("searchController");
+        }
+        if (!FacesContext.getCurrentInstance().isPostback()) {
+
+            buildListOfIdentifiers();
+        }
     }
 
     private void buildListOfIdentifiers() {
 
         if (!hasLoadedUniprotAcs()){
+
             Callable<Set<String>> uniprotAcsRunnable = createBrowserInteractorListRunnable(userQuery.getSearchQuery(), getSolrSearcher(), userQuery.isFilterSpoke(), userQuery.isFilterNegative());
             Future<Set<String>> uniprotAcsFuture = executorService.submit(uniprotAcsRunnable);
 

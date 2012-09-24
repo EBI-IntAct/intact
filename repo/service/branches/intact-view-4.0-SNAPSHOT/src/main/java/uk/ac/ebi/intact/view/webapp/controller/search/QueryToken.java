@@ -34,13 +34,21 @@ public class QueryToken {
     }
 
     public QueryToken(String query, String field) {
-        this(query, field, BooleanOperand.AND);
+        this(query, field, BooleanOperand.AND, "AND");
     }
 
     public QueryToken(String query, String field, BooleanOperand operand) {
         this.query = query;
         this.field = field;
         this.operand = operand;
+        this.booleanString = this.operand.toString();
+    }
+
+    public QueryToken(String query, String field, BooleanOperand operand, String operandStr) {
+        this.query = query;
+        this.field = field;
+        this.operand = operand;
+        this.booleanString = operandStr;
     }
 
     public String getField() {
@@ -64,8 +72,14 @@ public class QueryToken {
     }
 
     public void setOperand(BooleanOperand operand) {
-        this.operand = operand;
-        this.booleanString = operand.toString();
+        if (operand != null){
+            this.operand = operand;
+            this.booleanString = operand.toString();
+        }
+        else {
+            this.operand = BooleanOperand.AND;
+            this.booleanString = "AND";
+        }
     }
 
     public boolean isNotQuery() {
@@ -81,8 +95,15 @@ public class QueryToken {
     }
 
     public void setOperandStr(String booleanStr) {
-        this.booleanString = booleanStr;
-        operand = BooleanOperand.valueOf(booleanStr);
+
+        if (booleanStr != null){
+            this.booleanString = booleanStr;
+            operand = BooleanOperand.valueOf(booleanStr);
+        }
+        else {
+            this.operand = BooleanOperand.AND;
+            this.booleanString = "AND";
+        }
     }
 
     public String toQuerySyntax() {
@@ -106,7 +127,7 @@ public class QueryToken {
             queryString.append(query).append("\"");
         }
         else {
-            surroundByQuotesIfNecessary(query, queryString);
+            escapeIfNecessary(query, queryString);
         }
         return queryString.toString();
     }
@@ -116,7 +137,7 @@ public class QueryToken {
         return toQuerySyntax();
     }
 
-    public void surroundByQuotesIfNecessary(String query, StringBuffer queryString) {
+    public void escapeIfNecessary(String query, StringBuffer queryString) {
 
         // range query, do nothing
         if (query.startsWith("[") && query.endsWith("]")){
@@ -132,21 +153,15 @@ public class QueryToken {
             // deal with wild search
             if (query.contains("*")){
                 queryString.append(query.toLowerCase()
-                        .replaceAll(" ", "\\ ")
-                        .replaceAll(":", "\\:")
+                        .replaceAll(" ", "\\\\ ")
+                        .replaceAll(":", "\\\\:")
                         .replaceAll("\\(", "\\\\(")
                         .replaceAll("\\)", "\\\\)")
-                        .replaceAll("-", "\\-")
+                        .replaceAll("-", "\\\\-")
                         .replaceAll("\\+", "\\\\+"));
             }
             else {
-                queryString.append(query
-                        .replaceAll(" ", "\\ ")
-                        .replaceAll(":", "\\:")
-                        .replaceAll("\\(", "\\\\(")
-                        .replaceAll("\\)", "\\\\)")
-                        .replaceAll("-", "\\-")
-                        .replaceAll("\\+", "\\\\+"));
+                queryString.append("\""+query+"\"");
             }
         }
         else if (query.contains("*")){

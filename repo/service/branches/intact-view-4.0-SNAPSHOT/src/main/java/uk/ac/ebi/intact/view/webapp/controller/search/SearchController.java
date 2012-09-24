@@ -98,9 +98,8 @@ public class SearchController extends JpaBaseController {
 
     private String acPrefix;
 
-    @Autowired
     private BrowseController browseController;
-    @Autowired
+
     private UserQuery userQuery;
 
     public SearchController() {
@@ -126,9 +125,14 @@ public class SearchController extends JpaBaseController {
     }
 
     public void searchOnLoad(ComponentSystemEvent evt) {
+        if (this.browseController == null){
+            this.browseController = (BrowseController) getBean("browseBean");
+        }
         if (!FacesContext.getCurrentInstance().isPostback()) {
+
             UserQuery userQuery = getUserQuery();
             if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedSearchControllerResults){
+                userQuery.clearFilters();
                 doBinarySearch(userQuery.createSolrQuery());
             }
         }
@@ -136,11 +140,12 @@ public class SearchController extends JpaBaseController {
 
     public String doBinarySearchAction() {
         UserQuery userQuery = getUserQuery();
+
         SolrQuery solrQuery = userQuery.createSolrQuery();
 
         doBinarySearch(solrQuery);
 
-        return "/pages/interactions/interactions.xhtml?faces-redirect=true&includeViewParams=true";
+        return "/pages/interactions/interactions.xhtml?faces-redirect=true";
     }
 
     private void resetDetailControllers() {
@@ -260,30 +265,27 @@ public class SearchController extends JpaBaseController {
         };
     }
 
-    public String doClearSearchAndGoHome() {
-        getUserQuery().reset();
-
-        return "/main?forces-redirect=true";
-    }
-
     public void onTabChanged(TabChangeEvent evt) {
         // load interactions if necessary
         if (evt.getTab() != null && "interactionsTab".equals(evt.getTab().getId())){
             UserQuery userQuery = getUserQuery();
             if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedSearchControllerResults){
+                userQuery.clearFilters();
                 doBinarySearch(userQuery.createSolrQuery());
             }
         }
-        else if ("browseTab".equals(evt.getTab().getId())){
+        else if (evt.getTab() != null && "browseTab".equals(evt.getTab().getId())){
 
             if (!browseController.hasLoadedUniprotAcs()){
                 doBrowserSearch();
             }
         }
-        /*if (evt.getTab() != null && "listsTab".equals(evt.getTab().getId())) {
-            doInteractorsSearch();
+        if (evt.getTab() != null && "listsTab".equals(evt.getTab().getId())) {
 
-        }*/
+            if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedInteractorResults){
+                doInteractorsSearch();
+            }
+        }
     }
 
     public void doBrowserSearch() {
@@ -639,6 +641,9 @@ public class SearchController extends JpaBaseController {
     }
 
     private UserQuery getUserQuery() {
+        if (this.userQuery == null){
+           this.userQuery = (UserQuery) getBean("userQuery");
+        }
         return userQuery;
     }
 

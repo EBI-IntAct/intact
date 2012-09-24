@@ -29,13 +29,12 @@
                          disabled="#{userQuery.showNewFieldPanel}"/>
             &#160;
             <p:commandButton id="quickSearchBtn" ajax="false"
-                             onclick="queryTxt = document.getElementById('queryTxt'); _gaq.push(['_trackEvent', 'SearchPanel', 'Search', queryTxt.value])"
+                             onclick="queryTxt = document.getElementById(':intactForm:queryTxt'); _gaq.push(['_trackEvent', 'SearchPanel', 'Search', queryTxt.value])"
                              value="Search"
                              disabled="#{userQuery.showNewFieldPanel}"
                              action="#{searchBean.doBinarySearchAction}"
                              onstart="statusDialog.show()"
                              oncomplete="statusDialog.hide()">
-                <f:setPropertyActionListener value="2" target="#{contextController.activeTabIndex}"/>
             </p:commandButton>
             &#160;
             <p:commandButton id="clearSearchBtn" value="Clear"
@@ -44,7 +43,7 @@
                              disabled="#{userQuery.showNewFieldPanel}"
                              onstart="statusDialog.show()"
                              oncomplete="statusDialog.hide()"
-                             update="searchPanel"
+                             update=":intactForm:searchPanel"
                              process="@this"
                              partialSubmit="true"/>
             &#160;
@@ -52,7 +51,7 @@
                            style="font-weight:bold"
                            actionListener="#{userQuery.doShowAddFieldPanel}"
                            disabled="#{userQuery.showNewFieldPanel}"
-                           update="searchPanelDetails,searchPanel"
+                           update=":intactForm:searchPanelDetails,:intactForm:searchPanel"
                            onstart="statusDialog.show()"
                            oncomplete="statusDialog.hide()"
                            partialSubmit="true"
@@ -81,7 +80,7 @@
                 &#160;
                 <h:outputText value="Field: "/>
                 <h:selectOneMenu id="newQueryField" title="Field: " value="#{userQuery.newQueryToken.field}">
-                    <p:ajax event="change" update="newQueryPanel" process="@this" onstart="statusDialog.show()"
+                    <p:ajax event="change" update=":intactForm:newQueryPanel" process="@this" onstart="statusDialog.show()"
                             oncomplete="statusDialog.hide()"/>
                     <f:selectItems value="#{userQuery.searchFieldSelectItems}"/>
                 </h:selectOneMenu>
@@ -112,7 +111,8 @@
                                     selectionMode="single" selection="#{userQuery.selectedSearchTerm}"
                                     dynamic="true" cache="true"
                                     style="width:50%;">
-                                <p:ajax event="select" listener="#{userQuery.searchFieldsMap[userQuery.newQueryToken.field].browser.doSelectCvTerm}" oncomplete="browseCvDialog.hide()" update=":intactForm:newQuerytxt" />
+                                <p:ajax event="select" listener="#{userQuery.searchFieldsMap[userQuery.newQueryToken.field].browser.doSelectCvTerm}"
+                                        oncomplete="browseCvDialog.hide(); statusDialog.hide()" update=":intactForm:newQueryPanel" onstart="statusDialog.show()" process="@this"/>
 
                                 <p:treeNode id="ontologyTreeNode">
                                     <h:outputText id="termTxt" value="#{otw.term.name} - (#{otw.interactionCount} interactions)"/>
@@ -136,14 +136,12 @@
                                  action="#{searchBean.doBinarySearchAction}"
                                  onstart="statusDialog.show()"
                                  oncomplete="statusDialog.hide()"
-                                 ajax="false">
-                    <f:setPropertyActionListener value="2" target="#{contextController.activeTabIndex}"/>
-                </p:commandButton>
+                                 ajax="false"/>
                 &#160;
                 <p:commandButton id="cancelFieldBtn" value="Cancel"
                                  process="@this"
                                  actionListener="#{userQuery.doCancelAddField}"
-                                 update="searchPanel,searchPanelDetails"
+                                 update=":intactForm:searchPanel,:intactForm:searchPanelDetails"
                                  onstart="statusDialog.show()"
                                  oncomplete="statusDialog.hide()"
                                  partialSubmit="true"/>

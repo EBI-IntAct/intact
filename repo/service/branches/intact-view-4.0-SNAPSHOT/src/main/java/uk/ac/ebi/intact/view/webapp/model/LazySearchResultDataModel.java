@@ -156,7 +156,11 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
         if (result == null) {
             load(0,0, null, SortOrder.ASCENDING, null);
         }
-        return Long.valueOf(result.getNumberResults()).intValue();
+        if (result != null){
+            return Long.valueOf(result.getNumberResults()).intValue();
+        }
+
+        return 0;
     }
 
     private void flipIfNecessary(BinaryInteraction<Interactor> binaryInteraction) {
