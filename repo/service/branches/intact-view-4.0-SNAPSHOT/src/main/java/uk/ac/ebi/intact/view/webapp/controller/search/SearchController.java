@@ -284,7 +284,7 @@ public class SearchController extends JpaBaseController {
         }
         if (evt.getTab() != null && "listsTab".equals(evt.getTab().getId())) {
 
-            if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedInteractorResults){
+            if (this.currentQuery == null || !getUserQuery().getSearchQuery().equals(this.currentQuery) || !hasLoadedInteractorResults){
                 doInteractorsSearch();
             }
         }
