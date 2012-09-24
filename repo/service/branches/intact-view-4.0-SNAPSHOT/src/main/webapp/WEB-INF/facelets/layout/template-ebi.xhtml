@@ -109,12 +109,12 @@
 
         <h:outputScript library="javascript" name="intact.js"/>
         <h:outputScript library="javascript" name="twitter/jquery.tweet.js"/>
+        <ui:insert name="dialogs"/>
 
         <h:form id="intactForm" prependId="false">
 
             <!-- Contents -->
             <div class="contents" id="contents">
-                <ui:insert name="dialogs"/>
 
                 <table class="contentspane" id="contentspane" summary="The main content pane of the page"
                        style="width: 100%">

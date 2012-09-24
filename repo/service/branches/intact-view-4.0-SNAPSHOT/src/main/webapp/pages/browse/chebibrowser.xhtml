@@ -27,7 +27,7 @@
                 selectionMode="single" selection="#{chebiBrowser.selectedNode}"
                 style="width:50%;">
 
-            <p:ajax event="select" listener="#{chebiBrowser.onNodeSelect}" />
+            <p:ajax event="select" listener="#{chebiBrowser.onNodeSelect}" process="@this" onstart="statusDialog.show()" oncomplete="statusDialog.hide()"/>
 
             <p:treeNode>
                 <h:outputText value="#{otw.term.name} - (#{otw.interactionCount} interactions)"/>

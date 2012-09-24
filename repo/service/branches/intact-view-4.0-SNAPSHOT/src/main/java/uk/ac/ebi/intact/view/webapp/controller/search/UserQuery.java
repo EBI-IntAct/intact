@@ -16,7 +16,6 @@
 package uk.ac.ebi.intact.view.webapp.controller.search;
 
 import com.google.common.collect.Maps;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
@@ -24,7 +23,6 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.model.TreeNode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import psidev.psi.mi.calimocho.solr.converter.SolrFieldName;
@@ -38,7 +36,6 @@ import uk.ac.ebi.intact.view.webapp.util.JsfUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -68,26 +65,13 @@ public class UserQuery extends BaseController {
     @Autowired
     private IntactViewConfiguration intactViewConfiguration;
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
     private String searchQuery = STAR_QUERY;
     private String ontologySearchQuery;
     private String urlFriendlyQuery;
 
     private InteractionOntologyTerm ontologyTerm;
 
-    private List<QueryToken> queryTokenList;
-    private List<String> queryFilterList;
-
     private Map<String,String> longQueriesMap;
-
-    private String[] datasets;
-    private String[] sources;
-    private String[] expansions;
-
-    private String[] goTerms;
-    private String[] chebiTerms;
 
     private Map<String, String> termMap;
 
@@ -122,9 +106,7 @@ public class UserQuery extends BaseController {
     private boolean isOntologyQuery=false;
 
     public UserQuery() {
-        this.queryTokenList = new ArrayList<QueryToken>();
         this.longQueriesMap = new HashMap<String, String>();
-        this.queryFilterList = new ArrayList<String>();
         termMap = Maps.newHashMap();
     }
 
@@ -141,21 +123,16 @@ public class UserQuery extends BaseController {
         this.userSortColumn = DEFAULT_SORT_COLUMN;
         this.userSortOrder = DEFAULT_SORT_ORDER;
         this.selectedSearchTerm = null;
+        this.newQueryToken = new QueryToken("");
 
         clearFilters();
     }
 
     public void clearFilters() {
-        datasets = new String[0];
-        sources = new String[0];
-        expansions = new String[0];
-        chebiTerms = new String[0];
-        goTerms = new String[0];
         termMap.clear();
-        queryTokenList.clear();
-        queryFilterList.clear();
-
-        newQueryToken = null;
+        isOntologyQuery=false;
+        filterNegative=false;
+        filterSpoke=false;
     }
 
     private void initSearchFields() {
@@ -205,10 +182,8 @@ public class UserQuery extends BaseController {
         for (SearchField field : searchFields) {
             searchFieldsMap.put(field.getName(), field);
         }
-    }
 
-    public void clearSearchFilters(ActionEvent evt) {
-        clearFilters();
+        this.newQueryToken = new QueryToken("");
     }
 
     public SolrQuery createSolrQuery( ) {
@@ -287,19 +262,6 @@ public class UserQuery extends BaseController {
         }
     }
 
-    public String getDisplayQuery() {
-        String query = "";
-
-        if ( STAR_QUERY.equals(query)) {
-            query = "*";
-        }
-
-        if ( termMap.containsKey( query ) ) {
-            query = query + " (" + termMap.get( query ) + ")";
-        }
-        return query;
-    }
-
     public void doShowAddFieldPanel(ActionEvent evt) {
         showAddFieldsPanel();
 
@@ -311,37 +273,23 @@ public class UserQuery extends BaseController {
     }
 
     public void doAddFieldToQuery(QueryToken queryToken) {
+        String query = searchQuery;
 
         if (!isWildcardQuery(queryToken.getQuery())) {
             // the new field is the new query
             if (isWildcardQuery(searchQuery)) {
                 final boolean excludeOperand = true;
-                searchQuery = queryToken.toQuerySyntax(excludeOperand);
+                query = queryToken.toQuerySyntax(excludeOperand);
             }
             // add the new field in the query
             else {
-                searchQuery =  surroundByBraces(searchQuery) + " " + queryToken.toQuerySyntax();
+                query =  surroundByBraces(query) + " " + queryToken.toQuerySyntax();
             }
         }
 
-        setSearchQuery(searchQuery);
+        setSearchQuery(query);
 
         hideAddFieldsPanel();
-    }
-
-    public void doAddTermToQuery(ActionEvent evt) {
-        Map<String, String> requestParamsMap = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-
-        String operandStr = requestParamsMap.get("token_operand");
-        BooleanOperand operand = BooleanOperand.valueOf(operandStr);
-        boolean not = requestParamsMap.containsKey("token_not");
-        String query = requestParamsMap.get("token_query");
-        String field = requestParamsMap.get("token_field");
-
-        QueryToken token = new QueryToken(query, field, operand);
-        token.setNotQuery(not);
-
-        doAddFieldToQuery(token);
     }
 
     public boolean isWildcardQuery() {
@@ -350,19 +298,6 @@ public class UserQuery extends BaseController {
 
     private boolean isWildcardQuery(String query) {
         return (query == null || query.trim().length() == 0 || "*".equals(query) || "*:*".equals(query));
-    }
-
-    private String surroundByBracesIfNecessary(String query) {
-        if( query.matches( "\\(.*\\)" ) ) {
-            return query;
-        }
-
-        // searching for space should be enough as it covers all 3 other cases, just left them for clarity sake.
-        if  (query.contains(" ") || query.contains(" AND ") || query.contains(" OR ") || query.contains(" +")) {
-            query = "("+query+")";
-        }
-
-        return query;
     }
 
     private String surroundByBraces(String query) {
@@ -375,10 +310,13 @@ public class UserQuery extends BaseController {
 
     public void doCancelAddField(ActionEvent evt) {
         hideAddFieldsPanel();
+        this.newQueryToken = new QueryToken("");
     }
 
     public void doClearSearchField(ActionEvent evt) {
+        clearFilters();
         setSearchQuery("");
+        this.newQueryToken = new QueryToken("");
     }
 
     private void showAddFieldsPanel() {
@@ -386,7 +324,6 @@ public class UserQuery extends BaseController {
     }
 
     private void hideAddFieldsPanel() {
-        newQueryToken = null;
         showNewFieldPanel = false;
     }
 
@@ -456,52 +393,6 @@ public class UserQuery extends BaseController {
         return sb.toString();
     }
 
-    public boolean isUsingFilters() {
-        final String[] filterQueries = createSolrQuery( ).getFilterQueries();
-        return (filterQueries != null && filterQueries.length > 0);
-    }
-
-    public void addGoTerm(ActionEvent evt) {
-        String param = JsfUtils.getFirstParamValue(evt);
-        String termName = (String)JsfUtils.getParameterValue( TERM_NAME_PARAM, evt);
-        goTerms = (String[])ArrayUtils.add(goTerms, param);
-        termMap.put( param,termName );
-
-        addToTokenList(FieldNames.DB_GO, termName);
-    }
-
-    public void addChebiTerm(ActionEvent evt) {
-        String param = JsfUtils.getFirstParamValue(evt);
-        String termName = (String)JsfUtils.getParameterValue( TERM_NAME_PARAM, evt);
-        chebiTerms = (String[]) ArrayUtils.add(chebiTerms, param);
-        termMap.put( param,termName );
-
-        addToTokenList(FieldNames.DB_CHEBI, termName);
-    }
-
-    public void doAddParamTermToQuery(ActionEvent evt) {
-        String operand = (String)JsfUtils.getParameterValue( "operand", evt);
-        String field = (String)JsfUtils.getParameterValue( "field", evt);
-        String query = (String)JsfUtils.getParameterValue( "queryValue", evt);
-
-        //termMap.put( param,termName );
-
-        doAddParamToQuery(operand, field, query);
-    }
-
-    public void doAddParamToQuery(String operand, String field, String query) {
-        doAddFieldToQuery(new QueryToken(query, field, BooleanOperand.valueOf(operand)));
-    }
-
-    public void doAddFilterToQuery(String field, String query) {
-        String filterQuery = field+":\""+query+"\"";
-        if (!this.queryFilterList.contains(filterQuery)){
-            this.queryFilterList.add(filterQuery);
-        }
-
-        hideAddFieldsPanel();
-    }
-
     public void doAddParamOntologyTermToQuery(ActionEvent evt) {
         String term = (String)JsfUtils.getParameterValue( "term", evt);
 
@@ -509,29 +400,8 @@ public class UserQuery extends BaseController {
         prepareFromOntologySearch(evt);
     }
 
-    public Collection<String> getDatasetsToInclude() {
-        if (!containsNotSpecified(datasets)) {
-            return Arrays.asList(datasets);
-        }
-        return Collections.EMPTY_LIST;
-    }
-
-    public boolean isCurrentOntologyQuery() {
-        return (searchQuery == null && ontologySearchQuery != null);
-    }
-
-    public void onOntologySearchCheckboxChanged(ValueChangeEvent evt) {
-        if (Boolean.FALSE.equals(evt.getNewValue())) {
-            ontologySearchQuery = null;
-        }
-    }
-
-    public void doSelectAllDatasets(ActionEvent evt) {
-        setDatasets(filterPopulator.getDatasets().toArray(new String[filterPopulator.getDatasets().size()]));
-    }
-
-    public void doUnselectDatasets(ActionEvent evt) {
-        datasets = new String[0];
+    public void doAddParamToQuery(String operand, String field, String query) {
+        doAddFieldToQuery(new QueryToken(query, field, BooleanOperand.valueOf(operand), operand));
     }
 
     public void doSelectCvTerm(NodeSelectEvent evt) {
@@ -545,25 +415,9 @@ public class UserQuery extends BaseController {
         }
     }
 
-    private void addToTokenList(String fieldName, String value) {
-        QueryToken token = new QueryToken(value, fieldName);
-
-        if (!queryTokenList.contains(token)) {
-            queryTokenList.add(token);
-        }
-    }
-
-    private void addToTokenList(String fieldName, String[] values) {
-        for (String value : values) {
-            addToTokenList(fieldName, value);
-        }
-    }
-
     public String getSearchQuery() {
         return searchQuery;
     }
-
-
 
     public void setSearchQuery(String searchQuery) {
 
@@ -615,47 +469,6 @@ public class UserQuery extends BaseController {
         this.ontologySearchQuery = ontologySearchQuery;
     }
 
-    public String[] getSources() {
-        return sources;
-    }
-
-    public void setSources(String[] sources) {
-        this.sources = sources;
-    }
-
-    public String[] getDatasets() {
-        return datasets;
-    }
-
-    public void setDatasets(String[] datasets) {
-        this.datasets = datasets;
-
-        //addToTokenList(FieldNames.DATASET, datasets);
-    }
-
-    public String[] getExpansions() {
-        return expansions;
-    }
-
-    public void setExpansions(String[] expansions) {
-        this.expansions = expansions;
-
-        //addToTokenList(FieldNames.DATASET, datasets);
-    }
-
-    public static boolean containsNotSpecified(String[] values) {
-        for (String value : values) {
-            if (isNotSpecified(value)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean isNotSpecified(String value) {
-        return FilterPopulatorController.NOT_SPECIFIED_VALUE.equals(value);
-    }
-
     public String getUserSortColumn() {
         return userSortColumn;
     }
@@ -678,44 +491,6 @@ public class UserQuery extends BaseController {
 
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
-    }
-
-    public String[] getGoTerms() {
-        return goTerms;
-    }
-
-    public void setGoTerms(String[] goTerms) {
-        this.goTerms = goTerms;
-    }
-
-    public String[] getChebiTerms() {
-        return chebiTerms;
-    }
-
-    public void setChebiTerms(String[] chebiTerms) {
-        this.chebiTerms = chebiTerms;
-    }
-
-    public List<SelectItem> getGoTermsSelectItems() {
-        return createSelectItems(goTerms);
-    }
-
-    public List<SelectItem> getChebiTermsSelectItems() {
-        return createSelectItems(chebiTerms);
-    }
-
-    private List<SelectItem> createSelectItems(String[] values) {
-        List<SelectItem> selectItems = new ArrayList<SelectItem>(values.length);
-
-        for ( String term : values ) {
-            if ( termMap.containsKey( term ) ) {
-                selectItems.add( new SelectItem( term, term + " (" + termMap.get( term ) + ")" ) );
-            } else {
-                selectItems.add( new SelectItem( term ) );
-            }
-        }
-
-        return selectItems;
     }
 
     public void setUpQueryParameters(ActionEvent event) {
@@ -745,22 +520,6 @@ public class UserQuery extends BaseController {
 
     public List<SelectItem> getSearchFieldSelectItems() {
         return searchFieldSelectItems;
-    }
-
-    public List<QueryToken> getQueryTokenList() {
-        return queryTokenList;
-    }
-
-    public List<String> getQueryFilterList() {
-        return queryFilterList;
-    }
-
-    public void setQueryFilterList(List<String> queryFilterList) {
-        this.queryFilterList = queryFilterList;
-    }
-
-    public void setQueryTokenList(List<QueryToken> queryTokenList) {
-        this.queryTokenList = queryTokenList;
     }
 
     public boolean isShowNewFieldPanel() {

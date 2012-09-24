@@ -30,7 +30,7 @@
         <dataexchange.version>2.1.5-SNAPSHOT</dataexchange.version>
         <spring.version>3.1.2.RELEASE</spring.version>
 
-        <debug>false</debug>
+        <debug>true</debug>
         <projectStage>Development</projectStage>
 
         <jetty.port>9095</jetty.port>
