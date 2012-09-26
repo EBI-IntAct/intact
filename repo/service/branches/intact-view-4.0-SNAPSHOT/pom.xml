@@ -27,7 +27,7 @@
 
     <properties>
         <core.version>2.6.1-SNAPSHOT</core.version>
-        <dataexchange.version>2.1.5-SNAPSHOT</dataexchange.version>
+        <dataexchange.version>2.1.6-SNAPSHOT</dataexchange.version>
         <spring.version>3.1.2.RELEASE</spring.version>
 
         <debug>true</debug>
@@ -488,7 +488,7 @@
 
         <dependency>
             <groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>
-            <artifactId>intact-solr</artifactId>
+            <artifactId>intact-solr-core</artifactId>
             <version>${dataexchange.version}</version>
             <exclusions>
                 <exclusion>
@@ -518,7 +518,7 @@
         <dependency>
             <groupId>psidev.psi.mi</groupId>
             <artifactId>psi25-xml-rdf</artifactId>
-            <version>1.8.1-SNAPSHOT</version>
+            <version>1.8.2-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>woodstox</groupId>
@@ -529,7 +529,7 @@
         <dependency>
             <groupId>psidev.psi.mi</groupId>
             <artifactId>psimitab</artifactId>
-            <version>1.8.1-SNAPSHOT</version>
+            <version>1.8.2-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -815,12 +815,6 @@
         </dependency>
 
         <!-- Tests -->
-        <dependency>
-            <groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>
-            <artifactId>intact-psimitab-converters</artifactId>
-            <version>2.1.5-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

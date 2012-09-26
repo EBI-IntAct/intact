@@ -66,6 +66,7 @@ public class SearchController extends JpaBaseController {
     private int nucleicAcidTotalResults;
 
     private String currentQuery;
+    private String selectedInteractor;
 
     private boolean hasLoadedSearchControllerResults=false;
     private boolean hasLoadedInteractorResults=false;
@@ -132,7 +133,7 @@ public class SearchController extends JpaBaseController {
 
             UserQuery userQuery = getUserQuery();
             if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedSearchControllerResults){
-                userQuery.clearFilters();
+                userQuery.clearInteractionFilters();
                 doBinarySearch(userQuery.createSolrQuery());
             }
         }
@@ -140,10 +141,28 @@ public class SearchController extends JpaBaseController {
 
     public String doBinarySearchAction() {
         UserQuery userQuery = getUserQuery();
+        if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedSearchControllerResults){
+            userQuery.clearInteractionFilters();
+        }
 
         SolrQuery solrQuery = userQuery.createSolrQuery();
 
         doBinarySearch(solrQuery);
+
+        return "/pages/interactions/interactions.xhtml?faces-redirect=true";
+    }
+
+    public String doBinarySearchWithInteractorFilterAction() {
+        if (selectedInteractor != null){
+            UserQuery userQuery = getUserQuery();
+            userQuery.clearFilters();
+
+            userQuery.doAddFieldToQuery(new QueryToken(this.selectedInteractor, FieldNames.ID));
+
+            SolrQuery solrQuery = userQuery.createSolrQuery();
+
+            doBinarySearch(solrQuery);
+        }
 
         return "/pages/interactions/interactions.xhtml?faces-redirect=true";
     }
@@ -270,7 +289,7 @@ public class SearchController extends JpaBaseController {
         if (evt.getTab() != null && "interactionsTab".equals(evt.getTab().getId())){
             UserQuery userQuery = getUserQuery();
             if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedSearchControllerResults){
-                userQuery.clearFilters();
+                userQuery.clearInteractionFilters();
                 doBinarySearch(userQuery.createSolrQuery());
             }
         }
@@ -377,79 +396,77 @@ public class SearchController extends JpaBaseController {
 
     private void checkAndResumeInteractorTasks(Future<InteractorSearchResultDataModel> proteinFuture, Future<InteractorSearchResultDataModel> compoundFuture,
                                                Future<InteractorSearchResultDataModel> nucleicAcidFuture, Future<InteractorSearchResultDataModel> geneFuture) {
+        if (proteinFuture != null){
+            try {
+                this.proteinResults = proteinFuture.get();
+                this.proteinTotalResults = proteinResults.getRowCount();
 
-        try {
-            this.proteinResults = proteinFuture.get();
-            this.proteinTotalResults = proteinResults.getRowCount();
-
-        } catch (InterruptedException e) {
-            log.error("The intact protein search was interrupted, we cancel the task.", e);
-            if (!proteinFuture.isCancelled()){
-                proteinFuture.cancel(true);
-            }
-        } catch (ExecutionException e) {
-            log.error("The intact protein search could not be executed, we cancel the task.", e);
-            if (!proteinFuture.isCancelled()){
-                proteinFuture.cancel(true);
-            }
-        }
-
-        try {
-            this.smallMoleculeResults = compoundFuture.get();
-            this.smallMoleculeTotalResults = smallMoleculeResults.getRowCount();
-
-        } catch (InterruptedException e) {
-            log.error("The intact compound search was interrupted, we cancel the task.", e);
-            if (!compoundFuture.isCancelled()){
-                compoundFuture.cancel(true);
-            }
-        } catch (ExecutionException e) {
-            log.error("The intact compound search could not be executed, we cancel the task.", e);
-            if (!compoundFuture.isCancelled()){
-                compoundFuture.cancel(true);
+            } catch (InterruptedException e) {
+                log.error("The intact protein search was interrupted, we cancel the task.", e);
+                if (!proteinFuture.isCancelled()){
+                    proteinFuture.cancel(true);
+                }
+            } catch (ExecutionException e) {
+                log.error("The intact protein search could not be executed, we cancel the task.", e);
+                if (!proteinFuture.isCancelled()){
+                    proteinFuture.cancel(true);
+                }
             }
         }
 
-        try {
-            this.nucleicAcidResults = nucleicAcidFuture.get();
-            this.nucleicAcidTotalResults = nucleicAcidResults.getRowCount();
+        if (compoundFuture != null){
+            try {
+                this.smallMoleculeResults = compoundFuture.get();
+                this.smallMoleculeTotalResults = smallMoleculeResults.getRowCount();
 
-        } catch (InterruptedException e) {
-            log.error("The intact nucleic acid search was interrupted, we cancel the task.", e);
-            if (!nucleicAcidFuture.isCancelled()){
-                nucleicAcidFuture.cancel(true);
+            } catch (InterruptedException e) {
+                log.error("The intact compound search was interrupted, we cancel the task.", e);
+                if (!compoundFuture.isCancelled()){
+                    compoundFuture.cancel(true);
+                }
+            } catch (ExecutionException e) {
+                log.error("The intact compound search could not be executed, we cancel the task.", e);
+                if (!compoundFuture.isCancelled()){
+                    compoundFuture.cancel(true);
+                }
             }
-        } catch (ExecutionException e) {
-            log.error("The intact nucleic acid search could not be executed, we cancel the task.", e);
-            if (!nucleicAcidFuture.isCancelled()){
-                nucleicAcidFuture.cancel(true);
+        }
+
+        if (nucleicAcidFuture != null){
+            try {
+                this.nucleicAcidResults = nucleicAcidFuture.get();
+                this.nucleicAcidTotalResults = nucleicAcidResults.getRowCount();
+
+            } catch (InterruptedException e) {
+                log.error("The intact nucleic acid search was interrupted, we cancel the task.", e);
+                if (!nucleicAcidFuture.isCancelled()){
+                    nucleicAcidFuture.cancel(true);
+                }
+            } catch (ExecutionException e) {
+                log.error("The intact nucleic acid search could not be executed, we cancel the task.", e);
+                if (!nucleicAcidFuture.isCancelled()){
+                    nucleicAcidFuture.cancel(true);
+                }
             }
         }
 
-        try {
-            this.geneResults = geneFuture.get();
-            this.geneTotalResults = geneResults.getRowCount();
+        if (geneFuture != null){
+            try {
+                this.geneResults = geneFuture.get();
+                this.geneTotalResults = geneResults.getRowCount();
 
-        } catch (InterruptedException e) {
-            log.error("The intact gene interactor was interrupted, we cancel the task.", e);
-            if (!nucleicAcidFuture.isCancelled()){
-                nucleicAcidFuture.cancel(true);
-            }
-        } catch (ExecutionException e) {
-            log.error("The intact gene interactor could not be executed, we cancel the task.", e);
-            if (!nucleicAcidFuture.isCancelled()){
-                nucleicAcidFuture.cancel(true);
+            } catch (InterruptedException e) {
+                log.error("The intact gene interactor was interrupted, we cancel the task.", e);
+                if (!nucleicAcidFuture.isCancelled()){
+                    nucleicAcidFuture.cancel(true);
+                }
+            } catch (ExecutionException e) {
+                log.error("The intact gene interactor could not be executed, we cancel the task.", e);
+                if (!nucleicAcidFuture.isCancelled()){
+                    nucleicAcidFuture.cancel(true);
+                }
             }
         }
-    }
-
-    public InteractorSearchResultDataModel doInteractorSearch(String interactorTypeMi) {
-        final SolrQuery solrQuery = getUserQuery().createSolrQuery();
-        final String [] interactorTypeMiArray = new String[] {interactorTypeMi};
-        final SolrServer solrServer = intactViewConfiguration.getInteractionSolrServer();
-        final int pageSize = getUserQuery().getPageSize();
-
-        return doInteractorSearch(interactorTypeMiArray, solrQuery, solrServer, pageSize);
     }
 
     public InteractorSearchResultDataModel doInteractorSearch(final String[] interactorTypeMis, final SolrQuery solrQuery, final SolrServer solrServer, final int pageSize) {
@@ -488,7 +505,7 @@ public class SearchController extends JpaBaseController {
         }
 
         StringBuilder sb = new StringBuilder( selected.size() * 10 );
-        sb.append("identifier:(");
+        sb.append(FieldNames.ID).append(":(");
 
         for (Iterator<InteractorWrapper> iterator = selected.iterator(); iterator.hasNext();) {
             InteractorWrapper interactorWrapper = iterator.next();
@@ -496,7 +513,7 @@ public class SearchController extends JpaBaseController {
             sb.append(interactorWrapper.getAc());
 
             if (iterator.hasNext()) {
-                sb.append(" ");
+                sb.append(" OR ");
             }
         }
 
@@ -505,6 +522,8 @@ public class SearchController extends JpaBaseController {
         final String query = sb.toString();
 
         UserQuery userQuery = getUserQuery();
+        userQuery.clearFilters();
+
         userQuery.setSearchQuery( query );
 
         SolrQuery solrQuery = userQuery.createSolrQuery();
@@ -666,5 +685,13 @@ public class SearchController extends JpaBaseController {
         } catch (UnsupportedEncodingException e) {
             throw new IntactViewException("Invalid query", e);
         }
+    }
+
+    public String getSelectedInteractor() {
+        return selectedInteractor;
+    }
+
+    public void setSelectedInteractor(String selectedInteractor) {
+        this.selectedInteractor = selectedInteractor;
     }
 }

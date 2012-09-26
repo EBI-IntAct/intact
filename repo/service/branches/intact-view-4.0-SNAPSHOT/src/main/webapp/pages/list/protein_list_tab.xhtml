@@ -10,8 +10,6 @@
 
     <!-- RESULT SUMMARY -->
 
-    <!--<ui:include src="/pages/inc/queryDisplay.xhtml"/>-->
-
     <p:panel id="selectionButtons" style="width:100%">
 
         <strong>
@@ -21,16 +19,16 @@
         <h:panelGroup>
             <p:commandLink value="Search Interactions"
                              actionListener="#{searchBean.doSearchInteractionsFromProteinListSelection}"
-                             action="/pages/interactions/interactions.xhtml?faces-redirect=true&amp;includeViewParams=true" ajax="false"/>
+                             action="/pages/interactions/interactions.xhtml?faces-redirect=true" ajax="false"/>
             &#160;|&#160;
-            <p:commandLink value="Domains" actionListener="#{proteinListController.openInInterpro}"/>
-            &#160;|&#160;
-            <p:commandLink value="Pathways" actionListener="#{proteinListController.openInReactome}"/>
+            <!--<p:commandLink value="Domains" actionListener="#{proteinListController.openInInterpro}"/>
+            &#160;|&#160;-->
+            <p:commandLink value="Pathways" actionListener="#{proteinListController.openInReactome}" process="@this proteinListResults"/>
 
             &#160;|&#160;
-            <p:commandLink value="Chromosome Location" actionListener="#{proteinListController.openInEnsembl}"/>
+            <p:commandLink value="Chromosome Location" actionListener="#{proteinListController.openInEnsembl}" process="@this proteinListResults"/>
             &#160;|&#160;
-            <p:commandLink value="mRNA Expression" actionListener="#{proteinListController.openInArrayExpress}"/>
+            <p:commandLink value="mRNA Expression" actionListener="#{proteinListController.openInArrayExpress}" process="@this proteinListResults"/>
         </h:panelGroup>
     </p:panel>
 
@@ -40,8 +38,8 @@
                  rowIndexVar="status"
                  dynamic="true" emptyMessage="No proteins found matching the query."
                  rows="#{userQuery.pageSize}" loadingMessage="Loading proteins..."
-                 paginator="true" paginatorAlwaysVisible="false"
-                 selection="#{proteinListController.selected}" >
+                 paginator="#{searchBean.proteinResults.rowCount gt userQuery.pageSize}" paginatorPosition="both"
+                 selection="#{proteinListController.selected}" rendered="#{searchBean.proteinTotalResults > 0}">
 
         <p:column selectionMode="multiple" />
 
@@ -61,9 +59,9 @@
 
         <p:column>
             <f:facet name="header"><h:outputText value="Interactions"/></f:facet>
-            <p:commandLink action="#{searchBean.doBinarySearchAction}" value="#{interactorWrapper.count}" ajax="false">
-                <f:setPropertyActionListener value="(#{userQuery.searchQuery}) AND #{interactorWrapper.ac}"
-                                             target="#{userQuery.searchQuery}"/>
+            <p:commandLink action="#{searchBean.doBinarySearchWithInteractorFilterAction}" value="#{interactorWrapper.count}" ajax="false">
+                <f:setPropertyActionListener value="#{interactorWrapper.ac}"
+                                             target="#{searchBean.selectedInteractor}"/>
             </p:commandLink>
         </p:column>
 
@@ -76,8 +74,6 @@
                     <h:panelGroup rendered="#{xref.cvXrefQualifier.identifier == 'MI:0356'}">
                         <iax:goUniprot query="#{xref.primaryId}" onlyLogo="true"/>
                         <br/>
-                        <!--<iax:goDrugPortProteinView query="#{xref.primaryId}" onlyLogo="true"/>-->
-                        <!--<br/>-->
                     </h:panelGroup>
                 </h:panelGroup>
 
@@ -94,11 +90,6 @@
 
             <h:panelGroup>
                 <iax:goMoleculeView query="#{interactorWrapper.ac}" onlyLogo="true"/>
-
-                <!--<p:commandLink action="#{moleculeViewBean.open(interactorWrapper.interactor.ac)}" ajax="false"-->
-                        <!--value="#{interactorWrapper.interactor.ac}">-->
-
-        <!--</p:commandLink>-->
 
                 <br/>
             </h:panelGroup>

@@ -29,6 +29,8 @@ import uk.ac.ebi.intact.model.util.ProteinUtils;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,6 +67,21 @@ public class Functions {
         if (interactor == null) return null;
 
         return interactor.getAc();
+    }
+
+    public static Collection extractIdentityXrefs(Collection<InteractorXref> allXrefs){
+        Collection<InteractorXref> xrefs = new ArrayList<InteractorXref>(allXrefs.size());
+
+        for (InteractorXref xref : allXrefs) {
+            CvXrefQualifier qualifier = xref.getCvXrefQualifier();
+            String qualifierMi = null;
+            if (qualifier != null && ((qualifierMi = qualifier.getIdentifier()) != null &&
+                    qualifierMi.equals(CvXrefQualifier.IDENTITY_MI_REF))) {
+                xrefs.add(xref);
+            }
+        }
+
+        return xrefs;
     }
 
 

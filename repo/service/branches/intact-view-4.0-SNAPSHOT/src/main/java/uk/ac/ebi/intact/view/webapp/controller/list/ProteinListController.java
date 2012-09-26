@@ -104,7 +104,7 @@ public class ProteinListController extends InteractorListController {
     }
 
     public void openInInterpro(ActionEvent evt) {
-        String url = "http://www.ebi.ac.uk/interpro/ISpy?ac="+StringUtils.join(getSelectedUniprotIds(), ",");
+        String url = "http://www.ebi.ac.uk/interpro/IProtein?ac="+StringUtils.join(getSelectedUniprotIds(), ",");
         executeUrlRedirection(url);
     }
 

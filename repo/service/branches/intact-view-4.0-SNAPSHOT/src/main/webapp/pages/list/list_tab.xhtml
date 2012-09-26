@@ -8,6 +8,8 @@
 
     <p:tabView id="listPanels" cache="false" dynamic="true"
                activeIndex="#{contextController.interactorActiveTabIndex}">
+        <p:ajax event="tabChange" onstart="statusDialog.show()" oncomplete="statusDialog.hide()"/>
+
         <p:tab title="Proteins (#{searchBean.proteinTotalResults})"  disabled="#{searchBean.proteinTotalResults == 0}">
             <div style="float:right;">
                 <p:commandLink type="button" onclick="whatIsListDialog.show()">

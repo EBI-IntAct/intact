@@ -27,6 +27,8 @@ import org.springframework.transaction.TransactionStatus;
 import uk.ac.ebi.intact.core.context.DataContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactFacetField;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrSearcher;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.InteractorIdCount;
 import uk.ac.ebi.intact.model.InteractorImpl;
@@ -58,6 +60,9 @@ public class InteractorSearchResultDataModel extends LazyDataModel<InteractorWra
 
     private LRUMap interactorCache;
 
+    private Map<String, Integer> mapOfResultsPerInteractorType;
+    private List<IntactFacetField> termsToQuery;
+
     public InteractorSearchResultDataModel(SolrServer solrServer, SolrQuery solrQuery, String interactorTypeMi)  {
         this(solrServer, solrQuery, new String[] {interactorTypeMi});
     }
@@ -69,7 +74,8 @@ public class InteractorSearchResultDataModel extends LazyDataModel<InteractorWra
         this.interactorTypeMis = interactorTypeMis;
 
         idCounts = new ArrayList<InteractorWrapper>();
-        this.interactorCache = new LRUMap();
+        this.interactorCache = new LRUMap(30);
+        termsToQuery = new ArrayList<IntactFacetField>(interactorTypeMis.length);
 
         countTotalResults();
     }
@@ -83,7 +89,10 @@ public class InteractorSearchResultDataModel extends LazyDataModel<InteractorWra
         }
         else {
 
-            totalCount = this.solrSearcher.countAllInteractors(solrQuery, this.interactorTypeMis);
+            this.mapOfResultsPerInteractorType = this.solrSearcher.countAllInteractors(solrQuery, this.interactorTypeMis);
+            for (Integer number : mapOfResultsPerInteractorType.values()){
+                this.totalCount+=number;
+            }
         }
     }
 
@@ -99,12 +108,50 @@ public class InteractorSearchResultDataModel extends LazyDataModel<InteractorWra
         }
 
         if (log.isDebugEnabled()) log.debug("Fetching interactors for query: "+solrQuery);
-
-        final Multimap<String,InteractorIdCount> idCountMultimap = solrSearcher.searchInteractors(solrQuery, interactorTypeMis, first, pageSize);
-
         idCounts.clear();
+        termsToQuery.clear();
+        firstResult = first;
 
-        wrap(idCountMultimap.values(), first, pageSize);
+        String key = first+"_"+pageSize;
+        if (this.interactorCache.containsKey(key)){
+            this.idCounts.addAll((List) this.interactorCache.get(key));
+        }
+        else {
+            int numberProcessed = 0;
+            int numberElements = 0;
+
+            for (String type : this.interactorTypeMis){
+
+                String typeField = FieldNames.INTACT_BY_INTERACTOR_TYPE_PREFIX+type.replaceAll(":","").toLowerCase();
+                if (this.mapOfResultsPerInteractorType.containsKey(typeField)){
+                    int results = this.mapOfResultsPerInteractorType.get(typeField);
+                    // we can skip these results because are not in the page
+                    if (numberProcessed+results<first){
+                        numberProcessed+=results;
+                    }
+                    // these results can be processed for this page
+                    else if (results > 0) {
+                        int firstElement=Math.max(first-numberProcessed, 0);
+                        int maxElements=results-firstElement;
+
+                        if (pageSize-numberElements <= maxElements){
+                            maxElements=pageSize-numberElements;
+                            this.termsToQuery.add(new IntactFacetField(type, firstElement, maxElements));
+                            break;
+                        }
+                        else {
+                            this.termsToQuery.add(new IntactFacetField(type, firstElement, maxElements));
+                            numberProcessed+=maxElements;
+                            numberElements+=maxElements;
+                        }
+                    }
+                }
+            }
+
+            final Multimap<String,InteractorIdCount> idCountMultimap = solrSearcher.searchInteractors(solrQuery, this.termsToQuery.toArray(new IntactFacetField[]{}));
+
+            wrap(idCountMultimap.values(), first, pageSize);
+        }
 
         return idCounts;
     }
@@ -132,8 +179,8 @@ public class InteractorSearchResultDataModel extends LazyDataModel<InteractorWra
 
     private void wrap(Collection<InteractorIdCount> idCount, int first, int pageSize) {
 
-
-        String key = first+"_"+pageSize;
+        int end = first+pageSize;
+        String key = first+"_"+end;
         if (this.interactorCache.containsKey(key)){
             this.idCounts.addAll((List) this.interactorCache.get(key));
         }
@@ -142,22 +189,31 @@ public class InteractorSearchResultDataModel extends LazyDataModel<InteractorWra
             DataContext dataContext = context.getDataContext();
             DaoFactory factory = context.getDaoFactory();
 
-            TransactionStatus transactionStatus = dataContext.beginTransaction();
-
             Map<String, Long> idCountMap = new HashMap<String, Long>(idCount.size());
+            int numberProcessedElements = 0;
             for (InteractorIdCount count : idCount){
                 idCountMap.put(count.getAc(), count.getCount());
+                numberProcessedElements++;
+                if (numberProcessedElements==pageSize){
+                    break;
+                }
             }
 
-            List<InteractorImpl> interactors = factory.getInteractorDao().getByAc(idCountMap.keySet());
+            // collect all results first and store in cache
+            List<String> totalAcs = new ArrayList<String>(idCountMap.keySet());
+            if (!totalAcs.isEmpty()){
+                TransactionStatus transactionStatus = dataContext.beginTransaction();
 
-            for (InteractorImpl interactor : interactors){
-                InteractorWrapper wrapper = new InteractorWrapper(interactor, idCountMap.get(interactor.getAc()));
+                List<InteractorImpl> interactors = factory.getInteractorDao().getByAc(idCountMap.keySet());
 
-                this.idCounts.add(wrapper);
+                for (InteractorImpl interactor : interactors){
+                    InteractorWrapper wrapper = new InteractorWrapper(interactor, idCountMap.get(interactor.getAc()));
+
+                    this.idCounts.add(wrapper);
+                }
+
+                dataContext.commitTransaction(transactionStatus);
             }
-
-            dataContext.commitTransaction(transactionStatus);
 
             this.interactorCache.put(key, new ArrayList<InteractorWrapper>(this.idCounts));
         }

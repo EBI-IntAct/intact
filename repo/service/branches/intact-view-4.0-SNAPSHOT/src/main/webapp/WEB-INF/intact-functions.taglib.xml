@@ -14,6 +14,12 @@
     </function>
 
     <function>
+        <function-name>extractIdentityXrefs</function-name>
+        <function-class>uk.ac.ebi.intact.view.webapp.util.Functions</function-class>
+        <function-signature>java.util.Collection extractIdentityXrefs(java.util.Collection)</function-signature>
+    </function>
+
+    <function>
         <function-name>getIdentifierForDasty</function-name>
         <function-class>uk.ac.ebi.intact.view.webapp.util.Functions</function-class>
         <function-signature>java.lang.String getIdentifierForDasty(uk.ac.ebi.intact.model.Interactor)</function-signature>
