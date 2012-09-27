@@ -17,7 +17,6 @@ package uk.ac.ebi.intact.view.webapp.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Hibernate;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.core.context.IntactContext;
@@ -169,6 +168,17 @@ public class Functions {
         return cvObject;
     }
 
+    public static Annotation findAnnotationByTopicMiOrLabel(AnnotatedObject<?, ?> annotatedObject, String miOrLabel) {
+        Collection<Annotation> annotations = IntactCore.ensureInitializedAnnotations(annotatedObject);
+        for (Annotation annotation : annotations) {
+            final CvTopic topic = annotation.getCvTopic();
+            if (topic != null && (miOrLabel.equals(topic.getIdentifier()) || miOrLabel.equals(topic.getShortLabel()))) {
+                return annotation;
+            }
+        }
+        return null;
+    }
+
     /**
      * Calculates the XREFs, associated to a database and for the AC/query provided
      * @param db the CvDatabase to get the URL template from
@@ -179,15 +189,7 @@ public class Functions {
         String xrefUrl = null;
 
         if (db != null) {
-            Annotation annotation = null;
-
-            if (IntactCore.isInitialized(db.getAnnotations())) {
-                annotation = AnnotatedObjectUtils.findAnnotationByTopicMiOrLabel(db, CvTopic.SEARCH_URL);
-            } else {
-
-                Hibernate.initialize(db.getAnnotations());
-                annotation = AnnotatedObjectUtils.findAnnotationByTopicMiOrLabel(db, CvTopic.SEARCH_URL);
-            }
+            Annotation annotation = findAnnotationByTopicMiOrLabel(db, CvTopic.SEARCH_URL);
 
             if (annotation != null) {
                 xrefUrl = annotation.getAnnotationText();

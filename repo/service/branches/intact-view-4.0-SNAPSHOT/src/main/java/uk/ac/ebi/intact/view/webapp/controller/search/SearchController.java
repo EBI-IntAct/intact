@@ -288,7 +288,7 @@ public class SearchController extends JpaBaseController {
         // load interactions if necessary
         if (evt.getTab() != null && "interactionsTab".equals(evt.getTab().getId())){
             UserQuery userQuery = getUserQuery();
-            if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedSearchControllerResults){
+            if (this.currentQuery == null || !hasLoadedSearchControllerResults){
                 userQuery.clearInteractionFilters();
                 doBinarySearch(userQuery.createSolrQuery());
             }
@@ -297,26 +297,26 @@ public class SearchController extends JpaBaseController {
             if (browseController == null){
                 this.browseController = (BrowseController) getBean("browseBean");
             }
-            if (!browseController.hasLoadedUniprotAcs(getUserQuery())){
-                doBrowserSearch(getUserQuery());
+            if (!browseController.hasLoadedUniprotAcs(this.currentQuery)){
+                doBrowserSearch(this.currentQuery, getUserQuery());
             }
         }
         if (evt.getTab() != null && "listsTab".equals(evt.getTab().getId())) {
 
-            if (this.currentQuery == null || !getUserQuery().getSearchQuery().equals(this.currentQuery) || !hasLoadedInteractorResults){
+            if (this.currentQuery == null || !hasLoadedInteractorResults){
                 doInteractorsSearch();
             }
         }
     }
 
-    public void doBrowserSearch(UserQuery userQuery) {
-        Callable<Set<String>> uniprotAcsRunnable = browseController.createBrowserInteractorListRunnable(getUserQuery().getSearchQuery(), browseController.getSolrSearcher(), userQuery.isFilterSpoke(), userQuery.isFilterNegative());
+    public void doBrowserSearch(String query, UserQuery userQuery) {
+        Callable<Set<String>> uniprotAcsRunnable = browseController.createBrowserInteractorListRunnable(query != null ? query : UserQuery.STAR_QUERY, browseController.getSolrSearcher(), userQuery.isFilterSpoke(), userQuery.isFilterNegative());
         Future<Set<String>> uniprotAcsFuture = executorService.submit(uniprotAcsRunnable);
 
-        if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedInteractorResults){
+        if (this.currentQuery == null || !hasLoadedInteractorResults){
             doInteractorsSearch();
         }
-        browseController.checkAndResumeBrowserInteractorListTasks(uniprotAcsFuture, userQuery.getSearchQuery());
+        browseController.checkAndResumeBrowserInteractorListTasks(uniprotAcsFuture, query != null ? query : UserQuery.STAR_QUERY);
     }
 
 
@@ -335,6 +335,8 @@ public class SearchController extends JpaBaseController {
         }
 
         final OntologyInteractorTypeConfig config = typeConfig;
+
+        getUserQuery().setSearchQuery(this.currentQuery);
         final SolrQuery solrQuery = getUserQuery().createSolrQuery();
         final SolrServer solrServer = intactViewConfiguration.getInteractionSolrServer();
         final int pageSize = getUserQuery().getPageSize();
@@ -693,5 +695,13 @@ public class SearchController extends JpaBaseController {
 
     public void setSelectedInteractor(String selectedInteractor) {
         this.selectedInteractor = selectedInteractor;
+    }
+
+    public String getCurrentQuery() {
+        return currentQuery;
+    }
+
+    public boolean hasLoadedInteractorResults() {
+        return hasLoadedInteractorResults;
     }
 }
