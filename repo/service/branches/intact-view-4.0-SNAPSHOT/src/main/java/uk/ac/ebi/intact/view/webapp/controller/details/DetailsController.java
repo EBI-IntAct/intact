@@ -30,8 +30,10 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.core.persistence.dao.InteractionDao;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
+import uk.ac.ebi.intact.view.webapp.controller.ContextController;
 import uk.ac.ebi.intact.view.webapp.controller.JpaBaseController;
 import uk.ac.ebi.intact.view.webapp.controller.details.complex.SimilarInteraction;
 import uk.ac.ebi.intact.view.webapp.controller.details.complex.SimilarInteractionsMatrix;
@@ -40,6 +42,7 @@ import uk.ac.ebi.intact.view.webapp.controller.details.complex.TableHeaderContro
 import uk.ac.ebi.intact.view.webapp.controller.search.SearchController;
 import uk.ac.ebi.intact.view.webapp.controller.search.UserQuery;
 
+import javax.faces.context.FacesContext;
 import javax.persistence.Query;
 import java.util.*;
 
@@ -85,61 +88,57 @@ public class DetailsController extends JpaBaseController {
 
     @Transactional(readOnly = true)
     public void loadData() {
+        if (!FacesContext.getCurrentInstance().isPostback()) {
+            log.info( "DetailsController.loadData" );
 
-        log.info( "DetailsController.loadData" );
+            UserQuery userQuery = (UserQuery) getBean("userQuery");
+            SearchController searchController = (SearchController) getBean("searchBean");
 
-        UserQuery userQuery = (UserQuery) getBean("userQuery");
-        SearchController searchController = (SearchController) getBean("searchBean");
-
-        if( interactionAc != null && experimentAc != null ) {
-            addErrorMessage( "Please either request an interaction or an experiment accession number.",
-                             "Both were specified." );
-            return;
-        }
-
-        if ( interactionAc != null ) {
-            if ( log.isDebugEnabled() ) log.debug( "Parameter " + INTERACTION_AC_PARAM + " was specified" );
-            setInteractionAc( interactionAc );
-
-            // Update interaction search
-            /*userQuery.reset();
-            userQuery.setSearchQuery( "interaction_id:" + interactionAc );
-            SolrQuery solrQuery = userQuery.createSolrQuery();
-            searchController.doBinarySearch( solrQuery );*/
-
-        } else if ( experimentAc != null ) {
-
-            if ( log.isDebugEnabled() ) log.debug( "Parameter " + EXPERIMENT_AC_PARAM + " was specified" );
-            setExperimentAc( experimentAc );
-
-            /*userQuery.reset();*/
-        }
-
-        if (binary != null) {
-            String[] interactorAcs = binary.split(",");
-
-            if (interactorAcs.length != 2) {
-                addErrorMessage("When the binary parameter is specified, two comma-separated interactor ACs are expected",
-                        "Found: "+interactorAcs.length);
+            if( interactionAc != null && experimentAc != null ) {
+                addErrorMessage( "Please either request an interaction or an experiment accession number.",
+                        "Both were specified." );
                 return;
             }
 
-            List<Interaction> interactions = getDaoFactory().getInteractionDao()
-                    .getInteractionsForProtPairAc(interactorAcs[0], interactorAcs[1]);
+            if ( interactionAc != null ) {
+                if ( log.isDebugEnabled() ) log.debug( "Parameter " + INTERACTION_AC_PARAM + " was specified" );
+                loadInteraction();
 
-            if (interactions.size() > 0) {
-                Interaction binaryInteraction = interactions.get(0);
-                setInteraction(binaryInteraction);
+            } else if ( experimentAc != null ) {
 
-                // Update interaction search
-                userQuery.reset();
-                userQuery.setSearchQuery( interactorAcs[0] + " AND " + interactorAcs[1] );
-                SolrQuery solrQuery = userQuery.createSolrQuery();
-                searchController.doBinarySearch( solrQuery );
+                if ( log.isDebugEnabled() ) log.debug( "Parameter " + EXPERIMENT_AC_PARAM + " was specified" );
+                loadExperiment();
+            }
 
-            } else {
-                addErrorMessage("No interactions were found", "");
-                return;
+            if (binary != null) {
+                String[] interactorAcs = binary.split(",");
+
+                if (interactorAcs.length != 2) {
+                    addErrorMessage("When the binary parameter is specified, two comma-separated interactor ACs are expected",
+                            "Found: "+interactorAcs.length);
+                    return;
+                }
+
+                List<Interaction> interactions = getDaoFactory().getInteractionDao()
+                        .getInteractionsForProtPairAc(interactorAcs[0], interactorAcs[1]);
+
+                if (interactions.size() > 0) {
+                    Interaction binaryInteraction = interactions.get(0);
+                    setInteraction(binaryInteraction);
+
+                    // Update interaction search
+                    userQuery.reset();
+                    userQuery.setSearchQuery(FieldNames.ID+":"+interactorAcs[0] + " AND " + FieldNames.ID+":" + interactorAcs[1] );
+                    SolrQuery solrQuery = userQuery.createSolrQuery();
+                    searchController.doBinarySearch( solrQuery );
+
+                } else {
+                    addErrorMessage("No interactions were found", "");
+                    return;
+                }
+
+                ContextController contextController = (ContextController) getBean("contextController");
+                contextController.setActiveTabIndex(5);
             }
         }
     }
@@ -160,8 +159,12 @@ public class DetailsController extends JpaBaseController {
         this.binary = binary;
     }
 
-    @Transactional(readOnly = true)
     public void setExperimentAc( String experimentAc ) {
+        this.experimentAc = experimentAc;
+    }
+
+    @Transactional(readOnly = true)
+    public void loadExperiment( ) {
         if ( log.isDebugEnabled() ) log.debug( "Calling setExperimentAc( '" + experimentAc + "' )..." );
         experiment = getDaoFactory().getExperimentDao().getByAc( experimentAc );
         if ( experiment == null ) {
@@ -191,10 +194,15 @@ public class DetailsController extends JpaBaseController {
         this.interaction = interaction;
     }
 
-    @Transactional(readOnly = true)
     public void setInteractionAc( String interactionAc ) {
+        this.interactionAc = interactionAc;
+    }
+
+    @Transactional(readOnly = true)
+    public void loadInteraction( ) {
         if ( log.isDebugEnabled() ) log.debug( "Calling setInteractionAc( '" + interactionAc + "' )..." );
         interaction = getDaoFactory().getInteractionDao().getByAc( interactionAc );
+        experiment = getExperiment();
 
         if (interaction == null) {
             interaction = getDaoFactory().getInteractionDao().getByXref( interactionAc );
@@ -206,10 +214,11 @@ public class DetailsController extends JpaBaseController {
     public Experiment getExperiment() {
         Experiment exp = null;
         if( experiment != null ) {
-            exp = experiment;
+            return experiment;
         }
 
         if( interaction != null && !interaction.getExperiments().isEmpty() ) {
+
             exp = interaction.getExperiments().iterator().next();
         }
         return exp;

@@ -99,10 +99,6 @@ public class BrowseController extends JpaBaseController {
         }
     }
 
-    public void createListOfIdentifiers() {
-        buildListOfIdentifiers();
-    }
-
     public void searchOnLoad(ComponentSystemEvent evt) {
         if (userQuery == null){
             userQuery = (UserQuery) getBean("userQuery");
@@ -118,15 +114,15 @@ public class BrowseController extends JpaBaseController {
 
     private void buildListOfIdentifiers() {
 
-        if (!hasLoadedUniprotAcs(userQuery)){
+        if (!hasLoadedUniprotAcs(searchController.getCurrentQuery())){
 
-            Callable<Set<String>> uniprotAcsRunnable = createBrowserInteractorListRunnable(userQuery.getSearchQuery(), getSolrSearcher(), userQuery.isFilterSpoke(), userQuery.isFilterNegative());
+            Callable<Set<String>> uniprotAcsRunnable = createBrowserInteractorListRunnable(searchController.getCurrentQuery() != null ? searchController.getCurrentQuery() : UserQuery.STAR_QUERY, getSolrSearcher(), userQuery.isFilterSpoke(), userQuery.isFilterNegative());
             Future<Set<String>> uniprotAcsFuture = executorService.submit(uniprotAcsRunnable);
 
-            if (!searchController.hasLoadedCurrentQuery()){
+            if (!searchController.hasLoadedInteractorResults()){
                 searchController.doInteractorsSearch();
             }
-            checkAndResumeBrowserInteractorListTasks(uniprotAcsFuture, userQuery.getSearchQuery());
+            checkAndResumeBrowserInteractorListTasks(uniprotAcsFuture, searchController.getCurrentQuery());
         }
     }
 
@@ -332,9 +328,9 @@ public class BrowseController extends JpaBaseController {
         return maxSizeRNAExpression;
     }
 
-    public boolean hasLoadedUniprotAcs(UserQuery userQuery) {
+    public boolean hasLoadedUniprotAcs(String userQuery) {
 
-        if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery)){
+        if ((this.currentQuery == null && userQuery != null) || (userQuery != null && !userQuery.equals(this.currentQuery))){
             return false;
         }
         return true;
