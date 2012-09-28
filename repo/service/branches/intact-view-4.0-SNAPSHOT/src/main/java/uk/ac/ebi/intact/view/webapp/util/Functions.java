@@ -206,7 +206,7 @@ public class Functions {
 
 
         if (xrefUrl != null) {
-            replacedUrl = xrefUrl.replaceAll("\\$\\{ac\\}", ac);
+            replacedUrl = xrefUrl.replaceAll("\\$*\\{ac\\}", ac);
         }
 
         return replacedUrl;

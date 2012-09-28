@@ -25,6 +25,7 @@ import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 import uk.ac.ebi.intact.view.webapp.controller.JpaBaseController;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.ComponentSystemEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,25 +50,27 @@ public class CvObjectController extends JpaBaseController {
 
     @Transactional(readOnly = true)
     public void load(ComponentSystemEvent evt) {
-        cvAnnotations = new ArrayList<Annotation>();
+        if (!FacesContext.getCurrentInstance().isPostback()) {
+            cvAnnotations = new ArrayList<Annotation>();
 
-        if (ac != null) {
-            cv = getDaoFactory().getCvObjectDao().getByAc(ac);
+            if (ac != null) {
+                cv = getDaoFactory().getCvObjectDao().getByAc(ac);
 
-            final Annotation annotation = AnnotatedObjectUtils.findAnnotationByTopicMiOrLabel(cv, CvTopic.DEFINITION);
+                final Annotation annotation = AnnotatedObjectUtils.findAnnotationByTopicMiOrLabel(cv, CvTopic.DEFINITION);
 
-            if (annotation != null) {
-                cvDescription = annotation.getAnnotationText();
-            }
-
-            for (Annotation annot : cv.getAnnotations()) {
-                if (!annot.getCvTopic().getShortLabel().equals(CvTopic.USED_IN_CLASS)) {
-                    cvAnnotations.add(annot);
+                if (annotation != null) {
+                    cvDescription = annotation.getAnnotationText();
                 }
-            }
 
-        } else if (cv != null) {
-            ac = cv.getAc();
+                for (Annotation annot : cv.getAnnotations()) {
+                    if (!annot.getCvTopic().getShortLabel().equals(CvTopic.USED_IN_CLASS)) {
+                        cvAnnotations.add(annot);
+                    }
+                }
+
+            } else if (cv != null) {
+                ac = cv.getAc();
+            }
         }
     }
 

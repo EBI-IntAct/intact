@@ -43,6 +43,7 @@ import uk.ac.ebi.intact.view.webapp.controller.search.SearchController;
 import uk.ac.ebi.intact.view.webapp.controller.search.UserQuery;
 
 import javax.faces.context.FacesContext;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.*;
 
@@ -69,13 +70,14 @@ public class DetailsController extends JpaBaseController {
     private static final Collection<String> publicationTopics = new ArrayList<String>();
     private static final String JOURNAL = "MI:0885";
     private static final String PUBLICATION_YEAR = "MI:0886";
-
+    private static final String DATASET = "MI:0875";
     private static final String CONTACT_EMAIL = "MI:0634";
 
     static {
         publicationTopics.add( AUTHOR_LIST );
         publicationTopics.add( JOURNAL );
         publicationTopics.add( PUBLICATION_YEAR );
+        publicationTopics.add( DATASET );
     }
 
     private String interactionAc;
@@ -308,7 +310,7 @@ public class DetailsController extends JpaBaseController {
 
         final long start = System.currentTimeMillis();
 
-        DaoFactory factory = IntactContext.getCurrentInstance().getDaoFactory();
+        DaoFactory factory = getDaoFactory();
         InteractionDao interactionDao = factory.getInteractionDao();
         Query query = factory.getEntityManager().
                 createQuery("select distinct i.ac from InteractionImpl i join i.components as comp join comp.interactor as inter where i.ac <> :interactionAc and " +
@@ -384,5 +386,17 @@ public class DetailsController extends JpaBaseController {
             members.add( new SimpleInteractor( interactor.getAc(), interactor.getShortLabel() ) );
         }
         return members;
+    }
+
+    public String getPublicationTitle(){
+        Experiment exp = getExperiment();
+
+        if (exp != null && exp.getPublication() != null && exp.getPublication().getFullName() != null){
+            return exp.getPublication().getFullName();
+        }
+        else if (exp != null && exp.getFullName() != null){
+            return exp.getFullName();
+        }
+        return "-";
     }
 }
