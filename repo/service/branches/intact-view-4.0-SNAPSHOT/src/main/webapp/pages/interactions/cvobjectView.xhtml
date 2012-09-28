@@ -21,7 +21,7 @@
         </h:head>
         <h:body>
             <h:form>
-                <ui:param name="cv" value="#{cvLazyPopupController.fetch(requestScope.className, requestScope.identifier)}"/>
+                <ui:param name="biosource" value="#{cvLazyPopupController.fetch(requestScope.className, requestScope.identifier)}"/>
 
                 <iv:cvDetails cv="#{cv}"/>
             </h:form>
