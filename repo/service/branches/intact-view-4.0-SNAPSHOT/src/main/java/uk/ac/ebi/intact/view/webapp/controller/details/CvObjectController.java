@@ -16,6 +16,8 @@
 package uk.ac.ebi.intact.view.webapp.controller.details;
 
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +25,9 @@ import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
+import uk.ac.ebi.intact.view.webapp.IntactViewException;
 import uk.ac.ebi.intact.view.webapp.controller.JpaBaseController;
+import uk.ac.ebi.intact.view.webapp.controller.application.CvObjectService;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ComponentSystemEvent;
@@ -44,6 +48,11 @@ public class CvObjectController extends JpaBaseController {
 
     private String cvDescription;
     private List<Annotation> cvAnnotations;
+
+    private String identifier;
+    private String className;
+    @Autowired
+    private CvObjectService cvObjectService;
 
     public CvObjectController() {
     }
@@ -70,8 +79,30 @@ public class CvObjectController extends JpaBaseController {
 
             } else if (cv != null) {
                 ac = cv.getAc();
+            }else if (identifier != null){
+                if (className == null){
+                   className = "CvObject";
+                }
+                this.cv = loadByIdentifier(className, identifier);
             }
         }
+    }
+
+    private CvObject loadByIdentifier(String className, String identifier) {
+        CvObject cvObject;
+
+        final Class cvClass;
+        try {
+            cvClass = Thread.currentThread().getContextClassLoader().loadClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new IntactViewException("Class not found: "+className, e);
+        }
+
+        cvObject = getDaoFactory().getCvObjectDao(cvClass).getByPsiMiRef(identifier);
+        Hibernate.initialize(cvObject.getXrefs());
+        Hibernate.initialize(cvObject.getAnnotations());
+
+        return cvObject;
     }
 
     public String getCvDescription() {
@@ -97,5 +128,21 @@ public class CvObjectController extends JpaBaseController {
 
     public List<Annotation> getCvAnnotations() {
         return cvAnnotations;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
     }
 }

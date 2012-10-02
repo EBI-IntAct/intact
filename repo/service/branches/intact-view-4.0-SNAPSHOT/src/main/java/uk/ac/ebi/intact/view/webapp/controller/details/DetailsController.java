@@ -92,6 +92,7 @@ public class DetailsController extends JpaBaseController {
     private int numberInteractions=0;
     private int numberParticipants=0;
     private ParticipantLazyDataModel participants;
+    private boolean featureAvailable;
 
     @Transactional(readOnly = true)
     public void loadData() {
@@ -256,6 +257,7 @@ public class DetailsController extends JpaBaseController {
         this.numberParticipants = countParticipantNumbers();
 
         this.participants = new ParticipantLazyDataModel(getIntactContext().getDataContext(), getIntactContext().getDaoFactory().getEntityManager(), this.interactionAc, this.numberParticipants);
+        loadFeatureNumber();
     }
 
     public Experiment getExperiment() {
@@ -288,7 +290,10 @@ public class DetailsController extends JpaBaseController {
         Collection<Annotation> selectedAnnotations = new ArrayList<Annotation>( publication.getAnnotations().size() );
         
         for ( Annotation annotation : publication.getAnnotations() ) {
-            if ( publicationTopics.contains( annotation.getCvTopic().getIdentifier() ) ) {
+            if ( publicationTopics.contains( annotation.getCvTopic().getIdentifier() )
+                    && !CvTopic.AUTHOR_LIST_MI_REF.equals(annotation.getCvTopic().getIdentifier())
+                    && !CvTopic.PUBLICATION_YEAR_MI_REF.equals(annotation.getCvTopic().getIdentifier())
+                    && !CvTopic.JOURNAL_MI_REF.equals(annotation.getCvTopic().getIdentifier())) {
                 selectedAnnotations.add( annotation );
             }
         }
@@ -312,16 +317,21 @@ public class DetailsController extends JpaBaseController {
         return getAnnotationTextByMi( getExperiment().getPublication(), CONTACT_EMAIL );
     }
 
+    @Transactional(readOnly = true)
     public boolean isFeaturesAvailable(){
-        boolean featuresAvailable = false;
-        Interaction interaction = getInteraction();
-        for(Component component : interaction.getComponents()){
-            featuresAvailable = featuresAvailable || (component.getFeatures().size() > 0);
-            if (featuresAvailable){
-                break;
-            }
+        return featureAvailable;
+    }
+
+    @Transactional(readOnly = true)
+    public void loadFeatureNumber(){
+        if (interactionAc == null){
+            featureAvailable=false;
+            return;
         }
-        return featuresAvailable;
+        Long number = (Long) getIntactContext().getDaoFactory().getEntityManager().createQuery("select count(f.ac) from Feature f join f.component as c " +
+                "join c.interaction as i where i.ac = :ac").setParameter("ac", interactionAc).getSingleResult();
+
+        featureAvailable = number > 0;
     }
 
     private String getAnnotationTextByMi( AnnotatedObject ao, final String mi ) {

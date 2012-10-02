@@ -55,7 +55,7 @@ public class ParticipantWrapper {
         parameters = new ArrayList<Parameter>(component.getParameters());
         confidences = new ArrayList<ComponentConfidence>(component.getConfidences());
         features = new ArrayList<Feature>(component.getFeatures().size());
-        for (Feature feature : features){
+        for (Feature feature : component.getFeatures()){
             Hibernate.initialize(feature.getRanges());
             Hibernate.initialize(feature.getAnnotations());
             Hibernate.initialize(feature.getXrefs());
