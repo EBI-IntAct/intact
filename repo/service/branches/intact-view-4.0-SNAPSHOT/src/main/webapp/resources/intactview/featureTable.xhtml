@@ -8,7 +8,7 @@
                 xmlns:ot="http://myfaces.apache.org/orchestra"
 
                 xmlns:iaf="http://intact.ebi.ac.uk/functions"
-
+                xmlns:iam="http://intact.ebi.ac.uk/miscel"
                 xmlns:composite="http://java.sun.com/jsf/composite">
 
     <!-- INTERFACE -->
@@ -21,6 +21,9 @@
 
         <p:dataTable id="#{cc.id}" var="feature" value="#{cc.attrs.features}" paginator="false" dynamic="false">
             <p:column>
+                <f:facet name="header">
+                    <h:outputText value="Feature label"/>
+                </f:facet>
                 <h:outputText value="#{feature.shortLabel}" />
             </p:column>
             <p:column>
@@ -57,7 +60,27 @@
                     </ui:repeat>
                 </ul>
             </p:column>
+
+            <p:column >
+                <f:facet name="header">
+                    <h:outputText value="Feature Annotations"/>
+                </f:facet>
+                <iv:annotationTable annotations="#{feature.annotations}"/>
+            </p:column>
+
+            <p:column >
+                <f:facet name="header">
+                    <h:outputText value="Feature Xrefs"/>
+                </f:facet>
+
+                <iv:xrefTable xrefs="#{feature.xrefs}"/>
+            </p:column>
         </p:dataTable>
+
+        <div class="legend" style="margin-top: 5px; margin-left: 15px;" align="right">
+            <b>Legend:</b>
+
+        </div>
 
     </composite:implementation>
 
