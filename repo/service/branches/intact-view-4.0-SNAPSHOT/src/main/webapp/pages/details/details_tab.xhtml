@@ -18,45 +18,6 @@
 
 <h:panelGroup id="experimentPanel" rendered="#{detailsBean.experiment != null}">
 
-<ui:param name="experiment" value="#{detailsBean.experiment}"/>
-<!-- TODO Following statement would be harsh on the database if the experiment has a large amount of interactions !! -->
-<ui:param name="interactionCount" value="#{fn:length(experiment.interactions)}"/>
-
-<h2>Experiment (#{interactionCount} interaction#{interactionCount > 1 ? 's' : ''})</h2>
-
-<h:panelGroup>
-
-    <iv:panelLabelAndMessage label="Accession:" labelStyleClass="textLabel">
-        <h:outputText value="#{experiment.ac}"/>
-    </iv:panelLabelAndMessage>
-
-    <iv:panelLabelAndMessage label="Name:" labelStyleClass="textLabel">
-        <h:outputText value="#{experiment.shortLabel}"/>
-    </iv:panelLabelAndMessage>
-
-    <iv:panelLabelAndMessage label="Host organism:" labelStyleClass="textLabel">
-        <iv:biosourcePopup bioSource="#{experiment.bioSource}"/>
-    </iv:panelLabelAndMessage>
-
-    <iv:panelLabelAndMessage label="Interaction Detection Method:" labelStyleClass="textLabel">
-        <iv:cvPopup cv="#{experiment.cvInteraction}"/>
-    </iv:panelLabelAndMessage>
-
-    <iv:panelLabelAndMessage label="Participant Identification Method:" labelStyleClass="textLabel">
-        <iv:cvPopup cv="#{experiment.cvIdentification}"/>
-    </iv:panelLabelAndMessage>
-
-    <iv:panelLabelAndMessage label="Cross References:" labelStyleClass="textLabel" visible="#{not empty experiment.xrefs}">
-        <iv:xrefTable id="experimentXrefTable" xrefs="#{experiment.xrefs}"/>
-    </iv:panelLabelAndMessage>
-
-    <iv:panelLabelAndMessage label="Annotations:" labelStyleClass="textLabel" visible="#{not empty detailsBean.experimentAnnotations}">
-        <iv:annotationTable id="experimentAnnotsTable" annotations="#{detailsBean.experimentAnnotations}"/>
-    </iv:panelLabelAndMessage>
-
-</h:panelGroup>
-
-
 <ui:param name="publication" value="#{experiment.publication}"/>
 <ui:param name="pmid" value="#{publication.publicationId}"/>
 
@@ -109,6 +70,43 @@
     </tr>
 </table>
 
+<ui:param name="experiment" value="#{detailsBean.experiment}"/>
+<ui:param name="interactionCount" value="#{detailsBean.countInteractionNumbers}"/>
+
+<h2>Experiment (#{interactionCount} interaction#{interactionCount > 1 ? 's' : ''})</h2>
+
+<h:panelGroup>
+
+    <iv:panelLabelAndMessage label="Accession:" labelStyleClass="textLabel">
+        <h:outputText value="#{experiment.ac}"/>
+    </iv:panelLabelAndMessage>
+
+    <iv:panelLabelAndMessage label="Name:" labelStyleClass="textLabel">
+        <h:outputText value="#{experiment.shortLabel}"/>
+    </iv:panelLabelAndMessage>
+
+    <iv:panelLabelAndMessage label="Host organism:" labelStyleClass="textLabel">
+        <iv:biosourcePopup bioSource="#{experiment.bioSource}"/>
+    </iv:panelLabelAndMessage>
+
+    <iv:panelLabelAndMessage label="Interaction Detection Method:" labelStyleClass="textLabel">
+        <iv:cvPopup cv="#{experiment.cvInteraction}"/>
+    </iv:panelLabelAndMessage>
+
+    <iv:panelLabelAndMessage label="Participant Identification Method:" labelStyleClass="textLabel">
+        <iv:cvPopup cv="#{experiment.cvIdentification}"/>
+    </iv:panelLabelAndMessage>
+
+    <iv:panelLabelAndMessage label="Cross References:" labelStyleClass="textLabel" visible="#{not empty experiment.xrefs}">
+        <iv:xrefTable id="experimentXrefTable" xrefs="#{experiment.xrefs}"/>
+    </iv:panelLabelAndMessage>
+
+    <iv:panelLabelAndMessage label="Annotations:" labelStyleClass="textLabel" visible="#{not empty detailsBean.experimentAnnotations}">
+        <iv:annotationTable id="experimentAnnotsTable" annotations="#{detailsBean.experimentAnnotations}"/>
+    </iv:panelLabelAndMessage>
+
+</h:panelGroup>
+
 
 <ui:param name="interaction" value="#{detailsBean.interaction}"/>
 
@@ -140,6 +138,14 @@
 
                 <iv:panelLabelAndMessage label="Annotations:" labelStyleClass="textLabel" visible="#{not empty interaction.annotations}">
                     <iv:annotationTable id="interactionAnnotsTable" annotations="#{interaction.annotations}"/>
+                </iv:panelLabelAndMessage>
+
+                <iv:panelLabelAndMessage label="Interaction Parameters:" labelStyleClass="textLabel" visible="#{not empty interaction.parameters}">
+                    <iv:parametersTable id="interactionParamTable" parameters="#{interaction.parameters}"/>
+                </iv:panelLabelAndMessage>
+
+                <iv:panelLabelAndMessage label="Interaction Confidences:" labelStyleClass="textLabel" visible="#{not empty interaction.confidences}">
+                    <iv:confidencesTable id="interactionConfTable" confidences="#{interaction.confidences}"/>
                 </iv:panelLabelAndMessage>
             </td>
 
@@ -178,9 +184,11 @@
 
 <ui:param name="interactor" value="#{participant.interactor}"/>
 <ui:param name="annotationCount"
-          value="#{fn:length(participant.xrefs) + fn:length(participant.annotations) + fn:length(participant.aliases)}"/>
+          value="#{fn:length(participant.xrefs) + fn:length(participant.annotations)}"/>
 <ui:param name="parameterCount" value="#{fn:length(participant.parameters)}"/>
 <ui:param name="domainCount" value="#{fn:length(participant.bindingDomains)}"/>
+<ui:param name="confidenceCount" value="#{fn:length(participant.confidences)}"/>
+
 <p:column id="numberParticipantCol">
     <f:facet name="header">
         <h:outputText value="#"/>
@@ -368,38 +376,172 @@
         <h:outputText value="More..."/>
     </f:facet>
 
-    <div id="extraDiv" class="extra" style="border: 0px; width:100px; ">
-        <div class="#{annotationCount>0 ? 'ia-annotation' : 'ia-legend-gray'}" style="width:10px; display: inline; border: 1px solid gray;" align="center">
-            <iv:participantPopup participant="#{participant}" text="A" style="font-weight:bold; color:white;"
-                                 visible="#{annotationCount>0}"/>
+    <div id="extraDiv1" class="extra" style="border: 0px; width:100px; ">
+        <div class="#{annotationCount>0 ? 'ia-annotation' : 'ia-legend-gray'}" style="width:20px; display: inline; border: 1px solid gray;" align="center">
+            <p:commandLink id="annotationLink_${row+1}" type="button" onclick="annotDlg_#{row+1}.show();" rendered="#{annotationCount>0}">
+                <h:outputText value="A" style="font-weight:bold; color:white;"/>
+            </p:commandLink>
+
+            <p:dialog header="Participant: #{participant.interactor.fullName}"
+                      widgetVar="annotDlg_#{row+1}" height="400" width="750" fixedCenter="true"
+                      constrainToViewport="true" modal="false">
+
+                <h3>Participant: #{participant.interactor.fullName}</h3>
+
+                <iv:panelLabelAndMessage label="Accession:" labelStyle="font-weight:bold;">
+                    <h:outputText value="#{participant.ac}"/>
+                </iv:panelLabelAndMessage>
+                <br/>
+
+                <iv:panelLabelAndMessage label="Name:" labelStyle="font-weight:bold;">
+                    <h:outputText value="#{participant.interactor.shortLabel}"/>
+                </iv:panelLabelAndMessage>
+                <br/>
+
+                <iv:panelLabelAndMessage label="Cross References:" visible="#{not empty participant.xrefs}"
+                                         labelStyle="font-weight:bold;">
+                    <iv:xrefTable xrefs="#{participant.xrefs}" />
+                </iv:panelLabelAndMessage>
+                <br/>
+
+                <iv:panelLabelAndMessage label="Annotations:" visible="#{not empty participant.annotations}"
+                                         labelStyle="font-weight:bold;">
+                    <iv:annotationTable annotations="#{participant.annotations}" />
+                </iv:panelLabelAndMessage>
+
+            </p:dialog>
 
             <h:outputText value="A" shortDesc="#{annotationCount} Annotation" rendered="#{annotationCount == 0}"
                           style="font-weight:bold; color:white;"/>
         </div>
-        <div class="#{parameterCount>0 ? 'ia-parameter' : 'ia-legend-gray'}" style="width:10px; display: inline; border: 1px solid gray;" align="center">
-            <iv:participantPopup participant="#{participant}" text="P" style="font-weight:bold; color:white;"
-                                 visible="#{parameterCount>0}"/>
+        <div class="#{parameterCount>0 ? 'ia-parameter' : 'ia-legend-gray'}" style="width:20px; display: inline; border: 1px solid gray;" align="center">
+            <p:commandLink id="parameterLink_${row+1}" type="button" onclick="parameterDlg_#{row+1}.show();" rendered="#{parameterCount>0}">
+                <h:outputText value="P" style="font-weight:bold; color:white;"/>
+            </p:commandLink>
+
+            <p:dialog header="Participant: #{participant.interactor.fullName}"
+                      widgetVar="parameterDlg_#{row+1}" height="400" width="750" fixedCenter="true"
+                      constrainToViewport="true" modal="false">
+
+                <h3>Participant: #{participant.interactor.fullName}</h3>
+
+                <iv:panelLabelAndMessage label="Accession:" labelStyle="font-weight:bold;">
+                    <h:outputText value="#{participant.ac}"/>
+                </iv:panelLabelAndMessage>
+                <br/>
+
+                <iv:panelLabelAndMessage label="Name:" labelStyle="font-weight:bold;">
+                    <h:outputText value="#{participant.interactor.shortLabel}"/>
+                </iv:panelLabelAndMessage>
+                <br/>
+
+                <iv:panelLabelAndMessage label="Parameters:"
+                                         labelStyle="font-weight:bold;">
+                    <iv:parametersTable parameters="#{participant.parameters}" />
+                </iv:panelLabelAndMessage>
+
+            </p:dialog>
 
             <h:outputText value="P" shortDesc="#{parameterCount} Parameter" rendered="#{parameterCount == 0}"
                           style="font-weight:bold;color:white;"/>
         </div>
-        <div class="#{participant.stoichiometry>0 ? 'ia-stoichiometry' : 'ia-legend-gray'}" style="width:10px; display: inline; border: 1px solid gray;" align="center">
-            <iv:participantPopup participant="#{participant}" text="S" style="font-weight:bold; color:white;"
-                                 visible="#{participant.stoichiometry gt 0}"/>
+    </div>
+    <br/>
+    <div id="extraDiv2" class="extra" style="border: 0px; width:100px; ">
+        <div class="#{participant.stoichiometry>0 ? 'ia-stoichiometry' : 'ia-legend-gray'}" style="width:20px; display: inline; border: 1px solid gray;" align="center">
+            <p:commandLink id="stcLink_${row+1}" type="button" onclick="stcDlg_#{row+1}.show();" rendered="#{participant.stoichiometry > 0}">
+                <h:outputText value="S" style="font-weight:bold; color:white;"/>
+            </p:commandLink>
+
+            <p:dialog header="Participant: #{participant.interactor.fullName}"
+                      widgetVar="stcDlg_#{row+1}" height="400" width="750" fixedCenter="true"
+                      constrainToViewport="true" modal="false">
+
+                <h3>Participant: #{participant.interactor.fullName}</h3>
+
+                <iv:panelLabelAndMessage label="Accession:" labelStyle="font-weight:bold;">
+                    <h:outputText value="#{participant.ac}"/>
+                </iv:panelLabelAndMessage>
+                <br/>
+
+                <iv:panelLabelAndMessage label="Name:" labelStyle="font-weight:bold;">
+                    <h:outputText value="#{participant.interactor.shortLabel}"/>
+                </iv:panelLabelAndMessage>
+                <br/>
+
+                <iv:panelLabelAndMessage label="Stoichiometry:"
+                                         labelStyle="font-weight:bold;">
+                    <h:outputText value="#{participant.stoichiometry}"/>
+                </iv:panelLabelAndMessage>
+
+            </p:dialog>
 
             <h:outputText value="S" shortDesc="Stoichiometry: none" rendered="#{participant.stoichiometry eq 0}"
                           style="font-weight:bold;color:white;"/>
         </div>
-        <div class="#{domainCount>0 ? 'ia-feature' : 'ia-legend-gray'}" style="width:10px; display: inline; border: 1px solid gray;" align="center">
-            <iv:participantPopup participant="#{participant}" text="F" style="font-weight:bold; color:white;"
-                                 visible="#{domainCount>0}"/>
+        <div class="#{domainCount>0 ? 'ia-feature' : 'ia-legend-gray'}" style="width:20px; display: inline; border: 1px solid gray;" align="center">
+            <p:commandLink id="featureLink_${row+1}" type="button" onclick="featureDlg_#{row+1}.show();" rendered="#{domainCount > 0}">
+                <h:outputText value="F" style="font-weight:bold; color:white;"/>
+            </p:commandLink>
+
+            <p:dialog header="Participant: #{participant.interactor.fullName}"
+                      widgetVar="featureDlg_#{row+1}" height="400" width="750" fixedCenter="true"
+                      constrainToViewport="true" modal="false">
+
+                <h3>Participant: #{participant.interactor.fullName}</h3>
+
+                <iv:panelLabelAndMessage label="Accession:" labelStyle="font-weight:bold;">
+                    <h:outputText value="#{participant.ac}"/>
+                </iv:panelLabelAndMessage>
+                <br/>
+
+                <iv:panelLabelAndMessage label="Name:" labelStyle="font-weight:bold;">
+                    <h:outputText value="#{participant.interactor.shortLabel}"/>
+                </iv:panelLabelAndMessage>
+                <br/>
+
+                <iv:panelLabelAndMessage label="Features:"
+                                         labelStyle="font-weight:bold;">
+                    <iv:featureTable features="#{participant.features}"/>
+                </iv:panelLabelAndMessage>
+
+            </p:dialog>
 
             <h:outputText value="F" shortDesc="#{domainCount} feature" rendered="#{domainCount == 0}"
                           style="font-weight:bold; color:white;"/>
         </div>
+        <div class="#{confidenceCount>0 ? 'ia-confidence' : 'ia-legend-gray'}" style="width:20px; display: inline; border: 1px solid gray;" align="center">
+            <p:commandLink id="confidenceLink_${row+1}" type="button" onclick="confidenceDlg_#{row+1}.show();" rendered="#{confidenceCount > 0}">
+                <h:outputText value="C" style="font-weight:bold; color:white;"/>
+            </p:commandLink>
 
+            <p:dialog header="Participant: #{participant.interactor.fullName}"
+                      widgetVar="confidenceDlg_#{row+1}" height="400" width="750" fixedCenter="true"
+                      constrainToViewport="true" modal="false">
+
+                <h3>Participant: #{participant.interactor.fullName}</h3>
+
+                <iv:panelLabelAndMessage label="Accession:" labelStyle="font-weight:bold;">
+                    <h:outputText value="#{participant.ac}"/>
+                </iv:panelLabelAndMessage>
+                <br/>
+
+                <iv:panelLabelAndMessage label="Name:" labelStyle="font-weight:bold;">
+                    <h:outputText value="#{participant.interactor.shortLabel}"/>
+                </iv:panelLabelAndMessage>
+                <br/>
+
+                <iv:panelLabelAndMessage label="Confidences:"
+                                         labelStyle="font-weight:bold;">
+                    <iv:confidencesTable confidences="#{participant.confidences}"/>
+                </iv:panelLabelAndMessage>
+
+            </p:dialog>
+
+            <h:outputText value="C" shortDesc="#{confidenceCount} confidence" rendered="#{confidenceCount == 0}"
+                          style="font-weight:bold; color:white;"/>
+        </div>
     </div>
-
 </p:column>
 
 </p:dataTable>
@@ -408,10 +550,11 @@
 
 <div class="legend" style="margin-top: 5px; margin-left: 15px;" align="right">
     <b>Legend:</b>
-    <div class="ia-annotation" style="display: inline; border: 1px solid gray;">A</div>Annotation &#160;&#160;
+    <div class="ia-annotation" style="display: inline; border: 1px solid gray;">A</div>Annotation and Cross Reference&#160;&#160;
     <div class="ia-parameter" style="display: inline; border: 1px solid gray;">P</div>Experimental Parameter &#160;&#160;
     <div class="ia-stoichiometry" style="display: inline; border: 1px solid gray;">S</div>Stoichiometry &#160;&#160;
     <div class="ia-feature" style="display: inline; border: 1px solid gray;">F</div>Experimental Feature
+    <div class="ia-confidence" style="display: inline; border: 1px solid gray;">C</div>Participant Confidence
 </div>
 
 <h:panelGroup rendered="#{detailsBean.featuresAvailable}">

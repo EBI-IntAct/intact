@@ -121,6 +121,14 @@ td.compoundStructure {
     margin-right:5px;
 }
 
+.ia-confidence {
+    background: #5e5e5e !important;
+    color:white;
+    padding-right:2px;
+    padding-left:2px;
+    margin-right:5px;
+}
+
 .ia-legend-gray {
     background: lightgray !important;
     color:white;

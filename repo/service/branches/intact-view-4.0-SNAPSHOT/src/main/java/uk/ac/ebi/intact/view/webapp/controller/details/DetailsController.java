@@ -145,6 +145,16 @@ public class DetailsController extends JpaBaseController {
         }
     }
 
+    public int countInteractionNumbers(){
+        Experiment exp = getExperiment();
+
+        if (exp == null){
+            return 0;
+        }
+
+        return getIntactContext().getDaoFactory().getExperimentDao().countInteractionsForExperimentWithAc(exp.getAc());
+    }
+
     public String getInteractionAc() {
         return interactionAc;
     }
