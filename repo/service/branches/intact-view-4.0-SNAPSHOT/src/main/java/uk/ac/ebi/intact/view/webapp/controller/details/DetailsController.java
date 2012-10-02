@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.primefaces.model.LazyDataModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -41,6 +42,7 @@ import uk.ac.ebi.intact.view.webapp.controller.details.complex.SimpleInteractor;
 import uk.ac.ebi.intact.view.webapp.controller.details.complex.TableHeaderController;
 import uk.ac.ebi.intact.view.webapp.controller.search.SearchController;
 import uk.ac.ebi.intact.view.webapp.controller.search.UserQuery;
+import uk.ac.ebi.intact.view.webapp.model.ParticipantLazyDataModel;
 
 import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
@@ -87,6 +89,9 @@ public class DetailsController extends JpaBaseController {
     private Interaction interaction;
 
     private Experiment experiment;
+    private int numberInteractions=0;
+    private int numberParticipants=0;
+    private ParticipantLazyDataModel participants;
 
     @Transactional(readOnly = true)
     public void loadData() {
@@ -127,6 +132,7 @@ public class DetailsController extends JpaBaseController {
                 if (interactions.size() > 0) {
                     Interaction binaryInteraction = interactions.get(0);
                     setInteraction(binaryInteraction);
+                    loadParticipants();
 
                     // Update interaction search
                     userQuery.reset();
@@ -142,10 +148,12 @@ public class DetailsController extends JpaBaseController {
                 ContextController contextController = (ContextController) getBean("contextController");
                 contextController.setActiveTabIndex(5);
             }
+
+            this.numberInteractions = countInteractionNumbers();
         }
     }
 
-    public int countInteractionNumbers(){
+    private int countInteractionNumbers(){
         Experiment exp = getExperiment();
 
         if (exp == null){
@@ -153,6 +161,25 @@ public class DetailsController extends JpaBaseController {
         }
 
         return getIntactContext().getDaoFactory().getExperimentDao().countInteractionsForExperimentWithAc(exp.getAc());
+    }
+
+    private int countParticipantNumbers(){
+
+        if (interaction == null){
+            return 0;
+        }
+        Long l = (Long) getIntactContext().getDaoFactory().getEntityManager().createQuery("select count(distinct p.ac) from InteractionImpl i join i.components as p " +
+                "where i.ac = :ac").setParameter("ac", interactionAc).getSingleResult();
+
+        return l.intValue();
+    }
+
+    public int getNumberInteractions() {
+        return numberInteractions;
+    }
+
+    public int getNumberParticipants() {
+        return numberParticipants;
     }
 
     public String getInteractionAc() {
@@ -204,6 +231,7 @@ public class DetailsController extends JpaBaseController {
 
     public void setInteraction( Interaction interaction ) {
         this.interaction = interaction;
+        this.interactionAc = interaction.getAc();
     }
 
     public void setInteractionAc( String interactionAc ) {
@@ -221,6 +249,13 @@ public class DetailsController extends JpaBaseController {
         }
 
         if ( interaction == null ) addErrorMessage( "No interaction found in the database for ac: " + interactionAc, "" );
+        loadParticipants();
+    }
+
+    private void loadParticipants(){
+        this.numberParticipants = countParticipantNumbers();
+
+        this.participants = new ParticipantLazyDataModel(getIntactContext().getDataContext(), getIntactContext().getDaoFactory().getEntityManager(), this.interactionAc, this.numberParticipants);
     }
 
     public Experiment getExperiment() {
@@ -408,5 +443,9 @@ public class DetailsController extends JpaBaseController {
             return exp.getFullName();
         }
         return "-";
+    }
+
+    public ParticipantLazyDataModel getParticipants() {
+        return participants;
     }
 }
