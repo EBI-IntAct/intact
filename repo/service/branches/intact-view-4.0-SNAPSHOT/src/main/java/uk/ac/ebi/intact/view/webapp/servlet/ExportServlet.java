@@ -72,7 +72,6 @@ public class ExportServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         IntactViewConfiguration intactViewConfiguration = (IntactViewConfiguration) applicationContext.getBean("intactViewConfiguration");
-
         SolrServer solrServer = intactViewConfiguration.getInteractionSolrServer();
 
         String searchQuery = request.getParameter(PARAM_QUERY);
@@ -92,9 +91,10 @@ public class ExportServlet extends HttpServlet {
             searchQuery = URLDecoder.decode( searchQuery, "UTF-8" );
         }
 
-        if (searchQuery == null) {
-            throw new IntactViewException("No query provided");
+        if (searchQuery == null || searchQuery.length() == 0) {
+            searchQuery = URLDecoder.decode( UserQuery.STAR_QUERY, "UTF-8" );
         }
+
         String extension = getExtension(format);
         
         String fixedQuery = searchQuery;
@@ -158,7 +158,7 @@ public class ExportServlet extends HttpServlet {
         }
         else {
             solrQuery.setParam("qf", SolrFieldName.identifier.toString()+" "+SolrFieldName.xref.toString()+" "+SolrFieldName.pxref.toString()+" "+SolrFieldName.species.toString()+" "+SolrFieldName.detmethod.toString()+" "+SolrFieldName.type.toString()+" "+SolrFieldName.pbiorole.toString()
-                    +" "+SolrFieldName.ptype.toString()+" "+SolrFieldName.ftype.toString()+" "+SolrFieldName.pmethod.toString()+" "+SolrFieldName.annot.toString());
+                    +" "+SolrFieldName.ptype.toString()+" "+SolrFieldName.ftype.toString()+" "+SolrFieldName.pmethod.toString()+" "+SolrFieldName.annot.toString()+" "+SolrFieldName.pubid.toString()+" "+SolrFieldName.pubauth.toString()+" "+SolrFieldName.interaction_id.toString());
         }
 
         // add filters

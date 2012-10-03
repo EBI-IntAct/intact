@@ -53,25 +53,17 @@ public class MoleculeViewController extends JpaBaseController{
     public void loadInteractor() {
         FacesContext context = FacesContext.getCurrentInstance();
 
-        if ( interactorAc != null ) {
-            log.debug( "Parameter " + INTERACTOR_AC_PARAM + " was specified" );
-            setInteractorAc( interactorAc );
+        if (!context.isPostback()) {
+            if ( interactorAc != null ) {
+                log.debug( "Parameter " + INTERACTOR_AC_PARAM + " was specified" );
+                setInteractorAc( interactorAc );
 
-            interactor = getDaoFactory().getInteractorDao().getByAc(interactorAc);
+                interactor = getDaoFactory().getInteractorDao().getByAc(interactorAc);
 
-            /*UserQuery userQuery = (UserQuery) getBean("userQuery");
-            SearchController searchController = (SearchController) getBean("searchBean");*/
-
-            // Update interaction search
-            /*userQuery.reset();
-            userQuery.setSearchQuery( "id:" + interactorAc );
-            SolrQuery solrQuery = userQuery.createSolrQuery();
-            searchController.doBinarySearch( solrQuery );*/
-
-            ContextController contextController = (ContextController) getBean("contextController");
-            contextController.setActiveTabIndex(6);
+                ContextController contextController = (ContextController) getBean("contextController");
+                contextController.setActiveTabIndex(6);
+            }
         }
-
     }
 
     public String open(String interactorAc) {

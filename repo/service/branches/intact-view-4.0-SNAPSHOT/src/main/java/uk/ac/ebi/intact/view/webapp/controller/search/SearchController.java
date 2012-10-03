@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
-import org.hupo.psi.mi.psicquic.registry.client.PsicquicRegistryClientException;
 import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -117,12 +116,7 @@ public class SearchController extends JpaBaseController {
             executorService = psicquicThreadConfig.getExecutorService();
         }
 
-        try {
-            this.psicquicController = new PsicquicSearchManager(this.executorService, this.intactViewConfiguration);
-        } catch (PsicquicRegistryClientException e) {
-            addErrorMessage("Problem counting results in other databases", "Registry not available");
-            e.printStackTrace();
-        }
+        this.psicquicController = new PsicquicSearchManager(this.executorService, this.intactViewConfiguration);
     }
 
     public void searchOnLoad(ComponentSystemEvent evt) {
@@ -301,7 +295,7 @@ public class SearchController extends JpaBaseController {
                 doBrowserSearch(this.currentQuery, getUserQuery());
             }
         }
-        if (evt.getTab() != null && "listsTab".equals(evt.getTab().getId())) {
+        else if (evt.getTab() != null && "listsTab".equals(evt.getTab().getId())) {
 
             if (this.currentQuery == null || !hasLoadedInteractorResults){
                 doInteractorsSearch();
@@ -665,7 +659,7 @@ public class SearchController extends JpaBaseController {
 
     private UserQuery getUserQuery() {
         if (this.userQuery == null){
-           this.userQuery = (UserQuery) getBean("userQuery");
+            this.userQuery = (UserQuery) getBean("userQuery");
         }
         return userQuery;
     }
