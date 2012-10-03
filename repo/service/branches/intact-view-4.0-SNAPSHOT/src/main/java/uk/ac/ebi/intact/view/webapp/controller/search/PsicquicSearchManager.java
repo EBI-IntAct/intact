@@ -24,6 +24,8 @@ import org.hupo.psi.mi.psicquic.registry.client.registry.PsicquicRegistryClient;
 import org.hupo.psi.mi.psicquic.wsclient.PsicquicSimpleClient;
 import uk.ac.ebi.intact.view.webapp.controller.config.IntactViewConfiguration;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +54,7 @@ public class PsicquicSearchManager {
     private ExecutorService executorService;
     private IntactViewConfiguration intactViewConfiguration;
 
-    public PsicquicSearchManager(ExecutorService executorService, IntactViewConfiguration intactViewConfiguration) throws PsicquicRegistryClientException {
+    public PsicquicSearchManager(ExecutorService executorService, IntactViewConfiguration intactViewConfiguration) {
         if (executorService == null){
             throw new NullPointerException("The psicquicController needs an executorService.");
         }
@@ -62,7 +64,17 @@ public class PsicquicSearchManager {
         this.executorService = executorService;
         this.intactViewConfiguration = intactViewConfiguration;
 
-        initializeServices();
+        try {
+            initializeServices();
+        } catch (PsicquicRegistryClientException e) {
+            FacesContext context = FacesContext.getCurrentInstance();
+            if (context != null){
+                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Problem counting results in other databases", "Registry not available");
+                context.addMessage(null, facesMessage);
+            }
+
+            e.printStackTrace();
+        }
     }
 
     public void initializeServices() throws PsicquicRegistryClientException {
@@ -108,27 +120,39 @@ public class PsicquicSearchManager {
         if (query == null || query.length() == 0) {
             query = UserQuery.STAR_QUERY;
         }
-
-        final String psicquicQuery = query;
-
         runningTasks.clear();
 
-        for (final ServiceType service : services) {
-            final PsicquicSimpleClient client = intactViewConfiguration.getPsicquicClient(service.getRestUrl());
+        try {
+            if (services == null){
+                initializeServices();
+            }
+            final String psicquicQuery = query;
 
-            if (intactViewConfiguration.getWebappName().contains(service.getName()) || intactViewConfiguration.getDatabaseNamesUsingSameSolr().contains(service.getName())) {
-                continue;
+            for (final ServiceType service : services) {
+                final PsicquicSimpleClient client = intactViewConfiguration.getPsicquicClient(service.getRestUrl());
+
+                if (intactViewConfiguration.getWebappName().contains(service.getName()) || intactViewConfiguration.getDatabaseNamesUsingSameSolr().contains(service.getName())) {
+                    continue;
+                }
+
+                Callable<PsicquicCountResults> runnable = new Callable<PsicquicCountResults>() {
+                    public PsicquicCountResults call() {
+
+                        return processPsicquicQueries(service, psicquicQuery, client);
+                    }
+                };
+
+                Future<PsicquicCountResults> f = executorService.submit(runnable);
+                runningTasks.add(f);
+            }
+        } catch (PsicquicRegistryClientException e) {
+            FacesContext context = FacesContext.getCurrentInstance();
+            if (context != null){
+                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Problem counting results in other databases", "Registry not available");
+                context.addMessage(null, facesMessage);
             }
 
-            Callable<PsicquicCountResults> runnable = new Callable<PsicquicCountResults>() {
-                public PsicquicCountResults call() {
-
-                    return processPsicquicQueries(service, psicquicQuery, client);
-                }
-            };
-
-            Future<PsicquicCountResults> f = executorService.submit(runnable);
-            runningTasks.add(f);
+            e.printStackTrace();
         }
     }
 

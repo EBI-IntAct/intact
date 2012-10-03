@@ -141,20 +141,21 @@ public class BinaryInteractionsExporter {
 
     private void writeMitab(Writer out, PsimiTabWriter writer, SolrQuery query) throws IOException {
         Integer firstResult = 0;
-        Integer maxResults = 200;
+        Integer maxResults = 500;
 
         // write header first
         writer.writeMitabHeader(out);
 
         Collection interactions;
-
         do {
-            query.setStart(firstResult);
-            query.setRows(maxResults);
+            SolrQuery queryCopy = query.getCopy();
+
+            queryCopy.setStart(firstResult);
+            queryCopy.setRows(maxResults);
 
             IntactSolrSearchResult result = null;
             try {
-                result = solrSearcher.search(query);
+                result = solrSearcher.search(queryCopy);
                 interactions = result.getBinaryInteractionList();
 
                 writer.write(interactions, out);
@@ -174,7 +175,7 @@ public class BinaryInteractionsExporter {
     }
     private void writeXGMML(OutputStream out, SolrQuery query) throws IOException {
         Integer firstResult = 0;
-        Integer maxResults = 200;
+        Integer maxResults = 500;
 
         Collection interactions;
         XgmmlStreamingGrapBuilder graphBuilder = null;
@@ -184,12 +185,13 @@ public class BinaryInteractionsExporter {
             boolean started = false;
 
             do {
-                query.setStart(firstResult);
-                query.setRows(maxResults);
+                SolrQuery queryCopy = query.getCopy();
+                queryCopy.setStart(firstResult);
+                queryCopy.setRows(maxResults);
 
                 IntactSolrSearchResult result = null;
                 try {
-                    result = solrSearcher.search(query);
+                    result = solrSearcher.search(queryCopy);
 
                     if (!started){
                         started = true;
@@ -242,7 +244,7 @@ public class BinaryInteractionsExporter {
 
     public void exportToMiXml(OutputStream os, SolrQuery solrQuery, String format) throws IOException {
 
-        final EntrySet entrySet = createEntrySet(solrQuery);
+        final EntrySet entrySet = createEntrySet(solrQuery.getCopy());
 
         PsimiXmlWriter writer = null;
         if ( XML_2_53.equals( format ) ) {
