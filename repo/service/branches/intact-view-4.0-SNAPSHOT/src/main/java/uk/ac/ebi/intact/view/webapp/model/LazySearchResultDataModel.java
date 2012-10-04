@@ -51,18 +51,19 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
 
     private static final Log log = LogFactory.getLog(LazySearchResultDataModel.class);
 
-    private static String DEFAULT_SORT_COLUMN = FieldNames.INTACT_SCORE_NAME;
-
     private SolrQuery solrQuery;
     private IntactSolrSearcher solrSearcher;
 
     private IntactSolrSearchResult result;
 
     private List<BinaryInteraction> binaryInteractions;
+    private int numberOfBinaryInteractionsToShow;
 
     public LazySearchResultDataModel(SolrServer solrServer, SolrQuery solrQuery) {
-         this.solrSearcher = new IntactSolrSearcher(solrServer);
-         this.solrQuery = solrQuery != null ? solrQuery.getCopy() : null;
+        this.solrSearcher = new IntactSolrSearcher(solrServer);
+        this.solrQuery = solrQuery != null ? solrQuery.getCopy() : null;
+
+        prepareNegativeSolrQuery();
     }
 
     @Override
@@ -77,53 +78,9 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
             return Collections.EMPTY_LIST;
         }
         else {
+
             this.binaryInteractions = null;
-
-            solrQuery.setStart(first)
-                    .setRows(pageSize)
-                    .setFacet(true)
-                    .setFacetMissing(false)
-                    .addFacetField(FieldNames.COMPLEX_EXPANSION_FACET)
-                    .addFacetField(FieldNames.NEGATIVES_FACET);
-
-            // add some limit to faceting for performances improvement
-            solrQuery.set(FacetParams.FACET_OFFSET, 0);
-            // we know that we have only 4 type of expansion methods : spoke expanded, no expansion, matrix or bipartite
-            solrQuery.setFacetLimit(4);
-
-            // sort by intact mi score desc
-            if (solrQuery.getSortField() == null && sortField != null) {
-                if (sortOrder.equals(SortOrder.ASCENDING)){
-                    solrQuery.setSortField(sortField, SolrQuery.ORDER.asc);
-                }
-                else if (sortOrder.equals(SortOrder.DESCENDING)){
-                    solrQuery.setSortField(sortField, SolrQuery.ORDER.desc);
-                }
-            }
-
-            if (log.isDebugEnabled()) {
-                try {
-                    log.debug("Fetching results: "+ URLDecoder.decode(solrQuery.toString(), "UTF-8"));
-                } catch (UnsupportedEncodingException e) {
-                    log.fatal(e);
-                }
-            }
-
-            try {
-                result = solrSearcher.search(solrQuery);
-            } catch (PsicquicSolrException e) {
-                FacesContext context = FacesContext.getCurrentInstance();
-                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to retrieve results", solrQuery.getQuery());
-                context.addMessage(null, facesMessage);
-                log.fatal("Impossible to retrieve results for query " + solrQuery.getQuery(), e);
-                result = null;
-            } catch (SolrServerException e) {
-                FacesContext context = FacesContext.getCurrentInstance();
-                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to retrieve results", solrQuery.getQuery());
-                context.addMessage(null, facesMessage);
-                log.fatal("Impossible to retrieve results for query " + solrQuery.getQuery(), e);
-                result = null;
-            }
+            prepareSolrQuery(first, pageSize, sortField, sortOrder);
 
             List<BinaryInteraction> interactions = new ArrayList<BinaryInteraction>(pageSize);
 
@@ -149,6 +106,82 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
             this.binaryInteractions = interactions;
 
             return interactions;
+        }
+    }
+
+    private void prepareSolrQuery(int first, int pageSize, String sortField, SortOrder sortOrder) {
+        SolrQuery copyQuery = solrQuery.getCopy();
+        copyQuery.setStart(first)
+                .setRows(pageSize)
+                .setFacet(true)
+                .setFacetMissing(false)
+                .addFacetField(FieldNames.COMPLEX_EXPANSION_FACET)
+                .addFacetField(FieldNames.NEGATIVES_FACET);
+
+        // add some limit to faceting for performances improvement
+        copyQuery.set(FacetParams.FACET_OFFSET, 0);
+        // we know that we have only 4 type of expansion methods : spoke expanded, no expansion, matrix or bipartite
+        copyQuery.setFacetLimit(4);
+
+        // sort by intact mi score desc
+        if (copyQuery.getSortField() == null && sortField != null) {
+            if (sortOrder.equals(SortOrder.ASCENDING)){
+                copyQuery.setSortField(sortField, SolrQuery.ORDER.asc);
+            }
+            else if (sortOrder.equals(SortOrder.DESCENDING)){
+                copyQuery.setSortField(sortField, SolrQuery.ORDER.desc);
+            }
+        }
+
+        if (log.isDebugEnabled()) {
+            try {
+                log.debug("Fetching results: "+ URLDecoder.decode(copyQuery.toString(), "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                log.fatal(e);
+            }
+        }
+
+        try {
+            result = solrSearcher.search(copyQuery);
+        } catch (PsicquicSolrException e) {
+            FacesContext context = FacesContext.getCurrentInstance();
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to retrieve results", copyQuery.getQuery());
+            context.addMessage(null, facesMessage);
+            log.fatal("Impossible to retrieve results for query " + copyQuery.getQuery(), e);
+            result = null;
+        } catch (SolrServerException e) {
+            FacesContext context = FacesContext.getCurrentInstance();
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to retrieve results", copyQuery.getQuery());
+            context.addMessage(null, facesMessage);
+            log.fatal("Impossible to retrieve results for query " + copyQuery.getQuery(), e);
+            result = null;
+        }
+    }
+
+    private void prepareNegativeSolrQuery() {
+        SolrQuery copyQuery = solrQuery.getCopy();
+        copyQuery.setStart(0)
+                .setRows(0);
+
+        // add negative filter
+        copyQuery.addFilterQuery(FieldNames.NEGATIVE+":true");
+
+        try {
+            IntactSolrSearchResult negativeResults = solrSearcher.search(copyQuery);
+            this.numberOfBinaryInteractionsToShow = Long.valueOf(negativeResults.getNumberResults()).intValue();
+
+        } catch (PsicquicSolrException e) {
+            FacesContext context = FacesContext.getCurrentInstance();
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to count negative interactions", copyQuery.getQuery());
+            context.addMessage(null, facesMessage);
+            log.fatal("Impossible to retrieve results for query " + copyQuery.getQuery(), e);
+            this.numberOfBinaryInteractionsToShow = 0;
+        } catch (SolrServerException e) {
+            FacesContext context = FacesContext.getCurrentInstance();
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to count negative interactions", copyQuery.getQuery());
+            context.addMessage(null, facesMessage);
+            log.fatal("Impossible to retrieve results for query " + copyQuery.getQuery(), e);
+            this.numberOfBinaryInteractionsToShow = 0;
         }
     }
 
@@ -277,5 +310,9 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
     private BinaryInteraction getInteraction(int rowIndex) {
         final BinaryInteraction binaryInteraction = binaryInteractions.get(rowIndex);
         return binaryInteraction;
+    }
+
+    public int getNumberOfBinaryInteractionsToShow() {
+        return numberOfBinaryInteractionsToShow;
     }
 }

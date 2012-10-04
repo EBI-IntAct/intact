@@ -70,7 +70,7 @@ public class InteractorSearchResultDataModel extends LazyDataModel<InteractorWra
     public InteractorSearchResultDataModel(SolrServer solrServer, SolrQuery solrQuery, String[] interactorTypeMis)  {
 
         this.solrSearcher = new IntactSolrSearcher(solrServer);
-        this.solrQuery = solrQuery != null ? solrQuery.getCopy() : solrQuery;
+        this.solrQuery = solrQuery;
         this.interactorTypeMis = interactorTypeMis;
 
         idCounts = new ArrayList<InteractorWrapper>();
@@ -148,7 +148,7 @@ public class InteractorSearchResultDataModel extends LazyDataModel<InteractorWra
                 }
             }
 
-            final Multimap<String,InteractorIdCount> idCountMultimap = solrSearcher.searchInteractors(solrQuery, this.termsToQuery.toArray(new IntactFacetField[]{}));
+            final Multimap<String,InteractorIdCount> idCountMultimap = solrSearcher.searchInteractors(solrQuery.getCopy(), this.termsToQuery.toArray(new IntactFacetField[]{}));
 
             wrap(idCountMultimap.values(), first, pageSize);
         }

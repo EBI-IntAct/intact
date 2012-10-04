@@ -138,6 +138,10 @@ public class QueryToken {
     }
 
     public void escapeIfNecessary(String query, StringBuffer queryString) {
+        if (query.equals(UserQuery.STAR_QUERY)){
+            queryString.append(query);
+            return;
+        }
 
         // range query, do nothing
         if (query.startsWith("[") && query.endsWith("]")){
@@ -159,6 +163,12 @@ public class QueryToken {
                         .replaceAll("\\)", "\\\\)")
                         .replaceAll("-", "\\\\-")
                         .replaceAll("\\+", "\\\\+"));
+            }
+            else if (query.contains("(") ||
+                    query.contains(")") ||
+                    query.contains("-") ||
+                    query.contains("+")){
+                queryString.append(query);
             }
             else {
                 queryString.append("\""+query+"\"");
