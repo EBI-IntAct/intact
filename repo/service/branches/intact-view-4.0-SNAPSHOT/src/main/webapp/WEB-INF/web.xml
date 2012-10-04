@@ -37,6 +37,12 @@
         <param-value>http://www.ebi.ac.uk/~intact/site/dotm/dotm-1.1.xml</param-value>
     </context-param>
 
+    <!-- to avoid viewExpiredException-->
+    <context-param>
+        <param-name>com.sun.faces.enableRestoreView11Compatibility</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
     <!-- MyFaces -->
 
     <context-param>
