@@ -170,7 +170,8 @@ public class FilterPopulatorController extends SpringInitializedService{
     private List<SelectItem> listNegativeSelectItems() {
         List<SelectItem> negativeItems = new ArrayList<SelectItem>(2);
         negativeItems.add(new SelectItem("true", "Only negative interactions"));
-        negativeItems.add(new SelectItem("false", "Excludes negative interactions"));
+        negativeItems.add(new SelectItem("(false OR true)", "Includes negative interactions"));
+        negativeItems.add(new SelectItem("false", "Only positive interactions (default)"));
         return negativeItems;
     }
 

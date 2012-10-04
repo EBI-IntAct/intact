@@ -135,7 +135,7 @@ public class SearchController extends JpaBaseController {
 
     public String doBinarySearchAction() {
         UserQuery userQuery = getUserQuery();
-        if (this.currentQuery == null || !userQuery.getSearchQuery().equals(this.currentQuery) || !hasLoadedSearchControllerResults){
+        if (this.currentQuery == null || !hasLoadedSearchControllerResults){
             userQuery.clearInteractionFilters();
         }
 
@@ -304,7 +304,7 @@ public class SearchController extends JpaBaseController {
     }
 
     public void doBrowserSearch(String query, UserQuery userQuery) {
-        Callable<Set<String>> uniprotAcsRunnable = browseController.createBrowserInteractorListRunnable(query != null ? query : UserQuery.STAR_QUERY, browseController.getSolrSearcher(), userQuery.isFilterSpoke(), userQuery.isFilterNegative());
+        Callable<Set<String>> uniprotAcsRunnable = browseController.createBrowserInteractorListRunnable(query != null ? query : UserQuery.STAR_QUERY, browseController.getSolrSearcher(), userQuery.isFilterSpoke(), userQuery.isIncludeNegative());
         Future<Set<String>> uniprotAcsFuture = executorService.submit(uniprotAcsRunnable);
 
         if (this.currentQuery == null || !hasLoadedInteractorResults){
@@ -677,7 +677,7 @@ public class SearchController extends JpaBaseController {
 
     public String getExportQueryParameters(){
         try {
-            return "format="+exportFormat+"&query="+ URLEncoder.encode(getUserQuery().getSearchQuery(), "UTF-8").replaceAll("\\+", "%20")+"&negative="+getUserQuery().isFilterNegative()+"&spoke="+getUserQuery().isFilterSpoke()+"&ontology="+getUserQuery().isOntologyQuery()+"&sort="+userSortColumn+"&asc="+ascending;
+            return "format="+exportFormat+"&query="+ URLEncoder.encode(getUserQuery().getSearchQuery(), "UTF-8").replaceAll("\\+", "%20")+"&negative="+getUserQuery().isIncludeNegative()+"&spoke="+getUserQuery().isFilterSpoke()+"&ontology="+getUserQuery().isOntologyQuery()+"&sort="+userSortColumn+"&asc="+ascending;
         } catch (UnsupportedEncodingException e) {
             throw new IntactViewException("Invalid query", e);
         }
@@ -697,5 +697,12 @@ public class SearchController extends JpaBaseController {
 
     public boolean hasLoadedInteractorResults() {
         return hasLoadedInteractorResults;
+    }
+
+    public int getNumberOfBinaryInteractionsToShow(){
+        if (results == null){
+           return 0;
+        }
+        return this.results.getNumberOfBinaryInteractionsToShow();
     }
 }

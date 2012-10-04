@@ -97,11 +97,11 @@ public class UserQuery extends BaseController {
     private TreeNode selectedSearchTerm;
 
     private static final String ONTOLOGY_QUERY_PARAMETER_NAME = "ontologyQuery";
-    private static final String FILTER_NEGATIVE_PARAMETER_NAME = "filterNegative";
+    private static final String INCLUDE_NEGATIVE_PARAMETER_NAME = "includeNegative";
     private static final String FILTER_SPOKE_PARAMETER_NAME = "filterSpoke";
     private static final String QUERY_PARAMETER_NAME = "query";
 
-    private boolean filterNegative=false;
+    private boolean includeNegative =false;
     private boolean filterSpoke=false;
     private boolean isOntologyQuery=false;
 
@@ -131,12 +131,12 @@ public class UserQuery extends BaseController {
     public void clearFilters() {
         termMap.clear();
         isOntologyQuery=false;
-        filterNegative=false;
+        includeNegative =false;
         filterSpoke=false;
     }
 
     public void clearInteractionFilters() {
-        filterNegative=false;
+        includeNegative =false;
         filterSpoke=false;
     }
 
@@ -203,8 +203,8 @@ public class UserQuery extends BaseController {
         SolrQuery query = new SolrQuery( searchQuery );
         query.setSortField(userSortColumn, (userSortOrder)? SolrQuery.ORDER.desc : SolrQuery.ORDER.asc);
 
-        if (filterNegative){
-            query.addFilterQuery(FieldNames.NEGATIVE+":false");
+        if (includeNegative){
+            query.addFilterQuery(FieldNames.NEGATIVE+":(true OR false)");
         }
         if (filterSpoke){
             query.addFilterQuery(FieldNames.COMPLEX_EXPANSION+":\"-\"");
@@ -503,8 +503,8 @@ public class UserQuery extends BaseController {
             if (QUERY_PARAMETER_NAME.equals(entry.getKey())){
                 setSearchQuery((String) entry.getValue());
             }
-            else if (FILTER_NEGATIVE_PARAMETER_NAME.equals(entry.getKey())){
-                setFilterNegative(Boolean.parseBoolean((String) entry.getValue()));
+            else if (INCLUDE_NEGATIVE_PARAMETER_NAME.equals(entry.getKey())){
+                setIncludeNegative(Boolean.parseBoolean((String) entry.getValue()));
             }
             else if (FILTER_SPOKE_PARAMETER_NAME.equals(entry.getKey())){
                 setFilterSpoke(Boolean.parseBoolean((String) entry.getValue()));
@@ -567,12 +567,12 @@ public class UserQuery extends BaseController {
         this.selectedSearchTerm = selectedSearchTerm;
     }
 
-    public boolean isFilterNegative() {
-        return filterNegative;
+    public boolean isIncludeNegative() {
+        return includeNegative;
     }
 
-    public void setFilterNegative(boolean filterNegative) {
-        this.filterNegative = filterNegative;
+    public void setIncludeNegative(boolean includeNegative) {
+        this.includeNegative = includeNegative;
     }
 
     public boolean isFilterSpoke() {
@@ -595,8 +595,8 @@ public class UserQuery extends BaseController {
         return ONTOLOGY_QUERY_PARAMETER_NAME;
     }
 
-    public String getFilterNegativeParameterName() {
-        return FILTER_NEGATIVE_PARAMETER_NAME;
+    public String getIncludeNegativeParameterName() {
+        return INCLUDE_NEGATIVE_PARAMETER_NAME;
     }
 
     public String getFilterSpokeParameterName() {

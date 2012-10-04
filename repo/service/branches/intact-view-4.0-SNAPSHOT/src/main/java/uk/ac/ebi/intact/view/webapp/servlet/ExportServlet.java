@@ -80,7 +80,7 @@ public class ExportServlet extends HttpServlet {
         String spoke = request.getParameter(PARAM_FILTER_SPOKE);
         String ontology = request.getParameter(PARAM_ONTOLOGY_QUERY);
 
-        boolean filterNegative = negative != null ? Boolean.parseBoolean(negative) : false;
+        boolean includeNegative = negative != null ? Boolean.parseBoolean(negative) : false;
         boolean filterSpoke = negative != null ? Boolean.parseBoolean(spoke) : false;
         boolean ontologyQuery = ontology != null ? Boolean.parseBoolean(ontology) : false;
 
@@ -112,7 +112,7 @@ public class ExportServlet extends HttpServlet {
         String sortColumn = request.getParameter(PARAM_SORT);
         String sortAsc = request.getParameter(PARAM_SORT_ASC);
 
-        SolrQuery solrQuery = createSolrQuery(searchQuery, ontologyQuery, sortColumn, sortAsc, filterNegative, filterSpoke);
+        SolrQuery solrQuery = createSolrQuery(searchQuery, ontologyQuery, sortColumn, sortAsc, includeNegative, filterSpoke);
 
         if (exporter == null){
             exporter = new BinaryInteractionsExporter(solrServer);
@@ -163,7 +163,7 @@ public class ExportServlet extends HttpServlet {
 
         // add filters
         if (filterNegative){
-            solrQuery.addFilterQuery(FieldNames.NEGATIVE+":false");
+            solrQuery.addFilterQuery(FieldNames.NEGATIVE+":(true OR false)");
         }
         if (filterSpoke){
             solrQuery.addFilterQuery(FieldNames.COMPLEX_EXPANSION+":\"-\"");

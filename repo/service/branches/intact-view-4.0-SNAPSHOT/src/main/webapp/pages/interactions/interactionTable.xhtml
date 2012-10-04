@@ -81,7 +81,7 @@
 <p:dataTable id="resultsTable" var="binaryInteraction" value="#{searchBean.results}"
              rows="#{userQuery.pageSize}"
              dynamic="true" rowIndexVar="row" paginatorPosition="both"
-             paginator="#{searchBean.results.rowCount gt userQuery.pageSize}"
+             paginator="#{searchBean.totalResults gt userQuery.pageSize}"
              rowStyleClass="#{not searchBean.results.sameThanPrevious? 'newInteractionRow' : 'sameInteractionRow'} #{searchBean.results.negative? ', negativeInteractionRow' : ''}" rendered="#{searchBean.totalResults > 0}">
 <p:column id="detailCol">
     <h:outputLink value="#{request.contextPath}/interaction/#{searchBean.getMainAccessionXref(binaryInteraction).identifier}" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Interaction details','#{detailsBean.interactionAc}'])">

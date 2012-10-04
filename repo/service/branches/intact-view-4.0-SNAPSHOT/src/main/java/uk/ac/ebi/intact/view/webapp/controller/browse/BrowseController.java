@@ -116,7 +116,7 @@ public class BrowseController extends JpaBaseController {
 
         if (!hasLoadedUniprotAcs(searchController.getCurrentQuery())){
 
-            Callable<Set<String>> uniprotAcsRunnable = createBrowserInteractorListRunnable(searchController.getCurrentQuery() != null ? searchController.getCurrentQuery() : UserQuery.STAR_QUERY, getSolrSearcher(), userQuery.isFilterSpoke(), userQuery.isFilterNegative());
+            Callable<Set<String>> uniprotAcsRunnable = createBrowserInteractorListRunnable(searchController.getCurrentQuery() != null ? searchController.getCurrentQuery() : UserQuery.STAR_QUERY, getSolrSearcher(), userQuery.isFilterSpoke(), userQuery.isIncludeNegative());
             Future<Set<String>> uniprotAcsFuture = executorService.submit(uniprotAcsRunnable);
 
             if (!searchController.hasLoadedInteractorResults()){
