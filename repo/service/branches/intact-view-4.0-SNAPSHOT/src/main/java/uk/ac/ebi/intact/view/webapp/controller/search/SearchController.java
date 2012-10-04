@@ -133,6 +133,16 @@ public class SearchController extends JpaBaseController {
         }
     }
 
+    public void refreshStatusOnLoad(ComponentSystemEvent evt) {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        String statusParam = context.getExternalContext().getRequestParameterMap().get("status");
+
+        if (statusParam != null && "exp".equals(statusParam)) {
+            addWarningMessage("Session expired", "The user session was expired due to inactivity or the server being restarted");
+        }
+    }
+
     public String doBinarySearchAction() {
         UserQuery userQuery = getUserQuery();
         if (this.currentQuery == null || !hasLoadedSearchControllerResults){

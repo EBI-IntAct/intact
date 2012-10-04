@@ -72,8 +72,10 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
 
             // add a error message
             FacesContext context = FacesContext.getCurrentInstance();
-            FacesMessage facesMessage = new FacesMessage( FacesMessage.SEVERITY_ERROR, "Query is empty", "Cannot fetch any results because query is empty. Please enter a query." );
-            context.addMessage( null, facesMessage );
+            if (context != null){
+                FacesMessage facesMessage = new FacesMessage( FacesMessage.SEVERITY_ERROR, "Query is empty", "Cannot fetch any results because query is empty. Please enter a query." );
+                context.addMessage( null, facesMessage );
+            }
 
             return Collections.EMPTY_LIST;
         }
@@ -92,13 +94,18 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
                     }
                 } catch (PsimiTabException e) {
                     FacesContext context = FacesContext.getCurrentInstance();
-                    FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to retrieve results", solrQuery.getQuery());
-                    context.addMessage(null, facesMessage);
+                    if (context != null){
+                        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to retrieve results", solrQuery.getQuery());
+                        context.addMessage(null, facesMessage);
+                    }
+
                     log.fatal("Impossible to retrieve results for query " + solrQuery.getQuery(), e);
                 } catch (IOException e) {
                     FacesContext context = FacesContext.getCurrentInstance();
-                    FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to retrieve results", solrQuery.getQuery());
-                    context.addMessage(null, facesMessage);
+                    if (context != null){
+                        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to retrieve results", solrQuery.getQuery());
+                        context.addMessage(null, facesMessage);
+                    }
                     log.fatal("Impossible to retrieve results for query " + solrQuery.getQuery(), e);
                 }
             }
@@ -145,14 +152,19 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
             result = solrSearcher.search(copyQuery);
         } catch (PsicquicSolrException e) {
             FacesContext context = FacesContext.getCurrentInstance();
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to retrieve results", copyQuery.getQuery());
-            context.addMessage(null, facesMessage);
+            if (context != null){
+                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to retrieve results", copyQuery.getQuery());
+                context.addMessage(null, facesMessage);
+            }
+
             log.fatal("Impossible to retrieve results for query " + copyQuery.getQuery(), e);
             result = null;
         } catch (SolrServerException e) {
             FacesContext context = FacesContext.getCurrentInstance();
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to retrieve results", copyQuery.getQuery());
-            context.addMessage(null, facesMessage);
+            if (context != null){
+                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to retrieve results", copyQuery.getQuery());
+                context.addMessage(null, facesMessage);
+            }
             log.fatal("Impossible to retrieve results for query " + copyQuery.getQuery(), e);
             result = null;
         }
@@ -172,14 +184,19 @@ public class LazySearchResultDataModel extends LazyDataModel<BinaryInteraction> 
 
         } catch (PsicquicSolrException e) {
             FacesContext context = FacesContext.getCurrentInstance();
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to count negative interactions", copyQuery.getQuery());
-            context.addMessage(null, facesMessage);
+            if (context != null){
+                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to count negative interactions", copyQuery.getQuery());
+                context.addMessage(null, facesMessage);
+            }
+
             log.fatal("Impossible to retrieve results for query " + copyQuery.getQuery(), e);
             this.numberOfBinaryInteractionsToShow = 0;
         } catch (SolrServerException e) {
             FacesContext context = FacesContext.getCurrentInstance();
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to count negative interactions", copyQuery.getQuery());
-            context.addMessage(null, facesMessage);
+            if (context != null){
+                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Temporarily impossible to count negative interactions", copyQuery.getQuery());
+                context.addMessage(null, facesMessage);
+            }
             log.fatal("Impossible to retrieve results for query " + copyQuery.getQuery(), e);
             this.numberOfBinaryInteractionsToShow = 0;
         }

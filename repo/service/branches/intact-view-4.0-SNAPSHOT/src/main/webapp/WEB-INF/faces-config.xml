@@ -335,4 +335,8 @@
         </navigation-case>
     </navigation-rule>
 
+    <factory>
+        <exception-handler-factory>uk.ac.ebi.intact.view.webapp.error.factory.ViewExpiredExceptionHandlerFactory</exception-handler-factory>
+    </factory>
+
 </faces-config>

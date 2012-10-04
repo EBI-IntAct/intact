@@ -84,8 +84,10 @@ public class InteractorSearchResultDataModel extends LazyDataModel<InteractorWra
         if (solrQuery == null) {
             // add a error message
             FacesContext context = FacesContext.getCurrentInstance();
-            FacesMessage facesMessage = new FacesMessage( FacesMessage.SEVERITY_ERROR, "Query is empty", "Cannot fetch any results because query is empty. Please enter a query." );
-            context.addMessage( null, facesMessage );
+            if (context != null){
+                FacesMessage facesMessage = new FacesMessage( FacesMessage.SEVERITY_ERROR, "Query is empty", "Cannot fetch any results because query is empty. Please enter a query." );
+                context.addMessage( null, facesMessage );
+            }
         }
         else {
 
@@ -103,8 +105,10 @@ public class InteractorSearchResultDataModel extends LazyDataModel<InteractorWra
         if (solrQuery == null) {
             // add a error message
             FacesContext context = FacesContext.getCurrentInstance();
-            FacesMessage facesMessage = new FacesMessage( FacesMessage.SEVERITY_ERROR, "Query is empty", "Cannot fetch any results because query is empty. Please enter a query." );
-            context.addMessage( null, facesMessage );
+            if (context != null){
+                FacesMessage facesMessage = new FacesMessage( FacesMessage.SEVERITY_ERROR, "Query is empty", "Cannot fetch any results because query is empty. Please enter a query." );
+                context.addMessage( null, facesMessage );
+            }
         }
 
         if (log.isDebugEnabled()) log.debug("Fetching interactors for query: "+solrQuery);

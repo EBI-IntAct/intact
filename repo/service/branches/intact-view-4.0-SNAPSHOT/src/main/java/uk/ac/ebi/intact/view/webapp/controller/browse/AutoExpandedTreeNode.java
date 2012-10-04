@@ -52,8 +52,10 @@ public class AutoExpandedTreeNode extends OntologyTermNode {
                 return createTreeNodes(otw.getChildren());
             } catch (SolrServerException e) {
                 FacesContext context = FacesContext.getCurrentInstance();
-                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Problem getting term children interaction count", e.getMessage());
-                context.addMessage(null, facesMessage);
+                if (context != null){
+                    FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Problem getting term children interaction count", e.getMessage());
+                    context.addMessage(null, facesMessage);
+                }
 
                 return Collections.EMPTY_LIST;
             }
@@ -81,8 +83,10 @@ public class AutoExpandedTreeNode extends OntologyTermNode {
             children = ontologyTermWrapper.getChildren();
         } catch (SolrServerException e) {
             FacesContext context = FacesContext.getCurrentInstance();
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Problem getting term children interaction count", e.getMessage());
-            context.addMessage(null, facesMessage);
+            if (context != null){
+                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Problem getting term children interaction count", e.getMessage());
+                context.addMessage(null, facesMessage);
+            }
 
             children = Collections.EMPTY_LIST;
         }
