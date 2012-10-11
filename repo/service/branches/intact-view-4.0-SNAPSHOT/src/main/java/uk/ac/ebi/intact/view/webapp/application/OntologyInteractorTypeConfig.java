@@ -40,6 +40,11 @@ public class OntologyInteractorTypeConfig implements InitializingBean{
     private String [] nucleicAcidTypes;
     private String[] geneTypes;
 
+    private boolean proteinTypesInitialized;
+    private boolean compoundTypesInitialized;
+    private boolean nucleicAcidTypesInitialized;
+    private boolean geneTypesInitialized;
+
     @Override
     public void afterPropertiesSet() throws Exception {
 
@@ -106,8 +111,12 @@ public class OntologyInteractorTypeConfig implements InitializingBean{
                 this.proteinTypes[index] = term.getId();
                 index++;
             }
+            proteinTypesInitialized = true;
         }
         catch (SolrServerException e){
+            log.error("Could not load protein types from SOLR index. Use defaults.", e);
+            proteinTypesInitialized = false;
+
             proteinTypes = new String[]{CvInteractorType.PROTEIN_MI_REF,CvInteractorType.PEPTIDE_MI_REF};
         }
     }
@@ -127,8 +136,11 @@ public class OntologyInteractorTypeConfig implements InitializingBean{
                 this.compoundTypes[index] = term.getId();
                 index++;
             }
+            compoundTypesInitialized = true;
         }
         catch (SolrServerException e){
+            log.error("Could not load compound types from SOLR index. Use defaults.", e);
+            compoundTypesInitialized = false;
             compoundTypes = new String[]{"MI:1100",CvInteractorType.SMALL_MOLECULE_MI_REF,CvInteractorType.POLYSACCHARIDE_MI_REF};
         }
     }
@@ -148,8 +160,11 @@ public class OntologyInteractorTypeConfig implements InitializingBean{
                 this.nucleicAcidTypes[index] = term.getId();
                 index++;
             }
+            nucleicAcidTypesInitialized = true;
         }
         catch (SolrServerException e){
+            log.error("Could not load nucleic acid types from SOLR index. Use defaults.", e);
+            nucleicAcidTypesInitialized = false;
             nucleicAcidTypes = new String[]{"MI:0318",CvInteractorType.DNA_MI_REF,CvInteractorType.RNA_MI_REF};
         }
     }
@@ -169,8 +184,12 @@ public class OntologyInteractorTypeConfig implements InitializingBean{
                 this.geneTypes[index] = term.getId();
                 index++;
             }
+
+            geneTypesInitialized = true;
         }
         catch (SolrServerException e){
+            log.error("Could not load gene types from SOLR index. Use defaults.", e);
+            geneTypesInitialized = false;
             geneTypes = new String[]{"MI:0250"};
         }
     }
@@ -191,18 +210,38 @@ public class OntologyInteractorTypeConfig implements InitializingBean{
     }
 
     public String[] getProteinTypes() {
+        if (!proteinTypesInitialized){
+            final SolrServer ontologySolrServer = viewConfiguration.getOntologySolrServer();
+            OntologySearcher ontologySearcher = new OntologySearcher(ontologySolrServer);
+            loadProteins(ontologySearcher);
+        }
         return proteinTypes;
     }
 
     public String[] getCompoundTypes() {
+        if (!compoundTypesInitialized){
+            final SolrServer ontologySolrServer = viewConfiguration.getOntologySolrServer();
+            OntologySearcher ontologySearcher = new OntologySearcher(ontologySolrServer);
+            loadCompounds(ontologySearcher);
+        }
         return compoundTypes;
     }
 
     public String[] getNucleicAcidTypes() {
+        if (!nucleicAcidTypesInitialized){
+            final SolrServer ontologySolrServer = viewConfiguration.getOntologySolrServer();
+            OntologySearcher ontologySearcher = new OntologySearcher(ontologySolrServer);
+            loadNucleicAcids(ontologySearcher);
+        }
         return nucleicAcidTypes;
     }
 
     public String[] getGeneTypes() {
+        if (!geneTypesInitialized){
+            final SolrServer ontologySolrServer = viewConfiguration.getOntologySolrServer();
+            OntologySearcher ontologySearcher = new OntologySearcher(ontologySolrServer);
+            loadGenes(ontologySearcher);
+        }
         return geneTypes;
     }
 }

@@ -53,6 +53,7 @@ public class StatisticsController extends SpringInitializedService {
     private int interactorCount = 0;
     private int interactionCount = 0;
     private int interactorsWithNoInteractions = 0;
+    private boolean isBinaryInteractionCountInitialized = false;
 
     private IntactSolrSearcher searcher;
 
@@ -109,9 +110,12 @@ public class StatisticsController extends SpringInitializedService {
         try {
             result = searcher.search("*:*", 0, 0);
             int count = Long.valueOf(result.getNumberResults()).intValue();
+            isBinaryInteractionCountInitialized = true;
+
             return count;
         } catch (Exception e) {
             log.error("Impossible to check statistics in solr", e);
+            isBinaryInteractionCountInitialized = false;
             return 0;
         }
     }
@@ -121,6 +125,9 @@ public class StatisticsController extends SpringInitializedService {
     }
 
     public int getBinaryInteractionCount() {
+        if (!isBinaryInteractionCountInitialized){
+            binaryInteractionCount = countBinaryInteractionsFromIndex();
+        }
         return binaryInteractionCount;
     }
 
