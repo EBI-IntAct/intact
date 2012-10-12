@@ -151,23 +151,25 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
      * This method will initialise the synonyms, aliases, definition, comments, obsolete message, url from the map of metadata
      */
     public void loadSynonymsFrom(Map metadata, boolean isObsolete) {
-        for (Object key : metadata.keySet()){
-            String keyName = (String) key;
+        if (metadata != null){
+            for (Object key : metadata.keySet()){
+                String keyName = (String) key;
 
-            // definition
-            if (DEFINITION_KEY.equalsIgnoreCase(keyName)){
-                String description = (String) metadata.get(keyName);
+                // definition
+                if (DEFINITION_KEY.equalsIgnoreCase(keyName)){
+                    String description = (String) metadata.get(keyName);
 
-                processDefinition(description);
-            }
-            // comment
-            else if (COMMENT_KEY.equalsIgnoreCase(keyName) || keyName.startsWith(COMMENT_KEY + META_DATA_SEPARATOR)){
-                String comment = (String) metadata.get(keyName);
-                this.comments.add(comment);
-            }
-            else {
-                String synonym = (String) metadata.get(keyName);
-                processSynonym(keyName, synonym);
+                    processDefinition(description);
+                }
+                // comment
+                else if (COMMENT_KEY.equalsIgnoreCase(keyName) || keyName.startsWith(COMMENT_KEY + META_DATA_SEPARATOR)){
+                    String comment = (String) metadata.get(keyName);
+                    this.comments.add(comment);
+                }
+                else {
+                    String synonym = (String) metadata.get(keyName);
+                    processSynonym(keyName, synonym);
+                }
             }
         }
 
