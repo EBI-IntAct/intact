@@ -121,10 +121,7 @@ BEGIN
            SELECT count(distinct c.interaction_ac) INTO v_self_binary
            FROM ia_component c
            WHERE   
-           (
-           c.stoichiometry > 2 OR c.stoichiometry = 2
-           )
-           AND c.interaction_ac IN
+           c.interaction_ac IN
            (
            SELECT distinct comp.interaction_ac
            FROM ia_component comp
@@ -141,10 +138,6 @@ BEGIN
            AND a.topic_ac = cont.ac
            AND cont.shortlabel = 'negative'
            AND c.interaction_ac = i.ac
-           AND
-           (
-           c.stoichiometry > 2 OR c.stoichiometry = 2
-           )
            AND c.interaction_ac IN
            (
            SELECT distinct comp.interaction_ac
