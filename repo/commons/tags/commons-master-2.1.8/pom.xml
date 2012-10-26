@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.maven</groupId>
+        <artifactId>intact-master</artifactId>
+        <version>21</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>uk.ac.ebi.intact.commons</groupId>
+    <artifactId>commons-master</artifactId>
+    <packaging>pom</packaging>
+    <version>2.1.8</version>
+
+    <name>IntAct Commons</name>
+    <description>Commons Master POM</description>
+    <url>http://www.ebi.ac.uk/~intact/devsite/commons</url>
+
+    <properties>
+        <currentVersion>${version}</currentVersion>
+    </properties>
+
+    <scm>
+        <connection>scm:svn:https://intact.googlecode.com/svn/repo/commons/tags/commons-master-2.1.8</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/commons/tags/commons-master-2.1.8</developerConnection>
+        <url>http://code.google.com/p/intact/source/browse/repo/commons/tags/commons-master-2.1.8</url>
+    </scm>
+
+    <modules>
+        <module>hibernateconfig-maven-plugin</module>
+        <module>intact-commons</module>
+        <module>irefindex-seguid</module>
+  </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>${groupId}</groupId>
+                <artifactId>intact-commons</artifactId>
+                <version>${currentVersion}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.17</version>
+                <exclusions>
+                   <exclusion>
+                      <groupId>javax.jms</groupId>
+                      <artifactId>jms</artifactId>
+                   </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>3.2.1</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+    <repositories>
+         <repository>
+              <id>intact.nexus</id>
+              <name>IntAct Nexus</name>
+              <url>http://www.ebi.ac.uk/intact/maven/nexus/content/groups/public</url>
+         </repository>
+    </repositories>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/commons</url>
+        </site>
+    </distributionManagement>
+
+</project>
