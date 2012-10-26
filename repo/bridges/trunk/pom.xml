@@ -39,7 +39,6 @@
        <module>intact-blast</module>
        <module>intact-go</module>
        <module>intact-google</module>
-       <module>coredep</module>
        <module>intact-ontologies</module>
        <module>intact-ols-light</module>
     <module>intact-ontology-manager</module>
@@ -52,7 +51,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>jaxws-maven-plugin</artifactId>
-                    <version>1.10</version>
+                    <version>1.12</version>
 
                     <executions>
                     <execution>
@@ -91,7 +90,7 @@
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
-                <version>1.2.15</version>
+                <version>1.2.17</version>
                 <exclusions>
                    <exclusion>
                       <groupId>javax.jms</groupId>
@@ -111,7 +110,7 @@
             <dependency>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-tools</artifactId>
-                <version>2.1.7</version>
+                <version>2.2.7</version>
             </dependency>
             <dependency>
                 <groupId>xfire</groupId>
@@ -140,7 +139,7 @@
             <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
-                <version>2.4</version>
+                <version>2.6</version>
             </dependency>
         </dependencies>
 
@@ -150,7 +149,7 @@
         <dependency>
              <groupId>junit</groupId>
              <artifactId>junit</artifactId>
-             <version>4.4</version>
+             <version>4.10</version>
              <scope>test</scope>
         </dependency>
     </dependencies>
