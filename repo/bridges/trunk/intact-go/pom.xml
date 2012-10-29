@@ -17,9 +17,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>uk.ac.ebi</groupId>
-            <artifactId>ols</artifactId>
-            <version>1.14</version>
+            <groupId>uk.ac.ebi.intact.bridges</groupId>
+            <artifactId>intact-ontology-manager</artifactId>
+            <version>${pom.version}</version>
         </dependency>
 
         <!-- 3rd party -->
