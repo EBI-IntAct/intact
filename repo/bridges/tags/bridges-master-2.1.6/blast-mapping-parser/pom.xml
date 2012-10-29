@@ -1,0 +1,69 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>bridges-master</artifactId>
+		<groupId>uk.ac.ebi.intact.bridges</groupId>
+		<version>2.1.6</version>
+	</parent>
+
+	<artifactId>blast-mapping-parser</artifactId>
+	<packaging>jar</packaging>
+	<version>2.1.6</version>
+
+	<name>IntAct Bridges :: Blast Mapping Parser</name>
+
+	<build>
+		<plugins>
+            <!-- Conversion of XML Schema into Java source code using JAXB-XJC -->
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.8.2</version>
+                <configuration>
+                    <schemaDirectory>src/main/resources</schemaDirectory>
+                    <generatePackage>uk.ac.ebi.intact.confidence.blastmapping.jaxb</generatePackage>
+                    <strict>false</strict>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<!-- 3rd party -->
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+		</dependency>
+
+		<!-- JAXB -->
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>stax</groupId>
+			<artifactId>stax</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+		</dependency>
+	</dependencies>
+
+	<repositories>
+        <repository>
+            <id>intact.nexus</id>
+            <name>IntAct Nexus</name>
+            <url>http://www.ebi.ac.uk/intact/maven/nexus/content/groups/public</url>
+        </repository>
+    </repositories>
+</project>
