@@ -6,12 +6,11 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.util.go;
 
-import uk.ac.ebi.ook.web.services.Query;
-import uk.ac.ebi.ook.web.services.QueryServiceLocator;
+import psidev.psi.tools.ontology_manager.client.OlsClient;
 
 import javax.xml.rpc.ServiceException;
+import java.net.MalformedURLException;
 import java.rmi.RemoteException;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -37,7 +36,7 @@ public class GoServerProxy {
 
     // Instance Data
 
-    private Query olsQuery;
+    private OlsClient olsQuery;
 
     private boolean categoryEnabled = true;
 
@@ -62,10 +61,10 @@ public class GoServerProxy {
      * @throws javax.xml.rpc.ServiceException
      */
     public GoTerm query( String goId )
-            throws RemoteException, ServiceException, GoIdNotFoundException {
+            throws RemoteException, ServiceException, GoIdNotFoundException, MalformedURLException {
         if (goId == null) throw new NullPointerException("goId cannot be null");
 
-        olsQuery = new QueryServiceLocator().getOntologyQuery();
+        olsQuery = new OlsClient();
 
         String name = olsQuery.getTermById(goId, GO);
 
@@ -93,9 +92,9 @@ public class GoServerProxy {
         return term;
     }
 
-    private static String getCategoryForGoId(String goId) throws RemoteException, ServiceException{
-        Query olsQuery = new QueryServiceLocator().getOntologyQuery();
-        HashMap goIdMap = olsQuery.getTermParents(goId, "GO");
+    private static String getCategoryForGoId(String goId) throws RemoteException, ServiceException, MalformedURLException {
+        OlsClient olsQuery = new OlsClient();
+        Map goIdMap = olsQuery.getTermParents(goId, "GO");
 
         if (goIdMap.isEmpty()) {
             return goId;
