@@ -1,66 +1,66 @@
-<?xml version="1.0" encoding="UTF-8"?><definitions xmlns:tns="http://webservice.cdb.ebi.ac.uk/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://webservice.cdb.ebi.ac.uk/" name="WSCitationImplService">
-  <types>
-    <xsd:schema>
-      <xsd:import namespace="http://webservice.cdb.ebi.ac.uk/" schemaLocation="http://www.ebi.ac.uk:80/webservices/citexplore/v1.0/service?xsd=1"></xsd:import>
-    </xsd:schema>
-  </types>
-  <message name="searchCitations">
-    <part element="tns:searchCitations" name="parameters"></part>
-  </message>
-  <message name="searchCitationsResponse">
-    <part element="tns:searchCitationsResponse" name="parameters"></part>
-  </message>
-  <message name="QueryException">
-    <part element="tns:QueryException" name="fault"></part>
-  </message>
-  <message name="doc2loc">
-    <part element="tns:doc2loc" name="parameters"></part>
-  </message>
-  <message name="doc2locResponse">
-    <part element="tns:doc2locResponse" name="parameters"></part>
-  </message>
-  <portType name="WSCitationImpl">
-    <operation name="searchCitations">
-      <input message="tns:searchCitations"></input>
-      <output message="tns:searchCitationsResponse"></output>
-      <fault message="tns:QueryException" name="QueryException"></fault>
-    </operation>
-    <operation name="doc2loc">
-      <input message="tns:doc2loc"></input>
-      <output message="tns:doc2locResponse"></output>
-      <fault message="tns:QueryException" name="QueryException"></fault>
-    </operation>
-  </portType>
-  <binding type="tns:WSCitationImpl" name="WSCitationImplPortBinding">
-    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"></soap:binding>
-    <operation name="searchCitations">
-      <soap:operation soapAction=""></soap:operation>
-      <input>
-        <soap:body use="literal"></soap:body>
-      </input>
-      <output>
-        <soap:body use="literal"></soap:body>
-      </output>
-      <fault name="QueryException">
-        <soap:fault use="literal" name="QueryException"></soap:fault>
-      </fault>
-    </operation>
-    <operation name="doc2loc">
-      <soap:operation soapAction=""></soap:operation>
-      <input>
-        <soap:body use="literal"></soap:body>
-      </input>
-      <output>
-        <soap:body use="literal"></soap:body>
-      </output>
-      <fault name="QueryException">
-        <soap:fault use="literal" name="QueryException"></soap:fault>
-      </fault>
-    </operation>
-  </binding>
-  <service name="WSCitationImplService">
-    <port binding="tns:WSCitationImplPortBinding" name="WSCitationImplPort">
-      <soap:address location="http://www.ebi.ac.uk:80/webservices/citexplore/v1.0/service"></soap:address>
-    </port>
-  </service>
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://webservice.cdb.ebi.ac.uk/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://webservice.cdb.ebi.ac.uk/" name="WSCitationImplService">
+    <types>
+        <xsd:schema>
+            <xsd:import schemaLocation="http://www.ebi.ac.uk:80/webservices/citexplore/v1.0/service?xsd=1" namespace="http://webservice.cdb.ebi.ac.uk/"></xsd:import>
+        </xsd:schema>
+    </types>
+    <message name="searchCitations">
+        <part element="tns:searchCitations" name="parameters"></part>
+    </message>
+    <message name="searchCitationsResponse">
+        <part element="tns:searchCitationsResponse" name="parameters"></part>
+    </message>
+    <message name="QueryException">
+        <part element="tns:QueryException" name="fault"></part>
+    </message>
+    <message name="doc2loc">
+        <part element="tns:doc2loc" name="parameters"></part>
+    </message>
+    <message name="doc2locResponse">
+        <part element="tns:doc2locResponse" name="parameters"></part>
+    </message>
+    <portType name="WSCitationImpl">
+        <operation name="searchCitations">
+            <input message="tns:searchCitations"></input>
+            <output message="tns:searchCitationsResponse"></output>
+            <fault message="tns:QueryException" name="QueryException"></fault>
+        </operation>
+        <operation name="doc2loc">
+            <input message="tns:doc2loc"></input>
+            <output message="tns:doc2locResponse"></output>
+            <fault message="tns:QueryException" name="QueryException"></fault>
+        </operation>
+    </portType>
+    <binding name="WSCitationImplPortBinding" type="tns:WSCitationImpl">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"></soap:binding>
+        <operation name="searchCitations">
+            <soap:operation soapAction=""></soap:operation>
+            <input>
+                <soap:body use="literal"></soap:body>
+            </input>
+            <output>
+                <soap:body use="literal"></soap:body>
+            </output>
+            <fault name="QueryException">
+                <soap:fault name="QueryException" use="literal"></soap:fault>
+            </fault>
+        </operation>
+        <operation name="doc2loc">
+            <soap:operation soapAction=""></soap:operation>
+            <input>
+                <soap:body use="literal"></soap:body>
+            </input>
+            <output>
+                <soap:body use="literal"></soap:body>
+            </output>
+            <fault name="QueryException">
+                <soap:fault name="QueryException" use="literal"></soap:fault>
+            </fault>
+        </operation>
+    </binding>
+    <service name="WSCitationImplService">
+        <port name="WSCitationImplPort" binding="tns:WSCitationImplPortBinding">
+            <soap:address location="http://www.ebi.ac.uk:80/webservices/citexplore/v1.0/service"></soap:address>
+        </port>
+    </service>
 </definitions>
