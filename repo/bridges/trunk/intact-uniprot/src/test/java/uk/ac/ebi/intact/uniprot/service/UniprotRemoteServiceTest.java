@@ -240,11 +240,11 @@ public class UniprotRemoteServiceTest {
         assertEquals( 2, protein.getSynomyms().size() );
         assertEquals( "MTI1", protein.getSynomyms().iterator().next() );
 
-        assertEquals( 1, protein.getOrfs().size() );
-        assertEquals( "J1305/J1286", protein.getOrfs().iterator().next() );
+        assertEquals( 3, protein.getOrfs().size() );
+        assertEquals( "J1286", protein.getOrfs().iterator().next() );
 
         assertEquals( 1, protein.getLocuses().size() );
-        assertTrue( protein.getLocuses().contains( "YJL020C/YJL021C" ) );
+        assertTrue( protein.getLocuses().contains( "YJL020C" ) );
 
         // sequence
         String sequence = "MSEPEVPFKVVAQFPYKSDYEDDLNFEKDQEIIVTSVEDAEWYFGEYQDSNGDVIEGIFP" +
