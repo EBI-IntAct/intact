@@ -55,11 +55,11 @@
         <h:panelGroup rendered="#{userQuery.filterSpoke}"
                       inlineStyle="margin-top:-10px; margin-left: 10px; margin-bottom:30px">
             <li>
-                Binary interactions originated
+                Binary interactions originating
                 from&#160;
                 <p:commandLink onclick="complexExpansionDialog.show()">spoke expanded co-complexes
                     <h:graphicImage alt="helpIcon" url="/images/help.png"/>
-                </p:commandLink> are filtered out from you results and you may want to&#160;
+                </p:commandLink> are filtered out from your results and you may want to&#160;
                 <h:commandLink value="include" actionListener="#{userQuery.setUpQueryParameters}" action="#{searchBean.doBinarySearchAction}">
                     <f:attribute name="#{userQuery.filterSpokeParameterName}" value="false" />
                 </h:commandLink>
