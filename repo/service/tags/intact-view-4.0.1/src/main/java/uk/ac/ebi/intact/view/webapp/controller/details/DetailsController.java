@@ -143,7 +143,15 @@ public class DetailsController extends JpaBaseController {
                 if (interactions.size() > 0) {
                     Interaction binaryInteraction = interactions.get(0);
                     setInteraction(binaryInteraction);
+                    if( interaction != null && !interaction.getExperiments().isEmpty() ) {
+
+                        experiment = interaction.getExperiments().iterator().next();
+                    }
+                    else {
+                        experiment = null;
+                    }
                     loadParticipants();
+                    loadNumberOfInteractorsInExperiment();
                     loadJsonExperimentInteractions();
 
                     // Update interaction search
