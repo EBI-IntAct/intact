@@ -293,6 +293,10 @@ public class SearchController extends JpaBaseController {
                 // store the current query
                 currentQuery = solrQueryCopy.getQuery();
 
+                if (results == null){
+                    return 0;
+                }
+
                 return results.getRowCount();
             }
         };
