@@ -9,9 +9,10 @@
 
     <f:metadata>
         <f:event type="preRenderView" listener="#{contextController.setActiveTabIndex(3)}"/>
+        <f:event type="preRenderView" listener="#{taxonomyBrowser.searchOnLoad}"/>
     </f:metadata>
 
-     <ui:define name="browseTabContent">
+    <ui:define name="browseTabContent">
 
         <h:panelGroup>
             <h:graphicImage alt="Back" url="/images/back_arrow.gif" />

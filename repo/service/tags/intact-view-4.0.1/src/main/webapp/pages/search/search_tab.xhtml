@@ -7,7 +7,7 @@
 
                 xmlns:fn="http://java.sun.com/jsp/jstl/functions"
                 xmlns:sf="http://www.ebi.ac.uk/faces/site"
-                
+
                 xmlns:iv="http://java.sun.com/jsf/composite/intactview"
 
                 xmlns:iam="http://intact.ebi.ac.uk/miscel"
@@ -20,40 +20,40 @@
         </p:commandLink>
     </div>
 
-<table width="100%">
-    <tr>
-        <td width="60%" style="vertical-align:top; text-align:left">
+    <table width="100%">
+        <tr>
+            <td width="60%" style="vertical-align:top; text-align:left">
 
-            <h:panelGroup>
+                <h:panelGroup>
 
-                <h2>Quick search</h2>
+                    <h2>Quick search</h2>
 
                     <iv:panelLabelAndMessage label="Search query:">
                         <f:facet name="help">
                             <h:panelGroup>
                                 <ul>
                                     <li>
-                                    <h:panelGroup>
-                                        Protein accession number: e.g.&#160;
-                                        <h:commandLink value="P20053" actionListener="#{userQuery.setUpQueryParameters}" action="#{searchBean.doBinarySearchAction}">
-                                            <f:attribute name="#{userQuery.queryParameterName}" value="P20053" />
-                                        </h:commandLink>
-                                    </h:panelGroup>
-                                        </li><li>
+                                        <h:panelGroup>
+                                            Protein accession number: e.g.&#160;
+                                            <h:commandLink value="P20053" actionListener="#{userQuery.setUpQueryParameters}" action="#{searchBean.doBinarySearchAction}">
+                                                <f:attribute name="#{userQuery.queryParameterName}" value="P20053" />
+                                            </h:commandLink>
+                                        </h:panelGroup>
+                                    </li><li>
                                     <h:panelGroup>
                                         Drug name: e.g.&#160;
                                         <h:commandLink value="imatinib" actionListener="#{userQuery.setUpQueryParameters}" action="#{searchBean.doBinarySearchAction}">
                                             <f:attribute name="#{userQuery.queryParameterName}" value="imatinib" />
                                         </h:commandLink>
                                     </h:panelGroup>
-                                     </li><li>
+                                </li><li>
                                     <h:panelGroup>
                                         Gene name: e.g.&#160;
                                         <h:commandLink value="DDR1" actionListener="#{userQuery.setUpQueryParameters}" action="#{searchBean.doBinarySearchAction}">
                                             <f:attribute name="#{userQuery.queryParameterName}" value="DDR1" />
                                         </h:commandLink>
                                     </h:panelGroup>
-                                     </li><li>
+                                </li><li>
                                     <h:panelGroup>
                                         Phrases (surrounded by quotes): e.g.
                                         <ui:param name="expr" value="#{iam:surroundByQuotesIfMissing('NADH dehydrogenase')}"/>
@@ -70,14 +70,14 @@
 
                         <f:facet name="end">
                             <h:commandButton id="searchBtn"
-                                              value="Search"
-                                              action="#{searchBean.doBinarySearchAction}">
-                             </h:commandButton>
+                                             value="Search"
+                                             action="#{searchBean.doBinarySearchAction}">
+                            </h:commandButton>
                         </f:facet>
 
                         <h:inputText id="searchInTabTxt" size="40"
-                                      onfocus="this.select()"
-                                      onkeyup="$('#queryTxt').val(this.value);"/>
+                                     onfocus="this.select()"
+                                     onkeyup="$('#queryTxt').val(this.value);"/>
                     </iv:panelLabelAndMessage>
 
                     <p:panel>
@@ -89,7 +89,7 @@
                     </p:panel>
 
 
-                <h2>Ontology Search</h2>
+                    <h2>Ontology Search</h2>
 
                     <h:outputText
                             value="Start typing an ontology term, possible completions of the term associated with at least one binary interaction will be shown :"/>
@@ -103,37 +103,35 @@
                                         var="term" itemLabel="#{term.name}" itemValue="#{term}"
                                         typeAhead="true" completeMethod="#{ontologyBean.fillAutocomplete}"
                                         autoHighlight="true" forceSelection="true"
-                                        maxResults="20" size="30"/>
+                                        maxResults="20" size="30" scrollHeight="30" dropdown="true"/>
 
                         <f:facet name="help">
                             <h:panelGroup>
                                 <ul><li>
                                     <h:panelGroup>
                                         <h:outputText value="Term name: "/>
-                                        <h:commandLink value="mammalia"
-                                                        actionListener="#{userQuery.doAddParamOntologyTermToQuery}"
-                                                        action="#{searchBean.doBinarySearchAction}">
-                                            <f:param name="term" value="mammalia"/>
+                                        <h:commandLink value="mammalia" actionListener="#{userQuery.setUpQueryParameters}" action="#{searchBean.doBinarySearchAction}">
+                                            <f:attribute name="#{userQuery.queryParameterName}" value="species:mammalia" />
+                                            <f:attribute name="#{userQuery.ontologyQueryParameterName}" value="true" />
                                         </h:commandLink>
                                     </h:panelGroup>
-                                    </li><li>
+                                </li><li>
                                     <h:panelGroup>
                                         <h:outputText value="Term name: "/>
-                                        <h:commandLink value="two hybrid"
-                                                        actionListener="#{userQuery.doAddParamOntologyTermToQuery}"
-                                                        action="#{searchBean.doBinarySearchAction}">
-                                            <f:param name="term" value="two hybrid"/>
+                                        <h:commandLink value="two hybrid" actionListener="#{userQuery.setUpQueryParameters}" action="#{searchBean.doBinarySearchAction}">
+                                            <f:attribute name="#{userQuery.queryParameterName}" value="detmethod:two\ hybrid" />
+                                            <f:attribute name="#{userQuery.ontologyQueryParameterName}" value="true" />
                                         </h:commandLink>
                                     </h:panelGroup>
-                                    </li>
+                                </li>
                                 </ul>
                             </h:panelGroup>
                         </f:facet>
                         <f:facet name="end">
                             <h:commandButton id="ontologySearchBtn"
-                                              value="Search"
-                                              actionListener="#{userQuery.prepareFromOntologySearch}"
-                                              action="#{searchBean.doBinarySearchAction}">
+                                             value="Search"
+                                             actionListener="#{userQuery.prepareFromOntologySearch}"
+                                             action="#{searchBean.doBinarySearchAction}">
                             </h:commandButton>
                         </f:facet>
                     </iv:panelLabelAndMessage>
@@ -156,48 +154,48 @@
                     </iv:panelLabelAndMessage>
 
                     <p:commandLink value="Why do I find more interactions using the Ontology Search ?"
-                            onclick="ontologyInfoDialog.show()"/>
+                                   onclick="ontologyInfoDialog.show()"/>
 
-                <p:dialog header="Why do I find more interactions using the Ontology Search ?"
-                          widgetVar="ontologyInfoDialog"
-                          width="700" height="500">
-                    <div style="width:670px; overflow:auto;">
-                        <br/>
-                        The ontology search is designed to provide search facilities on a given set of ontologies.
-                        Furthermore, whenever you search for a given ontology term, it also includes the interactions of
-                        all children that may have been used to annotate participants of these interactions.
-                        <br/>
-                        <br/>
-                        <u>Example</u>: Let's look at a GO term like synapse (GO:0045202), when searching for synapse in the
-                        Ontology Search, we actually search for that term but also all of its children as depicted below:
+                    <p:dialog header="Why do I find more interactions using the Ontology Search ?"
+                              widgetVar="ontologyInfoDialog"
+                              width="700" height="500">
+                        <div style="width:670px; overflow:auto;">
+                            <br/>
+                            The ontology search is designed to provide search facilities on a given set of ontologies.
+                            Furthermore, whenever you search for a given ontology term, it also includes the interactions of
+                            all children that may have been used to annotate participants of these interactions.
+                            <br/>
+                            <br/>
+                            <u>Example</u>: Let's look at a GO term like synapse (GO:0045202), when searching for synapse in the
+                            Ontology Search, we actually search for that term but also all of its children as depicted below:
 
-                        <blockquote>
-                            <h:graphicImage alt="goSynapse" url="/images/documentation/go_synapse.png"/></blockquote>
+                            <blockquote>
+                                <h:graphicImage alt="goSynapse" url="/images/documentation/go_synapse.png"/></blockquote>
 
-                        However, when searching for that same term in Quick Search, we will only present you with the
-                        interactions for which this and only this term was found.
-                    </div>
-                </p:dialog>
-            </h:panelGroup>
+                            However, when searching for that same term in Quick Search, we will only present you with the
+                            interactions for which this and only this term was found.
+                        </div>
+                    </p:dialog>
+                </h:panelGroup>
 
-        </td>
-    </tr>
-</table>
+            </td>
+        </tr>
+    </table>
 
-<h:panelGroup rendered="#{intactViewConfiguration.chebiSearchEnabled}">
+    <h:panelGroup rendered="#{intactViewConfiguration.chebiSearchEnabled}">
 
 
-<h2>Other Searches</h2>
+        <h2>Other Searches</h2>
 
-    <p:panel header="Chemical Search" toggleable="true" collapsed="true" >
+        <p:panel header="Chemical Search" toggleable="true" collapsed="true" >
 
-         <p:ajax event="toggle" oncomplete="document.getElementById('lalaFrame').src = '#{intactViewConfiguration.chebiUrl}#{intactViewConfiguration.chebiChemicalSearchPath}&amp;callbackUrl=#{requestConfigBean.encodedCallBackUrl}'" />
+            <p:ajax event="toggle" oncomplete="document.getElementById('lalaFrame').src = '#{intactViewConfiguration.chebiUrl}#{intactViewConfiguration.chebiChemicalSearchPath}&amp;callbackUrl=#{requestConfigBean.encodedCallBackUrl}'" />
 
             <iframe id="lalaFrame" frameborder="0" width="1200" height="1300"
                     src=""/>
 
-    </p:panel>
+        </p:panel>
 
-</h:panelGroup>
+    </h:panelGroup>
 
 </ui:composition>
