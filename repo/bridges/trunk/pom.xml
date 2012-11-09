@@ -108,10 +108,10 @@
 
             <!-- JAX-WS -->
             <dependency>
-                <groupId>com.sun.xml.ws</groupId>
-                <artifactId>jaxws-tools</artifactId>
-                <version>2.2.7</version>
-            </dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-tools</artifactId>
+            <version>2.1.7</version>
+        </dependency>
             <dependency>
                 <groupId>xfire</groupId>
                 <artifactId>xfire-jsr181-api</artifactId>
