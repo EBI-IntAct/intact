@@ -19,7 +19,7 @@
     <groupId>uk.ac.ebi.intact.tools</groupId>
     <artifactId>intact-tools-base</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>IntAct Tools</name>
     <url>http://www.ebi.ac.uk/~baranda/intact/maven-plugins</url>
     <description>Set of tools that do not depend on intact-core</description>
