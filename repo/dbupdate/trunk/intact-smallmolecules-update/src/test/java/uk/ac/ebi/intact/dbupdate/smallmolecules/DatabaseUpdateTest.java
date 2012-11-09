@@ -15,12 +15,9 @@
  */
 package uk.ac.ebi.intact.dbupdate.smallmolecules;
 
-import org.junit.Test;
 import org.junit.Ignore;
-import uk.ac.ebi.intact.core.context.IntactContext;
-
-import java.net.URL;
-import java.io.File;
+import org.junit.Test;
+import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 
 /**
  *
@@ -29,13 +26,11 @@ import java.io.File;
  * @version $Id$
  * @since 2.0.1
  */
-public class DatabaseUpdateTest {
+public class DatabaseUpdateTest extends IntactBasicTestCase{
 
     @Ignore
     @Test
     public void zdev() throws Exception {
-        final URL url = DatabaseUpdateTest.class.getResource( "/iweb2-hibernate.cfg.xml" );
-        IntactContext.initStandaloneContext( new File( url.getFile() ) );
 
         SmallMoleculeUpdator updator = new SmallMoleculeUpdator( new ChebiProcessor() );
 
