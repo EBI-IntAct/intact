@@ -13,6 +13,12 @@
     <name>IntAct Bridges :: IMEx Central</name>
     <packaging>jar</packaging>
     <version>2.1.6.1</version>
+    <scm>
+        <connection>scm:svn:https://intact.googlecode.com/svn/repo/bridges/trunk/intact-imexcentral/</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/bridges/trunk/intact-imexcentral/</developerConnection>
+        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/bridges/trunk/intact-imexcentral/</url>
+    </scm>
+
 
     <properties>
         <maven.test.failure.ignore>true</maven.test.failure.ignore>
