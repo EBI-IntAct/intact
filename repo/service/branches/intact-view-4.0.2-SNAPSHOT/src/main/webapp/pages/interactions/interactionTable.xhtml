@@ -78,6 +78,7 @@
 
 <iv:cvLazyDialog dialogVar="cvInfoDialog"/>
 
+<div style="overflow: auto; max-width: 1200px">
 <p:dataTable id="resultsTable" var="binaryInteraction" value="#{searchBean.results}"
              rows="#{userQuery.pageSize}"
              dynamic="true" rowIndexVar="row" paginatorPosition="both"
@@ -717,5 +718,5 @@
 </p:column>
 
 </p:dataTable>
-
+</div>
 </ui:composition>

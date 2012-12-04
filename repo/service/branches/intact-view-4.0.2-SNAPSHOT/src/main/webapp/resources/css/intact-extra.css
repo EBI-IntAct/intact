@@ -2,6 +2,22 @@ a img {
     border: 0;
 }
 
+.center{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Remove for compliance */
+.sidemenu a:hover, a:focus, a:active {
+    border-bottom: none !important;
+}
+
+/* Remove for compliance */
+.contents a:hover, a:focus, a:active {
+    border-bottom: none !important;
+}
+
 /** status **/
 .busyStatus {
     right: 0px; top: 0px;
@@ -138,7 +154,7 @@ td.compoundStructure {
 }
 
 .intact_fixedWidth {
-    width:650px;
+    width:1000px;
 }
 
 
@@ -153,3 +169,5 @@ font-weight:bold;
 font-size:120%;
 color:#006666;
 }
+
+
