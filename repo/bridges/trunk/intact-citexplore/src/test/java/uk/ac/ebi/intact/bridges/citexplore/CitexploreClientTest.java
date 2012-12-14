@@ -7,8 +7,8 @@ package uk.ac.ebi.intact.bridges.citexplore;
 
 import junit.framework.Assert;
 import org.junit.Test;
-import uk.ac.ebi.cdb.webservice.Citation;
-import uk.ac.ebi.cdb.webservice.JournalIssue;
+import uk.ac.ebi.cdb.webservice.JournalInfo;
+import uk.ac.ebi.cdb.webservice.Result;
 
 /**
  * CitexploreClient Tester.
@@ -23,11 +23,11 @@ public class CitexploreClientTest {
     @Test
     public void testGetDateOfPublication() {
         CitexploreClient citexploreClient = new CitexploreClient();
-        Citation c = citexploreClient.getCitationById( "1234567" );
+        Result c = citexploreClient.getCitationById( "1234567" );
         Assert.assertNotNull( c );
         Assert.assertNotNull( c.getTitle() );
-        JournalIssue journalIssue = c.getJournalIssue();
-        Assert.assertNotNull( c.getJournalIssue() );
+        JournalInfo journalIssue = c.getJournalInfo();
+        Assert.assertNotNull( c.getJournalInfo() );
         short date = journalIssue.getYearOfPublication();
         Assert.assertEquals( 1975, date );
     }
