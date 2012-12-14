@@ -33,7 +33,7 @@ public class CitexploreClient {
     private WSCitationImplService service;
 
     public CitexploreClient(){
-        this("http://www.ebi.ac.uk/webservices/citexplore/v1.0/service?wsdl");
+        this("http://www.ebi.ac.uk/webservices/citexplore/v3.0.1/service?wsdl");
     }
 
     public CitexploreClient(String wsdlUrl){
@@ -48,23 +48,26 @@ public class CitexploreClient {
         return service.getWSCitationImplPort();
     }
 
-    public Citation getCitationById(String id) {
-        List<ResultBean> results = searchCitationsByExternalId(id).getResultBeanCollection();
+    public Result getCitationById(String id) {
+        List<Result> results = searchCitationsByExternalId(id).getResult();
 
         if (!results.isEmpty()) {
-            return results.iterator().next().getCitation();
+            return results.iterator().next();
         }
 
         return null;
     }
 
-    private ResultListBean searchCitationsByExternalId(String id) {
+    private ResultList searchCitationsByExternalId(String id) {
         final String query = "EXT_ID:" + id + " SRC:med";
         try {
             // SRC:med is needed as the external ids are not unique.
             // ex : extId1 coresponds to 2 publication in citexplore one from medline, one from CiteSeer.
             // Putting : core allow to get a lighter object just with the title, authors name...
-            return getPort().searchCitations(query, "core", 0, null); //"core"
+            // we can choose between metadata for citations or full text for full text searches
+            ResponseWrapper wrapper = getPort().searchPublications(query, "metadata","core", 0, false, "intact-dev@ebi.ac.uk");
+
+            return  wrapper.getResultList();//"core"
         } catch (QueryException_Exception e) {
             throw new CitexploreClientException("Problem fetching query: "+query, e);
         }
@@ -72,10 +75,10 @@ public class CitexploreClient {
 
     public static void main(String[] args) throws Exception{
         CitexploreClient client = new CitexploreClient();
-        Citation c = client.getCitationById("1");
+        Result c = client.getCitationById("1");
 //        Citation c = client.getCitationById("1234567");
-        System.out.println(c.getJournalIssue());
-        System.out.println(c.getJournalIssue().getYearOfPublication());
+        System.out.println(c.getJournalInfo());
+        System.out.println(c.getJournalInfo().getYearOfPublication());
 
         System.out.println(client.getCitationById("1234567").getTitle());
     }
