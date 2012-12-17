@@ -170,7 +170,6 @@ public class DetailsController extends JpaBaseController {
             }
 
             this.numberInteractions = countInteractionNumbers();
-            loadNumberOfInteractorsInExperiment();
         }
     }
 
@@ -231,10 +230,9 @@ public class DetailsController extends JpaBaseController {
             addErrorMessage( "No experiment found in the database for ac: " + experimentAc, "Please try with an other AC." );
         } else {
             if ( log.isDebugEnabled() ) log.debug( "Found experiment: " + experiment.getShortLabel() );
+            loadNumberOfInteractorsInExperiment();
+            loadJsonExperimentInteractions();
         }
-
-        loadNumberOfInteractorsInExperiment();
-        loadJsonExperimentInteractions();
     }
 
     public boolean hasExperiment() {
@@ -270,6 +268,11 @@ public class DetailsController extends JpaBaseController {
             interaction = getDaoFactory().getInteractionDao().getByXref( interactionAc );
         }
         if ( interaction == null ) addErrorMessage( "No interaction found in the database for ac: " + interactionAc, "" );
+        else{
+            loadParticipants();
+            loadNumberOfInteractorsInExperiment();
+            loadJsonExperimentInteractions();
+        }
 
         if( interaction != null && !interaction.getExperiments().isEmpty() ) {
 
@@ -278,10 +281,6 @@ public class DetailsController extends JpaBaseController {
         else {
             experiment = null;
         }
-
-        loadParticipants();
-        loadNumberOfInteractorsInExperiment();
-        loadJsonExperimentInteractions();
     }
 
     private void loadParticipants(){
