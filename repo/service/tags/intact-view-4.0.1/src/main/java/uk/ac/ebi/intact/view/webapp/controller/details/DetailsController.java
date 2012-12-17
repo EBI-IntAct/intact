@@ -317,7 +317,7 @@ public class DetailsController extends JpaBaseController {
         Long number = (Long) getIntactContext().getDaoFactory().getEntityManager().createQuery("select count(distinct interactor.ac) " +
                 "from Experiment e join e.interactions as i join i.components as comp join comp.interactor as interactor " +
                 "where e.ac = :experimentAc").setParameter("experimentAc", getExperiment().getAc()).getSingleResult();
-        this.numberOfInteractorsInExperiment = number.intValue();
+        this.numberOfInteractorsInExperiment = number != null ? number.intValue() : 0;
     }
 
     public int getNumberOfInteractorsInExperiment(){
