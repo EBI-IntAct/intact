@@ -492,6 +492,11 @@
                     <groupId>uk.ac.ebi.intact.core</groupId>
                     <artifactId>intact-core</artifactId>
                 </exclusion>
+
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>com.springsource.org.apache.commons.io</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
