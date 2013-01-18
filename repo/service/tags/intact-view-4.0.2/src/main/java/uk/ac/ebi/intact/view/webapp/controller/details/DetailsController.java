@@ -220,6 +220,7 @@ public class DetailsController extends JpaBaseController {
 
     public void setExperimentAc( String experimentAc ) {
         this.experimentAc = experimentAc;
+        this.interactionAc = null;
     }
 
     @Transactional(readOnly = true)
@@ -241,6 +242,7 @@ public class DetailsController extends JpaBaseController {
 
     public void setExperiment( Experiment experiment ) {
         this.experiment = experiment;
+        this.interactionAc = null;
     }
 
     public boolean hasInteraction() {
@@ -254,10 +256,12 @@ public class DetailsController extends JpaBaseController {
     public void setInteraction( Interaction interaction ) {
         this.interaction = interaction;
         this.interactionAc = interaction.getAc();
+        this.experimentAc = null;
     }
 
     public void setInteractionAc( String interactionAc ) {
         this.interactionAc = interactionAc;
+        this.experimentAc = null;
     }
 
     @Transactional(readOnly = true)
