@@ -15,9 +15,8 @@
  */
 package uk.ac.ebi.intact.irefindex.seguid;
 
-import org.junit.Test;
 import org.junit.Assert;
-import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * This class is used to test the RogidGenerator
@@ -33,7 +32,7 @@ public class RogidGeneratorTest {
         String sequence = "arndceqghil";
         RogidGenerator rogidGenerator = new RogidGenerator();
         final String seguid = rogidGenerator.calculateSeguid( sequence );
-        Assert.assertEquals( seguid, "agaxiUJROmjYnzKOyjUC7+bxqLE" );
+        Assert.assertEquals( seguid, "qF2cjL7/GegxGY6uEvgUFBhfcs0" );
     }
 
 

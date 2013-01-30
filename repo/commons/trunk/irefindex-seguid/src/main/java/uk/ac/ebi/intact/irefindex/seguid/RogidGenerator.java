@@ -17,12 +17,12 @@ package uk.ac.ebi.intact.irefindex.seguid;
 
 
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.irefindex.seguid.base64.Base64;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 
 /**
@@ -46,7 +46,7 @@ public class RogidGenerator {
     /**
      * calculates the Seguid for the given protein sequence
      *
-     * @param sequence protein sequence
+     * @param sequence rogid sequence
      * @return Seguid
      * @throws SeguidException handled by  SeguidException class
      */
@@ -72,7 +72,6 @@ public class RogidGenerator {
 
         try {
             MessageDigest messageDigest = MessageDigest.getInstance( "SHA" );
-            sequence = sequence.trim().toUpperCase();
             messageDigest.update( sequence.getBytes() );
             byte[] digest = messageDigest.digest();
             String seguid = Base64.encodeBytes( digest );
@@ -105,6 +104,6 @@ public class RogidGenerator {
         if ( taxid == null ) {
             throw new NullPointerException( "You must give a non null taxid" );
         }
-        return doMessageDigestAndBase64Encoding( sequence ) + taxid;
+        return doMessageDigestAndBase64Encoding( sequence.trim().toUpperCase()) + taxid;
     }
 }
