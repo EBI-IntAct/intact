@@ -15,10 +15,8 @@
  */
 package uk.ac.ebi.intact.irefindex.seguid;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * TODO comment that class header
@@ -44,7 +42,7 @@ public class RigidGeneratorTest {
         rigidGenerator.addSequence( P33025, taxid2 );
 
         final String rigid = rigidGenerator.calculateRigid();
-        Assert.assertEquals("+/DyxaNG0mklydsbUh12WcfudXI",rigid);
+        Assert.assertEquals("7R0pXUAgJuA2Jnl68zE+3bUyaSI",rigid);
 
     }
 
@@ -67,7 +65,7 @@ public class RigidGeneratorTest {
         rigidGenerator.addSequence( P67080, taxid3 );
 
         final String rigid = rigidGenerator.calculateRigid();
-        Assert.assertEquals("8gCCeMoszv8/PVqk2BhyPCwf5ZI",rigid);
+        Assert.assertEquals("mnNnZkKDlE8l1KDPwzNhwOFukXg",rigid);
 
     }
 
