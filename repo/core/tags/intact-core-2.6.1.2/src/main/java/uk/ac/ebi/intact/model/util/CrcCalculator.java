@@ -291,9 +291,6 @@ public class CrcCalculator {
 
         if (feature == null) return sb;
 
-		// short label
-		sb.append(feature.getShortLabel());
-
         // feature type
         sb.append(createUniquenessString(feature.getCvFeatureType()));
 
