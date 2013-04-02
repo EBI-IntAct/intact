@@ -481,14 +481,14 @@
         <tr:column headerText="Context">
             <tr:iterator value="#{msg.context.contexts}" var="ctxt" rows="3" first="0">
                 <h:panelGroup styleClass="errorContext">
-                    <tr:goLink destination="#{ctxt.locator.locationDescription}" rendered="#{ctxt.isContextWithAnchor}">
+                    <tr:goLink destination="##{ctxt.locator.locationDescription}" rendered="#{ctxt.contextWithAnchor}">
                         <nobr><tr:outputText value="#{ctxt.objectLabel} #{ctxt.locator.locationDescription}" /></nobr>
                     </tr:goLink>
                     <tr:outputText value="#{ctxt.objectLabel} #{ctxt.locator.locationDescription}" rendered="#{ not ctxt.contextWithAnchor}"/>
                 </h:panelGroup>
                 <tr:iterator value="#{ctxt.associatedContexts}" var="a_ctxt">
                     <h:panelGroup styleClass="errorContext">
-                        <tr:goLink destination="#{a_ctxt.locator.locationDescription}" rendered="#{a_ctxt.isContextWithAnchor}">
+                        <tr:goLink destination="#{a_ctxt.locator.locationDescription}" rendered="#{a_ctxt.contextWithAnchor}">
                             <nobr><tr:outputText value="#{a_ctxt.objectLabel} #{a_ctxt.locator.locationDescription}" /></nobr>
                         </tr:goLink>
                         <tr:outputText value="#{a_ctxt.objectLabel} #{a_ctxt.locator.locationDescription}" rendered="#{ not a_ctxt.contextWithAnchor}"/>
@@ -497,14 +497,14 @@
             </tr:iterator>
             <tr:iterator value="#{msg.context.contexts}" var="ctxt" first="3">
                 <h:panelGroup styleClass="errorContext errorContextDetails">
-                    <tr:goLink destination="#{ctxt.locator.locationDescription}" rendered="#{ctxt.isContextWithAnchor}">
+                    <tr:goLink destination="##{ctxt.locator.locationDescription}" rendered="#{ctxt.contextWithAnchor}">
                         <nobr><tr:outputText value="#{ctxt.objectLabel} #{ctxt.locator.locationDescription}" /></nobr>
                     </tr:goLink>
                     <tr:outputText value="#{ctxt.objectLabel} #{ctxt.locator.locationDescription}" rendered="#{ not ctxt.contextWithAnchor}"/>
                 </h:panelGroup>
                 <tr:iterator value="#{ctxt.associatedContexts}" var="a_ctxt">
                     <h:panelGroup styleClass="errorContext errorContextDetails">
-                        <tr:goLink destination="#{a_ctxt.locator.locationDescription}" rendered="#{a_ctxt.isContextWithAnchor}">
+                        <tr:goLink destination="##{a_ctxt.locator.locationDescription}" rendered="#{a_ctxt.contextWithAnchor}">
                             <nobr><tr:outputText value="#{a_ctxt.objectLabel} #{a_ctxt.locator.locationDescription}" /></nobr>
                         </tr:goLink>
                         <tr:outputText value="#{a_ctxt.objectLabel} #{a_ctxt.locator.locationDescription}" rendered="#{ not a_ctxt.contextWithAnchor}"/>
@@ -524,6 +524,7 @@
 
 <!-- HTML View -->
 <a name="html_view"/>
+<div style="overflow-y: auto; height: 600px">
 <tr:panelHeader text="HTML View"
                 rendered="#{psiValidatorController.currentPsiReport != null and psiValidatorController.currentPsiReport.xmlSyntaxValid}">
 
@@ -532,6 +533,7 @@
     </div>
 
 </tr:panelHeader>
+</div>
 
 </ui:define>
 </ui:composition>

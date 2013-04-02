@@ -238,7 +238,15 @@ public class PsiReportBuilder {
                     FacesContext context = FacesContext.getCurrentInstance();
                     FacesMessage message = new FacesMessage( "Failed to produce the HTML view of your data: the interaction data source is not recognized");
                     context.addMessage( null, message );
+                    report.setHtmlView(null);
                 }
+            }
+            catch (Exception e){
+                log.error( "Failed to produce the HTML view", e);
+                FacesContext context = FacesContext.getCurrentInstance();
+                FacesMessage message = new FacesMessage( "Failed to produce the HTML view of your data: the interaction data source is not recognized");
+                context.addMessage( null, message );
+                report.setHtmlView(null);
             }
             finally {
                 htmlWriter.close();
@@ -249,6 +257,7 @@ public class PsiReportBuilder {
             FacesContext context = FacesContext.getCurrentInstance();
             FacesMessage message = new FacesMessage( "Failed to produce the HTML view of your data: " + e.getMessage() );
             context.addMessage( null, message );
+            report.setHtmlView(null);
         }
         finally {
             if (dataSource instanceof MolecularInteractionFileDataSource){
