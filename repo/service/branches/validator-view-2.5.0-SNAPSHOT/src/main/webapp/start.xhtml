@@ -481,41 +481,35 @@
         <tr:column headerText="Context">
             <tr:iterator value="#{msg.context.contexts}" var="ctxt" rows="3" first="0">
                 <h:panelGroup styleClass="errorContext">
-                    <tr:goLink destination="#e#{ctxt.experimentId}" rendered="#{ctxt.experimentId != -1}">
-                        <nobr><tr:outputText value="Experiment #{ctxt.experimentId}" /></nobr>
+                    <tr:goLink destination="#{ctxt.locator.locationDescription}" rendered="#{ctxt.isContextWithAnchor}">
+                        <nobr><tr:outputText value="#{ctxt.objectLabel} #{ctxt.locator.locationDescription}" /></nobr>
                     </tr:goLink>
-                    <tr:goLink destination="#ix#{ctxt.interactionId}" rendered="#{ctxt.interactionId != -1}">
-                        <nobr><tr:outputText value="Interaction #{ctxt.interactionId}" /></nobr>
-                    </tr:goLink>
-                    <tr:goLink destination="#p#{ctxt.participantId}" rendered="#{ctxt.participantId != -1}">
-                        <nobr><tr:outputText value="Participant #{ctxt.participantId}" /></nobr>
-                    </tr:goLink>
-                    <tr:goLink destination="#i#{ctxt.interactorId}" rendered="#{ctxt.interactorId != -1}">
-                        <nobr><tr:outputText value="Interactor #{ctxt.interactorId}" /></nobr>
-                    </tr:goLink>
-                    <tr:goLink destination="#f#{ctxt.featureId}" rendered="#{ctxt.featureId != -1}">
-                        <nobr><tr:outputText value="Feature #{ctxt.featureId}" /></nobr>
-                    </tr:goLink>
+                    <tr:outputText value="#{ctxt.objectLabel} #{ctxt.locator.locationDescription}" rendered="#{ not ctxt.contextWithAnchor}"/>
                 </h:panelGroup>
+                <tr:iterator value="#{ctxt.associatedContexts}" var="a_ctxt">
+                    <h:panelGroup styleClass="errorContext">
+                        <tr:goLink destination="#{a_ctxt.locator.locationDescription}" rendered="#{a_ctxt.isContextWithAnchor}">
+                            <nobr><tr:outputText value="#{a_ctxt.objectLabel} #{a_ctxt.locator.locationDescription}" /></nobr>
+                        </tr:goLink>
+                        <tr:outputText value="#{a_ctxt.objectLabel} #{a_ctxt.locator.locationDescription}" rendered="#{ not a_ctxt.contextWithAnchor}"/>
+                    </h:panelGroup>
+                </tr:iterator>
             </tr:iterator>
             <tr:iterator value="#{msg.context.contexts}" var="ctxt" first="3">
                 <h:panelGroup styleClass="errorContext errorContextDetails">
-                    <tr:goLink destination="#e#{ctxt.experimentId}" rendered="#{ctxt.experimentId != -1}">
-                        <nobr><tr:outputText value="Experiment #{ctxt.experimentId}" /></nobr>
+                    <tr:goLink destination="#{ctxt.locator.locationDescription}" rendered="#{ctxt.isContextWithAnchor}">
+                        <nobr><tr:outputText value="#{ctxt.objectLabel} #{ctxt.locator.locationDescription}" /></nobr>
                     </tr:goLink>
-                    <tr:goLink destination="#ix#{ctxt.interactionId}" rendered="#{ctxt.interactionId != -1}">
-                        <nobr><tr:outputText value="Interaction #{ctxt.interactionId}" /></nobr>
-                    </tr:goLink>
-                    <tr:goLink destination="#p#{ctxt.participantId}" rendered="#{ctxt.participantId != -1}">
-                        <nobr><tr:outputText value="Participant #{ctxt.participantId}" /></nobr>
-                    </tr:goLink>
-                    <tr:goLink destination="#i#{ctxt.interactorId}" rendered="#{ctxt.interactorId != -1}">
-                        <nobr><tr:outputText value="Interactor #{ctxt.interactorId}" /></nobr>
-                    </tr:goLink>
-                    <tr:goLink destination="#f#{ctxt.featureId}" rendered="#{ctxt.featureId != -1}">
-                        <nobr><tr:outputText value="Feature #{ctxt.featureId}" /></nobr>
-                    </tr:goLink>
+                    <tr:outputText value="#{ctxt.objectLabel} #{ctxt.locator.locationDescription}" rendered="#{ not ctxt.contextWithAnchor}"/>
                 </h:panelGroup>
+                <tr:iterator value="#{ctxt.associatedContexts}" var="a_ctxt">
+                    <h:panelGroup styleClass="errorContext errorContextDetails">
+                        <tr:goLink destination="#{a_ctxt.locator.locationDescription}" rendered="#{a_ctxt.isContextWithAnchor}">
+                            <nobr><tr:outputText value="#{a_ctxt.objectLabel} #{a_ctxt.locator.locationDescription}" /></nobr>
+                        </tr:goLink>
+                        <tr:outputText value="#{a_ctxt.objectLabel} #{a_ctxt.locator.locationDescription}" rendered="#{ not a_ctxt.contextWithAnchor}"/>
+                    </h:panelGroup>
+                </tr:iterator>
             </tr:iterator>
             <!-- behavior for these links is in validator.js, listeners are bound dynamically -->
             <tr:goLink styleClass="showErrorContextDetails" rendered="#{msg.context.numberOfContexts > 3}"><tr:outputText value="Show all contexts" /></tr:goLink>
