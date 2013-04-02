@@ -6,9 +6,11 @@ package uk.ac.ebi.intact.services.validator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import psidev.psi.mi.html.MIHtmlWriter;
+import psidev.psi.mi.jami.datasource.*;
+import psidev.psi.mi.jami.utils.factory.MolecularInteractionDataSourceFactory;
 import psidev.psi.mi.validator.ValidatorReport;
 import psidev.psi.mi.validator.extension.Mi25Validator;
-import psidev.psi.mi.xml.stylesheets.XslTransformerUtils;
 import psidev.psi.tools.validator.MessageLevel;
 import psidev.psi.tools.validator.ValidatorMessage;
 import psidev.psi.tools.validator.preferences.UserPreferences;
@@ -18,7 +20,9 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class is the responsible of reading and validating the PSI File and creating a validation report
@@ -53,6 +57,8 @@ public class PsiReportBuilder {
     private ValidationScope validationScope;
 
     private DataModel model;
+
+    private FileSourceAnalyzer fileSourceAnalyzer;
 
     ///**
     //* Handy enumeration to avoid null checks on the previous attributes, when trying to determine
@@ -99,9 +105,7 @@ public class PsiReportBuilder {
         //this.file = file;
         this.validationScope = validationScope;
         this.model = model;
-        //this.progressModel = progressModel;
-
-        //this.currentSourceType = SourceType.FILE;
+        this.fileSourceAnalyzer = new FileSourceAnalyzer();
     }
 
     /**
@@ -185,13 +189,6 @@ public class PsiReportBuilder {
             // validate the file
             validateInputStream(report, streamToValidate, validator);
 
-            /*if( model.equals( DataModel.PSI_MI ) ) {
-                validatePsiMiFile(report, file);
-            } else if( model.equals( DataModel.PSI_PAR ) ) {
-                validatePsiParFile(report, file);
-            } else {
-                throw new IllegalStateException( "Unknown data model: " + model );
-            }*/
 
         } catch (Throwable t) {
             log.error("Unexpected error thrown", t);
@@ -217,50 +214,56 @@ public class PsiReportBuilder {
      */
     public void createHtmlView( PsiReport report, InputStream is ) {
         log.debug("Completed file validation ... about to build the report now ...");
+        MolecularInteractionDataSource dataSource = null;
+        OpenedInputStream openedStream = null;
+        try {
+            openedStream = fileSourceAnalyzer.getMolecularInteractionSourceFor(is);
+            Map<String, Object> requiredOptions = new HashMap<String, Object>();
+            requiredOptions.put(Mi25Validator.SOURCE_FORMAT, openedStream.getSource().toString());
 
-        if (report.isXmlSyntaxValid()) {
-            String transformedOutput = null;
-            try {
-                // we transform the xml to html using an utility class that returns
-                // the output stream with the html content
-                final ByteArrayOutputStream os = new ByteArrayOutputStream( 4096 );
-                
-                try{
-                    XslTransformerUtils.viewPsiMi25(is, os);
-                    transformedOutput = os.toString();
+            dataSource = MolecularInteractionDataSourceFactory.getMolecularInteractionDataSourceFrom(openedStream.getStream(), requiredOptions);
+
+            ByteArrayOutputStream output = new ByteArrayOutputStream( 4096 );
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
+            MIHtmlWriter htmlWriter = new MIHtmlWriter(writer);
+
+            try{
+                if (dataSource instanceof StreamingInteractionSource){
+                    htmlWriter.writeDataSourceWithoutHeaderAndBody((StreamingInteractionSource) dataSource);
+
+                    report.setHtmlView( output.toString() );
                 }
-                finally {
-                    os.close();
+                else{
+                    log.error( "Failed to produce the HTML view");
+                    FacesContext context = FacesContext.getCurrentInstance();
+                    FacesMessage message = new FacesMessage( "Failed to produce the HTML view of your data: the interaction data source is not recognized");
+                    context.addMessage( null, message );
                 }
             }
-            catch ( Exception e ) {
-                log.error( "Failed to produce the HTML view", e );
-                FacesContext context = FacesContext.getCurrentInstance();
-                FacesMessage message = new FacesMessage( "Failed to produce the HTML view of your data: " + e.getMessage() );
-                context.addMessage( null, message );
+            finally {
+                htmlWriter.close();
+                output.close();
             }
-            report.setHtmlView( transformedOutput );
-        } else {
+        } catch ( Exception e ) {
+            log.error( "Failed to produce the HTML view", e );
+            FacesContext context = FacesContext.getCurrentInstance();
+            FacesMessage message = new FacesMessage( "Failed to produce the HTML view of your data: " + e.getMessage() );
+            context.addMessage( null, message );
+        }
+        finally {
+            if (dataSource instanceof MolecularInteractionFileDataSource){
+                ((MolecularInteractionFileDataSource)dataSource).close();
+            }
+            if (openedStream != null){
+                openedStream.close();
+            }
+        }
+
+        if (!report.isXmlSyntaxValid()) {
             //if the xml validation is wrong, the second validation won't be run
             report.setSemanticsStatus( PsiReport.NOT_RUN ); // not checked, XML syntax needs to be valid first
         }
-
     }
-
-    ///**
-    //* Returns the InputStream, independently of the origin of the information
-    //*
-    //* @return the stream with the info
-    //* @throws IOException throw when there are I/O problems
-    //*/
-    /*private InputStream getInputStream() throws IOException {
-        // uses the currentSourceType to determine how to open and return the inputStream
-        if (currentSourceType == SourceType.URL) {
-            return url.openStream();
-        } else {
-            return new FileInputStream( file );
-        }
-    }*/
 
     /**
      * Validates PSI-MI data.

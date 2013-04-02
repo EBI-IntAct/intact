@@ -45,24 +45,14 @@ public class PsiValidatorController extends BaseController {
     //static private List<String> PROGRESS_STEPS;
     private static final String ZIP_EXTENSION = ".zip";
     private static final String XML_EXTENSION = ".xml";
+    private static final String TXT_EXTENSION = ".txt";
+    private static final String CSV_EXTENSION = ".csv";
+    private static final String TSV_EXTENSION = ".tsv";
     private static final String SAMPLE_URL="http://psimi.googlecode.com/svn/trunk/validator/psimi-schema-validator/xml_samples/10366597.xml";
     private static final String MIMIX="MIMIx";
     private static final String IMEX="IMEx";
     private static final String PSIMI="PSI-MI";
 
-    //static {
-    //PROGRESS_STEPS = new ArrayList<String>();
-
-    ///* 0 */ PROGRESS_STEPS.add( "Uploading data to be validated" );
-    ///* 1 */ PROGRESS_STEPS.add( "Configuring the validator" );
-    ///* 2 */ PROGRESS_STEPS.add( "Running XML validation" );
-    ///* 3 */ PROGRESS_STEPS.add( "Running controlled vocabulary mapping checks" );
-    ///* 4 */ PROGRESS_STEPS.add( "Running semantic validation" );
-    ///* 5 */ PROGRESS_STEPS.add( "Building validation report" );
-    //}
-
-    //public static final String URL_PARAM = "url";
-    //public static final String MODEL_PARAM = "model";
 
     /**
      * Logging is an essential part of an application
@@ -249,36 +239,6 @@ public class PsiValidatorController extends BaseController {
         }
     }
 
-    /*/**
-     * This is a valueChangeEvent. When the selection of File/URL is changed, this event is fired.
-     *
-     * @param vce needed in valueChangeEvent methods. From it we get the new value
-     */
-    /*public void uploadTypeChanged( ValueChangeEvent vce ) {
-        String type = ( String ) vce.getNewValue();
-        uploadLocalFile = type.equals( "local" );
-
-        if ( log.isDebugEnabled() )
-            log.debug( "Upload type changed, is local file? " + uploadLocalFile );
-    }*/
-
-    /*/**
-     * This is a valueChangeEvent. When the selection of File/URL is changed, this event is fired.
-     *
-     * @param vce needed in valueChangeEvent methods. From it we get the new value
-     */
-    /*public void validationScopeChangedMI( ValueChangeEvent vce ) {
-        String type = ( String ) vce.getNewValue();
-        validationScope = ValidationScope.valueOf( type );
-        if ( log.isDebugEnabled() ) log.debug( "MI Validation scope changed to '" + validationScope + "'" );
-    } */
-
-    /*public void validationScopeChangedPAR( ValueChangeEvent vce ) {
-        String type = ( String ) vce.getNewValue();
-        validationScope = ValidationScope.valueOf( type );
-        if ( log.isDebugEnabled() ) log.debug( "PAR Validation scope changed to '" + validationScope + "'" );
-    }*/
-
     public void validationModelChangedMI( DisclosureEvent event ) {
         if ( event.isExpanded() ) {
             model = DataModel.PSI_MI;
@@ -294,117 +254,6 @@ public class PsiValidatorController extends BaseController {
             if ( log.isDebugEnabled() ) log.debug( "Data model set to '" + model + "'" );
         }
     }
-
-//    public void onPoll( PollEvent event ) {
-//        if ( progressModel != null && ( progressModel.getMaximum() <= progressModel.getValue() ) ) {
-//            // one can attach processing at the end of a poll event
-//            System.out.println( "Polling just happened, current status message is: " + PROGRESS_STEPS.get( (int)progressModel.getValue() ));
-//
-//        }
-//    }
-
-    /*public List<String> getProgressSteps() {
-        return PROGRESS_STEPS;
-    }
-
-    public DefaultBoundedRangeModel getProgressModel() {
-        return progressModel;
-    }
-
-    @PreRenderView
-    public void initialParams() {
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        String urlParam = context.getExternalContext().getRequestParameterMap().get( URL_PARAM );
-        String modelParam = context.getExternalContext().getRequestParameterMap().get( MODEL_PARAM );
-
-        if ( urlParam != null && modelParam != null) {
-            if ( log.isInfoEnabled() ) {
-                log.info( "User submitted a request with data specified in the URL: " + urlParam );
-            }
-
-            if( modelParam.equalsIgnoreCase( "PAR" ) || modelParam.equalsIgnoreCase( "PSI-PAR" ) ) {
-                model = DataModel.PSI_PAR;
-                validationScope = ValidationScope.SYNTAX;
-            } else if( modelParam.equalsIgnoreCase( "MI" ) || modelParam.equalsIgnoreCase( "PSI-MI" ) ) {
-                model = DataModel.PSI_MI;
-                validationScope = ValidationScope.MIMIX;
-                String msg = "You have tried to validate a file via URL, however the data model you have specified '"+
-                        modelParam +"' was not recognized. Please use one of the following 'MI', 'PSI-MI' or " +
-                        "'PAR', 'PSI-PAR'";
-                FacesMessage message = new FacesMessage( msg );
-                context.addMessage( null, message );
-                return;
-            }
-
-            uploadLocalFile = false;
-            psiUrl = urlParam;
-            try {
-                initializeProgressModel();
-                uploadFromUrl();
-            } catch ( IOException e ) {
-                final String msg = "Failed to upload PSI data from given URL";
-                FacesMessage message = new FacesMessage( FacesMessage.SEVERITY_WARN, msg, null );
-                context.addMessage( "inputUrl", message );
-            }
-        } else if( urlParam != null || modelParam != null ) {
-            String msg = "You have tried to validate a file via URL, however you haven't provided all required " +
-                    "parameters. Please specify 'url' and 'model' ('PSI-MI' or 'PSI-PAR').";
-            FacesMessage message = new FacesMessage( FacesMessage.SEVERITY_WARN, msg, null );
-            context.addMessage( null, message );
-        }
-    }*/
-
-    // This is the method invoked when pressing the valdidate button, names after thte variable to be updated.
-    /*public void onPsiFileUpload( ValueChangeEvent event ) {
-
-        System.out.println( "PsiValidatorController.psiFile: uploadLocalFile=" + uploadLocalFile );
-
-        if ( uploadLocalFile ) {
-            psiFile = ( UploadedFile ) event.getNewValue();
-            if ( psiFile != null ) {
-                FacesContext context = FacesContext.getCurrentInstance();
-                FacesMessage message = new FacesMessage(
-                        "Successfully uploaded file " + psiFile.getFilename() +
-                                " (" + psiFile.getLength() + " bytes)" );
-                context.addMessage( event.getComponent().getClientId( context ), message );
-
-            }
-        }
-    }*/
-
-    ///**
-    //* Validates the data entered by the user upon pressing the validate button.
-    //*
-    //* @param event
-    //*/
-    /*public void validate( ActionEvent event ) {
-
-        initializeProgressModel();
-
-        try {
-            File f;
-
-            if ( uploadLocalFile ) {
-                // we use a different upload method, depending on the user selection
-                f = uploadFromLocalFile();
-            } else {
-                f = uploadFromUrl();
-            }
-
-            if (f != null){
-                validateInputStream(f);
-            }
-        } catch ( Throwable t ) {
-            final String msg = "Failed to upload from " + ( uploadLocalFile ? "local file" : "URL" );
-
-            log.error( msg, t );
-
-            FacesContext context = FacesContext.getCurrentInstance();
-            FacesMessage message = new FacesMessage( msg );
-            context.addMessage( event.getComponent().getClientId( context ), message );
-        }
-    }*/
 
     public String loadExample(){
 
@@ -531,38 +380,44 @@ public class PsiValidatorController extends BaseController {
 
         // we execute the method of the builder that actually creates the report
         log.info( "About to start building the PSI report" );
+        try{
+            if (!validationScope.equals(ValidationScope.CUSTOMIZED)){
+                this.currentPsiReport = builder.createPsiReport(streamToValidate);
+            }
+            else{
+                List<ObjectRule> customizedRules = new ArrayList<ObjectRule>();
 
-        if (!validationScope.equals(ValidationScope.CUSTOMIZED)){
-            this.currentPsiReport = builder.createPsiReport(streamToValidate);
+                List<Integer> rules = this.customizedRules.get(ValidationScope.PSI_MI);
+
+                if (rules != null && !rules.isEmpty()){
+                    extractSelectedRules(customizedRules, rules);
+                }
+
+                rules = this.customizedRules.get(ValidationScope.MIMIX);
+
+                if (rules != null && !rules.isEmpty()){
+                    extractSelectedRules(customizedRules, rules);
+                }
+
+                rules = this.customizedRules.get(ValidationScope.IMEX);
+
+                if (rules != null && !rules.isEmpty()){
+                    extractSelectedRules(customizedRules, rules);
+                }
+
+                this.currentPsiReport = builder.createPsiReport(streamToValidate, customizedRules);
+            }
         }
-        else{
-            List<ObjectRule> customizedRules = new ArrayList<ObjectRule>();
-
-            List<Integer> rules = this.customizedRules.get(ValidationScope.PSI_MI);
-
-            if (rules != null && !rules.isEmpty()){
-                extractSelectedRules(customizedRules, rules);
-            }
-
-            rules = this.customizedRules.get(ValidationScope.MIMIX);
-
-            if (rules != null && !rules.isEmpty()){
-                extractSelectedRules(customizedRules, rules);
-            }
-
-            rules = this.customizedRules.get(ValidationScope.IMEX);
-
-            if (rules != null && !rules.isEmpty()){
-                extractSelectedRules(customizedRules, rules);
-            }
-
-            this.currentPsiReport = builder.createPsiReport(streamToValidate, customizedRules);
+        finally {
+            streamToValidate.close();
         }
 
-        streamToValidate.close();
-
-        builder.createHtmlView(this.currentPsiReport, streamToView);
-        streamToView.close();
+        try{
+            builder.createHtmlView(this.currentPsiReport, streamToView);
+        }
+        finally {
+            streamToView.close();
+        }
     }
 
     private void extractSelectedRules(List<ObjectRule> customizedRules, List<Integer> rules) {
@@ -572,84 +427,6 @@ public class PsiValidatorController extends BaseController {
             }
         }
     }
-
-    /**
-     * Store the content of the given input stream into a temporary file and return its descriptor.
-     *
-     * @param is the input stream to store.
-     * @return a File descriptor describing a temporary file storing the content of the given input stream.
-     * @throws IOException if an IO error occur.
-     */
-    /*private File storeAsTemporaryFile( InputStream is, String fileName ) throws IOException {
-
-        if ( is == null ) {
-            throw new IllegalArgumentException( "You must give a non null InputStream" );
-        }
-
-        if (!fileName.endsWith("." + XML_EXTENSION)){
-            return null;
-        }
-
-        BufferedReader in = new BufferedReader( new InputStreamReader( is ) );
-
-        // Create a temp file and write URL content in it.
-        File tempDirectory = new File( System.getProperty( "java.io.tmpdir", "tmp" ) );
-        if ( !tempDirectory.exists() ) {
-            if ( !tempDirectory.mkdirs() ) {
-                throw new IOException( "Cannot create temp directory: " + tempDirectory.getAbsolutePath() );
-            }
-        }
-
-        File tempFile = new File(tempDirectory, fileName);
-
-        log.info( "The file is temporary store as: " + tempFile.getAbsolutePath() );
-
-        BufferedWriter out = new BufferedWriter( new FileWriter( tempFile ) );
-
-        String line;
-        while ( ( line = in.readLine() ) != null ) {
-            out.write( line );
-        }
-
-        in.close();
-
-        out.flush();
-        out.close();
-
-        // no need for that, will never be a directory
-
-        /*String [] xmlExtension = {XML_EXTENSION};
-        boolean recursive = true;
-
-        Collection<File> files = new ArrayList<File>();
-        if (tempFile.isDirectory()){
-            files = FileUtils.listFiles(tempFile, xmlExtension, recursive);
-        }
-        else {
-            files.add(tempFile);
-        }
-
-        if (files.size() > 1){
-            FacesContext context = FacesContext.getCurrentInstance();
-            FacesMessage message = new FacesMessage( FacesMessage.SEVERITY_WARN, "The directory "+tempFile.getName()+" contained " + files.size() + " XML files. Only one will be validated.", null );
-            context.addMessage( null, message );
-        }
-
-        if (!files.isEmpty()){
-            File xmlFileToValidate = files.iterator().next();
-
-            FileUtils.copyFileToDirectory(xmlFileToValidate, tempDirectory);
-
-            tempFile.delete();
-
-            return new File(tempDirectory, xmlFileToValidate.getName());
-        }
-        else {
-            tempFile.delete();
-        }*/
-
-    //return tempFile;
-    //}
 
     /**
      * Reads the file from a URL, so it can read locally and remotely
@@ -741,7 +518,10 @@ public class PsiValidatorController extends BaseController {
                 byte data[] = new byte[BUFFER];
 
                 if (!entry.isDirectory()){
-                    if (entry.getName().endsWith(XML_EXTENSION)){
+                    if (entry.getName().endsWith(XML_EXTENSION) ||
+                            entry.getName().endsWith(CSV_EXTENSION) ||
+                            entry.getName().endsWith(TSV_EXTENSION) ||
+                            entry.getName().endsWith(TXT_EXTENSION)){
                         String finalFileName = entry.getName().substring( entry.getName().lastIndexOf( File.separator ) + 1, entry.getName().length() );
 
                         String name = tempDirectory.getAbsolutePath() + File.separator + finalFileName;
@@ -801,67 +581,6 @@ public class PsiValidatorController extends BaseController {
         }
         return successful;
     }
-
-    /*/**
-     * This method is a "validator" method. It has the arguments that JSF specifies for this kind of methods.
-     * The objective is to validate the URL provided by the user, whether it is in the correct form
-     * or the place where it points it does exist
-     *
-     * @param context    The JSF FacesContext
-     * @param toValidate The UIComponent to validate (this is a UIInput component), the controller of the text box
-     * @param value      The value provided in the text box by the user
-     */
-    /*public void validateUrlFormat( FacesContext context,
-                                   UIComponent toValidate,
-                                   Object value ) {
-        if ( log.isDebugEnabled() ) {
-            log.debug( "Validating URL: " + value );
-        }
-
-        // we put the current report to null.
-        // This is done because we want to clear the existing report from the form.
-        // The form renders the report part if this variable is not null
-        currentPsiReport = null;
-
-        URL url = null;
-
-        // Our UIComponent is an instance of UIInput, which is the component behind the text box
-        CoreInputText inputCompToValidate = ( CoreInputText ) toValidate;
-
-        // We get the id of that component. Take into account that the id rendered in the HTML cannot
-        // be the same that the real id of the component
-        String toValidateClientId = inputCompToValidate.getClientId( context );
-
-        try {
-            // we create the url with the value provided. If a MalformedUrlException is thrown,
-            // that means that the url does not have the appropiate form
-            url = new URL( ( String ) value );
-        }
-        catch ( MalformedURLException e ) {
-            log.warn( "Invalid URL given by the user: " + value, e );
-
-            // if it fails, we need to invalidate the component (this is the way to tell in JSF
-            // that there has been an invalid value)
-            inputCompToValidate.setValid( false );
-
-            // we add the message error to the facesContext, using the clientId of the component.
-            // This way, the message will be rendered in the expected place
-            context.addMessage( toValidateClientId, new FacesMessage( "The given URL was not valid." ) );
-            return;
-        }
-
-        try {
-            // if the url is ok, we try to connect to it and open the stream
-            url.openStream();
-        }
-        catch ( Throwable e ) {
-            log.error( "Error while validating the URL.", e );
-
-            // if it fails, invalidate the component and add the error message shown to the user
-            inputCompToValidate.setValid( false );
-            context.addMessage( toValidateClientId, new FacesMessage( "Could not read URL content." ) );
-        }
-    }*/
 
     // ACCESSOR METHODS
 
