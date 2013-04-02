@@ -21,7 +21,7 @@
 <!-- Description -->
 <tr:panelHeader text="Overview">
 
-<tr:group>
+    <tr:group>
 
         <div style="float:right; padding-left: 20px; padding-top: 20px">
 
@@ -524,16 +524,12 @@
 
 <!-- HTML View -->
 <a name="html_view"/>
-<div style="overflow-y: auto; height: 600px">
 <tr:panelHeader text="HTML View"
                 rendered="#{psiValidatorController.currentPsiReport != null and psiValidatorController.currentPsiReport.xmlSyntaxValid}">
-
-    <div>
+    <div style="overflow-y: auto; height: 600px">
         <tr:outputText value="#{psiValidatorController.currentPsiReport.htmlView}" escape="false"/>
     </div>
-
 </tr:panelHeader>
-</div>
 
 </ui:define>
 </ui:composition>
