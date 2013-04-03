@@ -402,11 +402,15 @@
             <tr:outputText value="#{msg.message}" />
         </tr:column>
 
-        <!-- TODO rules only seem to be showing line number 1, always :( -->
         <!-- Build a links to respective object anchor's -->
-        <!--<tr:column headerText="Context">-->
-        <!--<tr:outputText value="Line #{msg.context.lineNumber}"/>-->
-        <!--</tr:column>-->
+        <tr:column headerText="Context">
+            <h:panelGroup rendered="#{msg.context.locator != null}">
+                <tr:goLink destination="##{msg.context.locator.locationDescription}" rendered="#{ctxt.contextWithAnchor}">
+                    <nobr><tr:outputText value="#{msg.context.objectLabel} #{ctxt.locator.locationDescription}" /></nobr>
+                </tr:goLink>
+                <tr:outputText value="#{msg.context.objectLabel} #{msg.context.locator.locationDescription}" rendered="#{ not msg.context.contextWithAnchor}"/>
+            </h:panelGroup>
+        </tr:column>
     </tr:table>
 
 </tr:panelHeader>
