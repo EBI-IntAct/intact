@@ -62,11 +62,19 @@
         <tr:goLink destination="http://www.psidev.info/index.php?q=node/60" targetFrame="_blank">
             <tr:outputText value="PSI-MI XML 2.5"/>
         </tr:goLink>
-        <tr:outputText value=" and "/>
-        <tr:goLink destination="http://www.psidev.info/index.php?q=node/281" targetFrame="_blank">
-            <tr:outputText value="PSI-PAR"/>
+        <tr:outputText value=", "/>
+        <tr:goLink destination="http://code.google.com/p/psicquic/wiki/MITAB25Format" targetFrame="_blank">
+            <tr:outputText value="MITAB 2.5"/>
         </tr:goLink>
-        <tr:outputText value=" format."/>
+        <tr:outputText value=", "/>
+        <tr:goLink destination="http://code.google.com/p/psicquic/wiki/MITAB26Format" targetFrame="_blank">
+            <tr:outputText value="MITAB 2.6"/>
+        </tr:goLink>
+        <tr:outputText value=" and "/>
+        <tr:goLink destination="http://code.google.com/p/psicquic/wiki/MITAB27Format" targetFrame="_blank">
+            <tr:outputText value="MITAB 2.7"/>
+        </tr:goLink>
+        <tr:outputText value=" formats."/>
         <br/>
         <br/>
         <tr:commandLink text="Here" action="documentation.help"/>
@@ -84,7 +92,7 @@
             </li>
             <li>
                 <tr:goLink destination="help.xhtml#syntax">
-                    <tr:outputText value="XML syntax"/>
+                    <tr:outputText value="XML and MITAB syntax"/>
                 </tr:goLink>
             </li>
             <li>
@@ -122,7 +130,7 @@
 
 <!-- File upload -->
 
-<tr:panelHeader text="PSI-MI XML 2.5 validation">
+<tr:panelHeader text="PSI-MI validation">
 
     <tr:panelGroupLayout layout="vertical">
 
@@ -163,8 +171,8 @@
                                   columns="50" value="#{psiValidatorController.psiUrl}"
                                   styleClass="urlUpload"/>
                     <tr:panelList>
-                        <tr:outputText value="Single XML file"/>
-                        <tr:outputText value="ZIP file containing one XML file (if several XML files, only one will be validated)"/>
+                        <tr:outputText value="Single XML or MITAB file"/>
+                        <tr:outputText value="ZIP file containing one XML or MITAB file (if several XML/MITAB files, only one will be validated)"/>
                         <tr:commandLink action="#{psiValidatorController.loadExample}"><tr:outputText value="Load an example"/></tr:commandLink>
                     </tr:panelList>
                 </trh:cellFormat>
@@ -188,7 +196,7 @@
                                         </tr:commandLink>
 
                                         <tr:selectOneRadio id="scopeSelector" value="#{psiValidatorController.validationScope}" styleClass="validatorScopes">
-                                            <tr:selectItem label="XML Syntax Only" value="SYNTAX"/>
+                                            <tr:selectItem label="File Syntax Only" value="SYNTAX"/>
                                             <tr:selectItem label="Controlled Vocabulary Usage" value="CV_ONLY"/>
                                             <tr:selectItem label="PSI-MI" shortDesc="Basic checks for PSI-MI" value="PSI_MI"/>
                                             <tr:selectItem label="MIMIx" shortDesc="Minimum Information about a Molecular Interaction guidelines" value="MIMIX"/>
@@ -252,7 +260,7 @@
                                 </tr:commandLink>
 
                                 <tr:selectOneRadio id="scopeSelector2" value="#{psiValidatorController.validationScope}">
-                                    <tr:selectItem label="XML Syntax Only" value="SYNTAX"/>
+                                    <tr:selectItem label="File Syntax Only" value="SYNTAX"/>
                                     <tr:selectItem label="Controlled Vocabulary Usage" value="CV_ONLY"/>
                                 </tr:selectOneRadio>
                             </tr:panelHorizontalLayout>
