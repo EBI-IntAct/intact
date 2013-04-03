@@ -488,7 +488,7 @@
                 </h:panelGroup>
                 <tr:iterator value="#{ctxt.associatedContexts}" var="a_ctxt">
                     <h:panelGroup styleClass="errorContext">
-                        <tr:goLink destination="#{a_ctxt.locator.locationDescription}" rendered="#{a_ctxt.contextWithAnchor}">
+                        <tr:goLink destination="##{a_ctxt.locator.locationDescription}" rendered="#{a_ctxt.contextWithAnchor}">
                             <nobr><tr:outputText value="#{a_ctxt.objectLabel} #{a_ctxt.locator.locationDescription}" /></nobr>
                         </tr:goLink>
                         <tr:outputText value="#{a_ctxt.objectLabel} #{a_ctxt.locator.locationDescription}" rendered="#{ not a_ctxt.contextWithAnchor}"/>
