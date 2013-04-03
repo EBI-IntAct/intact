@@ -325,7 +325,7 @@
                                       rendered="#{psiValidatorController.currentPsiReport.xmlSyntaxInvalid}"/>
                         </trh:cellFormat>
                         <trh:cellFormat>
-                            <tr:outputText value="XML Syntax"/>
+                            <tr:outputText value="File Syntax"/>
                         </trh:cellFormat>
                         <trh:cellFormat>
                             <tr:outputText value="#{psiValidatorController.currentPsiReport.xmlSyntaxStatus}"/>
@@ -360,7 +360,7 @@
                                       rendered="#{psiValidatorController.currentPsiReport.xmlSemanticInvalid}"/>
                         </trh:cellFormat>
                         <trh:cellFormat>
-                            <tr:outputText value="XML Semantics"/>
+                            <tr:outputText value="File Semantics"/>
                         </trh:cellFormat>
                         <trh:cellFormat>
                             <tr:outputText value="#{psiValidatorController.currentPsiReport.semanticsStatus}"/>
@@ -389,7 +389,7 @@
 <!-- XML Syntax Validation Report -->
 
 <a name="xml_report"/>
-<tr:panelHeader text="XML Syntax Validation Report" rendered="#{psiValidatorController.currentPsiReport.xmlSyntaxInvalid}">
+<tr:panelHeader text="File Syntax Validation Report" rendered="#{psiValidatorController.currentPsiReport.xmlSyntaxInvalid}">
 
     <tr:table width="800" var="msg" value="#{psiValidatorController.currentPsiReport.xmlSyntaxReport}">
         <tr:column >
