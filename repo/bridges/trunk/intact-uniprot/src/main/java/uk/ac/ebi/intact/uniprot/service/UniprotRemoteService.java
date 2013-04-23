@@ -150,6 +150,7 @@ public class UniprotRemoteService extends SimpleUniprotRemoteService {
     @Override
     public void close() {
         this.retrievalCache.clear();
+        this.getErrors().clear();
     }
 
     public Collection<UniprotProtein> retrieve( String ac, boolean processSpliceVars ) {
