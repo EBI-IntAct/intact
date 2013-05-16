@@ -88,7 +88,7 @@ public class OboOntologyIterator implements OntologyIterator {
 
             String id = oboClass.getID();
             String name = oboClass.getName();
-            
+
             Set<SynonymImpl> oboSynonyms = oboClass.getSynonyms();
             Set<String> synonyms = synonymsToString(oboSynonyms);
 
@@ -100,19 +100,19 @@ public class OboOntologyIterator implements OntologyIterator {
                 // parents
                 for (Link link : oboClass.getParents()) {
                     LinkedObject oboParent = link.getParent();
-    
+
                     String parentId = oboParent.getID();
                     String parentName = oboParent.getName();
-    
+
                     String relationshipType = link.getType().getID();
                     boolean cyclicRelationship = link.getType().isCyclic();
-                    
+
                     Set<String> parentSynonyms = getSynonyms(oboParent);
 
                     OntologyDocument doc = createParentChildRelationship(id, name, synonyms, parentId, parentName, parentSynonyms, relationshipType, cyclicRelationship);
                     documentPool.add(doc);
                 }
-    
+
                 // if it is a leaf, add itself to the index as parent with no children
                 if (isALeafTerm(oboClass)) {
                     OntologyDocument doc = createLeafRelationship(id, name, synonyms);
@@ -152,13 +152,13 @@ public class OboOntologyIterator implements OntologyIterator {
         return synonyms;
     }
 
-    private OntologyDocument createParentChildRelationship(String id, String name, Set<String> childSynonyms, 
-                                                           String parentId, String parentName, Set<String> parentSynonyms, 
+    private OntologyDocument createParentChildRelationship(String id, String name, Set<String> childSynonyms,
+                                                           String parentId, String parentName, Set<String> parentSynonyms,
                                                            String relationshipType, boolean cyclicRelationship) {
         final OntologyDocument ontologyDocument = new OntologyDocument(ontology, parentId, parentName, id, name, relationshipType, cyclicRelationship);
         ontologyDocument.addAllChildSynonyms(childSynonyms);
         ontologyDocument.addAllParentSynonyms(parentSynonyms);
-        
+
         return ontologyDocument;
     }
 
