@@ -3,14 +3,14 @@
     <parent>
         <groupId>uk.ac.ebi.intact.commons</groupId>
         <artifactId>commons-master</artifactId>
-        <version>2.1.9</version>
+        <version>2.1.10-SNAPSHOT</version>
     </parent>
     
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>irefindex-seguid</artifactId>
     <packaging>jar</packaging>
-    <version>2.1.9</version>
+    <version>2.1.10-SNAPSHOT</version>
 
     <name>Intact Commons :: Irefindex-Seguid</name>
     <description>Irefindex-Seguid, utility class that generates the RIGIDs and ROGIDs</description>
