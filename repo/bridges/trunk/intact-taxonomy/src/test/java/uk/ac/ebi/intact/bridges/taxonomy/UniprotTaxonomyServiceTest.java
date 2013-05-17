@@ -60,9 +60,9 @@ public class UniprotTaxonomyServiceTest {
         assertNotNull( term );
 //        System.out.println(term);
         assertEquals( 452646, term.getTaxid() );
-        assertEquals( "MUSVI", term.getMnemonic() );
+        assertEquals( "NEOVI", term.getMnemonic() );
         assertEquals( "American mink", term.getCommonName() );
-        assertEquals( "Mustela vison", term.getScientificName() );
+        assertEquals( "Neovison vison", term.getScientificName() );
         assertEquals( 1, term.getSynonyms().size() );
         assertTrue( term.hasObsoleteTaxid() );
         assertEquals( 9667, term.getObsoleteTaxid() );
