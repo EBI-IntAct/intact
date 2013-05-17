@@ -1,0 +1,79 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+		<artifactId>intact-blast</artifactId>
+		<groupId>uk.ac.ebi.intact.bridges</groupId>
+		<version>2.1.7</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>wu-blast</artifactId>
+
+	<name>IntAct Bridges :: Blast :: WuBlast</name>
+	<version>2.1.7</version>
+	<packaging>jar</packaging>
+
+        <scm>
+            <connection>scm:svn:https://intact.googlecode.com/svn/repo/bridges/tags/bridges-master-2.1.7/intact-blast/wu-blast</connection>
+            <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/bridges/tags/bridges-master-2.1.7/intact-blast/wu-blast</developerConnection>
+            <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/bridges/tags/bridges-master-2.1.7/intact-blast/wu-blast</url>
+        </scm>
+
+	<build>
+		<plugins>
+			<plugin>
+                           <groupId>org.codehaus.mojo</groupId>
+                          <artifactId>jaxws-maven-plugin</artifactId>
+                        </plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+
+        <!-- Blast parser and Uniprot-->
+        <dependency>
+            <groupId>uk.ac.ebi.intact.bridges</groupId>
+            <artifactId>blast-mapping-parser</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.bridges</groupId>
+            <artifactId>intact-uniprot</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+
+        <!-- JAX-WS -->
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-tools</artifactId>
+        </dependency>
+
+        <!-- 3rd party -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
+
+        <!-- for the wswublast h2 db -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.0.20070617</version>
+		</dependency>
+
+	</dependencies>
+
+	<!-- EBI repositories -->
+	<repositories>
+        <repository>
+            <id>intact.nexus</id>
+            <name>IntAct Nexus</name>
+            <url>http://www.ebi.ac.uk/intact/maven/nexus/content/groups/public</url>
+        </repository>
+    </repositories>
+</project>
