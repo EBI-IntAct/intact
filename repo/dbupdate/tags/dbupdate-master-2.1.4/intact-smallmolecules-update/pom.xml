@@ -1,0 +1,65 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.dbupdate</groupId>
+        <artifactId>dbupdate-master</artifactId>
+        <version>2.1.4</version>
+    </parent>
+
+    <artifactId>intact-smallmolecules-update</artifactId>
+    <version>2.1.4</version>
+
+    <name>IntAct Database Update :: Small molecules Update</name>
+
+    <dependencies>
+
+        <!-- IntAct dependencies -->
+        <dependency>
+            <groupId>uk.ac.ebi.intact.core</groupId>
+            <artifactId>intact-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.intact.dataexchange</groupId>
+            <artifactId>intact-enricher</artifactId>
+            <version>${dataexchange.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2</version>
+        </dependency>
+
+        <!--Chebi webservice -->
+        <dependency>
+            <groupId>uk.ac.ebi.chebi.webapps.chebiWS.client</groupId>
+            <artifactId>chebiWS-client</artifactId>
+            <version>2.0</version>
+        </dependency>
+
+        <!-- Oracle -->
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>oracle-thin</artifactId>
+            <version>10.2.0.4</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <repositories>
+        <repository>
+              <id>intact.nexus</id>
+              <name>IntAct Nexus</name>
+              <url>http://www.ebi.ac.uk/intact/maven/nexus/content/groups/public</url>
+        </repository>
+    </repositories>
+</project>
