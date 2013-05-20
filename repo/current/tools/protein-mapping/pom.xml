@@ -10,16 +10,16 @@
     <groupId>uk.ac.ebi.intact.tools</groupId>
     <artifactId>protein-mapping</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
 
     <name>Protein-mapping</name>
     <description>Helps the curator to identify a protein</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/tools/protein-mapping</url>
 
     <scm>
-        <connection>scm:svn:https://intact.googlecode.com/svn/repo/current/tools/protein-mapping</connection>
-        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/current/tools/protein-mapping</developerConnection>
-        <url>https://intact.googlecode.com/svn/repo/current/tools/protein-mapping</url>
+        <connection>scm:svn:https://intact.googlecode.com/svn/repo/current/tools/protein-mapping/tags/protein-mapping-1.0.1</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/current/tools/protein-mapping/tags/protein-mapping-1.0.1</developerConnection>
+        <url>https://intact.googlecode.com/svn/repo/current/tools/protein-mapping/tags/protein-mapping-1.0.1</url>
     </scm>
 
     <properties>
