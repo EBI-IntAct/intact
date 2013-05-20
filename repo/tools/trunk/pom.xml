@@ -19,15 +19,15 @@
     <groupId>uk.ac.ebi.intact.tools</groupId>
     <artifactId>intact-tools-base</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1</version>
+    <version>1.0.2-SNAPSHOT</version>
     <name>IntAct Tools</name>
     <url>http://www.ebi.ac.uk/~baranda/intact/maven-plugins</url>
     <description>Set of tools that do not depend on intact-core</description>
 
     <scm>
-        <connection>scm:svn:https://intact.googlecode.com/svn/repo/tools/tags/intact-tools-base-1.0.1</connection>
-        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/tools/tags/intact-tools-base-1.0.1</developerConnection>
-        <url>https://intact.googlecode.com/svn/repo/tools/tags/intact-tools-base-1.0.1</url>
+        <connection>scm:svn:https://intact.googlecode.com/svn/repo/tools/trunk</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/tools/trunk</developerConnection>
+        <url>https://intact.googlecode.com/svn/repo/tools/trunk</url>
     </scm>
 
     <modules>
