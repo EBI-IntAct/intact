@@ -25,7 +25,7 @@ public class UnisaveServiceTest {
         UnisaveService service = new UnisaveService();
         final List<EntryVersionInfo> versions = service.getVersions( "P12345", false );
         Assert.assertNotNull( versions );
-        Assert.assertEquals( 81, versions.size() );
+        Assert.assertEquals( 84, versions.size() );
     }
 
     /*
@@ -224,7 +224,7 @@ public class UnisaveServiceTest {
         Assert.assertNotNull( sv );
         Assert.assertNotNull( sv.getSequence() );
         Assert.assertEquals( "SSWWAHVEMGPPDPILGVTEAYKRDTNSKK", sv.getSequence().getSequence() );
-        Assert.assertEquals( "UniProtKB/Swiss-Prot|P12345|Release 2012_10/2012_10|31-OCT-2012", sv.getSequence().getHeader() );
+        Assert.assertEquals( "UniProtKB/Swiss-Prot|P12345|Release 2013_04/2013_04|03-APR-2013", sv.getSequence().getHeader() );
         Assert.assertEquals( 1, sv.getVersion() );
     }
 
@@ -251,7 +251,7 @@ public class UnisaveServiceTest {
         Assert.assertNotNull( sv );
         Assert.assertNotNull( sv.getSequence() );
         Assert.assertEquals( "VPFLSKAVRCGPVIPFVIHHFNFRRVTTTKRRRNKYVLVPGYGWVLQDDYLVNSVKMTGENDLPPNQLPHDDDLLFTYAKILLYDYISYFPKFRHNNPDLLDHKTELELFPLKADSAARNKANFYARTLWNDTITDKSAFKPGTYNDTVAGLLLWQQCALMWSLPKSVINRTISGVCDALTNRTSLTLLKRISDWLKQLGLACSPIHRLFIELPTLLGRGAIPGDADKDIKHRLAFDPSITVDVPKEQLHLLIYRLLSRNLNITKVNSFEHHLEERLLWSKSGSHYYPDDKINELLPPQPTRKEFLDVVTTEYIKECKPQVFIRQSRKLEHGKERFIYNCDTVSYVYFDFILKLFETGWQDSEAILSPGDYTSERLHAKISSYKYKAMLDYTDFNSQHTIQSMRLIFETMKELLPPEATFALDWCIASFDNMQTSDGLKWMATLPSGHRATTFINTVLNWCYTQMVGLKFDSFMCAGDDVILMSQQPISLAPILTSHFKFNPSKQSTGTRGEFLRKHYSEAGVFAYPCRAIASLVSGNWLSQSLRENTPILVPIQNGIDRLRSRAGLLGVPWKLGLSELIEREAIPKEVGMALLNSHAAGPGLITRDYSSFTVTPKPPKLSSTLEYTATRYGLQDLSKHVPWKQLTTVESDKLSRQIKKISYRHCSQAKITYNCTYEVFKPRGLPTVLSGSSQPSLSMLWWQAMLKQAIQDDSTKKIDARMFAANACTSSVSGDAFLRANASMAGVLITSLITSSS", sv.getSequence().getSequence() );
-        Assert.assertEquals( "UniProtKB/TrEMBL|Q98753|Release 2011_07/2011_07|28-JUN-2011", sv.getSequence().getHeader() );
+        Assert.assertEquals( "UniProtKB/TrEMBL|Q98753|Release 2013_04/2013_04|03-APR-2013", sv.getSequence().getHeader() );
         Assert.assertEquals( 2, sv.getVersion() );
     }
 
