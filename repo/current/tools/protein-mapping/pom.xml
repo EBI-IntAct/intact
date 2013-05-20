@@ -25,6 +25,8 @@
     <properties>
         <maven.pmd.skip>true</maven.pmd.skip>
         <spring.version>3.1.2.RELEASE</spring.version>
+        <bridges.version>2.1.7</bridges.version>
+        <core.version>2.6.2</core.version>
     </properties>
 
     <build>
@@ -106,38 +108,38 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.bridges</groupId>
             <artifactId>intact-uniprot</artifactId>
-            <version>2.1.7-SNAPSHOT</version>
+            <version>${bridges.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>3.1.2.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-expression</artifactId>
-        <version>3.1.2.RELEASE</version>
+        <version>${spring.version}</version>
     </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.intact.bridges</groupId>
             <artifactId>intact-picr</artifactId>
-            <version>2.1.7-SNAPSHOT</version>
+            <version>${bridges.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.intact.bridges</groupId>
             <artifactId>ncbi-blast</artifactId>
-            <version>2.1.7-SNAPSHOT</version>
+            <version>${bridges.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.intact.core</groupId>
             <artifactId>intact-core</artifactId>
-            <version>2.6.2-SNAPSHOT</version>
+            <version>${core.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.intact.bridges</groupId>
             <artifactId>intact-taxonomy</artifactId>
-            <version>2.1.7-SNAPSHOT</version>
+            <version>${bridges.version}</version>
         </dependency>
 
 
@@ -145,7 +147,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>3.1.2.RELEASE</version>
+            <version>${spring.version}</version>
             <optional>true</optional>
         </dependency>
 
