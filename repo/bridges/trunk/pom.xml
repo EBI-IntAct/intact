@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
@@ -29,20 +30,20 @@
     </scm>
 
     <modules>
-       <module>intact-imexcentral</module>
-       <module>intact-picr</module>
-       <module>intact-citexplore</module>
-       <module>intact-taxonomy</module>
-       <module>intact-uniprot</module>
-       <module>intact-unisave</module>
-       <module>blast-mapping-parser</module>
-       <module>intact-blast</module>
-       <module>intact-go</module>
-       <module>intact-google</module>
-       <module>intact-ontologies</module>
-       <module>intact-ols-light</module>
-    <module>intact-ontology-manager</module>
-  </modules>
+        <module>intact-imexcentral</module>
+        <module>intact-picr</module>
+        <module>intact-citexplore</module>
+        <module>intact-taxonomy</module>
+        <module>intact-uniprot</module>
+        <module>intact-unisave</module>
+        <module>blast-mapping-parser</module>
+        <module>intact-blast</module>
+        <module>intact-go</module>
+        <module>intact-google</module>
+        <module>intact-ontologies</module>
+        <module>intact-ols-light</module>
+        <module>intact-ontology-manager</module>
+    </modules>
 
 
     <build>
@@ -54,30 +55,30 @@
                     <version>1.12</version>
 
                     <executions>
-                    <execution>
-                        <goals>
-                            <goal>wsimport</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                        <execution>
+                            <goals>
+                                <goal>wsimport</goal>
+                            </goals>
+                        </execution>
+                    </executions>
 
-                <dependencies>
-                <dependency>
-                <groupId>javax.xml</groupId>
-                <artifactId>webservices-api</artifactId>
-                <version>1.4</version>
-                </dependency>
-                <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-xjc</artifactId>
-                <version>2.1.12</version>
-                </dependency>
-                <dependency>
-                <groupId>com.sun.xml.ws</groupId>
-                <artifactId>jaxws-rt</artifactId>
-                <version>2.1.4</version>
-                </dependency>
-                </dependencies> 
+                    <dependencies>
+                        <dependency>
+                            <groupId>javax.xml</groupId>
+                            <artifactId>webservices-api</artifactId>
+                            <version>1.4</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.sun.xml.bind</groupId>
+                            <artifactId>jaxb-xjc</artifactId>
+                            <version>2.1.12</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.sun.xml.ws</groupId>
+                            <artifactId>jaxws-rt</artifactId>
+                            <version>2.1.4</version>
+                        </dependency>
+                    </dependencies>
 
                 </plugin>
             </plugins>
@@ -86,16 +87,16 @@
 
     <dependencyManagement>
         <dependencies>
-            
+
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
                 <version>1.2.17</version>
                 <exclusions>
-                   <exclusion>
-                      <groupId>javax.jms</groupId>
-                      <artifactId>jms</artifactId>
-                   </exclusion>
+                    <exclusion>
+                        <groupId>javax.jms</groupId>
+                        <artifactId>jms</artifactId>
+                    </exclusion>
                 </exclusions>
                 <optional>true</optional>
             </dependency>
@@ -108,10 +109,10 @@
 
             <!-- JAX-WS -->
             <dependency>
-            <groupId>com.sun.xml.ws</groupId>
-            <artifactId>jaxws-tools</artifactId>
-            <version>2.1.7</version>
-        </dependency>
+                <groupId>com.sun.xml.ws</groupId>
+                <artifactId>jaxws-tools</artifactId>
+                <version>2.1.7</version>
+            </dependency>
             <dependency>
                 <groupId>xfire</groupId>
                 <artifactId>xfire-jsr181-api</artifactId>
@@ -147,10 +148,10 @@
 
     <dependencies>
         <dependency>
-             <groupId>junit</groupId>
-             <artifactId>junit</artifactId>
-             <version>4.10</version>
-             <scope>test</scope>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
