@@ -37,6 +37,7 @@
         <module>sanity</module>
         <module>service</module>
         <module>site</module>
+        <module>tools</module>
     </modules>
 
 
