@@ -45,7 +45,7 @@
         <dependency>
             <groupId>uk.ac.ebi.uniprot.kraken</groupId>
             <artifactId>uniprotjapi</artifactId>
-            <version>2013.05</version>
+            <version>2013.06</version>
         </dependency>
 
         <dependency>
