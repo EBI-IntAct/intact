@@ -73,10 +73,15 @@ public class PICRSearchProcessWithAccession extends IdentificationActionImpl {
         try {
             // get the Uniprot best guess of PICR for this identifier and this taxId
             String [] idResults = this.picrClient.getUniprotBestGuessFor(identifier, taxId);
-            // the database is always stored in the first String
-            String databaseName = idResults[0];
-            // the uniprot AC is always stored in the second String
-            String uniprotId = idResults[1];
+            String databaseName = null;
+            String uniprotId = null;
+
+            if (idResults != null && idResults.length == 2){
+                // the database is always stored in the first String
+                databaseName = idResults[0];
+                // the uniprot AC is always stored in the second String
+                uniprotId = idResults[1];
+            }
 
             // If the uniprot AC is not null and the database is not null, we can filter the results
             if (uniprotId != null && databaseName != null){
