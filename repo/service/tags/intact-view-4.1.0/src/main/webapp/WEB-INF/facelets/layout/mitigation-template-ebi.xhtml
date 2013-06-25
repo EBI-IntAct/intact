@@ -186,7 +186,7 @@
                     <h:panelGroup rendered="#{!hideSidebar}">
                         <td class="leftmenucell" id="leftmenucell">
                             <div class="leftmenu" id="leftmenu"
-                                 style="width: 145px; visibility: visible; display: block;">
+                                 style="width: 180px; visibility: visible; display: block;">
 
                                 <!-- start left menu here  -->
                                 <ui:insert name="sidebar"/>
@@ -226,8 +226,8 @@
 </div>
 
 <script type="text/javascript" src="#{requestConfigBean.absoluteContextPath}/resources/javascript/intact.js"></script>
-<script type="text/javascript"
-        src="#{requestConfigBean.absoluteContextPath}/resources/javascript/twitter/jquery.tweet.js"></script>
+<!-- Twitter widget -->
+<script type="text/javascript">!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 
 <!-- Google Analytics -->
 <ui:param name="googleTracker" value="#{intactViewConfiguration.googleAnalyticsTracker}"/>
