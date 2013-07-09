@@ -20,7 +20,7 @@
 
     <properties>
         <currentVersion>${version}</currentVersion>
-        <core.version>2.6.3-SNAPSHOT</core.version>
+        <core.version>2.6.3</core.version>
         <bridges.version>2.1.7</bridges.version>
         <uniprot.version>2013.05</uniprot.version>
         <tools.version>1.0.1</tools.version>
