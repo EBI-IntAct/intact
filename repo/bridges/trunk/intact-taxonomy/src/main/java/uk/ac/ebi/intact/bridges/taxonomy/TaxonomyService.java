@@ -75,4 +75,11 @@ public interface TaxonomyService {
      * @return the MI reference of the source database.
      */
     public String getSourceDatabaseMiRef();
+
+    /**
+     * Return the IntAct CvDatabase corresponding to the resource that is being queried.
+     *
+     * @return the name reference of the source database.
+     */
+    public String getSourceDatabaseName();
 }

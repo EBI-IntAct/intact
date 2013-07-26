@@ -311,4 +311,9 @@ public class NewtTaxonomyService implements TaxonomyService {
         // return Newt
         return "MI:0247";
     }
+
+    public String getSourceDatabaseName() {
+        // return Newt
+        return "newt";
+    }
 }

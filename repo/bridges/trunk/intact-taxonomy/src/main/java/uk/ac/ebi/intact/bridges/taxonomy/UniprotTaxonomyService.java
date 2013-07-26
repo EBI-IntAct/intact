@@ -174,4 +174,8 @@ public class UniprotTaxonomyService implements TaxonomyService {
     public String getSourceDatabaseMiRef() {
         return "MI:0942"; // uniprot taxonomy
     }
+
+    public String getSourceDatabaseName() {
+        return "uniprot taxonomy";  // uniprot taxonomy
+    }
 }
