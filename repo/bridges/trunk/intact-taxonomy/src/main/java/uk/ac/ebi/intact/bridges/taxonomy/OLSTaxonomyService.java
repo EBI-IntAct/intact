@@ -116,4 +116,8 @@ public class OLSTaxonomyService implements TaxonomyService {
     public String getSourceDatabaseMiRef() {
         return "MI:0942"; // cheating here, there is no OLS database in the MI ontology ... and Newt is dead :(
     }
+
+    public String getSourceDatabaseName() {
+       return "uniprot taxonomy";  // cheating here, there is no OLS database in the MI ontology ... and Newt is dead :(
+    }
 }

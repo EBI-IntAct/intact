@@ -67,4 +67,9 @@ public class DummyTaxonomyService implements TaxonomyService {
         // return IntAct
         return "MI:0469";
     }
+
+    public String getSourceDatabaseName() {
+        // return IntAct
+        return "intact";
+    }
 }
