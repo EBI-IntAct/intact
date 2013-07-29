@@ -335,9 +335,9 @@ public class SimpleUniprotRemoteService extends AbstractUniprotService {
         }
 
         // Comments: disease
-        List<DiseaseComment> diseases = uniProtEntry.getComments( CommentType.DISEASE );
-        for ( DiseaseComment disease : diseases ) {
-            uniprotProtein.getFunctions().add( disease.getValue() );
+        List<DiseaseCommentStructured> diseases = uniProtEntry.getComments( CommentType.DISEASE );
+        for ( DiseaseCommentStructured disease : diseases ) {
+            uniprotProtein.getFunctions().add( disease.getDisease().getDescription().getValue() );
         }
 
         // keywords
