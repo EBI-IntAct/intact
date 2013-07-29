@@ -368,10 +368,9 @@ public class UniprotRemoteServiceTest {
 
         UniprotProtein protein = proteins.iterator().next();
         assertNotNull( protein.getSpliceVariants() );
-        assertEquals( 3, protein.getSpliceVariants().size() );
+        assertEquals( 2, protein.getSpliceVariants().size() );
 
         boolean sv1 = false;
-        boolean sv2 = false;
         boolean sv3 = false;
 
         log.debug( "" );
@@ -385,7 +384,7 @@ public class UniprotRemoteServiceTest {
             if ( "Q24208-1".equals( sv.getPrimaryAc() ) ) {
 
                 assertEquals( 0, sv.getSecondaryAcs().size() );
-                assertEquals( "eIF-2-gamma", sv.getSynomyms().iterator().next() );
+                assertEquals( "eIF-2gamma", sv.getSynomyms().iterator().next() );
                 assertEquals( "MATAEAQIGVNRNLQKQDLSNLDVSKLTPLSPEVISRQATINIGTIGHVAHGKSTVVKAI" +
                         "SGVQTVRFKNELERNITIKLGYANAKIYKCDNPKCPRPASFVSDASSKDDSLPCTRLNCS" +
                         "GNFRLVRHVSFVDCPGHDILMATMLNGAAVMDAALLLIAGNESCPQPQTSEHLAAIEIMK" +
@@ -395,24 +394,6 @@ public class UniprotRemoteServiceTest {
                         "GQLPDIYQELEISYYLLRRLLGVRTDGDKKGARVEKLQKNEILLVNIGSLSTGGRISATK" +
                         "GDLAKIVLTTPVCTEKGEKIALSRRVENHWRLIGWGQIFGGKTITPVLDSQVAKK", sv.getSequence() );
                 sv1 = true;
-
-            } else if ( "P45975-1".equals( sv.getPrimaryAc() ) ) {
-
-                assertEquals( 0, sv.getSecondaryAcs().size() );
-                assertEquals( 1, sv.getSynomyms().size() );
-                assertEquals( "Su(var)3-9", sv.getSynomyms().iterator().next() );
-                assertEquals( "MATAEAQIGVNRNLQKQDLSNLDVSKLTPLSPEVISRQATINIGTIGHVAHGKSTVVKAI" +
-                        "SGVQTVRFKNELERNITIKLERLSEKKIKNLLTSKQQRQQYEIKQRSMLRHLAELRRHSR" +
-                        "FRRLCTKPASSSMPASTSSVDRRTTRRSTSQTSLSPSNSSGYGSVFGCEEHDVDKIPSLN" +
-                        "GFAKLKRRRSSCVGAPTPNSKRSKNNMGVIAKRPPKGEYVVERIECVEMDQYQPVFFVKW" +
-                        "LGYHDSENTWESLANVADCAEMEKFVERHQQLYETYIAKITTELEKQLEALPLMENITVA" +
-                        "EVDAYEPLNLQIDLILLAQYRAAGSRSQREPQKIGERALKSMQIKRAQFVRRKQLADLAL" +
-                        "FEKRMNHVEKPSPPIRVENNIDLDTIDSNFMYIHDNIIGKDVPKPEAGIVGCKCTEDTEE" +
-                        "CTASTKCCARFAGELFAYERSTRRLRLRPGSAIYECNSRCSCDSSCSNRLVQHGRQVPLV" +
-                        "LFKTANGSGWGVRAATALRKGEFVCEYIGEIITSDEANERGKAYDDNGRTYLFDLDYNTA" +
-                        "QDSEYTIDAANYGNISHFINHSCDPNLAVFPCWIEHLNVALPHLVFFTLRPIKAGEELSF" +
-                        "DYIRADNEDVPYENLSTAVRVECRCGRDNCRKVLF", sv.getSequence() );
-                sv2 = true;
 
             } else if ( "Q24208-2".equals( sv.getPrimaryAc() ) ) {
 
@@ -452,7 +433,6 @@ public class UniprotRemoteServiceTest {
         } // for
 
         assertTrue( "Q24208-1 was missing from the splice variant list.", sv1 );
-        assertTrue( "P45975-1 was missing from the splice variant list.", sv2 );
         assertTrue( "Q24208-2 was missing from the splice variant list.", sv3 );
     }
 
