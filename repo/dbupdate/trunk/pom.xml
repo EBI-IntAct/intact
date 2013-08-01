@@ -22,7 +22,6 @@
         <currentVersion>${version}</currentVersion>
         <core.version>2.6.4-SNAPSHOT</core.version>
         <bridges.version>2.1.8-SNAPSHOT</bridges.version>
-        <uniprot.version>2013.05</uniprot.version>
         <tools.version>1.0.1</tools.version>
         <dataexchange.version>2.1.7</dataexchange.version>
         <spring.version>3.1.2.RELEASE</spring.version>
