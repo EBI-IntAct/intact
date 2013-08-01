@@ -1,3 +1,4 @@
+
 package uk.ac.ebi.intact.bridges.complex;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;

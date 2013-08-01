@@ -1,3 +1,4 @@
+
 package uk.ac.ebi.intact.bridges.complex;
 
 import java.net.URL;
