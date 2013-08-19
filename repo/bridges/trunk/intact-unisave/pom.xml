@@ -27,6 +27,7 @@
                     <wsdlUrls>
                         <url>http://www.ebi.ac.uk/uniprot/unisave/unisave.wsdl</url>
                     </wsdlUrls>
+                    <sei/>
                 </configuration>
             </plugin>
         </plugins>
