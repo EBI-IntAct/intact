@@ -20,10 +20,9 @@
 
     <properties>
         <currentVersion>${version}</currentVersion>
-        <core.version>2.6.4-SNAPSHOT</core.version>
-        <bridges.version>2.1.8-SNAPSHOT</bridges.version>
-        <tools.version>1.0.1</tools.version>
-        <dataexchange.version>2.1.7</dataexchange.version>
+        <core.version>2.6.4</core.version>
+        <bridges.version>2.1.8</bridges.version>
+        <tools.version>1.0.2</tools.version>
         <spring.version>3.1.2.RELEASE</spring.version>
     </properties>
 
@@ -37,7 +36,6 @@
         <module>intact-biosource-update</module>
         <module>intact-update-model</module>
         <module>intact-proteins-update</module>
-        <module>intact-smallmolecules-update</module>
         <module>intact-datasets-update</module>
         <module>intact-cv-update</module>
         <module>intact-bioactiveentities-update</module>
