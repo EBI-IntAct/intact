@@ -164,6 +164,7 @@
                                 <argument>-Djavax.net.ssl.keyStorePassword=${keystore.password}</argument>
                                 <argument>uk.ac.ebi.intact.service.ImexIntactAdminGroupUpdater</argument>
                                 <argument>${inputFile}</argument>
+                                <argument>${adminToRemove}</argument>
                             </arguments>
                         </configuration>
                     </plugin>
