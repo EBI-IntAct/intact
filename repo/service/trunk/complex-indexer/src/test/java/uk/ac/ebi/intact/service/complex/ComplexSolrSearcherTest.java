@@ -1,4 +1,4 @@
-package uk.ac.ebi.intact.dataexchange.psimi.solr.complex;
+package uk.ac.ebi.intact.service.complex;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Assert;
 import org.junit.Test;
+import uk.ac.ebi.intact.service.complex.ComplexSolrSearcher;
 
 import java.io.IOException;
 

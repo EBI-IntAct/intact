@@ -1,4 +1,4 @@
-package uk.ac.ebi.intact.dataexchange.psimi.solr.complex;
+package uk.ac.ebi.intact.service.complex;
 
 /**
  * This class is for represent a result of a complex search

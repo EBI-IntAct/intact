@@ -1,10 +1,10 @@
-package uk.ac.ebi.intact.dataexchange.psimi.solr.converter;
+package uk.ac.ebi.intact.service.complex;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.common.SolrInputDocument;
 import uk.ac.ebi.intact.bridges.ontologies.term.OntologyTerm;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.complex.ComplexFieldNames;
-import uk.ac.ebi.intact.dataexchange.psimi.solr.enricher.ComplexSolrEnricher;
+import uk.ac.ebi.intact.service.complex.ComplexSolrEnricher;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
 import uk.ac.ebi.intact.model.*;
 

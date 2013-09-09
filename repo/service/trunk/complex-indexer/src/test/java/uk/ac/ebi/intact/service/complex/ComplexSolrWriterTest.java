@@ -1,4 +1,4 @@
-package uk.ac.ebi.intact.dataexchange.psimi.solr.complex;
+package uk.ac.ebi.intact.service.complex;
 
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.junit.After;
@@ -6,11 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.item.ExecutionContext;
-import uk.ac.ebi.intact.model.InteractionImpl;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import uk.ac.ebi.intact.service.complex.ComplexSolrWriter;
 
 /**
  * @author Oscar Forner (oforner@ebi.ac.uk)
