@@ -1,6 +1,6 @@
-package uk.ac.ebi.intact.dataexchange.psimi.solr.complex;
+package uk.ac.ebi.intact.service.complex;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;

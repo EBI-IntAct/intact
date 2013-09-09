@@ -1,7 +1,7 @@
-package uk.ac.ebi.intact.dataexchange.psimi.solr.enricher;
+package uk.ac.ebi.intact.service.complex;
 
 
-import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.collections15.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServerException;

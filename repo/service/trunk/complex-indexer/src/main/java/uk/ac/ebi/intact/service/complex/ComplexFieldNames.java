@@ -1,4 +1,4 @@
-package uk.ac.ebi.intact.dataexchange.psimi.solr.complex;
+package uk.ac.ebi.intact.service.complex;
 
 /**
  * @author Oscar Forner (oforner@ebi.ac.uk)

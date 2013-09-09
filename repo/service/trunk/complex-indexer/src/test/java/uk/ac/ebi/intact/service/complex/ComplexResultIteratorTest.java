@@ -1,11 +1,13 @@
-package uk.ac.ebi.intact.dataexchange.psimi.solr.complex;
+package uk.ac.ebi.intact.service.complex;
 
 import junit.framework.Assert;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import uk.ac.ebi.intact.service.complex.ComplexFieldNames;
+import uk.ac.ebi.intact.service.complex.ComplexResultIterator;
+import uk.ac.ebi.intact.service.complex.ComplexSearchResults;
 
 import java.util.Iterator;
 
@@ -50,7 +52,7 @@ public class ComplexResultIteratorTest {
     public void testGetFieldValues() throws Exception {
         Iterator < SolrDocument > iterator = this.solrDocumentList.iterator() ;
         SolrDocument solrDocument = iterator.next ( );
-        Assert.assertTrue ("Test complex_ac, first", this.complexResultIterator.getFieldValues ( solrDocument, ComplexFieldNames.COMPLEX_AC ) .equals ( "first another" ) ) ;
+        Assert.assertTrue("Test complex_ac, first", this.complexResultIterator.getFieldValues(solrDocument, ComplexFieldNames.COMPLEX_AC).equals("first another")) ;
         Assert.assertTrue ("Test complex_name, first", this.complexResultIterator.getFieldValues ( solrDocument, ComplexFieldNames.COMPLEX_NAME ) .equals ( "second" ) ) ;
         Assert.assertTrue ("Test description, first", this.complexResultIterator.getFieldValues ( solrDocument, ComplexFieldNames.DESCRIPTION ) .equals ( "third maybe" ) ) ;
         Assert.assertTrue ("Test organism_name, first", this.complexResultIterator.getFieldValues ( solrDocument, ComplexFieldNames.ORGANISM_NAME ) .equals ( "fourth" ) ) ;
