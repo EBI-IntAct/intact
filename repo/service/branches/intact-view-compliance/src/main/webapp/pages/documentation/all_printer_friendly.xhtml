@@ -3,14 +3,14 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:h="http://java.sun.com/jsf/html"
 
-                template="/WEB-INF/facelets/layout/template-ebi.xhtml">
+                template="/WEB-INF/facelets/layout/compliance-template-ebi.xhtml">
 
     <ui:param name="hideSidebar" value="true"/>
 
     <ui:define name="content">
 
         <p>
-            <ui:include src="/pages/documentation/about/intact_home.xhtml"/>
+            <ui:include src="home_content.xhtml"/>
         </p>
 
         <p>
@@ -25,9 +25,6 @@
             <ui:include src="downloads_content.xhtml"/>
         </p>
 
-        <p>
-            <ui:include src="acknowledgements_content.xhtml"/>
-        </p>
         <p>
             <ui:include src="publications_content.xhtml"/>
         </p>

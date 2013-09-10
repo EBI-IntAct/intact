@@ -28,8 +28,8 @@
         <dataexchange.version>2.1.8</dataexchange.version>
         <spring.version>3.1.2.RELEASE</spring.version>
 
-        <debug>false</debug>
-        <projectStage>Production</projectStage>
+        <debug>true</debug>
+        <projectStage>Development</projectStage>
 
         <jetty.port>9095</jetty.port>
         <jetty.contextPath>/intact</jetty.contextPath>
@@ -112,7 +112,7 @@
                             <maxIdleTime>600000</maxIdleTime>
                         </connector>
                     </connectors>
-                    <scanIntervalSeconds>0</scanIntervalSeconds>
+                    <scanIntervalSeconds>3</scanIntervalSeconds>
                     <webAppConfig>
                         <contextPath>${jetty.contextPath}</contextPath>
                         <jettyEnvXml>${build.outputDirectory}/META-INF/jetty-env.xml</jettyEnvXml>
@@ -730,7 +730,7 @@
         <dependency>
             <groupId>org.apache.myfaces.core</groupId>
             <artifactId>myfaces-api</artifactId>
-            <version>2.1.9</version>
+            <version>2.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.myfaces.core</groupId>
