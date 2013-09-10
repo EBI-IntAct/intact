@@ -190,7 +190,7 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
         return false;
     }
 
-    private boolean isADatabaseManagedByPICR(String database){
+    private boolean isADatabaseManagedByPICR(String database, String databaseName){
 
         if (database != null){
             if (listOfMIDatabasesManagedByPICR.contains(database)){
@@ -201,6 +201,13 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
                     if (name.equalsIgnoreCase(database)){
                         return true;
                     }
+                }
+            }
+        }
+        else if (databaseName != null){
+            for (String name : listOfDatabaseNamesManagedByPICR){
+                if (name.equalsIgnoreCase(database)){
+                    return true;
                 }
             }
         }
@@ -247,12 +254,12 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
             try {
                 String uniprot = null;
 
-                if (context.getDatabaseForIdentifier() == null){
+                if (context.getDatabaseForIdentifier() == null && context.getDatabaseName() == null){
                     log.warn("The identifier " + context.getIdentifier() + " is not associated to a database name or MI, so we will not use PICR" +
                             " to map this identifier to an uniprot entry.");
                 }
 
-                if (isADatabaseManagedByPICR(context.getDatabaseForIdentifier())){
+                if (isADatabaseManagedByPICR(context.getDatabaseForIdentifier(), context.getDatabaseName())){
                     // result of PICR
                     uniprot = this.listOfActions.get(0).runAction(context);
                     // get the reports of the first action
@@ -345,12 +352,12 @@ public class StrategyWithIdentifier extends IdentificationStrategyImpl implement
         this.listOfReports.clear();
         String uniprot = null;
 
-        if (context.getDatabaseForIdentifier() == null){
+        if (context.getDatabaseForIdentifier() == null && context.getDatabaseName() == null){
             log.warn("The identifier " + context.getIdentifier() + " is not associated to a database name or MI, so we will not use PICR" +
                     " to map this identifier to an uniprot entry.");
         }
 
-        if (isADatabaseManagedByPICR(context.getDatabaseForIdentifier())){
+        if (isADatabaseManagedByPICR(context.getDatabaseForIdentifier(), context.getDatabaseName())){
             // result of PICR
             uniprot = this.listOfActions.get(0).runAction(context);
             // get the reports of the first action
