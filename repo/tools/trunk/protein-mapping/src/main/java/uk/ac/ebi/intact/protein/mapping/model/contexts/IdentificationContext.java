@@ -30,6 +30,11 @@ public class IdentificationContext {
     private String databaseForIdentifier;
 
     /**
+     * the database mi number or name of the identifier
+     */
+    private String databaseName;
+
+    /**
      * the organism of the protein
      */
     private BioSource organism;
@@ -92,6 +97,7 @@ public class IdentificationContext {
         this.protein_name = context.getProtein_name();
         this.globalName = context.getGlobalName();
         this.databaseForIdentifier = context.getDatabaseForIdentifier();
+        this.databaseName = context.getDatabaseName();
     }
 
     /**
@@ -233,5 +239,12 @@ public class IdentificationContext {
     public void setGlobalName(String globalName) {
         this.globalName = globalName;
     }
-    
+
+    public String getDatabaseName() {
+        return databaseName;
+    }
+
+    public void setDatabaseName(String databaseName) {
+        this.databaseName = databaseName;
+    }
 }
