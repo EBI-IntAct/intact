@@ -7,7 +7,7 @@
                 xmlns:sf="http://www.ebi.ac.uk/faces/site"
                 xmlns:iax="http://intact.ebi.ac.uk/extlinks"
 
-                template="/WEB-INF/facelets/layout/template.xhtml">
+                template="/WEB-INF/facelets/layout/compliance-template-ebi.xhtml">
 
     <ui:define name="dialogs">
         <p:dialog modal="true" widgetVar="statusDialog" header="Please wait..."
@@ -76,7 +76,7 @@
     </ui:define>
 
     <ui:define name="content">
-
+        <h:form id="mainForm" prependId="false">
         <h:panelGroup>
 
             <h:panelGroup>
@@ -87,9 +87,6 @@
             </h:panelGroup>
 
         </h:panelGroup>
-
-
-        <ui:include src="pages/search/search_panel.xhtml"/>
 
 
         <p:tabView id="mainPanels" activeIndex="#{contextController.activeTabIndex}" dynamic="true"
@@ -145,7 +142,7 @@
         </p:tabView>
         <!--shortDesc="#{searchBean.totalResults > intactViewConfiguration.graphMaxInteractionCount ? 'Too many interactions selected to display a graphical network' : 'Click this tab to visualize the interaction network' }"
         disabled="#{searchBean.totalResults == 0 or searchBean.totalResults > intactViewConfiguration.graphMaxInteractionCount}"-->
-
+        </h:form>
     </ui:define>
 
 </ui:composition>

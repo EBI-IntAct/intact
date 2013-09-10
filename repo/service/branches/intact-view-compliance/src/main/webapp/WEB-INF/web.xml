@@ -305,12 +305,12 @@
 
     <context-param>
         <param-name>facelets.DEVELOPMENT</param-name>
-        <param-value>false</param-value>
+        <param-value>true</param-value>
     </context-param>
 
     <context-param>
         <param-name>facelets.REFRESH_PERIOD</param-name>
-        <param-value>-1</param-value>
+        <param-value>1</param-value>
     </context-param>
 
     <!--  JSF RI Performance tuning -->
@@ -557,7 +557,7 @@
     </error-page>
 
     <resource-env-ref>
-        <resource-env-ref-name>jdbc/IntactDS</resource-env-ref-name>
+        <resource-env-ref-name>jdbc/IntactPubDS</resource-env-ref-name>
         <resource-env-ref-type>
             javax.sql.DataSource
         </resource-env-ref-type>
