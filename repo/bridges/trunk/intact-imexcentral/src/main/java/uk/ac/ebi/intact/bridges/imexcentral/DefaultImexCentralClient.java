@@ -27,7 +27,7 @@ public class DefaultImexCentralClient implements ImexCentralClient {
 
     public static final String IC_TEST = "https://imexcentral.org/icentraltest/ws-v20";
     public static final String IC_BETA = "https://imexcentral.org/icentralbeta/ws-v20";
-    public static final String IC_PROD = IC_BETA;
+    public static final String IC_PROD = "https://imexcentral.org/icentral/ws-v20";
 
     private IcentralService service;
     private IcentralPort port;
