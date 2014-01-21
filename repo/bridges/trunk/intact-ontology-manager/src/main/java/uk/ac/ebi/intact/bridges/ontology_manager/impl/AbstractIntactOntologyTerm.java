@@ -325,8 +325,9 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
     protected void processDefinition(Term term) {
 
         String definition = term.getDefinition();
-
-        processDefinition(definition);
+        if (definition != null){
+            processDefinition(definition);
+        }
     }
 
     /**
