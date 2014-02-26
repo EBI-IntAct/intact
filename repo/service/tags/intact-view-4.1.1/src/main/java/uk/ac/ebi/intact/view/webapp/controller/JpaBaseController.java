@@ -2,6 +2,7 @@ package uk.ac.ebi.intact.view.webapp.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 
@@ -17,16 +18,19 @@ public abstract class JpaBaseController extends BaseController {
 
     IntactContext intactContext;
 
+    @Autowired
+    private DaoFactory daoFactory;
+
     protected DaoFactory getDaoFactory() {
-        return getIntactContext().getDataContext().getDaoFactory();
+        return this.daoFactory;
     }
 
     protected IntactContext getIntactContext() {
         if (intactContext == null){
-           intactContext = IntactContext.getCurrentInstance();
+            intactContext = IntactContext.getCurrentInstance();
         }
         return intactContext;
     }
 
-    
+
 }
