@@ -103,13 +103,13 @@ public class UniprotTaxonomyOntologyIterator extends LineOntologyIterator {
         String synonym = safeGet(cols, 4);
         String[] otherNames = split(safeGet(cols, 5));
 
-        String childName;
+        String childName = scientificName;
         
-        if (commonName != null && commonName.length() > 0) {
+        /*if (commonName != null && commonName.length() > 0) {
             childName = commonName;
         } else {
             childName = scientificName;
-        }
+        }*/
 
         String parentId = safeGet(cols, 9);
         String parentName = "";
@@ -123,7 +123,8 @@ public class UniprotTaxonomyOntologyIterator extends LineOntologyIterator {
         OntologyDocument doc = new OntologyDocument("uniprot taxonomy", parentId, parentName,
                 childId, childName, "OBO_REL:is_a", false);
 
-        doc.addChildSynonym(scientificName);
+        //doc.addChildSynonym(scientificName);
+        doc.addChildSynonym(commonName);
         doc.addChildSynonym(synonym);
         doc.addAllChildSynonyms(otherNames);
 
