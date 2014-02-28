@@ -36,7 +36,7 @@ public class UniprotTaxonomyOntologyIteratorTest {
         OntologyDocument ontologyDocument = iterator.processLine(line);
 
         Assert.assertEquals("218834", ontologyDocument.getChildId());
-        Assert.assertEquals("Brazilian false rice rat", ontologyDocument.getChildName());
+        Assert.assertEquals("Pseudoryzomys simplex", ontologyDocument.getChildName());
         Assert.assertEquals("218833", ontologyDocument.getParentId());
         Assert.assertEquals("Pseudoryzomys", ontologyDocument.getParentName());
         Assert.assertEquals(4, ontologyDocument.getChildSynonyms().size());
