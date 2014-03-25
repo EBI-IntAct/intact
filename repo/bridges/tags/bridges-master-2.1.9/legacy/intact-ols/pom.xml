@@ -1,0 +1,90 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.bridges.legacy</groupId>
+        <artifactId>bridges-legacy-master</artifactId>
+        <version>2.0-beta-11-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.intact.util</groupId>
+    <artifactId>intact-ols</artifactId>
+    <packaging>jar</packaging>
+    <version>2.0-beta-11-SNAPSHOT</version>
+    <name>IntAct Bridges :: Legacy :: OLS Client</name>
+    <description>Client for the OLS Web Service</description>
+
+    <scm>
+        <connection>scm:svn:https://intact.googlecode.com/svn/repo/bridges/legacy/intact-ols/trunk</connection>
+        <developerConnection>scm:svn:https://intact.googlecode.com/svn/repo/bridges/legacy/intact-ols/trunk</developerConnection>
+        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/bridges/legacy/intact-ols/trunk/</url>
+    </scm>
+
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
+
+    <properties>
+        <maven.test.failure.ignore>true</maven.test.failure.ignore>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>uk.ac.ebi.pride</groupId>
+            <artifactId>ols-client</artifactId>
+            <version>1.15</version>
+        </dependency>
+
+        <!-- Caching techology-->
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>1.2.4RC</version>
+        </dependency>        
+
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>Codehaus Snapshots</id>
+            <url>http://snapshots.repository.codehaus.org/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
+    
+    <pluginRepositories>
+        <pluginRepository>
+            <id>Codehaus Snapshots</id>
+            <url>http://snapshots.repository.codehaus.org/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/${artifactId}</url>
+        </site>
+    </distributionManagement>
+
+</project>
