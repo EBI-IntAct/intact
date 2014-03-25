@@ -40,5 +40,13 @@
     <modules>
         <module>protein-mapping</module>
     </modules>
+    <!-- EBI repositories -->
+    <repositories>
+        <repository>
+            <id>intact.nexus</id>
+            <name>IntAct Nexus</name>
+            <url>http://www.ebi.ac.uk/intact/maven/nexus/content/groups/public</url>
+        </repository>
+    </repositories>
 
 </project>
