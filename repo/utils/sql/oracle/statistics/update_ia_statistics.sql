@@ -51,9 +51,8 @@ DECLARE
     p_start   VARCHAR2( 10 ) := '2003-08-02';   /* Starting date              */
     v_num_day NUMBER := 7;                      /* day interval betweem stats */
     i         NUMBER;
-    v_negative_binary NUMBER;
     v_self_binary NUMBER;
-    v_negative_self NUMBER;
+
 BEGIN
 
     DBMS_OUTPUT.enable( 1000000 );
@@ -108,16 +107,6 @@ BEGIN
             WHERE objClass like '%Interaction%' AND
                   created <= v_date;
 
-           SELECT count(distinct comp.ac) - 1 INTO v_negative_binary 
-           FROM ia_interactor i, ia_int2annot ia, ia_annotation a, ia_controlledvocab c, ia_component comp
-           WHERE i.objclass like '%Interaction%'
-           AND i.ac = ia.interactor_ac
-           AND ia.annotation_ac = a.ac
-           AND a.topic_ac = c.ac
-           AND c.shortlabel = 'negative'
-           AND comp.interaction_ac = i.ac
-           AND i.created <= v_date;
-
            SELECT count(distinct c.interaction_ac) INTO v_self_binary
            FROM ia_component c
            WHERE   
@@ -130,24 +119,7 @@ BEGIN
            )
            AND c.created <= v_date;
 
-           SELECT count(distinct c.interaction_ac) INTO v_negative_self
-           FROM ia_interactor i, ia_int2annot ia, ia_annotation a, ia_controlledvocab cont, ia_component c
-           WHERE i.objclass like '%Interaction%'
-           AND i.ac = ia.interactor_ac
-           AND ia.annotation_ac = a.ac
-           AND a.topic_ac = cont.ac
-           AND cont.shortlabel = 'negative'
-           AND c.interaction_ac = i.ac
-           AND c.interaction_ac IN
-           (
-           SELECT distinct comp.interaction_ac
-           FROM ia_component comp
-           GROUP BY comp.interaction_ac
-           HAVING count(comp.ac) = 1
-           )
-           AND c.created <= v_date;
-
-            v_binary_interactions := v_components - v_interactions + v_self_binary - (v_negative_binary + v_negative_self);
+            v_binary_interactions := v_components - v_interactions + v_self_binary;
 
             SELECT count( distinct interaction_ac ) INTO v_complex_interactions
             FROM IA_Component c1
