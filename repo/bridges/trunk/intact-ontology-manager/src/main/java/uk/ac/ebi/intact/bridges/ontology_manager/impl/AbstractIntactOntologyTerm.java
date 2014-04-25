@@ -184,56 +184,58 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
      */
     public void loadXrefsFrom(Map xrefs) {
 
-        for (Object key : xrefs.keySet()){
-            String keyName = (String) key;
+        if (xrefs != null){
+            for (Object key : xrefs.keySet()){
+                String keyName = (String) key;
 
-            // xref definitions
-            if (XREF_DEFINITION_KEY.equalsIgnoreCase(keyName) || keyName.startsWith(XREF_DEFINITION_KEY)) {
-                String xref = (String) xrefs.get(keyName);
+                // xref definitions
+                if (XREF_DEFINITION_KEY.equalsIgnoreCase(keyName) || keyName.startsWith(XREF_DEFINITION_KEY)) {
+                    String xref = (String) xrefs.get(keyName);
 
-                if (xref.contains(META_XREF_SEPARATOR)){
-                    String [] xrefDef = xref.split(META_XREF_SEPARATOR);
-                    String database = null;
-                    String accession = null;
-                    String pubmedPrimary = null;
+                    if (xref.contains(META_XREF_SEPARATOR)){
+                        String [] xrefDef = xref.split(META_XREF_SEPARATOR);
+                        String database = null;
+                        String accession = null;
+                        String pubmedPrimary = null;
 
-                    if (xrefDef.length == 2){
-                        database = xrefDef[0];
-                        accession = xrefDef[1].trim();
-                    }
-                    else if (xrefDef.length > 2){
-                        database = xrefDef[0];
-                        accession = xref.substring(database.length() + 1).trim();
-                    }
+                        if (xrefDef.length == 2){
+                            database = xrefDef[0];
+                            accession = xrefDef[1].trim();
+                        }
+                        else if (xrefDef.length > 2){
+                            database = xrefDef[0];
+                            accession = xref.substring(database.length() + 1).trim();
+                        }
 
-                    if (database != null && accession != null){
-                        pubmedPrimary = processXrefDefinition(xref, database, accession, pubmedPrimary);
-                    }
-                }
-            }
-            else {
-                String xref = (String) xrefs.get(keyName);
-
-                if (xref.contains(META_XREF_SEPARATOR)){
-                    String [] xrefDef = xref.split(META_XREF_SEPARATOR);
-                    String database = null;
-                    String accession = null;
-
-                    if (xrefDef.length == 2){
-                        database = xrefDef[0];
-                        accession = xrefDef[1].trim();
-                    }
-                    else if (xrefDef.length > 2){
-                        database = xrefDef[0];
-                        accession = xref.substring(database.length() + 1).trim();
-                    }
-
-                    if (database != null && accession != null){
-                        processXref(database, accession);
+                        if (database != null && accession != null){
+                            pubmedPrimary = processXrefDefinition(xref, database, accession, pubmedPrimary);
+                        }
                     }
                 }
                 else {
-                    processXref(null, xref);
+                    String xref = (String) xrefs.get(keyName);
+
+                    if (xref.contains(META_XREF_SEPARATOR)){
+                        String [] xrefDef = xref.split(META_XREF_SEPARATOR);
+                        String database = null;
+                        String accession = null;
+
+                        if (xrefDef.length == 2){
+                            database = xrefDef[0];
+                            accession = xrefDef[1].trim();
+                        }
+                        else if (xrefDef.length > 2){
+                            database = xrefDef[0];
+                            accession = xref.substring(database.length() + 1).trim();
+                        }
+
+                        if (database != null && accession != null){
+                            processXref(database, accession);
+                        }
+                    }
+                    else {
+                        processXref(null, xref);
+                    }
                 }
             }
         }
