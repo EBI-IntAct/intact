@@ -170,6 +170,7 @@ begin
 		, owner_ac
 		, created_user
                 , role_ac
+                , category
 		)
 	values
 		( l_event 
@@ -187,6 +188,7 @@ begin
 		, :old.owner_ac
 		, :old.created_user
                 , :old.role_ac
+                , :old.category
 		);
 end; 
 
@@ -613,6 +615,7 @@ begin
                 , owner_pk
                 , reviewer_pk
                 , evidence_type_ac
+                , category
 		)
 	values
 		( l_event 
@@ -637,6 +640,7 @@ begin
                 , :old.owner_pk
                 , :old.reviewer_pk
                 , :old.evidence_type_ac
+                , :old.category
 		);
 end;
 
@@ -732,6 +736,7 @@ begin
 		, biologicalrole_ac
 		, identmethod_ac
                 , maxstoichiometry
+                , category
 		)
 	values
 		( l_event 
@@ -752,6 +757,7 @@ begin
 		, :old.biologicalrole_ac
 		, :old.identmethod_ac
                 , :old.maxstoichiometry
+                , :old.category
 		);
 end;  
 
