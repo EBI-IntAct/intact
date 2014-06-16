@@ -77,7 +77,7 @@ set term off
 set term on
 
 alter table ia_expfeature2feature add constraint FK_linked2evidence foreign key (linked_feature_ac) references ia_feature;
-alter table ia_expfeature2feature add constraint FK_linked2parent foreign key (feature_evidence_ac) references ia_feature;
+alter table ia_expfeature2feature add constraint FK_linked2fparent foreign key (feature_evidence_ac) references ia_feature;
 
 PROMPT Creating table "ia_feature2method"
 create table ia_feature2method (created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), feature_ac varchar2(30 char) not null, method_ac varchar2(30 char) not null);
