@@ -248,8 +248,8 @@ set term off
     'Refers to the variable parameter value/condition (ia_variable_parameter_value)';
 set term on
 
-alter table ia_varset2paramvalue add constraint FK_varset2parametervalue foreign key (parametervalue_id) references ia_variable_parameter_value;
-alter table ia_varset2paramvalue add constraint FK_varset2varset foreign key (varset_id) references ia_interaction_var_parameters;
+alter table ia_varset2paramvalue add constraint FK_varset2parametervalue foreign key (parametervalue_id) references ia_var_parameter_value;
+alter table ia_varset2paramvalue add constraint FK_varset2varset foreign key (varset_id) references ia_interaction_varparam;
 
 PROMPT Creating table "ia_complex_lcycle_evt"
 create table ia_complex_lcycle_evt (ac varchar2(30 char) not null, created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), note clob, when_date timestamp, event_ac varchar2(30 char) not null, user_ac varchar2(30 char) not null, complex_ac varchar2(30 char), primary key (ac))
@@ -271,8 +271,8 @@ set term off
     'Referes to the biological complex';
 set term on
 
-create index ia_complex_lifecycle_eventidx_event_event on ia_complex_lcycle_evt (event_ac)
-create index ia_complex_lifecycle_eventidx_event_who on ia_complex_lcycle_evt (user_ac)
+create index ia_complex_lcycle_evtidx on ia_complex_lcycle_evt (event_ac)
+create index ia_complex_lcycle_usidx on ia_complex_lcycle_evt (user_ac)
 alter table ia_complex_lcycle_evt add constraint FK_LIFECYCLE_EVENT_COMPLEX foreign key (complex_ac) references ia_interactor;
 alter table ia_complex_lcycle_evt add constraint FK_event2type foreign key (event_ac) references ia_controlledvocab;
 alter table ia_complex_lcycle_evt add constraint FK_event2user foreign key (user_ac) references ia_user;
