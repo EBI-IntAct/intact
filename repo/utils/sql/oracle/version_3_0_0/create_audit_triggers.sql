@@ -1,11 +1,11 @@
 set serveroutput on
 spool cr_audit_triggers.sql
 
-PROMPT Creating audit trigger for ia_experimental_causal_relationship_audit
+PROMPT Creating audit trigger for ia_exp_causal_relations_audit
 
-create or replace trigger trgAud_ia_experimental_causal_relationship_audit
+create or replace trigger trgAud_ia_exp_causal_relations_audit
 	before update or delete
-	on ia_experimental_causal_relationship
+	on ia_exp_causal_relations
 	for each row
  
 declare
@@ -19,7 +19,7 @@ begin
 	end if ;  
 	
 	
-	insert into ia_experimental_causal_relationship_audit 
+	insert into ia_exp_causal_relations_audit 
 		( event 
 		, id
 		, created
@@ -47,11 +47,11 @@ begin
 		);
 end; 
 
-PROMPT Creating audit trigger for ia_modelled_causal_relationship_audit
+PROMPT Creating audit trigger for ia_mod_causal_relations_audit
 
-create or replace trigger trgAud_ia_modelled_causal_relationship_audit
+create or replace trigger trgAud_ia_mod_causal_relations_audit
 	before update or delete
-	on ia_modelled_causal_relationship_audit
+	on ia_mod_causal_relations
 	for each row
  
 declare
@@ -65,7 +65,7 @@ begin
 	end if ;  
 	
 	
-	insert into ia_modelled_causal_relationship_audit 
+	insert into ia_mod_causal_relations_audit 
 		( event 
 		, id
 		, created
@@ -192,11 +192,11 @@ begin
 		);
 end; 
 
-PROMPT Creating audit trigger for ia_modelled_feature2linked_feature_audit_audit
+PROMPT Creating audit trigger for ia_modfeature2feature_audit
 
-create or replace trigger trgAud_ia_modelled_feature2linked_feature_audit_audit
+create or replace trigger trgAud_ia_modfeature2feature_audit
 	before update or delete
-	on ia_modelled_feature2linked_feature
+	on ia_modfeature2feature
 	for each row
  
 declare
@@ -210,7 +210,7 @@ begin
 	end if ;  
 	
 	
-	insert into ia_modelled_feature2linked_feature_audit 
+	insert into ia_modfeature2feature_audit 
 		( event 
 		, modelled_feature_ac
 		, linked_feature_ac
@@ -230,9 +230,9 @@ begin
 		);
 end; 
 
-TRIGGER "INTACT".trgTrk_ia_modelled_feature2linked_feature
+TRIGGER "INTACT".trgTrk_ia_modfeature2feature
 	before insert or update
-	on ia_modelled_feature2linked_feature
+	on ia_modfeature2feature
 	for each row
  
 begin
@@ -247,11 +247,11 @@ begin
 
 end;
 
-PROMPT Creating audit trigger for ia_feature_evidence2linked_feature_audit
+PROMPT Creating audit trigger for ia_expfeature2feature_audit
 
-create or replace trigger trgAud_ia_feature_evidence2linked_feature_audit
+create or replace trigger trgAud_ia_expfeature2feature_audit
 	before update or delete
-	on ia_feature_evidence2linked_feature
+	on ia_expfeature2feature
 	for each row
  
 declare
@@ -265,7 +265,7 @@ begin
 	end if ;  
 	
 	
-	insert into ia_feature_evidence2linked_feature_audit 
+	insert into ia_expfeature2feature_audit 
 		( event 
 		, feature_evidence_ac
 		, linked_feature_ac
@@ -285,9 +285,9 @@ begin
 		);
 end;
 
-TRIGGER "INTACT".trgTrk_feature_evidence2linked_feature
+TRIGGER "INTACT".trgTrk_ia_expfeature2feature
 	before insert or update
-	on ia_feature_evidence2linked_feature
+	on ia_expfeature2feature
 	for each row
  
 begin
@@ -302,11 +302,11 @@ begin
 
 end;
 
-PROMPT Creating audit trigger for ia_feature2detection_method_audit
+PROMPT Creating audit trigger for ia_feature2method_audit
 
-create or replace trigger trgAud_ia_feature2detection_method_audit
+create or replace trigger trgAud_ia_feature2method_audit
 	before update or delete
-	on ia_feature2detection_method_audit
+	on ia_feature2method
 	for each row
  
 declare
@@ -320,7 +320,7 @@ begin
 	end if ;  
 	
 	
-	insert into ia_feature2detection_method_audit 
+	insert into ia_feature2method_audit 
 		( event 
 		, method_ac
 		, feature_ac
@@ -340,9 +340,9 @@ begin
 		);
 end;
 
-TRIGGER "INTACT".trgTrk_feature2detection_method
+TRIGGER "INTACT".trgTrk_ia_feature2method
 	before insert or update
-	on ia_feature2detection_method
+	on ia_feature2method
 	for each row
  
 begin
@@ -481,10 +481,10 @@ begin
 		);
 end;
 
-PROMPT Creating audit trigger for ia_modelled_resulting_sequence_xref_audit
-create or replace TRIGGER "INTACT".trgAud_ia_modelled_resulting_sequence_xref
+PROMPT Creating audit trigger for ia_mod_sequence_xref_audit
+create or replace TRIGGER "INTACT".trgAud_ia_mod_sequence_xref_xref
 	before update or delete
-	on ia_modelled_resulting_sequence_xref
+	on ia_mod_sequence_xref
 	for each row
  
 declare
@@ -498,7 +498,7 @@ begin
 	end if ;  
 	
 	
-	insert into ia_modelled_resulting_sequence_xref_audit 
+	insert into ia_mod_sequence_xref_audit 
 		( event 
 		, ac
 		, created
@@ -528,10 +528,10 @@ begin
 		);
 end;
 
-PROMPT Creating audit trigger for ia_experimental_resulting_sequence_xref_audit
-create or replace TRIGGER "INTACT".trgAud_ia_experimental_resulting_sequence_xref
+PROMPT Creating audit trigger for ia_exp_sequence_xref_audit
+create or replace TRIGGER "INTACT".trgAud_ia_exp_sequence_xref
 	before update or delete
-	on ia_experimental_resulting_sequence_xref
+	on ia_exp_sequence_xref
 	for each row
  
 declare
@@ -545,7 +545,7 @@ begin
 	end if ;  
 	
 	
-	insert into ia_experimental_resulting_sequence_xref_audit 
+	insert into ia_exp_sequence_xref_audit 
 		( event 
 		, ac
 		, created
@@ -644,11 +644,11 @@ begin
 		);
 end;
 
-PROMPT Creating audit trigger for ia_interactor_pool2interactor_audit
+PROMPT Creating audit trigger for ia_pool2interactor_audit
 
-create or replace trigger trgAud_ia_interactor_pool2interactor_audit
+create or replace trigger trgAud_ia_pool2interactor_audit
 	before update or delete
-	on ia_interactor_pool2interactor_audit
+	on ia_pool2interactor
 	for each row
  
 declare
@@ -662,7 +662,7 @@ begin
 	end if ;  
 	
 	
-	insert into ia_interactor_pool2interactor_audit 
+	insert into ia_pool2interactor_audit 
 		( event 
 		, interactor_pool_ac
 		, interactor_ac
@@ -682,9 +682,9 @@ begin
 		);
 end;
 
-TRIGGER "INTACT".trgTrk_interactor_pool2interactor
+TRIGGER "INTACT".trgTrk_ia_pool2interactor
 	before insert or update
-	on ia_interactor_pool2interactor
+	on ia_pool2interactor
 	for each row
  
 begin
@@ -803,11 +803,11 @@ begin
 		);
 end; 
 
-PROMPT Creating audit trigger for ia_variable_parameter_value_audit
+PROMPT Creating audit trigger for ia_var_parameter_value_audit
 
-create or replace TRIGGER "INTACT".trgAud_ia_variable_parameter_value
+create or replace TRIGGER "INTACT".trgAud_ia_var_parameter_value_value
 	before update or delete
-	on ia_variable_parameter_value
+	on ia_var_parameter_value
 	for each row
  
 declare
@@ -821,7 +821,7 @@ begin
 	end if ;  
 	
 	
-	insert into ia_variable_parameter_audit 
+	insert into ia_var_parameter_value_audit 
 		( event 
 		, id
 		, created
@@ -845,11 +845,11 @@ begin
 		);
 end; 
 
-PROMPT Creating audit trigger for ia_interaction_var_parameters_audit
+PROMPT Creating audit trigger for ia_interaction_varparam_audit
 
-create or replace TRIGGER "INTACT".trgAud_ia_interaction_var_parameters_value
+create or replace TRIGGER "INTACT".trgAud_ia_interaction_varparam_value
 	before update or delete
-	on ia_interaction_var_parameters
+	on ia_interaction_varparam
 	for each row
  
 declare
@@ -863,7 +863,7 @@ begin
 	end if ;  
 	
 	
-	insert into ia_interaction_var_parameters_value_audit 
+	insert into ia_interaction_varparam_audit 
 		( event 
 		, id
 		, created
@@ -883,11 +883,11 @@ begin
 		);
 end; 
 
-PROMPT Creating audit trigger for ia_varset2parametervalue_audit
+PROMPT Creating audit trigger for ia_varset2paramvalue_audit
 
-create or replace trigger trgAud_ia_varset2parametervalue_audit
+create or replace trigger trgAud_ia_varset2paramvalue_audit
 	before update or delete
-	on ia_varset2parametervalue_audit
+	on ia_varset2paramvalue
 	for each row
  
 declare
@@ -901,7 +901,7 @@ begin
 	end if ;  
 	
 	
-	insert into ia_varset2parametervalue_audit 
+	insert into ia_varset2paramvalue_audit 
 		( event 
 		, varset_id
 		, parametervalue_id
@@ -921,9 +921,9 @@ begin
 		);
 end;
 
-TRIGGER "INTACT".trgTrk_varset2parametervalue
+TRIGGER "INTACT".trgTrk_ia_varset2paramvalue
 	before insert or update
-	on ia_varset2parametervalue
+	on ia_varset2paramvalue
 	for each row
  
 begin
@@ -938,11 +938,11 @@ begin
 
 end; 
 
-PROMPT Creating audit trigger for ia_ia_complex_lifecycle_event_audit
+PROMPT Creating audit trigger for ia_complex_lcycle_evt_audit
 
-create or replace trigger trgAud_ia_complex_lifecycle_event_audit
+create or replace trigger trgAud_ia_complex_lcycle_evt_audit
 	before update or delete
-	on ia_complex_lifecycle_event_audit
+	on ia_complex_lcycle_evt
 	for each row
  
 declare
@@ -956,7 +956,7 @@ begin
 	end if ;  
 	
 	
-	insert into ia_complex_lifecycle_event_audit 
+	insert into ia_complex_lcycle_evt_audit 
 		( event 
                 , created
 		, created_user
