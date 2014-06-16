@@ -130,7 +130,7 @@ set term off
     'Database cross references for range resulting sequences occuring in biological complexes';
     COMMENT ON COLUMN ia_mod_sequence_xref.ac IS
     'Primary key for resulting sequence xref';
-    COMMENT ON ia_mod_sequence_xref.id IS
+    COMMENT ON COLUMN ia_mod_sequence_xref.id IS
     'Database primary identifier'; 
     COMMENT ON COLUMN ia_mod_sequence_xref.dbrelease IS
     'Database cross reference version';
