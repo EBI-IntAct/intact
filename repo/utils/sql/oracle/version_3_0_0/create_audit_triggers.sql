@@ -116,7 +116,6 @@ begin
 		, shortlabel
 		, fullname
 		, created_user
-                , publication_ac
 		)
 	values
 		( l_event 
@@ -129,7 +128,6 @@ begin
 		, :old.shortlabel
 		, :old.fullname
 		, :old.created_user
-                , :old.publication_ac
 		);
 end; 
 
