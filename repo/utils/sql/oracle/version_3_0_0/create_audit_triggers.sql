@@ -26,7 +26,6 @@ begin
 		, created_user
 		, updated
 		, userstamp
-		, deprecated
 		, relation_type_ac
 		, experimental_target_ac
 		, modelled_target_ac
@@ -39,7 +38,6 @@ begin
 		, :old.created_user
 		, :old.updated
 		, :old.userstamp
-		, :old.deprecated
 		, :old.relation_type_ac
 		, :old.experimental_target_ac
 		, :old.modelled_target_ac
@@ -72,7 +70,6 @@ begin
 		, created_user
 		, updated
 		, userstamp
-		, deprecated
 		, relation_type_ac
 		, target_ac
                 , source_ac
@@ -84,7 +81,6 @@ begin
 		, :old.created_user
 		, :old.updated
 		, :old.userstamp
-		, :old.deprecated
 		, :old.relation_type_ac
 		, :old.target_ac
                 , :old.source_ac

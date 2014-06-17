@@ -37,11 +37,11 @@ PROMPT *************************************************************************
 PROMPT "Creating public synonyms..."
 @create_public_synonyms.sql
 
+@alter_tables.sql
+
 PROMPT *********************************************************************************/
 PROMPT "Creating audit triggers..."
 @create_audit_trigger.sql
-
-@alter_tables.sql
 
 PROMPT *********************************************************************************/
 PROMPT "Update schema version to 3.0.0"
