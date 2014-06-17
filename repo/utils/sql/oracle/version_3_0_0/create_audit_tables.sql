@@ -17,10 +17,10 @@ PROMPT Creating table "ia_feature_parameter_AUDIT"
 create table ia_feature_parameter_audit (event char(1) not null, ac varchar2(30 char) not null, created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), base number(10,0), uncertainty double precision, exponent number(10,0), factor double precision, parametertype_ac varchar2(30 char) not null, parameterunit_ac varchar2(30 char), parent_ac varchar2(30 char), primary key (ac));
 
 PROMPT Creating table "ia_mod_sequence_xref_AUDIT"
-create table ia_mod_sequence_xref_audit (event char(1) not null, ac varchar2(30 char) not null, created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), id varchar2(50 char) not null, secondaryId varchar2(256 char), dbrelease varchar2(255 char), database_ac varchar2(30 char), qualifier_ac varchar2(30 char), parent_ac varchar2(30 char), primary key (ac));
+create table ia_mod_sequence_xref_audit (event char(1) not null, ac varchar2(30 char) not null, created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), primaryid varchar2(50 char) not null, secondaryId varchar2(256 char), dbrelease varchar2(255 char), database_ac varchar2(30 char), qualifier_ac varchar2(30 char), parent_ac varchar2(30 char), primary key (ac));
 
 PROMPT Creating table "ia_exp_sequence_xref_AUDIT"
-create table ia_exp_sequence_xref_audit (event char(1) not null, ac varchar2(30 char) not null, created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), id varchar2(50 char) not null, secondaryId varchar2(256 char), dbrelease varchar2(255 char), database_ac varchar2(30 char), qualifier_ac varchar2(30 char), parent_ac varchar2(30 char), primary key (ac));
+create table ia_exp_sequence_xref_audit (event char(1) not null, ac varchar2(30 char) not null, created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), primaryid varchar2(50 char) not null, secondaryId varchar2(256 char), dbrelease varchar2(255 char), database_ac varchar2(30 char), qualifier_ac varchar2(30 char), parent_ac varchar2(30 char), primary key (ac));
 
 PROMPT Creating table "ia_pool2interactor_AUDIT"
 create table ia_pool2interactor_audit (event char(1) not null, created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), interactor_pool_ac varchar2(30 char) not null, interactor_ac varchar2(30 char) not null);
