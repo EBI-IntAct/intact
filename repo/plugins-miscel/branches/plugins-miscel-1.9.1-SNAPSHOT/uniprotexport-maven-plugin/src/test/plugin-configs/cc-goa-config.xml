@@ -1,0 +1,23 @@
+<project>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>uniprotexport-maven-plugin</artifactId>
+                <configuration>
+                    <targetPath>target/uniprotexport-test</targetPath>
+
+                    <uniprotCommentsFilename>uniprotcomments.dat</uniprotCommentsFilename>
+                    <goaFilename>gene_association.goa_intact</goaFilename>
+                    <gzipGoa>true</gzipGoa>
+                    <summaryFile>target/uniprotexport-test/line_exported_summary.log</summaryFile>
+                    <nonBinaryInteractionsFile>target/uniprotexport-test/non-binary-interactions.log
+                    </nonBinaryInteractionsFile>
+                    <overwrite>true</overwrite>
+                    <ignoreNoUniprotDrExport>true</ignoreNoUniprotDrExport>
+                    <hibernateConfig>src/test/resources/test-hibernate.cfg.xml</hibernateConfig>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,2 @@
+ID interactor A	ID interactor B	Alt. ID interactor A	Alt. ID interactor B	Alias(es) interactor A	Alias(es) interactor B	Interaction detection method(s)	Publication 1st author(s)	Publication Identifier(s)	Taxid interactor A	Taxid interactor B	Interaction type(s)	Source database(s)	Interaction identifier(s)	Confidence value(s)
+uniprotkb:P38974	uniprotkb:P38975	uniprotkb:etfA(gene name)	uniprotkb:etfB(gene name)	-	-	MI:0114(x-ray diffraction)	-	pubmed:10026281	taxid:266(parde)	taxid:266(parde)	MI:0407(direct interaction)	MI:0469(intact)	intact:EBI-1027623	-

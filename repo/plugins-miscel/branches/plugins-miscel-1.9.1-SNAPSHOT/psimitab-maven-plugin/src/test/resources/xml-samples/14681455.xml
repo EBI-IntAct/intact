@@ -1,0 +1,226 @@
+   <entrySet level="2" minorVersion="3" version="5" xmlns="net:sf:psidev:mi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="net:sf:psidev:mi http://psidev.sourceforge.net/mi/rel25/src/MIF253.xsd">
+     <entry>
+       <source releaseDate="2007-10-12">
+         <names>
+           <shortLabel>European Bioinformatics Institute</shortLabel>
+         </names>
+         <bibref>
+           <xref>
+             <primaryRef db="pubmed" dbAc="MI:0446" id="14681455" refType="primary-reference" refTypeAc="MI:0358"/>
+           </xref>
+         </bibref>
+         <xref>
+           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0469" refType="primary-reference" refTypeAc="MI:0358"/>
+         </xref>
+         <attributeList>
+           <attribute name="postalAddress">Wellcome Trust Genome Campus, Hinxton, Cambridge, CB10 1SD, United Kingdom</attribute>
+           <attribute name="url">http://www.ebi.ac.uk</attribute>
+         </attributeList>
+       </source>
+       <experimentList>
+         <experimentDescription id="2">
+           <names>
+             <shortLabel>human</shortLabel>
+             <fullName>Curated complexes - human</fullName>
+           </names>
+           <bibref>
+             <xref>
+               <primaryRef db="pubmed" dbAc="MI:0446" id="14681455" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </bibref>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-706540" secondary="human"/>
+             <secondaryRef db="newt" dbAc="MI:0247" id="9606" refType="target-species" secondary="human"/>
+           </xref>
+           <hostOrganismList>
+             <hostOrganism ncbiTaxId="9606">
+               <names>
+                 <shortLabel>human</shortLabel>
+                 <fullName>Homo sapiens</fullName>
+               </names>
+             </hostOrganism>
+           </hostOrganismList>
+           <interactionDetectionMethod>
+             <names>
+               <shortLabel>inferred by curator</shortLabel>
+               <fullName>inferred by curator</fullName>
+               <alias>modeled by curator</alias>
+               <alias>modelled by curator</alias>
+               <alias>modeled by curator</alias>
+               <alias>modelled by curator</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0364" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionDetectionMethod>
+           <participantIdentificationMethod>
+             <names>
+               <shortLabel>predetermined</shortLabel>
+               <fullName>predetermined participant</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0396" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="7940758" refType="go-definition-ref" refTypeAc="MI:0242"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </participantIdentificationMethod>
+           <attributeList>
+             <attribute name="curated-complex"></attribute>
+             <attribute name="dataset">Complexes - Interaction dataset based on curated protein complexes.</attribute>
+             <attribute name="comment">A collection of literature-mined stable and functionally defined human molecular complexes of known stoichiometry and biological role.</attribute>
+           </attributeList>
+         </experimentDescription>
+       </experimentList>
+       <interactorList>
+         <interactor id="4">
+           <names>
+             <shortLabel>bcl2_human</shortLabel>
+             <fullName>Apoptosis regulator Bcl-2</fullName>
+             <alias type="gene name" typeAc="MI:0301">BCL2</alias>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="P10415" refType="identity" refTypeAc="MI:0356" version="SP_111"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0005741" secondary="C:mitochondrial outer membrane"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0031965"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0001836" secondary="P:release of cytochrome c from"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR012238" secondary="Bcl2_apop_reg"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0006916" secondary="P:anti-apoptosis"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0006959" secondary="P:humoral immune response"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0051434"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0000074" secondary="P:regulation of cell cycle"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR000712" secondary="Bcl2_BH"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR003093" secondary="Bcl2_BH4"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR002475" secondary="BCL2_family"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR004725" secondary="Bcl2_reg"/>
+             <secondaryRef db="uniprotkb" dbAc="MI:0486" id="P10416" refType="secondary-ac" refTypeAc="MI:0360" version="SP_111"/>
+             <secondaryRef db="uniprotkb" dbAc="MI:0486" id="Q13842" refType="secondary-ac" refTypeAc="MI:0360" version="SP_111"/>
+             <secondaryRef db="uniprotkb" dbAc="MI:0486" id="Q16197" refType="secondary-ac" refTypeAc="MI:0360" version="SP_111"/>
+             <secondaryRef db="ensembl" dbAc="MI:0476" id="ENSG00000171791"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0002020"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0046982"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0042803"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0051607"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0007565"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0032848"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0051902"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0051402"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0046902"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0043497"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0043496"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0010039"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0035094"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0009314"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0009636"/>
+             <secondaryRef db="rcsb pdb" dbAc="MI:0460" id="1G5M"/>
+             <secondaryRef db="rcsb pdb" dbAc="MI:0460" id="1GJH"/>
+             <secondaryRef db="rcsb pdb" dbAc="MI:0460" id="1YSW"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR013278"/>
+             <secondaryRef db="intact" dbAc="MI:0469" id="EBI-77694" secondary="bcl2_human"/>
+           </xref>
+           <interactorType>
+             <names>
+               <shortLabel>protein</shortLabel>
+               <fullName>protein</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+               <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="identity" refTypeAc="MI:0356"/>
+             </xref>
+           </interactorType>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MAHAGRTGYDNREIVMKYIHYKLSQRGYEWDAGDVGAAPPGAAPAPGIFSSQPGHTPHPAASRDPVARTSPLQTPAAPGAAAGPALSPVPPVVHLTLRQAGDDFSRRYRRDFAEMSSQLHLTPFTARGRFATVVEELFRDGVNWGRIVAFFEFGGVMCVESVNREMSPLVDNIALWMTEYLNRHLHTWIQDNGGWDAFVELYGPSMRPLFDFSWLSLKTLLSLALVGACITLGAYLGHK</sequence>
+         </interactor>
+       </interactorList>
+       <interactionList>
+         <interaction id="1">
+           <names>
+             <shortLabel>bcl2_bcl2_human</shortLabel>
+             <fullName>BCL-2 homodimer</fullName>
+           </names>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-706546" secondary="bcl2_bcl2_human"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0043066" refType="process" refTypeAc="MI:0359" secondary="negative regulation of apoptos"/>
+             <secondaryRef db="pubmed" dbAc="MI:0446" id="14634621" refType="see-also" refTypeAc="MI:0361"/>
+             <secondaryRef db="intact" dbAc="MI:0469" id="EBI-700826" refType="exp-evidence"/>
+           </xref>
+           <experimentList>
+             <experimentRef>2</experimentRef>
+           </experimentList>
+           <participantList>
+             <participant id="3">
+               <interactorRef>4</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+             </participant>
+             <participant id="5">
+               <interactorRef>4</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>neutral component</shortLabel>
+                     <fullName>neutral component</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+             </participant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>direct interaction</shortLabel>
+               <fullName>direct interaction</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0407" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionType>
+           <attributeList>
+             <attribute name="curated-complex">Role of homodimer is unclear, may act as reservoir of protein for heterodimer formation.</attribute>
+             <attribute name="complex-synonym">Bcl2 homodimer; Bcl-2:Bcl-2; Bcl2:Bcl2;</attribute>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+       </interactionList>
+     </entry>
+   </entrySet>
