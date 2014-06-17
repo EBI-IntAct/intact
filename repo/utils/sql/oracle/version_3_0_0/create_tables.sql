@@ -123,14 +123,14 @@ alter table ia_feature_parameter add constraint FK_featureparam2unit foreign key
 alter table ia_feature_parameter add constraint FK_featureparam2feature foreign key (parent_ac) references ia_feature;
 
 PROMPT Creating table "ia_mod_sequence_xref"
-create table ia_mod_sequence_xref (ac varchar2(30 char) not null, created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), id varchar2(50 char) not null, secondaryId varchar2(256 char), dbrelease varchar2(255 char), database_ac varchar2(30 char), qualifier_ac varchar2(30 char), parent_ac varchar2(30 char), primary key (ac));
+create table ia_mod_sequence_xref (ac varchar2(30 char) not null, created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), primaryid varchar2(50 char) not null, secondaryId varchar2(256 char), dbrelease varchar2(255 char), database_ac varchar2(30 char), qualifier_ac varchar2(30 char), parent_ac varchar2(30 char), primary key (ac));
 
 set term off
     COMMENT ON TABLE ia_mod_sequence_xref IS
     'Database cross references for range resulting sequences occuring in biological complexes';
     COMMENT ON COLUMN ia_mod_sequence_xref.ac IS
     'Primary key for resulting sequence xref';
-    COMMENT ON COLUMN ia_mod_sequence_xref.id IS
+    COMMENT ON COLUMN ia_mod_sequence_xref.primaryid IS
     'Database primary identifier'; 
     COMMENT ON COLUMN ia_mod_sequence_xref.dbrelease IS
     'Database cross reference version';
@@ -147,14 +147,14 @@ alter table ia_mod_sequence_xref add constraint FK_modresxref2qualifier foreign 
 alter table ia_mod_sequence_xref add constraint FK_modresxref2range foreign key (parent_ac) references ia_range;
 
 PROMPT Creating table "ia_exp_sequence_xref"
-create table ia_exp_sequence_xref (ac varchar2(30 char) not null, created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), id varchar2(50 char) not null, secondaryId varchar2(256 char), dbrelease varchar2(255 char), database_ac varchar2(30 char), qualifier_ac varchar2(30 char), parent_ac varchar2(30 char), primary key (ac));
+create table ia_exp_sequence_xref (ac varchar2(30 char) not null, created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), primaryid varchar2(50 char) not null, secondaryId varchar2(256 char), dbrelease varchar2(255 char), database_ac varchar2(30 char), qualifier_ac varchar2(30 char), parent_ac varchar2(30 char), primary key (ac));
 
 set term off
     COMMENT ON TABLE ia_exp_sequence_xref IS
     'Database cross references for range resulting sequences occuring in interaction evidences (mutations, etc.)';
     COMMENT ON COLUMN ia_exp_sequence_xref.ac IS
     'Primary key for resulting sequence xref';
-    COMMENT ON COLUMN ia_exp_sequence_xref.id IS
+    COMMENT ON COLUMN ia_exp_sequence_xref.primaryid IS
     'Database primary identifier'; 
     COMMENT ON COLUMN ia_exp_sequence_xref.dbrelease IS
     'Database cross reference version';
