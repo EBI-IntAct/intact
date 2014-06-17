@@ -16,7 +16,7 @@
 package uk.ac.ebi.intact.kickstart;
 
 import org.hupo.psi.mi.psicquic.wsclient.UniversalPsicquicClient;
-import psidev.psi.mi.search.SearchResult;
+import org.hupo.psi.mi.psicquic.wsclient.result.MitabSearchResult;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 
 /**
@@ -31,7 +31,7 @@ public class RemotePsicquicSearch {
         // change the endpoint address as needed
         UniversalPsicquicClient client = new UniversalPsicquicClient("http://www.ebi.ac.uk/intact/psicquic/webservices/psicquic");
 
-        SearchResult<?> result = client.getByInteractor("brca2", 0, 50);
+        MitabSearchResult result = client.getByInteractor("brca2", 0, 50);
 
         // Print the results in the console
         System.out.println("Interactions found: "+result.getTotalCount());
