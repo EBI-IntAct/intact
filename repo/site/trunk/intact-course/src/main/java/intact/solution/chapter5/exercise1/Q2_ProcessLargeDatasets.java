@@ -17,7 +17,7 @@
 package intact.solution.chapter5.exercise1;
 
 import org.hupo.psi.mi.psicquic.wsclient.UniversalPsicquicClient;
-import psidev.psi.mi.search.SearchResult;
+import org.hupo.psi.mi.psicquic.wsclient.result.MitabSearchResult;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.model.CrossReference;
 
@@ -46,7 +46,7 @@ public class Q2_ProcessLargeDatasets {
 
         UniversalPsicquicClient client = new UniversalPsicquicClient(soapServiceAddress);
 
-        SearchResult<BinaryInteraction> results;
+        MitabSearchResult results;
 
         System.out.println("Total results: "+client.getByQuery(miqlQuery, 0, 0).getTotalCount());
 

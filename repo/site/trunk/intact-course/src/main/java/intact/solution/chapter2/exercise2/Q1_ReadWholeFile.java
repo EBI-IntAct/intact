@@ -16,9 +16,9 @@
 
 package intact.solution.chapter2.exercise2;
 
+import psidev.psi.mi.tab.PsimiTabException;
 import psidev.psi.mi.tab.PsimiTabReader;
 import psidev.psi.mi.tab.model.BinaryInteraction;
-import psidev.psi.mi.xml.converter.ConverterException;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +31,7 @@ import java.util.Collection;
  * @see psidev.psi.mi.tab.model.BinaryInteraction
  */
 public class Q1_ReadWholeFile {
-    public static void main( String[] args ) throws ConverterException, IOException {
+    public static void main( String[] args ) throws IOException, PsimiTabException {
 
         // Prepare the input MITAB file
         File intputFile = new File( Q1_ReadWholeFile.class.getResource( "/samples/mitab/18189341.txt" ).getFile() );
@@ -39,7 +39,7 @@ public class Q1_ReadWholeFile {
         System.out.println( "Reading MITAB data from: " + intputFile.getAbsolutePath() );
 
         // Instanciate the reader class that supports the Standard MITAB data format
-        PsimiTabReader reader = new PsimiTabReader( true );
+        PsimiTabReader reader = new PsimiTabReader( );
 
         // Read the whole file into a collection
         final Collection<BinaryInteraction> interactions = reader.read( intputFile );

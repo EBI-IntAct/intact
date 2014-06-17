@@ -40,7 +40,7 @@ public class Q3_ClientAndMitab {
 
         PsicquicSimpleClient client = new PsicquicSimpleClient("http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/current/search/");
 
-        PsimiTabReader mitabReader = new PsimiTabReader(false);
+        PsimiTabReader mitabReader = new PsimiTabReader();
 
         InputStream result = client.getByQuery("brca2");
 

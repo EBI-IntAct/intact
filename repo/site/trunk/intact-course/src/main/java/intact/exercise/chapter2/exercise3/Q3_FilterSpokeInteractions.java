@@ -19,8 +19,6 @@ package intact.exercise.chapter2.exercise3;
 import psidev.psi.mi.tab.PsimiTabReader;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.xml.converter.ConverterException;
-import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
-import uk.ac.ebi.intact.psimitab.IntactPsimiTabReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,10 +33,6 @@ import java.util.Iterator;
  * count of spoke expanded interaction;
  * count of experimentaly identified binary interaction (i.e. not expanded).
  *
- * @see uk.ac.ebi.intact.psimitab.IntactPsimiTabReader
- * @see uk.ac.ebi.intact.psimitab.IntactPsimiTabReader#iterate(java.io.File)
- * @see uk.ac.ebi.intact.psimitab.IntactBinaryInteraction
- * @see uk.ac.ebi.intact.psimitab.IntactBinaryInteraction#getExpansionMethods()
  */
 public class Q3_FilterSpokeInteractions {
 
@@ -52,7 +46,7 @@ public class Q3_FilterSpokeInteractions {
         System.out.println( "Iterating over extended MITAB data from: " + intputFile.getAbsolutePath() );
 
         // Instanciate the reader class that supports the IntAct extended MITAB data format
-        PsimiTabReader reader = new IntactPsimiTabReader( true );
+        PsimiTabReader reader = new PsimiTabReader( );
 
         // Prepare for iterating over the file.
         final Iterator<BinaryInteraction> interactionIterator = reader.iterate( intputFile );
@@ -65,7 +59,7 @@ public class Q3_FilterSpokeInteractions {
 
         while ( interactionIterator.hasNext() ) {
             // Here we get an IntAct specific BinaryInteraction that gives access to the additional fields
-            IntactBinaryInteraction bi = ( IntactBinaryInteraction ) interactionIterator.next();
+            BinaryInteraction bi = ( BinaryInteraction ) interactionIterator.next();
 
             // TODO - filter and count here
         }

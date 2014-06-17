@@ -45,7 +45,7 @@ public class Q2_ClientAndMitabBetterMemory {
         System.out.println( "Reading MITAB data from: " + intputFile.getAbsolutePath() );
 
         // Instantiate the reader class that supports the Standard MITAB data format
-        PsimiTabReader reader = new PsimiTabReader( true );
+        PsimiTabReader reader = new PsimiTabReader( );
 
         InputStream is = new FileInputStream( intputFile );
         final Iterator<BinaryInteraction> interactionIterator = reader.iterate( is );

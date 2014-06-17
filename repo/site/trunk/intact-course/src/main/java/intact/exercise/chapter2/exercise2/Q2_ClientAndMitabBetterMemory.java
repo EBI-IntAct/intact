@@ -29,8 +29,6 @@ import java.io.File;
  *
  * Now write an other program (similar to question 2) that implements this more efficient memory management.
  *
- * @see psidev.psi.mi.tab.PsimiTabReader#iterate(java.io.File)
- * @see psidev.psi.mi.tab.model.BinaryInteraction
  */
 public class Q2_ClientAndMitabBetterMemory {
 
@@ -42,7 +40,7 @@ public class Q2_ClientAndMitabBetterMemory {
         System.out.println( "Reading MITAB data from: " + intputFile.getAbsolutePath() );
 
         // Instantiate the reader class that supports the Standard MITAB data format
-        PsimiTabReader reader = new PsimiTabReader( true );
+        PsimiTabReader reader = new PsimiTabReader( );
 
         // TODO start here - iterate through the interactions in the file using the reader
     }

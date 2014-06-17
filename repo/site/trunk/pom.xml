@@ -29,7 +29,7 @@
     </scm>
 
     <modules>
-        <module>intact-site</module>
+        <module>intact-course</module>
         <module>intact-devsite</module>
         <module>intact-kickstart</module>
   </modules>
