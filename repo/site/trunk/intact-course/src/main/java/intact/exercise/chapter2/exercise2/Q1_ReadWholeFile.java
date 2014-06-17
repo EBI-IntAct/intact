@@ -16,7 +16,7 @@
 
 package intact.exercise.chapter2.exercise2;
 
-import psidev.psi.mi.xml.converter.ConverterException;
+import psidev.psi.mi.tab.PsimiTabException;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,11 +24,9 @@ import java.io.IOException;
 /**
  * Question 1: Can you write a class that reads a MITAB data file/stream and print out the count of interactions parsed?
  *
- * @see psidev.psi.mi.tab.PsimiTabReader
- * @see psidev.psi.mi.tab.model.BinaryInteraction
  */
 public class Q1_ReadWholeFile {
-    public static void main( String[] args ) throws ConverterException, IOException {
+    public static void main( String[] args ) throws PsimiTabException, IOException {
 
         // Prepare the input MITAB file
         File intputFile = new File( Q1_ReadWholeFile.class.getResource( "/samples/mitab/18189341.txt" ).getFile() );

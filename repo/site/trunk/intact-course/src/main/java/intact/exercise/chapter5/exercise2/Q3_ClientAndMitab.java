@@ -41,7 +41,7 @@ public class Q3_ClientAndMitab {
         PsicquicSimpleClient client = new PsicquicSimpleClient("http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/current/search/");
 
         // instantiate the reader
-        PsimiTabReader mitabReader = new PsimiTabReader(false);
+        PsimiTabReader mitabReader = new PsimiTabReader();
 
         InputStream result = null; // how to get the result from PSICQUIC?
 

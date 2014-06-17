@@ -17,7 +17,7 @@
 package intact.solution.chapter5.exercise1;
 
 import org.hupo.psi.mi.psicquic.wsclient.UniversalPsicquicClient;
-import psidev.psi.mi.search.SearchResult;
+import org.hupo.psi.mi.psicquic.wsclient.result.MitabSearchResult;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.model.CrossReference;
 
@@ -44,7 +44,7 @@ public class Q1_PsicquicQuery {
         UniversalPsicquicClient client = new UniversalPsicquicClient(soapServiceAddress);
 
         // search by brca2
-        SearchResult<BinaryInteraction> results = client.getByQuery("brca2", 0, Integer.MAX_VALUE);
+        MitabSearchResult results = client.getByQuery("brca2", 0, Integer.MAX_VALUE);
 
         // Print the results in the console
         System.out.println( "Interactions found: " + results.getTotalCount() );

@@ -25,21 +25,21 @@
         <dependency>
             <groupId>org.hupo.psi.mi.psicquic</groupId>
             <artifactId>psicquic-client</artifactId>
-             <version>1.3</version>
+             <version>1.5.3</version>
         </dependency>
 
         <!-- Simple client -->
         <dependency>
             <groupId>org.hupo.psi.mi.psicquic</groupId>
             <artifactId>psicquic-simple-client</artifactId>
-             <version>1.0</version>
+             <version>1.3.3</version>
         </dependency>
 
         <!-- Registry client -->
         <dependency>
             <groupId>org.hupo.psi.mi.psicquic</groupId>
             <artifactId>psicquic-registry-client</artifactId>
-             <version>1.0</version>
+             <version>1.1.0</version>
         </dependency>
 
 
@@ -47,84 +47,27 @@
          <dependency>
             <groupId>psidev.psi.mi</groupId>
             <artifactId>psimitab</artifactId>
-             <version>1.7.9</version>
+             <version>1.8.4.1</version>
         </dependency>
          <dependency>
             <groupId>psidev.psi.mi</groupId>
             <artifactId>psimitab-search</artifactId>
-            <version>1.7.9</version>
+            <version>1.8.4</version>
         </dependency>
 
         <!-- Needed to process the IntAct expanded MITAB files -->
         <dependency>
             <groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>
-            <artifactId>intact-psimitab</artifactId>
-            <version>2.1.1</version>
+            <artifactId>intact-psimitab-converters</artifactId>
+            <version>2.1.9</version>
         </dependency>
 
         <!-- PSI-MI XML -->
         <dependency>
             <groupId>psidev.psi.mi</groupId>
             <artifactId>psi25-xml</artifactId>
-            <version>1.7.9</version>
+            <version>1.8.4</version>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>-->
-            <!--<artifactId>intact-psixml-exchange</artifactId>-->
-            <!--<version>2.0.1</version>-->
-            <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--<groupId>ehcache</groupId>-->
-                    <!--<artifactId>ehcache</artifactId>-->
-                <!--</exclusion>-->
-            <!--</exclusions>-->
-        <!--</dependency>-->
-
-        <!--&lt;!&ndash; cv-update &ndash;&gt;-->
-        <!--<dependency>-->
-            <!--<groupId>uk.ac.ebi.intact.dataexchange</groupId>-->
-            <!--<artifactId>intact-cvutils</artifactId>-->
-            <!--<version>2.0.1</version>-->
-        <!--</dependency>-->
-
-        <!-- PSI-MI TAB - conversion and search -->
-        <!--<dependency>-->
-            <!--<groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>-->
-            <!--<artifactId>intact-psimitab</artifactId>-->
-            <!--<version>2.0.1</version>-->
-            <!--<exclusions>-->
-            	<!--<exclusion>-->
-            		<!--<artifactId>intact-ols</artifactId>-->
-            		<!--<groupId>uk.ac.ebi.intact.util</groupId>-->
-            	<!--</exclusion>-->
-            <!--</exclusions>-->
-        <!--</dependency>-->
-
-        <!-- Binary Search Client -->
-        <!--<dependency>-->
-            <!--<groupId>uk.ac.ebi.intact.service.search.binary</groupId>-->
-            <!--<artifactId>wsclient</artifactId>-->
-            <!--<version>1.6.0-rc3-SNAPSHOT</version>-->
-        <!--</dependency>-->
-
-        <!-- It this is not present, eclipse fails to synchronize the maven build
-        due to a bug on the original POM of the stax-ex dependency used by the client (version 1.0) -->
-        <!--<dependency>-->
-            <!--<groupId>org.jvnet.staxex</groupId>-->
-            <!--<artifactId>stax-ex</artifactId>-->
-            <!--<version>1.2</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.sun.xml.bind</groupId>-->
-            <!--<artifactId>jaxb-impl</artifactId>-->
-            <!--<version>2.1.7</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>javax.xml.bind</groupId>-->
-            <!--<artifactId>jaxb-api</artifactId>-->
-            <!--<version>2.1</version>-->
-        <!--</dependency>-->
 
         <!-- Database drivers - Comment/uncomment the one/s you need -->
 

@@ -27,7 +27,6 @@ import java.io.File;
 /**
  * Question 2:  Write a program that queries the local Lucene index to search for interaction evidences involving specific molecules. For instance by uniprot identifier O45406 or pubmed id 17129783.
  *
- * @see org.apache.lucene.store.FSDirectory#getDirectory(String)
  * @see org.apache.lucene.store.Directory
  * @see psidev.psi.mi.search.Searcher#search(String, org.apache.lucene.store.Directory)
  * @see psidev.psi.mi.search.SearchResult
@@ -43,7 +42,7 @@ public class Q2_QueryLocalIndexUsingMIQL {
         if( !indexLocation.exists() || !indexLocation.canRead() ) {
             throw new IllegalStateException( "Could not read index: " + indexLocation.getAbsolutePath() );
         }
-        Directory directory = FSDirectory.getDirectory(indexLocation );
+        Directory directory = FSDirectory.open(indexLocation );
 
         // Other queries you can test:
         //   - id:O45406

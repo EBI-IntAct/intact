@@ -37,7 +37,7 @@ public class Q4_ClientAndMitabBetterMemory {
 
         PsicquicSimpleClient client = new PsicquicSimpleClient("http://www.ebi.ac.uk/Tools/webservices/psicquic/intact/webservices/current/search/");
 
-        PsimiTabReader mitabReader = new PsimiTabReader(false);
+        PsimiTabReader mitabReader = new PsimiTabReader();
 
         // TODO start here, how to read the interactions one at a time?
     }

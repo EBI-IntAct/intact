@@ -16,17 +16,14 @@
 
 package intact.solution.chapter2.exercise2;
 
+import psidev.psi.mi.tab.PsimiTabException;
 import psidev.psi.mi.tab.PsimiTabReader;
 import psidev.psi.mi.tab.PsimiTabWriter;
 import psidev.psi.mi.tab.model.BinaryInteraction;
-import psidev.psi.mi.xml.converter.ConverterException;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Question 3:  Now that we have read the content of a MITAB file/stream, we can attempt to write this content back to
@@ -39,14 +36,14 @@ import java.util.Iterator;
  */
 public class Q3_WriteToFile {
 
-    public static void main( String[] args ) throws ConverterException, IOException {
+    public static void main( String[] args ) throws IOException, PsimiTabException {
         // Prepare the input MITAB file
         File intputFile = new File( Q1_ReadWholeFile.class.getResource( "/samples/mitab/18189341.txt" ).getFile() );
 
         System.out.println( "Iterating over MITAB data from: " + intputFile.getAbsolutePath() );
 
         // Instantiate the reader class that supports the Standard MITAB data format
-        PsimiTabReader reader = new PsimiTabReader( true );
+        PsimiTabReader reader = new PsimiTabReader( );
 
         // Read the collections from the file
         final Collection<BinaryInteraction> interactions = reader.read(intputFile);
