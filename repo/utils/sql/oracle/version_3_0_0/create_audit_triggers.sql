@@ -445,7 +445,7 @@ begin
 		, downstream_sequence
                 , resulting_sequence
                 , modelled_participant_ac
-                , participant_evidence_ac
+                , experimental_participant_ac
 		)
 	values
 		( l_event
@@ -471,7 +471,7 @@ begin
 		, :old.downstream_sequence
                 , :old.resulting_sequence
                 , :old.modelled_participant_ac
-                , :old.participant_evidence_ac
+                , :old.experimental_participant_ac
 		);
 end;
 
