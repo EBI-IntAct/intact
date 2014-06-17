@@ -7,7 +7,6 @@ package uk.ac.ebi.intact.uniprot.service.crossRefAdapter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.uniprot.service.RuntimeUniprotServiceException;
 import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseCrossReference;
 
 import java.lang.reflect.InvocationTargetException;
@@ -165,11 +164,11 @@ public class ReflectionCrossReferenceBuilder {
 
         Class<? extends DatabaseCrossReference> clazz = crossRef.getClass();
 
-        String db = crossRef.getDatabase().toName();
+        String db = crossRef.getDatabase().getName();
 
-        String id = null;
+        String id = crossRef.getPrimaryId().toString();
 
-        Method method = findMethod( clazz, db );
+        /*Method method = findMethod( clazz, db );
 
         try {
             if ( method != null ) {
@@ -196,7 +195,7 @@ public class ReflectionCrossReferenceBuilder {
             }
         } catch ( Exception e ) {
             throw new RuntimeUniprotServiceException("Problem getting xref id using reflection: "+crossRef+" / method: "+clazz.getName()+" "+method, e);
-        }
+        } */
 
         // TODO 2006-10-24: how to retreive a description ?!?!
         // TODO > so far we cannot, the UniProt Team is going to provide a tool to replace this Builder soon.
