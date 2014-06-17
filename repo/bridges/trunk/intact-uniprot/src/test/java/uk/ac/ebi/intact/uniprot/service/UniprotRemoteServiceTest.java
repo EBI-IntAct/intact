@@ -296,7 +296,7 @@ public class UniprotRemoteServiceTest {
         assertEquals( 8, protein.getKeywords().size() );
 
         // cross references
-        assertEquals( 12, protein.getCrossReferences().size() );
+        assertEquals( 13, protein.getCrossReferences().size() );
 
         // splice variants
         assertEquals( 0, protein.getSpliceVariants().size() );
@@ -550,7 +550,7 @@ public class UniprotRemoteServiceTest {
 
         // check that we have not so many cross references
         // cross references
-        assertEquals( 10, protein.getCrossReferences().size() );
+        assertEquals( 11, protein.getCrossReferences().size() );
 
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "1TG0", "PDB" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "1WDX", "PDB" ) ) );

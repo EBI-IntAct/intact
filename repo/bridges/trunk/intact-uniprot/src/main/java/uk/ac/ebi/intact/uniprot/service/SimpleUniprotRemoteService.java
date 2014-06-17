@@ -576,7 +576,7 @@ public class SimpleUniprotRemoteService extends AbstractUniprotService {
         Collection<UniprotCrossReference> convertedRefs = new ArrayList<UniprotCrossReference>();
         ReflectionCrossReferenceBuilder builder = new ReflectionCrossReferenceBuilder();
         for ( DatabaseCrossReference ref : refs ) {
-            String db = ref.getDatabase().toName();
+            String db = ref.getDatabase().getName();
             if ( getCrossReferenceSelector() != null && !getCrossReferenceSelector().isSelected( db ) ) {
                 log.trace( getCrossReferenceSelector().getClass().getSimpleName() + " filtered out database: '" + db + "'." );
                 continue;

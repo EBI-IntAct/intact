@@ -6,7 +6,7 @@
 package uk.ac.ebi.intact.uniprot.data;
 
 import uk.ac.ebi.kraken.interfaces.uniprot.*;
-import uk.ac.ebi.kraken.interfaces.uniprot.dbx.smart.Smart;
+import uk.ac.ebi.kraken.interfaces.uniprot.dbx.go.Go;
 import uk.ac.ebi.kraken.interfaces.uniprot.comments.*;
 import uk.ac.ebi.kraken.interfaces.uniprot.description.Field;
 import uk.ac.ebi.kraken.interfaces.uniprot.description.FieldType;
@@ -22,11 +22,7 @@ import uk.ac.ebi.kraken.model.factories.DefaultCommentFactory;
 import uk.ac.ebi.kraken.model.factories.DefaultFeatureFactory;
 import uk.ac.ebi.kraken.model.factories.DefaultUniProtFactory;
 import uk.ac.ebi.kraken.model.factories.DefaultXRefFactory;
-import uk.ac.ebi.kraken.model.uniprot.dbx.ensembl.EnsemblImpl;
-import uk.ac.ebi.kraken.model.uniprot.dbx.flybase.FlyBaseImpl;
-import uk.ac.ebi.kraken.model.uniprot.dbx.go.GoImpl;
-import uk.ac.ebi.kraken.model.uniprot.dbx.interpro.InterProImpl;
-import uk.ac.ebi.kraken.model.uniprot.dbx.smart.SmartImpl;
+import uk.ac.ebi.kraken.model.uniprot.dbx.DatabaseCrossReferenceImpl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -129,9 +125,8 @@ public class MockUniProtEntries {
     private static DatabaseCrossReference buildGo( String id ) {
         DefaultXRefFactory factory = DefaultXRefFactory.getInstance();
 
-        GoImpl go = new GoImpl();
-        go.setGoId( factory.buildGoId( id ) );
-        go.setDatabase( DatabaseType.GO );
+        Go go = factory.buildGo(new DatabaseCrossReferenceImpl(DatabaseType.GO));
+        go.setPrimaryId(factory.buildXDBAttribute(id));
 
         return go;
     }
@@ -139,9 +134,8 @@ public class MockUniProtEntries {
     private static DatabaseCrossReference buildFlybase( String id ) {
         DefaultXRefFactory factory = DefaultXRefFactory.getInstance();
 
-        FlyBaseImpl fb = new FlyBaseImpl();
-        fb.setFlyBaseAccessionNumber( factory.buildFlyBaseAccessionNumber( id ) );
-        fb.setDatabase( DatabaseType.FLYBASE );
+        DatabaseCrossReference fb = factory.buildDatabaseCrossReference(DatabaseType.FLYBASE);
+        fb.setPrimaryId(factory.buildXDBAttribute(id));
 
         return fb;
     }
@@ -149,30 +143,28 @@ public class MockUniProtEntries {
     private static DatabaseCrossReference buildEnsembl( String id ) {
         DefaultXRefFactory factory = DefaultXRefFactory.getInstance();
 
-        EnsemblImpl e = new EnsemblImpl();
-        e.setEnsemblGeneIdentifier( factory.buildEnsemblGeneIdentifier( id ) );
-        e.setDatabase( DatabaseType.ENSEMBL );
+        DatabaseCrossReference fb = factory.buildDatabaseCrossReference(DatabaseType.ENSEMBL);
+        fb.setPrimaryId(factory.buildXDBAttribute(id));
 
-        return e;
+        return fb;
     }
 
     private static DatabaseCrossReference buildInterpro( String id ) {
         DefaultXRefFactory factory = DefaultXRefFactory.getInstance();
 
-        InterProImpl ipr = new InterProImpl();
-        ipr.setInterProId( factory.buildInterProId( id ) );
-        ipr.setDatabase( DatabaseType.INTERPRO );
+        DatabaseCrossReference fb = factory.buildDatabaseCrossReference(DatabaseType.INTERPRO);
+        fb.setPrimaryId(factory.buildXDBAttribute(id));
 
-        return ipr;
+        return fb;
     }
 
     private static DatabaseCrossReference buildSmart( String id ) {
         DefaultXRefFactory factory = DefaultXRefFactory.getInstance();
 
-        Smart s = new SmartImpl();
-        s.setSmartAccessionNumber( factory.buildSmartAccessionNumber( id ) );
+        DatabaseCrossReference fb = factory.buildDatabaseCrossReference(DatabaseType.SMART);
+        fb.setPrimaryId(factory.buildXDBAttribute(id));
 
-        return s;
+        return fb;
     }
 
     private static EntryAudit buildEntryAudit( int version,
@@ -350,7 +342,7 @@ public class MockUniProtEntries {
         entry.setPrimaryUniProtAccession( factory.buildPrimaryUniProtAccession( "P60952" ) );
         entry.setSecondaryUniProtAccessions( buildSecondaryAcs( new String[]{"P21181", "P25763"} ) );
         entry.setProteinDescription( buildDescription( "Cell division control protein 42 homolog precursor (G25K GTP-binding protein)" ) );
-        entry.setOrganisms( Arrays.asList( buildOrganism( "Dog", "Canis familiaris" ) ) );
+        entry.setOrganism( buildOrganism( "Dog", "Canis familiaris" ) );
         entry.setNcbiTaxonomyIds( Arrays.asList( buildTaxid( "9615" ) ) );
         entry.setGenes( Arrays.asList( buildGene( "CDC42", NONE, NONE, NONE ) ) );
 
