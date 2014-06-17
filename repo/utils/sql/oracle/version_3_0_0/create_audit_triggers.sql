@@ -3,7 +3,7 @@ spool cr_audit_triggers.sql
 
 PROMPT Creating audit trigger for ia_exp_causal_relations_audit
 
-create or replace trigger trgAud_ia_exp_causal_relations_audit
+create or replace trigger "INTACT".trgAud_exp_causal_relations
 	before update or delete
 	on ia_exp_causal_relations
 	for each row
@@ -49,7 +49,7 @@ end;
 
 PROMPT Creating audit trigger for ia_mod_causal_relations_audit
 
-create or replace trigger trgAud_ia_mod_causal_relations_audit
+create or replace trigger "INTACT".trgAud_mod_causal_relations
 	before update or delete
 	on ia_mod_causal_relations
 	for each row
@@ -194,7 +194,7 @@ end;
 
 PROMPT Creating audit trigger for ia_modfeature2feature_audit
 
-create or replace trigger trgAud_ia_modfeature2feature_audit
+create or replace trigger "INTACT".trgAud_ia_modfeature2feature
 	before update or delete
 	on ia_modfeature2feature
 	for each row
@@ -230,7 +230,7 @@ begin
 		);
 end; 
 
-TRIGGER "INTACT".trgTrk_ia_modfeature2feature
+create or replace TRIGGER "INTACT".trgTrk_ia_modfeature2feature
 	before insert or update
 	on ia_modfeature2feature
 	for each row
@@ -249,7 +249,7 @@ end;
 
 PROMPT Creating audit trigger for ia_expfeature2feature_audit
 
-create or replace trigger trgAud_ia_expfeature2feature_audit
+create or replace trigger "INTACT".trgAud_ia_expfeature2feature
 	before update or delete
 	on ia_expfeature2feature
 	for each row
@@ -285,7 +285,7 @@ begin
 		);
 end;
 
-TRIGGER "INTACT".trgTrk_ia_expfeature2feature
+create or replace TRIGGER "INTACT".trgTrk_ia_expfeature2feature
 	before insert or update
 	on ia_expfeature2feature
 	for each row
@@ -304,7 +304,7 @@ end;
 
 PROMPT Creating audit trigger for ia_feature2method_audit
 
-create or replace trigger trgAud_ia_feature2method_audit
+create or replace trigger "INTACT".trgAud_ia_feature2method
 	before update or delete
 	on ia_feature2method
 	for each row
@@ -340,7 +340,7 @@ begin
 		);
 end;
 
-TRIGGER "INTACT".trgTrk_ia_feature2method
+create or replace TRIGGER "INTACT".trgTrk_ia_feature2method
 	before insert or update
 	on ia_feature2method
 	for each row
@@ -359,7 +359,7 @@ end;
 
 PROMPT Creating audit trigger for ia_feature_parameter_audit
 
-create or replace trigger trgAud_ia_feature_parameter_audit
+create or replace trigger trgAud_ia_feature_parameter
 	before update or delete
 	on ia_feature_parameter
 	for each row
@@ -482,7 +482,7 @@ begin
 end;
 
 PROMPT Creating audit trigger for ia_mod_sequence_xref_audit
-create or replace TRIGGER "INTACT".trgAud_ia_mod_sequence_xref_xref
+create or replace TRIGGER "INTACT".trgAud_ia_mod_sequence_xref
 	before update or delete
 	on ia_mod_sequence_xref
 	for each row
@@ -646,7 +646,7 @@ end;
 
 PROMPT Creating audit trigger for ia_pool2interactor_audit
 
-create or replace trigger trgAud_ia_pool2interactor_audit
+create or replace trigger "INTACT".trgAud_ia_pool2interactor
 	before update or delete
 	on ia_pool2interactor
 	for each row
@@ -682,7 +682,7 @@ begin
 		);
 end;
 
-TRIGGER "INTACT".trgTrk_ia_pool2interactor
+create or replace TRIGGER "INTACT".trgTrk_ia_pool2interactor
 	before insert or update
 	on ia_pool2interactor
 	for each row
@@ -805,7 +805,7 @@ end;
 
 PROMPT Creating audit trigger for ia_var_parameter_value_audit
 
-create or replace TRIGGER "INTACT".trgAud_ia_var_parameter_value_value
+create or replace TRIGGER "INTACT".trgAud_ia_var_parameter_value
 	before update or delete
 	on ia_var_parameter_value
 	for each row
@@ -847,7 +847,7 @@ end;
 
 PROMPT Creating audit trigger for ia_interaction_varparam_audit
 
-create or replace TRIGGER "INTACT".trgAud_ia_interaction_varparam_value
+create or replace TRIGGER "INTACT".trgAud_interaction_varparam
 	before update or delete
 	on ia_interaction_varparam
 	for each row
@@ -885,7 +885,7 @@ end;
 
 PROMPT Creating audit trigger for ia_varset2paramvalue_audit
 
-create or replace trigger trgAud_ia_varset2paramvalue_audit
+create or replace trigger trgAud_ia_varset2paramvalue
 	before update or delete
 	on ia_varset2paramvalue
 	for each row
@@ -921,7 +921,7 @@ begin
 		);
 end;
 
-TRIGGER "INTACT".trgTrk_ia_varset2paramvalue
+create or replace TRIGGER "INTACT".trgTrk_ia_varset2paramvalue
 	before insert or update
 	on ia_varset2paramvalue
 	for each row
@@ -940,7 +940,7 @@ end;
 
 PROMPT Creating audit trigger for ia_complex_lcycle_evt_audit
 
-create or replace trigger trgAud_ia_complex_lcycle_evt_audit
+create or replace trigger trgAud_ia_complex_lcycle_evt
 	before update or delete
 	on ia_complex_lcycle_evt
 	for each row
