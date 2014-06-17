@@ -36,7 +36,7 @@ public class ConvertPsiMiTabToXml {
         File fileToConvert = new File(ImportPsiData.class.getResource("/16469705.txt").getFile());
 
         // create the PSIMITAB reader
-        PsimiTabReader reader = new PsimiTabReader(true);
+        PsimiTabReader reader = new PsimiTabReader();
 
         // read the binary interactions in the file
         Collection<BinaryInteraction> binaryInteractions = reader.read(fileToConvert);
