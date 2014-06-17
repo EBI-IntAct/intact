@@ -4,10 +4,6 @@ alter table ia_institution_audit drop column url;  -- drop institution url
 alter table ia_institution drop column postaladdress;  -- drop institution postal address
 alter table ia_institution_audit drop column postaladdress;  -- drop institution postal address
 
-alter table ia_institution add (publication_ac varchar2(30 char)); -- add publication ac foreign key
-alter table ia_institution_audit add (publication_ac varchar2(30 char)); -- add publication ac foreign key
-alter table ia_institution add constraint FK_institution2publication foreign key (publication_ac) references ia_simple_publication;
-
 alter table ia_feature add (role_ac varchar2(30 char), category varchar2(31 char)); -- add role ac foreign key and category
 alter table ia_feature_audit add (role_ac varchar2(30 char), category varchar2(31 char)); -- add role ac foreign key and category
 alter table ia_feature add constraint FK_feature2role foreign key (role_ac) references ia_controlledvocab;
