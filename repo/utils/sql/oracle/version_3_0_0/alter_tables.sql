@@ -11,7 +11,7 @@ alter table ia_feature add constraint FK_feature2role foreign key (role_ac) refe
 alter table ia_range add (resulting_sequence clob, modelled_participant_ac varchar2(30 char), experimental_participant_ac varchar2(30 char)); -- add resulting sequence and participant ref in range
 alter table ia_range_audit add (resulting_sequence clob, modelled_participant_ac varchar2(30 char), experimental_participant_ac varchar2(30 char)); -- add resulting sequence and participant refin range
 alter table ia_range add constraint FK_range2modelledparticipant foreign key (modelled_participant_ac) references ia_component;
-alter table ia_range add constraint FK_feature2participantevidence foreign key (participant_evidence_ac) references ia_component;
+alter table ia_range add constraint FK_feature2participantevidence foreign key (experimental_participant_ac) references ia_component;
 
 alter table ia_interactor add (status_ac varchar2(30 char), owner_pk varchar2(30 char), reviewer_pk varchar2(30 char), evidence_type_ac varchar2(30 char), category varchar2(31 char)); -- add complex lifecycle properties and evidence type and category
 alter table ia_interactor_audit add (status_ac varchar2(30 char), owner_pk varchar2(30 char), reviewer_pk varchar2(30 char), evidence_type_ac varchar2(30 char), category varchar2(31 char)); -- add complex lifecycle properties and evidence type and category
