@@ -582,11 +582,13 @@ public class SimpleUniprotRemoteService extends AbstractUniprotService {
                 continue;
             }
 
-            UniprotCrossReference xref = builder.build(ref);
+            for (UniprotCrossReference xref : builder.build(ref)) {
 
-            if (xref != null){
-                convertedRefs.add( xref );
+                if (xref != null){
+                    convertedRefs.add( xref );
+                }
             }
+
         }
         return convertedRefs;
     }

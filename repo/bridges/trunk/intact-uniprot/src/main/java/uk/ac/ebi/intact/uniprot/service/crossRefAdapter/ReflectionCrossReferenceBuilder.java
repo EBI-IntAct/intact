@@ -11,8 +11,7 @@ import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseCrossReference;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.*;
 
 /**
  * Utility that allows to convert a specific implementation of a DatabaseCrossReference into the generic UniprotCrossReference.
@@ -156,7 +155,7 @@ public class ReflectionCrossReferenceBuilder {
      *
      * @return a newly created UniprotCrossReference or null if it could not be created.
      */
-    public <T extends DatabaseCrossReference> UniprotCrossReference build( T crossRef ) {
+    public <T extends DatabaseCrossReference> Collection<UniprotCrossReference> build( T crossRef ) {
 
         if ( log.isDebugEnabled() ) {
             log.debug( "Converting " + crossRef.getClass().getName() + " into a UniprotCrossReference." );
@@ -164,9 +163,30 @@ public class ReflectionCrossReferenceBuilder {
 
         Class<? extends DatabaseCrossReference> clazz = crossRef.getClass();
 
+        List<UniprotCrossReference> references = new ArrayList<UniprotCrossReference>();
+        String desc = null;
         String db = crossRef.getDatabase().getName();
-
-        String id = crossRef.getPrimaryId().toString();
+        if ( ! db.equalsIgnoreCase("Ensembl")) {
+            String id = crossRef.getPrimaryId().toString();
+            if (id == null) {
+                throw new IllegalArgumentException("Cannot get id from cross reference: "+crossRef.getClass().getSimpleName()+" [ "+crossRef+" ]");
+            }
+            // Build the Generic Cross reference
+            references.add(new UniprotCrossReference( id, db, desc ));
+        }
+        else {
+            String id = crossRef.getPrimaryId().toString();
+            String second_id = crossRef.getDescription() != null ? crossRef.getDescription().toString() : null;
+            String third_id  = crossRef.getThird()       != null ? crossRef.getThird()      .toString() : null;
+            String fourth_id = crossRef.getFourth()      != null ? crossRef.getFourth()     .toString() : null;
+            if (id == null){
+                throw new IllegalArgumentException("Cannot get id from cross reference: "+crossRef.getClass().getSimpleName()+" [ "+crossRef+" ]");
+            }
+            references.add(new UniprotCrossReference(id, db, desc));
+            if (second_id != null && second_id.trim().length() > 0) references.add(new UniprotCrossReference(second_id, db, desc));
+            if (third_id  != null && third_id .trim().length() > 0) references.add(new UniprotCrossReference(third_id , db, desc));
+            if (fourth_id != null && fourth_id.trim().length() > 0) references.add(new UniprotCrossReference(fourth_id, db, desc));
+        }
 
         /*Method method = findMethod( clazz, db );
 
@@ -199,13 +219,8 @@ public class ReflectionCrossReferenceBuilder {
 
         // TODO 2006-10-24: how to retreive a description ?!?!
         // TODO > so far we cannot, the UniProt Team is going to provide a tool to replace this Builder soon.
-        String desc = null;
 
-        if (id == null) {
-            throw new IllegalArgumentException("Cannot get id from cross reference: "+crossRef.getClass().getSimpleName()+" [ "+crossRef+" ]");
-        }
-
-        // Build the Generic Cross reference
-        return new UniprotCrossReference( id, db, desc );
+        return references;
     }
+
 }
