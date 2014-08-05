@@ -3,10 +3,7 @@ package uk.ac.ebi.intact.bridges.ontology_manager;
 import psidev.psi.tools.ontology_manager.OntologyManagerTemplate;
 import psidev.psi.tools.ontology_manager.client.OlsClient;
 import psidev.psi.tools.ontology_manager.impl.local.OntologyLoaderException;
-import uk.ac.ebi.intact.bridges.ontology_manager.builders.DefaultOntologyTermBuilder;
-import uk.ac.ebi.intact.bridges.ontology_manager.builders.IntactOntologyTermBuilder;
-import uk.ac.ebi.intact.bridges.ontology_manager.builders.MiOntologyTermBuilder;
-import uk.ac.ebi.intact.bridges.ontology_manager.builders.ModOntologyTermBuilder;
+import uk.ac.ebi.intact.bridges.ontology_manager.builders.*;
 import uk.ac.ebi.intact.bridges.ontology_manager.client.IntactFilterOlsClient;
 import uk.ac.ebi.intact.bridges.ontology_manager.impl.local.IntactLocalOntology;
 import uk.ac.ebi.intact.bridges.ontology_manager.impl.ols.IntactOlsOntology;
@@ -33,12 +30,14 @@ public class IntactOntologyManager extends OntologyManagerTemplate<IntactOntolog
     private static final String OLS_SOURCE = "ols";
     private static final String MI = "MI";
     private static final String MOD = "MOD";
+    private static final String ECO = "ECO";
 
     protected final static Map<String, Class> keyword2class = new HashMap<String, Class>();
 
     static {
-        keyword2class.put( "MI", MiOntologyTermBuilder.class );
-        keyword2class.put( "MOD", ModOntologyTermBuilder.class );
+        keyword2class.put( MI, MiOntologyTermBuilder.class );
+        keyword2class.put( MOD, ModOntologyTermBuilder.class );
+        keyword2class.put( ECO, EcoOntologyTermBuilder.class );
     }
 
     public IntactOntologyManager(InputStream configFile) throws OntologyLoaderException {
