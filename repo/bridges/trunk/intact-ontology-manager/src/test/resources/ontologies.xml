@@ -12,4 +12,11 @@
               name="PSI-MOD"
               identifier="MOD"
               version="1.260"/>
+
+    <cvSource source="ols"
+              uri=""
+              format="OBO"
+              name="Evidence Ontology"
+              identifier="ECO"
+              version="1.260"/>
 </cvSourceList>

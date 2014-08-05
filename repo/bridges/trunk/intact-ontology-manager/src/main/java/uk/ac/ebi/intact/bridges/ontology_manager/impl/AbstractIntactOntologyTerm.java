@@ -158,8 +158,9 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
                 // definition
                 if (DEFINITION_KEY.equalsIgnoreCase(keyName)){
                     String description = (String) metadata.get(keyName);
-
-                    processDefinition(description);
+                    if (description != null){
+                        processDefinition(description);
+                    }
                 }
                 // comment
                 else if (COMMENT_KEY.equalsIgnoreCase(keyName) || keyName.startsWith(COMMENT_KEY + META_DATA_SEPARATOR)){

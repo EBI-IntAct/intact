@@ -29,7 +29,7 @@ public class IntactOntologyManagerTest {
         IntactOntologyManager om = new IntactOntologyManager(ontology);
         ontology.close();
 
-        Assert.assertEquals(2, om.getOntologyIDs().size());
+        Assert.assertEquals(3, om.getOntologyIDs().size());
 
         OntologyAccessTemplate<IntactOntologyTermI> accessMI = om.getOntologyAccess("MI");
         Assert.assertNotNull(accessMI);
@@ -43,5 +43,11 @@ public class IntactOntologyManagerTest {
         Assert.assertTrue(accessMOD instanceof IntactOlsOntology);
         Assert.assertNotNull(accessMOD.getTermForAccession("MOD:01161"));
         Assert.assertNull(accessMOD.getTermForAccession("MI:0018"));
+
+        OntologyAccessTemplate<IntactOntologyTermI> accessECO = om.getOntologyAccess("ECO");
+        Assert.assertNotNull(accessECO);
+        Assert.assertTrue(accessECO instanceof IntactOlsOntology);
+        Assert.assertNotNull(accessECO.getTermForAccession("ECO:0000003"));
+        Assert.assertNull(accessECO.getTermForAccession("MI:0018"));
     }
 }
