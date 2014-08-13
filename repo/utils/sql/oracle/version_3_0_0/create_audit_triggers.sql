@@ -951,7 +951,8 @@ begin
 	
 	
 	insert into ia_complex_lcycle_evt_audit 
-		( event 
+		( event
+                , ac 
                 , created
 		, created_user
 		, updated
@@ -964,6 +965,7 @@ begin
 		)
 	values
 		( l_event 
+                , :old.ac
                 , :old.created
 		, :old.created_user
 		, :old.updated
