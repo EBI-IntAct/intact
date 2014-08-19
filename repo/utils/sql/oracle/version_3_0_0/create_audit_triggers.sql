@@ -977,6 +977,24 @@ begin
                 , :old.complex_ac
 		);
 end;   
+
+PROMPT Creating audit trigger for owner of interaction
+
+create or replace TRIGGER "INTACT"."TRGOWN_IA_INTERACTOR" 
+	before insert or update
+	on ia_interactor
+	for each row
+
+declare
+begin
+
+	if inserting and :new.owner_ac is NULL then
+		:new.owner_ac := 'EBI-10';
+	elsif updating and :new.owner_ac is NULL then
+		:new.owner_ac := 'EBI-10';
+	end if ;
+
+end;
 /         
 
 show error

@@ -22,3 +22,9 @@ alter table ia_interactor add constraint FK_complex2evidencetype foreign key (ev
 
 alter table ia_component add (maxstoichiometry number(10,0), category varchar2(31 char)); -- add max stoichiometry for participant and category
 alter table ia_component_audit add (maxstoichiometry number(10,0), category varchar2(31 char)); -- add max stoichiometry for participant and category
+
+alter table ia_sequence_chunk drop constraint SYS_C00178400; -- remove not null constarin on parent_ac to enable oneToMany unidirectional
+alter table ia_sequence_chunk_audit drop constraint SYS_C00178407 -- remove not null constarin on parent_ac to enable oneToMany unidirectional
+
+alter table ia_feature drop constraint SYS_C00178104; -- remove not null constarin on parent_ac to enable orphan removal
+alter table ia_feature_audit drop constraint SYS_C00178139; -- remove not null constarin on parent_ac to enable orphan removal
