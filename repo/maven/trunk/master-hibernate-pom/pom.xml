@@ -165,12 +165,12 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>4.2.8.Final</version>
+            <version>4.3.6.Final</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>4.2.8.Final</version>
+            <version>4.3.6.Final</version>
             <exclusions>
                 <!-- using the clib-nodep below, which includes dependencies such as asm -->
                 <exclusion>
@@ -206,30 +206,12 @@
             </exclusions>
         </dependency>
 
-        <!--<dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-annotations</artifactId>
-            <version>3.5.6-Final</version>
-        </dependency>-->
-
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
             <version>1.0.1.Final</version>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <version>3.7.1.GA</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>c3p0</groupId>
-            <artifactId>c3p0</artifactId>
-            <version>0.9.1.2</version>
-        </dependency>
--->
+
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
