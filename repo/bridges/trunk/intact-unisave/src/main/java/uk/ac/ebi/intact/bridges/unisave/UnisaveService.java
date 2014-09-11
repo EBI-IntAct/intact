@@ -15,18 +15,21 @@
  */
 package uk.ac.ebi.intact.bridges.unisave;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.uniprot.unisave.*;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeConstants;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.namespace.QName;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -40,18 +43,95 @@ public class UnisaveService {
 
     private static final Log log = LogFactory.getLog( UnisaveService.class );
 
-    private UnisavePortType unisavePortType;
+    private String unisaveUrlRestJson = "http://www.ebi.ac.uk/uniprot/unisave/rest";
+    private DefaultHttpClient httpClient = new DefaultHttpClient();
 
     public UnisaveService() {
-        URL wsdlUrl = null;
+
+    }
+
+    private Object getDataFromWebService(String query){
+        HttpGet request = new HttpGet(query);
+        request.addHeader("accept", "application/json");
         try {
-            wsdlUrl = new URL("http://www.ebi.ac.uk/uniprot/unisave/unisave.wsdl");
-        } catch (MalformedURLException e) {
+            HttpResponse response = httpClient.execute(request);
+            if (response.getStatusLine().getStatusCode() != 200) {
+                throw new RuntimeException("Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+            }
+            return JSONValue.parse(new BufferedReader(new InputStreamReader((response.getEntity().getContent()))));
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
+    }
 
-        Unisave service = new Unisave(wsdlUrl, new QName("http://www.ebi.ac.uk/uniprot/unisave", "unisave"));
-        unisavePortType = service.getUnisave();
+    private String buildQuery(Type type, String id, String version) throws UnisaveServiceException {
+        StringBuilder builder = new StringBuilder().append(this.unisaveUrlRestJson);
+        switch (type){
+            case ENTRIES:
+                builder.append(Type.ENTRIES.valueOf()).append(id);
+                break;
+            case ENTRY_VERSION:
+                if(version != null){
+                    builder.append(Type.ENTRY_VERSION.valueOf()).append(id).append("/").append(version);
+                }
+                else {
+                    throw new UnisaveServiceException("To use the " + Type.ENTRY_VERSION.valueOf() +
+                            " method in the Rest you have to provide a not null version");
+                }
+                break;
+            case ENTRIES_INFO:
+                builder.append(Type.ENTRIES_INFO.valueOf()).append(id);
+                break;
+            case ENTRY_INFO_VERSION:
+                if (version != null){
+                    builder.append(Type.ENTRY_INFO_VERSION.valueOf()).append(id).append("/").append(version);
+                }
+                else {
+                    throw new UnisaveServiceException("To use the " + Type.ENTRY_INFO_VERSION.valueOf() +
+                            " method in the Rest you have to provide a not null version");
+                }
+                break;
+            default:
+                return null;
+        }
+        return builder.toString();
+    }
+
+    private String getSequence(String content) {
+        content = content.substring(content.lastIndexOf("SEQUENCE"));
+        content = content.substring(content.indexOf("\n")).trim();
+        content = content.replaceAll(" ", "");
+        content = content.replaceAll("\n", "");
+        return content.replaceAll("\t", "").replaceAll("//","");
+    }
+
+
+    private String getFastHeader(String content) {
+        int init = content.indexOf("FT ");
+        int last = content.lastIndexOf("FT ");
+        if(init == -1) return null;
+        last = content.indexOf("\n", last); //real last
+        return content.substring(init, last);
+    }
+
+    private String getContentForSequenceVersion(String identifier, int sequence_version) throws UnisaveServiceException {
+        JSONArray array = (JSONArray) getDataFromWebService(buildQuery(Type.ENTRIES, identifier, null));
+        JSONObject jo = null;
+        for(int i = 0; i < array.size(); ++i){
+            jo = (JSONObject) array.get(i);
+            if (sequence_version == Integer.valueOf(String.valueOf(jo.get("sequence_version")))){
+                return (String)jo.get("content");
+            }
+        }
+        return null;
+    }
+
+    public String getSequenceFor(String identifier, boolean isSecondary, int sequence_version) throws UnisaveServiceException{
+        String content = getContentForSequenceVersion(identifier, sequence_version);
+        if (content != null) return getSequence(content);
+        else return null;
     }
 
     /**
@@ -64,14 +144,15 @@ public class UnisaveService {
      *
      * @throws UnisaveServiceException if the identifier cannot be found in UniSave.
      */
-    public List<EntryVersionInfo> getVersions( String identifier, boolean isSecondary ) throws UnisaveServiceException {
-        final VersionInfo versionInfo;
-        try {
-            versionInfo = unisavePortType.getVersionInfo( identifier, isSecondary );
-        } catch ( Exception e ) {
-            throw new UnisaveServiceException( e.getMessage(), e );
+    public List<Integer> getVersions( String identifier, boolean isSecondary ) throws UnisaveServiceException {
+        JSONArray array = (JSONArray) getDataFromWebService(buildQuery(Type.ENTRIES_INFO, identifier, null));
+        List<Integer> list = new ArrayList<Integer>();
+        JSONObject jo = null;
+        for(int i = 0; i < array.size(); ++i) {
+            jo = (JSONObject) array.get(i);
+            list.add(Integer.valueOf(String.valueOf(jo.get("entry_version"))));
         }
-        final List<EntryVersionInfo> list = versionInfo.getEntryVersionInfo();
+
         if( list.isEmpty() ) {
             throw new UnisaveServiceException( "Failed to find any version for "+ (isSecondary?"secondary":"primary") +" identifier " + identifier );
         }
@@ -84,52 +165,22 @@ public class UnisaveService {
             throw new IllegalArgumentException("The date cannot be null.");
         }
 
-        List<EntryVersionInfo> listOfVersions = getVersions(identifier, isSecondary);
-
-        EntryVersionInfo lastEntryVersionBeforeDate = null;
-
-        try {
-            GregorianCalendar c = new GregorianCalendar();
-            c.setTime(date);
-            XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-
-            for (EntryVersionInfo version : listOfVersions){
-                XMLGregorianCalendar calendarRelease = version.getReleaseDate();
-
-                if (DatatypeConstants.LESSER == calendarRelease.compare(date2) || DatatypeConstants.EQUAL == calendarRelease.compare(date2)){
-                    if (lastEntryVersionBeforeDate == null){
-                        lastEntryVersionBeforeDate = version;
-                    }
-                    else if(DatatypeConstants.GREATER == calendarRelease.compare(lastEntryVersionBeforeDate.getReleaseDate())){
-                        lastEntryVersionBeforeDate = version;
-                    }
+        JSONArray array = (JSONArray) getDataFromWebService(buildQuery(Type.ENTRIES, identifier, null));
+        JSONObject jo = null;
+        DateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+        Date auxDate = null;
+        int version = -1;
+        for(int i = 0; i < array.size(); ++i) {
+            jo = (JSONObject) array.get(i);
+            try {
+                auxDate = formatter.parse((String) jo.get("firstReleaseDate"));
+                if(auxDate.before(date)){
+                    return getSequence(String.valueOf(jo.get("content")));
                 }
-
-            }
-
-        } catch (DatatypeConfigurationException e) {
-            throw new UnisaveServiceException("The date " + date.toString() + " cannot be converted into XMLGregorianCalendar.", e);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            };
         }
-
-        if (lastEntryVersionBeforeDate == null){
-            return null;
-        }
-
-        FastaSequence fasta = getFastaSequence(lastEntryVersionBeforeDate);
-        return fasta.getSequence();
-    }
-
-    public String getSequenceFor(String identifier, boolean isSecondary, int sequenceVersion) throws UnisaveServiceException {
-
-        List<EntryVersionInfo> listOfVersions = getVersions(identifier, isSecondary);
-
-        for (EntryVersionInfo versionInfo : listOfVersions){
-            if (versionInfo.getSequenceVersion() == sequenceVersion){
-                FastaSequence fasta = getFastaSequence(versionInfo);
-                return fasta.getSequence();
-            }
-        }
-
         return null;
     }
 
@@ -147,28 +198,22 @@ public class UnisaveService {
             throw new IllegalArgumentException("The date cannot be null.");
         }
 
-        List<EntryVersionInfo> listOfVersions = getVersions(identifier, isSecondary);
         Map<Integer, String> oldSequences = new HashMap<Integer, String>();
-
-        try {
-            GregorianCalendar c = new GregorianCalendar();
-            c.setTime(date);
-            XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-
-            for (EntryVersionInfo version : listOfVersions){
-                XMLGregorianCalendar calendarRelease = version.getReleaseDate();
-
-                if (DatatypeConstants.LESSER == calendarRelease.compare(date2) || DatatypeConstants.EQUAL == calendarRelease.compare(date2)){
-                    if (!oldSequences.keySet().contains(version.getSequenceVersion())){
-                        FastaSequence fasta = getFastaSequence(version);
-                        oldSequences.put(version.getSequenceVersion(), fasta.getSequence());
-                    }
+        JSONArray array = (JSONArray) getDataFromWebService(buildQuery(Type.ENTRIES, identifier, null));
+        JSONObject jo = null;
+        DateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+        Date auxDate = null;
+        for(int i = 0; i < array.size(); ++i){
+            jo = (JSONObject) array.get(i);
+            try {
+                auxDate = formatter.parse((String) jo.get("firstReleaseDate") );
+                if(auxDate.before(date)){
+                    oldSequences.put(Integer.valueOf(String.valueOf(jo.get("sequence_version"))),
+                                    getSequence((String) jo.get("content")));
                 }
-
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-
-        } catch (DatatypeConfigurationException e) {
-            throw new UnisaveServiceException("The date " + date.toString() + " cannot be converted into XMLGregorianCalendar.", e);
         }
 
         return oldSequences;
@@ -181,40 +226,12 @@ public class UnisaveService {
      * @return a fasta sequence.
      * @throws UnisaveServiceException if the version given doesn't have an entryId that can be found in UniSave.
      */
-    public FastaSequence getFastaSequence( EntryVersionInfo version ) throws UnisaveServiceException {
-        final Version fastaVersion;
-        try {
-            fastaVersion = unisavePortType.getVersion( version.getEntryId(), true );
-        } catch ( Exception e ) {
-            throw new UnisaveServiceException( "Failed upon trying to get FASTA sequence for entry id " + version.getEntryId(), e );
-        }
-        final String entry = fastaVersion.getEntry();
-        final String[] array = entry.split( "\n" );
-        if ( array.length < 2 ) {
-            throw new IllegalStateException( "expected to receive a fasta format: " + entry );
-        }
-        String header = array[0];
-        if ( header.startsWith( ">" ) ) {
-            header = header.substring( 1 );
-        } else {
-            throw new IllegalStateException( "Bad FASTA header format: " + header );
-        }
-
-        String sequence;
-        if ( array.length > 2 ) {
-            // optimized buffer size considering that all sub sequence are of equal length.
-            StringBuilder sb = new StringBuilder( ( array.length - 1 ) * array[1].length() );
-            for ( int i = 1; i < array.length; i++ ) {
-                String seq = array[i];
-                sb.append( seq );
-            }
-            sequence = sb.toString();
-        } else {
-            sequence = array[1];
-        }
-
-        return new FastaSequence( header, sequence );
+    public FastaSequence getFastaSequence( String identifier, int version ) throws UnisaveServiceException {
+        String content = getContentForSequenceVersion(identifier, version);
+        if (content != null) return new FastaSequence( getFastHeader(content), getSequence(content) );
+        else return null;
     }
+
 
     /**
      * Returns the sequence version of a sequence for a certain uniprot ac.
@@ -226,32 +243,21 @@ public class UnisaveService {
      * @throws UnisaveServiceException
      */
     public int getSequenceVersion(String identifier, boolean isSecondary, String sequence) throws UnisaveServiceException{
+        JSONArray array = (JSONArray) getDataFromWebService(buildQuery(Type.ENTRIES, identifier, null));
 
-        // 1. get all versions ordered from the most recent to the oldest
         if ( log.isDebugEnabled() ) {
             log.debug( "Collecting version(s) for entry by " + ( isSecondary ? "secondary" : "primary" ) + " ac: " + identifier );
+            log.debug( "Found " + array.size() + " version(s)" );
         }
-
-        final List<EntryVersionInfo> versions = getVersions( identifier, isSecondary );
-
-        if ( log.isDebugEnabled() ) {
-            log.debug( "Found " + versions.size() + " version(s)" );
+        JSONObject jo = null;
+        for(int i = 0; i < array.size(); ++i){
+            jo = (JSONObject) array.get(i);
+            String content = (String)jo.get("content");
+            if (sequence.equalsIgnoreCase(getSequence(content))){
+                return Integer.valueOf(String.valueOf(jo.get("sequence_version")));
+            }
         }
-
-        // 3. for each protein sequence version
-        int currentSequenceVersion = -1;
-
-        for ( EntryVersionInfo versionInfo : versions) {
-
-            FastaSequence fasta = getFastaSequence(versionInfo);
-
-            if ( fasta.getSequence().equalsIgnoreCase(sequence) ) {
-                currentSequenceVersion = versionInfo.getSequenceVersion();
-                break;
-            } // if
-        } // versions
-
-        return currentSequenceVersion;
+        return -1;
     }
 
     /**
@@ -277,72 +283,36 @@ public class UnisaveService {
             log.debug( "Collecting version(s) for entry by " + ( isSecondary ? "secondary" : "primary" ) + " ac: " + identifier );
         }
 
-        final List<EntryVersionInfo> versions = getVersions( identifier, isSecondary );
-
-        if ( log.isDebugEnabled() ) {
-            log.debug( "Found " + versions.size() + " version(s)" );
-        }
-
-        // 3. for each protein sequence version
+        JSONArray array = (JSONArray) getDataFromWebService(buildQuery(Type.ENTRIES, identifier, null));
+        JSONObject jo = null;
+        int parameterSequenceVersion = getSequenceVersion(identifier, isSecondary, sequence);
         int currentSequenceVersion = -1;
-
-        boolean done = false;
-        for ( Iterator<EntryVersionInfo> iterator = versions.iterator(); iterator.hasNext() && !done; ) {
-            EntryVersionInfo version = iterator.next();
-
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Processing version entry: " + version.getEntryId() + " sequence version " + version.getSequenceVersion() );
+        for(int i = 0 ; i < array.size() ; ++i){
+            jo = (JSONObject) array.get(i);
+            if(parameterSequenceVersion < Integer.parseInt(String.valueOf(jo.get("sequence_version")))){
+                if(currentSequenceVersion != Integer.parseInt(String.valueOf(jo.get("sequence_version")))){
+                    //New version of the sequence
+                    currentSequenceVersion = Integer.parseInt(String.valueOf(jo.get("sequence_version")));
+                    FastaSequence fastaSequence = getFastaSequence(identifier, currentSequenceVersion);
+                    sequenceUpdates.add(new SequenceVersion(fastaSequence, currentSequenceVersion));
+                }
             }
-
-            if ( currentSequenceVersion == -1 || currentSequenceVersion != version.getSequenceVersion() ) {
-                currentSequenceVersion = version.getSequenceVersion();
-
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "Retrieving FASTA sequence for sequence version " + currentSequenceVersion );
-                }
-
-                final FastaSequence fastaSequence = getFastaSequence( version );
-
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "Sequence length retrieved: " + fastaSequence.getSequence().length() );
-                }
-
-                // check that the sequence is different from the one previously added (if any), if so add it
-                boolean addSequence = false;
-                if ( !sequenceUpdates.isEmpty() ) {
-                    final String previousSequence = sequenceUpdates.iterator().next().getSequence().getSequence();
-                    if ( !previousSequence.equals( fastaSequence.getSequence() ) ) {
-                        final int d = StringUtils.getLevenshteinDistance( previousSequence, fastaSequence.getSequence() );
-                        if ( log.isDebugEnabled() ) {
-                            log.debug( "Levenshtein distance was: " + d );
-                        }
-                        addSequence = true;
-                    }
-                } else {
-                    // that's the first one
-                    addSequence = true;
-                }
-
-                if ( addSequence ) {
-                    // add at beginning so the first element if the given sequence, the followings reflecting subsequence updates.
-                    sequenceUpdates.addFirst( new SequenceVersion( fastaSequence, currentSequenceVersion ) );
-                }
-
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "Adding this sequence to the list of updates available" );
-                }
-
-                if ( fastaSequence.getSequence().equals( sequence ) ) {
-                    // 3b. if is the same as the sequence provided, stop and return the list of update available from UniSave
-                    if ( log.isDebugEnabled() ) {
-                        log.debug( "The given sequence matches version " + currentSequenceVersion + ". Abort processing and return current list (size: " + sequenceUpdates.size() + ")" );
-                    }
-
-                    done = true;
-                }
-            } // if
-        } // versions
-
+        }
         return sequenceUpdates;
     }
+
+    private enum Type {
+        ENTRIES ("/json/entries/"),
+        ENTRY_VERSION ("/json/entry/"),
+        ENTRIES_INFO ("/json/entryinfos/"),
+        ENTRY_INFO_VERSION ("/json/entryinfo/");
+
+        private final String value;
+
+        Type(String value){ this.value = value;}
+
+        private String valueOf(){return this.value;}
+
+    }
+
 }
