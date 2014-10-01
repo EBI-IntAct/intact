@@ -5,12 +5,12 @@
 	<parent>
 		<artifactId>bridges-master</artifactId>
 		<groupId>uk.ac.ebi.intact.bridges</groupId>
-		<version>2.1.11-SNAPSHOT</version>
+		<version>2.1.11</version>
 	</parent>
 
 	<artifactId>blast-mapping-parser</artifactId>
 	<packaging>jar</packaging>
-	<version>2.1.11-SNAPSHOT</version>
+	<version>2.1.11</version>
 
 	<name>IntAct Bridges :: Blast Mapping Parser</name>
 
