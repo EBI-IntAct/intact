@@ -56,7 +56,7 @@ public class BlastResultFilterTest {
             System.out.println(prot.getAccession());
             System.out.println(prot.getIdentity());
         }
-        Assert.assertEquals(12, filteredResults.size());
+        Assert.assertEquals(13, filteredResults.size());
     }
 
     @Test
@@ -72,7 +72,7 @@ public class BlastResultFilterTest {
             System.out.println(prot.getAccession());
             System.out.println(prot.getIdentity());
         }
-        Assert.assertEquals(1, filteredResults.size());
+        Assert.assertEquals(2, filteredResults.size());
     }
 
     @Test
@@ -88,7 +88,7 @@ public class BlastResultFilterTest {
             System.out.println(prot.getAccession());
             System.out.println(prot.getIdentity());
         }
-        Assert.assertEquals(1, filteredResults.size());
+        Assert.assertEquals(2, filteredResults.size());
     }
 
     @Test
@@ -99,7 +99,7 @@ public class BlastResultFilterTest {
         List<BlastProtein> filteredResultsOnIdentity = filter.filterMappingEntriesWithIdentity((float)100);
 
         Assert.assertEquals(false, filteredResultsOnIdentity.isEmpty());
-        Assert.assertEquals(12, filteredResultsOnIdentity.size());
+        Assert.assertEquals(13, filteredResultsOnIdentity.size());
 
         List<BlastProtein> filteredResultsOnOrganism = filter.filterMappingEntriesWithOrganism("7227");
 
