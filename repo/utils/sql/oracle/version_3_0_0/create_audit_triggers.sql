@@ -995,6 +995,60 @@ begin
 	end if ;
 
 end;
+
+PROMPT update audit trigger for interactor ref
+
+create or replace TRIGGER "INTACT"."TRGAUD_IA_INTERACTOR_XREF" 
+	before update or delete
+	on ia_interactor_xref
+	for each row
+ 
+declare
+	l_event char(1);
+begin
+ 
+	if deleting then    
+		l_event := 'D';
+	elsif updating then 
+		l_event := 'U';
+	end if ;  
+	
+	
+	insert into ia_interactor_xref_audit 
+		( event 
+		, ac
+		, deprecated
+		, created
+		, updated
+		, userstamp
+		, qualifier_ac
+		, database_ac
+		, parent_ac
+		, owner_ac
+		, primaryid
+		, secondaryid
+		, dbrelease
+		, created_user
+                , category
+		)
+	values
+		( l_event 
+		, :old.ac
+		, :old.deprecated
+		, :old.created
+		, :old.updated
+		, :old.userstamp
+		, :old.qualifier_ac
+		, :old.database_ac
+		, :old.parent_ac
+		, :old.owner_ac
+		, :old.primaryid
+		, :old.secondaryid
+		, :old.dbrelease
+		, :old.created_user
+                , :old.category
+		);
+end; 
 /         
 
 show error
