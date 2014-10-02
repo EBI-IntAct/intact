@@ -305,12 +305,14 @@ public class CrossReferenceSearchProcess extends ActionNeedingUniprotService{
         ReflectionCrossReferenceBuilder builder = new ReflectionCrossReferenceBuilder();
 
         for ( DatabaseCrossReference ref : databaseCrossReferences ) {
-            UniprotCrossReference uref = builder.build( ref );
+            Collection<UniprotCrossReference> urefs = builder.build( ref );
 
-            if (uref.getAccessionNumber().equals(identifier)){
-                String databaseUniprot = uref.getDatabase();
+            for (UniprotCrossReference uref : urefs){
+                if (uref.getAccessionNumber().equals(identifier)){
+                    String databaseUniprot = uref.getDatabase();
 
-                return databaseUniprot;
+                    return databaseUniprot;
+                }
             }
         }
 
