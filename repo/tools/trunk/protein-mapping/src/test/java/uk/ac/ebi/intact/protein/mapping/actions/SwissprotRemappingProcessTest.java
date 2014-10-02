@@ -40,7 +40,7 @@ public class SwissprotRemappingProcessTest {
     }
 
     @Test
-    public void test_SwissprotRemapping_Successful(){
+    public void test_SwissprotRemapping_failed(){
         String sequence = "MSAIQAAWPSGTECIAKYNFHGTAEQDLPFCKGDVLTIVAVTKDPNWYKAKNKVGREGII\n" +
                 "PANYVQKREGVKAGTKLSLMPWFHGKITREQAERLLYPPETGLFLVRESTNYPGDYTLCV\n" +
                 "SCDGKVEHYRIMYHASKLSIDEEVYFENLMQLVEHYTSDADGLCTRLIKPKVMEGTVAAQ\n" +
@@ -59,7 +59,7 @@ public class SwissprotRemappingProcessTest {
         try {
             String ac = this.process.runAction(context);
             List<MappingReport> reports = this.process.getListOfActionReports();
-            Assert.assertEquals(2, reports.size());
+            Assert.assertEquals(3, reports.size());
             for (String warn : reports.get(1).getWarnings()){
                 System.out.println(warn);
             }
@@ -68,7 +68,7 @@ public class SwissprotRemappingProcessTest {
 
             Assert.assertNull(ac);
             Assert.assertEquals(true, reports.get(1) instanceof DefaultBlastReport);
-            Assert.assertEquals(StatusLabel.TO_BE_REVIEWED, reports.get(1).getStatusLabel());
+            Assert.assertEquals(StatusLabel.FAILED, reports.get(1).getStatusLabel());
 
         } catch (ActionProcessingException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -76,7 +76,7 @@ public class SwissprotRemappingProcessTest {
     }
 
     @Test
-    public void test_SwissprotRemapping_Successful_WithoutOrganism(){
+    public void test_SwissprotRemapping_failed_WithoutOrganism(){
         String sequence = "MSAIQAAWPSGTECIAKYNFHGTAEQDLPFCKGDVLTIVAVTKDPNWYKAKNKVGREGII\n" +
                 "PANYVQKREGVKAGTKLSLMPWFHGKITREQAERLLYPPETGLFLVRESTNYPGDYTLCV\n" +
                 "SCDGKVEHYRIMYHASKLSIDEEVYFENLMQLVEHYTSDADGLCTRLIKPKVMEGTVAAQ\n" +
@@ -95,7 +95,7 @@ public class SwissprotRemappingProcessTest {
         try {
             String ac = this.process.runAction(context);
             List<MappingReport> reports = this.process.getListOfActionReports();
-            Assert.assertEquals(2, reports.size());
+            Assert.assertEquals(3, reports.size());
             for (String warn : reports.get(1).getWarnings()){
                 System.out.println(warn);
             }
@@ -104,7 +104,7 @@ public class SwissprotRemappingProcessTest {
 
             Assert.assertNull(ac);
             Assert.assertEquals(true, reports.get(1) instanceof DefaultBlastReport);
-            Assert.assertEquals(StatusLabel.TO_BE_REVIEWED, reports.get(1).getStatusLabel());
+            Assert.assertEquals(StatusLabel.FAILED, reports.get(1).getStatusLabel());
 
         } catch (ActionProcessingException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -149,7 +149,7 @@ public class SwissprotRemappingProcessTest {
     }
 
     @Test
-    public void test_SwissprotRemapping_to_be_reviewed_WithEnsemblGeneAndOrganism_LowIdentity(){
+    public void test_SwissprotRemapping_failed_WithEnsemblGeneAndOrganism_LowIdentity(){
         String sequence = "MSAIQAAWPSGTECIAKYNFHGTAEQDLPFCKGDVLTIVAVTKDPNWYKAKNKVGREGII\n" +
                 "PANYVQKREGVKAGTKLSLMPWFHGKITREQAERLLYPPETGLFLVRESTNYPGDYTLCV\n" +
                 "SCDGKVEHYRIMYHASKLSIDEEVYFENLMQLVEHYTSDADGLCTRLIKPKVMEGTVAAQ\n" +
@@ -178,7 +178,7 @@ public class SwissprotRemappingProcessTest {
             Assert.assertEquals(true, reports.get(2) instanceof DefaultBlastReport);
             Assert.assertEquals(true, ((DefaultBlastReport) reports.get(2)).getBlastMatchingProteins().size() > 0);
             Assert.assertEquals(StatusLabel.FAILED, reports.get(1).getStatus().getLabel());
-            Assert.assertEquals(StatusLabel.TO_BE_REVIEWED, reports.get(2).getStatus().getLabel());
+            Assert.assertEquals(StatusLabel.FAILED, reports.get(2).getStatus().getLabel());
 
         } catch (ActionProcessingException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
