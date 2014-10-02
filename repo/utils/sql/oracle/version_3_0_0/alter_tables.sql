@@ -29,5 +29,7 @@ alter table ia_sequence_chunk_audit drop constraint SYS_C00178407 -- remove not 
 alter table ia_feature drop constraint SYS_C00178104; -- remove not null constarin on parent_ac to enable orphan removal
 alter table ia_feature_audit drop constraint SYS_C00178139; -- remove not null constarin on parent_ac to enable orphan removal
 
-alter table ia_interactor_xref add (category varchar2(31 char)); -- add complex GO xref category
-alter table ia_interactor_xref_audit add (category varchar2(31 char)); -- add complex GO xref category
+alter table ia_interactor_xref add (category varchar2(31 char), pubmed varchar2(255 char), evidencetype_ac varchar2(30 char)); -- add complex GO xref category
+alter table ia_interactor_xref_audit add (category varchar2(31 char), pubmed varchar2(255 char), evidencetype_ac varchar2(30 char)); -- add complex GO xref category
+alter table ia_interactor_xref add constraint FK_GO2ECO foreign key (evidencetype_ac) references ia_controlledvocab
+

@@ -1030,6 +1030,8 @@ begin
 		, dbrelease
 		, created_user
                 , category
+                , pubmed
+                , evidencetype_ac
 		)
 	values
 		( l_event 
@@ -1047,6 +1049,8 @@ begin
 		, :old.dbrelease
 		, :old.created_user
                 , :old.category
+                , :old.pubmed
+                , :old.evidencetype_ac
 		);
 end; 
 /         
