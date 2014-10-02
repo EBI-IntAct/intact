@@ -33,7 +33,7 @@
 
     <properties>
         <spring.version>3.1.2.RELEASE</spring.version>
-        <bridges.version>2.1.10</bridges.version>
+        <bridges.version>2.1.11</bridges.version>
         <core.version>2.6.6</core.version>
     </properties>
 
