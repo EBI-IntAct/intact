@@ -20,9 +20,9 @@
 
     <properties>
         <currentVersion>${version}</currentVersion>
-        <core.version>2.6.6</core.version>
-        <bridges.version>2.1.11</bridges.version>
-        <tools.version>1.0.4</tools.version>
+        <core.version>2.6.7-SNAPSHOT</core.version>
+        <bridges.version>2.1.12-SNAPSHOT</bridges.version>
+        <tools.version>1.0.5-SNAPSHOT</tools.version>
         <spring.version>3.1.2.RELEASE</spring.version>
     </properties>
 
