@@ -271,8 +271,8 @@ set term off
     'Referes to the biological complex';
 set term on
 
-create index ia_complex_lcycle_evtidx on ia_complex_lcycle_evt (event_ac)
-create index ia_complex_lcycle_usidx on ia_complex_lcycle_evt (user_ac)
+create index ia_complex_lcycle_evtidx on ia_complex_lcycle_evt (event_ac);
+create index ia_complex_lcycle_usidx on ia_complex_lcycle_evt (user_ac);
 alter table ia_complex_lcycle_evt add constraint FK_LIFECYCLE_EVENT_COMPLEX foreign key (complex_ac) references ia_interactor;
 alter table ia_complex_lcycle_evt add constraint FK_event2type foreign key (event_ac) references ia_controlledvocab;
 alter table ia_complex_lcycle_evt add constraint FK_event2user foreign key (user_ac) references ia_user;
