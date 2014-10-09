@@ -61,6 +61,6 @@ public class EcoOntologyTermBuilder implements IntactOntologyTermBuilder{
 
     @Override
     public Pattern getDatabaseRegexp() {
-        return AbstractIntactOntologyTerm.MOD_REGEXP;
+        return AbstractIntactOntologyTerm.ECO_REGEXP;
     }
 }

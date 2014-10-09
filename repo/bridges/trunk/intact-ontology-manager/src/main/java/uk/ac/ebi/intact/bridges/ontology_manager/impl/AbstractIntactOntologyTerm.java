@@ -64,6 +64,7 @@ public abstract class AbstractIntactOntologyTerm extends OntologyTermImpl implem
 
     public final static Pattern MOD_REGEXP = Pattern.compile("MOD:[0-9]{5}+");
     public final static Pattern MI_REGEXP = Pattern.compile("MI:[0-9]{4}+");
+    public final static Pattern ECO_REGEXP = Pattern.compile("ECO:[0-9]+");
 
     /**
      * Shortlabel of the cv object in intact
