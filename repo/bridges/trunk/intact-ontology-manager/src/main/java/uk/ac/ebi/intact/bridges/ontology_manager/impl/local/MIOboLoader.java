@@ -91,8 +91,11 @@ public class MIOboLoader extends IntactOboLoader {
                         continue;
                     }
                     else {
-                        ontology.addLink( relation.getObjectTerm().getIdentifier(),
-                                relation.getSubjectTerm().getIdentifier() );
+                        if (relation.getPredicateTerm() != null && ("is_a".equals(relation.getPredicateTerm().getName())
+                        || "part_of".equals(relation.getPredicateTerm().getName()))){
+                            ontology.addLink( relation.getObjectTerm().getIdentifier(),
+                                    relation.getSubjectTerm().getIdentifier() );
+                        }
                     }
                 }
             }

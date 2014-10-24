@@ -9,9 +9,9 @@ import uk.ac.ebi.intact.bridges.ontology_manager.builders.IntactOntologyTermBuil
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyAccess;
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 
+import javax.xml.rpc.ServiceException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -102,5 +102,76 @@ public class IntactOlsOntology extends AbstractOlsOntology<IntactOntologyTermI> 
         return termBuilder;
     }
 
+    /**
+     * This method looks up the direct parents of the given OntologyTermI.
+     * Note: this method is cached and only operates directly on OLS if
+     * the query has not been performed before.
+     *
+     * @param term the OntologyTermI for which to look up its direct parents.
+     * @return a Set of OntologyTermIs of the direct parents of the given term.
+     */
+    @Override
+    public Set<IntactOntologyTermI> getDirectParents( IntactOntologyTermI term ) {
+        Set<IntactOntologyTermI> directParents = super.getDirectParents(term);
+        Iterator<IntactOntologyTermI> parentIterator = directParents.iterator();
 
+        while (parentIterator.hasNext()){
+            IntactOntologyTermI parent = parentIterator.next();
+
+            try {
+                Map<String, String> relations = olsClient.getQuery().getTermRelations(parent.getTermAccession(), ontologyID);
+
+                if (relations.containsKey(term.getTermAccession())){
+                    String relation = relations.get(term.getTermAccession());
+                    // remove other parents to avoid cyclic dependencies
+                    if (relation == null || (!relation.equals("part_of") && !relation.equals("is_a"))){
+                        parentIterator.remove();
+                    }
+                }
+            } catch (ServiceException e) {
+                throw new IllegalStateException( "RemoteException while trying to connect to OLS." );
+            } catch (RemoteException e) {
+                throw new IllegalStateException( "RemoteException while trying to connect to OLS." );
+            }
+        }
+
+        return directParents;
+    }
+
+    /**
+     * Method to retrieve only the direct child terms of the specified
+     * ontology term. This method uses the getChildren(OntologyTermI, int)
+     * method with a level of 1 to retrieve the direct children on the
+     * specified term.
+     *
+     * @param term the ontology term to get the child terms for.
+     * @return a Set containing the direct child terms of the specified term.
+     */
+    @Override
+    public Set<IntactOntologyTermI> getDirectChildren( IntactOntologyTermI term ) {
+        Set<IntactOntologyTermI> directChildren = super.getDirectChildren(term);
+        Iterator<IntactOntologyTermI> childrenIterator = directChildren.iterator();
+
+        try {
+            Map<String, String> relations = olsClient.getQuery().getTermRelations(term.getTermAccession(), ontologyID);
+
+            while (childrenIterator.hasNext()){
+                IntactOntologyTermI child = childrenIterator.next();
+
+                if (relations.containsKey(child.getTermAccession())){
+                    String relation = relations.get(child.getTermAccession());
+                    // remove other parents to avoid cyclic dependencies
+                    if (relation == null || (!relation.equals("part_of") && !relation.equals("is_a"))){
+                        childrenIterator.remove();
+                    }
+                }
+            }
+        } catch (ServiceException e) {
+            throw new IllegalStateException( "RemoteException while trying to connect to OLS." );
+        } catch (RemoteException e) {
+            throw new IllegalStateException( "RemoteException while trying to connect to OLS." );
+        }
+
+        return directChildren;
+    }
 }
