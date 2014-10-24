@@ -8,8 +8,10 @@ import uk.ac.ebi.intact.bridges.ontology_manager.builders.IntactOntologyTermBuil
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 import uk.ac.ebi.ols.loader.parser.OBO2FormatParser;
 import uk.ac.ebi.ols.model.interfaces.Term;
+import uk.ac.ebi.ols.model.interfaces.TermRelationship;
 
 import java.io.File;
+import java.util.Iterator;
 
 /**
  * Intact obo loader
@@ -78,5 +80,25 @@ public class IntactOboLoader extends AbstractOboLoader<IntactOntologyTermI, Inta
     @Override
     protected IntactOntologyTermI createNewOntologyTerm(Term t) {
         return this.termBuilder.createIntactOntologyTermFrom(t);
+    }
+
+    @Override
+    protected void buildTermRelationships(IntactOntology ontology) {
+        // 2. build hierarchy based on the relations of the Terms
+        for ( Iterator iterator = ontBean.getTerms().iterator(); iterator.hasNext(); ) {
+            Term term = ( Term ) iterator.next();
+
+            if ( term.getRelationships() != null ) {
+                for ( Iterator iterator1 = term.getRelationships().iterator(); iterator1.hasNext(); ) {
+                    TermRelationship relation = ( TermRelationship ) iterator1.next();
+
+                    if (relation.getPredicateTerm() != null && ("is_a".equals(relation.getPredicateTerm().getName())
+                            || "part_of".equals(relation.getPredicateTerm().getName()))){
+                        ontology.addLink( relation.getObjectTerm().getIdentifier(),
+                                relation.getSubjectTerm().getIdentifier() );
+                    }
+                }
+            }
+        }
     }
 }
