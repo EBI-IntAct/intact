@@ -51,6 +51,6 @@ public class IntactOlsOntologyTest {
 
         Set<IntactOntologyTermI> children = olsOntology.getDirectChildren(term);
 
-        Assert.assertEquals(1, children.size());
+        Assert.assertEquals(0, children.size());
     }
 }
