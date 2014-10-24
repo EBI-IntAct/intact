@@ -5,6 +5,7 @@ import org.junit.Test;
 import psidev.psi.tools.ontology_manager.impl.local.OntologyLoaderException;
 import uk.ac.ebi.intact.bridges.ontology_manager.builders.EcoOntologyTermBuilder;
 import uk.ac.ebi.intact.bridges.ontology_manager.builders.MiOntologyTermBuilder;
+import uk.ac.ebi.intact.bridges.ontology_manager.builders.ModOntologyTermBuilder;
 import uk.ac.ebi.intact.bridges.ontology_manager.impl.ols.IntactOlsOntology;
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 
@@ -31,6 +32,18 @@ public class IntactOlsOntologyTest {
     }
 
     @Test
+    public void test_MOD() throws OntologyLoaderException {
+
+        IntactOlsOntology olsOntology = new IntactOlsOntology(new ModOntologyTermBuilder());
+
+        IntactOntologyTermI term = olsOntology.getTermForAccession("MOD:00012");
+
+        Set<IntactOntologyTermI> parents = olsOntology.getDirectChildren(term);
+
+        Assert.assertEquals(2, parents.size());
+    }
+
+    @Test
     public void test_eco_parent_cyclic() throws OntologyLoaderException {
 
         IntactOlsOntology olsOntology = new IntactOlsOntology(new EcoOntologyTermBuilder());
@@ -41,6 +54,7 @@ public class IntactOlsOntologyTest {
 
         Assert.assertEquals(2, parents.size());
     }
+
 
     @Test
     public void test_eco_children_cyclic() throws OntologyLoaderException {
