@@ -3,7 +3,6 @@ package uk.ac.ebi.intact.bridges.ontology_manager.builders;
 import uk.ac.ebi.intact.bridges.ontology_manager.impl.AbstractIntactOntologyTerm;
 import uk.ac.ebi.intact.bridges.ontology_manager.impl.EcoOntologyTerm;
 import uk.ac.ebi.intact.bridges.ontology_manager.impl.local.IntactOboLoader;
-import uk.ac.ebi.intact.bridges.ontology_manager.impl.local.MIOboLoader;
 import uk.ac.ebi.intact.bridges.ontology_manager.interfaces.IntactOntologyTermI;
 import uk.ac.ebi.ols.model.interfaces.Term;
 
@@ -46,7 +45,7 @@ public class EcoOntologyTermBuilder implements IntactOntologyTermBuilder{
 
     @Override
     public IntactOboLoader createIntactOboLoader(File ontologyDirectory) {
-        return new MIOboLoader(ontologyDirectory, ECO_ONTOLOGY_DEFINITION, ECO_FULL_NAME, ECO_SHORT_NAME, this);
+        return new IntactOboLoader(ontologyDirectory, ECO_ONTOLOGY_DEFINITION, ECO_FULL_NAME, ECO_SHORT_NAME, this);
     }
 
     @Override
