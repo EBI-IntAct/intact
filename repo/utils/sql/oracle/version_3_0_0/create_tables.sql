@@ -23,9 +23,9 @@ set term off
     'The source participant of this causal relationship which points to a participant evidence.';
 set term on
 
-alter table ia_exp_causal_relations add constraint FK_exprelationship2expTarget foreign key (experimental_target_ac) references ia_component;
-alter table ia_exp_causal_relations add constraint FK_exprelationship2modTarget foreign key (modelled_target_ac) references ia_component;
-alter table ia_exp_causal_relations add constraint FK_exprelationship2source foreign key (source_ac) references ia_component;
+alter table ia_exp_causal_relations add constraint FK_exprelationship2expTarget foreign key (experimental_target_ac) references ia_component ON DELETE CASCADE;
+alter table ia_exp_causal_relations add constraint FK_exprelationship2modTarget foreign key (modelled_target_ac) references ia_component ON DELETE CASCADE;
+alter table ia_exp_causal_relations add constraint FK_exprelationship2source foreign key (source_ac) references ia_component ON DELETE CASCADE;
 alter table ia_exp_causal_relations add constraint FK_exprelationship2type foreign key (relation_type_ac) references ia_controlledvocab;
 
 PROMPT Creating table "ia_mod_causal_relations"
@@ -45,8 +45,8 @@ set term off
     'The source participant of this causal relationship which points to a participant of a biological complex.';
 set term on
 
-alter table ia_mod_causal_relations add constraint FK_modrelationship2target foreign key (target_ac) references ia_component;
-alter table ia_mod_causal_relations add constraint FK_modrelationship2source foreign key (source_ac) references ia_component;
+alter table ia_mod_causal_relations add constraint FK_modrelationship2target foreign key (target_ac) references ia_component ON DELETE CASCADE;
+alter table ia_mod_causal_relations add constraint FK_modrelationship2source foreign key (source_ac) references ia_component ON DELETE CASCADE;
 alter table ia_mod_causal_relations add constraint FK_modrelationship2type foreign key (relation_type_ac) references ia_controlledvocab;
 
 PROMPT Creating table "ia_modfeature2feature"
@@ -61,8 +61,8 @@ set term off
     'Refers to the modelled feature which is linked to the parent modelled feature';
 set term on
 
-alter table ia_modfeature2feature add constraint FK_linked2modelled foreign key (linked_feature_ac) references ia_feature;
-alter table ia_modfeature2feature add constraint FK_linked2parent foreign key (modelled_feature_ac) references ia_feature;
+alter table ia_modfeature2feature add constraint FK_linked2modelled foreign key (linked_feature_ac) references ia_feature ON DELETE CASCADE;
+alter table ia_modfeature2feature add constraint FK_linked2parent foreign key (modelled_feature_ac) references ia_feature ON DELETE CASCADE;
 
 PROMPT Creating table "ia_expfeature2feature"
 create table ia_expfeature2feature (created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), feature_evidence_ac varchar2(30 char) not null, linked_feature_ac varchar2(30 char) not null);
@@ -76,8 +76,8 @@ set term off
     'Refers to the feature evidence which is linked to the parent feature evidence';
 set term on
 
-alter table ia_expfeature2feature add constraint FK_linked2evidence foreign key (linked_feature_ac) references ia_feature;
-alter table ia_expfeature2feature add constraint FK_linked2fparent foreign key (feature_evidence_ac) references ia_feature;
+alter table ia_expfeature2feature add constraint FK_linked2evidence foreign key (linked_feature_ac) references ia_feature ON DELETE CASCADE;
+alter table ia_expfeature2feature add constraint FK_linked2fparent foreign key (feature_evidence_ac) references ia_feature ON DELETE CASCADE;
 
 PROMPT Creating table "ia_feature2method"
 create table ia_feature2method (created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), feature_ac varchar2(30 char) not null, method_ac varchar2(30 char) not null);
@@ -92,7 +92,7 @@ set term off
 set term on
 
 alter table ia_feature2method add constraint FK_feature2method foreign key (method_ac) references ia_controlledvocab;
-alter table ia_feature2method add constraint FK_feature2feature foreign key (feature_ac) references ia_feature;
+alter table ia_feature2method add constraint FK_feature2feature foreign key (feature_ac) references ia_feature ON DELETE CASCADE;
 
 PROMPT Creating table "ia_feature_parameter"
 create table ia_feature_parameter (ac varchar2(30 char) not null, created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), base number(10,0), uncertainty double precision, exponent number(10,0), factor double precision, parametertype_ac varchar2(30 char) not null, parameterunit_ac varchar2(30 char), parent_ac varchar2(30 char), primary key (ac));
@@ -120,7 +120,7 @@ set term on
 
 alter table ia_feature_parameter add constraint FK_featureparam2type foreign key (parametertype_ac) references ia_controlledvocab;
 alter table ia_feature_parameter add constraint FK_featureparam2unit foreign key (parameterunit_ac) references ia_controlledvocab;
-alter table ia_feature_parameter add constraint FK_featureparam2feature foreign key (parent_ac) references ia_feature;
+alter table ia_feature_parameter add constraint FK_featureparam2feature foreign key (parent_ac) references ia_feature ON DELETE CASCADE;
 
 PROMPT Creating table "ia_mod_sequence_xref"
 create table ia_mod_sequence_xref (ac varchar2(30 char) not null, created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), primaryid varchar2(50 char) not null, secondaryId varchar2(256 char), dbrelease varchar2(255 char), database_ac varchar2(30 char), qualifier_ac varchar2(30 char), parent_ac varchar2(30 char), primary key (ac));
@@ -144,7 +144,7 @@ set term on
 
 alter table ia_mod_sequence_xref add constraint FK_modresxref2database foreign key (database_ac) references ia_controlledvocab;
 alter table ia_mod_sequence_xref add constraint FK_modresxref2qualifier foreign key (qualifier_ac) references ia_controlledvocab;
-alter table ia_mod_sequence_xref add constraint FK_modresxref2range foreign key (parent_ac) references ia_range;
+alter table ia_mod_sequence_xref add constraint FK_modresxref2range foreign key (parent_ac) references ia_range ON DELETE CASCADE;
 
 PROMPT Creating table "ia_exp_sequence_xref"
 create table ia_exp_sequence_xref (ac varchar2(30 char) not null, created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), primaryid varchar2(50 char) not null, secondaryId varchar2(256 char), dbrelease varchar2(255 char), database_ac varchar2(30 char), qualifier_ac varchar2(30 char), parent_ac varchar2(30 char), primary key (ac));
@@ -168,7 +168,7 @@ set term on
 
 alter table ia_exp_sequence_xref add constraint FK_expresxref2database foreign key (database_ac) references ia_controlledvocab;
 alter table ia_exp_sequence_xref add constraint FK_expresxref2qualifier foreign key (qualifier_ac) references ia_controlledvocab;
-alter table ia_exp_sequence_xref add constraint FK_expresxref2range foreign key (parent_ac) references ia_range;
+alter table ia_exp_sequence_xref add constraint FK_expresxref2range foreign key (parent_ac) references ia_range ON DELETE CASCADE;
 
 PROMPT Creating table "ia_pool2interactor"
 create table ia_pool2interactor (created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), interactor_pool_ac varchar2(30 char) not null, interactor_ac varchar2(30 char) not null);
@@ -182,8 +182,8 @@ set term off
     'Refers to the interactor which is part of the pool in the ia_interactor table';
 set term on
 
-alter table ia_pool2interactor add constraint FK_pool2interactor foreign key (interactor_ac) references ia_interactor;
-alter table ia_pool2interactor add constraint FK_pool2interactorpool foreign key (interactor_pool_ac) references ia_interactor;
+alter table ia_pool2interactor add constraint FK_pool2interactor foreign key (interactor_ac) references ia_interactor ON DELETE CASCADE;
+alter table ia_pool2interactor add constraint FK_pool2interactorpool foreign key (interactor_pool_ac) references ia_interactor ON DELETE CASCADE;
 
 PROMPT Creating table "ia_variable_parameter"
 create table ia_variable_parameter (id number(19,0) not null, created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), description varchar2(255 char), experiment_ac varchar2(30 char), unit_ac varchar2(30 char), primary key (id));
@@ -201,7 +201,7 @@ set term off
     'Refers to the unit of this variable parameter which is a controlled vocabulary term';
 set term on
 
-alter table ia_variable_parameter add constraint FK_vparam2experiment foreign key (experiment_ac) references ia_experiment;
+alter table ia_variable_parameter add constraint FK_vparam2experiment foreign key (experiment_ac) references ia_experiment ON DELETE CASCADE;
 alter table ia_variable_parameter add constraint FK_vparam2unit foreign key (unit_ac) references ia_controlledvocab;
 
 PROMPT Creating table "ia_var_parameter_value"
@@ -220,7 +220,7 @@ set term off
     'Refers to the variable parameter description used in an experiment';
 set term on
 
-alter table ia_var_parameter_value add constraint FK_i3tapwtfymhhx0ucchfco47ih foreign key (parameter_id) references ia_variable_parameter;
+alter table ia_var_parameter_value add constraint FK_i3tapwtfymhhx0ucchfco47ih foreign key (parameter_id) references ia_variable_parameter ON DELETE CASCADE;
 
 PROMPT Creating table "ia_interaction_varparam"
 create table ia_interaction_varparam (id number(19,0) not null, created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), parent_ac varchar2(30 char), primary key (id))
@@ -234,7 +234,7 @@ set term off
     'Refers to the interaction evidence that occurs with this specific set of conditions';
 set term on
 
-alter table ia_interaction_varparam add constraint FK_varset2interaction foreign key (parent_ac) references ia_interactor;
+alter table ia_interaction_varparam add constraint FK_varset2interaction foreign key (parent_ac) references ia_interactor ON DELETE CASCADE;
 
 PROMPT Creating table "ia_varset2paramvalue"
 create table ia_varset2paramvalue (created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), varset_id number(19,0) not null, parametervalue_id number(19,0) not null, primary key (varset_id, parametervalue_id));
@@ -248,8 +248,8 @@ set term off
     'Refers to the variable parameter value/condition (ia_variable_parameter_value)';
 set term on
 
-alter table ia_varset2paramvalue add constraint FK_varset2parametervalue foreign key (parametervalue_id) references ia_var_parameter_value;
-alter table ia_varset2paramvalue add constraint FK_varset2varset foreign key (varset_id) references ia_interaction_varparam;
+alter table ia_varset2paramvalue add constraint FK_varset2parametervalue foreign key (parametervalue_id) references ia_var_parameter_value ON DELETE CASCADE;
+alter table ia_varset2paramvalue add constraint FK_varset2varset foreign key (varset_id) references ia_interaction_varparam ON DELETE CASCADE;
 
 PROMPT Creating table "ia_complex_lcycle_evt"
 create table ia_complex_lcycle_evt (ac varchar2(30 char) not null, created timestamp, created_user varchar2(30 char), updated timestamp, userstamp varchar2(30 char), note clob, when_date timestamp, event_ac varchar2(30 char) not null, user_ac varchar2(30 char) not null, complex_ac varchar2(30 char), primary key (ac))
@@ -273,6 +273,6 @@ set term on
 
 create index ia_complex_lcycle_evtidx on ia_complex_lcycle_evt (event_ac);
 create index ia_complex_lcycle_usidx on ia_complex_lcycle_evt (user_ac);
-alter table ia_complex_lcycle_evt add constraint FK_LIFECYCLE_EVENT_COMPLEX foreign key (complex_ac) references ia_interactor;
+alter table ia_complex_lcycle_evt add constraint FK_LIFECYCLE_EVENT_COMPLEX foreign key (complex_ac) references ia_interactor ON DELETE CASCADE;
 alter table ia_complex_lcycle_evt add constraint FK_event2type foreign key (event_ac) references ia_controlledvocab;
 alter table ia_complex_lcycle_evt add constraint FK_event2user foreign key (user_ac) references ia_user;
