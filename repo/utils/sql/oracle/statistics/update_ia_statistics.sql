@@ -96,16 +96,19 @@ BEGIN
             SELECT count(*) INTO v_interaction_number
             FROM ia_interactor
             WHERE created <= v_date AND
-                  objclass like '%Interaction%';
+                  objclass like '%Interaction%' AND
+                  category = 'interaction_evidence';
 
             SELECT count(ac) INTO v_components
             FROM ia_component
-            WHERE created <= v_date;
+            WHERE created <= v_date AND 
+                  category = 'participant_evidence';
 
             SELECT count(ac) INTO v_interactions
             FROM ia_interactor
             WHERE objClass like '%Interaction%' AND
-                  created <= v_date;
+                  created <= v_date AND 
+                  category = 'interaction_evidence';
 
            SELECT count(distinct c.interaction_ac) INTO v_self_binary
            FROM ia_component c
@@ -114,6 +117,8 @@ BEGIN
            (
            SELECT distinct comp.interaction_ac
            FROM ia_component comp
+           WHERE comp.category = 'participant_evidence' 
+           AND comp.created <= v_date 
            GROUP BY comp.interaction_ac
            HAVING count(comp.ac) = 1
            )
@@ -126,27 +131,24 @@ BEGIN
             WHERE interaction_ac IN (SELECT interaction_ac
                                      FROM IA_Component c2
                                      WHERE c2.created <= v_date AND                   -- date filter
-                                           c1.interaction_ac = c2.interaction_ac
+                                           c1.interaction_ac = c2.interaction_ac AND
+                                           c2.category = 'participant_evidence'
                                      GROUP BY interaction_ac
                                      HAVING count( * ) > 2
                                     );
 
             SELECT count(*) INTO v_experiment_number
             FROM IA_Experiment
-            WHERE created <= v_date;
+            WHERE created <= v_date AND 
+                  DETECTMETHOD_AC NOT IN (SELECT ac FROM ia_controlledvocab WHERE shortlabel = 'inferred by curator');
 
             SELECT count(*) INTO v_term_number
             FROM IA_ControlledVocab
             WHERE created <= v_date;
 
-            SELECT count( distinct x.primaryId ) INTO v_publications
-            FROM ia_experiment e, ia_experiment_xref x, ia_controlledvocab q, ia_controlledvocab db
-            WHERE e.shortlabel like '%' and
-                  e.ac = x.parent_ac and
-                  x.database_ac = db.ac and
-                  db.shortlabel = 'pubmed' and
-                  x.qualifier_ac = q.ac and
-                  q.shortlabel = 'primary-reference' and
+            SELECT count( distinct p.ac ) INTO v_publications
+            FROM ia_publication e
+            WHERE e.shortlabel <> '14681455'
                   e.created <= v_date;
 
             DBMS_OUTPUT.PUT_LINE( 'CREATE: ' || to_char( v_date )||': '||to_char(v_interaction_number)||' '||to_char(v_binary_interactions)||' '||to_char(v_complex_interactions)||' '||to_char(v_experiment_number)||' '||to_char(v_term_number) ||' '||to_char(v_publications));
