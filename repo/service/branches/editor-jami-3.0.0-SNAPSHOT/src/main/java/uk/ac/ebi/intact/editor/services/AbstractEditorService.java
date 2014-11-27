@@ -72,6 +72,25 @@ public abstract class AbstractEditorService implements EditorService {
         }
     }
 
+    protected <T extends Auditable> void persistIntactObject(T intactObject, IntactBaseDao<T> dao) throws SynchronizerException,
+            FinderException, PersisterException {
+        try{
+            dao.persist(intactObject);
+        }
+        catch (SynchronizerException e){
+            getIntactDao().getSynchronizerContext().clearCache();
+            throw e;
+        }
+        catch (FinderException e){
+            getIntactDao().getSynchronizerContext().clearCache();
+            throw e;
+        }
+        catch (PersisterException e){
+            getIntactDao().getSynchronizerContext().clearCache();
+            throw e;
+        }
+    }
+
     protected <T extends Auditable> T reattachIntactObjectIfTransient(T intactObject, IntactBaseDao<T> dao){
         // merge current user because detached
         if (dao.isTransient(intactObject)){
