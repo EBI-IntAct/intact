@@ -1,25 +1,22 @@
 package uk.ac.ebi.intact.editor.controller.admin;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.intact.core.config.ConfigurationHandler;
-import uk.ac.ebi.intact.core.context.IntactContext;
-import uk.ac.ebi.intact.core.persistence.dao.DbInfoDao;
-import uk.ac.ebi.intact.core.util.DebugUtil;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.model.meta.Application;
-import uk.ac.ebi.intact.model.meta.ApplicationProperty;
-import uk.ac.ebi.intact.model.meta.DbInfo;
-import uk.ac.ebi.kraken.uuw.services.remoting.UniProtJAPI;
+import psidev.psi.mi.jami.model.Source;
+import uk.ac.ebi.intact.editor.controller.BaseController;
+import uk.ac.ebi.intact.editor.services.admin.ApplicationInfoService;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
+import uk.ac.ebi.intact.jami.model.meta.Application;
+import uk.ac.ebi.intact.jami.synchronizer.FinderException;
+import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
+import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 
-import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.faces.event.ActionEvent;
 import javax.sql.DataSource;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +27,7 @@ import java.util.Map;
  */
 @Controller("applicationInfo")
 @Lazy
-public class ApplicationInfoController extends JpaAwareController {
+public class ApplicationInfoController extends BaseController {
 
     private String uniprotJapiVersion;
     private String schemaVersion;
@@ -38,85 +35,72 @@ public class ApplicationInfoController extends JpaAwareController {
     private String lastCvUpdate;
     private String databaseCounts;
 
+    @Resource(name = "defaultApp")
     private Application application;
+
+    @Autowired
+    @Qualifier("applicationInfoService")
+    private transient ApplicationInfoService applicationInfoService;
+
+    private boolean isInitialised = false;
 
     public ApplicationInfoController() {
     }
 
-    @PostConstruct
-    @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
     public void init() {
-        uniprotJapiVersion = UniProtJAPI.factory.getVersion();
-
-        final DbInfoDao infoDao = getDaoFactory().getDbInfoDao();
-
-        schemaVersion = getDbInfoValue(infoDao, DbInfo.SCHEMA_VERSION);
-        lastUniprotUpdate = getDbInfoValue(infoDao, DbInfo.LAST_PROTEIN_UPDATE);
-        lastCvUpdate = getDbInfoValue(infoDao, DbInfo.LAST_CV_UPDATE_PSIMI);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(256);
-        PrintStream ps = new PrintStream(baos);
-        try{
-            DebugUtil.printDatabaseCounts(ps);
-            databaseCounts = baos.toString().replaceAll("\n","<br/>");
-        }
-        finally {
-            ps.close();
-            databaseCounts = "";
-        }
-
-        application = IntactContext.getCurrentInstance().getApplication();
+        ApplicationInfoService.ApplicationInfo appInfo = getApplicationInfoService().getCurrentApplicationInfo();
+        uniprotJapiVersion = appInfo.getUniprotJapiVersion();
+        schemaVersion = appInfo.getSchemaVersion();
+        lastUniprotUpdate = appInfo.getLastUniprotUpdate();
+        lastCvUpdate = appInfo.getLastCvUpdate();
+        databaseCounts = appInfo.getDatabaseCounts();
+        isInitialised = true;
     }
 
-    @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED)
     public void saveApplicationProperties(ActionEvent evt) {
-        for (ApplicationProperty prop : application.getProperties()) {
-            getDaoFactory().getApplicationPropertyDao().saveOrUpdate(prop);
+        try {
+            getApplicationInfoService().saveApplicationProperties(this.application);
+        } catch (SynchronizerException e) {
+            addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+        } catch (FinderException e) {
+            addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+        } catch (PersisterException e) {
+            addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
         }
-
-        ConfigurationHandler configurationHandler = getConfigurationHandler();
-        configurationHandler.loadConfiguration(getApplication());
-
-        addInfoMessage("Preferences saved", "");
     }
 
-    @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED)
     public void persistConfig(ActionEvent evt) {
-        getConfigurationHandler().persistConfiguration();
-        application = getDaoFactory().getApplicationDao().getByAc(application.getAc());
-    }
-
-    private String getDbInfoValue(DbInfoDao infoDao, String key) {
-        String value;
-        DbInfo dbInfo = infoDao.get(key);
-        if (dbInfo != null) {
-            value = dbInfo.getValue();
-        } else {
-            value = "<unknown>";
+        try {
+            getApplicationInfoService().persistConfig(this.application);
+        } catch (SynchronizerException e) {
+            addErrorMessage("Cannot save application details ", e.getCause()+": "+e.getMessage());
+        } catch (FinderException e) {
+            addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+        } catch (PersisterException e) {
+            addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
         }
-        return value;
     }
 
-    @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-    public List<Institution> getAvailableInstitutions() {        
-        return getDaoFactory().getInstitutionDao().getAll();
+    public List<Source> getAvailableInstitutions() {
+        return getApplicationInfoService().getAvailableInstitutions();
     }
 
     public List<Map.Entry<String,DataSource>> getDataSources() {
-        return new ArrayList<Map.Entry<String,DataSource>>(
-                IntactContext.getCurrentInstance().getSpringContext().getBeansOfType(DataSource.class).entrySet());
+        return getApplicationInfoService().getDataSources();
     }
 
     public List<Map.Entry<String,PlatformTransactionManager>> getTransactionManagers() {
-        return new ArrayList<Map.Entry<String,PlatformTransactionManager>>(
-                IntactContext.getCurrentInstance().getSpringContext().getBeansOfType(PlatformTransactionManager.class).entrySet());
+        return getApplicationInfoService().getTransactionManagers();
     }
 
     public String[] getBeanNames() {
-        return IntactContext.getCurrentInstance().getSpringContext().getBeanDefinitionNames();
+        return getApplicationInfoService().getBeanNames();
     }
 
     public String getUniprotJapiVersion() {
+        if (!isInitialised){
+           init();
+        }
         return uniprotJapiVersion;
     }
 
@@ -129,35 +113,31 @@ public class ApplicationInfoController extends JpaAwareController {
     }
 
     public String getSchemaVersion() {
+        if (!isInitialised){
+            init();
+        }
         return schemaVersion;
     }
 
-    public void setSchemaVersion(String schemaVersion) {
-        this.schemaVersion = schemaVersion;
-    }
-
     public String getLastUniprotUpdate() {
+        if (!isInitialised){
+            init();
+        }
         return lastUniprotUpdate;
     }
 
-    public void setLastUniprotUpdate(String lastUniprotUpdate) {
-        this.lastUniprotUpdate = lastUniprotUpdate;
-    }
-
     public String getLastCvUpdate() {
+        if (!isInitialised){
+            init();
+        }
         return lastCvUpdate;
     }
 
-    public void setLastCvUpdate(String lastCvUpdate) {
-        this.lastCvUpdate = lastCvUpdate;
-    }
-
     public String getDatabaseCounts() {
+        if (!isInitialised){
+            init();
+        }
         return databaseCounts;
-    }
-
-    public void setDatabaseCounts(String databaseCounts) {
-        this.databaseCounts = databaseCounts;
     }
 
     public Application getApplication() {
@@ -168,7 +148,10 @@ public class ApplicationInfoController extends JpaAwareController {
         this.application = application;
     }
 
-    private ConfigurationHandler getConfigurationHandler() {
-        return (ConfigurationHandler) getSpringContext().getBean("configurationHandler");
+    public ApplicationInfoService getApplicationInfoService() {
+        if (this.applicationInfoService == null){
+            this.applicationInfoService = ApplicationContextProvider.getBean("applicationInfoService");
+        }
+        return applicationInfoService;
     }
 }

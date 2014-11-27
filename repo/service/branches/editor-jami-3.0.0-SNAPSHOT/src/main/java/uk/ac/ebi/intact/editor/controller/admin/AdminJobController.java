@@ -16,26 +16,27 @@
 package uk.ac.ebi.intact.editor.controller.admin;
 
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
-import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobExecutionNotRunningException;
-import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.launch.NoSuchJobExecutionException;
+import org.springframework.batch.core.launch.NoSuchJobInstanceException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import psidev.psi.mi.jami.batch.MIBatchJobManager;
 import uk.ac.ebi.intact.editor.controller.BaseController;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 
 import javax.annotation.Resource;
 import javax.faces.component.UIParameter;
 import javax.faces.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -48,37 +49,45 @@ import java.util.List;
 @Lazy
 public class AdminJobController extends BaseController {
 
-    @Resource( name = "editorJobOperator" )
-    private JobOperator jobOperator;
-
-    @Resource( name = "intactJobExplorer" )
-    private JobExplorer jobExplorer;
+    @Resource( name = "psiMIJobManager" )
+    private transient MIBatchJobManager psiMIJobManager;
 
     public AdminJobController() {
     }
 
     public List<String> getJobNames() {
-        return jobExplorer.getJobNames();
+        return new ArrayList<String>(getPsiMIJobManager().getJobOperator().getJobNames());
     }
 
-    public List<JobExecution> getRunningJobExecutions( String jobName ) {
-        return new ArrayList<JobExecution>( jobExplorer.findRunningJobExecutions( jobName ) );
-    }
-
-    public List<JobInstance> getJobInstances( String jobName ) {
-        return jobExplorer.getJobInstances( jobName, 0, 50 );
-    }
-
-    public List<JobExecution> getJobExecutions( Long jobInstanceId ) {
-        if ( jobInstanceId > 0 ) {
-            JobInstance jobInstance = jobExplorer.getJobInstance( jobInstanceId );
-            return jobExplorer.getJobExecutions( jobInstance );
+    public List<Long> getRunningJobExecutions( String jobName ) {
+        try {
+            return new ArrayList<Long>( getPsiMIJobManager().getJobOperator().getRunningExecutions(jobName) );
+        } catch (NoSuchJobException e) {
+            return Collections.EMPTY_LIST;
         }
-        return new ArrayList<JobExecution>();
     }
 
-    public List<StepExecution> getStepExecutions( JobExecution jobExecution ) {
-        return new ArrayList<StepExecution>( jobExecution.getStepExecutions() );
+    public List<Long> getJobInstances( String jobName ) {
+        try {
+            return new ArrayList<Long>(getPsiMIJobManager().getJobOperator().getJobInstances( jobName, 0, 50 ));
+        } catch (NoSuchJobException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    public List<Long> getJobExecutions( Long jobInstanceId ) {
+        if ( jobInstanceId > 0 ) {
+            try {
+                return new ArrayList<Long>(getPsiMIJobManager().getJobOperator().getExecutions( jobInstanceId ));
+            } catch (NoSuchJobInstanceException e) {
+                return Collections.EMPTY_LIST;
+            }
+        }
+        return Collections.EMPTY_LIST;
+    }
+
+    public StepExecution getLastStepExecution( JobInstance jobInstance, String stepName ) {
+        return this.psiMIJobManager.getJobRepository().getLastStepExecution(jobInstance, stepName);
     }
 
     public void restart( ActionEvent evt ) {
@@ -89,7 +98,7 @@ public class AdminJobController extends BaseController {
             long executionId = ( Long ) param.getValue();
 
             try {
-                jobOperator.restart( executionId );
+                getPsiMIJobManager().restartJob(executionId);
 
                 addInfoMessage( "Job restarted", "Execution ID: " + executionId );
             } catch ( JobInstanceAlreadyCompleteException e ) {
@@ -107,6 +116,8 @@ public class AdminJobController extends BaseController {
             } catch ( JobParametersInvalidException e ) {
                 addErrorMessage( "Job parameters are invalid", "Execution ID: " + executionId );
                 e.printStackTrace();
+            } catch (NoSuchJobInstanceException e) {
+                addErrorMessage("Job instance does not exist", "Execution ID: " + executionId);
             }
         }
     }
@@ -116,7 +127,7 @@ public class AdminJobController extends BaseController {
         long executionId = ( Long ) param.getValue();
 
         try {
-            jobOperator.stop( executionId );
+            getPsiMIJobManager().getJobOperator().stop(executionId);
 
             addInfoMessage( "Job stopped", "Execution ID: " + executionId );
         } catch ( NoSuchJobExecutionException e ) {
@@ -126,5 +137,12 @@ public class AdminJobController extends BaseController {
             addErrorMessage( "Job is not running anymore", "Execution ID: " + executionId );
             e.printStackTrace();
         }
+    }
+
+    public MIBatchJobManager getPsiMIJobManager() {
+        if (this.psiMIJobManager == null){
+            this.psiMIJobManager = ApplicationContextProvider.getBean("psiMIJobManager");
+        }
+        return psiMIJobManager;
     }
 }
