@@ -18,7 +18,6 @@ package uk.ac.ebi.intact.editor.controller.reviewer;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import uk.ac.ebi.intact.editor.controller.JpaAwareController;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)

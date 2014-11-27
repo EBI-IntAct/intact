@@ -28,7 +28,6 @@ import psidev.psi.mi.jami.model.CvTerm;
 import uk.ac.ebi.intact.core.persister.CoreDeleter;
 import uk.ac.ebi.intact.core.persister.IntactObjectDeleteException;
 import uk.ac.ebi.intact.core.util.DebugUtil;
-import uk.ac.ebi.intact.editor.controller.JpaAwareController;
 import uk.ac.ebi.intact.editor.controller.admin.UserManagerController;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.ImportCandidate;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.ImportJamiCandidate;

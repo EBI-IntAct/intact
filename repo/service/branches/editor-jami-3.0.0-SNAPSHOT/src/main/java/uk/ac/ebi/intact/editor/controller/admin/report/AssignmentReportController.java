@@ -18,20 +18,16 @@ package uk.ac.ebi.intact.editor.controller.admin.report;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import org.joda.time.DateTime;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.intact.editor.controller.JpaAwareController;
 import uk.ac.ebi.intact.model.CvLifecycleEventType;
 import uk.ac.ebi.intact.model.LifecycleEvent;
 
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 

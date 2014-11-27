@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persistence.dao.AnnotatedObjectDao;
 import uk.ac.ebi.intact.core.persistence.util.InstitutionMerger;
-import uk.ac.ebi.intact.editor.controller.JpaAwareController;
 import uk.ac.ebi.intact.editor.controller.curate.institution.InstitutionService;
 import uk.ac.ebi.intact.editor.util.SelectableCollectionDataModel;
 import uk.ac.ebi.intact.model.Institution;

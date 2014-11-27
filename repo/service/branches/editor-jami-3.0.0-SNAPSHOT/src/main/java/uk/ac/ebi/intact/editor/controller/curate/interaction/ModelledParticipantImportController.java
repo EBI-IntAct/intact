@@ -34,7 +34,6 @@ import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Gene;
 import psidev.psi.mi.jami.model.Participant;
 import uk.ac.ebi.intact.editor.config.EditorConfig;
-import uk.ac.ebi.intact.editor.controller.JpaAwareController;
 import uk.ac.ebi.intact.editor.controller.admin.UserManagerController;
 import uk.ac.ebi.intact.editor.controller.curate.util.CheckIdentifier;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;

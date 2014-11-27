@@ -8,7 +8,6 @@ import psidev.psi.mi.jami.model.Complex;
 import psidev.psi.mi.jami.model.ModelledFeature;
 import psidev.psi.mi.jami.model.ModelledParticipant;
 import uk.ac.ebi.intact.core.persister.IntactCore;
-import uk.ac.ebi.intact.editor.controller.JpaAwareController;
 import uk.ac.ebi.intact.editor.controller.curate.cvobject.CvObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentController;
 import uk.ac.ebi.intact.editor.controller.curate.feature.FeatureController;

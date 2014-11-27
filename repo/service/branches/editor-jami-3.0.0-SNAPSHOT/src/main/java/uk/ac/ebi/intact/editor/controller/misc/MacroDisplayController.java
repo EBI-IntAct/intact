@@ -18,7 +18,6 @@ package uk.ac.ebi.intact.editor.controller.misc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import uk.ac.ebi.intact.editor.controller.JpaAwareController;
 
 import javax.faces.event.ComponentSystemEvent;
 

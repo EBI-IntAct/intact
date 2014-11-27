@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.context.DataContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persistence.dao.BioSourceDao;
-import uk.ac.ebi.intact.editor.controller.JpaAwareController;
 import uk.ac.ebi.intact.model.BioSource;
 
 import javax.annotation.PostConstruct;
