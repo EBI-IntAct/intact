@@ -18,18 +18,16 @@ package uk.ac.ebi.intact.editor.controller.admin;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameter;
-import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.batch.core.launch.JobInstanceAlreadyExistsException;
+import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import psidev.psi.mi.jami.batch.MIBatchJobManager;
 import uk.ac.ebi.intact.editor.controller.BaseController;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 
 import javax.annotation.Resource;
-import javax.faces.event.ActionEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,52 +40,40 @@ import java.util.Map;
 @ConversationName( "admin" )
 public class CompatibilityController extends BaseController {
 
-    @Resource( name = "editorJobLauncher" )
-    private JobLauncher jobLauncher;
+    @Resource( name = "psiMIJobManager" )
+    private transient MIBatchJobManager psiMIJobManager;
 
     public CompatibilityController() {
     }
 
-    public void launchPublicationSync( ActionEvent evt ) {
-        Job job = getJob( "publicationSyncJob" );
-
-        String jobId = String.valueOf( System.currentTimeMillis() );
-
-        launchJob(job, jobId);
-    }
-
-    public void launchExperimentSync( ActionEvent evt ) {
-        Job job = getJob( "experimentSyncJob" );
-
-        String jobId = String.valueOf( System.currentTimeMillis() );
-
-        launchJob(job, jobId);
-    }
-
-    private void launchJob(Job job, String jobId) {
+    private void launchJob(String name, String jobId) {
         Map<String, JobParameter> jobParameterMap = new HashMap<String, JobParameter>();
         jobParameterMap.put( "jobId", new JobParameter( jobId ) );
 
         try {
-            jobLauncher.run( job, new JobParameters( jobParameterMap ) );
+            getPsiMIJobManager().startJobWithParameters(name, jobId != null ? "jobId=" + jobId : null);
 
             addInfoMessage( "Job started", "Job ID: " + jobId );
-        } catch ( JobExecutionAlreadyRunningException e ) {
-            addErrorMessage( "Job is already running", "Job ID: " + jobId );
-            e.printStackTrace();
-        } catch ( JobRestartException e ) {
-            addErrorMessage( "Cannot restart job", "Job ID: " + jobId );
-            e.printStackTrace();
-        } catch ( JobInstanceAlreadyCompleteException e ) {
-            addErrorMessage( "Job already complete", "Job ID: " + jobId );
-            e.printStackTrace();
         } catch ( JobParametersInvalidException e ) {
             addErrorMessage( "Invalid job parameters", "Job ID: " + jobId );
+            e.printStackTrace();
+        } catch (JobInstanceAlreadyExistsException e) {
+            addErrorMessage( "Job already running", "Job ID: " + jobId );
+            e.printStackTrace();
+        } catch (NoSuchJobException e) {
+            addErrorMessage( "No such job exist", "Job ID: " + jobId );
             e.printStackTrace();
         }
     }
 
     private Job getJob( String jobName ) {
         return ( Job ) getSpringContext().getBean( jobName );
+    }
+
+    public MIBatchJobManager getPsiMIJobManager() {
+        if (this.psiMIJobManager == null){
+            this.psiMIJobManager = ApplicationContextProvider.getBean("psiMIJobManager");
+        }
+        return psiMIJobManager;
     }
 }

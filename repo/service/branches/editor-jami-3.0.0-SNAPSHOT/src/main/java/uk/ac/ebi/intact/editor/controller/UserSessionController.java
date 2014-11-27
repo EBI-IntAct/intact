@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import psidev.psi.mi.jami.model.Source;
 import uk.ac.ebi.intact.editor.services.UserSessionService;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.user.Role;
 import uk.ac.ebi.intact.jami.model.user.User;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
@@ -44,7 +45,7 @@ public class UserSessionController extends BaseController implements DisposableB
 
     @Autowired
     @Qualifier("userSessionService")
-    private UserSessionService userSessionService;
+    private transient UserSessionService userSessionService;
 
     public UserSessionController() {
     }
@@ -55,7 +56,7 @@ public class UserSessionController extends BaseController implements DisposableB
 
     public User getCurrentUser(boolean refresh) {
         if (refresh && currentUser != null) {
-            currentUser = userSessionService.loadUser(currentUser.getLogin());
+            currentUser = getUserSessionService().loadUser(currentUser.getLogin());
         }
 
         return currentUser;
@@ -87,24 +88,31 @@ public class UserSessionController extends BaseController implements DisposableB
 
         if (currentUser != null) {
             try {
-                this.userSessionService.notifyLastActivity(currentUser);
+                getUserSessionService().notifyLastActivity(currentUser);
             } catch (SynchronizerException e) {
                 addErrorMessage("Cannot notify last activity of user "+currentUser, e.getCause()+": "+e.getMessage());
             } catch (FinderException e) {
-                addErrorMessage("Cannot notify last activity of user "+currentUser, e.getCause()+": "+e.getMessage());
+                addErrorMessage("Cannot notify last activity of user " + currentUser, e.getCause() + ": " + e.getMessage());
             } catch (PersisterException e) {
-                addErrorMessage("Cannot notify last activity of user "+currentUser, e.getCause()+": "+e.getMessage());
+                addErrorMessage("Cannot notify last activity of user " + currentUser, e.getCause() + ": " + e.getMessage());
             }
         }
     }
 
     public Source getUserInstitution() {
 
-        return currentUser != null ? this.userSessionService.getUserInstitution(currentUser) : null;
+        return currentUser != null ? getUserSessionService().getUserInstitution(currentUser) : null;
     }
 
     @Override
     public void destroy() throws Exception {
         log.info( "UserSessionController for user '" + currentUser.getLogin() + "' destroyed" );
+    }
+
+    public UserSessionService getUserSessionService() {
+        if (this.userSessionService == null){
+            this.userSessionService = ApplicationContextProvider.getBean("userSessionService");
+        }
+        return userSessionService;
     }
 }
