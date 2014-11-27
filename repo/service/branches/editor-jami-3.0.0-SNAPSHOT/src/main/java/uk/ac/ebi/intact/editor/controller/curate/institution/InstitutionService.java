@@ -23,7 +23,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.persistence.dao.InstitutionDao;
-import uk.ac.ebi.intact.editor.controller.JpaAwareController;
 import uk.ac.ebi.intact.model.Institution;
 
 import javax.annotation.PostConstruct;

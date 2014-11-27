@@ -21,7 +21,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.intact.editor.controller.JpaAwareController;
 import uk.ac.ebi.intact.jami.dao.OrganismDao;
 import uk.ac.ebi.intact.jami.model.extension.IntactOrganism;
 

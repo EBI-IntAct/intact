@@ -24,7 +24,6 @@ import psidev.psi.mi.jami.model.ModelledFeature;
 import psidev.psi.mi.jami.model.ModelledParticipant;
 import uk.ac.ebi.intact.core.persister.IntactCore;
 import uk.ac.ebi.intact.core.util.DebugUtil;
-import uk.ac.ebi.intact.editor.controller.JpaAwareController;
 import uk.ac.ebi.intact.editor.controller.UserListener;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
 import uk.ac.ebi.intact.jami.dao.IntactDao;

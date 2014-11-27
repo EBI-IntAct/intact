@@ -19,7 +19,6 @@ import org.primefaces.model.LazyDataModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import uk.ac.ebi.intact.editor.controller.JpaAwareController;
 import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
 import uk.ac.ebi.intact.model.Publication;
 

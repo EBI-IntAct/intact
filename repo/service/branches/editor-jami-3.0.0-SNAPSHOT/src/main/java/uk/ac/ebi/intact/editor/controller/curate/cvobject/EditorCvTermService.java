@@ -25,7 +25,6 @@ import psidev.psi.mi.jami.model.OntologyTerm;
 import psidev.psi.mi.jami.model.Xref;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.XrefUtils;
-import uk.ac.ebi.intact.editor.controller.JpaAwareController;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.dao.CvTermDao;
 import uk.ac.ebi.intact.jami.dao.IntactDao;

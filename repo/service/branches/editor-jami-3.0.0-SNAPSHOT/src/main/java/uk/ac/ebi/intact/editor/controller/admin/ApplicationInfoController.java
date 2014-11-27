@@ -9,7 +9,6 @@ import uk.ac.ebi.intact.core.config.ConfigurationHandler;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persistence.dao.DbInfoDao;
 import uk.ac.ebi.intact.core.util.DebugUtil;
-import uk.ac.ebi.intact.editor.controller.JpaAwareController;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.meta.Application;
 import uk.ac.ebi.intact.model.meta.ApplicationProperty;
