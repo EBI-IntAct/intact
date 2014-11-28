@@ -8,7 +8,7 @@ import uk.ac.ebi.intact.model.clone.IntactClonerException;
 import java.lang.reflect.Constructor;
 
 /**
- * Cloner for cv objects. It will not clone parents and children
+ * Cloner for cvobject objects. It will not clone parents and children
  *
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  * @version $Id$
@@ -42,7 +42,7 @@ public class CvObjectIntactCloner extends IntactCloner {
             clone.setSecondaryId(xref.getSecondaryId());
             clone.setDbRelease(xref.getDbRelease());
 
-            // does not clone cv database and qualifier
+            // does not clone cvobject database and qualifier
             clone.setCvDatabase(xref.getCvDatabase());
             clone.setCvXrefQualifier(xref.getCvXrefQualifier());
 

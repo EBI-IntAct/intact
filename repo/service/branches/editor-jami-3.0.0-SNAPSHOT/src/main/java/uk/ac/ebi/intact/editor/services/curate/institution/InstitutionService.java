@@ -68,7 +68,7 @@ public class InstitutionService extends AbstractEditorService {
         return getInstitutionSelectItems(true);
     }
 
-    public List<SelectItem> getInstitutionSelectItems(boolean addDefaultNoSelection) {
+    public synchronized List<SelectItem> getInstitutionSelectItems(boolean addDefaultNoSelection) {
         if (institutionSelectItems == null){
             return null;
         }
