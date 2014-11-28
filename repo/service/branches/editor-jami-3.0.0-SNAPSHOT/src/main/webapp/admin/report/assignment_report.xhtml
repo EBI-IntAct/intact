@@ -10,20 +10,47 @@
 
     <ui:define name="adminContent">
 
-        <h2>Correction Assignments</h2>
+        <h2>Publication Correction Assignments</h2>
 
          <p:calendar label="From: " value="#{assignmentReportController.fromDate}"  pattern="dd/MM/yyyy" />
          <p:calendar label="To: " value="#{assignmentReportController.toDate}" pattern="dd/MM/yyyy"/>
 
-        <p:commandButton value="Count assignments" actionListener="#{assignmentReportController.calculate}"
-                         update=":editorForm:assignmentPanel"/>
+        <p:commandButton value="Count Publication assignments" actionListener="#{assignmentReportController.calculatePublicationAssigments}"
+                         update=":editorForm:assignmentPublicationPanel"/>
 
         <br/> <br/>
 
-        <h:panelGroup id="assignmentPanel">
+        <h:panelGroup id="assignmentPublicationPanel">
 
-            <p:dataTable var="assignmentInfo" value="#{assignmentReportController.assignmentInfos}"
-                         rendered="#{assignmentReportController.assignmentInfos != null}">
+            <p:dataTable var="assignmentInfo" value="#{assignmentReportController.publicationAssignmentInfos}"
+                         rendered="#{assignmentReportController.publicationAssignmentInfos != null}">
+                <p:column headerText="Reviewer">
+                    <h:outputText value="#{assignmentInfo.reviewer}"/>
+                </p:column>
+                <p:column headerText="Count">
+                    <h:outputText value="#{assignmentInfo.count}"/>
+                </p:column>
+                <p:column headerText="Percentage">
+                    <h:outputText value="#{assignmentInfo.percentage}"/>
+                </p:column>
+            </p:dataTable>
+
+        </h:panelGroup>
+
+        <h2>Biological complexes Correction Assignments</h2>
+
+        <p:calendar label="From: " value="#{assignmentReportController.fromDate}"  pattern="dd/MM/yyyy" />
+        <p:calendar label="To: " value="#{assignmentReportController.toDate}" pattern="dd/MM/yyyy"/>
+
+        <p:commandButton value="Count Biological complex assignments" actionListener="#{assignmentReportController.calculateComplexAssigments}"
+                         update=":editorForm:assignmentComplexPanel"/>
+
+        <br/> <br/>
+
+        <h:panelGroup id="assignmentComplexPanel">
+
+            <p:dataTable var="assignmentInfo" value="#{assignmentReportController.complexAssignmentInfos}"
+                         rendered="#{assignmentReportController.complexAssignmentInfos != null}">
                 <p:column headerText="Reviewer">
                     <h:outputText value="#{assignmentInfo.reviewer}"/>
                 </p:column>

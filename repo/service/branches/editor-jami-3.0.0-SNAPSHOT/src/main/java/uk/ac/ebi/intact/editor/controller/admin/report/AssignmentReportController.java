@@ -16,14 +16,13 @@
 package uk.ac.ebi.intact.editor.controller.admin.report;
 
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.services.admin.report.AssignmentReportService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 
+import javax.annotation.Resource;
 import javax.faces.event.ActionEvent;
 import java.util.Date;
 import java.util.List;
@@ -41,8 +40,7 @@ public class AssignmentReportController extends BaseController {
     private Date fromDate;
     private Date toDate;
 
-    @Autowired
-    @Qualifier("assignmentReportService")
+    @Resource(name = "assignmentReportService")
     private transient AssignmentReportService assignmentReportService;
 
     public AssignmentReportController() {
