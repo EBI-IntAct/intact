@@ -24,14 +24,14 @@
                 <br/><br/>
 
                 <p:dataTable id="institutionsTable" var="institution" value="#{institutionAdminController.institutionsDataModel}"
-                             selection="#{institutionAdminService.institutionSelectItems}">
+                             selection="#{institutionAdminController.selectedInstitutions}">
                     <f:facet name="header">
                         <h:panelGroup>
                             Selected:&#160;
                             <h:selectOneMenu value="#{institutionAdminController.mergeDestinationInstitution}">
                                 <f:selectItem itemLabel="-- Merge into --" itemValue="#{null}"
                                               noSelectionOption="true"/>
-                                <f:selectItems value="#{institutionAdminController.institutionItems}"/>
+                                <f:selectItems value="#{institutionAdminService.institutionItems}"/>
                             </h:selectOneMenu>
                             <p:commandButton value="Merge" actionListener="#{institutionAdminController.mergeSelected}"
                                              update=":editorForm:messagesComponent, :editorForm:institutionTab"/>
@@ -89,7 +89,7 @@
                             itemLabel="#{user.firstName} #{user.lastName} (#{institutionAdminService.getInstitutionNameFor(user)})" itemValue="#{user}">
                 </p:pickList>
 
-                <p:commandButton value="Fix" actionListener="#{institutionAdminController.fixReleasableOwners}" update=":editorForm:messagesComponent, :editorForm:institutionTab"/>
+                <p:commandButton value="Fix" actionListener="#{institutionAdminController.fixAnnotatedObjectOwners}" update=":editorForm:messagesComponent, :editorForm:institutionTab"/>
             </p:tab>
         </p:tabView>
 

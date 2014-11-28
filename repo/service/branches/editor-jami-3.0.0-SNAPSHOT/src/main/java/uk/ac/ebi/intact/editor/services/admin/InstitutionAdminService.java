@@ -121,7 +121,7 @@ public class InstitutionAdminService extends AbstractEditorService {
         return source != null ? source.getShortName() : "-";
     }
 
-    public List<SelectItem> getInstitutionSelectItems() {
+    public List<SelectItem> getInstitutionItems() {
         List<SelectItem> institutions = institutionService.getInstitutionSelectItems(false);
         if (institutions == null){
             institutionService.loadInstitutions();
