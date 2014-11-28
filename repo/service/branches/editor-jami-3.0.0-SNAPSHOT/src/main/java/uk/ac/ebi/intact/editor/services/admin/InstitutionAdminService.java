@@ -20,8 +20,9 @@ import org.primefaces.model.SelectableDataModelWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.intact.editor.controller.misc.AbstractUserController;
+import psidev.psi.mi.jami.model.Source;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
+import uk.ac.ebi.intact.editor.services.UserSessionService;
 import uk.ac.ebi.intact.editor.services.curate.institution.InstitutionService;
 import uk.ac.ebi.intact.editor.util.SelectableCollectionDataModel;
 import uk.ac.ebi.intact.jami.model.extension.IntactSource;
@@ -53,6 +54,9 @@ public class InstitutionAdminService extends AbstractEditorService {
 
     @Resource(name = "institutionService")
     private InstitutionService institutionService;
+
+    @Resource(name = "userSessionService")
+    private UserSessionService userSessionService;
 
     public InstitutionAdminService() {
 
@@ -90,12 +94,12 @@ public class InstitutionAdminService extends AbstractEditorService {
 
         int updated = 0;
         for (uk.ac.ebi.intact.jami.model.user.User selected : selectedUsers){
-            IntactSource userInstitution = getInstitutionFor(selected);
+            Source userInstitution = userSessionService.getUserInstitution(selected);
 
-            if (userInstitution != null) {
+            if (userInstitution instanceof IntactSource) {
 
-                updated += publicationService.replaceSource(userInstitution, selected.getLogin());
-                updated += complexService.replaceSource(userInstitution, selected.getLogin());
+                updated += publicationService.replaceSource((IntactSource)userInstitution, selected.getLogin());
+                updated += complexService.replaceSource((IntactSource)userInstitution, selected.getLogin());
             }
         }
 
@@ -104,19 +108,8 @@ public class InstitutionAdminService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true,propagation = Propagation.REQUIRED)
-    public IntactSource getInstitutionFor(uk.ac.ebi.intact.jami.model.user.User user) {
-        String ac = findPreference(user, AbstractUserController.INSTITUTION_AC, null);
-
-        if (ac != null) {
-            return getIntactDao().getSourceDao().getByAc(ac);
-        }
-
-        return null;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true,propagation = Propagation.REQUIRED)
     public String getInstitutionNameFor(uk.ac.ebi.intact.jami.model.user.User user) {
-        IntactSource source = getInstitutionFor(user);
+        Source source = userSessionService.getUserInstitution(user);
 
         return source != null ? source.getShortName() : "-";
     }

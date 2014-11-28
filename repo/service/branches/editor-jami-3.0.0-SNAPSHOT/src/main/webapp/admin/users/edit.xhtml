@@ -11,8 +11,7 @@
          <f:metadata>
             <f:viewParam name="login" value="#{userAdminController.loginParam}"/>
 
-            <f:event type="preRenderView" listener="#{userAdminController.loadUserToUpdate}"/>
-             <f:event type="preRenderView" listener="#{userAdminController.loadRoles}"/>
+            <f:event type="preRenderView" listener="#{userAdminController.loadData}"/>
         </f:metadata>
     </ui:define>
 
@@ -51,13 +50,13 @@
                          required="true" requiredMessage="You must enter an email address" />
 
             <h:outputLabel value="Institution: " for="institutionTxt"/>
-            <p:selectOneMenu id="institutionTxt" value="#{userAdminController.institution}">
-                <f:selectItems value="#{institutionService.institutionSelectItems}"/>
+            <p:selectOneMenu id="institutionTxt" value="#{userAdminController.institution}" converter="institutionConverter">
+                <f:selectItems value="#{institutionAdminService.institutionItems}"/>
             </p:selectOneMenu>
 
             <h:outputLabel value="Role(s):" for="rolesPick"/>
             <p:pickList id="rolesPick" value="#{userAdminController.roles}" var="role"
-                        itemLabel="#{role}" itemValue="#{role}" required="true" requiredMessage="You must provide at least one role">
+                        itemLabel="#{role.name}" itemValue="#{role}" required="true" requiredMessage="You must provide at least one role">
             </p:pickList>
 
             <h:outputLabel value="Default curation depth:" for="depthSel"/>
@@ -70,15 +69,14 @@
             <p:inputText id="guTxt" value="#{userAdminController.googleUsername}" converter="trimmingConverter"/>
 
             <h:outputLabel value="Default reviewer: " for="mentorSel"/>
-            <p:selectOneMenu id="mentorSel" value="#{userAdminController.mentorReviewer}">
-                <f:selectItems value="#{userAdminController.reviewerSelectItems}"/>
+            <p:selectOneMenu id="mentorSel" value="#{userAdminController.mentorReviewer}" converter="userConverter">
+                <f:selectItems value="#{userAdminController.allReviewerSelectItems}"/>
             </p:selectOneMenu>
 
             <h:outputLabel value="My Notes:" for="notesArea"/>
             <p:inputTextarea id="notesArea" value="#{userAdminController.rawNotes}" rows="10" cols="80"/>
 
             <h:commandButton action="#{userAdminController.saveUser}" value="Save"/>
-            <!--onclick="document.getElementById('editUser_passwordHash').value = hex_sha1( document.getElementById('editUser_password').value )"-->
             <h:link outcome="admin.users.list" value="Cancel"/>
         </h:panelGrid>
 
