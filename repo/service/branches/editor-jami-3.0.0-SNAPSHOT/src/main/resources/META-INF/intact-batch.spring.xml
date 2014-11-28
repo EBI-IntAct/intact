@@ -4,6 +4,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
+    <import resource="classpath*:META-INF/psimi-batch-spring.xml"/>
+
     <!-- Job database: Initialize the datasource -->
     <bean id="intactDataSourceInitializer" class="uk.ac.ebi.intact.core.batch.BatchDatasourceInitializer">
         <property name="dataSource" ref="intactBatchDataSource"/>
@@ -20,17 +22,10 @@
     
     <bean id="editorJobLauncher"
 		class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
-		<property name="jobRepository" ref="intactJobRepository" />
+		<property name="jobRepository" ref="basicBatchJobRepository" />
         <property name="taskExecutor" ref="editorAsyncTaskExecutor" />
 	</bean>
 
     <bean id="editorAsyncTaskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor"/>
-
-    <bean id="editorJobOperator" class="org.springframework.batch.core.launch.support.SimpleJobOperator">
-        <property name="jobExplorer" ref="intactJobExplorer"/>
-        <property name="jobRepository" ref="intactJobRepository" />
-        <property name="jobRegistry" ref="intactJobRegistry" />
-        <property name="jobLauncher" ref="editorJobLauncher" />
-      </bean>
 
 </beans>
