@@ -36,7 +36,7 @@ import uk.ac.ebi.intact.dbupdate.prot.report.ReportWriterImpl;
 import uk.ac.ebi.intact.dbupdate.prot.report.UpdateReportHandler;
 import uk.ac.ebi.intact.editor.config.EditorConfig;
 import uk.ac.ebi.intact.editor.controller.BaseController;
-import uk.ac.ebi.intact.editor.controller.curate.cvobject.CvObjectService;
+import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.editor.controller.curate.util.CheckIdentifier;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;

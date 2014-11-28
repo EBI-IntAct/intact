@@ -17,13 +17,20 @@ package uk.ac.ebi.intact.editor.controller.bulk;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import uk.ac.ebi.intact.core.persister.BulkOperations;
-import uk.ac.ebi.intact.editor.controller.curate.cvobject.CvObjectService;
-import uk.ac.ebi.intact.model.*;
+import psidev.psi.mi.jami.model.impl.DefaultAnnotation;
+import uk.ac.ebi.intact.editor.controller.BaseController;
+import uk.ac.ebi.intact.editor.services.bulk.BulkOperationsService;
+import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
+import uk.ac.ebi.intact.jami.model.extension.*;
+import uk.ac.ebi.intact.jami.synchronizer.FinderException;
+import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
+import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 
+import javax.annotation.Resource;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
 import javax.faces.model.SelectItem;
@@ -40,7 +47,7 @@ import java.util.List;
 @Controller
 @Scope( "conversation.access" )
 @ConversationName( "bulk" )
-public class BulkAnnotationController extends JpaAwareController {
+public class BulkAnnotationController extends BaseController {
 
     private String acs[];
     private String updatedAcs[];
@@ -49,10 +56,13 @@ public class BulkAnnotationController extends JpaAwareController {
     private List<SelectItem> topicSelectItems;
     private boolean replaceIfTopicExists = true;
 
-    private Annotation annotation;
+    @Resource(name = "bulkOperationsService")
+    private transient BulkOperationsService bulkOperations;
+    @Resource(name = "cvObjectService")
+    private transient CvObjectService cvService;
 
-    @Autowired
-    private BulkOperations bulkOperations;
+    private IntactCvTerm topic;
+    private String value;
 
     public BulkAnnotationController() {
         topicSelectItems = new ArrayList<SelectItem>(1);
@@ -60,8 +70,13 @@ public class BulkAnnotationController extends JpaAwareController {
     }
 
     public void load(ComponentSystemEvent evt) {
-        annotation = new Annotation();
+        if (!FacesContext.getCurrentInstance().isPostback()) {
+            if (!getCvService().isInitialised()){
+                getCvService().loadData();
+            }
+        }
     }
+
 
     public void addBulkAnnotation(ActionEvent evt) {
 
@@ -69,7 +84,15 @@ public class BulkAnnotationController extends JpaAwareController {
         try {
             aoClass = Thread.currentThread().getContextClassLoader().loadClass(aoClassName);
 
-            updatedAcs = bulkOperations.addAnnotation(annotation, acs, aoClass, replaceIfTopicExists);
+            try {
+                updatedAcs = bulkOperations.addAnnotation(new DefaultAnnotation(this.topic, this.value), acs, aoClass, replaceIfTopicExists);
+            } catch (SynchronizerException e) {
+                addErrorMessage("Cannot add annotation " + this.topic, e.getCause() + ": " + e.getMessage());
+            } catch (FinderException e) {
+                addErrorMessage("Cannot add annotation " + this.topic, e.getCause() + ": " + e.getMessage());
+            } catch (PersisterException e) {
+                addErrorMessage("Cannot add annotation " + this.topic, e.getCause() + ": " + e.getMessage());
+            }
 
             if (acs.length > 0 && updatedAcs.length == 0) {
                 addErrorMessage("Operation failed", "None of the ACs could be updated (do they exist?)");
@@ -96,24 +119,30 @@ public class BulkAnnotationController extends JpaAwareController {
 
         String newClassname = aoClassName;
 
-        CvObjectService cvObjectService = (CvObjectService) getSpringContext().getBean("cvObjectService");
+        if (!getCvService().isInitialised()){
+            getCvService().loadData();
+        }
 
-        if (Publication.class.getName().equals(newClassname)) {
-            topicSelectItems = cvObjectService.getPublicationTopicSelectItems();
-        } else if (Experiment.class.getName().equals(newClassname)) {
-            topicSelectItems = cvObjectService.getExperimentTopicSelectItems();
-        } else if (InteractionImpl.class.getName().equals(newClassname)) {
-            topicSelectItems = cvObjectService.getInteractionTopicSelectItems();
-        } else if (InteractorImpl.class.getName().equals(newClassname)) {
-            topicSelectItems = cvObjectService.getInteractorTopicSelectItems();
-        } else if (Component.class.getName().equals(newClassname)) {
-            topicSelectItems = cvObjectService.getParticipantTopicSelectItems();
-        } else if (Feature.class.getName().equals(newClassname)) {
-            topicSelectItems = cvObjectService.getFeatureTopicSelectItems();
-        } else if (BioSource.class.getName().equals(newClassname)) {
-            topicSelectItems = cvObjectService.getBioSourceTopicSelectItems();
-        } else if (CvObject.class.getName().equals(newClassname)) {
-            topicSelectItems = cvObjectService.getCvObjectTopicSelectItems();
+        if (IntactPublication.class.getName().equals(newClassname)) {
+            topicSelectItems = getCvService().getPublicationTopicSelectItems();
+        } else if (IntactExperiment.class.getName().equals(newClassname)) {
+            topicSelectItems = getCvService().getExperimentTopicSelectItems();
+        } else if (IntactInteractionEvidence.class.getName().equals(newClassname)) {
+            topicSelectItems = getCvService().getInteractionTopicSelectItems();
+        } else if (IntactInteractor.class.getName().equals(newClassname)) {
+            topicSelectItems = getCvService().getInteractorTopicSelectItems();
+        }else if (IntactComplex.class.getName().equals(newClassname)) {
+            topicSelectItems = getCvService().getComplexTopicSelectItems();
+        }else if (IntactParticipantEvidence.class.getName().equals(newClassname)
+                || IntactModelledParticipant.class.getName().equals(newClassname)) {
+            topicSelectItems = getCvService().getParticipantTopicSelectItems();
+        } else if (IntactFeatureEvidence.class.getName().equals(newClassname)
+                || IntactModelledFeature.class.getName().equals(newClassname)) {
+            topicSelectItems = getCvService().getFeatureTopicSelectItems();
+        } else if (IntactSource.class.getName().equals(newClassname)) {
+            topicSelectItems = getCvService().getNoClassSelectItems();
+        } else if (IntactCvTerm.class.getName().equals(newClassname)) {
+            topicSelectItems = getCvService().getCvObjectTopicSelectItems();
         } else {
             addErrorMessage("Error", "No class for type: "+newClassname);
         }
@@ -135,14 +164,6 @@ public class BulkAnnotationController extends JpaAwareController {
         this.updatedAcs = updatedAcs;
     }
 
-    public Annotation getAnnotation() {
-        return annotation;
-    }
-
-    public void setAnnotation(Annotation annotation) {
-        this.annotation = annotation;
-    }
-
     public String getAoClassName() {
         return aoClassName;
     }
@@ -153,10 +174,6 @@ public class BulkAnnotationController extends JpaAwareController {
 
     public List<SelectItem> getTopicSelectItems() {
         return topicSelectItems;
-    }
-
-    public void setTopicSelectItems(List<SelectItem> topicSelectItems) {
-        this.topicSelectItems = topicSelectItems;
     }
 
     public String[] getCouldNotUpdateAcs() {
@@ -173,5 +190,35 @@ public class BulkAnnotationController extends JpaAwareController {
 
     public void setReplaceIfTopicExists(boolean replaceIfTopicExists) {
         this.replaceIfTopicExists = replaceIfTopicExists;
+    }
+
+    public IntactCvTerm getTopic() {
+        return topic;
+    }
+
+    public void setTopic(IntactCvTerm topic) {
+        this.topic = topic;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public BulkOperationsService getBulkOperations() {
+        if (this.bulkOperations == null){
+            this.bulkOperations = ApplicationContextProvider.getBean("bulkOperationsService");
+        }
+        return bulkOperations;
+    }
+
+    public CvObjectService getCvService() {
+        if (this.cvService == null){
+            this.cvService = ApplicationContextProvider.getBean("cvObjectService");
+        }
+        return cvService;
     }
 }

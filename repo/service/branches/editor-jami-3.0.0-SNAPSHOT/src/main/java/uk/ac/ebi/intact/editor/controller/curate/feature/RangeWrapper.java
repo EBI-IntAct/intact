@@ -16,7 +16,7 @@
 package uk.ac.ebi.intact.editor.controller.curate.feature;
 
 import uk.ac.ebi.intact.core.context.IntactContext;
-import uk.ac.ebi.intact.editor.controller.curate.cvobject.CvObjectService;
+import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.model.CvFuzzyType;
 import uk.ac.ebi.intact.model.Range;
 import uk.ac.ebi.intact.model.util.FeatureUtils;

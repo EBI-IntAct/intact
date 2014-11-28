@@ -546,7 +546,7 @@ public class ChangesController extends JpaAwareController implements UserListene
                     iterator.remove();
                 }
             }
-            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cv terms)
+            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cvobject terms)
             else if (unsavedChange.getUnsavedObject().getAc() == null) {
 
                 if (unsavedChange.getUnsavedObject() instanceof AnnotatedObject){
@@ -594,7 +594,7 @@ public class ChangesController extends JpaAwareController implements UserListene
                     iterator.remove();
                 }
             }
-            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cv terms)
+            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cvobject terms)
             else if (unsavedChange.getUnsavedObject().getAc() == null && unsavedChange.getUnsavedObject() == io) {
 
                 iterator.remove();
@@ -635,7 +635,7 @@ public class ChangesController extends JpaAwareController implements UserListene
                     iterator.remove();
                 }
             }
-            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cv terms)
+            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cvobject terms)
             else if (unsavedChange.getUnsavedObject().getAc() == null) {
                 if (unsavedChange.getUnsavedObject() instanceof Interaction){
                     Interaction unsavedInteraction = (Interaction) unsavedChange.getUnsavedObject();
@@ -704,7 +704,7 @@ public class ChangesController extends JpaAwareController implements UserListene
                     iterator.remove();
                 }
             }
-            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cv terms)
+            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cvobject terms)
             else if (unsavedChange.getUnsavedObject().getAc() == null) {
                 if (unsavedChange.getUnsavedObject() instanceof IntactComplex){
                     IntactComplex unsavedInteraction = (IntactComplex) unsavedChange.getUnsavedObject();
@@ -773,7 +773,7 @@ public class ChangesController extends JpaAwareController implements UserListene
                     iterator.remove();
                 }
             }
-            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cv terms)
+            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cvobject terms)
             else if (unsavedChange.getUnsavedObject().getAc() == null) {
                 if (unsavedChange.getUnsavedObject() instanceof Experiment){
                     Experiment unsavedExperiment = (Experiment) unsavedChange.getUnsavedObject();
@@ -825,7 +825,7 @@ public class ChangesController extends JpaAwareController implements UserListene
                     }
                 }
             }
-            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cv terms)
+            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cvobject terms)
             else if (unsavedChange.getUnsavedObject().getAc() == null) {
                 if (unsavedChange.getUnsavedObject() instanceof Publication){
                     Publication unsavedPublication = (Publication) unsavedChange.getUnsavedObject();
@@ -874,7 +874,7 @@ public class ChangesController extends JpaAwareController implements UserListene
                     iterator.remove();
                 }
             }
-            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cv terms)
+            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cvobject terms)
             else if (unsavedChange.getUnsavedObject().getAc() == null) {
                 if (unsavedChange.getUnsavedObject() instanceof uk.ac.ebi.intact.model.Component){
                     uk.ac.ebi.intact.model.Component unsavedComponent = (uk.ac.ebi.intact.model.Component) unsavedChange.getUnsavedObject();
@@ -942,7 +942,7 @@ public class ChangesController extends JpaAwareController implements UserListene
                     iterator.remove();
                 }
             }
-            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cv terms)
+            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cvobject terms)
             else if (unsavedChange.getUnsavedObject().getAc() == null) {
                 checkParentOfUnsavedObject(parentAcs, iterator, unsavedChange);
             }
@@ -1000,7 +1000,7 @@ public class ChangesController extends JpaAwareController implements UserListene
                     iterator.remove();
                 }
             }
-            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cv terms)
+            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cvobject terms)
             else if (unsavedChange.getUnsavedObject().getAc() == null) {
                 if (unsavedChange.getUnsavedObject() instanceof Feature){
                     Feature unsavedComponent = (Feature) unsavedChange.getUnsavedObject();
@@ -1049,7 +1049,7 @@ public class ChangesController extends JpaAwareController implements UserListene
                     iterator.remove();
                 }
             }
-            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cv terms)
+            // the object is new, we can only checks if we have an unchanged event which is new and does not have a collection of parent acs (interactors, organism, cvobject terms)
             else if (unsavedChange.getUnsavedObject().getAc() == null) {
                 checkParentOfUnsavedObject(parentAcs, iterator, unsavedChange);
             }

@@ -34,7 +34,7 @@ public class CvObjectAutocompleter {
 
     public List<CvObject> autocomplete( String queryStr ) {
 
-    //Query query = inputCvObjectController.type.createQuery( "select cv from CvObject cv where cv.shortLabel like :query order by cv.shortLabel asc" );
+    //Query query = inputCvObjectController.type.createQuery( "select cvobject from CvObject cvobject where cvobject.shortLabel like :query order by cvobject.shortLabel asc" );
     //query.setParameter( "query", queryStr + "%" );
 
     //return query.getResultList();

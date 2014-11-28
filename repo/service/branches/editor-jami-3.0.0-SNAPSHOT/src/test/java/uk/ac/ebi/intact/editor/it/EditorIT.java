@@ -139,7 +139,7 @@ public abstract class EditorIT extends BaseIT {
     }
 
     protected void goToCvPage(String id){
-        goToPageInContext("/cv/"+id);
+        goToPageInContext("/cvobject/"+id);
     }
 
     protected void goToCuratePage() {
