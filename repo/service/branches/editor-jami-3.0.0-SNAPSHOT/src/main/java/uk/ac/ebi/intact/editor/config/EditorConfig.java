@@ -46,7 +46,7 @@ public class EditorConfig extends BaseController {
     private String googlePassword;
 
     @PersistentProperty(defaultValue = "0")
-    private float defaultStoichiometry;
+    private int defaultStoichiometry;
 
     @PersistentProperty(defaultValue = "imex curation")
     private String defaultCurationDepth;
@@ -104,11 +104,11 @@ public class EditorConfig extends BaseController {
         this.logoUrl = logoUrl;
     }
 
-    public float getDefaultStoichiometry() {
+    public int getDefaultStoichiometry() {
         return defaultStoichiometry;
     }
 
-    public void setDefaultStoichiometry(float defaultStoichiometry) {
+    public void setDefaultStoichiometry(int defaultStoichiometry) {
         this.defaultStoichiometry = defaultStoichiometry;
     }
 

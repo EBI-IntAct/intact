@@ -95,6 +95,7 @@
     <bean id="intactJamiConfiguration" class="uk.ac.ebi.intact.jami.context.IntactConfiguration" scope="prototype">
         <property name="acPrefix" value="${jami.ac.prefix}"/>
         <property name="defaultInstitution" ref="${jami.default.source}"/>
+        <property name="localCvPrefix" value="${jami.cv.prefix}"/>
     </bean>
 
     <!-- Default institutions -->
