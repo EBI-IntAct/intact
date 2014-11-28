@@ -2,13 +2,16 @@ package uk.ac.ebi.intact.editor.controller.misc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.editor.services.curate.institution.InstitutionService;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.model.user.Preference;
-import uk.ac.ebi.intact.model.user.User;
-import uk.ac.ebi.intact.model.util.UserUtils;
+import psidev.psi.mi.jami.model.Source;
+import uk.ac.ebi.intact.editor.controller.BaseController;
+import uk.ac.ebi.intact.editor.services.UserSessionService;
+import uk.ac.ebi.intact.editor.services.admin.UserAdminService;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
+import uk.ac.ebi.intact.jami.model.extension.IntactSource;
+import uk.ac.ebi.intact.jami.model.user.Preference;
+import uk.ac.ebi.intact.jami.model.user.User;
 
-import java.util.ArrayList;
+import javax.annotation.Resource;
 
 /**
  * Controller used when administrating users.
@@ -17,7 +20,7 @@ import java.util.ArrayList;
  * @version $Id$
  * @since 2.0
  */
-public abstract class AbstractUserController extends JpaAwareController {
+public abstract class AbstractUserController extends BaseController {
 
     private static final Log log = LogFactory.getLog(AbstractUserController.class);
 
@@ -29,6 +32,13 @@ public abstract class AbstractUserController extends JpaAwareController {
     public static final String INSTITUTION_NAME = "editor.institution.name";
 
     private User user;
+    private Source institution;
+    private User mentor;
+
+    @Resource(name = "userSessionService")
+    private transient UserSessionService userSessionService;
+    @Resource(name = "userAdminService")
+    private transient UserAdminService userAdminService;
 
     /////////////////
     // Users
@@ -74,30 +84,26 @@ public abstract class AbstractUserController extends JpaAwareController {
         setPreference(GOOGLE_USERNAME, notes);
     }
 
-    public Institution getInstitution() {
-        return getInstitution(getUser());
-    }
-
-    public Institution getInstitution(User user) {
-        String ac = findPreference(user, INSTITUTION_AC, null);
-
-        if (ac != null) {
-            InstitutionService institutionService = (InstitutionService) getSpringContext().getBean("institutionService");
-            return institutionService.findInstitutionByAc(ac);
+    public Source getInstitution() {
+        if (this.institution == null){
+            this.institution = getUserSessionService().getUserInstitution(getUser());
         }
-
-        return null;
+        return this.institution;
     }
 
-    public void setInstitution(Institution institution) {
+    public void setInstitution(IntactSource institution) {
         if (institution != null) {
             setPreference(INSTITUTION_AC, institution.getAc());
-            setPreference(INSTITUTION_NAME, institution.getShortLabel());
+            setPreference(INSTITUTION_NAME, institution.getShortName());
         }
+        this.institution = institution;
     }
 
     public User getMentorReviewer() {
-        return UserUtils.getMentorReviewer(getIntactContext(), getUser());
+        if (this.mentor == null){
+            this.mentor = getUserAdminService().loadMentorReviewer(getUser());
+        }
+        return mentor;
     }
 
     public void setMentorReviewer(User mentor) {
@@ -114,6 +120,27 @@ public abstract class AbstractUserController extends JpaAwareController {
 
             }
         }
+        this.mentor = mentor;
+    }
+
+    public UserSessionService getUserSessionService() {
+        if (this.userSessionService == null){
+           userSessionService = ApplicationContextProvider.getBean("userSessionService");
+        }
+        return userSessionService;
+    }
+
+    public UserAdminService getUserAdminService() {
+        if (this.userAdminService == null){
+            userAdminService = ApplicationContextProvider.getBean("userAdminService");
+        }
+        return userAdminService;
+    }
+
+    protected void refreshContext(){
+        this.user = null;
+        this.institution = null;
+        this.mentor = null;
     }
 
     private String findPreference(String prefKey) {
@@ -125,10 +152,6 @@ public abstract class AbstractUserController extends JpaAwareController {
     }
 
     private String findPreference(User user, String prefKey, String defaultValue) {
-        if (user.getPreferences() == null) {
-            user.setPreferences(new ArrayList<Preference>());
-        }
-
         for (Preference pref : user.getPreferences()) {
             if (prefKey.equals(pref.getKey())) {
                 return pref.getValue();
@@ -138,10 +161,6 @@ public abstract class AbstractUserController extends JpaAwareController {
     }
 
     private void setPreference(String prefKey, String prefValue) {
-        if (user.getPreferences() == null) {
-            user.setPreferences(new ArrayList<Preference>());
-        }
-
         Preference preference = null;
 
         for (Preference pref : user.getPreferences()) {
@@ -151,7 +170,7 @@ public abstract class AbstractUserController extends JpaAwareController {
         }
 
         if (preference == null) {
-            preference = new Preference(user, prefKey);
+            preference = new Preference(prefKey);
             user.getPreferences().add(preference);
         }
 
