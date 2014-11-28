@@ -190,10 +190,10 @@ public class ComplexController extends AnnotatedObjectController {
         // to be overrided
         IntactComplex complex = (IntactComplex)ComplexJamiCloner.cloneComplex((IntactComplex) ao);
         getLifecycleManager().getStartStatus().create(complex, "Created in Editor",
-                ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentJamiUser());
+                ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
 
         if (assignToMe) {
-            User user = ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentJamiUser();
+            User user = ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser();
             lifecycleManager.getNewStatus().claimOwnership(complex, user);
             lifecycleManager.getAssignedStatus().startCuration(complex, user);
         }
@@ -818,7 +818,7 @@ public class ComplexController extends AnnotatedObjectController {
         try {
             reloadedComplex = (IntactComplex)getDbSynchronizer().synchronize(this.complex, false);
             setComplex(reloadedComplex);
-            getLifecycleManager().getAssignedStatus().startCuration(complex, ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentJamiUser());
+            getLifecycleManager().getAssignedStatus().startCuration(complex, ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
 
             addInfoMessage("Curation started", "Curation is now in progress");
         } catch (FinderException e) {
@@ -859,7 +859,7 @@ public class ComplexController extends AnnotatedObjectController {
             boolean sanityCheckPassed = true;
 
             getLifecycleManager().getCurationInProgressStatus().readyForChecking(complex, correctionComment, sanityCheckPassed,
-                    ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentJamiUser());
+                    ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
 
             correctionComment = null;
 
@@ -892,7 +892,7 @@ public class ComplexController extends AnnotatedObjectController {
             reloadedComplex = (IntactComplex)getDbSynchronizer().synchronize(this.complex, false);
             setComplex(reloadedComplex);
             getLifecycleManager().getReadyForCheckingStatus().revert(this.complex,
-                    ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentJamiUser());
+                    ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
 
             correctionComment = null;
 
@@ -926,7 +926,7 @@ public class ComplexController extends AnnotatedObjectController {
             reloadedComplex = (IntactComplex)getDbSynchronizer().synchronize(this.complex, false);
             setComplex(reloadedComplex);
             getLifecycleManager().getReadyForReleaseStatus().revert(this.complex,
-                    ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentJamiUser());
+                    ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
 
         } catch (FinderException e) {
             // clear cache
@@ -963,11 +963,11 @@ public class ComplexController extends AnnotatedObjectController {
             setComplex(reloadedComplex);
             if (complex.getStatus().equals(LifeCycleStatus.READY_FOR_RELEASE)) {
                 getLifecycleManager().getReadyForReleaseStatus().putOnHold(complex, onHold,
-                        ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentJamiUser());
+                        ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
                 addInfoMessage("On-hold added to complex", "Complex won't be released until the 'on hold' is removed");
             } else if (complex.getStatus().equals(LifeCycleStatus.RELEASED)) {
                 getLifecycleManager().getReleasedStatus().putOnHold(complex, onHold,
-                        ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentJamiUser());
+                        ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
                 addInfoMessage("On-hold added to released complex", "Data will be publicly visible until the next release");
             }
             else{
@@ -999,7 +999,7 @@ public class ComplexController extends AnnotatedObjectController {
             reloadedComplex = (IntactComplex)getDbSynchronizer().synchronize(this.complex, false);
             setComplex(reloadedComplex);
             getLifecycleManager().getAcceptedOnHoldStatus().onHoldRemoved(complex, null,
-                    ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentJamiUser());
+                    ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
             this.onHold = null;
 
         } catch (FinderException e) {
@@ -1188,11 +1188,11 @@ public class ComplexController extends AnnotatedObjectController {
             reloadedComplex = (IntactComplex)getDbSynchronizer().synchronize(this.complex, false);
             setComplex(reloadedComplex);
             getLifecycleManager().getReadyForCheckingStatus().accept(complex, "Accepted " + new SimpleDateFormat("yyyy-MMM-dd").format(new Date()).toUpperCase() + " by " + userSessionController.getCurrentUser().getLogin().toUpperCase(),
-                    ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentJamiUser());
+                    ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
 
             if (!complex.isOnHold()) {
                 lifecycleManager.getAcceptedStatus().readyForRelease(complex, "Accepted and not on-hold",
-                        ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentJamiUser());
+                        ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
             }
 
         } catch (FinderException e) {
@@ -1231,7 +1231,7 @@ public class ComplexController extends AnnotatedObjectController {
             addInfoMessage("Complex rejected", "");
 
             getLifecycleManager().getReadyForCheckingStatus().reject(this.complex, date + ". " + reasonForRejection,
-                    ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentJamiUser());
+                    ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
 
             this.toBeReviewed = this.complex.getToBeReviewedComment();
 
@@ -1322,7 +1322,7 @@ public class ComplexController extends AnnotatedObjectController {
         }
         CvTermDao dao = getIntactDao().getCvTermDao();
         CvTerm type = dao.getByMIIdentifier(Complex.COMPLEX_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS);
-        User user = ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentJamiUser();
+        User user = ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser();
         InteractionEvidence ev = getIntactDao().getInteractionDao().getByAc(interactionEvidence.getAc());
         // the interaction evidence is loaded with jami
         if (ev != null){
@@ -1374,7 +1374,7 @@ public class ComplexController extends AnnotatedObjectController {
         this.complex.setSource(userSessionController.getUserSource());
         this.complex.setCreatedDate(new Date());
         this.complex.setUpdatedDate(this.complex.getCreatedDate());
-        User user = ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentJamiUser();
+        User user = ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser();
         this.complex.setCreator(user.getLogin());
         this.complex.setUpdator(user.getLogin());
         this.complex.setInteractorType(type);

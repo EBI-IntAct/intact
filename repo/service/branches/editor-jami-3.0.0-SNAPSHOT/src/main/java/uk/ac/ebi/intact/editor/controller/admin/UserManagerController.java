@@ -17,21 +17,15 @@ package uk.ac.ebi.intact.editor.controller.admin;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.controller.UserListener;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.context.UserContext;
-import uk.ac.ebi.intact.jami.dao.IntactDao;
-import uk.ac.ebi.intact.model.user.User;
+import uk.ac.ebi.intact.jami.model.user.User;
 
+import javax.annotation.Resource;
 import java.util.*;
 
 /**
@@ -45,9 +39,8 @@ public class UserManagerController extends BaseController implements UserListene
 
     private Set<User> loggedInUsers;
 
-    @Autowired
-    @Qualifier(value = "jamiUserContext")
-    private UserContext userContext;
+    @Resource(name = "jamiUserContext")
+    private transient UserContext userContext;
 
     public UserManagerController() {
         loggedInUsers = new HashSet<User>();
@@ -55,10 +48,6 @@ public class UserManagerController extends BaseController implements UserListene
 
     public Collection<User> getLoggedInUsers() {
         return new ArrayList<User>(loggedInUsers);
-    }
-
-    public void setLoggedInUsers( Set<User> loggedInUsers ) {
-        this.loggedInUsers = loggedInUsers;
     }
 
     public String getLoggedInUserCount() {
@@ -83,7 +72,6 @@ public class UserManagerController extends BaseController implements UserListene
     }
 
     @Override
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void userLoggedIn(User user) {
         if (user == null) return;
 
@@ -92,14 +80,7 @@ public class UserManagerController extends BaseController implements UserListene
         userSessionController.setCurrentUser(user);
 
         // set the user to be used when writing into the database
-        IntactContext.getCurrentInstance().getUserContext().setUser( user );
-
-        // set current jami user
-        IntactDao intactDao = ApplicationContextProvider.getBean("intactDao");
-        this.userContext.setUser(intactDao.getUserDao().getByLogin(user.getLogin()));
-        Hibernate.initialize(this.userContext.getUser().getPreferences());
-        Hibernate.initialize(this.userContext.getUser().getRoles());
-        userSessionController.setCurrentJamiUser(this.userContext.getUser());
+        this.userContext.setUser( user );
 
         loggedInUsers.add(user);
     }
@@ -117,4 +98,13 @@ public class UserManagerController extends BaseController implements UserListene
         return TimeZone.getDefault();
     }
 
+    public UserContext getUserContext() {
+        if (userContext == null){
+           userContext = ApplicationContextProvider.getBean("jamiUserContext");
+            if (getCurrentUser() != null){
+                userContext.setUser(getCurrentUser());
+            }
+        }
+        return userContext;
+    }
 }

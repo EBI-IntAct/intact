@@ -38,8 +38,8 @@ public class FeatureJamiCloner {
         clone.setUpdated(clone.getCreated());
         // set current user
         UserManagerController userController = ApplicationContextProvider.getBean("userManagerController");
-        clone.setCreator(userController.getCurrentJamiUser().getLogin());
-        clone.setUpdator(userController.getCurrentJamiUser().getLogin());
+        clone.setCreator(userController.getCurrentUser().getLogin());
+        clone.setUpdator(userController.getCurrentUser().getLogin());
         clone.setShortName(feature.getShortName());
         clone.setFullName(feature.getFullName());
         clone.setRole(feature.getRole());

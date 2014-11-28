@@ -101,7 +101,7 @@ public class ModelledParticipantImportController extends JpaAwareController {
         getIntactDao().getUserContext().
                 setUser(((UserManagerController)ApplicationContextProvider.
                         getBean("userManagerController")).
-                        getCurrentJamiUser());
+                        getCurrentUser());
 
         importCandidates = new ArrayList<ImportJamiCandidate>();
         queriesNoResults = new ArrayList<String>();
@@ -149,7 +149,7 @@ public class ModelledParticipantImportController extends JpaAwareController {
         getIntactDao().getUserContext().
                 setUser(((UserManagerController)ApplicationContextProvider.
                         getBean("userManagerController")).
-                        getCurrentJamiUser());
+                        getCurrentUser());
 
         for (ImportJamiCandidate candidate : importCandidates) {
             if (candidate.isSelected()) {

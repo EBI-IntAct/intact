@@ -52,7 +52,7 @@ public class ComplexJamiCloner {
         intactDao.getUserContext().
                 setUser(((UserManagerController)ApplicationContextProvider.
                         getBean("userManagerController")).
-                        getCurrentJamiUser());
+                        getCurrentUser());
         clone.setCreator(intactDao.getUserContext().getUserId());
         clone.setUpdator(intactDao.getUserContext().getUserId());
 
