@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.editor.controller.curate.institution;
+package uk.ac.ebi.intact.editor.services.curate.institution;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.intact.core.persistence.dao.InstitutionDao;
-import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.editor.services.AbstractEditorService;
+import uk.ac.ebi.intact.jami.model.extension.IntactSource;
 
-import javax.annotation.PostConstruct;
-import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,39 +32,36 @@ import java.util.List;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-@Controller
+@Service
 @Lazy
-public class InstitutionService extends JpaAwareController {
+public class InstitutionService extends AbstractEditorService {
 
     private static final Log log = LogFactory.getLog( InstitutionService.class );
 
-    private List<Institution> allInstitutions;
     private List<SelectItem> institutionSelectItems;
 
-    @Autowired
-    private InstitutionDao institutionDao;
-
-    @PostConstruct
-    public void loadData() {
-        refresh( null );
+    public synchronized void clearAll(){
+        this.institutionSelectItems = null;
     }
 
-    @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-    public void refresh( ActionEvent evt ) {
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+    public void loadInstitutions( ) {
         if ( log.isDebugEnabled() ) log.debug( "Loading Institutions" );
 
-        allInstitutions = institutionDao.getAllSorted(0,Integer.MAX_VALUE, "shortLabel", true);
+        clearAll();
+
+        List<IntactSource> allInstitutions = getIntactDao().getSourceDao().getAllSorted(0,Integer.MAX_VALUE, "shortName", true);
 
         institutionSelectItems = new ArrayList<SelectItem>(allInstitutions.size());
 
-        for (Institution institution : allInstitutions) {
-            institutionSelectItems.add(new SelectItem(institution, institution.getShortLabel(), institution.getFullName()));
+        for (IntactSource institution : allInstitutions) {
+            institutionSelectItems.add(new SelectItem(institution, institution.getShortName(), institution.getFullName()));
         }
     }
 
-
-    public Institution findInstitutionByAc( String ac ) {
-        return institutionDao.getByAc( ac );
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+    public IntactSource findInstitutionByAc( String ac ) {
+        return getIntactDao().getSourceDao().getByAc( ac );
     }
 
     public List<SelectItem> getInstitutionSelectItems() {
@@ -75,6 +69,9 @@ public class InstitutionService extends JpaAwareController {
     }
 
     public List<SelectItem> getInstitutionSelectItems(boolean addDefaultNoSelection) {
+        if (institutionSelectItems == null){
+            return null;
+        }
         List<SelectItem> items = new ArrayList(institutionSelectItems);
 
         if (addDefaultNoSelection) {
@@ -82,9 +79,5 @@ public class InstitutionService extends JpaAwareController {
         }
 
         return items;
-    }
-
-    public List<Institution> getAllInstitutions() {
-        return allInstitutions;
     }
 }
