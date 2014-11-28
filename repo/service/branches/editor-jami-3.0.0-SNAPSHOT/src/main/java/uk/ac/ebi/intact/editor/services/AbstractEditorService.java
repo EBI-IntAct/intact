@@ -15,8 +15,6 @@
  */
 package uk.ac.ebi.intact.editor.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import uk.ac.ebi.intact.jami.dao.IntactBaseDao;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.interceptor.IntactTransactionSynchronization;
@@ -24,6 +22,8 @@ import uk.ac.ebi.intact.jami.model.audit.Auditable;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
 import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -33,12 +33,10 @@ import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
  */
 public abstract class AbstractEditorService implements EditorService {
 
-    @Autowired
-    @Qualifier("intactDao")
+    @Resource(name = "intactDao")
     private IntactDao intactDao;
 
-    @Autowired
-    @Qualifier("intactTransactionSynchronization")
+    @Resource(name = "intactTransactionSynchronization")
     private IntactTransactionSynchronization afterCommitExecutor;
 
     public IntactDao getIntactDao() {

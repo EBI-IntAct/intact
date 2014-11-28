@@ -18,8 +18,6 @@ package uk.ac.ebi.intact.editor.controller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import psidev.psi.mi.jami.model.Source;
@@ -30,6 +28,8 @@ import uk.ac.ebi.intact.jami.model.user.User;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
 import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
+
+import javax.annotation.Resource;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -43,8 +43,7 @@ public class UserSessionController extends BaseController implements DisposableB
 
     private User currentUser;
 
-    @Autowired
-    @Qualifier("userSessionService")
+    @Resource(name = "userSessionService")
     private transient UserSessionService userSessionService;
 
     public UserSessionController() {
