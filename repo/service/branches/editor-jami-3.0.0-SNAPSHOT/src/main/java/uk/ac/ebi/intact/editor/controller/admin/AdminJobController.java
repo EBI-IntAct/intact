@@ -16,9 +16,11 @@
 package uk.ac.ebi.intact.editor.controller.admin;
 
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
+import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobExecutionNotRunningException;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.launch.NoSuchJobExecutionException;
@@ -36,7 +38,6 @@ import javax.annotation.Resource;
 import javax.faces.component.UIParameter;
 import javax.faces.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -52,42 +53,14 @@ public class AdminJobController extends BaseController {
     @Resource( name = "psiMIJobManager" )
     private transient MIBatchJobManager psiMIJobManager;
 
+    @Resource( name = "intactJobExplorer" )
+    private transient JobExplorer jobExplorer;
+
     public AdminJobController() {
     }
 
     public List<String> getJobNames() {
         return new ArrayList<String>(getPsiMIJobManager().getJobOperator().getJobNames());
-    }
-
-    public List<Long> getRunningJobExecutions( String jobName ) {
-        try {
-            return new ArrayList<Long>( getPsiMIJobManager().getJobOperator().getRunningExecutions(jobName) );
-        } catch (NoSuchJobException e) {
-            return Collections.EMPTY_LIST;
-        }
-    }
-
-    public List<Long> getJobInstances( String jobName ) {
-        try {
-            return new ArrayList<Long>(getPsiMIJobManager().getJobOperator().getJobInstances( jobName, 0, 50 ));
-        } catch (NoSuchJobException e) {
-            return Collections.EMPTY_LIST;
-        }
-    }
-
-    public List<Long> getJobExecutions( Long jobInstanceId ) {
-        if ( jobInstanceId > 0 ) {
-            try {
-                return new ArrayList<Long>(getPsiMIJobManager().getJobOperator().getExecutions( jobInstanceId ));
-            } catch (NoSuchJobInstanceException e) {
-                return Collections.EMPTY_LIST;
-            }
-        }
-        return Collections.EMPTY_LIST;
-    }
-
-    public StepExecution getLastStepExecution( JobInstance jobInstance, String stepName ) {
-        return this.psiMIJobManager.getJobRepository().getLastStepExecution(jobInstance, stepName);
     }
 
     public void restart( ActionEvent evt ) {
@@ -139,10 +112,37 @@ public class AdminJobController extends BaseController {
         }
     }
 
+    public List<JobExecution> getRunningJobExecutions( String jobName ) {
+        return new ArrayList<JobExecution>( jobExplorer.findRunningJobExecutions( jobName ) );
+    }
+
+    public List<JobInstance> getJobInstances( String jobName ) {
+        return jobExplorer.getJobInstances( jobName, 0, 50 );
+    }
+
+    public List<JobExecution> getJobExecutions( Long jobInstanceId ) {
+        if ( jobInstanceId > 0 ) {
+            JobInstance jobInstance = jobExplorer.getJobInstance( jobInstanceId );
+            return jobExplorer.getJobExecutions( jobInstance );
+        }
+        return new ArrayList<JobExecution>();
+    }
+
+    public List<StepExecution> getStepExecutions( JobExecution jobExecution ) {
+        return new ArrayList<StepExecution>( jobExecution.getStepExecutions() );
+    }
+
     public MIBatchJobManager getPsiMIJobManager() {
         if (this.psiMIJobManager == null){
             this.psiMIJobManager = ApplicationContextProvider.getBean("psiMIJobManager");
         }
         return psiMIJobManager;
+    }
+
+    public JobExplorer getJobExplorer() {
+        if (this.jobExplorer == null){
+            this.jobExplorer = ApplicationContextProvider.getBean("intactJobExplorer");
+        }
+        return jobExplorer;
     }
 }
