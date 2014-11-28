@@ -1,15 +1,22 @@
 package uk.ac.ebi.intact.editor.services.admin;
 
+import com.google.common.collect.Maps;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.Source;
+import uk.ac.ebi.intact.core.config.property.*;
+import uk.ac.ebi.intact.editor.config.EditorConfig;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
+import uk.ac.ebi.intact.jami.context.IntactConfiguration;
 import uk.ac.ebi.intact.jami.dao.DbInfoDao;
 import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
 import uk.ac.ebi.intact.jami.model.extension.IntactPolymer;
+import uk.ac.ebi.intact.jami.model.extension.IntactSource;
 import uk.ac.ebi.intact.jami.model.meta.Application;
 import uk.ac.ebi.intact.jami.model.meta.DbInfo;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
@@ -17,11 +24,14 @@ import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
 import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 import uk.ac.ebi.kraken.uuw.services.remoting.UniProtJAPI;
 
+import javax.annotation.PostConstruct;
+import javax.faces.model.SelectItem;
 import javax.sql.DataSource;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +39,21 @@ import java.util.Map;
  */
 @Service
 public class ApplicationInfoService extends AbstractEditorService {
+    private static final Log log = LogFactory.getLog(ApplicationInfoService.class);
+    private Map<Class, PropertyConverter> supportedPrimitiveConverter = Maps.newHashMap();
 
     public ApplicationInfoService() {
+    }
+
+    @PostConstruct
+    public void init() {
+        supportedPrimitiveConverter.put( java.lang.Boolean.TYPE, ApplicationContextProvider.getBean( BooleanPropertyConverter.class ) );
+        supportedPrimitiveConverter.put( java.lang.Short.TYPE, ApplicationContextProvider.getBean( ShortPropertyConverter.class ) );
+        supportedPrimitiveConverter.put( java.lang.Integer.TYPE, ApplicationContextProvider.getBean( IntegerPropertyConverter.class ) );
+        supportedPrimitiveConverter.put( java.lang.Long.TYPE, ApplicationContextProvider.getBean( LongPropertyConverter.class ) );
+        supportedPrimitiveConverter.put( java.lang.Float.TYPE, ApplicationContextProvider.getBean( FloatPropertyConverter.class ) );
+        supportedPrimitiveConverter.put( java.lang.Double.TYPE, ApplicationContextProvider.getBean( DoublePropertyConverter.class ) );
+        supportedPrimitiveConverter.put( java.lang.Character.TYPE, ApplicationContextProvider.getBean( CharPropertyConverter.class ) );
     }
 
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
@@ -71,27 +94,52 @@ public class ApplicationInfoService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
-    public void persistConfig(Application application) throws SynchronizerException, FinderException, PersisterException {
+    public Application persistConfig(Application application, EditorConfig editorConfig, IntactConfiguration jamiConfiguration) throws SynchronizerException, FinderException, PersisterException {
         // attach dao to transaction manager to clear cache after commit
         attachDaoToTransactionManager();
 
+        // update the Application object with the latest changes, since the last time the config was loaded
+        if (log.isInfoEnabled()) log.info("Persisting configuration for application: "+application.getKey());
+
+        Application dbApp = getIntactDao().getApplicationDao().getByKey(application.getKey());
+        if (dbApp != null) {
+            synchronizeApplication( application, dbApp );
+            application = dbApp;
+        }
+
+        persistEditorConfigProperties(editorConfig, application);
+        persistIntactConfigProperties(jamiConfiguration, application);
+
+        // persist the application object
         persistIntactObject(application, getIntactDao().getApplicationDao());
+
+        return getIntactDao().getApplicationDao().getByKey(application.getKey());
     }
 
-    private String getDbInfoValue(DbInfoDao infoDao, String key) {
-        String value;
-        uk.ac.ebi.intact.jami.model.meta.DbInfo dbInfo = infoDao.get(key);
-        if (dbInfo != null) {
-            value = dbInfo.getValue();
-        } else {
-            value = "<unknown>";
-        }
-        return value;
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
+    public IntactSource synchronizeDefaultSource(Source defaultSource) throws SynchronizerException, FinderException, PersisterException {
+        // attach dao to transaction manager to clear cache after commit
+        attachDaoToTransactionManager();
+
+        if (log.isInfoEnabled()) log.info("Persisting or retrieving default source: "+defaultSource);
+
+        return synchronizeIntactObject(defaultSource, getIntactDao().getSynchronizerContext().getSourceSynchronizer(), true);
     }
 
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-    public List<Source> getAvailableInstitutions() {
-        return new ArrayList<Source>(getIntactDao().getSourceDao().getAll());
+    public List<SelectItem> getAvailableInstitutions() {
+        Collection<IntactSource> allSources = getIntactDao().getSourceDao().getAll();
+        List<SelectItem> institutionItems = new ArrayList<SelectItem>(allSources.size());
+
+        for (IntactSource source : allSources){
+            if (source.getShortName().equalsIgnoreCase("intact")){
+                institutionItems.add(0, new SelectItem(source, source.getShortName(), source.getFullName()));
+            }
+            else{
+                institutionItems.add(new SelectItem(source, source.getShortName(), source.getFullName()));
+            }
+        }
+        return institutionItems;
     }
 
     public List<Map.Entry<String,DataSource>> getDataSources() {
@@ -106,6 +154,72 @@ public class ApplicationInfoService extends AbstractEditorService {
 
     public String[] getBeanNames() {
         return ApplicationContextProvider.getApplicationContext().getBeanDefinitionNames();
+    }
+
+    private void persistApplicationProperty(String key, String value, Application application){
+
+        uk.ac.ebi.intact.jami.model.meta.ApplicationProperty applicationProperty = application.getProperty(key);
+
+        if (applicationProperty != null) {
+            // set the property
+            applicationProperty.setValue(value);
+
+            if (log.isDebugEnabled()) {
+                log.debug("Loading field (db): "+key+"="+value);
+            }
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Loading field (beanWithConfig object): "+key+"="+value);
+            }
+
+            // create the property
+            applicationProperty = new uk.ac.ebi.intact.jami.model.meta.ApplicationProperty(key, value);
+            application.addProperty(applicationProperty);
+        }
+    }
+
+    private void persistIntactConfigProperties(IntactConfiguration jamiConfiguration, Application application) {
+
+        persistApplicationProperty("intactConfig.localCvPrefix",jamiConfiguration.getLocalCvPrefix(), application);
+        persistApplicationProperty("intactConfig.acPrefix",jamiConfiguration.getAcPrefix(), application);
+        persistApplicationProperty("intactConfig.defaultInstitution",jamiConfiguration.getDefaultInstitution().getShortName(), application);
+    }
+
+    private void persistEditorConfigProperties(EditorConfig editorConfig, Application application) {
+        if (editorConfig.getInstanceName() != null){
+            persistApplicationProperty("editorConfig.instanceName",editorConfig.getInstanceName(), application);
+        }
+        if (editorConfig.getLogoUrl() != null){
+            persistApplicationProperty("editorConfig.logoUrl",editorConfig.getLogoUrl(), application);
+        }
+        if (editorConfig.getGoogleUsername() != null){
+            persistApplicationProperty("editorConfig.googleUsername",editorConfig.getGoogleUsername(), application);
+        }
+        if (editorConfig.getGooglePassword() != null){
+            persistApplicationProperty("editorConfig.googlePassword",editorConfig.getGooglePassword(), application);
+        }
+        persistApplicationProperty("editorConfig.defaultStoichiometry",Integer.toString(editorConfig.getDefaultStoichiometry()), application);
+
+        if (editorConfig.getDefaultCurationDepth() != null){
+            persistApplicationProperty("editorConfig.defaultCurationDepth",editorConfig.getGooglePassword(), application);
+        }
+        persistApplicationProperty("editorConfig.revertDecisionTime",Integer.toString(editorConfig.getRevertDecisionTime()), application);
+
+        if (editorConfig.getTheme() != null){
+            persistApplicationProperty("editorConfig.theme",editorConfig.getTheme(), application);
+        }
+
+    }
+
+    private String getDbInfoValue(DbInfoDao infoDao, String key) {
+        String value;
+        uk.ac.ebi.intact.jami.model.meta.DbInfo dbInfo = infoDao.get(key);
+        if (dbInfo != null) {
+            value = dbInfo.getValue();
+        } else {
+            value = "<unknown>";
+        }
+        return value;
     }
 
     private void printDatabaseCounts(PrintStream ps) {
@@ -129,6 +243,25 @@ public class ApplicationInfoService extends AbstractEditorService {
         ps.println("BioSources: "+ getIntactDao().getOrganismDao().countAll());
         ps.println("Institutions: "+ getIntactDao().getSourceDao().countAll());
 
+    }
+
+    /**
+     * Synchronize all attributes of source onto target.
+     * @param source the source application
+     * @param target the target application
+     */
+    private void synchronizeApplication( Application source, Application target ) {
+        target.setDescription( source.getDescription() );
+
+        // create in target missing properties and update existing ones
+        for ( uk.ac.ebi.intact.jami.model.meta.ApplicationProperty sourceProperty : source.getProperties() ) {
+            final uk.ac.ebi.intact.jami.model.meta.ApplicationProperty targetProperty = target.getProperty( sourceProperty.getKey() );
+            if( targetProperty != null ) {
+                targetProperty.setValue( sourceProperty.getValue() );
+            } else {
+                target.addProperty( sourceProperty );
+            }
+        }
     }
 
     public class ApplicationInfo implements Serializable {

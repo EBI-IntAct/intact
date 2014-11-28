@@ -20,6 +20,7 @@ import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.interceptor.IntactTransactionSynchronization;
 import uk.ac.ebi.intact.jami.model.audit.Auditable;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
+import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
 import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 
@@ -74,6 +75,25 @@ public abstract class AbstractEditorService implements EditorService {
             FinderException, PersisterException {
         try{
             dao.persist(intactObject);
+        }
+        catch (SynchronizerException e){
+            getIntactDao().getSynchronizerContext().clearCache();
+            throw e;
+        }
+        catch (FinderException e){
+            getIntactDao().getSynchronizerContext().clearCache();
+            throw e;
+        }
+        catch (PersisterException e){
+            getIntactDao().getSynchronizerContext().clearCache();
+            throw e;
+        }
+    }
+
+    protected <T extends Auditable,I> T synchronizeIntactObject(I intactObject, IntactDbSynchronizer<I,T> synchronizer, boolean persist) throws SynchronizerException,
+            FinderException, PersisterException {
+        try{
+            return synchronizer.synchronize(intactObject, persist);
         }
         catch (SynchronizerException e){
             getIntactDao().getSynchronizerContext().clearCache();

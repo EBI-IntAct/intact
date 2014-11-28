@@ -1,14 +1,15 @@
 package uk.ac.ebi.intact.editor.controller.admin;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import psidev.psi.mi.jami.model.Source;
+import uk.ac.ebi.intact.editor.config.EditorConfig;
 import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.services.admin.ApplicationInfoService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
+import uk.ac.ebi.intact.jami.context.IntactConfiguration;
+import uk.ac.ebi.intact.jami.model.extension.IntactSource;
 import uk.ac.ebi.intact.jami.model.meta.Application;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
@@ -16,6 +17,7 @@ import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 
 import javax.annotation.Resource;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +40,14 @@ public class ApplicationInfoController extends BaseController {
     @Resource(name = "defaultApp")
     private Application application;
 
-    @Autowired
-    @Qualifier("applicationInfoService")
+    @Resource(name ="applicationInfoService")
     private transient ApplicationInfoService applicationInfoService;
+
+    @Resource(name ="intactJamiConfiguration")
+    private transient IntactConfiguration intactConfiguration;
+
+    @Resource(name = "editorConfig")
+    private transient EditorConfig editorConfig;
 
     private boolean isInitialised = false;
 
@@ -71,7 +78,7 @@ public class ApplicationInfoController extends BaseController {
 
     public void persistConfig(ActionEvent evt) {
         try {
-            getApplicationInfoService().persistConfig(this.application);
+            this.application = getApplicationInfoService().persistConfig(this.application, getEditorConfig(), getIntactConfiguration());
         } catch (SynchronizerException e) {
             addErrorMessage("Cannot save application details ", e.getCause()+": "+e.getMessage());
         } catch (FinderException e) {
@@ -81,7 +88,7 @@ public class ApplicationInfoController extends BaseController {
         }
     }
 
-    public List<Source> getAvailableInstitutions() {
+    public List<SelectItem> getAvailableInstitutions() {
         return getApplicationInfoService().getAvailableInstitutions();
     }
 
@@ -153,5 +160,37 @@ public class ApplicationInfoController extends BaseController {
             this.applicationInfoService = ApplicationContextProvider.getBean("applicationInfoService");
         }
         return applicationInfoService;
+    }
+
+    public IntactConfiguration getIntactConfiguration() {
+        if (this.intactConfiguration == null){
+            this.intactConfiguration = ApplicationContextProvider.getBean("intactJamiConfiguration");
+        }
+        return intactConfiguration;
+    }
+
+    public EditorConfig getEditorConfig() {
+        if (this.editorConfig == null){
+            this.editorConfig = ApplicationContextProvider.getBean("editorConfig");
+        }
+        return editorConfig;
+    }
+
+    public IntactSource getDefaultInstitution(){
+        Source defaultSource = getIntactConfiguration().getDefaultInstitution();
+        if (!(defaultSource instanceof IntactSource)){
+            try {
+                defaultSource = getApplicationInfoService().synchronizeDefaultSource(defaultSource);
+                getIntactConfiguration().setDefaultInstitution((IntactSource)defaultSource);
+            } catch (SynchronizerException e) {
+                addErrorMessage("Cannot save default source "+defaultSource, e.getCause()+": "+e.getMessage());
+            } catch (FinderException e) {
+                addErrorMessage("Cannot save default source "+defaultSource, e.getCause() + ": " + e.getMessage());
+            } catch (PersisterException e) {
+                addErrorMessage("Cannot save default source "+defaultSource, e.getCause() + ": " + e.getMessage());
+            }
+        }
+
+        return (IntactSource)defaultSource;
     }
 }
