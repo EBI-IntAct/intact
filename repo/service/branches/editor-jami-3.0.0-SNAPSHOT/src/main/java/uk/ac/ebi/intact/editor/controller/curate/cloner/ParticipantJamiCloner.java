@@ -38,8 +38,8 @@ public class ParticipantJamiCloner {
         clone.setUpdated(clone.getCreated());
         // set current user
         UserManagerController userController = ApplicationContextProvider.getBean("userManagerController");
-        clone.setCreator(userController.getCurrentJamiUser().getLogin());
-        clone.setUpdator(userController.getCurrentJamiUser().getLogin());
+        clone.setCreator(userController.getCurrentUser().getLogin());
+        clone.setUpdator(userController.getCurrentUser().getLogin());
         clone.setBiologicalRole(participant.getBiologicalRole());
         if (participant.getInteraction() instanceof Complex){
             clone.setInteraction((Complex)participant.getInteraction());

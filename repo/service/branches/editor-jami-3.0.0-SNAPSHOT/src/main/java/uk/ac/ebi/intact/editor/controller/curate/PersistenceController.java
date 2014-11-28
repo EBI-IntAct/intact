@@ -125,7 +125,7 @@ public class PersistenceController extends JpaAwareController {
         getIntactDao().getUserContext().
                 setUser(((UserManagerController) ApplicationContextProvider.
                         getBean("userManagerController")).
-                        getCurrentJamiUser());
+                        getCurrentUser());
 
         try {
             getIntactTransactionSynchronization().registerDaoForSynchronization(getIntactDao());
@@ -305,7 +305,7 @@ public class PersistenceController extends JpaAwareController {
         getIntactDao().getUserContext().
                 setUser(((UserManagerController)ApplicationContextProvider.
                         getBean("userManagerController")).
-                        getCurrentJamiUser());
+                        getCurrentUser());
 
         if (intactObject instanceof psidev.psi.mi.jami.model.Protein){
             psidev.psi.mi.jami.model.Protein proteinTranscript = (psidev.psi.mi.jami.model.Protein) intactObject;
