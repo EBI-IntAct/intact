@@ -24,14 +24,14 @@
                 <br/><br/>
 
                 <p:dataTable id="institutionsTable" var="institution" value="#{institutionAdminController.institutionsDataModel}"
-                             selection="#{institutionAdminController.selectedInstitutions}">
+                             selection="#{institutionAdminService.institutionSelectItems}">
                     <f:facet name="header">
                         <h:panelGroup>
                             Selected:&#160;
                             <h:selectOneMenu value="#{institutionAdminController.mergeDestinationInstitution}">
                                 <f:selectItem itemLabel="-- Merge into --" itemValue="#{null}"
                                               noSelectionOption="true"/>
-                                <f:selectItems value="#{institutionService.getInstitutionSelectItems(false)}"/>
+                                <f:selectItems value="#{institutionAdminController.institutionItems}"/>
                             </h:selectOneMenu>
                             <p:commandButton value="Merge" actionListener="#{institutionAdminController.mergeSelected}"
                                              update=":editorForm:messagesComponent, :editorForm:institutionTab"/>
@@ -54,7 +54,7 @@
 
                     <p:column selectionMode="multiple"/>
                     <p:column headerText="Short label">
-                        <h:link outcome="/curate/institution" value="#{institution.shortLabel}"
+                        <h:link outcome="/curate/institution" value="#{institution.shortName}"
                                 includeViewParams="true">
                             <f:param name="ac" value="#{institution.ac}"/>
                         </h:link>
@@ -66,13 +66,16 @@
                         <h:outputText value="#{institution.ac}"/>
                     </p:column>
                     <p:column headerText="# Publications">
-                        <h:outputText value="#{publicationDaoImpl.countByInstitutionAc(institution.ac)}"/>
+                        <h:outputText value="#{institutionAdminService.countNumberPublicationsFor(institution.ac)}"/>
                     </p:column>
                     <p:column headerText="# Experiments">
-                        <h:outputText value="#{experimentDaoImpl.countByInstitutionAc(institution.ac)}"/>
+                        <h:outputText value="#{institutionAdminService.countNumberExperimentsFor(institution.ac)}"/>
                     </p:column>
                     <p:column headerText="# Interactions">
-                        <h:outputText value="#{interactionDaoImpl.countByInstitutionAc(institution.ac)}"/>
+                        <h:outputText value="#{institutionAdminService.countNumberInteractionsFor(institution.ac)}"/>
+                    </p:column>
+                    <p:column headerText="# Biological complexes">
+                        <h:outputText value="#{institutionAdminService.countNumberComplexesFor(institution.ac)}"/>
                     </p:column>
                 </p:dataTable>
             </p:tab>
@@ -83,10 +86,10 @@
 
                 <h:outputLabel value="User(s):" for="userPick"/>
                 <p:pickList id="userPick" value="#{institutionAdminController.usersDualListModel}" var="user" converter="userConverter"
-                            itemLabel="#{user.firstName} #{user.lastName} (#{userAdminController.getInstitutionNameForUser(user)})" itemValue="#{user}">
+                            itemLabel="#{user.firstName} #{user.lastName} (#{institutionAdminService.getInstitutionNameFor(user)})" itemValue="#{user}">
                 </p:pickList>
 
-                <p:commandButton value="Fix" actionListener="#{institutionAdminController.fixAnnotatedObjectOwners}" update=":editorForm:messagesComponent, :editorForm:institutionTab"/>
+                <p:commandButton value="Fix" actionListener="#{institutionAdminController.fixReleasableOwners}" update=":editorForm:messagesComponent, :editorForm:institutionTab"/>
             </p:tab>
         </p:tabView>
 

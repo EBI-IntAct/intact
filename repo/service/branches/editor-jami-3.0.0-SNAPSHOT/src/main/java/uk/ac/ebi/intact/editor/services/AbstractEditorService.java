@@ -90,6 +90,25 @@ public abstract class AbstractEditorService implements EditorService {
         }
     }
 
+    protected <T extends Auditable> void deleteIntactObject(T intactObject, IntactBaseDao<T> dao) throws SynchronizerException,
+            FinderException, PersisterException {
+        try{
+            dao.delete(intactObject);
+        }
+        catch (SynchronizerException e){
+            getIntactDao().getSynchronizerContext().clearCache();
+            throw e;
+        }
+        catch (FinderException e){
+            getIntactDao().getSynchronizerContext().clearCache();
+            throw e;
+        }
+        catch (PersisterException e){
+            getIntactDao().getSynchronizerContext().clearCache();
+            throw e;
+        }
+    }
+
     protected <T extends Auditable,I> T synchronizeIntactObject(I intactObject, IntactDbSynchronizer<I,T> synchronizer, boolean persist) throws SynchronizerException,
             FinderException, PersisterException {
         try{
