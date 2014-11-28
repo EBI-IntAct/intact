@@ -17,14 +17,13 @@ package uk.ac.ebi.intact.editor.controller.admin;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.intact.editor.controller.BaseController;
+import uk.ac.ebi.intact.editor.services.admin.HqlQueryService;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
-import uk.ac.ebi.intact.model.IntactObject;
 
+import javax.annotation.Resource;
 import javax.faces.event.ActionEvent;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -36,113 +35,75 @@ import java.util.List;
  */
 @Controller
 @Scope("session")
-public class HqlRunnerController extends JpaAwareController {
-
-    private static final int MAX_RESULTS = 200;
+public class HqlRunnerController extends BaseController {
 
     private String hqlQuery;
-    private String jamiHqlQuery;
     private int maxResults;
     private String nativeQuery;
 
-    private Collection<? extends IntactObject> results;
-    private Collection<? extends IntactPrimaryObject> jamiResults;
+    private Collection<? extends IntactPrimaryObject> results;
     private Collection<Object[]> nativeResults;
+    Integer o;
     private List<String> columns;
 
+    @Resource(name = "hqlQueryService")
+    private HqlQueryService hqlQueryService;
+
     public HqlRunnerController() {
-        maxResults = MAX_RESULTS;
+        super();
+        maxResults = HqlQueryService.MAX_RESULTS;
     }
 
     public List<String> getColumns(){
         return columns != null ? columns :Collections.EMPTY_LIST;
     }
 
-    @SuppressWarnings({"unchecked"})
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void runQuery(ActionEvent evt) {
-        maxResults = Math.min(maxResults, MAX_RESULTS);
+        if (hqlQuery != null && hqlQuery.length() > 0){
+            try {
+                long startTime = System.currentTimeMillis();
 
-        hqlQuery = cleanQuery(hqlQuery);
+                results = getHqlQueryService().runQuery(maxResults, hqlQuery);
 
-        try {
-            EntityManager em = getCoreEntityManager();
-            Query query = em.createQuery(hqlQuery);
-            query.setMaxResults(maxResults);
+                long duration = System.currentTimeMillis() - startTime;
 
-            long startTime = System.currentTimeMillis();
+                addInfoMessage("Execution successful ("+duration+"ms)", "Results: "
+                        +(results.size() == HqlQueryService.MAX_RESULTS ? "More than " : "")+results.size());
 
-            results = query.getResultList();
-
-            long duration = System.currentTimeMillis() - startTime;
-
-            addInfoMessage("Execution successful ("+duration+"ms)", "Results: "+(results.size() == MAX_RESULTS ? "More than " : "")+results.size());
-
-        } catch (Throwable e) {
-            addErrorMessage("Problem running query", e.getMessage());
-        }
-    }
-
-    @SuppressWarnings({"unchecked"})
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public void runNativeQuery(ActionEvent evt) {
-        maxResults = Math.min(maxResults, MAX_RESULTS);
-
-        try {
-            EntityManager em = getCoreEntityManager();
-            Query query = em.createNativeQuery(nativeQuery);
-            query.setMaxResults(maxResults);
-
-            long startTime = System.currentTimeMillis();
-
-            nativeResults = query.getResultList();
-            columns = new ArrayList<String>();
-            if (!nativeResults.isEmpty()){
-                Object[] firstObjects = nativeResults.iterator().next();
-                columns = new ArrayList<String>(firstObjects.length);
-                int index = 0;
-                for (Object o : firstObjects){
-                    index++;
-                    columns.add("Column "+index);
-                }
+            } catch (Throwable e) {
+                addErrorMessage("Problem running query", e.getMessage());
             }
-
-            long duration = System.currentTimeMillis() - startTime;
-
-            addInfoMessage("Execution successful ("+duration+"ms)", "Results: "+(nativeResults.size() == MAX_RESULTS ? "More than " : "")+nativeResults.size());
-
-        } catch (Throwable e) {
-            addErrorMessage("Problem running query", e.getMessage());
         }
     }
 
-    @SuppressWarnings({"unchecked"})
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public void runJamiQuery(ActionEvent evt) {
-        maxResults = Math.min(maxResults, MAX_RESULTS);
+    public void runNativeQuery(ActionEvent evt) {
 
-        jamiHqlQuery = cleanQuery(jamiHqlQuery);
+        if (nativeQuery != null && nativeQuery.length() > 0){
+            try {
+                long startTime = System.currentTimeMillis();
 
-        try {
-            EntityManager em = getJamiEntityManager();
-            Query query = em.createQuery(jamiHqlQuery);
-            query.setMaxResults(maxResults);
+                nativeResults = getHqlQueryService().runNativeQuery(maxResults, nativeQuery);
 
-            long startTime = System.currentTimeMillis();
+                columns = new ArrayList<String>();
+                if (!nativeResults.isEmpty()){
+                    Object[] firstObjects = nativeResults.iterator().next();
+                    columns = new ArrayList<String>(firstObjects.length);
+                    int index = 0;
+                    for (Object o : firstObjects){
+                        index++;
+                        columns.add("Column "+index);
+                    }
+                }
 
-            jamiResults = query.getResultList();
+                long duration = System.currentTimeMillis() - startTime;
 
-            long duration = System.currentTimeMillis() - startTime;
+                addInfoMessage("Execution successful ("+duration+"ms)", "Results: "
+                        +(nativeResults.size() == HqlQueryService.MAX_RESULTS ? "More than " : "")+nativeResults.size());
 
-            addInfoMessage("Execution successful ("+duration+"ms)", "Results: "+(jamiResults.size() == MAX_RESULTS ? "More than " : "")+jamiResults.size());
-
-        } catch (Throwable e) {
-            addErrorMessage("Problem running query", e.getMessage());
+            } catch (Throwable e) {
+                addErrorMessage("Problem running query", e.getMessage());
+            }
         }
-    }
-
-    private String cleanQuery(String hqlQuery) {
-        return hqlQuery.replaceAll(";", "");
     }
 
     public String getHqlQuery() {
@@ -165,16 +126,8 @@ public class HqlRunnerController extends JpaAwareController {
         return nativeResults;
     }
 
-    public void setNativeResults(Collection<Object[]> nativeResults) {
-        this.nativeResults = nativeResults;
-    }
-
-    public Collection<? extends IntactObject> getResults() {
+    public Collection<? extends IntactPrimaryObject> getResults() {
         return results;
-    }
-
-    public void setResults(Collection<? extends IntactObject> results) {
-        this.results = results;
     }
 
     public int getMaxResults() {
@@ -185,19 +138,10 @@ public class HqlRunnerController extends JpaAwareController {
         this.maxResults = maxResults;
     }
 
-    public String getJamiHqlQuery() {
-        return jamiHqlQuery;
-    }
-
-    public void setJamiHqlQuery(String jamiHqlQuery) {
-        this.jamiHqlQuery = jamiHqlQuery;
-    }
-
-    public Collection<? extends IntactPrimaryObject> getJamiResults() {
-        return jamiResults;
-    }
-
-    public void setJamiResults(Collection<? extends IntactPrimaryObject> jamiResults) {
-        this.jamiResults = jamiResults;
+    public HqlQueryService getHqlQueryService() {
+        if (this.hqlQuery == null){
+            this.hqlQuery = ApplicationContextProvider.getBean("hqlQueryService");
+        }
+        return hqlQueryService;
     }
 }
