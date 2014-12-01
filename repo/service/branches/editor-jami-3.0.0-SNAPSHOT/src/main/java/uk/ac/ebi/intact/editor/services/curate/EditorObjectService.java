@@ -29,9 +29,7 @@ import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
-import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
-import uk.ac.ebi.intact.jami.model.extension.IntactProtein;
-import uk.ac.ebi.intact.jami.model.extension.InteractorXref;
+import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
@@ -171,5 +169,90 @@ public class EditorObjectService extends AbstractEditorService {
             return dbSynchronizer.findAllMatchingAcs(jamiObject);
         }
         return Collections.EMPTY_LIST;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public <T extends IntactPrimaryObject> T loadByAc(String ac) {
+
+        ac = ac.trim();
+
+        IntactPrimaryObject primary = getIntactDao().getEntityManager().find(IntactPublication.class, ac);
+        if (primary == null){
+            primary = getIntactDao().getEntityManager().find(IntactExperiment.class, ac);
+            if (primary == null){
+                primary = getIntactDao().getEntityManager().find(IntactInteractionEvidence.class, ac);
+
+                if (primary == null){
+                    primary = getIntactDao().getEntityManager().find(IntactComplex.class, ac);
+
+                    if (primary == null){
+                        primary = getIntactDao().getEntityManager().find(IntactParticipantEvidence.class, ac);
+
+                        if (primary == null){
+                            primary = getIntactDao().getEntityManager().find(IntactModelledParticipant.class, ac);
+
+                            if (primary == null){
+                                primary = getIntactDao().getEntityManager().find(IntactFeatureEvidence.class, ac);
+
+                                if (primary == null){
+                                    primary = getIntactDao().getEntityManager().find(IntactModelledFeature.class, ac);
+
+                                    if (primary == null){
+                                        primary = getIntactDao().getEntityManager().find(IntactInteractor.class, ac);
+
+                                        if (primary == null){
+                                            primary = getIntactDao().getEntityManager().find(IntactOrganism.class, ac);
+
+                                            if (primary == null){
+                                                primary = getIntactDao().getEntityManager().find(IntactCvTerm.class, ac);
+
+                                                if (primary == null){
+                                                    primary = getIntactDao().getEntityManager().find(IntactSource.class, ac);
+
+                                                    return (T)primary;
+                                                }
+                                                else{
+                                                    return (T)primary;
+                                                }
+                                            }
+                                            else{
+                                                return (T)primary;
+                                            }
+                                        }
+                                        else{
+                                            return (T)primary;
+                                        }
+                                    }
+                                    else{
+                                        return (T)primary;
+                                    }
+                                }
+                                else{
+                                    return (T)primary;
+                                }
+                            }
+                            else{
+                                return (T)primary;
+                            }
+                        }
+                        else{
+                            return (T)primary;
+                        }
+                    }
+                    else{
+                        return (T)primary;
+                    }
+                }
+                else{
+                    return (T)primary;
+                }
+            }
+            else{
+                return (T)primary;
+            }
+        }
+        else{
+            return (T)primary;
+        }
     }
 }

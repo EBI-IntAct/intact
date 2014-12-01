@@ -452,7 +452,7 @@ Results for query: <b>#{searchController.query}</b>
             </h:panelGroup>
 
             <h:panelGroup rendered="#{interactor == null}">
-                <p:commandLink action="#{curateController.editJamiByAc(participant.ac)}"
+                <p:commandLink action="#{curateController.editByAc(participant.ac)}"
                                value="(no interactor)" rendered="#{interactor == null}"
                                style="font-style: italic;"
                                ajax="false"/>
