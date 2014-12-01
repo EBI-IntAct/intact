@@ -31,7 +31,6 @@ import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
-import uk.ac.ebi.intact.editor.controller.curate.PersistenceController;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ModelledParticipantCloner;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.*;
 import uk.ac.ebi.intact.editor.util.SelectableCollectionDataModel;

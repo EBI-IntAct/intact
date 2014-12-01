@@ -29,7 +29,6 @@ import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.RangeUtils;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
-import uk.ac.ebi.intact.editor.controller.curate.PersistenceController;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ModelledFeatureCloner;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.ComplexController;
 import uk.ac.ebi.intact.editor.controller.curate.participant.ModelledParticipantController;

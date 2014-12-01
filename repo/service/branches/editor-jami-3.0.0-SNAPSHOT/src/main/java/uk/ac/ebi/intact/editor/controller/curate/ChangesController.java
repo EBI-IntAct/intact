@@ -24,18 +24,26 @@ import psidev.psi.mi.jami.model.ModelledFeature;
 import psidev.psi.mi.jami.model.ModelledParticipant;
 import uk.ac.ebi.intact.core.persister.IntactCore;
 import uk.ac.ebi.intact.core.util.DebugUtil;
+import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.controller.UserListener;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
+import uk.ac.ebi.intact.editor.services.curate.EditorObjectService;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
 import uk.ac.ebi.intact.jami.model.extension.IntactModelledFeature;
 import uk.ac.ebi.intact.jami.model.extension.IntactModelledParticipant;
+import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
+import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
+import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.user.User;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 
+import javax.annotation.Resource;
+import javax.faces.event.ActionEvent;
 import java.util.*;
 
 /**
@@ -45,9 +53,12 @@ import java.util.*;
  * @version $Id$
  */
 @Component
-public class ChangesController extends JpaAwareController implements UserListener {
+public class ChangesController extends BaseController implements UserListener {
 
     private static final Log log = LogFactory.getLog(ChangesController.class);
+
+    @Resource(name = "editorObjectService")
+    private transient EditorObjectService editorService;
 
     /**
      * Map containing the user name as the key, and a list with his/her changes.
@@ -1701,5 +1712,39 @@ public class ChangesController extends JpaAwareController implements UserListene
     private void removeUserFromHiddenUnsaved(String user) {
         hiddenChangesPerUser.remove(user);
         hiddenJamiChangesPerUser.remove(user);
+    }
+
+    public void saveAll(ActionEvent actionEvent) {
+        CurateController curateController = ApplicationContextProvider.getBean("curateController");
+
+        Collection<UnsavedChange> changes = new ArrayList(getUnsavedChangesForCurrentUser());
+
+        try {
+            getEditorService().saveAll(changes, getUnsavedChangesForCurrentUser());
+        }  catch (SynchronizerException e) {
+            addErrorMessage("Cannot save changes ", e.getCause() + ": " + e.getMessage());
+        } catch (FinderException e) {
+            addErrorMessage("Cannot save changes ", e.getCause() + ": " + e.getMessage());
+        } catch (PersisterException e) {
+            addErrorMessage("Cannot save changes ", e.getCause() + ": " + e.getMessage());
+        }
+
+        // refresh current view now
+        final AnnotatedObjectController currentAoController = curateController.getCurrentAnnotatedObjectController();
+        currentAoController.forceRefreshCurrentViewObject();
+    }
+
+    public void revertAll(ActionEvent actionEvent) {
+
+        Collection<UnsavedChange> changes = new ArrayList(getUnsavedChangesForCurrentUser());
+
+        getEditorService().revertAll(changes);
+    }
+
+    public EditorObjectService getEditorService() {
+        if (this.editorService == null){
+            this.editorService = ApplicationContextProvider.getBean("editorObjectService");
+        }
+        return editorService;
     }
 }
