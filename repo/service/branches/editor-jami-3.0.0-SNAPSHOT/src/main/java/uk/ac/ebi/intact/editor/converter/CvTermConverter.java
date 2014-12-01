@@ -15,7 +15,6 @@
  */
 package uk.ac.ebi.intact.editor.converter;
 
-import uk.ac.ebi.intact.editor.controller.curate.cvobject.EditorCvTermService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
 
