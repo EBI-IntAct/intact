@@ -47,11 +47,11 @@
         <br/>
 
              <div class="dialogButtonBar">
-                <p:commandButton value="Save All" actionListener="#{persistenceController.saveAll}"
+                <p:commandButton value="Save All" actionListener="#{changesController.saveAll}"
                                  onstart="saveAllDlg.show()" onsuccess="saveAllDlg.hide()" oncomplete="unsavedChangesDialog.hide();"
                                  update=":editorForm"/>
                  &#160;
-                <p:commandLink value="Revert All" actionListener="#{persistenceController.revertAll}"
+                <p:commandLink value="Revert All" actionListener="#{changesController.revertAll}"
                                onclick="revertAllDlg.show()" onsuccess="unsavedChangesDialog.hide()" oncomplete="revertAllDlg.hide();"
                                update=":editorForm"/>
             </div>
