@@ -15,9 +15,11 @@ import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
 import uk.ac.ebi.intact.editor.controller.curate.PersistenceController;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
+import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
@@ -32,43 +34,40 @@ import java.util.*;
 @ConversationName( "general" )
 public class CvObjectController extends AnnotatedObjectController {
 
-    @Autowired
+    @Resource(name = "cvObjectService")
     private CvObjectService cvObjectService;
 
-    @Autowired
-    private EditorCvTermService cvTermService;
-
     private String ac;
-    private CvDagObject cvObject;
+    private IntactCvTerm cvObject;
     private String cvClassName;
 
     private String newCvObjectType;
 
     private boolean isTopic;
 
-    private DualListModel<CvObject> parents;
-    private Map<Class<? extends CvDagObject>, String> classMap;
+    private DualListModel<IntactCvTerm> parents;
+    private Map<String, String> classMap;
 
     @PostConstruct
     public void initializeClassMap(){
-        classMap = new HashMap<Class<? extends CvDagObject>, String>();
-        classMap.put( CvInteraction.class, "MI:0001" );
-        classMap.put( CvInteractionType.class, "MI:0190" );
-        classMap.put( CvIdentification.class, "MI:0002" );
-        classMap.put( CvFeatureIdentification.class, "MI:0003" );
-        classMap.put( CvFeatureType.class, "MI:0116" );
-        classMap.put( CvInteractorType.class, "MI:0313" );
-        classMap.put( CvExperimentalPreparation.class, "MI:0346" );
-        classMap.put( CvFuzzyType.class, "MI:0333" );
-        classMap.put( CvXrefQualifier.class, "MI:0353" );
-        classMap.put( CvDatabase.class, "MI:0444" );
-        classMap.put( CvExperimentalRole.class, "MI:0495" );
-        classMap.put( CvBiologicalRole.class, "MI:0500" );
-        classMap.put( CvAliasType.class, "MI:0300" );
-        classMap.put( CvTopic.class, "MI:0590" );
-        classMap.put( CvParameterType.class, "MI:0640" );
-        classMap.put( CvParameterUnit.class, "MI:0647" );
-        classMap.put( CvConfidenceType.class, "MI:1064" );
+        classMap = new HashMap<String, String>();
+        classMap.put(IntactUtils.INTERACTION_DETECTION_METHOD_OBJCLASS, "MI:0001" );
+        classMap.put( IntactUtils.INTERACTION_TYPE_OBJCLASS, "MI:0190" );
+        classMap.put( IntactUtils.PARTICIPANT_DETECTION_METHOD_OBJCLASS, "MI:0002" );
+        classMap.put( IntactUtils.FEATURE_METHOD_OBJCLASS, "MI:0003" );
+        classMap.put( IntactUtils.FEATURE_TYPE_OBJCLASS, "MI:0116" );
+        classMap.put( IntactUtils.INTERACTOR_TYPE_OBJCLASS, "MI:0313" );
+        classMap.put( IntactUtils.PARTICIPANT_EXPERIMENTAL_PREPARATION_OBJCLASS, "MI:0346" );
+        classMap.put( IntactUtils.RANGE_STATUS_OBJCLASS, "MI:0333" );
+        classMap.put( IntactUtils.QUALIFIER_OBJCLASS, "MI:0353" );
+        classMap.put( IntactUtils.DATABASE_OBJCLASS, "MI:0444" );
+        classMap.put( IntactUtils.EXPERIMENTAL_ROLE_OBJCLASS, "MI:0495" );
+        classMap.put( IntactUtils.BIOLOGICAL_ROLE_OBJCLASS, "MI:0500" );
+        classMap.put( IntactUtils.ALIAS_TYPE_OBJCLASS, "MI:0300" );
+        classMap.put( IntactUtils.TOPIC_OBJCLASS, "MI:0590" );
+        classMap.put( IntactUtils.PARAMETER_TYPE_OBJCLASS, "MI:0640" );
+        classMap.put( IntactUtils.UNIT_OBJCLASS, "MI:0647" );
+        classMap.put( IntactUtils.CONFIDENCE_TYPE_OBJCLASS, "MI:1064" );
     }
 
     @Override
