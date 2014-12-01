@@ -4,10 +4,8 @@ import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import psidev.psi.mi.jami.model.Complex;
-import psidev.psi.mi.jami.model.ModelledFeature;
-import psidev.psi.mi.jami.model.ModelledParticipant;
-import uk.ac.ebi.intact.core.persister.IntactCore;
+import psidev.psi.mi.jami.model.*;
+import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.controller.curate.cvobject.CvObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentController;
 import uk.ac.ebi.intact.editor.controller.curate.feature.FeatureController;
@@ -20,12 +18,12 @@ import uk.ac.ebi.intact.editor.controller.curate.organism.BioSourceController;
 import uk.ac.ebi.intact.editor.controller.curate.participant.ModelledParticipantController;
 import uk.ac.ebi.intact.editor.controller.curate.participant.ParticipantController;
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
+import uk.ac.ebi.intact.editor.services.curate.EditorObjectService;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
-import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
-import uk.ac.ebi.intact.jami.model.extension.IntactModelledFeature;
-import uk.ac.ebi.intact.jami.model.extension.IntactModelledParticipant;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.jami.model.extension.*;
 
+import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,32 +37,23 @@ import java.util.Collection;
 @Controller
 @Scope( "conversation.access" )
 @ConversationName( "general" )
-public class CurateController extends JpaAwareController {
+public class CurateController extends BaseController {
 
     @Autowired
     private ChangesController changesController;
+
+    @Resource(name = "editorObjectService")
+    private transient EditorObjectService editorObjectService;
 
     private String acToOpen;
 
     private AnnotatedObjectController currentAnnotatedObjectController;
 
-    public String edit(IntactObject intactObject) {
+    public String edit(IntactPrimaryObject intactObject) {
         String suffix = (intactObject.getAc() != null)? "?faces-redirect=true&includeViewParams=true" : "";
 
         CurateObjectMetadata metadata = getMetadata(intactObject);
         setCurrentAnnotatedObjectController(metadata.getAnnotatedObjectController());
-
-        getCurrentAnnotatedObjectController().refreshTabsAndFocusXref();
-        return "/curate/"+metadata.getSlug()+suffix;
-    }
-
-    public String editJami(IntactPrimaryObject intactObject) {
-        String suffix = (intactObject.getAc() != null)? "?faces-redirect=true&includeViewParams=true" : "";
-
-        CurateJamiMetadata metadata = getJamiMetadata(intactObject);
-        setCurrentAnnotatedObjectController(metadata.getObjController());
-
-        metadata.getObjController().setJamiObject(intactObject);
 
         getCurrentAnnotatedObjectController().refreshTabsAndFocusXref();
         return "/curate/"+metadata.getSlug()+suffix;
@@ -77,99 +66,31 @@ public class CurateController extends JpaAwareController {
             return "";
         }
 
-        ac = ac.trim();
-
-        try {
-            Class<? extends AnnotatedObject> aoClass = IntactCore.classForAc(getIntactContext(), ac);
-
-            if (aoClass == null) {
-                addErrorMessage("Illegal AC", "No annotated object found with this AC: "+ac);
-                FacesContext.getCurrentInstance().renderResponse();
-            }
-
-            AnnotatedObject ao = getDaoFactory().getAnnotatedObjectDao(aoClass).getByAc(ac);
-
-            if ( ao == null ) {
-                addErrorMessage( "AC not found", "There is no IntAct object with ac '" + ac + "'" );
-                return "";
-            } else {
-                return edit(ao);
-            }
-        } catch (IllegalArgumentException e){
-            addErrorMessage( "AC not found", "There is no IntAct object with ac '" + ac + "'" );
-            return "";
-        }
+        return edit(getEditorObjectService().loadByAc(ac));
     }
 
-    public String editJamiByAc(String ac) {
-        if (ac == null) {
-            addErrorMessage("Illegal AC", "No AC provided");
-            FacesContext.getCurrentInstance().renderResponse();
-            return "";
-        }
-
-        ac = ac.trim();
-
-        IntactPrimaryObject primary = getJamiEntityManager().find(IntactComplex.class, ac);
-        if (primary == null){
-            primary = getJamiEntityManager().find(IntactModelledParticipant.class, ac);
-            if (primary == null){
-                primary = getJamiEntityManager().find(IntactModelledFeature.class, ac);
-
-                return editJami(primary);
-            }
-            else{
-                return editJami(primary);
-            }
-        }
-        else{
-            return editJami(primary);
-        }
-    }
-
-    public void save(IntactObject o) {
+    public void save(IntactPrimaryObject o) {
         save(o, true);
     }
 
-    public void save(IntactObject object, boolean refreshCurrentView) {
+    public void save(IntactPrimaryObject object, boolean refreshCurrentView) {
         AnnotatedObjectController annotatedObjectController = getMetadata(object).getAnnotatedObjectController();
         annotatedObjectController.doSave(refreshCurrentView);
     }
 
-    public void saveJami(IntactPrimaryObject o) {
-        saveJami(o, true);
-    }
-
-    public void saveJami(IntactPrimaryObject object, boolean refreshCurrentView) {
-        AnnotatedObjectController annotatedObjectController = getJamiMetadata(object).getObjController();
-        annotatedObjectController.doSave(refreshCurrentView);
-    }
-
-    public void discard(IntactObject object) {
+    public void discard(IntactPrimaryObject object) {
 
         AnnotatedObjectController annotatedObjectController = getMetadata(object).getAnnotatedObjectController();
         annotatedObjectController.doRevertChanges(null);
     }
 
-    public void discardJami(IntactPrimaryObject object) {
-
-        AnnotatedObjectController annotatedObjectController = getJamiMetadata((object)).getObjController();
-        annotatedObjectController.doRevertChanges(null);
-    }
-
-    public String cancelEdition(IntactObject object) {
+    public String cancelEdition(IntactPrimaryObject object) {
 
         AnnotatedObjectController annotatedObjectController = getMetadata(object).getAnnotatedObjectController();
         return annotatedObjectController.doCancelEdition();
     }
 
-    public String cancelJamiEdition(IntactPrimaryObject object) {
-
-        AnnotatedObjectController annotatedObjectController = getJamiMetadata((object)).getObjController();
-        return annotatedObjectController.doCancelEdition();
-    }
-
-    public String newIntactObject(IntactObject object) {
+    public String newIntactObject(IntactPrimaryObject object) {
         AnnotatedObjectController annotatedObjectController;
         CurateObjectMetadata meta = getMetadata(object);
         annotatedObjectController = meta.getAnnotatedObjectController();
@@ -179,71 +100,78 @@ public class CurateController extends JpaAwareController {
         return "/curate/"+meta.getSlug();
     }
 
-    public String newJamiObject(IntactPrimaryObject object) {
-        AnnotatedObjectController annotatedObjectController;
-        CurateJamiMetadata meta = getJamiMetadata(((IntactPrimaryObject)object));
-        annotatedObjectController = meta.getObjController();
-        setCurrentAnnotatedObjectController(annotatedObjectController);
-        getCurrentAnnotatedObjectController().refreshTabsAndFocusXref();
-
-        return "/curate/"+meta.getSlug();
-    }
-
-    public CurateObjectMetadata getMetadata(IntactObject intactObject) {
+    public CurateObjectMetadata getMetadata(IntactPrimaryObject intactObject) {
         Class<?> iaClass = intactObject.getClass();
 
-        if (Publication.class.isAssignableFrom(iaClass)) {
+        if (IntactPublication.class.isAssignableFrom(iaClass)) {
             PublicationController publicationController = (PublicationController) getSpringContext().getBean("publicationController");
-            publicationController.setPublication((Publication)intactObject);
+            publicationController.setPublication((IntactPublication)intactObject);
             return new CurateObjectMetadata(publicationController, "publication");
-        } else if (Experiment.class.isAssignableFrom(iaClass)) {
+        } else if (IntactExperiment.class.isAssignableFrom(iaClass)) {
             ExperimentController experimentController = (ExperimentController) getSpringContext().getBean("experimentController");
-            experimentController.setExperiment((Experiment)intactObject);
-            return new CurateObjectMetadata(experimentController, "experiment");
-        } else if (Interaction.class.isAssignableFrom(iaClass)) {
+            experimentController.setExperiment((IntactExperiment)intactObject);
+            CurateObjectMetadata meta = new CurateObjectMetadata(experimentController, "experiment");
+
+            Experiment exp = (Experiment)intactObject;
+            if (exp.getPublication() instanceof IntactPublication){
+                IntactPublication parent = (IntactPublication)exp.getPublication();
+                if (parent.getAc() != null){
+                    meta.getParents().add(parent.getAc());
+                }
+            }
+            return meta;
+        } else if (IntactInteractionEvidence.class.isAssignableFrom(iaClass)) {
             InteractionController interactionController = (InteractionController) getSpringContext().getBean("interactionController");
-            interactionController.setInteraction((Interaction)intactObject);
-            //interactionController.refreshParticipants();
-            //interactionController.refreshExperimentLists();
-            return new CurateObjectMetadata(interactionController, "interaction");
-        } else if (Interactor.class.isAssignableFrom(iaClass)) {
-            InteractorController interactorController = (InteractorController) getSpringContext().getBean("interactorController");
-            interactorController.setInteractor((Interactor)intactObject);
-            return new CurateObjectMetadata(interactorController, "interactor");
-        } else if (Component.class.isAssignableFrom(iaClass)) {
-            ParticipantController participantController = (ParticipantController) getSpringContext().getBean("participantController");
-            participantController.setParticipant((Component) intactObject);
-            return new CurateObjectMetadata(participantController, "participant");
-        } else if (Feature.class.isAssignableFrom(iaClass)) {
-            FeatureController featureController = (FeatureController) getSpringContext().getBean("featureController");
-            featureController.setFeature((Feature) intactObject);
-            return new CurateObjectMetadata(featureController, "feature");
-        } else if (CvObject.class.isAssignableFrom(iaClass)) {
-            CvObjectController cvObjectController = (CvObjectController) getSpringContext().getBean("cvObjectController");
-            cvObjectController.setCvObject((CvObject) intactObject);
-            return new CurateObjectMetadata(cvObjectController, "cvobject");
-        } else if (BioSource.class.isAssignableFrom(iaClass)) {
-            BioSourceController bioSourceController = (BioSourceController) getSpringContext().getBean("bioSourceController");
-            bioSourceController.setBioSource((BioSource) intactObject);
-            return new CurateObjectMetadata(bioSourceController, "organism");
-        } else if (Institution.class.isAssignableFrom(iaClass)) {
-            InstitutionController institutionController = (InstitutionController) getSpringContext().getBean("institutionController");
-            institutionController.setInstitution((Institution) intactObject);
-            return new CurateObjectMetadata(institutionController, "institution");
-        } else {
-            throw new IllegalArgumentException("No view defined for object with type: "+iaClass);
+            interactionController.setInteraction((IntactInteractionEvidence)intactObject);
+            CurateObjectMetadata meta = new CurateObjectMetadata(interactionController, "interaction");
+
+            InteractionEvidence inter = (InteractionEvidence)intactObject;
+            if (inter.getExperiment() instanceof IntactExperiment){
+                IntactExperiment parent = (IntactExperiment)inter.getExperiment();
+                if (parent.getAc() != null){
+                    meta.getParents().add(parent.getAc());
+                }
+                if (parent.getPublication() instanceof IntactPublication){
+                    IntactPublication parent2 = (IntactPublication)parent.getPublication();
+                    if (parent2.getAc() != null){
+                        meta.getParents().add(parent2.getAc());
+                    }
+                }
+            }
+            return meta;
         }
-    }
+        else if (IntactComplex.class.isAssignableFrom(iaClass)) {
+            return new CurateObjectMetadata((ComplexController) getSpringContext().getBean("complexController"), "complex");
+        }
+        else if (IntactParticipantEvidence.class.isAssignableFrom(iaClass)) {
+            ParticipantController participantController = (ParticipantController) getSpringContext().getBean("participantController");
+            participantController.setParticipant((IntactParticipantEvidence) intactObject);
+            CurateObjectMetadata meta = new CurateObjectMetadata(participantController, "participant");
 
-    public CurateJamiMetadata getJamiMetadata(IntactPrimaryObject intactObject) {
-        Class<?> iaClass = intactObject.getClass();
-
-        if (Complex.class.isAssignableFrom(iaClass)) {
-            return new CurateJamiMetadata("complex",
-                    (ComplexController) getSpringContext().getBean("complexController"));
-        } else if (ModelledParticipant.class.isAssignableFrom(iaClass)) {
-            CurateJamiMetadata meta = new CurateJamiMetadata("cparticipant",
-                    (ModelledParticipantController) getSpringContext().getBean("modelledParticipantController"));
+            ParticipantEvidence participant = (ParticipantEvidence)intactObject;
+            if (participant.getInteraction() instanceof IntactInteractionEvidence){
+                IntactInteractionEvidence inter = (IntactInteractionEvidence)participant.getInteraction();
+                if (inter.getAc() != null){
+                    meta.getParents().add(inter.getAc());
+                }
+                if (inter.getExperiment() instanceof IntactExperiment){
+                    IntactExperiment parent = (IntactExperiment)inter.getExperiment();
+                    if (parent.getAc() != null){
+                        meta.getParents().add(parent.getAc());
+                    }
+                    if (parent.getPublication() instanceof IntactPublication){
+                        IntactPublication parent2 = (IntactPublication)parent.getPublication();
+                        if (parent2.getAc() != null){
+                            meta.getParents().add(parent2.getAc());
+                        }
+                    }
+                }
+            }
+            return meta;
+        }
+        else if (IntactModelledParticipant.class.isAssignableFrom(iaClass)) {
+            CurateObjectMetadata meta = new CurateObjectMetadata((ModelledParticipantController) getSpringContext().getBean("modelledParticipantController"),
+                    "cparticipant");
             ModelledParticipant part = (ModelledParticipant)intactObject;
             if (part.getInteraction() instanceof IntactComplex){
                 IntactComplex parent = (IntactComplex)part.getInteraction();
@@ -252,9 +180,8 @@ public class CurateController extends JpaAwareController {
                 }
             }
             return meta;
-        } else if (ModelledFeature.class.isAssignableFrom(iaClass)) {
-            CurateJamiMetadata meta = new CurateJamiMetadata("cfeature",
-                    (ModelledFeatureController) getSpringContext().getBean("modelledFeatureController"));
+        } else if (IntactModelledFeature.class.isAssignableFrom(iaClass)) {
+            CurateObjectMetadata meta = new CurateObjectMetadata((ModelledFeatureController) getSpringContext().getBean("modelledFeatureController"), "cfeature");
             ModelledFeature feat = (ModelledFeature)intactObject;
             if (feat.getParticipant() instanceof IntactModelledParticipant){
                 IntactModelledParticipant part = (IntactModelledParticipant)feat.getParticipant();
@@ -268,6 +195,61 @@ public class CurateController extends JpaAwareController {
                     }
                 }
             }
+            return meta;
+        } else if (IntactFeatureEvidence.class.isAssignableFrom(iaClass)) {
+            FeatureController featureController = (FeatureController) getSpringContext().getBean("featureController");
+            featureController.setFeature((IntactFeatureEvidence) intactObject);
+            CurateObjectMetadata meta = new CurateObjectMetadata(featureController, "feature");
+
+            FeatureEvidence feature = (FeatureEvidence)intactObject;
+            if (feature.getParticipant() instanceof IntactParticipantEvidence){
+                IntactParticipantEvidence participant = (IntactParticipantEvidence)intactObject;
+                if (participant.getAc() != null){
+                    meta.getParents().add(participant.getAc());
+                }
+                if (participant.getInteraction() instanceof IntactInteractionEvidence){
+                    IntactInteractionEvidence inter = (IntactInteractionEvidence)participant.getInteraction();
+                    if (inter.getAc() != null){
+                        meta.getParents().add(inter.getAc());
+                    }
+                    if (inter.getExperiment() instanceof IntactExperiment){
+                        IntactExperiment parent = (IntactExperiment)inter.getExperiment();
+                        if (parent.getAc() != null){
+                            meta.getParents().add(parent.getAc());
+                        }
+                        if (parent.getPublication() instanceof IntactPublication){
+                            IntactPublication parent2 = (IntactPublication)parent.getPublication();
+                            if (parent2.getAc() != null){
+                                meta.getParents().add(parent2.getAc());
+                            }
+                        }
+                    }
+                }
+            }
+            return meta;
+        } else if (IntactInteractor.class.isAssignableFrom(iaClass)) {
+            InteractorController interactorController = (InteractorController) getSpringContext().getBean("interactorController");
+            interactorController.setInteractor((IntactInteractor) intactObject);
+            CurateObjectMetadata meta = new CurateObjectMetadata(interactorController, "interactor");
+
+            return meta;
+        } else if (IntactCvTerm.class.isAssignableFrom(iaClass)) {
+            CvObjectController cvObjectController = (CvObjectController) getSpringContext().getBean("cvObjectController");
+            cvObjectController.setCvObject((IntactCvTerm) intactObject);
+            CurateObjectMetadata meta = new CurateObjectMetadata(cvObjectController, "cvobject");
+
+            return meta;
+        } else if (IntactOrganism.class.isAssignableFrom(iaClass)) {
+            BioSourceController bioSourceController = (BioSourceController) getSpringContext().getBean("bioSourceController");
+            bioSourceController.setBioSource((IntactOrganism) intactObject);
+            CurateObjectMetadata meta = new CurateObjectMetadata(bioSourceController, "organism");
+
+            return meta;
+        } else if (IntactSource.class.isAssignableFrom(iaClass)) {
+            InstitutionController institutionController = (InstitutionController) getSpringContext().getBean("institutionController");
+            institutionController.setInstitution((IntactSource) intactObject);
+            CurateObjectMetadata meta = new CurateObjectMetadata(institutionController, "institution");
+
             return meta;
         } else {
             throw new IllegalArgumentException("No view defined for object with type: "+iaClass);
@@ -283,54 +265,13 @@ public class CurateController extends JpaAwareController {
 
         acToOpen = acToOpen.trim();
 
-        IntactPrimaryObject primary = getJamiEntityManager().find(IntactComplex.class, acToOpen);
-        if (primary == null){
-            primary = getJamiEntityManager().find(IntactModelledParticipant.class, acToOpen);
-            if (primary == null){
-                primary = getJamiEntityManager().find(IntactModelledFeature.class, acToOpen);
-
-                if (primary == null){
-                    try {
-                        Class<? extends AnnotatedObject> aoClass = IntactCore.classForAc(getIntactContext(), acToOpen);
-
-                        if (aoClass == null) {
-                            addErrorMessage("Illegal AC", "No annotated object found with this AC: "+acToOpen);
-                            FacesContext.getCurrentInstance().renderResponse();
-                        }
-
-                        AnnotatedObject ao = getDaoFactory().getAnnotatedObjectDao(aoClass).getByAc(acToOpen);
-
-                        if ( ao == null ) {
-                            addErrorMessage( "AC not found", "There is no IntAct object with ac '" + acToOpen + "'" );
-                            return "";
-                        } else {
-                            return edit(ao);
-                        }
-                    } catch (IllegalArgumentException e){
-                        addErrorMessage( "AC not found", "There is no IntAct object with ac '" + acToOpen + "'" );
-                        return "";
-                    }
-                }
-                else{
-                    return editJami(primary);
-                }
-            }
-            else{
-                return editJami(primary);
-            }
-        }
-        else{
-            return editJami(primary);
-        }
-    }
-
-    public boolean isAnnotatedObject(Object obj) {
-        return (obj instanceof AnnotatedObject) || (obj instanceof IntactPrimaryObject);
+        return editByAc(acToOpen);
     }
 
     public class CurateObjectMetadata {
         private String slug;
         private AnnotatedObjectController annotatedObjectController;
+        private Collection<String> parents = new ArrayList<String>();
 
         private CurateObjectMetadata(AnnotatedObjectController annotatedObjectController, String slug) {
             this.annotatedObjectController = annotatedObjectController;
@@ -341,31 +282,12 @@ public class CurateController extends JpaAwareController {
             return slug;
         }
 
-        public AnnotatedObjectController getAnnotatedObjectController() {
-            return annotatedObjectController;
-        }
-    }
-
-    public class CurateJamiMetadata {
-        private String slug;
-        private Collection<String> parents = new ArrayList<String>();
-        private AnnotatedObjectController objController;
-
-        private CurateJamiMetadata(String slug, AnnotatedObjectController objController) {
-            this.slug = slug;
-            this.objController = objController;
-        }
-
-        public String getSlug() {
-            return slug;
-        }
-
         public Collection<String> getParents() {
             return parents;
         }
 
-        public AnnotatedObjectController getObjController() {
-            return objController;
+        public AnnotatedObjectController getAnnotatedObjectController() {
+            return annotatedObjectController;
         }
     }
 
@@ -383,5 +305,12 @@ public class CurateController extends JpaAwareController {
 
     public void setAcToOpen(String acToOpen) {
         this.acToOpen = acToOpen;
+    }
+
+    public EditorObjectService getEditorObjectService() {
+        if (this.editorObjectService == null){
+            this.editorObjectService = ApplicationContextProvider.getBean("editorObjectService");
+        }
+        return editorObjectService;
     }
 }

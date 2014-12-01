@@ -76,7 +76,7 @@
 
                 <ui:repeat value="#{featureWrapper.linkedFeatures}" var="linked" varStatus="status">
                     <h:panelGroup rendered="#{linked.ac != null}">
-                        <p:commandLink onclick="load_feature.show()" action="#{curateController.editJami(linked)}"
+                        <p:commandLink onclick="load_feature.show()" action="#{curateController.edit(linked)}"
                                        style="#{linked.ac == null? 'color:blue' :''}"
                                        value="#{linked.shortName}" ajax="false"/>
                     </h:panelGroup>
