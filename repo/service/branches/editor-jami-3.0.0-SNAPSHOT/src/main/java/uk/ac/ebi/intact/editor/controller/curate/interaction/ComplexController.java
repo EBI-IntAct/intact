@@ -36,8 +36,8 @@ import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
 import uk.ac.ebi.intact.editor.controller.curate.PersistenceController;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedJamiChange;
-import uk.ac.ebi.intact.editor.controller.curate.cloner.ComplexJamiCloner;
-import uk.ac.ebi.intact.editor.controller.curate.cloner.ParticipantJamiCloner;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.ComplexCloner;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.ModelledParticipantCloner;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.dao.CvTermDao;
 import uk.ac.ebi.intact.jami.lifecycle.ComplexBCLifecycleEventListener;
@@ -188,7 +188,7 @@ public class ComplexController extends AnnotatedObjectController {
     @Override
     protected IntactComplex cloneAnnotatedObject(IntactPrimaryObject ao) {
         // to be overrided
-        IntactComplex complex = (IntactComplex)ComplexJamiCloner.cloneComplex((IntactComplex) ao);
+        IntactComplex complex = (IntactComplex) ComplexCloner.cloneComplex((IntactComplex) ao);
         getLifecycleManager().getStartStatus().create(complex, "Created in Editor",
                 ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
 
@@ -399,7 +399,7 @@ public class ComplexController extends AnnotatedObjectController {
     public void cloneParticipant(ModelledParticipantWrapper participantWrapper) {
         IntactModelledParticipant participant = getJamiEntityManager().merge(participantWrapper.getParticipant());
 
-        IntactModelledParticipant clone = (IntactModelledParticipant)ParticipantJamiCloner.cloneParticipant(participant);
+        IntactModelledParticipant clone = (IntactModelledParticipant) ModelledParticipantCloner.cloneParticipant(participant);
         addParticipant(clone);
         getJamiEntityManager().detach(participant);
     }
@@ -1327,7 +1327,7 @@ public class ComplexController extends AnnotatedObjectController {
         // the interaction evidence is loaded with jami
         if (ev != null){
             try {
-                IntactComplex complex = (IntactComplex)ComplexJamiCloner.cloneInteraction(ev);
+                IntactComplex complex = (IntactComplex) ComplexCloner.cloneInteraction(ev);
                 setComplex(complex);
             } catch (SynchronizerException e) {
                 // clear cache
@@ -1345,7 +1345,7 @@ public class ComplexController extends AnnotatedObjectController {
         }
         // the interaction evidence does not exist as it must be a complex
         else {
-            setComplex((IntactComplex)ComplexJamiCloner.cloneComplex(getIntactDao().getComplexDao().getByAc(interactionEvidence.getAc())));
+            setComplex((IntactComplex) ComplexCloner.cloneComplex(getIntactDao().getComplexDao().getByAc(interactionEvidence.getAc())));
         }
 
         this.complex.setInteractorType(type);
