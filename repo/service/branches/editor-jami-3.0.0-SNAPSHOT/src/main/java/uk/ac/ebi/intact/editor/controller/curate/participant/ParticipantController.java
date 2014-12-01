@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.persistence.dao.IntactObjectDao;
 import uk.ac.ebi.intact.core.persister.IntactCore;
 import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
-import uk.ac.ebi.intact.editor.controller.curate.ParameterizableObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentController;
