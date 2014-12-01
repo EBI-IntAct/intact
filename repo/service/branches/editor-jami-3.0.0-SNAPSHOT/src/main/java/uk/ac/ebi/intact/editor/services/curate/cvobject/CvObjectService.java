@@ -115,9 +115,6 @@ public class CvObjectService extends AbstractEditorService {
     private IntactCvTerm defaultExperimentalRole;
     private IntactCvTerm defaultBiologicalRole;
 
-    private Multimap<String, IntactCvTerm> cvObjectsByUsedInClass;
-    private Multimap<String, IntactCvTerm> cvObjectsByClass;
-
     public static final String USED_IN_CLASS = "used-in-class";
     public static final String OBSOLETE = "obsolete";
     public static final String OBSOLETE_MI_REF = "MI:0431";
@@ -162,8 +159,6 @@ public class CvObjectService extends AbstractEditorService {
         this.evidenceTypeSelectItems=null;
         this.defaultExperimentalRole=null;
         this.defaultBiologicalRole=null;
-        this.cvObjectsByUsedInClass.clear();
-        this.cvObjectsByClass.clear();
         isInitialised=false;
     }
 
@@ -185,8 +180,8 @@ public class CvObjectService extends AbstractEditorService {
         allCvObjectMap = new HashMap<CvKey, IntactCvTerm>( allCvObjects.size() * 2 );
         acCvObjectMap = new HashMap<String, IntactCvTerm>( allCvObjects.size() );
 
-        cvObjectsByUsedInClass = HashMultimap.create();
-        cvObjectsByClass = HashMultimap.create();
+        HashMultimap<String, IntactCvTerm> cvObjectsByUsedInClass = HashMultimap.create();
+        HashMultimap<String, IntactCvTerm> cvObjectsByClass = HashMultimap.create();
 
         for ( IntactCvTerm cvObject : allCvObjects ) {
             acCvObjectMap.put( cvObject.getAc(), cvObject );
@@ -651,14 +646,6 @@ public class CvObjectService extends AbstractEditorService {
         return cellTypeSelectItems;
     }
 
-    public Collection<IntactCvTerm> getCvObjectsByClass(String clazz) {
-        return cvObjectsByClass.get(clazz);
-    }
-
-    public Collection<IntactCvTerm> getCvTopicsByUsedInClass(String className) {
-        return cvObjectsByUsedInClass.get(className);
-    }
-
     public List<SelectItem> getParameterTypeSelectItems() {
         return parameterTypeSelectItems;
     }
@@ -699,17 +686,6 @@ public class CvObjectService extends AbstractEditorService {
             }
 
             return o1.getShortName().compareTo(o2.getShortName());
-        }
-    }
-
-    protected void loadCollectionCv(Collection<IntactCvTerm> cvs, List<SelectItem> items, boolean ignoreHidden) {
-        List<String> list = new ArrayList<String>(cvs.size());
-        for (IntactCvTerm term : cvs){
-            SelectItem item = createSelectItem(term, ignoreHidden);
-            if (item != null){
-                list.add(term.getAc());
-                items.add(item);
-            }
         }
     }
 

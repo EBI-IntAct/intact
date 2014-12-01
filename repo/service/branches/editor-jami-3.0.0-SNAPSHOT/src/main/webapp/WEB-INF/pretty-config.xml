@@ -110,11 +110,6 @@
     <!--<view-id value="/curate/curate.xhtml"/>-->
     <!--</url-mapping>-->
 
-    <!--<url-mapping id="bulk">-->
-    <!--<pattern value="/bulk/"/>-->
-    <!--<view-id value="/bulk/bulk_default.xhtml"/>-->
-    <!--</url-mapping>-->
-
     <!--<url-mapping id="reviewer">-->
     <!--<pattern value="/reviewer/dashboard/"/>-->
     <!--<view-id value="/reviewer/reviewerDashboard.xhtml"/>-->
