@@ -16,73 +16,68 @@
 package uk.ac.ebi.intact.editor.controller.curate.cloner;
 
 import psidev.psi.mi.jami.model.*;
-import uk.ac.ebi.intact.editor.controller.admin.UserManagerController;
-import uk.ac.ebi.intact.jami.ApplicationContextProvider;
+import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.model.extension.*;
 
-import java.util.Date;
-
 /**
- * Editor specific cloning routine for complex features.
+ * Editor specific cloning routine for feature evidences.
  *
  * @author Prem Anand (prem@ebi.ac.uk)
  * @version $Id: InteractionIntactCloner.java 14783 2010-07-29 12:52:28Z brunoaranda $
  * @since 2.0.1-SNAPSHOT
  */
-public class FeatureJamiCloner {
+public class FeatureEvidenceCloner extends EditorCloner{
 
 
-    public static ModelledFeature cloneFeature(Feature feature) {
-        IntactModelledFeature clone = new IntactModelledFeature();
-        clone.setCreated(new Date());
-        clone.setUpdated(clone.getCreated());
-        // set current user
-        UserManagerController userController = ApplicationContextProvider.getBean("userManagerController");
-        clone.setCreator(userController.getCurrentUser().getLogin());
-        clone.setUpdator(userController.getCurrentUser().getLogin());
+    public static FeatureEvidence cloneFeature(FeatureEvidence feature, IntactDao dao) {
+        IntactFeatureEvidence clone = new IntactFeatureEvidence();
+
+        initAuditProperties(clone, dao);
+
         clone.setShortName(feature.getShortName());
         clone.setFullName(feature.getFullName());
         clone.setRole(feature.getRole());
         clone.setType(feature.getType());
-        if (feature.getParticipant() instanceof ModelledParticipant){
-            clone.setParticipant((ModelledParticipant)feature.getParticipant());
+
+        clone.getDetectionMethods().addAll(feature.getDetectionMethods());
+
+        if (feature.getParticipant() instanceof ParticipantEvidence){
+            clone.setParticipant(feature.getParticipant());
         }
 
         for (Object obj : feature.getAliases()){
             Alias alias = (Alias)obj;
-            clone.getAliases().add(new ModelledFeatureAlias(alias.getType(), alias.getName()));
+            clone.getAliases().add(new FeatureEvidenceAlias(alias.getType(), alias.getName()));
         }
 
         for (Object obj: feature.getIdentifiers()){
             Xref ref = (Xref)obj;
-            clone.getIdentifiers().add(new ModelledFeatureXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
+            clone.getIdentifiers().add(new FeatureEvidenceXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
         }
 
         for (Object obj : feature.getXrefs()){
             Xref ref = (Xref)obj;
-            clone.getXrefs().add(new ModelledFeatureXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
+            clone.getXrefs().add(new FeatureEvidenceXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
         }
 
         for (Object obj : feature.getAnnotations()){
             Annotation annotation = (Annotation)obj;
-            clone.getAnnotations().add(new ModelledFeatureAnnotation(annotation.getTopic(), annotation.getValue()));
+            clone.getAnnotations().add(new FeatureEvidenceAnnotation(annotation.getTopic(), annotation.getValue()));
         }
 
         for (Object obj : feature.getRanges()){
             Range range = (Range)obj;
             ModelledRange r = new ModelledRange(range.getStart(), range.getEnd(), range.isLink());
-            r.setResultingSequence(new ModelledResultingSequence(range.getResultingSequence().getOriginalSequence(), range.getResultingSequence().getNewSequence()));
+            r.setResultingSequence(new ExperimentalResultingSequence(range.getResultingSequence().getOriginalSequence(),
+                    range.getResultingSequence().getNewSequence()));
 
             for (Object obj2 : range.getResultingSequence().getXrefs()){
                 Xref ref = (Xref)obj2;
-                r.getResultingSequence().getXrefs().add(new ModelledResultingSequenceXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
+                r.getResultingSequence().getXrefs().add(new ExperimentalResultingSequenceXref(ref.getDatabase(), ref.getId(),
+                        ref.getVersion(), ref.getQualifier()));
             }
 
             clone.getRanges().add(r);
-        }
-
-        if (feature.getParticipant() instanceof ModelledParticipant){
-            clone.setParticipant((ModelledParticipant)feature.getParticipant());
         }
 
         // don't need to add it to the feature component because it is already done by the cloner

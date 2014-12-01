@@ -33,7 +33,7 @@ import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
 import uk.ac.ebi.intact.editor.controller.curate.PersistenceController;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedJamiChange;
-import uk.ac.ebi.intact.editor.controller.curate.cloner.ParticipantJamiCloner;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.ModelledParticipantCloner;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.*;
 import uk.ac.ebi.intact.editor.util.SelectableCollectionDataModel;
 import uk.ac.ebi.intact.jami.context.UserContext;
@@ -240,7 +240,7 @@ public class ModelledParticipantController extends AnnotatedObjectController {
     @Override
     protected IntactModelledParticipant cloneAnnotatedObject(IntactPrimaryObject ao) {
         // to be overrided
-        return (IntactModelledParticipant) ParticipantJamiCloner.cloneParticipant((IntactModelledParticipant) ao);
+        return (IntactModelledParticipant) ModelledParticipantCloner.cloneParticipant((IntactModelledParticipant) ao);
     }
 
     public String newParticipant(IntactComplex interaction) {

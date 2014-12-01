@@ -16,31 +16,26 @@
 package uk.ac.ebi.intact.editor.controller.curate.cloner;
 
 import psidev.psi.mi.jami.model.*;
-import uk.ac.ebi.intact.editor.controller.admin.UserManagerController;
-import uk.ac.ebi.intact.jami.ApplicationContextProvider;
+import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.model.extension.*;
 
-import java.util.Date;
-
 /**
- * Editor specific cloning routine for biological complexes.
+ * Editor specific cloning routine for biological complexes participants.
  *
  * @author Prem Anand (prem@ebi.ac.uk)
  * @version $Id: InteractionIntactCloner.java 14783 2010-07-29 12:52:28Z brunoaranda $
  * @since 2.0.1-SNAPSHOT
  */
-public class ParticipantJamiCloner {
+public class ModelledParticipantCloner extends EditorCloner{
 
 
-    public static ModelledParticipant cloneParticipant(Participant participant) {
+    public static ModelledParticipant cloneParticipant(Participant participant, IntactDao dao) {
         IntactModelledParticipant clone = new IntactModelledParticipant(participant.getInteractor());
-        clone.setCreated(new Date());
-        clone.setUpdated(clone.getCreated());
         // set current user
-        UserManagerController userController = ApplicationContextProvider.getBean("userManagerController");
-        clone.setCreator(userController.getCurrentUser().getLogin());
-        clone.setUpdator(userController.getCurrentUser().getLogin());
+        initAuditProperties(clone, dao);
+
         clone.setBiologicalRole(participant.getBiologicalRole());
+
         if (participant.getInteraction() instanceof Complex){
             clone.setInteraction((Complex)participant.getInteraction());
         }
@@ -63,12 +58,8 @@ public class ParticipantJamiCloner {
 
         for (Object obj : participant.getFeatures()){
             Feature feature = (Feature)obj;
-            ModelledFeature r = FeatureJamiCloner.cloneFeature(feature);
+            ModelledFeature r = ModelledFeatureCloner.cloneFeature(feature, dao);
             clone.addFeature(r);
-        }
-
-        if (participant.getInteraction() instanceof ModelledInteraction){
-            clone.setInteraction((ModelledInteraction)participant.getInteraction());
         }
 
         // don't need to add it to the feature component because it is already done by the cloner

@@ -30,8 +30,7 @@ import psidev.psi.mi.jami.utils.RangeUtils;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
 import uk.ac.ebi.intact.editor.controller.curate.PersistenceController;
-import uk.ac.ebi.intact.editor.controller.curate.cloner.FeatureIntactCloner;
-import uk.ac.ebi.intact.editor.controller.curate.cloner.FeatureJamiCloner;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.ModelledFeatureCloner;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.ComplexController;
 import uk.ac.ebi.intact.editor.controller.curate.participant.ModelledParticipantController;
 import uk.ac.ebi.intact.jami.context.UserContext;
@@ -115,7 +114,7 @@ public class ModelledFeatureController extends AnnotatedObjectController {
     @Override
     protected IntactModelledFeature cloneAnnotatedObject(IntactPrimaryObject ao) {
         // to be overrided
-        return (IntactModelledFeature) FeatureJamiCloner.cloneFeature((IntactModelledFeature)ao);
+        return (IntactModelledFeature) ModelledFeatureCloner.cloneFeature((IntactModelledFeature) ao);
     }
 
     @Override
