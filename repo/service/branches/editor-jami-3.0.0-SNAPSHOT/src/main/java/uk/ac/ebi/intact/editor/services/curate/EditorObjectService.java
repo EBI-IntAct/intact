@@ -17,6 +17,8 @@ package uk.ac.ebi.intact.editor.services.curate;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +32,7 @@ import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.*;
+import uk.ac.ebi.intact.jami.model.user.User;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
@@ -45,6 +48,7 @@ import java.util.Collections;
  */
 
 @Service
+@Scope( BeanDefinition.SCOPE_PROTOTYPE )
 public class EditorObjectService extends AbstractEditorService {
 
     private static final Log log = LogFactory.getLog( EditorObjectService.class );
@@ -254,5 +258,9 @@ public class EditorObjectService extends AbstractEditorService {
         else{
             return (T)primary;
         }
+    }
+
+    public void setUser(User user){
+        getIntactDao().getUserContext().setUser(user);
     }
 }
