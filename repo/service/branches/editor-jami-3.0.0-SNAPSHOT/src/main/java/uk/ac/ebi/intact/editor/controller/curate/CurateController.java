@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.intact.editor.controller.BaseController;
+import uk.ac.ebi.intact.editor.controller.UserSessionController;
 import uk.ac.ebi.intact.editor.controller.curate.cvobject.CvObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentController;
 import uk.ac.ebi.intact.editor.controller.curate.feature.FeatureController;
@@ -22,6 +23,7 @@ import uk.ac.ebi.intact.editor.services.curate.EditorObjectService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.*;
+import uk.ac.ebi.intact.jami.model.user.Role;
 
 import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
@@ -309,5 +311,21 @@ public class CurateController extends BaseController {
             this.editorObjectService = ApplicationContextProvider.getBean("editorObjectService");
         }
         return editorObjectService;
+    }
+
+    public boolean isComplexCurationEnabled(){
+        UserSessionController userSessionController = ApplicationContextProvider.getBean("userSessionController");
+        if (userSessionController.hasRole(Role.ROLE_COMPLEX_CURATOR) || userSessionController.hasRole(Role.ROLE_COMPLEX_REVIEWER) ){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isPublicationCurationEnabled(){
+        UserSessionController userSessionController = ApplicationContextProvider.getBean("userSessionController");
+        if (userSessionController.hasRole(Role.ROLE_CURATOR) || userSessionController.hasRole(Role.ROLE_REVIEWER) ){
+            return true;
+        }
+        return false;
     }
 }

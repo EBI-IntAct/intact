@@ -126,9 +126,6 @@ public class SearchQueryService extends JpaAwareController {
         if (userSessionController.hasRole("CURATOR") || userSessionController.hasRole("REVIEWER") ){
             isPublicationSearchEnabled = true;
         }
-        if (userSessionController.hasRole("COMPLEX_CURATOR") || userSessionController.hasRole("COMPLEX_REVIEWER") ){
-            isComplexSearchEnabled = true;
-        }
 
         log.info( "Searching for '" + query + "'..." );
 
@@ -243,6 +240,10 @@ public class SearchQueryService extends JpaAwareController {
 
     @Transactional( value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public String doJamiSearch() {
+        UserSessionController userSessionController = ApplicationContextProvider.getBean("userSessionController");
+        if (userSessionController.hasRole("COMPLEX_CURATOR") || userSessionController.hasRole("COMPLEX_REVIEWER") ){
+            isComplexSearchEnabled = true;
+        }
 
         log.info( "Searching for '" + query + "'..." );
 
