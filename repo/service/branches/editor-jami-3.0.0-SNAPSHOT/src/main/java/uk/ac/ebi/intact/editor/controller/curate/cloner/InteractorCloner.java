@@ -17,7 +17,7 @@ package uk.ac.ebi.intact.editor.controller.curate.cloner;
 
 import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
-import uk.ac.ebi.intact.jami.model.audit.Auditable;
+import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
 import uk.ac.ebi.intact.jami.model.extension.InteractorAlias;
 import uk.ac.ebi.intact.jami.model.extension.InteractorAnnotation;
 import uk.ac.ebi.intact.jami.model.extension.InteractorXref;
@@ -31,17 +31,15 @@ import java.lang.reflect.InvocationTargetException;
  * @version $Id: InteractionIntactCloner.java 14783 2010-07-29 12:52:28Z brunoaranda $
  * @since 2.0.1-SNAPSHOT
  */
-public class InteractorCloner extends EditorCloner{
+public class InteractorCloner extends AbstractEditorCloner<Interactor, IntactInteractor> {
 
 
-    public static Interactor cloneInteractor(Interactor interactor, IntactDao dao) {
-        Interactor clone = null;
+    public IntactInteractor clone(Interactor interactor, IntactDao dao) {
+        IntactInteractor clone = null;
         try {
-            clone = interactor.getClass().getConstructor(String.class).newInstance(interactor.getShortName());
+            clone = (IntactInteractor)interactor.getClass().getConstructor(String.class).newInstance(interactor.getShortName());
 
-            if (clone instanceof Auditable){
-                initAuditProperties((Auditable)clone, dao);
-            }
+            initAuditProperties(clone, dao);
 
             clone.setShortName(interactor.getShortName());
             clone.setFullName(interactor.getFullName());

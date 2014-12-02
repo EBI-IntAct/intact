@@ -26,10 +26,10 @@ import uk.ac.ebi.intact.jami.model.extension.*;
  * @version $Id: InteractionIntactCloner.java 14783 2010-07-29 12:52:28Z brunoaranda $
  * @since 2.0.1-SNAPSHOT
  */
-public class ModelledFeatureCloner extends EditorCloner{
+public class ModelledFeatureCloner extends AbstractEditorCloner<Feature, IntactModelledFeature> {
 
 
-    public static ModelledFeature cloneFeature(Feature feature, IntactDao dao) {
+    public IntactModelledFeature clone(Feature feature, IntactDao dao) {
         IntactModelledFeature clone = new IntactModelledFeature();
 
         initAuditProperties(clone, dao);

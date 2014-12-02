@@ -628,7 +628,7 @@ public class ModelledFeatureController extends AnnotatedObjectController {
     }
 
     @Override
-    public String getJamiObjectName() {
+    public String getObjectName() {
         return this.feature.getShortName();
     }
 
@@ -711,7 +711,7 @@ public class ModelledFeatureController extends AnnotatedObjectController {
     }
 
     @Override
-    protected boolean isParentJamiObjectNotSaved() {
+    protected boolean isParentObjectNotSaved() {
         if (this.feature != null){
             if (this.feature.getParticipant() instanceof IntactModelledParticipant
                     && ((IntactModelledParticipant)this.feature.getParticipant()).getAc() == null){

@@ -1392,7 +1392,7 @@ public class ComplexController extends AnnotatedObjectController {
     }
 
     @Override
-    public String getJamiObjectName() {
+    public String getObjectName() {
         return getName();
     }
 

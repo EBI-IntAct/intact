@@ -26,10 +26,11 @@ import uk.ac.ebi.intact.jami.model.extension.*;
  * @version $Id: InteractionIntactCloner.java 14783 2010-07-29 12:52:28Z brunoaranda $
  * @since 2.0.1-SNAPSHOT
  */
-public class ModelledParticipantCloner extends EditorCloner{
+public class ModelledParticipantCloner extends AbstractEditorCloner<Participant, IntactModelledParticipant> {
 
+    private EditorCloner<Feature, IntactModelledFeature> featureCloner;
 
-    public static ModelledParticipant cloneParticipant(Participant participant, IntactDao dao) {
+    public IntactModelledParticipant clone(Participant participant, IntactDao dao) {
         IntactModelledParticipant clone = new IntactModelledParticipant(participant.getInteractor());
         // set current user
         initAuditProperties(clone, dao);
@@ -58,12 +59,23 @@ public class ModelledParticipantCloner extends EditorCloner{
 
         for (Object obj : participant.getFeatures()){
             Feature feature = (Feature)obj;
-            ModelledFeature r = ModelledFeatureCloner.cloneFeature(feature, dao);
+            ModelledFeature r = getFeatureCloner().clone(feature, dao);
             clone.addFeature(r);
         }
 
         // don't need to add it to the feature component because it is already done by the cloner
         return clone;
+    }
+
+    public EditorCloner<Feature, IntactModelledFeature> getFeatureCloner() {
+        if (this.featureCloner == null){
+            this.featureCloner = new ModelledFeatureCloner();
+        }
+        return featureCloner;
+    }
+
+    protected void setFeatureCloner(EditorCloner<Feature, IntactModelledFeature> featureCloner) {
+        this.featureCloner = featureCloner;
     }
 }
 
