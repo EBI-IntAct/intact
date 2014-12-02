@@ -123,7 +123,7 @@
                                actionListener="#{modelledParticipantController.markFeatureToDelete(featureWrapper.feature)}"
                                update=":editorForm:participantTabs:featuresPanel :editorForm:changesPanel :editorForm:messagesComponent :editorForm:unsavedChangesInfo" rendered="#{not changesController.isDeletedAc(featureWrapper.feature.ac)}"/>
                 <p:commandLink id="revertBtn" process="revertBtn" immediate="true" title="Revert" styleClass="ui-icon ui-icon-arrowreturnthick-1-w"
-                               actionListener="#{changesController.revertJami(featureWrapper.feature)}"
+                               actionListener="#{changesController.revert(featureWrapper.feature)}"
                                update=":editorForm:participantTabs:featuresPanel :editorForm:changesPanel :editorForm:messagesComponent :editorForm:unsavedChangesInfo" rendered="#{changesController.isDeletedAc(featureWrapper.feature.ac)}"/>
             </p:column>
         </p:dataTable>

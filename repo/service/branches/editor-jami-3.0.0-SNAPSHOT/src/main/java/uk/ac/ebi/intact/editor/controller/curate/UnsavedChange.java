@@ -15,7 +15,6 @@
  */
 package uk.ac.ebi.intact.editor.controller.curate;
 
-import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 
@@ -37,7 +36,6 @@ public class UnsavedChange {
     private IntactPrimaryObject parentObject;
     private String action;
     private Collection<String> acsToDeleteOn = new ArrayList<String>();
-    private IntactDao intactDao;
     private IntactDbSynchronizer dbSynchronizer;
     private String description;
 
@@ -48,18 +46,17 @@ public class UnsavedChange {
     private String scope;
 
     public UnsavedChange(IntactPrimaryObject unsavedObject, String action, String scope,
-                             IntactDbSynchronizer dbSynchronizer, IntactDao dao, String description) {
+                             IntactDbSynchronizer dbSynchronizer, String description) {
         this.unsavedObject = unsavedObject;
         this.action = action;
         this.scope = scope;
         this.dbSynchronizer = dbSynchronizer;
-        this.intactDao = dao;
         this.description = description;
     }
 
     public UnsavedChange(IntactPrimaryObject unsavedObject, String action, IntactPrimaryObject parentObject,
-                             String scope, IntactDbSynchronizer dbSynchronizer, IntactDao dao, String description) {
-        this(unsavedObject, action, scope, dbSynchronizer, dao, description);
+                             String scope, IntactDbSynchronizer dbSynchronizer,String description) {
+        this(unsavedObject, action, scope, dbSynchronizer, description);
         this.parentObject = parentObject;
         this.scope = scope;
     }
@@ -125,13 +122,5 @@ public class UnsavedChange {
 
     public void setDbSynchronizer(IntactDbSynchronizer dbSynchronizer) {
         this.dbSynchronizer = dbSynchronizer;
-    }
-
-    public IntactDao getIntactDao() {
-        return intactDao;
-    }
-
-    public void setIntactDao(IntactDao intactDao) {
-        this.intactDao = intactDao;
     }
 }
