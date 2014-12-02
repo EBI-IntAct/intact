@@ -36,6 +36,7 @@ import psidev.psi.mi.jami.utils.AliasUtils;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.editor.controller.BaseController;
+import uk.ac.ebi.intact.editor.controller.UserSessionController;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.services.curate.EditorObjectService;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
@@ -48,6 +49,7 @@ import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleEvent;
 import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleEventType;
 import uk.ac.ebi.intact.jami.model.lifecycle.Releasable;
+import uk.ac.ebi.intact.jami.model.user.Role;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
@@ -145,7 +147,15 @@ public abstract class AnnotatedObjectController extends BaseController implement
 
             addWarningMessage("This object is already being edited by: " + who, "Modifications may be lost or affect current work by the other curator");
         }
+
+        if (!getCvService().isInitialised()){
+            getCvService().loadData();
+        }
+
+        loadCautionMessages();
     }
+
+    protected abstract void loadCautionMessages();
 
     protected void generalComplexLoadChecks() {
 
@@ -1231,9 +1241,9 @@ public abstract class AnnotatedObjectController extends BaseController implement
 
     public abstract int getXrefsSize();
 
-    public abstract int getObjectAliasesSize();
+    public abstract int getAliasesSize();
 
-    public abstract int getObjectAnnotationsSize();
+    public abstract int getAnnotationsSize();
 
     public EditorObjectService getEditorService() {
         if (this.editorService == null){

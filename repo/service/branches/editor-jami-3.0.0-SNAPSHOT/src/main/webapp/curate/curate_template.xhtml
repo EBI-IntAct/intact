@@ -18,59 +18,9 @@
     </ui:include>
 </ui:define>
 
-<ui:define name="topTitle">
-    <h:panelGroup rendered="#{annotatedObjectController.annotatedObject != null}">
-        <h:panelGroup rendered="#{publicationController.publication != null}" styleClass="top-title">
-            <h:link outcome="/curate/publication" value="#{publicationController.firstAuthor} et al (#{publicationController.year})" rendered="#{publicationController.firstAuthor != null}"/>
-
-            <h:panelGroup rendered="#{publicationController.publication.publicationId != null}" styleClass="top-title-details">
-                (&#160;
-                <ot:separateConversationContext>
-                    <h:outputLink value="http://europepmc.org/abstract/MED/#{publicationController.publication.publicationId}"
-                                  target="_blank">
-                        <h:outputText style="font-weight: normal;" value="#{publicationController.publication.publicationId}"/>
-                        <span class="ui-icon ui-icon-extlink" style="display:inline-block; vertical-align: bottom"/>
-                    </h:outputLink>
-                </ot:separateConversationContext>
-                )
-            </h:panelGroup>
-        </h:panelGroup>
-
-        <br/>
-        <h:outputText styleClass="subTitle" value="#{publicationController.publication.status.shortLabel}"/>,
-        <h:outputText styleClass="subTitle-text" value=" owned by "
-                      rendered="#{publicationController.publication.currentOwner != null}"/>
-        <h:outputText styleClass="subTitle" value="#{publicationController.publication.currentOwner.login}"
-                      rendered="#{publicationController.publication.currentOwner != null}"/>
-        <h:outputText value="," rendered="#{publicationController.publication.currentReviewer != null}"/>
-        <h:outputText styleClass="subTitle-text" value=" reviewed by "
-                      rendered="#{publicationController.publication.currentReviewer != null}"/>
-        <h:outputText styleClass="subTitle" value="#{publicationController.publication.currentReviewer.login}"
-                      rendered="#{publicationController.publication.currentReviewer != null}"/>
-    </h:panelGroup>
-    <h:panelGroup rendered="#{annotatedObjectController.jamiObject != null}">
-        <h:panelGroup rendered="#{complexController.complex != null}" styleClass="top-title">
-            <h:link outcome="/curate/complex" value="#{complexController.name} (#{complexController.organism})" rendered="#{complexController.name != null}"/>
-        </h:panelGroup>
-
-        <br/>
-        <h:outputText styleClass="subTitle" value="#{complexController.complex.status}"/>,
-        <h:outputText styleClass="subTitle-text" value=" owned by "
-                      rendered="#{complexController.complex.currentOwner != null}"/>
-        <h:outputText styleClass="subTitle" value="#{complexController.complex.currentOwner.login}"
-                      rendered="#{complexController.complex.currentOwner != null}"/>
-        <h:outputText value="," rendered="#{complexController.complex.currentReviewer != null}"/>
-        <h:outputText styleClass="subTitle-text" value=" reviewed by "
-                      rendered="#{complexController.complex.currentReviewer != null}"/>
-        <h:outputText styleClass="subTitle" value="#{complexController.complex.currentReviewer.login}"
-                      rendered="#{complexController.complex.currentReviewer != null}"/>
-    </h:panelGroup>
-
-</ui:define>
-
 <ui:define name="actionsBar">
         <div class="ui-widget-content top-actions">
-            <h:panelGroup rendered="#{annotatedObjectController.annotatedObject != null or annotatedObjectController.jamiObject != null}">
+            <h:panelGroup rendered="#{annotatedObjectController.annotatedObject != null}">
             <ui:insert name="topActionsPanel"/>
 
                 <h:panelGroup id="topSavePanel" style="padding: 10px">
