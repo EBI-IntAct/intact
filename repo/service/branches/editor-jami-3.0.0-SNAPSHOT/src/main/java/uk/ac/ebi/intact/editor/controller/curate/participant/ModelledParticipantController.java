@@ -602,7 +602,7 @@ public class ModelledParticipantController extends AnnotatedObjectController {
     }
 
     @Override
-    public String getJamiObjectName() {
+    public String getObjectName() {
         return getInteractor();
     }
 
@@ -741,7 +741,7 @@ public class ModelledParticipantController extends AnnotatedObjectController {
     }
 
     @Override
-    protected boolean isParentJamiObjectNotSaved() {
+    protected boolean isParentObjectNotSaved() {
         if (this.participant != null){
             if (this.participant.getInteraction() instanceof IntactComplex
                     && ((IntactComplex)this.participant.getInteraction()).getAc() == null){

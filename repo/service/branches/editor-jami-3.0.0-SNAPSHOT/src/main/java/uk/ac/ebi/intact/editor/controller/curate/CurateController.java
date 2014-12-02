@@ -39,9 +39,6 @@ import java.util.Collection;
 @ConversationName( "general" )
 public class CurateController extends BaseController {
 
-    @Autowired
-    private ChangesController changesController;
-
     @Resource(name = "editorObjectService")
     private transient EditorObjectService editorObjectService;
 

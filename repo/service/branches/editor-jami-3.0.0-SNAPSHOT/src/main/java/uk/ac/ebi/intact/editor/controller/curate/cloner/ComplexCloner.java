@@ -39,9 +39,11 @@ import uk.ac.ebi.intact.jami.utils.IntactUtils;
  * @version $Id: InteractionIntactCloner.java 14783 2010-07-29 12:52:28Z brunoaranda $
  * @since 2.0.1-SNAPSHOT
  */
-public class ComplexCloner extends EditorCloner{
+public class ComplexCloner extends AbstractEditorCloner<Complex, IntactComplex> {
 
-    public static Complex cloneInteraction(InteractionEvidence evidence, IntactDao dao) throws SynchronizerException, FinderException, PersisterException {
+    private EditorCloner<Participant, IntactModelledParticipant> participantCloner;
+
+    public IntactComplex cloneFromEvidence(InteractionEvidence evidence, IntactDao dao) throws SynchronizerException, FinderException, PersisterException {
         IntactComplex clone = new IntactComplex(evidence.getShortName());
 
         initAuditProperties(clone, dao);
@@ -85,7 +87,6 @@ public class ComplexCloner extends EditorCloner{
 
         // get exp evidences
         if (!evidence.getIdentifiers().isEmpty()){
-            EditorCvTermService editorCvTermService = ApplicationContextProvider.getBean("editorCvTermService");
             IntactCvTerm expEvidence = cvService.findCvObject(IntactUtils.QUALIFIER_OBJCLASS, "exp-evidence");
             if (expEvidence == null){
                 expEvidence = new IntactCvTerm("exp-evidence");
@@ -110,7 +111,7 @@ public class ComplexCloner extends EditorCloner{
                     }
                 }
                 clone.getIdentifiers().add(new InteractorXref(db, ref.getId(), ref.getVersion(),
-                        editorCvTermService.findCvByAc(expEvidence.getAc())));
+                        cvService.findCvObjectByAc(expEvidence.getAc())));
             }
         }
 
@@ -133,7 +134,7 @@ public class ComplexCloner extends EditorCloner{
 
         for (Object obj : evidence.getParticipants()){
             Participant participant = (Participant)obj;
-            ModelledParticipant r = ModelledParticipantCloner.cloneParticipant(participant, dao);
+            ModelledParticipant r = getModelledParticipantCloner().clone(participant, dao);
             clone.addParticipant(r);
         }
 
@@ -148,7 +149,7 @@ public class ComplexCloner extends EditorCloner{
         return clone;
     }
 
-    public static Complex cloneComplex(Complex complex, IntactDao dao) {
+    public IntactComplex clone(Complex complex, IntactDao dao) {
         IntactComplex clone = new IntactComplex(complex.getShortName());
 
         initAuditProperties(clone, dao);
@@ -186,7 +187,7 @@ public class ComplexCloner extends EditorCloner{
 
         for (Object obj : complex.getParticipants()){
             Participant participant = (Participant)obj;
-            ModelledParticipant r = ModelledParticipantCloner.cloneParticipant(participant, dao);
+            ModelledParticipant r = getModelledParticipantCloner().clone(participant, dao);
             clone.addParticipant(r);
         }
 
@@ -199,6 +200,17 @@ public class ComplexCloner extends EditorCloner{
         }
 
         return clone;
+    }
+
+    public EditorCloner<Participant, IntactModelledParticipant> getModelledParticipantCloner(){
+         if (this.participantCloner == null){
+             this.participantCloner = new ModelledParticipantCloner();
+         }
+        return this.participantCloner;
+    }
+
+    protected void setParticipantCloner(EditorCloner<Participant, IntactModelledParticipant> participantCloner) {
+        this.participantCloner = participantCloner;
     }
 }
 

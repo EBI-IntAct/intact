@@ -27,9 +27,11 @@ import uk.ac.ebi.intact.jami.model.extension.*;
  * @version $Id: InteractionIntactCloner.java 14783 2010-07-29 12:52:28Z brunoaranda $
  * @since 2.0.1-SNAPSHOT
  */
-public class InteractionEvidenceCloner extends EditorCloner{
+public class InteractionEvidenceCloner extends AbstractEditorCloner<InteractionEvidence, IntactInteractionEvidence> {
 
-    public static InteractionEvidence cloneInteraction(InteractionEvidence evidence, IntactDao dao) {
+    private EditorCloner<ParticipantEvidence, IntactParticipantEvidence> participantCloner;
+
+    public IntactInteractionEvidence clone(InteractionEvidence evidence, IntactDao dao) {
         IntactInteractionEvidence clone = new IntactInteractionEvidence(evidence.getShortName());
 
         initAuditProperties(clone, dao);
@@ -57,7 +59,7 @@ public class InteractionEvidenceCloner extends EditorCloner{
         }
 
         for (ParticipantEvidence participant : evidence.getParticipants()){
-            ParticipantEvidence r = ParticipantEvidenceCloner.cloneParticipant(participant, dao);
+            ParticipantEvidence r = getParticipantCloner().clone(participant, dao);
             clone.addParticipant(r);
         }
 
@@ -74,6 +76,17 @@ public class InteractionEvidenceCloner extends EditorCloner{
             clone.getVariableParameterValues().add(setClone);
         }
         return clone;
+    }
+
+    public EditorCloner<ParticipantEvidence, IntactParticipantEvidence> getParticipantCloner() {
+        if (this.participantCloner == null){
+            this.participantCloner = new ParticipantEvidenceCloner();
+        }
+        return participantCloner;
+    }
+
+    protected void setParticipantCloner(EditorCloner<ParticipantEvidence, IntactParticipantEvidence> participantCloner) {
+        this.participantCloner = participantCloner;
     }
 }
 

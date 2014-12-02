@@ -2,7 +2,6 @@ package uk.ac.ebi.intact.editor.controller.curate.interaction;
 
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.IntactCore;
-import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectHelper;
 import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
 import uk.ac.ebi.intact.editor.controller.curate.util.ExperimentalRoleComparator;
 import uk.ac.ebi.intact.model.*;

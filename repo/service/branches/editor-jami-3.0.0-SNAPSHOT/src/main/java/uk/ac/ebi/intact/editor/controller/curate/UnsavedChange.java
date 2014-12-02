@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.editor.controller.curate;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -25,7 +26,7 @@ import java.util.Collection;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class UnsavedChange {
+public class UnsavedChange implements Serializable{
 
     public static final String DELETED = "deleted";
     public static final String CREATED = "created";

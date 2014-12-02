@@ -38,7 +38,7 @@ public class CuratorContextController extends BaseController {
     }
 
     public String intactObjectSimpleName(IntactPrimaryObject io) {
-        if (io == null) return null;
+        if (io == null) return "";
         else if (io instanceof Publication){
             return "Publication";
         }
