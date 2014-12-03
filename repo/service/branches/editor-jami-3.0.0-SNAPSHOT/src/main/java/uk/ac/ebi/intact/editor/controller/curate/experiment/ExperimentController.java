@@ -32,6 +32,7 @@ import psidev.psi.mi.jami.model.Publication;
 import psidev.psi.mi.jami.model.Xref;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
+import uk.ac.ebi.intact.editor.controller.admin.UserManagerController;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
@@ -48,7 +49,10 @@ import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleStatus;
 import uk.ac.ebi.intact.jami.model.lifecycle.Releasable;
 import uk.ac.ebi.intact.jami.service.ExperimentService;
 import uk.ac.ebi.intact.jami.service.PublicationService;
+import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
+import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
+import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 import uk.ac.ebi.intact.model.*;
 
@@ -325,6 +329,31 @@ public class ExperimentController extends AnnotatedObjectController {
         globalPublicationDecision();
     }
 
+    public void revertAccepted(ActionEvent evt) {
+        this.accepted = null;
+        removeAnnotation(Releasable.ACCEPTED, null,experiment.getAnnotations());
+        doSave(evt);
+
+        addInfoMessage("Experiment accepted annotation has been removed, publication reverted as well", experiment.getShortLabel());
+
+        // only if publication ready for release
+        if (publicationController.isReadyForRelease()){
+            getPublicationService().putReleasableOnHoldFromReadyForRelease(publicationController.getAc(),
+                    "Reverted accepted annotation of experiment "+experiment.getShortLabel(),((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser().getLogin());
+            // refresh publication
+            setExperiment(getExperimentService().reloadFullyInitialisedExperiment(experiment));
+            publicationController.setPublication((IntactPublication)experiment.getPublication());
+        }
+        // also if released, revert from release
+        else if (publicationController.isReleased()){
+            getPublicationService().moveReleasableFromReleasedToOnHold(publicationController.getAc(),
+                    "Reverted accepted annotation of experiment "+experiment.getShortLabel(),((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser().getLogin());
+            // refresh publication
+            setExperiment(getExperimentService().reloadFullyInitialisedExperiment(experiment));
+            publicationController.setPublication((IntactPublication)experiment.getPublication());
+        }
+    }
+
     public void rejectExperiment(ActionEvent actionEvent) {
 
         UserSessionController userSessionController = (UserSessionController) getSpringContext().getBean("userSessionController");
@@ -371,7 +400,7 @@ public class ExperimentController extends AnnotatedObjectController {
 
             // refresh publication
             setExperiment(getExperimentService().reloadFullyInitialisedExperiment(experiment));
-            refreshParentControllers();
+            publicationController.setPublication((IntactPublication)experiment.getPublication());
 
             // refresh experiments with possible changes in publication title, annotations and publication identifier
             publicationController.copyAnnotationsToExperiments(null);
@@ -418,6 +447,18 @@ public class ExperimentController extends AnnotatedObjectController {
         }
     }
 
+    public void removeToBeReviewed(ActionEvent evt){
+        addInfoMessage("Removed to-be-reviewed annotation", reasonForRejection);
+        // annotations are always loaded
+        removeAnnotation(Releasable.TO_BE_REVIEWED, null, experiment.getAnnotations());
+    }
+
+    public void removeCorrectionComment(ActionEvent evt){
+        addInfoMessage("Removed correction annotation", correctedComment);
+        // annotations are always loaded
+        removeAnnotation(Releasable.CORRECTION_COMMENT, null, experiment.getAnnotations());
+    }
+
     public void setToBeReviewed(String toBeReviewed) {
         this.reasonForRejection = null;
     }
@@ -432,6 +473,10 @@ public class ExperimentController extends AnnotatedObjectController {
 
     public boolean isRejected() {
         return reasonForRejection != null;
+    }
+
+    public boolean isCorrected() {
+        return correctedComment != null;
     }
 
     /**
@@ -618,6 +663,9 @@ public class ExperimentController extends AnnotatedObjectController {
             return true;
         }
         else if (AnnotationUtils.doesAnnotationHaveTopic(annot, null, Releasable.CORRECTION_COMMENT)){
+            return true;
+        }
+        else if (AnnotationUtils.doesAnnotationHaveTopic(annot, null, Releasable.ACCEPTED)){
             return true;
         }
         else {
