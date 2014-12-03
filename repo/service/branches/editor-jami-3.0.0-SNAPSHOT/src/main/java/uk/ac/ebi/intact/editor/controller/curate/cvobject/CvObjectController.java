@@ -3,21 +3,23 @@ package uk.ac.ebi.intact.editor.controller.curate.cvobject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
-import org.hibernate.Hibernate;
 import org.primefaces.model.DualListModel;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import psidev.psi.mi.jami.model.Alias;
+import psidev.psi.mi.jami.model.Annotation;
+import psidev.psi.mi.jami.model.Xref;
+import psidev.psi.mi.jami.utils.AnnotationUtils;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
-import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.CvTermCloner;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
-import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
+import uk.ac.ebi.intact.jami.model.extension.*;
+import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
@@ -32,19 +34,15 @@ import java.util.*;
 @ConversationName( "general" )
 public class CvObjectController extends AnnotatedObjectController {
 
-    @Resource(name = "cvObjectService")
-    private CvObjectService cvObjectService;
-
     private String ac;
     private IntactCvTerm cvObject;
     private String cvClassName;
-
     private String newCvObjectType;
-
     private boolean isTopic;
 
     private DualListModel<IntactCvTerm> parents;
     private Map<String, String> classMap;
+    private String definition;
 
     @PostConstruct
     public void initializeClassMap(){
@@ -66,56 +64,17 @@ public class CvObjectController extends AnnotatedObjectController {
         classMap.put( IntactUtils.PARAMETER_TYPE_OBJCLASS, "MI:0640" );
         classMap.put( IntactUtils.UNIT_OBJCLASS, "MI:0647" );
         classMap.put( IntactUtils.CONFIDENCE_TYPE_OBJCLASS, "MI:1064" );
+        classMap.put(IntactUtils.FEATURE_TYPE_OBJCLASS, "MOD:00000");
+        classMap.put(IntactUtils.DATABASE_OBJCLASS, "ECO:0000000");
     }
 
-    @Override
-    public AnnotatedObject getAnnotatedObject() {
-        return cvObject;
-    }
-
-    @Override
-    public void setAnnotatedObject(AnnotatedObject annotatedObject) {
-        this.cvObject = (CvDagObject) annotatedObject;
-
-        if (cvObject != null){
-            this.ac = annotatedObject.getAc();
-        }
-    }
-
-    @Override
-    public IntactPrimaryObject getJamiObject() {
-        return null;
-    }
-
-    @Override
-    public void setJamiObject(IntactPrimaryObject annotatedObject) {
-        // nothing to do
-    }
-
-    @Override
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String clone() {
-
-        return clone(cvObject, new CvObjectIntactCloner());
-    }
-
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void loadData(ComponentSystemEvent evt) {
         if (!FacesContext.getCurrentInstance().isPostback()) {
             if (ac != null) {
-                cvObject = (CvDagObject) loadByAc(getDaoFactory().getCvObjectDao(), ac);
-                if (cvObject != null){
-                    // initialise xrefs
-                    Hibernate.initialize(cvObject.getXrefs());
-                    // initialise xrefs
-                    Hibernate.initialize(cvObject.getAnnotations());
-                    // initialise xrefs
-                    Hibernate.initialize(cvObject.getAliases());
-                    // initialise xrefs
-                    Hibernate.initialize(cvObject.getParents());
-                }
+                setCvObject(getCvService().loadCvByAc(ac));
             } else if (cvClassName != null) {
-                cvObject = newInstance(cvClassName);
+                setCvObject(newInstance(cvClassName));
+                ac = null;
             }
 
             if (cvObject == null) {
@@ -123,39 +82,78 @@ public class CvObjectController extends AnnotatedObjectController {
                 return;
             }
 
-            if (!Hibernate.isInitialized(cvObject.getXrefs())
-                    || !Hibernate.isInitialized(cvObject.getAnnotations())
-                    || !Hibernate.isInitialized(cvObject.getAliases())
-                    || !Hibernate.isInitialized(cvObject.getParents())){
-                cvObject = (CvDagObject) loadByAc(getDaoFactory().getCvObjectDao(), cvObject.getAc());
-                // initialise xrefs
-                Hibernate.initialize(cvObject.getXrefs());
-                // initialise xrefs
-                Hibernate.initialize(cvObject.getAnnotations());
-                // initialise xrefs
-                Hibernate.initialize(cvObject.getAliases());
-                // initialise xrefs
-                Hibernate.initialize(cvObject.getParents());
-            }
-
-            prepareView();
             refreshTabsAndFocusXref();
         }
         generalLoadChecks();
     }
 
+    @Override
+    public IntactPrimaryObject getAnnotatedObject() {
+        return getCvObject();
+    }
+
+    @Override
+    public void setAnnotatedObject(IntactPrimaryObject annotatedObject) {
+        setCvObject((IntactCvTerm) annotatedObject);
+    }
+
+    @Override
+    protected AnnotatedObjectController getParentController() {
+        return null;
+    }
+
+    @Override
+    protected String getPageContext() {
+        return "cv";
+    }
+
+    @Override
+    protected void loadCautionMessages() {
+        if (this.cvObject != null){
+            if (!cvObject.areAnnotationsInitialized()){
+                setCvObject(getCvService().initialiseCvAnnotations(this.cvObject));
+            }
+
+            Annotation caution = AnnotationUtils.collectFirstAnnotationWithTopic(this.cvObject.getAnnotations(), Annotation.CAUTION_MI, Annotation.CAUTION);
+            setCautionMessage(caution != null ? caution.getValue() : null);
+        }
+    }
+
+    @Override
+    protected EditorCloner newClonerInstance() {
+        return new CvTermCloner();
+    }
+
+    @Override
+    public void newXref(ActionEvent evt) {
+        this.cvObject.getDbXrefs().add(new CvTermXref(IntactUtils.createMIDatabase("to set", null), "to set"));
+        setUnsavedChanges(true);
+    }
+
+    @Override
+    public List<Xref> collectXrefs() {
+        List<Xref> refs = new ArrayList<Xref>(cvObject.getDbXrefs());
+        Collections.sort(refs, new AuditableComparator());
+        // xrefs are always initialised
+        return refs;
+    }
+
+    @Override
+    public CvTermXref newXref(String db, String dbMI, String id, String secondaryId, String qualifier, String qualifierMI) {
+        return new CvTermXref(getCvService().findCvObjectByIdentifier(IntactUtils.DATABASE_OBJCLASS,
+                dbMI != null ? dbMI : db),
+                id,
+                secondaryId,
+                getCvService().findCvObjectByIdentifier(IntactUtils.QUALIFIER_OBJCLASS,
+                qualifierMI != null ? qualifierMI : qualifier));
+    }
+
     private void prepareView() {
         if (cvObject != null) {
 
-            List<CvObject> cvObjectsByClass = new ArrayList<CvObject>(getDaoFactory().getCvObjectDao(cvObject.getClass()).getAll());
-            List<CvObject> existingParents = new ArrayList<CvObject>(cvObject.getParents());
+            parents = getCvService().loadParentsList(this.cvObject);
 
-            Collections.sort( existingParents, new CvObjectService.CvObjectComparator() );
-            Collections.sort( cvObjectsByClass, new CvObjectService.CvObjectComparator() );
-
-            parents = new DualListModel<CvObject>(cvObjectsByClass, existingParents);
-
-            if (cvObject instanceof CvTopic) {
+            if (IntactUtils.TOPIC_OBJCLASS.equals(cvObject.getObjClass())) {
                 isTopic = true;
             }
         }
@@ -163,63 +161,41 @@ public class CvObjectController extends AnnotatedObjectController {
 
     public String newCvObject() {
         if (newCvObjectType != null) {
-            CvObject cvObject = newInstance(newCvObjectType);
-            setCvObject(cvObject);
+            setCvObject(newInstance(newCvObjectType));
         }
-
-        prepareView();
 
         return navigateToObject(cvObject);
     }
 
-    private CvDagObject newInstance(String cvClassName) {
-        CvDagObject obj = null;
+    private IntactCvTerm newInstance(String cvClassName) {
+        IntactCvTerm obj = new IntactCvTerm("to set");
+        obj.setObjClass(cvClassName);
 
-        try {
-            Class cvClass = Thread.currentThread().getContextClassLoader().loadClass(cvClassName);
-
-            obj = (CvDagObject) cvClass.newInstance();
-
-            if (this.classMap.containsKey(cvClass)){
-                CvDagObject parent = (CvDagObject)getDaoFactory().getCvObjectDao(cvClass).getByIdentifier(this.classMap.get(cvClass));
-                if (parent != null){
-                    obj.getParents().add(parent);
-                }
-            }
-        } catch (Exception e) {
-            addErrorMessage("Problem creating cvObject", "Class "+cvClassName);
-            e.printStackTrace();
-        }
-
-        getChangesController().markAsUnsaved(obj);
-
+        setUnsavedChanges(true);
         return obj;
     }
 
     @Override
-    public boolean doSaveDetails() {
+    public void doPreSave() {
 
-        Collection<CvObject> parentsToRemove = CollectionUtils.subtract(cvObject.getParents(), parents.getTarget());
-        Collection<CvObject> parentsToAdd = CollectionUtils.subtract(parents.getTarget(), cvObject.getParents());
+        Collection<IntactCvTerm> parentsToRemove = CollectionUtils.subtract(cvObject.getParents(), parents.getTarget());
+        Collection<IntactCvTerm> parentsToAdd = CollectionUtils.subtract(parents.getTarget(), cvObject.getParents());
 
-        for (CvObject parent : parentsToAdd) {
-            CvDagObject refreshedParent = (CvDagObject) getDaoFactory().getCvObjectDao().getByAc(parent.getAc());
-            refreshedParent.addChild(cvObject);
-            getDaoFactory().getCvObjectDao().update(refreshedParent);
-            getDaoFactory().getCvObjectDao().update(cvObject);
+        cvObject.getParents().removeAll(parentsToRemove);
+        cvObject.getParents().addAll(parentsToAdd);
+
+        // refresh cv service
+        getCvService().clearAll();
+
+        // if the cv does not have any parents, try to add one by default
+        if (this.classMap.containsKey(cvClassName) && cvObject.getParents().isEmpty()){
+            IntactCvTerm parent = getCvService().findCvObjectByIdentifier(cvClassName, this.classMap.get(cvClassName));
+            if (parent != null){
+                this.cvObject.getParents().add(parent);
+            }
         }
 
-        for (CvObject parent : parentsToRemove) {
-            CvDagObject refreshedParent = (CvDagObject) getDaoFactory().getCvObjectDao().getByAc(parent.getAc());
-            refreshedParent.removeChild(cvObject);
-            getDaoFactory().getCvObjectDao().update(refreshedParent);
-            getDaoFactory().getCvObjectDao().update(cvObject);
-        }
-
-        cvObjectService.refresh(null);
-        cvTermService.clearAll();
-
-        return super.doSaveDetails();
+        super.doPreSave();
     }
 
     @Override
@@ -228,42 +204,73 @@ public class CvObjectController extends AnnotatedObjectController {
     }
 
     public String[] getUsedIn() {
-        String usedInArr = super.findAnnotationText(CvTopic.USED_IN_CLASS);
+        if (cvObject != null){
+            // cv annotations are always initialised by default
+            Annotation usedInAnnot = AnnotationUtils.collectFirstAnnotationWithTopic(cvObject.getAnnotations(), null, CvObjectService.USED_IN_CLASS);
+            String usedInArr = usedInAnnot != null ? usedInAnnot.getValue() : null;
 
-        if (usedInArr == null) {
-            return new String[0];
+            if (usedInArr != null) {
+                String[] rawClasses = usedInArr.split(",");
+                String[] classes = new String[rawClasses.length];
+
+                for (int i=0; i<rawClasses.length; i++) {
+                    classes[i] = rawClasses[i].trim();
+                }
+
+                return classes;
+            }
         }
-
-        String[] rawClasses = usedInArr.split(",");
-        String[] classes = new String[rawClasses.length];
-
-        for (int i=0; i<rawClasses.length; i++) {
-            classes[i] = rawClasses[i].trim();
-        }
-
-        return classes;
+        return new String[0];
     }
 
     public void setUsedIn(String[] usedIn) {
         String usedInArr = StringUtils.join(usedIn, ",");
-        super.updateAnnotation(CvTopic.USED_IN_CLASS, usedInArr);
+        super.updateAnnotation(CvObjectService.USED_IN_CLASS, null, usedInArr, this.cvObject.getAnnotations());
     }
 
     public String getAc() {
         return ac;
     }
 
+    @Override
+    public int getXrefsSize() {
+        // cv xrefs are always initialised by default
+        return this.cvObject != null ? this.cvObject.getDbXrefs().size() : 0;
+    }
+
+    @Override
+    public int getAliasesSize() {
+        // aliases may not be initialised
+        if (this.cvObject == null){
+            return 0;
+        }
+        else if (this.cvObject.areSynonymsInitialized()){
+            return this.cvObject.getSynonyms().size();
+        }
+        return getCvService().countAliases(this.cvObject);
+    }
+
+    @Override
+    public int getAnnotationsSize() {
+        // cv annotations are always initialised by default
+        return this.cvObject != null ? this.cvObject.getAnnotations().size() : 0;
+    }
+
     public void setAc(String ac) {
         this.ac = ac;
     }
 
-    public CvObject getCvObject() {
+    public IntactCvTerm getCvObject() {
         return cvObject;
     }
 
-    public void setCvObject(CvObject cvObject) {
-        this.cvObject = (CvDagObject) cvObject;
-        this.ac = cvObject.getAc();
+    public void setCvObject(IntactCvTerm cvObject) {
+        this.cvObject = cvObject;
+        if (this.cvObject != null){
+            this.ac = cvObject.getAc();
+
+            initialiseDefaultProperties(cvObject);
+        }
     }
 
     public String getCvClassName() {
@@ -278,30 +285,11 @@ public class CvObjectController extends AnnotatedObjectController {
         return isTopic;
     }
 
-    public CvDagObject getParentCvObjects() {
-        if (cvObject.getParents().isEmpty()) {
-            return null;
-        }
-
-        return cvObject.getParents().iterator().next();
-    }
-
-    public void setParentCvObjects(CvDagObject parentCvObjects) {
-        if (parentCvObjects != null) {
-
-            // very important : DO NOT use Array.AsList because it will be a problem when persisting the data. We can only do a clear operation on lists
-            // and the clear method is always called in the corePersister to refresh collections (instead of using the set )
-
-            cvObject.getParents().clear();
-            cvObject.getParents().add(parentCvObjects);
-        }
-    }
-
-    public DualListModel<CvObject> getParents() {
+    public DualListModel<IntactCvTerm> getParents() {
         return parents;
     }
 
-    public void setParents(DualListModel<CvObject> parents) {
+    public void setParents(DualListModel<IntactCvTerm> parents) {
         this.parents = parents;
     }
 
@@ -314,64 +302,112 @@ public class CvObjectController extends AnnotatedObjectController {
     }
 
     @Override
-    public void doSave(boolean refreshCurrentView) {
-        ChangesController changesController = (ChangesController) getSpringContext().getBean("changesController");
-        PersistenceController persistenceController = getPersistenceController();
-
-        doSaveIntact(refreshCurrentView, changesController, persistenceController);
+    protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
+        prepareView();
     }
 
     @Override
-    public String doSave() {
-        return super.doSave();
+    public Collection<String> collectParentAcsOfCurrentAnnotatedObject() {
+        return Collections.EMPTY_LIST;
     }
 
     @Override
-    public void doSaveIfNecessary(ActionEvent evt) {
-        super.doSaveIfNecessary(evt);
+    public Class<? extends IntactPrimaryObject> getAnnotatedObjectClass() {
+        return IntactCvTerm.class;
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String getCautionMessage() {
-        if (cvObject == null){
-            return null;
+    @Override
+    public boolean isAliasNotEditable(Alias alias) {
+        return false;
+    }
+
+    @Override
+    public boolean isAnnotationNotEditable(Annotation annot) {
+        return false;
+    }
+
+    @Override
+    public IntactDbSynchronizer getDbSynchronizer() {
+        return getEditorService().getIntactDao().getSynchronizerContext().getCvSynchronizer(null);
+    }
+
+    @Override
+    public String getObjectName() {
+        return "Cv Object";
+    }
+
+    @Override
+    public void newAlias(ActionEvent evt) {
+        // aliases are not always initialised
+        if (!cvObject.areSynonymsInitialized()){
+            setCvObject(getCvService().initialiseCvSynonyms(this.cvObject));
         }
-        if (!Hibernate.isInitialized(cvObject.getAnnotations())){
-            return getAnnotatedObjectHelper().findAnnotationText(getDaoFactory().getCvObjectDao().getByAc(cvObject.getAc()),
-                    CvTopic.CAUTION_MI_REF, getDaoFactory());
-        }
-        return findAnnotationText(CvTopic.CAUTION_MI_REF);
-    }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String getInternalRemarkMessage() {
-        if (cvObject == null){
-            return null;
-        }
-        if (!Hibernate.isInitialized(cvObject.getAnnotations())){
-            return getAnnotatedObjectHelper().findAnnotationText(getDaoFactory().getCvObjectDao().getByAc(cvObject.getAc()),
-                    CvTopic.INTERNAL_REMARK, getDaoFactory());
-        }
-        return findAnnotationText(CvTopic.INTERNAL_REMARK);
-    }
-
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List collectAnnotations() {
-        return super.collectAnnotations();
-    }
-
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List collectAliases() {
-        return super.collectAliases();
-    }
-
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List collectXrefs() {
-        return super.collectXrefs();
-    }
-
-    public void changed(ActionEvent evt) {
+        this.cvObject.getSynonyms().add(new CvTermAlias(IntactUtils.createMIAliasType("to set", null), "to set"));
         setUnsavedChanges(true);
     }
 
+    @Override
+    public CvTermAlias newAlias(String alias, String aliasMI, String name) {
+        return new CvTermAlias(getCvService().findCvObject(IntactUtils.ALIAS_TYPE_OBJCLASS,
+                aliasMI != null ? aliasMI : alias),
+                name);
+    }
+
+    @Override
+    public List<Alias> collectAliases() {
+        // aliases are not always initialised
+        if (!cvObject.areSynonymsInitialized()){
+            setCvObject(getCvService().initialiseCvSynonyms(this.cvObject));
+        }
+
+        List<Alias> aliases = new ArrayList<Alias>(cvObject.getSynonyms());
+        Collections.sort(aliases, new AuditableComparator());
+        return aliases;
+    }
+
+    @Override
+    public void removeXref(Xref xref) {
+        this.cvObject.getDbXrefs().remove(xref);
+    }
+
+    @Override
+    public void newAnnotation(ActionEvent evt) {
+        this.cvObject.getAnnotations().add(new CvTermAnnotation(IntactUtils.createMITopic("to set", null)));
+        setUnsavedChanges(true);
+    }
+
+    @Override
+    public CvTermAnnotation newAnnotation(String topic, String topicMI, String text) {
+        return new CvTermAnnotation(getCvService().findCvObject(IntactUtils.TOPIC_OBJCLASS,
+                topicMI != null ? topicMI : topic),
+                text);
+    }
+
+    @Override
+    public void removeAnnotation(Annotation annotation) {
+        this.cvObject.getAnnotations().remove(annotation);
+    }
+
+    @Override
+    public List<Annotation> collectAnnotations() {
+        List<Annotation> annotations = new ArrayList<Annotation>(cvObject.getAnnotations());
+        Collections.sort(annotations, new AuditableComparator());
+        // xrefs are always initialised
+        return annotations;
+    }
+
+    public String getDefinition() {
+        if (cvObject == null){
+           return null;
+        }
+        return this.cvObject.getDefinition();
+    }
+
+    public void setDefinition(String definition) {
+        if (this.cvObject != null){
+            this.definition = definition;
+            this.cvObject.setDefinition(definition);
+        }
+    }
 }

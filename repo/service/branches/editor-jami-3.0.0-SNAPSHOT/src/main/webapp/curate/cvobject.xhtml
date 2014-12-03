@@ -78,6 +78,16 @@
                                          onchange="markAsUnsaved()" converter="trimmingConverter"/>
                         </td>
                     </tr>
+
+                    <tr>
+                        <td class="firstCell">
+                            <h:outputLabel value="Definition: " for="definitionTxt"/>
+                        </td>
+                        <td>
+                            <p:inputTextarea id="definitionTxt" value="#{cvObjectController.definition}" rows="4" cols="50" autoResize="false"
+                                             converter="trimmingConverter" onchange="markAsUnsaved()"/>
+                        </td>
+                    </tr>
                     <tr>
                         <td class="firstCell">
                             <h:outputLabel value="Parent term(s): " for="parentsPick"/>
