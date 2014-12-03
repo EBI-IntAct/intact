@@ -70,7 +70,7 @@
                         value="#{experiment.bioSource != null? experiment.bioSource.shortLabel : ''} (#{experiment.bioSource != null? experiment.bioSource.taxId : ''})"/>
             </p:column>
             <p:column id="interactions" headerText="# Interactions">
-                <h:outputText value="#{experimentController.countInteractionsByExperimentAc(experiment.ac)}"/>
+                <h:outputText value="#{experimentController.countInteractionsByExperiment(experiment)}"/>
             </p:column>
             <p:column id="actions" rendered="#{not readonly}" headerText="Actions">
                 <p:commandLink immediate="true" title="Mark to be deleted" styleClass="ui-icon ui-icon-closethick"

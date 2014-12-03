@@ -72,11 +72,6 @@ public abstract class BaseController implements Serializable {
         return userSessionController.getCurrentUser();
     }
 
-    public uk.ac.ebi.intact.jami.model.user.User getCurrentJamiUser() {
-        UserSessionController userSessionController = getUserSessionController();
-        return userSessionController.getCurrentJamiUser();
-    }
-
     protected void handleException(Throwable e) {
         FacesContext ctx = FacesContext.getCurrentInstance();
         ExceptionQueuedEventContext eventContext = new ExceptionQueuedEventContext( ctx, e );

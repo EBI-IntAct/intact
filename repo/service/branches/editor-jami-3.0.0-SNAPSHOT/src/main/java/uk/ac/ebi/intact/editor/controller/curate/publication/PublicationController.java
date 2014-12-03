@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.cdb.webservice.Authors;
 import uk.ac.ebi.cdb.webservice.Result;
 import uk.ac.ebi.intact.bridges.citexplore.CitexploreClient;
@@ -48,7 +49,12 @@ import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentController
 import uk.ac.ebi.intact.editor.util.CurateUtils;
 import uk.ac.ebi.intact.editor.util.LazyDataModelFactory;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
+import uk.ac.ebi.intact.jami.model.extension.IntactExperiment;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.Publication;
 import uk.ac.ebi.intact.model.user.Preference;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 import uk.ac.ebi.intact.model.util.ExperimentUtils;
@@ -139,6 +145,10 @@ public class PublicationController extends AnnotatedObjectController {
     @Override
     public void setJamiObject(IntactPrimaryObject annotatedObject) {
         // nothing to do
+    }
+
+    public void reloadSingleExperiment(IntactExperiment exp){
+
     }
 
     @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
@@ -238,7 +248,7 @@ public class PublicationController extends AnnotatedObjectController {
         }
     }
 
-    private void refreshDataModels() {
+    public void refreshDataModels() {
         interactionDataModel = LazyDataModelFactory.createLazyDataModel(getCoreEntityManager(),
                 "select i from InteractionImpl i join fetch i.experiments as exp " +
                         "where exp.publication.ac = '" + ac + "' order by exp.shortLabel asc",

@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import psidev.psi.mi.jami.model.Alias;
 import psidev.psi.mi.jami.model.Annotation;
+import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Xref;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
@@ -15,7 +16,10 @@ import uk.ac.ebi.intact.editor.controller.curate.cloner.CvTermCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
-import uk.ac.ebi.intact.jami.model.extension.*;
+import uk.ac.ebi.intact.jami.model.extension.CvTermAlias;
+import uk.ac.ebi.intact.jami.model.extension.CvTermAnnotation;
+import uk.ac.ebi.intact.jami.model.extension.CvTermXref;
+import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
@@ -71,7 +75,9 @@ public class CvObjectController extends AnnotatedObjectController {
     public void loadData(ComponentSystemEvent evt) {
         if (!FacesContext.getCurrentInstance().isPostback()) {
             if (ac != null) {
-                setCvObject(getCvService().loadCvByAc(ac));
+                if ( cvObject == null || !ac.equals( cvObject.getAc() ) ) {
+                    setCvObject(getCvService().loadCvByAc(ac));
+                }
             } else if (cvClassName != null) {
                 setCvObject(newInstance(cvClassName));
                 ac = null;
@@ -116,11 +122,13 @@ public class CvObjectController extends AnnotatedObjectController {
 
             Annotation caution = AnnotationUtils.collectFirstAnnotationWithTopic(this.cvObject.getAnnotations(), Annotation.CAUTION_MI, Annotation.CAUTION);
             setCautionMessage(caution != null ? caution.getValue() : null);
+            Annotation internal = AnnotationUtils.collectFirstAnnotationWithTopic(this.cvObject.getAnnotations(), null, "remark-internal");
+            setInternalRemark(internal != null ? internal.getValue() : null);
         }
     }
 
     @Override
-    protected EditorCloner newClonerInstance() {
+    protected EditorCloner<CvTerm, IntactCvTerm> newClonerInstance() {
         return new CvTermCloner();
     }
 
@@ -303,6 +311,10 @@ public class CvObjectController extends AnnotatedObjectController {
 
     @Override
     protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
+        IntactCvTerm cv = (IntactCvTerm)annotatedObject;
+        if (!cv.areAnnotationsInitialized() || !cv.areXrefsInitialized()){
+            this.cvObject = getCvService().reloadFullyInitialisedCv(cv);
+        }
         prepareView();
     }
 
@@ -345,6 +357,16 @@ public class CvObjectController extends AnnotatedObjectController {
 
         this.cvObject.getSynonyms().add(new CvTermAlias(IntactUtils.createMIAliasType("to set", null), "to set"));
         setUnsavedChanges(true);
+    }
+
+    @Override
+    public void removeAlias(Alias alias) {
+        // aliases are not always initialised
+        if (!cvObject.areSynonymsInitialized()){
+            setCvObject(getCvService().initialiseCvSynonyms(this.cvObject));
+        }
+
+        this.cvObject.getSynonyms().remove(alias);
     }
 
     @Override
@@ -393,7 +415,7 @@ public class CvObjectController extends AnnotatedObjectController {
     public List<Annotation> collectAnnotations() {
         List<Annotation> annotations = new ArrayList<Annotation>(cvObject.getAnnotations());
         Collections.sort(annotations, new AuditableComparator());
-        // xrefs are always initialised
+        // annotations are always initialised
         return annotations;
     }
 

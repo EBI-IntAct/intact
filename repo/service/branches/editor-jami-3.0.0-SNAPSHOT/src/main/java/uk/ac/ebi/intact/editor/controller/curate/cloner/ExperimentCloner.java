@@ -32,6 +32,11 @@ import uk.ac.ebi.intact.jami.utils.IntactUtils;
 public class ExperimentCloner extends AbstractEditorCloner<Experiment, IntactExperiment> {
 
     private EditorCloner<InteractionEvidence, IntactInteractionEvidence> evidenceCloner;
+    private boolean cloneInteractions = false;
+
+    public ExperimentCloner(boolean cloneInteractions) {
+        this.cloneInteractions = cloneInteractions;
+    }
 
     public IntactExperiment clone(Experiment experiment, IntactDao dao) {
         IntactExperiment clone = new IntactExperiment(experiment.getPublication());
@@ -41,6 +46,7 @@ public class ExperimentCloner extends AbstractEditorCloner<Experiment, IntactExp
         clone.setShortLabel(IntactUtils.generateAutomaticExperimentShortlabelFor(clone, IntactUtils.MAX_SHORT_LABEL_LEN));
         clone.setHostOrganism(experiment.getHostOrganism());
         clone.setInteractionDetectionMethod(experiment.getInteractionDetectionMethod());
+        clone.setPublication(experiment.getPublication());
         if (experiment instanceof IntactExperiment){
             clone.setParticipantIdentificationMethod(((IntactExperiment) experiment).getParticipantIdentificationMethod());
         }
@@ -69,14 +75,11 @@ public class ExperimentCloner extends AbstractEditorCloner<Experiment, IntactExp
                 paramClone.getVariableValues().add(cloneValue);
             }
         }
-        return clone;
-    }
 
-    public Experiment cloneWithInteractions(Experiment experiment, IntactDao dao) {
-        Experiment clone =clone(experiment, dao);
-
-        for (InteractionEvidence evidence : experiment.getInteractionEvidences()){
-            clone.addInteractionEvidence(getInteractionEvidenceCloner().clone(evidence, dao));
+        if (cloneInteractions){
+            for (InteractionEvidence evidence : experiment.getInteractionEvidences()){
+                clone.addInteractionEvidence(getInteractionEvidenceCloner().clone(evidence, dao));
+            }
         }
 
         return clone;

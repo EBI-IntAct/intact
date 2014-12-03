@@ -303,15 +303,6 @@ public class EditorObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactExperiment initialiseExperimentXrefs(IntactExperiment experiment) {
-        // reload participant without flushing changes
-        IntactExperiment reloaded = getIntactDao().getEntityManager().merge(experiment);
-        Collection<Xref> xrefs = reloaded.getXrefs();
-        initialiseXrefs(xrefs);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactPublication initialisePublicationXrefs(IntactPublication publication) {
         // reload publication without flushing changes
         IntactPublication reloaded = getIntactDao().getEntityManager().merge(publication);
@@ -366,15 +357,6 @@ public class EditorObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactExperiment initialiseExperimentAnnotations(IntactExperiment experiment) {
-        // reload participant without flushing changes
-        IntactExperiment reloaded = getIntactDao().getEntityManager().merge(experiment);
-        Collection<Annotation> annotations = reloaded.getAnnotations();
-        initialiseAnnotations(annotations);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactPublication initialisePublicationAnnotations(IntactPublication publication) {
         // reload publication without flushing changes
         IntactPublication reloaded = getIntactDao().getEntityManager().merge(publication);
@@ -417,7 +399,12 @@ public class EditorObjectService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public <T extends IntactPrimaryObject> T cloneAnnotatedObject(T ao, EditorCloner cloner) {
-        return (T)cloner.clone(ao, getIntactDao());
+
+        T reloaded = getIntactDao().getEntityManager().merge(ao);
+        T clone = (T)cloner.clone(ao, getIntactDao());
+        getIntactDao().getEntityManager().detach(reloaded);
+
+        return clone;
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
@@ -463,11 +450,6 @@ public class EditorObjectService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public int countAnnotations(AbstractIntactParticipant participant) {
         return getIntactDao().getParticipantDao(AbstractIntactParticipant.class).countAnnotationsForParticipant(participant.getAc());
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countAnnotations(IntactExperiment experiment) {
-        return getIntactDao().getExperimentDao().countAnnotationsForExperiment(experiment.getAc());
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
