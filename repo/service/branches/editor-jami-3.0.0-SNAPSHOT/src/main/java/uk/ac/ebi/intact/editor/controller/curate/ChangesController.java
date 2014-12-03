@@ -369,7 +369,8 @@ public class ChangesController extends BaseController implements UserListener {
         List<IntactPrimaryObject> ios = new ArrayList<IntactPrimaryObject>();
 
         for (UnsavedChange change : getUnsavedChangesForCurrentUser()) {
-            if (UnsavedChange.DELETED.equals(change.getAction())) {
+            if (UnsavedChange.DELETED.equals(change.getAction()) &&
+                    type.isAssignableFrom(change.getUnsavedObject().getClass())) {
 
                 if (change.getParentObject() != null && change.getParentObject().getAc() != null){
                     if (change.getParentObject().getAc().equals(parentAc)){

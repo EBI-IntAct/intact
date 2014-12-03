@@ -11,7 +11,9 @@
 
         <h:panelGroup id="interactionTable">
 
-            <ui:param name="toDeleteCount" value="#{changesController.getDeletedAcsByClassName('uk.ac.ebi.intact.model.Interaction', experimentController.ac).size()}"/>
+            <ui:param name="toDeleteCount"
+                      value="#{changesController.getDeletedAcsByClassName('uk.ac.ebi.intact.jami.model.extension.IntactInteractionEvidence',
+                      experimentController.ac).size()}"/>
 
             <h:panelGroup rendered="#{toDeleteCount gt 0}">
                 <ia:panelMessage level="info">
@@ -36,30 +38,30 @@
                     <ui:param name="ao" value="#{interaction}"/>
                 </ui:include>
             </p:column>
-            <p:column id="shortLabel" headerText="Shortlabel" sortBy="#{interaction.shortLabel}">
+            <p:column id="shortLabel" headerText="Shortlabel" sortBy="#{interaction.shortName}">
                 <h:panelGroup rendered="#{not changesController.isDeletedAc(interaction.ac)}">
                     <p:commandLink onclick="load_int.show()" action="/curate/interaction?faces-redirect=true&amp;includeViewParams=true"
                                style="#{interaction.ac == null? 'color:blue' :''}"
-                               value="#{interaction.shortLabel}" ajax="false">
+                               value="#{interaction.shortName}" ajax="false">
                         <f:setPropertyActionListener value="#{interaction}" target="#{interactionController.interaction}"/>
                     </p:commandLink>
                 </h:panelGroup>
                 <h:panelGroup rendered="#{changesController.isDeletedAc(interaction.ac)}">
-                    <h:outputText value="#{interaction.shortLabel}" style="color:red; text-decoration:line-through"/>
+                    <h:outputText value="#{interaction.shortName}" style="color:red; text-decoration:line-through"/>
                 </h:panelGroup>
             </p:column>
             <p:column id="experiment" headerText="Experiment" rendered="#{showExperiments}">
-                <h:outputText value="#{not empty interaction.experiments? interaction.experiments[0].shortLabel : ''}"/>
+                <h:outputText value="#{not null interaction.experiment ? interaction.experiment.shortLabel : ''}"/>
             </p:column>
             <p:column id="type" headerText="Type">
-                <h:outputText value="#{interaction.cvInteractionType.shortLabel}"/>
+                <h:outputText value="#{interaction.interactionType.shortName}" rendered="#{not null interaction.interactionType}"/>
             </p:column>
             <p:column id="participants" headerText="# Participants">
                 <h:outputText value="#{interactionController.countParticipantsByInteraction(interaction)}"/>
             </p:column>
             <p:column id="actions" rendered="#{not readonly}" headerText="Actions">
                 <p:commandLink immediate="true" title="Mark to be deleted" styleClass="ui-icon ui-icon-closethick"
-                               actionListener="#{interactionController.markToDeleteInteraction(interaction, interaction.experiments)}"
+                               actionListener="#{interactionController.markToDelete(interaction, interaction.experiment)}"
                                update=":editorForm" rendered="#{not changesController.isDeletedAc(interaction.ac)}"/>
                 <p:commandLink immediate="true" title="Revert" styleClass="ui-icon ui-icon-arrowreturnthick-1-w"
                                actionListener="#{changesController.revert(interaction)}"

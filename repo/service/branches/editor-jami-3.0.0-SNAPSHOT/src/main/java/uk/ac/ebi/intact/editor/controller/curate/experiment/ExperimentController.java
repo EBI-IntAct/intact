@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.editor.controller.curate.experiment;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.hibernate.Hibernate;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.LazyDataModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -37,6 +38,7 @@ import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ExperimentCloner;
+import uk.ac.ebi.intact.editor.controller.curate.organism.BioSourceService;
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
 import uk.ac.ebi.intact.editor.services.curate.experiment.ExperimentEditorService;
 import uk.ac.ebi.intact.editor.util.CurateUtils;
@@ -98,6 +100,11 @@ public class ExperimentController extends AnnotatedObjectController {
 
     @Resource(name = "publicationService")
     private transient PublicationService publicationService;
+
+    @Resource(name = "bioSourceService")
+    private transient BioSourceService biosourceService;
+
+    private boolean isInteractionTab = true;
 
     public ExperimentController() {
     }
@@ -163,10 +170,47 @@ public class ExperimentController extends AnnotatedObjectController {
             // load parent if not done yet
             refreshParentControllers();
 
-            refreshTabsAndFocusXref();
+            refreshTabs();
         }
 
         generalLoadChecks();
+    }
+
+    @Override
+    public void refreshTabs() {
+        super.refreshTabs();
+        isInteractionTab = true;
+    }
+
+    @Override
+    public void onTabChanged(TabChangeEvent e) {
+
+        // the xref tab is active
+        super.onTabChanged(e);
+
+        // all the tabs selectOneMenu are disabled, we can process the tabs specific to experiment
+        if (isAliasDisabled() && isXrefDisabled() && isAnnotationTopicDisabled()){
+            if (e.getTab().getId().equals("interactionsTab")){
+                isInteractionTab = true;
+            }
+            else {
+                isInteractionTab = false;
+            }
+        }
+        else {
+            isInteractionTab = false;
+        }
+    }
+
+    @Override
+    protected void generalLoadChecks() {
+        super.generalLoadChecks();
+        super.generalPublicationLoadChecks();
+
+        // load biosource service if not done
+        if (!getBiosourceService().isInitialised()){
+            getBiosourceService().loadData();
+        }
     }
 
     protected void refreshParentControllers() {
@@ -331,7 +375,7 @@ public class ExperimentController extends AnnotatedObjectController {
 
     public void revertAccepted(ActionEvent evt) {
         this.accepted = null;
-        removeAnnotation(Releasable.ACCEPTED, null,experiment.getAnnotations());
+        removeAnnotation(Releasable.ACCEPTED, null, experiment.getAnnotations());
         doSave(evt);
 
         addInfoMessage("Experiment accepted annotation has been removed, publication reverted as well", experiment.getShortLabel());
@@ -339,15 +383,15 @@ public class ExperimentController extends AnnotatedObjectController {
         // only if publication ready for release
         if (publicationController.isReadyForRelease()){
             getPublicationService().putReleasableOnHoldFromReadyForRelease(publicationController.getAc(),
-                    "Reverted accepted annotation of experiment "+experiment.getShortLabel(),((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser().getLogin());
+                    "Reverted accepted annotation of experiment " + experiment.getShortLabel(), ((UserManagerController) ApplicationContextProvider.getBean("userManagerController")).getCurrentUser().getLogin());
             // refresh publication
             setExperiment(getExperimentService().reloadFullyInitialisedExperiment(experiment));
-            publicationController.setPublication((IntactPublication)experiment.getPublication());
+            publicationController.setPublication((IntactPublication) experiment.getPublication());
         }
         // also if released, revert from release
         else if (publicationController.isReleased()){
             getPublicationService().moveReleasableFromReleasedToOnHold(publicationController.getAc(),
-                    "Reverted accepted annotation of experiment "+experiment.getShortLabel(),((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser().getLogin());
+                    "Reverted accepted annotation of experiment " + experiment.getShortLabel(), ((UserManagerController) ApplicationContextProvider.getBean("userManagerController")).getCurrentUser().getLogin());
             // refresh publication
             setExperiment(getExperimentService().reloadFullyInitialisedExperiment(experiment));
             publicationController.setPublication((IntactPublication)experiment.getPublication());
@@ -765,5 +809,12 @@ public class ExperimentController extends AnnotatedObjectController {
             this.publicationService = ApplicationContextProvider.getBean("publicationService");
         }
         return publicationService;
+    }
+
+    public BioSourceService getBiosourceService() {
+        if (this.biosourceService == null){
+            this.biosourceService = ApplicationContextProvider.getBean("bioSourceService");
+        }
+        return biosourceService;
     }
 }
