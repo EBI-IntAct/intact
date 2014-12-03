@@ -953,6 +953,18 @@ public abstract class AnnotatedObjectController extends BaseController implement
         setUnsavedChanges(true);
     }
 
+    public abstract void removeAlias(Alias alias);
+
+    public void removeAlias(Alias alias, Collection<Alias> aliases) {
+        Iterator<Alias> refIterator = aliases.iterator();
+        while (refIterator.hasNext()){
+            if (refIterator.next() == alias){
+                refIterator.remove();
+            }
+        }
+        setUnsavedChanges(true);
+    }
+
     public abstract List<Alias> collectAliases();
 
     // OTHER

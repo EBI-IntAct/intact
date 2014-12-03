@@ -384,6 +384,20 @@ public class CvObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public IntactCvTerm reloadFullyInitialisedCv(IntactCvTerm cv) {
+        IntactCvTerm reloaded = getIntactDao().getEntityManager().merge(cv);
+
+        // initialise xrefs because are first tab visible
+        initialiseXrefs(reloaded.getDbXrefs());
+        // initialise annotations because needs caution
+        initialiseAnnotations(reloaded.getDbAnnotations());
+
+        getIntactDao().getEntityManager().detach(reloaded);
+
+        return cv;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactCvTerm initialiseCvXrefs(IntactCvTerm cv) {
         // reload IntactInteractionEvidence without flushing changes
         IntactCvTerm reloaded = getIntactDao().getEntityManager().merge(cv);
@@ -437,8 +451,8 @@ public class CvObjectService extends AbstractEditorService {
         IntactCvTerm reloaded = getIntactDao().getEntityManager().merge(cv);
 
         List<IntactCvTerm> cvObjectsByClass = new ArrayList<IntactCvTerm>(getIntactDao().getCvTermDao().getByObjClass(reloaded.getObjClass()));
-        List<IntactCvTerm> existingParents = new ArrayList<IntactCvTerm>(cv.getParents().size());
-        for (OntologyTerm parent : cv.getParents()){
+        List<IntactCvTerm> existingParents = new ArrayList<IntactCvTerm>(reloaded.getParents().size());
+        for (OntologyTerm parent : reloaded.getParents()){
             IntactCvTerm reloadedParent = (IntactCvTerm)getIntactDao().getEntityManager().merge(parent);
             Hibernate.initialize(reloadedParent.getDbXrefs());
 
