@@ -19,6 +19,7 @@ import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Experiment;
 import psidev.psi.mi.jami.model.InteractionEvidence;
 import psidev.psi.mi.jami.model.Xref;
@@ -102,6 +103,9 @@ public class ExperimentEditorService extends AbstractEditorService {
             initialiseXrefs(((IntactPublication)experiment.getPublication()).getDbXrefs());
             initialiseAnnotations(((IntactPublication) experiment.getPublication()).getDbAnnotations());
         }
+
+        initialiseCv(experiment.getInteractionDetectionMethod());
+        initialiseCv(experiment.getParticipantIdentificationMethod());
 
         return experiment;
     }
@@ -218,5 +222,10 @@ public class ExperimentEditorService extends AbstractEditorService {
         for (InteractionEvidence ev : evidences){
             ev.getExperiment();
         }
+    }
+
+    private void initialiseCv(CvTerm participantIdentificationMethod) {
+        initialiseAnnotations(((IntactCvTerm)participantIdentificationMethod).getDbAnnotations());
+        initialiseXrefs(((IntactCvTerm)participantIdentificationMethod).getDbXrefs());
     }
 }
