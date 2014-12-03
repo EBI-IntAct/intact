@@ -45,6 +45,7 @@ import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationControll
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.lifecycle.LifeCycleManager;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
+import uk.ac.ebi.intact.jami.model.audit.Auditable;
 import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleEvent;
 import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleEventType;
@@ -148,6 +149,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
             addWarningMessage("This object is already being edited by: " + who, "Modifications may be lost or affect current work by the other curator");
         }
 
+        // load cv service if not done
         if (!getCvService().isInitialised()){
             getCvService().loadData();
         }
@@ -260,17 +262,6 @@ public abstract class AnnotatedObjectController extends BaseController implement
         }
     }
 
-    protected <T extends IntactPrimaryObject> T loadByAc(String ac) {
-        T ao = (T) changesController.findByAc(ac);
-
-        if (ao == null) {
-            ao = (T)getEditorService().loadByAc(ac, getAnnotatedObjectClass());
-            initialiseDefaultProperties(ao);
-        }
-
-        return ao;
-    }
-
     public void unsavedValueChange(ValueChangeEvent evt) {
         if (evt.getOldValue() != null && !evt.getOldValue().equals(evt.getNewValue())) {
             setUnsavedChanges(true);
@@ -369,22 +360,15 @@ public abstract class AnnotatedObjectController extends BaseController implement
                 }
 
                 // we refresh the object if it has been saved
-                if (getAnnotatedObject().getAc() != null && saved) {
-
-                    setAnnotatedObject(refresh(annotatedObject));
-                }
-                else if (annotatedObject != null){
+                if (annotatedObject != null){
                     setAnnotatedObject(annotatedObject);
-                }
-
-                if (getAnnotatedObject() != null) {
                     addInfoMessage("Saved", getAnnotatedObject().toString());
+                    doPostSave();
                 }
 
                 if (refreshCurrentView) {
                     refreshCurrentViewObject();
                 }
-                doPostSave();
             }
         }
         catch (Throwable t) {
@@ -1193,6 +1177,10 @@ public abstract class AnnotatedObjectController extends BaseController implement
         isAliasDisabled = aliasDisabled;
     }
 
+    public abstract boolean isAliasNotEditable(Alias alias);
+
+    public abstract boolean isAnnotationNotEditable(Annotation annot);
+
     /**
      * Bug jsf : selectOneMenu in a tab returns null if not active tab so we disable the selectOneMenu when it is disabled
      *
@@ -1264,5 +1252,37 @@ public abstract class AnnotatedObjectController extends BaseController implement
             this.cvService = ApplicationContextProvider.getBean("cvObjectService");
         }
         return cvService;
+    }
+
+    public class AuditableComparator<T extends Auditable> implements Comparator<T>{
+
+        @Override
+        public int compare(T auditable, T auditable2) {
+            if (auditable == null && auditable2 == null){
+                return 0;
+            }
+            else if (auditable == null){
+                return 1;
+            }
+            else if (auditable2 == null){
+                return -1;
+            }
+            else{
+                Date created1 = auditable.getCreated();
+                Date created2 = auditable2.getCreated();
+                if (created1 == null && created2 == null){
+                    return 0;
+                }
+                else if (created1 == null){
+                    return -1;
+                }
+                else if (created2 == null){
+                    return 1;
+                }
+                else{
+                    return created1.compareTo(created2);
+                }
+            }
+        }
     }
 }

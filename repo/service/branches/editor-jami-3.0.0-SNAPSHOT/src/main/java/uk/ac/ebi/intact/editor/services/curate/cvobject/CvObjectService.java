@@ -19,6 +19,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Hibernate;
+import org.primefaces.model.DualListModel;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
@@ -26,15 +28,13 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-import psidev.psi.mi.jami.model.Annotation;
-import psidev.psi.mi.jami.model.OntologyTerm;
-import psidev.psi.mi.jami.model.Participant;
-import psidev.psi.mi.jami.model.Xref;
+import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.CvTermUtils;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
 import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
+import uk.ac.ebi.intact.jami.model.extension.IntactSource;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.PostConstruct;
@@ -125,41 +125,43 @@ public class CvObjectService extends AbstractEditorService {
     }
 
     public synchronized void clearAll(){
-        this.allCvObjectMap.clear();
-        this.acCvObjectMap.clear();
-        this.publicationTopicSelectItems=null;
-        this.experimentTopicSelectItems=null;
-        this.interactionTopicSelectItems=null;
-        this.interactorTopicSelectItems=null;
-        this.participantTopicSelectItems=null;
-        this.featureTopicSelectItems=null;
-        this.complexTopicSelectItems=null;
-        this.cvObjectTopicSelectItems=null;
-        this.noClassSelectItems=null;
-        this.databaseSelectItems=null;
-        this.qualifierSelectItems=null;
-        this.aliasTypeSelectItems=null;
-        this.interactionDetectionMethodSelectItems=null;
-        this.participantDetectionMethodSelectItems=null;
-        this.participantExperimentalPreparationsSelectItems=null;
-        this.interactionTypeSelectItems=null;
-        this.interactorTypeSelectItems=null;
-        this.experimentalRoleSelectItems=null;
-        this.biologicalRoleSelectItems=null;
-        this.featureDetectionMethodSelectItems=null;
-        this.featureTypeSelectItems=null;
-        this.fuzzyTypeSelectItems=null;
-        this.cellTypeSelectItems=null;
-        this.tissueSelectItems=null;
-        this.parameterTypeSelectItems=null;
-        this.parameterUnitSelectItems=null;
-        this.confidenceTypeSelectItems=null;
-        this.featureRoleSelectItems=null;
-        this.complexTypeSelectItems=null;
-        this.evidenceTypeSelectItems=null;
-        this.defaultExperimentalRole=null;
-        this.defaultBiologicalRole=null;
-        isInitialised=false;
+        if (isInitialised){
+            this.allCvObjectMap.clear();
+            this.acCvObjectMap.clear();
+            this.publicationTopicSelectItems=null;
+            this.experimentTopicSelectItems=null;
+            this.interactionTopicSelectItems=null;
+            this.interactorTopicSelectItems=null;
+            this.participantTopicSelectItems=null;
+            this.featureTopicSelectItems=null;
+            this.complexTopicSelectItems=null;
+            this.cvObjectTopicSelectItems=null;
+            this.noClassSelectItems=null;
+            this.databaseSelectItems=null;
+            this.qualifierSelectItems=null;
+            this.aliasTypeSelectItems=null;
+            this.interactionDetectionMethodSelectItems=null;
+            this.participantDetectionMethodSelectItems=null;
+            this.participantExperimentalPreparationsSelectItems=null;
+            this.interactionTypeSelectItems=null;
+            this.interactorTypeSelectItems=null;
+            this.experimentalRoleSelectItems=null;
+            this.biologicalRoleSelectItems=null;
+            this.featureDetectionMethodSelectItems=null;
+            this.featureTypeSelectItems=null;
+            this.fuzzyTypeSelectItems=null;
+            this.cellTypeSelectItems=null;
+            this.tissueSelectItems=null;
+            this.parameterTypeSelectItems=null;
+            this.parameterUnitSelectItems=null;
+            this.confidenceTypeSelectItems=null;
+            this.featureRoleSelectItems=null;
+            this.complexTypeSelectItems=null;
+            this.evidenceTypeSelectItems=null;
+            this.defaultExperimentalRole=null;
+            this.defaultBiologicalRole=null;
+            isInitialised=false;
+        }
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
@@ -367,6 +369,117 @@ public class CvObjectService extends AbstractEditorService {
         }
 
         isInitialised=true;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public IntactCvTerm loadCvByAc(String ac) {
+        IntactCvTerm cv = getIntactDao().getEntityManager().find(IntactCvTerm.class, ac);
+
+        // initialise xrefs because are first tab visible
+        initialiseXrefs(cv.getDbXrefs());
+        // initialise annotations because needs caution
+        initialiseAnnotations(cv.getDbAnnotations());
+
+        return cv;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public IntactCvTerm initialiseCvXrefs(IntactCvTerm cv) {
+        // reload IntactInteractionEvidence without flushing changes
+        IntactCvTerm reloaded = getIntactDao().getEntityManager().merge(cv);
+        Collection<Xref> xrefs = reloaded.getDbXrefs();
+        initialiseXrefs(xrefs);
+
+        getIntactDao().getEntityManager().detach(cv);
+        return reloaded;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public int countAliases(IntactCvTerm cv) {
+        return getIntactDao().getCvTermDao().countSynonymsForCvTerm(cv.getAc());
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public int countAnnotations(IntactCvTerm cv) {
+        return getIntactDao().getCvTermDao().countAnnotationsForCvTerm(cv.getAc());
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public int countXrefs(IntactCvTerm cv) {
+        return getIntactDao().getCvTermDao().countXrefsForCvTerm(cv.getAc());
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public IntactCvTerm initialiseCvAnnotations(IntactCvTerm cv) {
+        // reload cv without flushing changes
+        IntactCvTerm reloaded = getIntactDao().getEntityManager().merge(cv);
+        Collection<Annotation> annotations = reloaded.getDbAnnotations();
+        initialiseAnnotations(annotations);
+
+        getIntactDao().getEntityManager().detach(cv);
+        return reloaded;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public IntactCvTerm initialiseCvSynonyms(IntactCvTerm cv) {
+        // reload cv without flushing changes
+        IntactCvTerm reloaded = getIntactDao().getEntityManager().merge(cv);
+        Collection<Alias> aliases = reloaded.getSynonyms();
+        initialiseAliases(aliases);
+
+        getIntactDao().getEntityManager().detach(cv);
+        return reloaded;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public DualListModel<IntactCvTerm> loadParentsList(IntactCvTerm cv) {
+        // reload cv without flushing changes
+        IntactCvTerm reloaded = getIntactDao().getEntityManager().merge(cv);
+
+        List<IntactCvTerm> cvObjectsByClass = new ArrayList<IntactCvTerm>(getIntactDao().getCvTermDao().getByObjClass(reloaded.getObjClass()));
+        List<IntactCvTerm> existingParents = new ArrayList<IntactCvTerm>(cv.getParents().size());
+        for (OntologyTerm parent : cv.getParents()){
+            IntactCvTerm reloadedParent = (IntactCvTerm)getIntactDao().getEntityManager().merge(parent);
+            Hibernate.initialize(reloadedParent.getDbXrefs());
+
+            getIntactDao().getEntityManager().detach(reloadedParent);
+        }
+
+        Collections.sort( existingParents, new CvObjectComparator() );
+        Collections.sort( cvObjectsByClass, new CvObjectComparator() );
+
+        DualListModel<IntactCvTerm> parents = new DualListModel<IntactCvTerm>(cvObjectsByClass, existingParents);
+
+        getIntactDao().getEntityManager().detach(cv);
+
+        return parents;
+    }
+
+    private void initialiseXrefs(Collection<Xref> xrefs) {
+        for (Xref ref : xrefs){
+            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbAnnotations());
+            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbXrefs());
+            if (ref.getQualifier() != null){
+                Hibernate.initialize(((IntactCvTerm)ref.getQualifier()).getDbXrefs());
+            }
+        }
+    }
+
+    private void initialiseAnnotations(Collection<Annotation> annotations) {
+        for (Annotation annot : annotations){
+            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbAnnotations());
+            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbXrefs());
+        }
+    }
+
+
+    private void initialiseAliases(Collection<Alias> aliases) {
+        for (Alias alias : aliases){
+            if (alias.getType() != null){
+                Hibernate.initialize(((IntactCvTerm)alias.getType()).getDbAnnotations());
+                Hibernate.initialize(((IntactCvTerm)alias.getType()).getDbXrefs());
+            }
+        }
     }
 
     public List<IntactCvTerm> getSortedTopicList( String key, Multimap<String, IntactCvTerm> topicMultimap ) {
