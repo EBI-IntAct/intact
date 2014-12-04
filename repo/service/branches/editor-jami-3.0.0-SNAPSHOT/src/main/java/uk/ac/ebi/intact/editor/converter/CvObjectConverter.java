@@ -17,7 +17,7 @@ package uk.ac.ebi.intact.editor.converter;
 
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
-import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -29,7 +29,7 @@ import javax.faces.convert.FacesConverter;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-@FacesConverter( value = "cvObjectConverter", forClass = CvObject.class )
+@FacesConverter( value = "cvObjectConverter", forClass = IntactCvTerm.class )
 public class CvObjectConverter implements Converter {
 
     @Override
@@ -44,11 +44,11 @@ public class CvObjectConverter implements Converter {
     public String getAsString( FacesContext facesContext, UIComponent uiComponent, Object o ) throws ConverterException {
         if ( o == null ) return null;
 
-        if ( o instanceof CvObject ) {
-            CvObject cvObject = ( CvObject ) o;
+        if ( o instanceof IntactCvTerm ) {
+            IntactCvTerm cvObject = ( IntactCvTerm ) o;
             return cvObject.getAc();
         } else {
-            throw new IllegalArgumentException( "Argument must be a CvObject: " + o + " (" + o.getClass() + ")" );
+            throw new IllegalArgumentException( "Argument must be a CvObject: " + o );
         }
     }
 }

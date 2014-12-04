@@ -19,10 +19,7 @@ import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import psidev.psi.mi.jami.model.CvTerm;
-import psidev.psi.mi.jami.model.Experiment;
-import psidev.psi.mi.jami.model.InteractionEvidence;
-import psidev.psi.mi.jami.model.Xref;
+import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.CvTermUtils;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
@@ -54,11 +51,27 @@ public class ExperimentEditorService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public int countVariableParameters(IntactExperiment experiment) {
+        return getIntactDao().getExperimentDao().countVariableParametersForExperiment(experiment.getAc());
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactExperiment initialiseExperimentAnnotations(IntactExperiment experiment) {
         // reload participant without flushing changes
         IntactExperiment reloaded = getIntactDao().getEntityManager().merge(experiment);
         Collection<psidev.psi.mi.jami.model.Annotation> annotations = reloaded.getAnnotations();
         initialiseAnnotations(annotations);
+
+        getIntactDao().getEntityManager().detach(reloaded);
+        return reloaded;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public IntactExperiment initialiseExperimentVariableParameters(IntactExperiment experiment) {
+        // reload participant without flushing changes
+        IntactExperiment reloaded = getIntactDao().getEntityManager().merge(experiment);
+        Collection<VariableParameter> parameters = reloaded.getVariableParameters();
+        initialiseVariableParameters(parameters);
 
         getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
@@ -224,8 +237,18 @@ public class ExperimentEditorService extends AbstractEditorService {
         }
     }
 
-    private void initialiseCv(CvTerm participantIdentificationMethod) {
-        initialiseAnnotations(((IntactCvTerm)participantIdentificationMethod).getDbAnnotations());
-        initialiseXrefs(((IntactCvTerm)participantIdentificationMethod).getDbXrefs());
+    private void initialiseCv(CvTerm term) {
+        initialiseAnnotations(((IntactCvTerm)term).getDbAnnotations());
+        initialiseXrefs(((IntactCvTerm)term).getDbXrefs());
+    }
+
+    private void initialiseVariableParameters(Collection<VariableParameter> parameters) {
+        for (VariableParameter param : parameters){
+            if (param.getUnit() != null){
+                Hibernate.initialize(((IntactCvTerm)param.getUnit()).getDbXrefs());
+            }
+
+            Hibernate.initialize(param.getVariableValues());
+        }
     }
 }
