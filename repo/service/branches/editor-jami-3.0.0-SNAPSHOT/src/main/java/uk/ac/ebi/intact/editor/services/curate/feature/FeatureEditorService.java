@@ -22,8 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.intact.editor.controller.curate.feature.RangeWrapper;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
+import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.jami.model.extension.*;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -32,6 +34,9 @@ import java.util.List;
  */
 @Service
 public class FeatureEditorService extends AbstractEditorService {
+
+    @Resource(name = "cvObjectService")
+    private CvObjectService cvObjectService;
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public int countAnnotations(AbstractIntactFeature feature) {
@@ -49,8 +54,19 @@ public class FeatureEditorService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public int countRanges(AbstractIntactFeature feature) {
+        return getIntactDao().getFeatureDao(feature.getClass()).countRangesForFeature(feature.getAc());
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public int countParameters(IntactFeatureEvidence feature) {
         return getIntactDao().getFeatureEvidenceDao().countParametersForFeature(feature.getAc());
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public int countDetectionMethods(IntactFeatureEvidence feature) {
+        int first = feature.getFeatureIdentification() != null ? 1 : 0;
+        return first + getIntactDao().getFeatureEvidenceDao().countDetectionMethodsForFeature(feature.getAc());
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
@@ -98,6 +114,19 @@ public class FeatureEditorService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public IntactFeatureEvidence initialiseFeatureDetectionMethods(IntactFeatureEvidence feature) {
+        // reload feature without flushing changes
+        IntactFeatureEvidence reloaded = getIntactDao().getEntityManager().merge(feature);
+        Collection<CvTerm> dets = reloaded.getDetectionMethods();
+        for (CvTerm det : dets){
+            initialiseCv(det);
+        }
+
+        getIntactDao().getEntityManager().detach(reloaded);
+        return reloaded;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public <T extends AbstractIntactFeature> T loadFeatureByAc(String ac, Class<T> featureClass) {
         T feature = getIntactDao().getEntityManager().find(featureClass, ac);
 
@@ -112,11 +141,16 @@ public class FeatureEditorService extends AbstractEditorService {
             initialiseCv(feature.getRole());
         }
 
+        // load participant interactor
+        if (feature.getParticipant() != null){
+            initialiseParticipant(feature.getParticipant());
+        }
+
         return feature;
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public <T extends AbstractIntactFeature> T reloadFullyInitialisedExperiment(T feature) {
+    public <T extends AbstractIntactFeature> T reloadFullyInitialisedFeature(T feature) {
         T reloaded = getIntactDao().getEntityManager().merge(feature);
 
         // initialise annotations because needs caution
@@ -124,10 +158,15 @@ public class FeatureEditorService extends AbstractEditorService {
 
         // load base types
         if (feature.getType() != null){
-            initialiseCv(feature.getType());
+            initialiseCv(reloaded.getType());
         }
         if (feature.getRole() != null){
-            initialiseCv(feature.getRole());
+            initialiseCv(reloaded.getRole());
+        }
+
+        // load participant interactor
+        if (feature.getParticipant() != null){
+            initialiseParticipant(reloaded.getParticipant());
         }
 
         getIntactDao().getEntityManager().detach(reloaded);
@@ -146,12 +185,12 @@ public class FeatureEditorService extends AbstractEditorService {
             initialisePosition(range.getStart());
             initialisePosition(range.getEnd());
 
-            rangeWrappers.add(new RangeWrapper(range, sequence, resultingSeqClass));
+            rangeWrappers.add(new RangeWrapper(range, sequence, cvObjectService, resultingSeqClass));
         }
 
         getIntactDao().getEntityManager().detach(reloaded);
 
-        return reloaded;
+        return rangeWrappers;
     }
 
     private void initialiseXrefs(Collection<Xref> xrefs) {
@@ -197,5 +236,19 @@ public class FeatureEditorService extends AbstractEditorService {
     private void initialisePosition(Position pos) {
         Hibernate.initialize(((IntactCvTerm)pos.getStatus()).getDbXrefs());
 
+    }
+
+    private void initialiseParticipant(Entity participant) {
+        if (participant.getInteractor() instanceof IntactPolymer){
+            // load sequence
+            ((Polymer) participant.getInteractor()).getSequence();
+        }
+        else if (participant.getInteractor() instanceof IntactComplex){
+            IntactComplex complex = (IntactComplex)participant.getInteractor();
+
+            for (ModelledParticipant p : complex.getParticipants()){
+                 initialiseParticipant(p);
+            }
+        }
     }
 }

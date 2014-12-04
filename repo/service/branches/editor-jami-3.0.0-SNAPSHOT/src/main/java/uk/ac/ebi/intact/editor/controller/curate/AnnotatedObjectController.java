@@ -42,6 +42,8 @@ import uk.ac.ebi.intact.editor.services.curate.EditorObjectService;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.ComplexController;
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
+import uk.ac.ebi.intact.editor.services.curate.experiment.ExperimentEditorService;
+import uk.ac.ebi.intact.editor.services.curate.feature.FeatureEditorService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.lifecycle.LifeCycleManager;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
@@ -141,7 +143,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
 
     protected void generalLoadChecks(){
         // set current user
-        getEditorService().setUser(getCurrentJamiUser());
+        getEditorService().setUser(getCurrentUser());
 
         if (changesController.isObjectBeingEdited(getAnnotatedObject(), false)) {
             String who = changesController.whoIsEditingObject(getAnnotatedObject());
@@ -983,7 +985,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
         }
         else if (ao instanceof IntactExperiment){
             IntactExperiment experiment = (IntactExperiment)ao;
-            annotations = getEditorService().initialiseExperimentAnnotations(experiment).getAnnotations();
+            annotations = ((ExperimentEditorService)ApplicationContextProvider.getBean("experimentEditorService")).initialiseExperimentAnnotations(experiment).getAnnotations();
         }
         else if (ao instanceof IntactInteractionEvidence){
             IntactInteractionEvidence interaction = (IntactInteractionEvidence)ao;
@@ -999,11 +1001,11 @@ public abstract class AnnotatedObjectController extends BaseController implement
         }
         else if (ao instanceof AbstractIntactFeature){
             AbstractIntactFeature participant = (AbstractIntactFeature)ao;
-            annotations = getEditorService().initialiseFeatureAnnotations(participant).getAnnotations();
+            annotations = ((FeatureEditorService)ApplicationContextProvider.getBean("featureEditorService")).initialiseFeatureAnnotations(participant).getAnnotations();
         }
         else if (ao instanceof IntactCvTerm){
             IntactCvTerm cv = (IntactCvTerm)ao;
-            annotations = getEditorService().initialiseCvAnnotations(cv).getAnnotations();
+            annotations = getCvService().initialiseCvAnnotations(cv).getAnnotations();
         }
         else if (ao instanceof IntactSource){
             IntactSource source = (IntactSource)ao;

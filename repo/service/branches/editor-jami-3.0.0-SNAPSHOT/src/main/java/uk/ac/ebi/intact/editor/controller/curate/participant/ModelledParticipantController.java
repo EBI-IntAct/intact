@@ -773,4 +773,12 @@ public class ModelledParticipantController extends AnnotatedObjectController {
             return getIntactDao().getModelledParticipantDao().countFeaturesForParticipant(this.ac);
         }
     }
+
+    public void reloadSingleFeature(IntactModelledFeature f){
+
+    }
+
+    public void removeFeature(IntactModelledFeature f){
+
+    }
 }

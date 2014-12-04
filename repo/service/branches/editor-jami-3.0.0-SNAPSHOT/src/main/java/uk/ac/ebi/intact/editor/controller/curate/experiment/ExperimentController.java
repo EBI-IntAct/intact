@@ -213,6 +213,8 @@ public class ExperimentController extends AnnotatedObjectController {
         }
     }
 
+
+
     protected void refreshParentControllers() {
         // different loaded publication
         if (publicationController.getPublication() != experiment.getPublication()){
@@ -244,6 +246,28 @@ public class ExperimentController extends AnnotatedObjectController {
                 }
             }
             experiment.getInteractionEvidences().add(ev);
+        }
+        else{
+            refreshInteractions();
+        }
+    }
+
+    public void removeInteractionEvidence(IntactInteractionEvidence ev){
+        // only update if not lazy loaded
+        if (experiment.areInteractionEvidencesInitialized()){
+            Iterator<InteractionEvidence> evIterator = experiment.getInteractionEvidences().iterator();
+            while (evIterator.hasNext()){
+                IntactInteractionEvidence intactEv = (IntactInteractionEvidence)evIterator.next();
+                if (intactEv.getAc() == null && ev == intactEv){
+                    evIterator.remove();
+                }
+                else if (intactEv.getAc() != null && !intactEv.getAc().equals(ev.getAc())){
+                    evIterator.remove();
+                }
+            }
+        }
+        else{
+            refreshInteractions();
         }
     }
 
@@ -299,27 +323,42 @@ public class ExperimentController extends AnnotatedObjectController {
         if (!experiment.areAnnotationsInitialized()
                 || (experiment.getPublication() != null
                 && (((IntactPublication)experiment.getPublication()).areAnnotationsInitialized()
-                || ((IntactPublication)experiment.getPublication()).areXrefsInitialized()))){
+                || ((IntactPublication)experiment.getPublication()).areXrefsInitialized()))
+                || !isCvInitialised(experiment.getParticipantIdentificationMethod())
+                || !isCvInitialised(experiment.getInteractionDetectionMethod())){
             this.experiment = getExperimentService().reloadFullyInitialisedExperiment(experiment);
         }
 
         refreshInteractions();
     }
 
+    private boolean isCvInitialised(CvTerm cv) {
+        if (cv instanceof IntactCvTerm){
+            IntactCvTerm intactCv = (IntactCvTerm)cv;
+            return intactCv.areXrefsInitialized() && intactCv.areAnnotationsInitialized();
+        }
+        return true;
+    }
+
     @Override
     public void doPostSave(){
+        // new object, add it to the list of experiments of its publication before saving
+        if (experiment.getPublication() != null) {
+            publicationController.reloadSingleExperiment(experiment);
+        }
         // refresh all interactions after saving
         refreshInteractions();
         publicationController.refreshDataModels();
         this.valuesToDeleteOnSave.clear();
     }
 
-    public void doPreSave() {
-        // new object, add it to the list of experiments of its publication before saving
-        if (experiment.getPublication() != null && experiment.getAc() == null) {
-            publicationController.reloadSingleExperiment(experiment);
-        }
+    @Override
+    public String doDelete() {
+        publicationController.removeExperiment(experiment);
+        return super.doDelete();
+    }
 
+    public void doPreSave() {
         // delete all variable parameter values
         Iterator<IntactVariableParameterValue> paramValuesIterator = this.valuesToDeleteOnSave.iterator();
         while (paramValuesIterator.hasNext()){
@@ -803,7 +842,7 @@ public class ExperimentController extends AnnotatedObjectController {
     }
 
     public List<VariableParameter> collectVariableParameters() {
-        // xrefs are not always initialised
+        // params are not always initialised
         if (!experiment.areVariableParametersInitialized()){
             setExperiment(getExperimentService().initialiseExperimentVariableParameters(this.experiment));
         }
@@ -855,6 +894,7 @@ public class ExperimentController extends AnnotatedObjectController {
     @Override
     public void newAnnotation(ActionEvent evt) {
         experiment.getAnnotations().add(new ExperimentAnnotation(IntactUtils.createMITopic("to set", null)));
+        setUnsavedChanges(true);
     }
 
     @Override

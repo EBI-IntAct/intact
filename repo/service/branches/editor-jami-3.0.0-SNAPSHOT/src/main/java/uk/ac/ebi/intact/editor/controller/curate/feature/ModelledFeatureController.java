@@ -18,43 +18,23 @@ package uk.ac.ebi.intact.editor.controller.curate.feature;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
-import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import psidev.psi.mi.jami.model.*;
-import psidev.psi.mi.jami.utils.AnnotationUtils;
-import psidev.psi.mi.jami.utils.RangeUtils;
+import psidev.psi.mi.jami.model.Feature;
+import psidev.psi.mi.jami.model.Position;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
-import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ModelledFeatureCloner;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.ComplexController;
 import uk.ac.ebi.intact.editor.controller.curate.participant.ModelledParticipantController;
-import uk.ac.ebi.intact.jami.context.UserContext;
-import uk.ac.ebi.intact.jami.dao.IntactDao;
-import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.*;
-import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
-import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
-import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.clone.IntactCloner;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ComponentSystemEvent;
-import javax.faces.model.SelectItem;
-import javax.faces.validator.ValidatorException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Modelled Feature controller.
@@ -63,18 +43,9 @@ import java.util.List;
 @Controller
 @Scope( "conversation.access" )
 @ConversationName( "general" )
-public class ModelledFeatureController extends AnnotatedObjectController {
+public class ModelledFeatureController extends AbstractFeatureController<IntactModelledFeature> {
 
     private static final Log log = LogFactory.getLog( ModelledFeatureController.class );
-
-    private IntactModelledFeature feature;
-    private List<ModelledRangeWrapper> rangeWrappers;
-    private boolean containsInvalidRanges;
-
-    /**
-     * The AC of the feature to be loaded.
-     */
-    private String ac;
 
     @Autowired
     private ComplexController complexController;
@@ -82,375 +53,78 @@ public class ModelledFeatureController extends AnnotatedObjectController {
     @Autowired
     private ModelledParticipantController modelledParticipantController;
 
-    private String newRangeValue;
-
-    private boolean isRangeDisabled;
-
-    private List<SelectItem> participantSelectItems;
-    private boolean isComplexFeature=false;
-
-    private String cautionMessage = null;
-    private String internalRemark = null;
-
     public ModelledFeatureController() {
+        super(IntactModelledFeature.class, ModelledResultingSequence.class);
     }
 
     @Override
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String clone() {
-        if (!getJamiEntityManager().contains(getFeature())){
-            IntactModelledFeature reloadedFeature = getJamiEntityManager().merge(this.feature);
-            setFeature(reloadedFeature);
-        }
-
-        String value = clone(getFeature());
-
-        getJamiEntityManager().detach(getFeature());
-
-        return value;
+    protected AnnotatedObjectController getParentController() {
+        return modelledParticipantController;
     }
 
     @Override
-    protected IntactModelledFeature cloneAnnotatedObject(IntactPrimaryObject ao) {
-        // to be overrided
-        return (IntactModelledFeature) ModelledFeatureCloner.cloneFeature((IntactModelledFeature) ao);
+    protected String getPageContext() {
+        return "cfeature";
     }
 
     @Override
-    public AnnotatedObject getAnnotatedObject() {
-        return null;
+    protected EditorCloner<Feature, IntactModelledFeature> newClonerInstance() {
+        return new ModelledFeatureCloner();
     }
 
     @Override
-    public void setAnnotatedObject(AnnotatedObject annotatedObject) {
-        // does nothing
-    }
-
-    @Override
-    public IntactPrimaryObject getJamiObject() {
-        return this.feature;
-    }
-
-    @Override
-    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-    public void setJamiObject(IntactPrimaryObject annotatedObject) {
-        // reload object if necessary
-        if (annotatedObject != null && annotatedObject.getAc() != null && !getJamiEntityManager().contains(annotatedObject)){
-            annotatedObject = getJamiEntityManager().merge(annotatedObject);
-        }
-        setFeature((IntactModelledFeature)annotatedObject);
-    }
-
-    private void refreshParticipantSelectItems() {
-        participantSelectItems = new ArrayList<SelectItem>();
-        participantSelectItems.add(new SelectItem(null, "select participant", "select participant", false, false, true));
-
-        if (this.feature.getParticipant() != null){
-            ModelledEntity modelledParticipant = this.feature.getParticipant();
-            if (modelledParticipant.getInteractor() instanceof psidev.psi.mi.jami.model.Complex){
-                isComplexFeature = true;
-                loadParticipants((Complex)modelledParticipant.getInteractor(), this.participantSelectItems);
-            }
-            else{
-                isComplexFeature = false;
-            }
-        }
-    }
-
-    private void loadParticipants(Complex parent, List<SelectItem> selectItems){
-        for (ModelledParticipant child : parent.getParticipants()){
-            IntactModelledParticipant part = (IntactModelledParticipant)child;
-            if (part.getInteractor() instanceof Complex){
-                loadParticipants((Complex)part.getInteractor(), selectItems);
-            }
-            else{
-                SelectItem item = new SelectItem( part, part.getInteractor().getShortName()+", "+part.getAc(), part.getInteractor().getFullName());
-                selectItems.add(item);
-            }
-        }
-    }
-
-    @Override
-    public String goToParent() {
-        return "/curate/cparticipant?faces-redirect=true&includeViewParams=true";
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public void loadData( ComponentSystemEvent event ) {
-        if (!FacesContext.getCurrentInstance().isPostback()) {
-            if ( (feature == null && ac != null) || (ac != null && feature != null && !ac.equals( feature.getAc() ))) {
-                setFeature(loadByJamiAc(IntactModelledFeature.class, ac));
-            }
-
-            if (feature == null) {
-                super.addErrorMessage("Feature does not exist", ac);
-                return;
-            }
-
-            if (feature.getAc() != null && !getJamiEntityManager().contains(feature)){
-                setFeature(getJamiEntityManager().merge(feature));
-            }
-
-            refreshParentControllers();
-
-            refreshTabsAndFocusXref();
-            if (containsInvalidRanges) {
-                addWarningMessage("This feature contains invalid ranges", "Ranges must be fixed before being able to save");
-            }
-
-            generalJamiLoadChecks();
-        }
-    }
-
-    protected void refreshParentControllers() {
-        final ModelledEntity participant = feature.getParticipant();
-
-        if (modelledParticipantController.getParticipant() != feature.getParticipant()) {
-            modelledParticipantController.setParticipant((IntactModelledParticipant)participant);
+    public void newXref(ActionEvent evt) {
+        // xrefs are not always initialised
+        if (!getFeature().areXrefsInitialized()){
+            setFeature(getFeatureEditorService().initialiseFeatureXrefs(getFeature()));
         }
 
-        if( feature.getParticipant() != null &&
-                ((ModelledParticipant)feature.getParticipant()).getInteraction() != complexController.getComplex() ) {
-            final Complex interaction = (Complex)((IntactModelledParticipant)participant).getInteraction();
-            complexController.setComplex((IntactComplex) interaction);
-        }
-    }
-
-    public void refreshRangeWrappers() {
-        this.rangeWrappers = new ArrayList<ModelledRangeWrapper>(feature.getRanges().size());
-
-        String sequence = getSequence();
-
-        containsInvalidRanges = false;
-
-        for (psidev.psi.mi.jami.model.Range range : feature.getRanges()) {
-            // override sequence if range has a participant
-            if (range.getParticipant() != null){
-                psidev.psi.mi.jami.model.Interactor interactor = range.getParticipant().getInteractor();
-
-                if (interactor instanceof psidev.psi.mi.jami.model.Polymer) {
-                    psidev.psi.mi.jami.model.Polymer polymer = (psidev.psi.mi.jami.model.Polymer) interactor;
-                    sequence = polymer.getSequence();
-                }
-            }
-            rangeWrappers.add(new ModelledRangeWrapper((ModelledRange)range, sequence, this));
-
-            if (!containsInvalidRanges && !RangeUtils.validateRange(range, sequence).isEmpty()) {
-                containsInvalidRanges = true;
-            }
-        }
-    }
-
-    @Override
-    protected IntactCloner newClonerInstance() {
-        return new FeatureIntactCloner();
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public void refreshRangeProperties(ModelledRange range){
-        try {
-            getIntactTransactionSynchronization().registerDaoForSynchronization(getIntactDao());
-            getIntactDao().getSynchronizerContext().getModelledRangeSynchronizer().synchronizeProperties(range);
-        } catch (FinderException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize range: " + e.getMessage(), e.getMessage());
-        } catch (PersisterException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize range: " + e.getMessage(), e.getMessage());
-        } catch (SynchronizerException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize range: " + e.getMessage(), e.getMessage());
-        }
-    }
-
-    public String newFeature(ModelledParticipant participant) {
-        IntactModelledFeature feature = new IntactModelledFeature();
-        feature.setParticipant(participant);
-        feature.setShortName(null);
-        feature.setCreated(new Date());
-        UserContext jamiUserContext = getIntactDao().getUserContext();
-        feature.setCreator(jamiUserContext.getUserId());
-        feature.setUpdator(jamiUserContext.getUserId());
-        feature.setUpdated(feature.getCreated());
-
-        setFeature(feature);
-
-        refreshRangeWrappers();
-        changed();
-
-        return navigateToJamiObject(feature);
-    }
-
-    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
-    public void newRange(ActionEvent evt) {
-        if (newRangeValue == null || newRangeValue.isEmpty()) {
-            addErrorMessage("Range value field is empty", "Please provide a range value before clicking on the New Range button");
-            return;
-        }
-
-        newRangeValue = newRangeValue.trim();
-
-        if (!newRangeValue.contains("-")) {
-            addErrorMessage("Illegal range value", "The range must contain a hyphen");
-            return;
-        }
-
-        String sequence = getSequence();
-        psidev.psi.mi.jami.model.Range range = null;
-        try {
-            range = RangeUtils.createRangeFromString(newRangeValue);
-            List<String> messages = RangeUtils.validateRange(range, sequence);
-            if (!messages.isEmpty()) {
-                for (String msg : messages){
-                    addErrorMessage("Range is not valid", msg);
-                }
-                return;
-            }
-        } catch (psidev.psi.mi.jami.exception.IllegalRangeException e) {
-            addErrorMessage("Range is not valid", e.getMessage());
-        }
-
-        range.setLink(false);
-        range.setResultingSequence(new ModelledResultingSequence(RangeUtils.extractRangeSequence(range, sequence), null));
-        IntactDao dao = getIntactDao();
-        getIntactTransactionSynchronization().registerDaoForSynchronization(dao);
-        try {
-            range = dao.getSynchronizerContext().getModelledRangeSynchronizer().synchronize(range, false);
-        } catch (FinderException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot create new Range: "+e.getMessage(), e.getMessage());
-        } catch (PersisterException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot create new Range: "+e.getMessage(), e.getMessage());
-        } catch (SynchronizerException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot create new Range: "+e.getMessage(), e.getMessage());
-        }
-
-        feature.getRanges().add(range);
-
-        refreshRangeWrappers();
-
-        newRangeValue = null;
-
+        getFeature().getDbXrefs().add(new ModelledFeatureXref(IntactUtils.createMIDatabase("to set", null), "to set"));
         setUnsavedChanges(true);
     }
 
-    public void validateFeature(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-
-        if (feature.getRanges().isEmpty()) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Feature without ranges", "One range is mandatory");
-            throw new ValidatorException(message);
-        }
-    }
-
-    private String getSequence() {
-        if (feature != null){
-            if (feature.getParticipant() != null){
-                psidev.psi.mi.jami.model.Interactor interactor = feature.getParticipant().getInteractor();
-
-                String sequence = null;
-
-                if (interactor instanceof psidev.psi.mi.jami.model.Polymer) {
-                    psidev.psi.mi.jami.model.Polymer polymer = (psidev.psi.mi.jami.model.Polymer) interactor;
-                    sequence = polymer.getSequence();
-                }
-                return sequence;
-            }
-            return null;
-        }
-        return null;
-    }
-
-    public void markRangeToDelete(ModelledRange range) {
-        if (range == null) return;
-
-        feature.getRanges().remove(range);
-        refreshRangeWrappers();
-        changed();
-    }
-
-    public List<ModelledRangeWrapper> getWrappedRanges() {
-        return rangeWrappers;
-    }
-
-    public String getAc() {
-        if ( ac == null && feature != null ) {
-            return feature.getAc();
-        }
-        return ac;
-    }
-
-    public void setAc( String ac ) {
-        this.ac = ac;
-    }
-
-    public IntactModelledFeature getFeature() {
-        return feature;
+    @Override
+    public ModelledFeatureXref newXref(String db, String dbMI, String id, String secondaryId, String qualifier, String qualifierMI) {
+        return new ModelledFeatureXref(getCvService().findCvObject(IntactUtils.DATABASE_OBJCLASS, dbMI != null ? dbMI : db),
+                id,
+                secondaryId,
+                getCvService().findCvObject(IntactUtils.QUALIFIER_OBJCLASS, qualifierMI != null ? qualifierMI : qualifier));
     }
 
     @Override
-    public void refreshTabsAndFocusXref(){
-        refreshTabs();
+    public void newAnnotation(ActionEvent evt) {
+        getFeature().getAnnotations().add(new ModelledFeatureAnnotation(IntactUtils.createMITopic("to set", null)));
+        setUnsavedChanges(true);
     }
 
     @Override
-    public void refreshTabs(){
-        super.refreshTabs();
-
-        this.isRangeDisabled = false;
-    }
-
-    public void setFeature( IntactModelledFeature feature ) {
-        this.feature = feature;
-
-        if (feature != null){
-            this.ac = feature.getAc();
-            refreshRangeWrappers();
-            refreshInfoMessages();
-            refreshParticipantSelectItems();
-        }
-        else{
-            this.ac = null;
-        }
+    public ModelledFeatureAnnotation newAnnotation(String topic, String topicMI, String text) {
+        return new ModelledFeatureAnnotation(getCvService().findCvObject(IntactUtils.TOPIC_OBJCLASS, topicMI != null ? topicMI: topic), text);
     }
 
     @Override
-    public void doPreSave() {
-        // the feature was just created, add it to the list of features of the participant
-        if (feature.getAc() == null){
-            modelledParticipantController.getParticipant().addFeature(feature);
+    public void newAlias(ActionEvent evt) {
+        // aliases are not always initialised
+        if (!getFeature().areAliasesInitialized()){
+            setFeature(getFeatureEditorService().initialiseFeatureAliases(getFeature()));
         }
-    }
 
-    public String getNewRangeValue() {
-        return newRangeValue;
-    }
-
-    public void setNewRangeValue(String newRangeValue) {
-        this.newRangeValue = newRangeValue;
-    }
-
-    public boolean isContainsInvalidRanges() {
-        return containsInvalidRanges;
-    }
-
-    public void setContainsInvalidRanges(boolean containsInvalidRanges) {
-        this.containsInvalidRanges = containsInvalidRanges;
+        getFeature().getAliases().add(new ModelledFeatureAlias("to set"));
+        setUnsavedChanges(true);
     }
 
     @Override
-    public Collection<String> collectParentAcsOfCurrentAnnotatedObject(){
+    public ModelledFeatureAlias newAlias(String alias, String aliasMI, String name) {
+        return new ModelledFeatureAlias(getCvService().findCvObject(IntactUtils.ALIAS_TYPE_OBJCLASS, aliasMI != null ? aliasMI : alias),
+                name);
+    }
+
+    @Override
+    public Collection<String> collectParentAcsOfCurrentAnnotatedObject() {
         Collection<String> parentAcs = new ArrayList<String>();
 
-        if (feature.getParticipant() != null){
-            IntactModelledParticipant comp = (IntactModelledParticipant)feature.getParticipant();
+        if (getFeature().getParticipant() instanceof IntactModelledParticipant){
+            IntactModelledParticipant comp = (IntactModelledParticipant)getFeature().getParticipant();
             if (comp.getAc() != null){
                 parentAcs.add(comp.getAc());
             }
@@ -461,293 +135,83 @@ public class ModelledFeatureController extends AnnotatedObjectController {
         return parentAcs;
     }
 
-    @Override
-    protected void refreshUnsavedChangesBeforeRevert(){
-        if (feature != null){
-            Collection<String> parentAcs = new ArrayList<String>();
-
-            if (feature.getParticipant() != null){
-                IntactModelledParticipant comp = (IntactModelledParticipant)feature.getParticipant();
-                if (comp.getAc() != null){
-                    parentAcs.add(comp.getAc());
-                }
-
-                addParentAcsTo(parentAcs, comp);
-            }
-
-            getChangesController().revertFeature(feature, parentAcs);
-        }
-    }
-
-    /**
-     * Get the publication ac of this participant if it exists, the ac of the interaction if it exists and the component ac if it exists and add it to the list or parentAcs
-     * @param parentAcs
-     * @param comp
-     */
     private void addParentAcsTo(Collection<String> parentAcs, IntactModelledParticipant comp) {
-        if (comp.getInteraction() != null){
+        if (comp.getInteraction() instanceof IntactComplex){
             IntactComplex inter = (IntactComplex)comp.getInteraction();
             addParentAcsTo(parentAcs, inter);
         }
     }
 
-    /**
-     * Add all the parent acs of this interaction
-     * @param parentAcs
-     * @param inter
-     */
     protected void addParentAcsTo(Collection<String> parentAcs, IntactComplex inter) {
         if (inter.getAc() != null){
             parentAcs.add(inter.getAc());
         }
     }
 
-    public boolean isRangeDisabled() {
-        return isRangeDisabled;
-    }
-
-    public void setRangeDisabled(boolean rangeDisabled) {
-        isRangeDisabled = rangeDisabled;
-    }
-
-    @Override
-    public void modifyClone(AnnotatedObject clone) {
-        refreshTabs();
-    }
-
-    public void onTabChanged(TabChangeEvent e) {
-
-        // the xref tab is active
-        super.onTabChanged(e);
-
-        // all the tabs selectOneMenu are disabled, we can process the tabs specific to interaction
-        if (isAliasDisabled() && isXrefDisabled() && isAnnotationTopicDisabled()){
-            if (e.getTab().getId().equals("rangesTab")){
-                isRangeDisabled = false;
-            }
-            else {
-                isRangeDisabled = true;
-            }
-        }
-        else {
-            isRangeDisabled = true;
-        }
-    }
-
-    public boolean isComplexFeature(){
-        return this.isComplexFeature;
-    }
-
-    @Override
-    protected boolean isPublicationParent() {
-        return false;
-    }
-
-    @Override
-    public void newXref(ActionEvent evt) {
-        this.feature.getDbXrefs().add(new ModelledFeatureXref(IntactUtils.createMIDatabase("unspecified", null), "to set"));
-        setUnsavedChanges(true);
-    }
-
-    @Override
-    public void newAnnotation(ActionEvent evt) {
-        this.feature.getAnnotations().add(new ModelledFeatureAnnotation(IntactUtils.createMITopic("unspecified", null)));
-        setUnsavedChanges(true);
-    }
-
-    @Override
-    public void newAlias(ActionEvent evt) {
-        this.feature.getAliases().add(new ModelledFeatureAlias("to set"));
-        setUnsavedChanges(true);
-    }
-
-    @Override
-    public String getCautionMessage() {
-        return this.cautionMessage;
-    }
-
-    @Override
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String getJamiCautionMessage(IntactPrimaryObject ao) {
-        Collection<Annotation> annots = getIntactDao().getModelledFeatureDao().getAnnotationsForFeature(ao.getAc());
-        psidev.psi.mi.jami.model.Annotation caution = AnnotationUtils.collectFirstAnnotationWithTopic(annots, psidev.psi.mi.jami.model.Annotation.CAUTION_MI,
-                psidev.psi.mi.jami.model.Annotation.CAUTION);
-        return caution != null ? caution.getValue() : null;
-    }
-
-    @Override
-    public String getInternalRemarkMessage() {
-        return this.internalRemark;
-    }
-
-    @Override
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List collectXrefs() {
-        if (!this.feature.areXrefsInitialized()){
-            IntactModelledFeature reloaded = getJamiEntityManager().merge(this.feature);
-            setFeature(reloaded);
-        }
-
-        List<Xref> xrefs = new ArrayList<Xref>(this.feature.getDbXrefs());
-
-        getJamiEntityManager().detach(this.feature);
-        return xrefs;
-    }
-
-    @Override
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List collectAliases() {
-        if (!this.feature.areAliasesInitialized()){
-            IntactModelledFeature reloaded = getJamiEntityManager().merge(this.feature);
-            setFeature(reloaded);
-        }
-
-        List<Alias> aliases = new ArrayList<Alias>(this.feature.getAliases());
-
-        getJamiEntityManager().detach(this.feature);
-        return aliases;
-    }
-
-    @Override
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List collectAnnotations() {
-        if (!this.feature.areAnnotationsInitialized()){
-            IntactModelledFeature reloaded = getJamiEntityManager().merge(this.feature);
-            setFeature(reloaded);
-        }
-
-        List<Annotation> xrefs = new ArrayList<Annotation>(this.feature.getAnnotations());
-
-        getJamiEntityManager().detach(this.feature);
-        return xrefs;
-    }
-
     @Override
     public IntactDbSynchronizer getDbSynchronizer() {
-        return getIntactDao().getSynchronizerContext().getModelledFeatureSynchronizer();
+        return getEditorService().getIntactDao().getSynchronizerContext().getModelledFeatureSynchronizer();
     }
 
     @Override
     public String getObjectName() {
-        return this.feature.getShortName();
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int getAliasesSize() {
-        if (this.feature.areAliasesInitialized()){
-            return this.feature.getAliases().size();
-        }
-        else{
-            return getIntactDao().getModelledFeatureDao().countAliasesForFeature(this.ac);
-        }
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int getAnnotationsSize() {
-        if (this.feature.areAnnotationsInitialized()){
-            return this.feature.getAnnotations().size();
-        }
-        else{
-            return getIntactDao().getModelledFeatureDao().countAnnotationsForFeature(this.ac);
-        }
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int getXrefsSize() {
-        if (this.feature.areXrefsInitialized()){
-            return this.feature.getDbXrefs().size();
-        }
-        else{
-            return getIntactDao().getModelledFeatureDao().countXrefsForFeature(this.ac);
-        }
-    }
-
-    public void removeJamiAlias(Alias alias){
-        this.feature.getAliases().remove(alias);
-    }
-
-    public void removeJamiXref(Xref xref){
-        this.feature.getDbXrefs().remove(xref);
-    }
-
-    public void removeJamiAnnotation(Annotation annot){
-        this.feature.getAnnotations().remove(annot);
-    }
-
-    public boolean isAliasNotEditable(Alias alias){
-        return false;
-    }
-
-    public boolean isAnnotationNotEditable(Annotation annot){
-        return false;
+        return "Complex feature";
     }
 
     @Override
-    public void doPostSave(){
-        modelledParticipantController.refreshFeatures();
-    }
+    protected void refreshParentControllers() {
+        // different loaded participant
+        if (modelledParticipantController.getParticipant() != getFeature().getParticipant()){
+            // different participant to load
+            if (modelledParticipantController.getAc() == null ||
+                    (getFeature().getParticipant() instanceof IntactModelledParticipant
+                            && !modelledParticipantController.getAc().equals(((IntactModelledParticipant)getFeature().getParticipant()).getAc()))){
+                IntactModelledParticipant intactParticipant = (IntactModelledParticipant)getFeature().getParticipant();
+                modelledParticipantController.setParticipant(intactParticipant);
 
-    private void refreshInfoMessages() {
-        Annotation remark = AnnotationUtils.collectFirstAnnotationWithTopic(this.feature.getAnnotations(), null,
-                "remark-internal");
-        this.internalRemark = remark != null ? remark.getValue() : null;
-        Annotation caution = AnnotationUtils.collectFirstAnnotationWithTopic(this.feature.getAnnotations(), Annotation.CAUTION_MI,
-                Annotation.CAUTION);
-        this.cautionMessage = caution != null ? caution.getValue() : null;
-    }
-
-    @Override
-    protected boolean areXrefsInitialised() {
-        return this.feature.areXrefsInitialized();
-    }
-
-    @Override
-    protected void doPostDelete(){
-        modelledParticipantController.setParticipant(null);
-        // remove this one from the participant
-        if (feature.getParticipant() != null){
-            modelledParticipantController.setAc(((IntactModelledParticipant)feature.getParticipant()).getAc());
-        }
-    }
-
-    @Override
-    protected boolean isParentObjectNotSaved() {
-        if (this.feature != null){
-            if (this.feature.getParticipant() instanceof IntactModelledParticipant
-                    && ((IntactModelledParticipant)this.feature.getParticipant()).getAc() == null){
-                return true;
+                // reload other parents
+                if( intactParticipant.getInteraction() instanceof IntactComplex ) {
+                    final IntactComplex interaction = (IntactComplex)intactParticipant.getInteraction();
+                    complexController.setComplex( interaction );
+                }
+                else{
+                    complexController.setComplex(null);
+                }
+            }
+            // replace old feature instance with new one in feature tables of participant
+            else{
+                getFeature().setParticipant(modelledParticipantController.getParticipant());
+                modelledParticipantController.reloadSingleFeature(getFeature());
             }
         }
-        return false;
     }
 
     @Override
-    protected AnnotatedObjectController getJamiParentController() {
-        return this.modelledParticipantController;
+    protected ModelledRange instantiateRange(Position start, Position end) {
+        return new ModelledRange(start, end);
     }
 
     @Override
-    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
-    public void doSave(boolean refreshCurrentView) {
-        ChangesController changesController = (ChangesController) getSpringContext().getBean("changesController");
-        PersistenceController persistenceController = getPersistenceController();
-
-        doSaveJami(refreshCurrentView, changesController, persistenceController);
+    protected ModelledResultingSequence instantiateResultingSequence(String original, String newSequence) {
+        return new ModelledResultingSequence(original, newSequence);
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int getFeatureRangeSize() {
-        return this.feature.getRanges().size();
+    @Override
+    protected IntactDbSynchronizer getRangeSynchronzer() {
+        return getEditorService().getIntactDao().getSynchronizerContext().getModelledRangeSynchronizer();
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String loadFeature(IntactModelledFeature feature){
-        if (feature != null && feature.getAc() != null && !getJamiEntityManager().contains(feature)){
-            setFeature(getJamiEntityManager().merge(feature));
+    @Override
+    public String doDelete() {
+        modelledParticipantController.removeFeature(getFeature());
+        return super.doDelete();
+    }
+
+    @Override
+    public void doPostSave() {
+        // the feature was just created, add it to the list of features of the participant
+        if (getFeature().getParticipant() != null){
+            modelledParticipantController.reloadSingleFeature(getFeature());
         }
-        else{
-            setFeature(feature);
-        }
-        return "/curate/cfeature"+(feature.getAc() != null ? "?faces-redirect=true&includeViewParams=true" : "");
     }
 }

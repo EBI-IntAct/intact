@@ -41,6 +41,8 @@ import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationControll
 import uk.ac.ebi.intact.editor.controller.curate.util.IntactObjectComparator;
 import uk.ac.ebi.intact.editor.util.SelectableCollectionDataModel;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
+import uk.ac.ebi.intact.jami.model.extension.IntactExperiment;
+import uk.ac.ebi.intact.jami.model.extension.IntactFeatureEvidence;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.clone.IntactCloner;
@@ -931,5 +933,13 @@ public class ParticipantController extends ParameterizableObjectController {
         else {
             return getDaoFactory().getComponentDao().getParticipantIdentificationMethodsForComponentAc(participant.getAc()).isEmpty();
         }
+    }
+
+    public void reloadSingleFeature(IntactFeatureEvidence f){
+
+    }
+
+    public void removeFeature(IntactFeatureEvidence f){
+
     }
 }

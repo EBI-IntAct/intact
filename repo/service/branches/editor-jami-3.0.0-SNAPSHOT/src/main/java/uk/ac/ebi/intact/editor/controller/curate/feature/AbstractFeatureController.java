@@ -17,31 +17,18 @@ package uk.ac.ebi.intact.editor.controller.curate.feature;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
-import org.hibernate.Hibernate;
 import org.primefaces.event.TabChangeEvent;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import psidev.psi.mi.jami.model.Alias;
-import psidev.psi.mi.jami.model.Annotation;
-import psidev.psi.mi.jami.model.Xref;
+import psidev.psi.mi.jami.exception.IllegalRangeException;
+import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
+import psidev.psi.mi.jami.utils.RangeUtils;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
-import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
-import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentController;
-import uk.ac.ebi.intact.editor.controller.curate.interaction.InteractionController;
-import uk.ac.ebi.intact.editor.controller.curate.participant.ParticipantController;
-import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
-import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.editor.services.curate.feature.FeatureEditorService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.*;
-import uk.ac.ebi.intact.jami.model.lifecycle.Releasable;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
+import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.Resource;
 import javax.faces.application.FacesMessage;
@@ -49,10 +36,11 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
+import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
-import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -74,17 +62,24 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     private String newRangeValue;
 
     private boolean isRangeDisabled;
+    private List<SelectItem> participantSelectItems;
+    private boolean isComplexFeature=false;
 
     @Resource(name = "featureEditorService")
     private transient FeatureEditorService featureEditorService;
 
     private Class<T> featureClass;
+    private Class<? extends AbstractIntactResultingSequence> resultingSequenceClass;
 
-    public AbstractFeatureController(Class<T> featureClass) {
+    public AbstractFeatureController(Class<T> featureClass, Class<? extends AbstractIntactResultingSequence> resultingSeqClass) {
         if (featureClass == null){
              throw new IllegalArgumentException("the feature class cannot be null");
         }
         this.featureClass = featureClass;
+        if (resultingSeqClass == null){
+            throw new IllegalArgumentException("the resulting sequence class cannot be null");
+        }
+        this.resultingSequenceClass = resultingSeqClass;
     }
 
     @Override
@@ -94,7 +89,7 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
 
     @Override
     public void setAnnotatedObject(IntactPrimaryObject annotatedObject) {
-         setFeature((AbstractIntactFeature)feature);
+         setFeature((T)feature);
     }
 
     @Override
@@ -141,39 +136,64 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     protected abstract void refreshParentControllers();
 
     public void refreshRangeWrappers() {
-        this.rangeWrappers = new ArrayList<RangeWrapper>(feature.getRanges().size());
-
         String sequence = getSequence();
+
+        if (feature.areRangesInitialized()){
+             this.rangeWrappers = new ArrayList<RangeWrapper>(feature.getRanges().size());
+            for (Object r : this.feature.getRanges()){
+                this.rangeWrappers.add(new RangeWrapper((AbstractIntactRange)r, sequence, getCvService(), resultingSequenceClass));
+            }
+        }
+        else{
+            this.rangeWrappers = getFeatureEditorService().loadRangeWrappers(feature, sequence, resultingSequenceClass);
+        }
 
         containsInvalidRanges = false;
 
-        for (Range range : feature.getRanges()) {
-            rangeWrappers.add(new RangeWrapper(range, sequence));
+        for (RangeWrapper range : this.rangeWrappers) {
 
-            if (!containsInvalidRanges && FeatureUtils.isABadRange(range, sequence)) {
+            if (!containsInvalidRanges && !range.isValidRange()) {
                 containsInvalidRanges = true;
             }
         }
     }
 
-    @Override
-    protected IntactCloner newClonerInstance() {
-        return new FeatureIntactCloner();
+    protected void refreshParticipantSelectItems() {
+        participantSelectItems = new ArrayList<SelectItem>();
+        participantSelectItems.add(new SelectItem(null, "select participant", "select participant", false, false, true));
+
+        if (this.feature.getParticipant() != null){
+            Entity participant = this.feature.getParticipant();
+            if (isComplexFeature){
+                loadParticipants((Complex)participant.getInteractor(), this.participantSelectItems);
+            }
+        }
     }
 
-    public String newFeature(Component participant) {
-        Feature feature = new Feature("feature", participant, new CvFeatureType());
-        feature.setShortLabel(null);
-        feature.setCvFeatureType(null);
+    private void loadParticipants(Complex parent, List<SelectItem> selectItems){
+        for (ModelledParticipant child : parent.getParticipants()){
+            IntactModelledParticipant part = (IntactModelledParticipant)child;
+            if (part.getInteractor() instanceof Complex){
+                loadParticipants((Complex)part.getInteractor(), selectItems);
+            }
+            else{
+                SelectItem item = new SelectItem( part, part.getInteractor().getShortName()+", "+part.getAc(), part.getInteractor().getFullName());
+                selectItems.add(item);
+            }
+        }
+    }
+    public boolean isComplexFeature(){
+        return this.isComplexFeature;
+    }
+
+    public String newFeature(Participant participant) throws InstantiationException, IllegalAccessException{
+        T feature = this.featureClass.newInstance();
+        feature.setShortName(null);
+        feature.setType(null);
+        feature.setParticipant(participant);
 
         setFeature(feature);
-
-        //participant.addBindingDomain(feature);
-
-        refreshRangeWrappers();
         changed();
-        //getUnsavedChangeManager().markAsUnsaved(feature);
-
         return navigateToObject(feature);
     }
 
@@ -191,44 +211,43 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         }
 
         String sequence = getSequence();
+        try{
+            Range newRange = RangeUtils.createRangeFromString(newRangeValue, false);
 
-        if (FeatureUtils.isABadRange(newRangeValue, sequence)) {
-            String problemMsg = FeatureUtils.getBadRangeInfo(newRangeValue, sequence);
-            addErrorMessage("Range is not valid", problemMsg);
+            IntactPosition start = new IntactPosition(getCvService().findCvObject(IntactUtils.RANGE_STATUS_OBJCLASS, newRange.getStart().getStatus().getMIIdentifier()),
+                    newRange.getStart().getStart(), newRange.getStart().getEnd());
+            IntactPosition end = new IntactPosition(getCvService().findCvObject(IntactUtils.RANGE_STATUS_OBJCLASS, newRange.getEnd().getStatus().getMIIdentifier()),
+                    newRange.getEnd().getStart(), newRange.getEnd().getEnd());
+
+            AbstractIntactRange intactRange = instantiateRange(start, end);
+            intactRange.setResultingSequence(instantiateResultingSequence(RangeUtils.extractRangeSequence(intactRange, sequence), null));
+
+            feature.getRanges().add(intactRange);
+            this.rangeWrappers.add(new RangeWrapper(intactRange, sequence, getCvService(), this.resultingSequenceClass));
+            newRangeValue = null;
+            setUnsavedChanges(true);
+        }
+        catch (IllegalRangeException e){
+            String problemMsg =e.getMessage();
+            addErrorMessage("Range is not valid: "+newRangeValue, problemMsg);
             return;
         }
-
-        Range newRange = FeatureUtils.createRangeFromString(newRangeValue, sequence);
-        newRange.setLinked(false);
-
-        // replace CVs by ones with ACs
-
-        CvObjectService cvObjectService = (CvObjectService) getSpringContext().getBean("cvObjectService");
-        CvFuzzyType fromFuzzyType = cvObjectService.findCvObjectByIdentifier(CvFuzzyType.class, newRange.getFromCvFuzzyType().getIdentifier());
-        CvFuzzyType toFuzzyType = cvObjectService.findCvObjectByIdentifier(CvFuzzyType.class, newRange.getToCvFuzzyType().getIdentifier());
-
-        newRange.setFromCvFuzzyType(fromFuzzyType);
-        newRange.setToCvFuzzyType(toFuzzyType);
-
-        feature.addRange(newRange);
-
-        refreshRangeWrappers();
-
-        newRangeValue = null;
-
-        setUnsavedChanges(true);
     }
+
+    protected abstract <I extends AbstractIntactRange> I instantiateRange(Position start, Position end);
+
+    protected abstract <I extends AbstractIntactResultingSequence> I instantiateResultingSequence(String original, String newSequence);
 
     public void validateFeature(FacesContext context, UIComponent component, Object value) throws ValidatorException {
 
-        if (feature.getRanges().isEmpty()) {
+        if (rangeWrappers.isEmpty()) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Feature without ranges", "One range is mandatory");
             throw new ValidatorException(message);
         }
     }
 
     private String getSequence() {
-        Interactor interactor = feature.getComponent().getInteractor();
+        Interactor interactor = feature.getParticipant() != null ? feature.getParticipant().getInteractor():null;
 
         String sequence = null;
 
@@ -239,14 +258,16 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         return sequence;
     }
 
-    public void markRangeToDelete(Range range) {
+    public void markRangeToDelete(RangeWrapper range) {
         if (range == null) return;
 
-        if (range.getAc() == null) {
-            feature.removeRange(range);
-            refreshRangeWrappers();
+        if (range.getRange().getAc() == null) {
+            feature.getRanges().remove(range.getRange());
+            rangeWrappers.remove(range);
         } else {
-            getChangesController().markToDeleteRange(range, range.getFeature());
+            Collection<String> parents = collectParentAcsOfCurrentAnnotatedObject();
+            parents.add(feature.getAc());
+            getChangesController().markToDelete(range.getRange(), this.feature, getRangeSynchronzer(), "Range: "+RangeUtils.convertRangeToString(range.getRange()), parents);
         }
     }
 
@@ -255,38 +276,51 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     }
 
     public String getAc() {
-        if ( ac == null && feature != null ) {
-            return feature.getAc();
-        }
         return ac;
     }
 
     @Override
     public int getXrefsSize() {
-        return 0;
+        if (feature == null){
+            return 0;
+        }
+        else if (feature.areXrefsInitialized()){
+            return feature.getDbXrefs().size();
+        }
+        else{
+            return getFeatureEditorService().countXrefs(this.feature);
+        }
     }
 
     @Override
     public int getAliasesSize() {
-        return 0;
+        if (feature == null){
+            return 0;
+        }
+        else if (feature.areAliasesInitialized()){
+            return feature.getAliases().size();
+        }
+        else{
+            return getFeatureEditorService().countAliases(this.feature);
+        }
     }
 
     @Override
     public int getAnnotationsSize() {
-        return 0;
+        if (feature == null){
+            return 0;
+        }
+        else {
+            return feature.getAnnotations().size();
+        }
     }
 
     public void setAc( String ac ) {
         this.ac = ac;
     }
 
-    public Feature getFeature() {
+    public T getFeature() {
         return feature;
-    }
-
-    @Override
-    public void refreshTabsAndFocusXref(){
-        refreshTabs();
     }
 
     @Override
@@ -296,50 +330,14 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         this.isRangeDisabled = false;
     }
 
-    public void setFeature( Feature feature ) {
+    public void setFeature( T feature ) {
         this.feature = feature;
 
         if (feature != null){
             this.ac = feature.getAc();
+
+            initialiseDefaultProperties(this.feature);
         }
-    }
-
-    @Override
-    public void doPreSave() {
-        // the feature was just created, add it to the list of features of the participant
-        if (feature.getAc() == null){
-            participantController.getParticipant().addFeature(feature);
-        }
-    }
-
-    @Override
-    public String doDelete(){
-        if (feature.getBoundDomain() != null){
-            Feature bound = feature.getBoundDomain();
-
-            if (bound.getBoundDomain() != null && feature.getAc() != null && feature.getAc().equalsIgnoreCase(bound.getBoundDomain().getAc())){
-                bound.setBoundDomain(null);
-                getPersistenceController().doSave(bound);
-            }
-            else if (bound.getBoundDomain() != null && feature.getAc() == null && feature.equals(bound.getBoundDomain())){
-                bound.setBoundDomain(null);
-                getPersistenceController().doSave(bound);
-            }
-
-            feature.setBoundDomain(null);
-        }
-
-        return super.doDelete();
-    }
-
-    @Override
-    public void newXref(ActionEvent evt) {
-
-    }
-
-    @Override
-    public <T extends AbstractIntactXref> T newXref(String db, String dbMI, String id, String secondaryId, String qualifier, String qualifierMI) {
-        return null;
     }
 
     public String getNewRangeValue() {
@@ -359,24 +357,8 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     }
 
     @Override
-    public Collection<String> collectParentAcsOfCurrentAnnotatedObject(){
-        Collection<String> parentAcs = new ArrayList<String>();
-
-        if (feature.getComponent() != null){
-            Component comp = feature.getComponent();
-            if (comp.getAc() != null){
-                parentAcs.add(comp.getAc());
-            }
-
-            addParentAcsTo(parentAcs, comp);
-        }
-
-        return parentAcs;
-    }
-
-    @Override
     public Class<? extends IntactPrimaryObject> getAnnotatedObjectClass() {
-        return null;
+        return featureClass;
     }
 
     @Override
@@ -389,73 +371,12 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         return false;
     }
 
-    @Override
-    protected void refreshUnsavedChangesBeforeRevert(){
-        Collection<String> parentAcs = new ArrayList<String>();
-
-        if (feature.getComponent() != null){
-            Component comp = feature.getComponent();
-            if (comp.getAc() != null){
-                parentAcs.add(comp.getAc());
-            }
-
-            addParentAcsTo(parentAcs, comp);
-        }
-
-        getChangesController().revertFeature(feature, parentAcs);
-    }
-
-    /**
-     * Get the publication ac of this participant if it exists, the ac of the interaction if it exists and the component ac if it exists and add it to the list or parentAcs
-     * @param parentAcs
-     * @param comp
-     */
-    private void addParentAcsTo(Collection<String> parentAcs, Component comp) {
-        if (comp.getInteraction() != null){
-            Interaction inter = comp.getInteraction();
-            addParentAcsTo(parentAcs, inter);
-        }
-    }
-
-    /**
-     * Add all the parent acs of this interaction
-     * @param parentAcs
-     * @param inter
-     */
-    protected void addParentAcsTo(Collection<String> parentAcs, Interaction inter) {
-        if (inter.getAc() != null){
-            parentAcs.add(inter.getAc());
-        }
-
-        if (IntactCore.isInitialized(inter.getExperiments()) && !inter.getExperiments().isEmpty()){
-            for (Experiment exp : inter.getExperiments()){
-                addParentAcsTo(parentAcs, exp);
-            }
-        }
-        else if (interactionController.getExperiment() != null){
-            Experiment exp = interactionController.getExperiment();
-            addParentAcsTo(parentAcs, exp);
-        }
-        else if (!IntactCore.isInitialized(inter.getExperiments())){
-            Collection<Experiment> experiments = IntactCore.ensureInitializedExperiments(inter);
-
-            for (Experiment exp : experiments){
-                addParentAcsTo(parentAcs, exp);
-            }
-        }
-    }
-
     public boolean isRangeDisabled() {
         return isRangeDisabled;
     }
 
     public void setRangeDisabled(boolean rangeDisabled) {
         isRangeDisabled = rangeDisabled;
-    }
-
-    @Override
-    public void modifyClone(AnnotatedObject clone) {
-        refreshTabs();
     }
 
     public void onTabChanged(TabChangeEvent e) {
@@ -478,160 +399,117 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     }
 
     @Override
-    public IntactDbSynchronizer getDbSynchronizer() {
-        return null;
-    }
-
-    @Override
-    public String getObjectName() {
-        return null;
-    }
-
-    @Override
-    public void doSave(boolean refreshCurrentView) {
-        ChangesController changesController = (ChangesController) getSpringContext().getBean("changesController");
-        PersistenceController persistenceController = getPersistenceController();
-
-        doSaveIntact(refreshCurrentView, changesController, persistenceController);
-    }
-
-    @Override
     protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
-        if (!Hibernate.isInitialized(feature.getRanges())
-                || !Hibernate.isInitialized(feature.getAnnotations())
-                || !Hibernate.isInitialized(feature.getXrefs())
-                || !Hibernate.isInitialized(feature.getAliases())){
-            feature = loadByAc(getDaoFactory().getFeatureDao(), feature.getAc());
-            // initialise ranges
-            Hibernate.initialize(feature.getRanges());
-            // initialise xrefs
-            Hibernate.initialize(feature.getXrefs());
-            // initialise aliases
-            Hibernate.initialize(feature.getAliases());
-            // initialise annotations
-            Hibernate.initialize(feature.getAnnotations());
+        T feature = (T) annotatedObject;
+        if (!feature.areAnnotationsInitialized()
+                || !isCvInitialised(feature.getType())
+                || !isCvInitialised(feature.getRole())
+                || !isInitialisedParticipant(feature.getParticipant())) {
+            this.feature = getFeatureEditorService().reloadFullyInitialisedFeature(feature);
         }
 
-        final Component participant = feature.getComponent();
-
-        if (participantController.getParticipant() == null) {
-            participantController.setParticipant(participant);
+        if (feature.getParticipant() != null && feature.getParticipant().getInteractor() instanceof Complex){
+            isComplexFeature = true;
+            refreshParticipantSelectItems();
         }
-
-        if( interactionController.getInteraction() == null ) {
-            final Interaction interaction = participant.getInteraction();
-            interactionController.setInteraction( interaction );
+        else{
+            isComplexFeature = false;
+            this.participantSelectItems=Collections.EMPTY_LIST;
         }
-
-        if ( publicationController.getPublication() == null ) {
-            Publication publication = participant.getInteraction().getExperiments().iterator().next().getPublication();
-            publicationController.setPublication( publication );
-        }
-
-        if ( experimentController.getExperiment() == null ) {
-            experimentController.setExperiment( participant.getInteraction().getExperiments().iterator().next() );
-        }
-
-        refreshTabsAndFocusXref();
 
         refreshRangeWrappers();
     }
 
-    @Override
-    public String doSave() {
-        return super.doSave();
+    private boolean isCvInitialised(CvTerm cv) {
+        if (cv instanceof IntactCvTerm){
+            IntactCvTerm intactCv = (IntactCvTerm)cv;
+            return intactCv.areXrefsInitialized() && intactCv.areAnnotationsInitialized();
+        }
+        return true;
     }
 
-    @Override
-    public void doSaveIfNecessary(ActionEvent evt) {
-        super.doSaveIfNecessary(evt);
+
+    private boolean isInitialisedParticipant(Entity entity) {
+        if (entity != null && entity.getInteractor() instanceof IntactComplex){
+            IntactComplex intactComplex = (IntactComplex) entity.getInteractor();
+            if (!intactComplex.areParticipantsInitialized()){
+                return false;
+            }
+            else{
+                for (ModelledParticipant p : intactComplex.getParticipants()){
+                     if (!isInitialisedParticipant(p)){
+                          return false;
+                     }
+                }
+            }
+        }
+        return true;
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String getCautionMessage() {
-        if (feature == null){
-            return null;
-        }
-        if (!Hibernate.isInitialized(feature.getAnnotations())){
-            return getAnnotatedObjectHelper().findAnnotationText(getDaoFactory().getFeatureDao().getByAc(feature.getAc()),
-                    CvTopic.CAUTION_MI_REF, getDaoFactory());
-        }
-        return findAnnotationText(CvTopic.CAUTION_MI_REF);
-    }
-
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String getInternalRemarkMessage() {
-        if (feature == null){
-            return null;
-        }
-        if (!Hibernate.isInitialized(feature.getAnnotations())){
-            return getAnnotatedObjectHelper().findAnnotationText(getDaoFactory().getFeatureDao().getByAc(feature.getAc()),
-                    CvTopic.INTERNAL_REMARK, getDaoFactory());
-        }
-        return findAnnotationText(CvTopic.INTERNAL_REMARK);
-    }
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public int getFeatureRangeSize() {
-        if (feature != null && Hibernate.isInitialized(feature.getRanges())){
-            return feature.getRanges().size();
-        }
-        else if (feature != null){
-            return getDaoFactory().getRangeDao().getByFeatureAc(feature.getAc()).size();
-        }
-        else {
+        if (feature == null){
             return 0;
         }
+        else if (feature.areRangesInitialized()){
+            return feature.getRanges().size();
+        }
+        else{
+            return getFeatureEditorService().countRanges(this.feature);
+        }
     }
 
-
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List collectAnnotations() {
-        return super.collectAnnotations();
-    }
-
-    @Override
-    public void newAlias(ActionEvent evt) {
-
-    }
-
-    @Override
-    public <T extends AbstractIntactAlias> T newAlias(String alias, String aliasMI, String name) {
-        return null;
+    public List<Annotation> collectAnnotations() {
+        List<Annotation> annotations = new ArrayList<Annotation>(feature.getAnnotations());
+        Collections.sort(annotations, new AuditableComparator());
+        // annotations are always initialised
+        return annotations;
     }
 
     @Override
     public void removeAlias(Alias alias) {
+        // aliases are not always initialised
+        if (!feature.areAliasesInitialized()){
+            setFeature(getFeatureEditorService().initialiseFeatureAliases(this.feature));
+        }
 
+        this.feature.getAliases().remove(alias);
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List collectAliases() {
-        return super.collectAliases();
+    public List<Alias> collectAliases() {
+        // aliases are not always initialised
+        if (!feature.areAliasesInitialized()){
+            setFeature(getFeatureEditorService().initialiseFeatureAliases(this.feature));
+        }
+
+        List<Alias> aliases = new ArrayList<Alias>(this.feature.getAliases());
+        Collections.sort(aliases, new AuditableComparator());
+        return aliases;
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List collectXrefs() {
-        return super.collectXrefs();
+    public List<Xref> collectXrefs() {
+        // aliases are not always initialised
+        if (!feature.areXrefsInitialized()){
+            setFeature(getFeatureEditorService().initialiseFeatureXrefs(this.feature));
+        }
+
+        List<Xref> xrefs = new ArrayList<Xref>(this.feature.getDbXrefs());
+        Collections.sort(xrefs, new AuditableComparator());
+        return xrefs;
     }
 
     @Override
     public void removeXref(Xref xref) {
+        // xrefs are not always initialised
+        if (!feature.areXrefsInitialized()){
+            setFeature(getFeatureEditorService().initialiseFeatureXrefs(this.feature));
+        }
 
-    }
-
-    @Override
-    public void newAnnotation(ActionEvent evt) {
-
-    }
-
-    @Override
-    public <T extends AbstractIntactAnnotation> T newAnnotation(String topic, String topicMI, String text) {
-        return null;
+        this.feature.getDbXrefs().remove(xref);
     }
 
     @Override
     public void removeAnnotation(Annotation annotation) {
-
+        feature.getAnnotations().remove(annotation);
     }
 
     public FeatureEditorService getFeatureEditorService() {
@@ -641,19 +519,9 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         return featureEditorService;
     }
 
-    protected ExperimentController getExperimentController() {
-        return experimentController;
+    public List<SelectItem> getParticipantSelectItems() {
+        return participantSelectItems;
     }
 
-    protected PublicationController getPublicationController() {
-        return publicationController;
-    }
-
-    protected InteractionController getInteractionController() {
-        return interactionController;
-    }
-
-    protected ParticipantController getParticipantController() {
-        return participantController;
-    }
+    protected abstract IntactDbSynchronizer getRangeSynchronzer();
 }
