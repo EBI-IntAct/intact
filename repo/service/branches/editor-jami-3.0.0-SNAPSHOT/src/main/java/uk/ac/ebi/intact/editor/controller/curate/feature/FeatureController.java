@@ -141,6 +141,12 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     }
 
     @Override
+    protected void generalLoadChecks() {
+        super.generalLoadChecks();
+        generalPublicationLoadChecks();
+    }
+
+    @Override
     protected EditorCloner<FeatureEvidence, IntactFeatureEvidence> newClonerInstance() {
         return new FeatureEvidenceCloner();
     }
@@ -304,13 +310,6 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
         return "Feature";
     }
 
-    public List<Annotation> collectAnnotations() {
-        List<Annotation> annotations = new ArrayList<Annotation>(getFeature().getAnnotations());
-        Collections.sort(annotations, new AuditableComparator());
-        // annotations are always initialised
-        return annotations;
-    }
-
     @Override
     public void newAlias(ActionEvent evt) {
         // aliases are not always initialised
@@ -348,16 +347,6 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     public FeatureEvidenceAlias newAlias(String alias, String aliasMI, String name) {
         return new FeatureEvidenceAlias(getCvService().findCvObject(IntactUtils.ALIAS_TYPE_OBJCLASS, aliasMI != null ? aliasMI : alias),
                 name);
-    }
-
-    @Override
-    public void removeAlias(Alias alias) {
-        // aliases are not always initialised
-        if (!getFeature().areAliasesInitialized()){
-            setFeature(getFeatureEditorService().initialiseFeatureAliases(getFeature()));
-        }
-
-        getFeature().getAliases().remove(alias);
     }
 
     public void removeParameter(Parameter parameter) {
@@ -400,27 +389,6 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
         return methods;
     }
 
-    public List<Xref> collectXrefs() {
-        // xrefs are not always initialised
-        if (!getFeature().areXrefsInitialized()){
-            setFeature(getFeatureEditorService().initialiseFeatureXrefs(getFeature()));
-        }
-
-        List<Xref> xrefs = new ArrayList<Xref>(getFeature().getDbXrefs());
-        Collections.sort(xrefs, new AuditableComparator());
-        return xrefs;
-    }
-
-    @Override
-    public void removeXref(Xref xref) {
-        // xrefs are not always initialised
-        if (!getFeature().areXrefsInitialized()){
-            setFeature(getFeatureEditorService().initialiseFeatureXrefs(getFeature()));
-        }
-
-       getFeature().getDbXrefs().remove(xref);
-    }
-
     @Override
     public void newAnnotation(ActionEvent evt) {
         getFeature().getAnnotations().add(new FeatureEvidenceAnnotation(IntactUtils.createMITopic("to set", null)));
@@ -430,11 +398,6 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     @Override
     public FeatureEvidenceAnnotation newAnnotation(String topic, String topicMI, String text) {
         return new FeatureEvidenceAnnotation(getCvService().findCvObject(IntactUtils.TOPIC_OBJCLASS, topicMI != null ? topicMI: topic), text);
-    }
-
-    @Override
-    public void removeAnnotation(Annotation annotation) {
-         getFeature().getAnnotations().remove(annotation);
     }
 
     @Override

@@ -56,7 +56,7 @@
                                  size="10" readonly="true"/>
 
                     <h:outputLabel value="Shortlabel: " for="shortlabelTxt"/>
-                    <p:inputText id="shortlabelTxt" value="#{institutionController.institution.shortLabel}" size="30" converter="trimmingConverter"
+                    <p:inputText id="shortlabelTxt" value="#{institutionController.institution.shortName}" size="30" converter="trimmingConverter"
                                  validator="#{annotatedObjectController.validateAnnotatedObject}"
                                  valueChangeListener="#{institutionController.unsavedValueChange}"
                                  required="true" requiredMessage="Shortlabel is required">
@@ -91,7 +91,7 @@
                 <p:ajax event="tabChange" listener="#{institutionController.onTabChanged}" />
 
                 <ui:decorate template="/curate/propertiesTabs.xhtml">
-                    <ui:param name="annotatedObjectSelectItems" value="#{cvObjectService.experimentTopicSelectItems}"/>
+                    <ui:param name="annotatedObjectSelectItems" value="#{cvObjectService.cvObjectTopicSelectItems}"/>
                 </ui:decorate>
 
             </p:tabView>

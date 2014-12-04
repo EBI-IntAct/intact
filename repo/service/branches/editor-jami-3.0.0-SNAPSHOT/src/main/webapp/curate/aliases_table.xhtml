@@ -44,7 +44,8 @@
                 <p:commandLink id="removeAliasBtn" styleClass="ui-icon ui-icon-closethick" process="removeAliasBtn"
                                actionListener="#{annotatedObjectController.removeAlias(alias)}"
                                oncomplete="markAsUnsaved()"
-                               update="aliasTable,#{update}"/>
+                               update="aliasTable,#{update}"
+                               />
             </p:column>
         </p:dataTable>
 
