@@ -285,15 +285,6 @@ public class EditorObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public AbstractIntactFeature initialiseFeatureXrefs(AbstractIntactFeature feature) {
-        // reload feature without flushing changes
-        AbstractIntactFeature reloaded = getIntactDao().getEntityManager().merge(feature);
-        Collection<Xref> xrefs = reloaded.getDbXrefs();
-        initialiseXrefs(xrefs);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public AbstractIntactParticipant initialiseParticipantXrefs(AbstractIntactParticipant participant) {
         // reload participant without flushing changes
         AbstractIntactParticipant reloaded = getIntactDao().getEntityManager().merge(participant);
@@ -335,15 +326,6 @@ public class EditorObjectService extends AbstractEditorService {
         IntactSource reloaded = getIntactDao().getEntityManager().merge(cv);
         Collection<Xref> xrefs = reloaded.getDbXrefs();
         initialiseXrefs(xrefs);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public AbstractIntactFeature initialiseFeatureAnnotations(AbstractIntactFeature feature) {
-        // reload feature without flushing changes
-        AbstractIntactFeature reloaded = getIntactDao().getEntityManager().merge(feature);
-        Collection<Annotation> annotations = reloaded.getAnnotations();
-        initialiseAnnotations(annotations);
         return reloaded;
     }
 
@@ -408,11 +390,6 @@ public class EditorObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countXrefs(AbstractIntactFeature feature) {
-        return getIntactDao().getFeatureDao(AbstractIntactFeature.class).countXrefsForFeature(feature.getAc());
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public int countXrefs(AbstractIntactParticipant participant) {
         return getIntactDao().getParticipantDao(AbstractIntactParticipant.class).countXrefsForParticipant(participant.getAc());
     }
@@ -443,11 +420,6 @@ public class EditorObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countAnnotations(AbstractIntactFeature feature) {
-        return getIntactDao().getFeatureDao(AbstractIntactFeature.class).countAnnotationsForFeature(feature.getAc());
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public int countAnnotations(AbstractIntactParticipant participant) {
         return getIntactDao().getParticipantDao(AbstractIntactParticipant.class).countAnnotationsForParticipant(participant.getAc());
     }
@@ -470,11 +442,6 @@ public class EditorObjectService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public int countAnnotations(IntactSource cv) {
         return getIntactDao().getSourceDao().countAnnotationsForSource(cv.getAc());
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countAliases(AbstractIntactFeature feature) {
-        return getIntactDao().getFeatureDao(AbstractIntactFeature.class).countAliasesForFeature(feature.getAc());
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)

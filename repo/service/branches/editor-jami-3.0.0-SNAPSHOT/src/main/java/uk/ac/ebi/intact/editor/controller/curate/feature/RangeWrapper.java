@@ -15,11 +15,15 @@
  */
 package uk.ac.ebi.intact.editor.controller.curate.feature;
 
-import uk.ac.ebi.intact.core.context.IntactContext;
+import org.apache.commons.lang.StringUtils;
+import psidev.psi.mi.jami.exception.IllegalRangeException;
+import psidev.psi.mi.jami.model.Range;
+import psidev.psi.mi.jami.utils.RangeUtils;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
-import uk.ac.ebi.intact.model.CvFuzzyType;
-import uk.ac.ebi.intact.model.Range;
-import uk.ac.ebi.intact.model.util.FeatureUtils;
+import uk.ac.ebi.intact.jami.model.extension.AbstractIntactRange;
+import uk.ac.ebi.intact.jami.model.extension.AbstractIntactResultingSequence;
+import uk.ac.ebi.intact.jami.model.extension.IntactPosition;
+import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.EditableValueHolder;
@@ -27,6 +31,8 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.validator.ValidatorException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -34,61 +40,71 @@ import javax.faces.validator.ValidatorException;
  */
 public class RangeWrapper {
 
-    private Range range;
+    private AbstractIntactRange range;
     private String sequence;
     private String rangeAsString;
 
-    public RangeWrapper(Range range, String sequence) {
+    private CvObjectService cvObjectService;
+    private Class<? extends AbstractIntactResultingSequence> resultingSequenceClass;
+
+    public RangeWrapper(AbstractIntactRange range, String sequence, CvObjectService cvService, Class<? extends AbstractIntactResultingSequence> resultingSequenceClass) {
         this.range = range;
-        this.rangeAsString = FeatureUtils.convertRangeIntoString(range);
+        this.rangeAsString = RangeUtils.convertRangeToString(range);
         this.sequence = sequence;
+
+        this.cvObjectService = cvService;
+        this.resultingSequenceClass = resultingSequenceClass;
     }
 
-    public void onRangeAsStringChanged(AjaxBehaviorEvent evt) {
-        Range newRange = FeatureUtils.createRangeFromString(rangeAsString, sequence);
+    public void onRangeAsStringChanged(AjaxBehaviorEvent evt)  throws IllegalRangeException,NoSuchMethodException,InstantiationException, IllegalAccessException,InvocationTargetException {
+        Range newRange = RangeUtils.createRangeFromString(rangeAsString, false);
 
-        this.range.setDownStreamSequence(newRange.getDownStreamSequence());
-        this.range.setUpStreamSequence(newRange.getUpStreamSequence());
-        this.range.setFromCvFuzzyType(newRange.getFromCvFuzzyType());
-        this.range.setFromIntervalStart(newRange.getFromIntervalStart());
-        this.range.setFromIntervalEnd(newRange.getFromIntervalEnd());
-        this.range.setToCvFuzzyType(newRange.getToCvFuzzyType());
-        this.range.setToIntervalStart(newRange.getToIntervalStart());
-        this.range.setToIntervalEnd(newRange.getToIntervalEnd());
-        this.range.setFullSequence(newRange.getFullSequence());
+        IntactPosition start = new IntactPosition(cvObjectService.findCvObject(IntactUtils.RANGE_STATUS_OBJCLASS, newRange.getStart().getStatus().getMIIdentifier()),
+                newRange.getStart().getStart(), newRange.getStart().getEnd());
+        IntactPosition end = new IntactPosition(cvObjectService.findCvObject(IntactUtils.RANGE_STATUS_OBJCLASS, newRange.getEnd().getStatus().getMIIdentifier()),
+                newRange.getEnd().getStart(), newRange.getEnd().getEnd());
 
-        CvObjectService cvObjectService = (CvObjectService) IntactContext.getCurrentInstance().getSpringContext().getBean("cvObjectService");
-        CvFuzzyType fromFuzzyType = cvObjectService.findCvObjectByIdentifier(CvFuzzyType.class, range.getFromCvFuzzyType().getIdentifier());
-        CvFuzzyType toFuzzyType = cvObjectService.findCvObjectByIdentifier(CvFuzzyType.class, range.getToCvFuzzyType().getIdentifier());
-
-        range.setFromCvFuzzyType(fromFuzzyType);
-        range.setToCvFuzzyType(toFuzzyType);
+        this.range.setPositions(start, end);
+        if (this.range.getResultingSequence() != null){
+            this.range.getResultingSequence().setOriginalSequence(RangeUtils.extractRangeSequence(this.range, this.sequence));
+        }
+        else{
+            this.range.setResultingSequence(this.resultingSequenceClass.getConstructor(String.class, String.class).newInstance(RangeUtils.extractRangeSequence(this.range, this.sequence),null));
+        }
     }
 
     public void onFuzzyTypeChanged(AjaxBehaviorEvent evt) {
 
-        // reconvert positions if necessary (if status became undetermined, c-terminal region or n-terminal region position becomes 0, if n-terminal position =1 if c-terminal position = end of protein sequence or 0 if no protein sequence)
-        FeatureUtils.correctRangePositionsAccordingToType(range, sequence);
-        this.rangeAsString = FeatureUtils.convertRangeIntoString(range);
+        this.rangeAsString = RangeUtils.convertRangeToString(range);
     }
 
     public void validateRange(FacesContext context, UIComponent component, Object value) throws ValidatorException {
 
         String rangeAsStr = (String) value;
-        if (FeatureUtils.isABadRange(rangeAsStr, sequence)) {
+        try {
+            psidev.psi.mi.jami.model.Range newRange = RangeUtils.createRangeFromString(rangeAsStr, false);
+            List<String> messages = RangeUtils.validateRange(newRange, sequence);
+            if (!messages.isEmpty()) {
+                EditableValueHolder valueHolder = (EditableValueHolder) component;
+                valueHolder.setValid(false);
+
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid range: "+ StringUtils.join(messages, ", "), "Range syntax is invalid: "+rangeAsStr);
+                throw new ValidatorException(message);
+            }
+        } catch (IllegalRangeException e) {
             EditableValueHolder valueHolder = (EditableValueHolder) component;
             valueHolder.setValid(false);
 
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid range", "Range syntax is invalid: "+rangeAsStr);
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid range: "+e.getMessage(), "Range syntax is invalid: "+rangeAsStr);
             throw new ValidatorException(message);
         }
     }
 
-    public Range getRange() {
+    public AbstractIntactRange getRange() {
         return range;
     }
 
-    public void setRange(Range range) {
+    public void setRange(AbstractIntactRange range) {
         this.range = range;
     }
 
@@ -101,10 +117,10 @@ public class RangeWrapper {
     }
 
     public boolean isValidRange() {
-        return !FeatureUtils.isABadRange(rangeAsString, sequence);
+        return !RangeUtils.validateRange(range, sequence).isEmpty();
     }
 
     public String getBadRangeInfo() {
-        return FeatureUtils.getBadRangeInfo(rangeAsString, sequence);
+        return StringUtils.join(RangeUtils.validateRange(range, sequence), ", ");
     }
 }

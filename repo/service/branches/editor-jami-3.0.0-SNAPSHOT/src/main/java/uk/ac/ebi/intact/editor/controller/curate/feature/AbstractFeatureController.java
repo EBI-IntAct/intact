@@ -28,20 +28,22 @@ import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.Alias;
 import psidev.psi.mi.jami.model.Annotation;
 import psidev.psi.mi.jami.model.Xref;
+import psidev.psi.mi.jami.utils.AnnotationUtils;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
-import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentController;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.InteractionController;
 import uk.ac.ebi.intact.editor.controller.curate.participant.ParticipantController;
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
+import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
+import uk.ac.ebi.intact.editor.services.curate.feature.FeatureEditorService;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
-import uk.ac.ebi.intact.jami.model.extension.AbstractIntactAlias;
-import uk.ac.ebi.intact.jami.model.extension.AbstractIntactAnnotation;
-import uk.ac.ebi.intact.jami.model.extension.AbstractIntactXref;
-import uk.ac.ebi.intact.jami.model.extension.IntactFeatureEvidence;
+import uk.ac.ebi.intact.jami.model.extension.*;
+import uk.ac.ebi.intact.jami.model.lifecycle.Releasable;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 
+import javax.annotation.Resource;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -54,19 +56,13 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Feature controller.
- *
- * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id: ParticipantController.java 14281 2010-04-12 21:48:43Z samuel.kerrien $
+ * Abstract Feature controller.
  */
-@Controller
-@Scope( "conversation.access" )
-@ConversationName( "general" )
-public class FeatureController extends AnnotatedObjectController {
+public abstract class AbstractFeatureController<T extends AbstractIntactFeature> extends AnnotatedObjectController {
 
-    private static final Log log = LogFactory.getLog( FeatureController.class );
+    private static final Log log = LogFactory.getLog( AbstractFeatureController.class );
 
-    private IntactFeatureEvidence feature;
+    private T feature;
     private List<RangeWrapper> rangeWrappers;
     private boolean containsInvalidRanges;
 
@@ -75,23 +71,20 @@ public class FeatureController extends AnnotatedObjectController {
      */
     private String ac;
 
-    @Autowired
-    private PublicationController publicationController;
-
-    @Autowired
-    private ExperimentController experimentController;
-
-    @Autowired
-    private InteractionController interactionController;
-
-    @Autowired
-    private ParticipantController participantController;
-
     private String newRangeValue;
 
     private boolean isRangeDisabled;
 
-    public FeatureController() {
+    @Resource(name = "featureEditorService")
+    private transient FeatureEditorService featureEditorService;
+
+    private Class<T> featureClass;
+
+    public AbstractFeatureController(Class<T> featureClass) {
+        if (featureClass == null){
+             throw new IllegalArgumentException("the feature class cannot be null");
+        }
+        this.featureClass = featureClass;
     }
 
     @Override
@@ -101,51 +94,29 @@ public class FeatureController extends AnnotatedObjectController {
 
     @Override
     public void setAnnotatedObject(IntactPrimaryObject annotatedObject) {
-         setFeature((IntactFeatureEvidence)feature);
-    }
-
-    @Override
-    public void setAnnotatedObject(AnnotatedObject annotatedObject) {
-        setFeature((Feature)annotatedObject);
-    }
-
-    @Override
-    public String goToParent() {
-        return "/curate/participant?faces-redirect=true&includeViewParams=true";
-    }
-
-    @Override
-    protected AnnotatedObjectController getParentController() {
-        return null;
-    }
-
-    @Override
-    protected String getPageContext() {
-        return null;
+         setFeature((AbstractIntactFeature)feature);
     }
 
     @Override
     protected void loadCautionMessages() {
+        if (this.feature != null){
+            if (!feature.areAnnotationsInitialized()){
+                setFeature(getFeatureEditorService().initialiseFeatureAnnotations(this.feature));
+            }
 
+            Annotation caution = AnnotationUtils.collectFirstAnnotationWithTopic(this.feature.getAnnotations(), Annotation.CAUTION_MI, Annotation.CAUTION);
+            setCautionMessage(caution != null ? caution.getValue() : null);
+            Annotation internal = AnnotationUtils.collectFirstAnnotationWithTopic(this.feature.getAnnotations(), null, "remark-internal");
+            setInternalRemark(internal != null ? internal.getValue() : null);
+        }
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void loadData( ComponentSystemEvent event ) {
         if (!FacesContext.getCurrentInstance().isPostback()) {
 
             if ( ac != null ) {
                 if ( feature == null || !ac.equals( feature.getAc() ) ) {
-                    feature = loadByAc(getDaoFactory().getFeatureDao(), ac);
-                    if (feature != null){
-                        // initialise ranges
-                        Hibernate.initialize(feature.getRanges());
-                        // initialise xrefs
-                        Hibernate.initialize(feature.getXrefs());
-                        // initialise aliases
-                        Hibernate.initialize(feature.getAliases());
-                        // initialise annotations
-                        Hibernate.initialize(feature.getAnnotations());
-                    }
+                    setFeature(getFeatureEditorService().loadFeatureByAc(ac, this.featureClass));
                 }
             } else {
                 if ( feature != null ) ac = feature.getAc();
@@ -156,45 +127,9 @@ public class FeatureController extends AnnotatedObjectController {
                 return;
             }
 
-            if (!Hibernate.isInitialized(feature.getRanges())
-                    || !Hibernate.isInitialized(feature.getAnnotations())
-                    || !Hibernate.isInitialized(feature.getXrefs())
-                    || !Hibernate.isInitialized(feature.getAliases())){
-                feature = loadByAc(getDaoFactory().getFeatureDao(), feature.getAc());
-                // initialise ranges
-                Hibernate.initialize(feature.getRanges());
-                // initialise xrefs
-                Hibernate.initialize(feature.getXrefs());
-                // initialise aliases
-                Hibernate.initialize(feature.getAliases());
-                // initialise annotations
-                Hibernate.initialize(feature.getAnnotations());
-            }
-
-            final Component participant = feature.getComponent();
-
-            if (participantController.getParticipant() == null) {
-                participantController.setParticipant(participant);
-            }
-
-            if( interactionController.getInteraction() == null ) {
-                final Interaction interaction = participant.getInteraction();
-                interactionController.setInteraction( interaction );
-            }
-
-            if ( publicationController.getPublication() == null ) {
-                Publication publication = participant.getInteraction().getExperiments().iterator().next().getPublication();
-                publicationController.setPublication( publication );
-            }
-
-            if ( experimentController.getExperiment() == null ) {
-                experimentController.setExperiment( participant.getInteraction().getExperiments().iterator().next() );
-            }
-
-            refreshTabsAndFocusXref();
+            refreshParentControllers();
+            refreshTabs();
         }
-
-        refreshRangeWrappers();
 
         if (containsInvalidRanges) {
             addWarningMessage("This feature contains invalid ranges", "Ranges must be fixed before being able to save");
@@ -203,22 +138,7 @@ public class FeatureController extends AnnotatedObjectController {
         generalLoadChecks();
     }
 
-    @Override
-    protected <T extends AnnotatedObject> T loadByAc(IntactObjectDao<T> dao, String ac) {
-        T ao = (T) getChangesController().findByAc(ac);
-
-        if (ao == null) {
-            Query query = getCoreEntityManager().createQuery("select f from Feature f where f.ac = :ac and f.category = :evidence");
-            query.setParameter("ac", ac);
-            query.setParameter("evidence", "evidence");
-            List<Feature> features = query.getResultList();
-            if (features.size() == 1){
-                ao = (T)features.iterator().next();
-            }
-        }
-
-        return ao;
-    }
+    protected abstract void refreshParentControllers();
 
     public void refreshRangeWrappers() {
         this.rangeWrappers = new ArrayList<RangeWrapper>(feature.getRanges().size());
@@ -577,7 +497,44 @@ public class FeatureController extends AnnotatedObjectController {
 
     @Override
     protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
+        if (!Hibernate.isInitialized(feature.getRanges())
+                || !Hibernate.isInitialized(feature.getAnnotations())
+                || !Hibernate.isInitialized(feature.getXrefs())
+                || !Hibernate.isInitialized(feature.getAliases())){
+            feature = loadByAc(getDaoFactory().getFeatureDao(), feature.getAc());
+            // initialise ranges
+            Hibernate.initialize(feature.getRanges());
+            // initialise xrefs
+            Hibernate.initialize(feature.getXrefs());
+            // initialise aliases
+            Hibernate.initialize(feature.getAliases());
+            // initialise annotations
+            Hibernate.initialize(feature.getAnnotations());
+        }
 
+        final Component participant = feature.getComponent();
+
+        if (participantController.getParticipant() == null) {
+            participantController.setParticipant(participant);
+        }
+
+        if( interactionController.getInteraction() == null ) {
+            final Interaction interaction = participant.getInteraction();
+            interactionController.setInteraction( interaction );
+        }
+
+        if ( publicationController.getPublication() == null ) {
+            Publication publication = participant.getInteraction().getExperiments().iterator().next().getPublication();
+            publicationController.setPublication( publication );
+        }
+
+        if ( experimentController.getExperiment() == null ) {
+            experimentController.setExperiment( participant.getInteraction().getExperiments().iterator().next() );
+        }
+
+        refreshTabsAndFocusXref();
+
+        refreshRangeWrappers();
     }
 
     @Override
@@ -675,5 +632,28 @@ public class FeatureController extends AnnotatedObjectController {
     @Override
     public void removeAnnotation(Annotation annotation) {
 
+    }
+
+    public FeatureEditorService getFeatureEditorService() {
+        if (this.featureEditorService == null){
+            this.featureEditorService = ApplicationContextProvider.getBean("featureEditorService");
+        }
+        return featureEditorService;
+    }
+
+    protected ExperimentController getExperimentController() {
+        return experimentController;
+    }
+
+    protected PublicationController getPublicationController() {
+        return publicationController;
+    }
+
+    protected InteractionController getInteractionController() {
+        return interactionController;
+    }
+
+    protected ParticipantController getParticipantController() {
+        return participantController;
     }
 }

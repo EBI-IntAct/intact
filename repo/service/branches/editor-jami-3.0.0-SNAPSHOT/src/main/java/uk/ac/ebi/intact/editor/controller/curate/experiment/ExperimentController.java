@@ -16,15 +16,12 @@
 package uk.ac.ebi.intact.editor.controller.curate.experiment;
 
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
-import org.hibernate.Hibernate;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.LazyDataModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.model.Alias;
 import psidev.psi.mi.jami.model.Annotation;
@@ -35,13 +32,11 @@ import psidev.psi.mi.jami.utils.AnnotationUtils;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
 import uk.ac.ebi.intact.editor.controller.admin.UserManagerController;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
-import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ExperimentCloner;
 import uk.ac.ebi.intact.editor.controller.curate.organism.BioSourceService;
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
 import uk.ac.ebi.intact.editor.services.curate.experiment.ExperimentEditorService;
-import uk.ac.ebi.intact.editor.util.CurateUtils;
 import uk.ac.ebi.intact.editor.util.LazyDataModelFactory;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
@@ -49,14 +44,12 @@ import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.model.extension.ExperimentXref;
 import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleStatus;
 import uk.ac.ebi.intact.jami.model.lifecycle.Releasable;
-import uk.ac.ebi.intact.jami.service.ExperimentService;
 import uk.ac.ebi.intact.jami.service.PublicationService;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
 import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
-import uk.ac.ebi.intact.model.*;
 
 import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
@@ -65,8 +58,6 @@ import javax.faces.event.ComponentSystemEvent;
 import javax.faces.event.ValueChangeEvent;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -87,8 +78,6 @@ public class ExperimentController extends AnnotatedObjectController {
 
     private String publicationToMoveTo;
 
-    private Pattern EXP_SHORTLABEL_PATTERN = Pattern.compile("[^0-9a-zA-Z]+");
-
     @Autowired
     private PublicationController publicationController;
 
@@ -105,8 +94,11 @@ public class ExperimentController extends AnnotatedObjectController {
     private transient BioSourceService biosourceService;
 
     private boolean isInteractionTab = true;
+    private boolean isVariableParameterTab = false;
+    private List<IntactVariableParameterValue> valuesToDeleteOnSave;
 
     public ExperimentController() {
+        valuesToDeleteOnSave = new ArrayList<IntactVariableParameterValue>();
     }
 
     @Override
@@ -180,6 +172,7 @@ public class ExperimentController extends AnnotatedObjectController {
     public void refreshTabs() {
         super.refreshTabs();
         isInteractionTab = true;
+        isVariableParameterTab = false;
     }
 
     @Override
@@ -192,13 +185,20 @@ public class ExperimentController extends AnnotatedObjectController {
         if (isAliasDisabled() && isXrefDisabled() && isAnnotationTopicDisabled()){
             if (e.getTab().getId().equals("interactionsTab")){
                 isInteractionTab = true;
+                isVariableParameterTab = false;
+            }
+            else if (e.getTab().getId().equals("vParametersTab")){
+                isVariableParameterTab = true;
+                isInteractionTab = false;
             }
             else {
                 isInteractionTab = false;
+                isVariableParameterTab = false;
             }
         }
         else {
             isInteractionTab = false;
+            isVariableParameterTab = false;
         }
     }
 
@@ -311,12 +311,29 @@ public class ExperimentController extends AnnotatedObjectController {
         // refresh all interactions after saving
         refreshInteractions();
         publicationController.refreshDataModels();
+        this.valuesToDeleteOnSave.clear();
     }
 
     public void doPreSave() {
         // new object, add it to the list of experiments of its publication before saving
         if (experiment.getPublication() != null && experiment.getAc() == null) {
             publicationController.reloadSingleExperiment(experiment);
+        }
+
+        // delete all variable parameter values
+        Iterator<IntactVariableParameterValue> paramValuesIterator = this.valuesToDeleteOnSave.iterator();
+        while (paramValuesIterator.hasNext()){
+            IntactVariableParameterValue v = paramValuesIterator.next();
+            try {
+                getEditorService().getIntactDao().getVariableParameterValueDao().delete(v);
+                paramValuesIterator.remove();
+            }  catch (SynchronizerException e) {
+                addErrorMessage("Cannot delete value "+v.toString(), e.getCause() + ": " + e.getMessage());
+            } catch (FinderException e) {
+                addErrorMessage("Cannot delete value "+v.toString(), e.getCause() + ": " + e.getMessage());
+            } catch (PersisterException e) {
+                addErrorMessage("Cannot delete value "+v.toString(), e.getCause() + ": " + e.getMessage());
+            }
         }
     }
 
@@ -529,6 +546,7 @@ public class ExperimentController extends AnnotatedObjectController {
     @Override
     protected void postRevert() {
         refreshInteractions();
+        this.valuesToDeleteOnSave.clear();
     }
 
     public String getAcceptedMessage() {
@@ -626,6 +644,18 @@ public class ExperimentController extends AnnotatedObjectController {
         }
         else{
             return getExperimentService().countXrefs(this.experiment);
+        }
+    }
+
+    public int getVariableParametersSize() {
+        if (experiment == null){
+            return 0;
+        }
+        else if (experiment.areVariableParametersInitialized()){
+            return experiment.getVariableParameters().size();
+        }
+        else{
+            return getExperimentService().countVariableParameters(this.experiment);
         }
     }
 
@@ -772,6 +802,46 @@ public class ExperimentController extends AnnotatedObjectController {
         return xrefs;
     }
 
+    public List<VariableParameter> collectVariableParameters() {
+        // xrefs are not always initialised
+        if (!experiment.areVariableParametersInitialized()){
+            setExperiment(getExperimentService().initialiseExperimentVariableParameters(this.experiment));
+        }
+
+        List<VariableParameter> variableParameters = new ArrayList<VariableParameter>(this.experiment.getVariableParameters());
+        Collections.sort(variableParameters, new AuditableComparator());
+        return variableParameters;
+    }
+
+    public void newVariableParameter(ActionEvent evt){
+        // parameters are not always initialised
+        if (!experiment.areVariableParametersInitialized()){
+            setExperiment(getExperimentService().initialiseExperimentVariableParameters(this.experiment));
+        }
+
+        experiment.addVariableParameter(new IntactVariableParameter("to set"));
+        setUnsavedChanges(true);
+    }
+
+    public void newVariableParameterValue(VariableParameter param){
+        param.getVariableValues().add(new IntactVariableParameterValue("to set", param));
+        setUnsavedChanges(true);
+    }
+
+    public void removeVariableParameter(VariableParameter param){
+        // parameters are not always initialised
+        if (!experiment.areVariableParametersInitialized()){
+            setExperiment(getExperimentService().initialiseExperimentVariableParameters(this.experiment));
+        }
+
+        experiment.removeVariableParameter(param);
+    }
+
+    public void removeVariableParameterValue(IntactVariableParameterValue value, IntactVariableParameter param){
+        param.getVariableValues().remove(value);
+        this.valuesToDeleteOnSave.add(value);
+    }
+
     @Override
     public void removeXref(Xref xref) {
         // xrefs are not always initialised
@@ -816,5 +886,13 @@ public class ExperimentController extends AnnotatedObjectController {
             this.biosourceService = ApplicationContextProvider.getBean("bioSourceService");
         }
         return biosourceService;
+    }
+
+    public boolean isVariableParameterTab() {
+        return isVariableParameterTab;
+    }
+
+    public boolean isInteractionTab() {
+        return isInteractionTab;
     }
 }

@@ -175,6 +175,14 @@
                 <ui:param name="annotatedObjectSelectItems" value="#{cvObjectService.experimentTopicSelectItems}"/>
             </ui:decorate>
 
+            <p:tab id="vParametersTab" title="Variable Parameters (#{experimentController.variableParametersSize})">
+                <ui:decorate template="variable_parameters_table.xhtml.xhtml">
+                    <ui:param name="annotatedObjectController" value="#{experimentController}"/>
+                    <ui:param name="parameterUnitSelectItems" value="#{cvObjectService.parameterUnitSelectItems}"/>
+                    <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
+                </ui:decorate>
+            </p:tab>
+
         </p:tabView>
 
 
