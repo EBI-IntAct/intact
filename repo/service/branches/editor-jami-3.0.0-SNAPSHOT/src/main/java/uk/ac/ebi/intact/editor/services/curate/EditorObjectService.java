@@ -321,15 +321,6 @@ public class EditorObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactSource initialiseSourceXrefs(IntactSource cv) {
-        // reload IntactInteractionEvidence without flushing changes
-        IntactSource reloaded = getIntactDao().getEntityManager().merge(cv);
-        Collection<Xref> xrefs = reloaded.getDbXrefs();
-        initialiseXrefs(xrefs);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public AbstractIntactParticipant initialiseParticipantAnnotations(AbstractIntactParticipant participant) {
         // reload participant without flushing changes
         AbstractIntactParticipant reloaded = getIntactDao().getEntityManager().merge(participant);
@@ -360,15 +351,6 @@ public class EditorObjectService extends AbstractEditorService {
     public IntactInteractionEvidence initialiseInteractionAnnotations(IntactInteractionEvidence interaction) {
         // reload IntactInteractionEvidence without flushing changes
         IntactInteractionEvidence reloaded = getIntactDao().getEntityManager().merge(interaction);
-        Collection<Annotation> annotations = reloaded.getDbAnnotations();
-        initialiseAnnotations(annotations);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactSource initialiseSourceAnnotations(IntactSource cv) {
-        // reload IntactInteractionEvidence without flushing changes
-        IntactSource reloaded = getIntactDao().getEntityManager().merge(cv);
         Collection<Annotation> annotations = reloaded.getDbAnnotations();
         initialiseAnnotations(annotations);
         return reloaded;
@@ -415,11 +397,6 @@ public class EditorObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countXrefs(IntactSource cv) {
-        return getIntactDao().getSourceDao().countXrefsForSource(cv.getAc());
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public int countAnnotations(AbstractIntactParticipant participant) {
         return getIntactDao().getParticipantDao(AbstractIntactParticipant.class).countAnnotationsForParticipant(participant.getAc());
     }
@@ -440,11 +417,6 @@ public class EditorObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countAnnotations(IntactSource cv) {
-        return getIntactDao().getSourceDao().countAnnotationsForSource(cv.getAc());
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public int countAliases(AbstractIntactParticipant participant) {
         return getIntactDao().getParticipantDao(AbstractIntactParticipant.class).countAliasesForParticipant(participant.getAc());
     }
@@ -457,11 +429,6 @@ public class EditorObjectService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public int countAliases(IntactInteractor interactor) {
         return getIntactDao().getInteractorDao(IntactInteractor.class).countAliasesForInteractor(interactor.getAc());
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countAliases(IntactSource cv) {
-        return getIntactDao().getSourceDao().countSynonymsForSource(cv.getAc());
     }
 
     private void initialiseXrefs(Collection<Xref> xrefs) {

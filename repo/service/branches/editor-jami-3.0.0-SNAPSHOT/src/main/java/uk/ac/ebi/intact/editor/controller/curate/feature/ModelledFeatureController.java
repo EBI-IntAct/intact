@@ -214,4 +214,10 @@ public class ModelledFeatureController extends AbstractFeatureController<IntactM
             modelledParticipantController.reloadSingleFeature(getFeature());
         }
     }
+
+    @Override
+    protected void generalLoadChecks() {
+        super.generalLoadChecks();
+        generalComplexLoadChecks();
+    }
 }
