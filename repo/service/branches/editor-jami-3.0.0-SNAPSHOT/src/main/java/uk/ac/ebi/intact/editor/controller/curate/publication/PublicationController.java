@@ -151,6 +151,10 @@ public class PublicationController extends AnnotatedObjectController {
 
     }
 
+    public void removeExperiment(IntactExperiment exp){
+
+    }
+
     @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void loadData(ComponentSystemEvent event) {
         if (!FacesContext.getCurrentInstance().isPostback()) {

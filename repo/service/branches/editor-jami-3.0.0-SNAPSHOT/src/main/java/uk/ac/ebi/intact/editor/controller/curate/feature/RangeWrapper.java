@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.editor.controller.curate.feature;
 
 import org.apache.commons.lang.StringUtils;
 import psidev.psi.mi.jami.exception.IllegalRangeException;
+import psidev.psi.mi.jami.model.Polymer;
 import psidev.psi.mi.jami.model.Range;
 import psidev.psi.mi.jami.utils.RangeUtils;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
@@ -47,13 +48,32 @@ public class RangeWrapper {
     private CvObjectService cvObjectService;
     private Class<? extends AbstractIntactResultingSequence> resultingSequenceClass;
 
+    private boolean isInvalid = false;
+    private String badRangeInfo = null;
+
     public RangeWrapper(AbstractIntactRange range, String sequence, CvObjectService cvService, Class<? extends AbstractIntactResultingSequence> resultingSequenceClass) {
         this.range = range;
         this.rangeAsString = RangeUtils.convertRangeToString(range);
-        this.sequence = sequence;
+        if (range.getParticipant() != null){
+            if (range.getParticipant().getInteractor() instanceof Polymer){
+                 this.sequence = ((Polymer)range.getParticipant().getInteractor()).getSequence();
+            }
+            else{
+                this.sequence = null;
+            }
+        }
+        else{
+            this.sequence = sequence;
+        }
 
         this.cvObjectService = cvService;
         this.resultingSequenceClass = resultingSequenceClass;
+
+        List<String> messages = RangeUtils.validateRange(this.range, this.sequence);
+        isInvalid = !messages.isEmpty();
+        if (isInvalid){
+            this.badRangeInfo = StringUtils.join(messages, ", ");
+        }
     }
 
     public void onRangeAsStringChanged(AjaxBehaviorEvent evt)  throws IllegalRangeException,NoSuchMethodException,InstantiationException, IllegalAccessException,InvocationTargetException {
@@ -71,11 +91,22 @@ public class RangeWrapper {
         else{
             this.range.setResultingSequence(this.resultingSequenceClass.getConstructor(String.class, String.class).newInstance(RangeUtils.extractRangeSequence(this.range, this.sequence),null));
         }
+
+        List<String> messages = RangeUtils.validateRange(this.range, this.sequence);
+        isInvalid = !messages.isEmpty();
+        if (isInvalid){
+            this.badRangeInfo = StringUtils.join(messages, ", ");
+        }
     }
 
     public void onFuzzyTypeChanged(AjaxBehaviorEvent evt) {
 
         this.rangeAsString = RangeUtils.convertRangeToString(range);
+        List<String> messages = RangeUtils.validateRange(this.range, this.sequence);
+        isInvalid = !messages.isEmpty();
+        if (isInvalid){
+            this.badRangeInfo = StringUtils.join(messages, ", ");
+        }
     }
 
     public void validateRange(FacesContext context, UIComponent component, Object value) throws ValidatorException {
@@ -117,10 +148,10 @@ public class RangeWrapper {
     }
 
     public boolean isValidRange() {
-        return !RangeUtils.validateRange(range, sequence).isEmpty();
+        return isInvalid;
     }
 
     public String getBadRangeInfo() {
-        return StringUtils.join(RangeUtils.validateRange(range, sequence), ", ");
+        return badRangeInfo;
     }
 }
