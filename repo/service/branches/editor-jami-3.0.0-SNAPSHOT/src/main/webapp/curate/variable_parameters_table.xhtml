@@ -34,10 +34,10 @@
             </f:facet>
             <h:selectOneMenu id="paramUnitSel" value="#{parameter.unit}" rendered="#{parameterUnitSelectItems != null}" disabled="#{not experimentController.isVariableParameterTab()}"
                     converter="cvObjectConverter">
-                <f:selectItems value="#{parameterUnitSelectItems}"/>
+                <f:selectItems value="#{cvObjectService.parameterUnitSelectItems}"/>
                 <ed:curation/>
             </h:selectOneMenu>
-            <h:outputText value="#{parameter.unit.shortName}" rendered="#{parameterUnitSelectItems == null}"/>
+            <h:outputText value="#{parameter.unit.shortName}" rendered="#{cvObjectService.parameterUnitSelectItems == null}"/>
         </p:column>
         <p:column>
             <f:facet name="header">
@@ -61,7 +61,7 @@
                             <p:commandLink styleClass="ui-icon ui-icon-closethick" process="@this"
                                            actionListener="#{experimentController.removeVariableParameterValue(value, parameter)}"
                                            oncomplete="markAsUnsaved()"
-                                           update="vparamValueList"/>
+                                           update="vparamValueList #{update}"/>
                         </li>
                     </ui:repeat>
                 </ul>

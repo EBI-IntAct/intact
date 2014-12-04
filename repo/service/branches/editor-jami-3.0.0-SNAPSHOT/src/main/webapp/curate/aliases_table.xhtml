@@ -24,7 +24,7 @@
                 <h:selectOneMenu id="aliasTypeSel" value="#{alias.type}" required="true"
                                  requiredMessage="Alias type is required" disabled="#{annotatedObjectController.isAliasDisabled()
                                  or annotatedObjectController.isAliasNotEditable(alias)}" converter="cvObjectConverter">
-                    <f:selectItems value="#{aliasTypeSelectItems}"/>
+                    <f:selectItems value="#{cvObjectService.aliasTypeSelectItems}"/>
                 </h:selectOneMenu>
             </p:column>
             <p:column>

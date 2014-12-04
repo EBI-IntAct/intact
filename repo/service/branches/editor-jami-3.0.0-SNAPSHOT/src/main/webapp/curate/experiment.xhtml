@@ -92,25 +92,27 @@
                         <h:outputLabel value="Interaction detection method: " for="detMethodTxt"/>
                     </td>
                     <td colspan="3">
-                        <ia:inputCvObject id="detMethodTxt" value="#{experimentController.experiment.interactionDetectionMethod}"
+                        <ia:inputCvTerm id="detMethodTxt" value="#{experimentController.experiment.interactionDetectionMethod}"
                                           selectItems="#{cvObjectService.interactionDetectionMethodSelectItems}"
                                           cvIdentifier="MI:0001"
                                           beforeTimeoutEvent="ia_disableSave()" oncomplete="ia_enableSave()"
                                           required="true" requiredMessage="Interaction detection method is required"
                                           update=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"
-                                          valueChangeAwareObject="#{experimentController}"/>
+                                          valueChangeAwareObject="#{experimentController}"
+                                          cvClass="uk.ac.ebi.intact.model.CvInteraction"/>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="1"><h:outputLabel value="Participant detection method: " for="partDetMethodTxt"/></td>
                     <td colspan="3">
-                        <ia:inputCvObject id="partDetMethodTxt" value="#{experimentController.experiment.participantIdentificationMethod}"
+                        <ia:inputCvTerm id="partDetMethodTxt" value="#{experimentController.experiment.participantIdentificationMethod}"
                                           selectItems="#{cvObjectService.participantDetectionMethodSelectItems}"
                                           cvIdentifier="MI:0002"
                                           beforeTimeoutEvent="ia_disableSave()" oncomplete="ia_enableSave()"
                                           required="true" requiredMessage="Participant identification method is required"
                                           update=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"
-                                          valueChangeAwareObject="#{experimentController}"/>
+                                          valueChangeAwareObject="#{experimentController}"
+                                          cvClass="uk.ac.ebi.intact.model.CvIdentification"/>
                     </td>
                 </tr>
                 <tr>

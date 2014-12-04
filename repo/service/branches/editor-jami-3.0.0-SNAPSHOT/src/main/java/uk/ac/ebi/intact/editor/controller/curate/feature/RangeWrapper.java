@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.editor.controller.curate.feature;
 
 import org.apache.commons.lang.StringUtils;
 import psidev.psi.mi.jami.exception.IllegalRangeException;
+import psidev.psi.mi.jami.model.Entity;
 import psidev.psi.mi.jami.model.Polymer;
 import psidev.psi.mi.jami.model.Range;
 import psidev.psi.mi.jami.utils.RangeUtils;
@@ -153,5 +154,27 @@ public class RangeWrapper {
 
     public String getBadRangeInfo() {
         return badRangeInfo;
+    }
+
+    public Entity getParticipant(){
+        return this.range.getParticipant();
+    }
+
+    public void setParticipant(Entity entity) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        this.range.setParticipant(entity);
+
+        if (entity.getInteractor() instanceof Polymer){
+            sequence = ((Polymer)entity.getInteractor()).getSequence();
+        }
+        else{
+            sequence = null;
+        }
+
+        if (this.range.getResultingSequence() != null){
+            this.range.getResultingSequence().setOriginalSequence(RangeUtils.extractRangeSequence(this.range, this.sequence));
+        }
+        else{
+            this.range.setResultingSequence(this.resultingSequenceClass.getConstructor(String.class, String.class).newInstance(RangeUtils.extractRangeSequence(this.range, this.sequence),null));
+        }
     }
 }

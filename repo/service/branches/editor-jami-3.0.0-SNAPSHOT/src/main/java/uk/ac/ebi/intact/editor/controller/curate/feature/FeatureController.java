@@ -80,6 +80,7 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
 
     private boolean isParametersDisabled;
     private boolean isDetectionMethodDisabled;
+    private CvTerm detectionMethodToAdd=null;
 
     public FeatureController() {
         super(IntactFeatureEvidence.class, ExperimentalResultingSequence.class);
@@ -166,7 +167,7 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
         }
     }
 
-    public int getDetectionMethodSize() {
+    public int getDetectionMethodsSize() {
         if (getFeature() == null){
             return 0;
         }
@@ -282,6 +283,7 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
             isParametersDisabled = true;
             isDetectionMethodDisabled = true;
         }
+
     }
 
     public boolean isParametersDisabled() {
@@ -336,9 +338,10 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
         if (!getFeature().areDetectionMethodsInitialized()){
             setFeature(getFeatureEditorService().initialiseFeatureDetectionMethods(getFeature()));
         }
-
-        getFeature().getDetectionMethods().add(IntactUtils.createMIFeatureDetectionMethod("to set", null));
-        setUnsavedChanges(true);
+        if (this.detectionMethodToAdd != null){
+            getFeature().getDetectionMethods().add(this.detectionMethodToAdd);
+            setUnsavedChanges(true);
+        }
     }
 
     @Override
@@ -437,5 +440,13 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     @Override
     protected IntactDbSynchronizer getRangeSynchronzer() {
         return getEditorService().getIntactDao().getSynchronizerContext().getExperimentalRangeSynchronizer();
+    }
+
+    public CvTerm getDetectionMethodToAdd() {
+        return detectionMethodToAdd;
+    }
+
+    public void setDetectionMethodToAdd(CvTerm detectionMethodToAdd) {
+        this.detectionMethodToAdd = detectionMethodToAdd;
     }
 }
