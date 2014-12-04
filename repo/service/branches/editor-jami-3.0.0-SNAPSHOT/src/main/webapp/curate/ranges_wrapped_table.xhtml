@@ -47,9 +47,9 @@
             <f:facet name="header">
                 <h:outputText value="From type"/>
             </f:facet>
-            <h:selectOneMenu id="fromCvFuzzyType" value="#{rangeWrapper.range.fromCvFuzzyType}" converter="cvObjectConverter"
+            <h:selectOneMenu id="fromCvFuzzyType" value="#{rangeWrapper.range.start.status}" converter="cvObjectConverter"
                              required="true"
-                             requiredMessage="Range from CvFuzzyType is required" disabled="#{featureController.isRangeDisabled()}">
+                             requiredMessage="Range from CvFuzzyType is required" disabled="#{annotatedObjetController.isRangeDisabled()}">
                 <f:ajax event="valueChange" render=":editorForm:featureTabs:rangesPanel :editorForm:messagesComponent :editorForm:changesPanel :editorForm:unsavedChangesInfo"
                         listener="#{rangeWrapper.onFuzzyTypeChanged}" onevent="markAsUnsaved()"/>
                 <f:selectItems value="#{cvObjectService.fuzzyTypeSelectItems}"/>
@@ -59,7 +59,7 @@
             <f:facet name="header">
                 <h:outputText value="To type"/>
             </f:facet>
-            <h:selectOneMenu id="toCvFuzzyType" value="#{rangeWrapper.range.toCvFuzzyType}" converter="cvObjectConverter"
+            <h:selectOneMenu id="toCvFuzzyType" value="#{rangeWrapper.range.end.status}" converter="cvObjectConverter"
                              required="true"
                              requiredMessage="Range to CvFuzzyType is required" disabled="#{featureController.isRangeDisabled()}">
                 <f:ajax event="valueChange" render=":editorForm:messagesComponent :editorForm:changesPanel :editorForm:unsavedChangesInfo"
@@ -71,40 +71,42 @@
             <f:facet name="header">
                 <h:outputText value="Intramolecular"/>
             </f:facet>
-            <h:selectBooleanCheckbox value="#{rangeWrapper.range.linked}" disabled="#{featureController.isRangeDisabled()}">
+            <h:selectBooleanCheckbox value="#{rangeWrapper.range.linked}" disabled="#{annotatedObjetController.isRangeDisabled()}">
                 <f:ajax event="valueChange" render=":editorForm:messagesComponent :editorForm:changesPanel :editorForm:unsavedChangesInfo"
                         onevent="markAsUnsaved()"/>
              </h:selectBooleanCheckbox>
-
-            <!--A link range is different from link feature. We should not associate link range to link feature-->
-            <!--TODO needs to be reviewed with curators-->
-            <!--<p:commandLink onclick="load_feature.show()" action="#{curateController.edit(rangeWrapper.range.feature.boundDomain)}"
-                           rendered="#{rangeWrapper.range.linked and rangeWrapper.range.feature.boundDomain != null}"
-                           value="#{rangeWrapper.range.feature.boundDomain.shortLabel}" ajax="false"/>-->
         </p:column>
         <p:column>
             <f:facet name="header">
                 <h:outputText value="Actions"/>
             </f:facet>
             <p:commandLink id="markDeletedBtn" process="markDeletedBtn" immediate="true" title="Mark to be deleted" styleClass="ui-icon ui-icon-closethick"
-                           actionListener="#{featureController.markRangeToDelete(rangeWrapper)}"
+                           actionListener="#{annotatedObjetController.markRangeToDelete(rangeWrapper)}"
                            update=":editorForm:changesPanel,:editorForm:messagesComponent,:editorForm:unsavedChangesInfo" rendered="#{not changesController.isDeletedAc(rangeWrapper.range.ac)}"
                            />
             <p:commandLink id="revertBtn" process="revertBtn" immediate="true" title="Revert" styleClass="ui-icon ui-icon-arrowreturnthick-1-w"
-                           actionListener="#{changesController.revert(rangeWrapper.range)}"
+                           actionListener="#{annotatedObjetController.revert(rangeWrapper.range)}"
                            update=":editorForm:changesPanel,:editorForm:messagesComponent,:editorForm:unsavedChangesInfo" rendered="#{changesController.isDeletedAc(rangeWrapper.range.ac)}"/>
         </p:column>
 
-        <p:rowExpansion>
-            <h:panelGrid columns="2">
-                <h:outputText value="Sequence:"/>
-                <p:inputTextarea value="#{rangeWrapper.range.fullSequence}" readonly="true" cols="60" rows="3"/>
+        <p:rowExpansion id="resultingSeqExpansion">
+            <h:panelGrid columns="2" rendered="#{rangeWrapper.range.resultingSequence != null}">
+                <h:outputText value="Original Sequence:"/>
+                <p:inputTextarea value="#{rangeWrapper.range.resultingSequence.originalSequence}" readonly="true" cols="60" rows="3"
+                                 rendered="#{rangeWrapper.range.resultingSequence.originalSequence != null}"/>
+                <h:outputText value="" rendered="#{rangeWrapper.range.resultingSequence.originalSequence == null}"/>
 
-                <h:outputText value="Upstream sequence:"/>
-                <p:inputTextarea value="#{rangeWrapper.range.upStreamSequence}" readonly="true" cols="60" rows="3"/>
+                <h:outputText value="New sequence (mutated sequence):"/>
+                <p:inputTextarea value="#{rangeWrapper.range.resultingSequence.newSequence}" cols="60" rows="3"/>
 
-                <h:outputText value="Downstream sequence:"/>
-                <p:inputTextarea value="#{rangeWrapper.range.downStreamSequence}" readonly="true" cols="60" rows="3"/>
+                <h:outputText value="Refers to participant:"/>
+                <h:selectOneMenu id="linkedParticipantMenu" value="#{rangeWrapper.participant}" converter="modelledParticipantConverter"
+                                 rendered="#{annotatedObjetController.complexFeature}" disabled="#{!annotatedObjetController.complexFeature
+                                 or annotatedObjetController.isRangeDisabled()}">
+                    <f:ajax event="valueChange" render=":editorForm:featureTabs:rangesPanel :editorForm:messagesComponent :editorForm:changesPanel :editorForm:unsavedChangesInfo"
+                            onevent="markAsUnsaved()"/>
+                    <f:selectItems value="#{annotatedObjectController.participantSelectItems}"/>
+                </h:selectOneMenu>
             </h:panelGrid>
         </p:rowExpansion>
 

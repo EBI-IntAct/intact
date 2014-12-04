@@ -44,7 +44,7 @@
          <h:panelGrid columns="2" id="inputPanel" onmouseover="document.getElementById('#{cc.clientId}:cvButtons').style.visibility = 'visible';"
                  onmouseout="document.getElementById('#{cc.clientId}:cvButtons').style.visibility = 'hidden';">
 
-                <h:selectOneMenu id="selectObject" value="#{cc.attrs.value}" size="#{cc.attrs.size}" converter="cvTermConverter"
+                <h:selectOneMenu id="selectObject" value="#{cc.attrs.value}" size="#{cc.attrs.size}" converter="cvObjectConverter"
                                  required="#{cc.attrs.required}" requiredMessage="#{cc.attrs.requiredMessage}"
                                  disabled="#{cc.attrs.disabled}">
                     <f:selectItems value="#{cc.attrs.selectItems}"/>

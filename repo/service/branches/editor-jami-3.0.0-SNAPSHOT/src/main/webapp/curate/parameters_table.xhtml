@@ -16,17 +16,17 @@
                              update="parametersTable #{update}"/>
         </div>
 
-        <p:dataTable id="parametersTable" var="parameter" value="#{annotatedObjectController.parameters}">
+        <p:dataTable id="parametersTable" var="parameter" value="#{annotatedObjectController.collectParameters}">
             <p:column>
                 <f:facet name="header">
                     <h:outputText value="Type"/>
                 </f:facet>
-                <h:selectOneMenu id="paramTypeSel" value="#{parameter.cvParameterType}" rendered="#{parameterTypeSelectItems != null}" disabled="#{disableParameterSelectItems}"
+                <h:selectOneMenu id="paramTypeSel" value="#{parameter.type}" rendered="#{cvObjectService.parameterTypeSelectItems != null}" disabled="#{disableParameterSelectItems}"
                                  required="true" requiredMessage="Parameter type is required">
-                    <f:selectItems value="#{parameterTypeSelectItems}"/>
+                    <f:selectItems value="#{cvObjectService.parameterTypeSelectItems}"/>
                     <p:ajax event="change" process="@this" oncomplete="markAsUnsaved()" update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"/>
                 </h:selectOneMenu>
-                <h:outputText value="#{parameter.cvParameterType.shortLabel}" rendered="#{parameterTypeSelectItems == null}"/>
+                <h:outputText value="#{parameter.type.shortName}" rendered="#{parameterTypeSelectItems == null}"/>
             </p:column>
            <p:column>
                 <f:facet name="header">
@@ -41,11 +41,11 @@
                 <f:facet name="header">
                     <h:outputText value="Unit"/>
                 </f:facet>
-                <h:selectOneMenu id="paramUnitSel" value="#{parameter.cvParameterUnit}" rendered="#{parameterUnitSelectItems != null}" disabled="#{disableParameterSelectItems}">
-                    <f:selectItems value="#{parameterUnitSelectItems}"/>
+                <h:selectOneMenu id="paramUnitSel" value="#{parameter.unit}" rendered="#{cvObjectService.parameterUnitSelectItems != null}" disabled="#{disableParameterSelectItems}">
+                    <f:selectItems value="#{cvObjectService.parameterUnitSelectItems}"/>
                     <ed:curation/>
                 </h:selectOneMenu>
-                <h:outputText value="#{parameter.cvParameterUnit.shortLabel}" rendered="#{parameterUnitSelectItems == null}"/>
+                <h:outputText value="#{parameter.unit.shortName}" rendered="#{parameterUnitSelectItems == null}"/>
             </p:column>
             <p:column>
                 <f:facet name="header">
@@ -79,7 +79,7 @@
                      <h:outputText value="Actions"/>
                 </f:facet>
                 <p:commandLink id="removeParamBtn" styleClass="ui-icon ui-icon-closethick" process="removeParamBtn"
-                               actionListener="#{annotatedObjectController.annotatedObject.removeParameter(parameter)}"
+                               actionListener="#{annotatedObjectController.removeParameter(parameter)}"
                                oncomplete="markAsUnsaved()"
                                update="parametersTable #{update}"/>
             </p:column>

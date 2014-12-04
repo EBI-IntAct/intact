@@ -20,7 +20,6 @@
     <ui:define name="metadata">
         <f:metadata>
             <f:viewParam name="ac" value="#{modelledFeatureController.ac}"/>
-            <f:event type="preRenderView" listener="#{editorCvTermService.loadDataIfNotDone}"/>
             <f:event type="preRenderView" listener="#{modelledFeatureController.loadData}"/>
             <f:event type="preRenderView" listener="#{curateController.setCurrentAnnotatedObjectController(modelledFeatureController)}"/>
         </f:metadata>
@@ -55,7 +54,7 @@
                 </p:outputPanel>
 
                 <div id="auditInfo" class="intact-auditPanel">
-                    <ia:jcreatorUpdator annotatedObject="#{feature}" />
+                    <ia:creatorUpdator annotatedObject="#{feature}" />
                 </div>
 
                 <table class="intact-tableBasicForm" cellpadding="0" cellspacing="0">
@@ -135,8 +134,6 @@
                             </p:commandButton>
                         </div>
 
-
-
                         <ui:param name="rangeToDeleteCount"
                                   value="#{changesController.getDeletedAcsByClassName('uk.ac.ebi.intact.jami.model.extension.ModelledRange', modelledFeatureController.ac).size()}"/>
 
@@ -146,21 +143,16 @@
                             </ia:panelMessage>
                         </h:panelGroup>
 
-                        <ui:include src="jranges_wrapped_table.xhtml">
+                        <ui:include src="ranges_wrapped_table.xhtml">
                             <ui:param name="value" value="#{modelledFeatureController.wrappedRanges}"/>
-                            <ui:param name="fuzzyTypeSelectItems" value="#{editorCvTermService.fuzzyTypeSelectItems}"/>
-                            <ui:param name="participantSelectItems" value="#{modelledFeatureController.participantSelectItems}"/>
                         </ui:include>
 
                     </p:outputPanel>
 
                 </p:tab>
 
-                <ui:decorate template="jpropertiesTabs.xhtml">
+                <ui:decorate template="propertiesTabs.xhtml">
                     <ui:param name="annotatedObjectSelectItems" value="#{editorCvTermService.featureTopicSelectItems}"/>
-                    <ui:param name="aliasTypeSelectItems" value="#{editorCvTermService.aliasTypeSelectItems}"/>
-                    <ui:param name="databaseSelectItems" value="#{editorCvTermService.featureDatabaseSelectItems}"/>
-                    <ui:param name="qualifierSelectItems" value="#{editorCvTermService.qualifierSelectItems}"/>
                 </ui:decorate>
 
             </p:tabView>

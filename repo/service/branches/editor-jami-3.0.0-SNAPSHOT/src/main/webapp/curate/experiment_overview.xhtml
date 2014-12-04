@@ -137,7 +137,7 @@
                                                 value="#{(participant.expressedIn != null)? participant.expressedIn.shortName : ''}"/>
                                     </p:column>
 
-                                    <p:column headerText="Stoichiometry" rendered="#{not null participant.stoichiometry}">
+                                    <p:column headerText="Stoichiometry" rendered="#{participant.stoichiometry != null}">
                                         <h:outputText value="S: #{experimentDetailedViewController.stoichiometryAsString(participant.stoichiometry)}"/>
                                     </p:column>
 
