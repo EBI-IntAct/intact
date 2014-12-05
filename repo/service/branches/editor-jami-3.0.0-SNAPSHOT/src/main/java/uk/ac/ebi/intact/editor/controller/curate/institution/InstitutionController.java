@@ -171,8 +171,8 @@ public class InstitutionController extends AnnotatedObjectController {
         if (institution == null){
             return 0;
         }
-        else if (institution.areXrefsInitialized()){
-            return institution.getDbXrefs().size();
+        else if (institution.areSynonymsInitialized()){
+            return institution.getSynonyms().size();
         }
         else {
             return getInstitutionService().countAliases(institution);

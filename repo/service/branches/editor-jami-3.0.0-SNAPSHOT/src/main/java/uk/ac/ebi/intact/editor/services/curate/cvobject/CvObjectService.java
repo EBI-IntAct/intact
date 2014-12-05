@@ -32,9 +32,7 @@ import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.CvTermUtils;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
-import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
-import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
-import uk.ac.ebi.intact.jami.model.extension.IntactSource;
+import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.PostConstruct;
@@ -85,6 +83,12 @@ public class CvObjectService extends AbstractEditorService {
     private List<SelectItem> interactionTypeSelectItems;
 
     private List<SelectItem> interactorTypeSelectItems;
+    private List<SelectItem> proteinTypeSelectItems;
+    private List<SelectItem> bioactiveEntitySelectItems;
+    private List<SelectItem> nucleicAcidSelectItems;
+    private List<SelectItem> polymerTypeSelectItems;
+    private List<SelectItem> moleculeSetTypeSelectItems;
+    private List<SelectItem> geneTypeSelectItems;
 
     private List<SelectItem> experimentalRoleSelectItems;
 
@@ -160,6 +164,12 @@ public class CvObjectService extends AbstractEditorService {
             this.evidenceTypeSelectItems=null;
             this.defaultExperimentalRole=null;
             this.defaultBiologicalRole=null;
+            this.proteinTypeSelectItems=null;
+            this.bioactiveEntitySelectItems=null;
+            this.nucleicAcidSelectItems=null;
+            this.polymerTypeSelectItems=null;
+            this.moleculeSetTypeSelectItems=null;
+            this.geneTypeSelectItems=null;
             isInitialised=false;
         }
     }
@@ -300,7 +310,7 @@ public class CvObjectService extends AbstractEditorService {
         interactionTypeSelectItems = createSelectItems( interactionTypes, "-- Select type --" );
 
         final List<IntactCvTerm> interactorTypes = getSortedList( IntactUtils.INTERACTOR_TYPE_OBJCLASS, cvObjectsByClass);
-        interactorTypeSelectItems = createSelectItems( interactorTypes, "-- Select type --" );
+        interactorTypeSelectItems = createSelectItems(interactorTypes, "-- Select type --");
 
         final List<IntactCvTerm> experimentalRoles = getSortedList( IntactUtils.EXPERIMENTAL_ROLE_OBJCLASS, cvObjectsByClass);
         // must have one experimental role
@@ -335,12 +345,14 @@ public class CvObjectService extends AbstractEditorService {
         confidenceTypeSelectItems = createSelectItems( confidenceTypes, "-- Select type --" );
 
         // evidence type
+        evidenceTypeSelectItems = new ArrayList<SelectItem>();
         IntactCvTerm evidenceTypeParent = getIntactDao().getCvTermDao().getByMIIdentifier("MI:1331", IntactUtils.DATABASE_OBJCLASS);
         if (evidenceTypeParent != null){
             loadChildren(evidenceTypeParent, evidenceTypeSelectItems, false, new HashSet<String>());
         }
 
         // complex type
+        complexTypeSelectItems = new ArrayList<SelectItem>();
         IntactCvTerm complexTypeParent = getIntactDao().getCvTermDao().getByMIIdentifier("MI:0314", IntactUtils.INTERACTOR_TYPE_OBJCLASS);
         SelectItem item = complexTypeParent != null ? createSelectItem(complexTypeParent, true):null;
         if (item != null){
@@ -348,6 +360,78 @@ public class CvObjectService extends AbstractEditorService {
         }
         if (complexTypeParent != null){
             loadChildren(complexTypeParent, complexTypeSelectItems, false, new HashSet<String>());
+        }
+
+        // nucleic acid type
+        nucleicAcidSelectItems = new ArrayList<SelectItem>();
+        IntactCvTerm nucleicAcidTypeParent = getIntactDao().getCvTermDao().getByMIIdentifier(NucleicAcid.NULCEIC_ACID_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS);
+        SelectItem itemNucleicAcid = nucleicAcidTypeParent != null ? createSelectItem(nucleicAcidTypeParent, true):null;
+        if (itemNucleicAcid != null){
+            nucleicAcidSelectItems.add(item);
+        }
+        if (nucleicAcidTypeParent != null){
+            loadChildren(nucleicAcidTypeParent, nucleicAcidSelectItems, false, new HashSet<String>());
+        }
+
+        // polymer and protein type
+        this.polymerTypeSelectItems = new ArrayList<SelectItem>();
+        this.proteinTypeSelectItems = new ArrayList<SelectItem>();
+        IntactCvTerm polymerType = getIntactDao().getCvTermDao().getByMIIdentifier(Polymer.POLYMER_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS);
+        IntactCvTerm proteinType = getIntactDao().getCvTermDao().getByMIIdentifier(Protein.PROTEIN_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS);
+        IntactCvTerm peptideType = getIntactDao().getCvTermDao().getByMIIdentifier(Protein.PEPTIDE_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS);
+        SelectItem itemPolymer = polymerType != null ? createSelectItem(polymerType, true):null;
+        SelectItem itemProtein = proteinType != null ? createSelectItem(proteinType, true):null;
+        SelectItem itemPeptide = peptideType != null ? createSelectItem(peptideType, true):null;
+        if (itemPolymer != null){
+            polymerTypeSelectItems.add(itemPolymer);
+        }
+        if (itemProtein != null){
+            proteinTypeSelectItems.add(itemProtein);
+        }
+        if (itemPeptide != null){
+            proteinTypeSelectItems.add(itemPeptide);
+        }
+        if (polymerType != null){
+            loadChildren(polymerType, polymerTypeSelectItems, false, new HashSet<String>());
+        }
+        if (proteinType != null){
+            loadChildren(proteinType, proteinTypeSelectItems, false, new HashSet<String>());
+        }
+        if (peptideType != null){
+            loadChildren(peptideType, proteinTypeSelectItems, false, new HashSet<String>());
+        }
+
+        // gene type
+        this.geneTypeSelectItems = new ArrayList<SelectItem>();
+        IntactCvTerm geneTypeParent = getIntactDao().getCvTermDao().getByMIIdentifier(Gene.GENE_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS);
+        SelectItem itemGene = complexTypeParent != null ? createSelectItem(geneTypeParent, true):null;
+        if (itemGene != null){
+            geneTypeSelectItems.add(item);
+        }
+        if (itemGene != null){
+            loadChildren(geneTypeParent, geneTypeSelectItems, false, new HashSet<String>());
+        }
+
+        // molecule set type
+        moleculeSetTypeSelectItems = new ArrayList<SelectItem>();
+        IntactCvTerm moleculeSetParent = getIntactDao().getCvTermDao().getByMIIdentifier(InteractorPool.MOLECULE_SET_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS);
+        SelectItem itemSet = moleculeSetParent != null ? createSelectItem(moleculeSetParent, true):null;
+        if (itemSet != null){
+            moleculeSetTypeSelectItems.add(itemSet);
+        }
+        if (moleculeSetParent != null){
+            loadChildren(moleculeSetParent, moleculeSetTypeSelectItems, false, new HashSet<String>());
+        }
+
+        // bioactive entity type
+        bioactiveEntitySelectItems = new ArrayList<SelectItem>();
+        IntactCvTerm bioactiveEntityParent = getIntactDao().getCvTermDao().getByMIIdentifier(BioactiveEntity.BIOACTIVE_ENTITY_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS);
+        SelectItem itemEntity = bioactiveEntityParent != null ? createSelectItem(bioactiveEntityParent, true):null;
+        if (itemEntity != null){
+            bioactiveEntitySelectItems.add(itemEntity);
+        }
+        if (bioactiveEntityParent != null){
+            loadChildren(bioactiveEntityParent, bioactiveEntitySelectItems, false, new HashSet<String>());
         }
 
         // feature role
@@ -795,6 +879,30 @@ public class CvObjectService extends AbstractEditorService {
 
     public IntactCvTerm getDefaultBiologicalRole() {
         return defaultBiologicalRole;
+    }
+
+    public List<SelectItem> getProteinTypeSelectItems() {
+        return proteinTypeSelectItems;
+    }
+
+    public List<SelectItem> getBioactiveEntitySelectItems() {
+        return bioactiveEntitySelectItems;
+    }
+
+    public List<SelectItem> getNucleicAcidSelectItems() {
+        return nucleicAcidSelectItems;
+    }
+
+    public List<SelectItem> getPolymerTypeSelectItems() {
+        return polymerTypeSelectItems;
+    }
+
+    public List<SelectItem> getMoleculeSetTypeSelectItems() {
+        return moleculeSetTypeSelectItems;
+    }
+
+    public List<SelectItem> getGeneTypeSelectItems() {
+        return geneTypeSelectItems;
     }
 
     public boolean isInitialised() {

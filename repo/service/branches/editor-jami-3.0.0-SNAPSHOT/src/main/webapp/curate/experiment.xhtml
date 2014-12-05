@@ -79,7 +79,7 @@
                         <h:outputLabel value="Host organism: " for="hostOrganismTxt"/>
                     </td>
                     <td colspan="3">
-                        <ia:inputBioSource id="hostOrganismTxt" value="#{experimentController.experiment.hostOrganism}"
+                        <ia:inputOrganism id="hostOrganismTxt" value="#{experimentController.experiment.hostOrganism}"
                                            selectItems="#{bioSourceService.bioSourceSelectItems}"
                                            required="true" requiredMessage="Host organism is required"
                                            oncomplete="ia_enableSave()"

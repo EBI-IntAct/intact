@@ -45,6 +45,7 @@ import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationControll
 import uk.ac.ebi.intact.editor.services.curate.experiment.ExperimentEditorService;
 import uk.ac.ebi.intact.editor.services.curate.feature.FeatureEditorService;
 import uk.ac.ebi.intact.editor.services.curate.institution.InstitutionService;
+import uk.ac.ebi.intact.editor.services.curate.interactor.InteractorEditorService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.lifecycle.LifeCycleManager;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
@@ -994,7 +995,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
         }
         else if (ao instanceof IntactInteractor){
             IntactInteractor interactor = (IntactInteractor)ao;
-            annotations = getEditorService().initialiseInteractorAnnotations(interactor).getAnnotations();
+            annotations = ((InteractorEditorService)ApplicationContextProvider.getBean("interactorEditorService")).initialiseInteractorAnnotations(interactor).getAnnotations();
         }
         else if (ao instanceof AbstractIntactParticipant){
             AbstractIntactParticipant participant = (AbstractIntactParticipant)ao;
@@ -1037,7 +1038,8 @@ public abstract class AnnotatedObjectController extends BaseController implement
         if (interactor == null) return false;
         else if (interactor instanceof IntactInteractor){
             IntactInteractor intactInteractor = (IntactInteractor)interactor;
-            annots = getEditorService().initialiseInteractorAnnotations(intactInteractor).getAnnotations();
+            annots = ((InteractorEditorService)ApplicationContextProvider.getBean("interactorEditorService")).
+                    initialiseInteractorAnnotations(intactInteractor).getAnnotations();
         }
         else{
             annots = interactor.getAnnotations();
