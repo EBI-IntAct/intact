@@ -27,6 +27,7 @@ import uk.ac.ebi.intact.core.context.DataContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persistence.dao.BioSourceDao;
 import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.util.biosource.BioSourceServiceException;
 
 import javax.annotation.PostConstruct;
 import javax.faces.event.ActionEvent;
@@ -87,5 +88,15 @@ public class BioSourceService extends JpaAwareController {
 
     public List<BioSource> getAllBioSources() {
         return allBioSources;
+    }
+
+    public BioSource getBiosourceByTaxid(String taxid) throws BioSourceServiceException {
+        BioSource biosource = bioSourceDao.getByTaxonIdUnique(taxid);
+
+        if (biosource == null) {
+            biosource = super.getBiosourceByTaxid(taxid);
+        }
+
+        return biosource;
     }
 }

@@ -1,27 +1,37 @@
 package uk.ac.ebi.intact.editor.controller.curate.interactor;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
-import org.hibernate.Hibernate;
+import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import psidev.psi.mi.jami.model.*;
+import psidev.psi.mi.jami.utils.AnnotationUtils;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
-import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.InteractorCloner;
+import uk.ac.ebi.intact.editor.controller.curate.interaction.ImportCandidate;
+import uk.ac.ebi.intact.editor.controller.curate.interaction.ParticipantImportController;
+import uk.ac.ebi.intact.editor.services.curate.interactor.InteractorEditorService;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.model.util.CvObjectUtils;
+import uk.ac.ebi.intact.jami.model.extension.*;
+import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
+import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
+import javax.annotation.Resource;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.event.ComponentSystemEvent;
+import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,66 +46,112 @@ import java.util.List;
 @ConversationName( "general" )
 public class InteractorController extends AnnotatedObjectController {
 
-    private Interactor interactor;
+    private IntactInteractor interactor;
 
     private String ac;
 
-    private CvInteractorType newInteractorType;
+    private String newInteractorType;
 
     @Autowired
     private UserSessionController userSessionController;
+
+    @Resource(name = "interactorEditorService")
+    private transient InteractorEditorService interactorEditorService;
+
+    private boolean isNoUniprotUpdate = false;
+    private boolean isInteractorMemberTab = false;
+
+    private  List<SelectItem> typeSelectItems;
+
+    private String setMember = null;
+    private List<ImportCandidate> interactorCandidates;
 
     public InteractorController() {
     }
 
     @Override
-    public AnnotatedObject getAnnotatedObject() {
+    public IntactPrimaryObject getAnnotatedObject() {
         return getInteractor();
     }
 
+    public boolean isInteractorPool(){
+        return this.interactor instanceof InteractorPool;
+    }
+
+    public boolean isPolymer(){
+        return this.interactor instanceof IntactPolymer;
+    }
+
     @Override
-    public IntactPrimaryObject getJamiObject() {
+    protected EditorCloner<Interactor, IntactInteractor> newClonerInstance() {
+        return new InteractorCloner();
+    }
+
+    @Override
+    public void newXref(ActionEvent evt) {
+        interactor.getDbXrefs().add(new InteractorXref(IntactUtils.createMIDatabase("to set", null), "to set"));
+        setUnsavedChanges(true);
+    }
+
+    @Override
+    public InteractorXref newXref(String db, String dbMI, String id, String secondaryId, String qualifier, String qualifierMI) {
+        return new InteractorXref(getCvService().findCvObjectByIdentifier(IntactUtils.DATABASE_OBJCLASS,
+                dbMI != null ? dbMI : db),
+                id,
+                secondaryId,
+                getCvService().findCvObjectByIdentifier(IntactUtils.QUALIFIER_OBJCLASS,
+                        qualifierMI != null ? qualifierMI : qualifier));
+    }
+
+
+    @Override
+    public void setAnnotatedObject(IntactPrimaryObject annotatedObject) {
+        setInteractor((IntactInteractor) annotatedObject);
+    }
+
+    @Override
+    protected AnnotatedObjectController getParentController() {
         return null;
     }
 
     @Override
-    public void setJamiObject(IntactPrimaryObject annotatedObject) {
-        // nothing to do
+    protected String getPageContext() {
+        return "interactor";
     }
 
     @Override
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String clone() {
+    protected void loadCautionMessages() {
+        if (this.interactor != null){
+            if (!interactor.areAnnotationsInitialized()){
+                setInteractor(getInteractorEditorService().initialiseInteractorAnnotations(this.interactor));
+            }
 
-
-        String value = clone(interactor, new InteractorIntactCloner());
-
-        return value;
+            Annotation caution = AnnotationUtils.collectFirstAnnotationWithTopic(this.interactor.getDbAnnotations(), Annotation.CAUTION_MI, Annotation.CAUTION);
+            setCautionMessage(caution != null ? caution.getValue() : null);
+            Annotation internal = AnnotationUtils.collectFirstAnnotationWithTopic(this.interactor.getDbAnnotations(), null, "remark-internal");
+            setInternalRemark(internal != null ? internal.getValue() : null);
+            Annotation noUniprotUpdate = AnnotationUtils.collectFirstAnnotationWithTopic(this.interactor.getDbAnnotations(), null, "remark-internal");
+            this.isNoUniprotUpdate = noUniprotUpdate != null;
+        }
     }
 
     @Override
-    public void setAnnotatedObject(AnnotatedObject annotatedObject) {
-        setInteractor((Interactor) annotatedObject);
+    public void refreshTabsAndFocusXref() {
+        if (this.interactor instanceof InteractorPool){
+            super.refreshTabs();
+            this.isInteractorMemberTab = true;
+        }
+        else{
+            super.refreshTabsAndFocusXref();
+        }
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void loadData( ComponentSystemEvent event ) {
         if (!FacesContext.getCurrentInstance().isPostback()) {
 
             if ( ac != null ) {
                 if ( interactor == null || !ac.equals(interactor.getAc())) {
-                    interactor = loadByAc(getDaoFactory().getInteractorDao(), ac);
-                    if (interactor != null){
-                        // initialise xrefs
-                        Hibernate.initialize(interactor.getXrefs());
-                        // initialise xrefs
-                        Hibernate.initialize(interactor.getAnnotations());
-                        // initialise xrefs
-                        Hibernate.initialize(interactor.getAliases());
-                        if (interactor instanceof Polymer){
-                            Hibernate.initialize(((Polymer) interactor).getSequenceChunks());
-                        }
-                    }
+                    setInteractor(getInteractorEditorService().loadInteractorByAc(ac));
                 }
             } else {
                 if ( interactor != null ) ac = interactor.getAc();
@@ -106,34 +162,15 @@ public class InteractorController extends AnnotatedObjectController {
                 return;
             }
 
-            if (!Hibernate.isInitialized(interactor.getXrefs())
-                    || !Hibernate.isInitialized(interactor.getAnnotations())
-                    || !Hibernate.isInitialized(interactor.getAliases())){
-                interactor = loadByAc(getDaoFactory().getInteractorDao(), interactor.getAc());
-
-                // initialise xrefs
-                Hibernate.initialize(interactor.getXrefs());
-                // initialise xrefs
-                Hibernate.initialize(interactor.getAnnotations());
-                // initialise xrefs
-                Hibernate.initialize(interactor.getAliases());
-                if (interactor instanceof Polymer){
-                    Hibernate.initialize(((Polymer) interactor).getSequenceChunks());
-                }
-            }
-
-            reset();
             refreshTabsAndFocusXref();
         }
 
         generalLoadChecks();
     }
 
-    private void reset() {
-    }
-
     public void validateAnnotatedObject(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-        if (!CvObjectUtils.isSmallMoleculeType(interactor.getCvInteractorType()) && interactor.getBioSource() == null) {
+        if (!(interactor instanceof BioactiveEntity)
+                && interactor.getOrganism() == null) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Organism is mandatory", "No biosource was defined");
             throw new ValidatorException(message);
         }
@@ -147,86 +184,51 @@ public class InteractorController extends AnnotatedObjectController {
         cleanSequence(null);
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public String newInteractor() {
-        Interactor interactor = newInstance(newInteractorType);
-        interactor.setOwner(userSessionController.getUserInstitution());
-        interactor.setCvInteractorType(newInteractorType);
+        IntactInteractor interactor = newInstance(newInteractorType);
+        interactor.setInteractorType(getCvService().findCvObject(IntactUtils.INTERACTOR_TYPE_OBJCLASS, interactor.getInteractorType().getMIIdentifier()));
 
         setInteractor(interactor);
 
-        getChangesController().markAsUnsaved(interactor);
+        setUnsavedChanges(true);
 
         return navigateToObject(interactor);
     }
 
-    // TODO migrate to intact core as this is generic functionality
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public Interactor newInstance(CvInteractorType interactorType) {
-        // re-attach xrefs
-        interactorType = getDaoFactory().getCvObjectDao(CvInteractorType.class).getByAc(interactorType.getAc());
-
-        if (CvObjectUtils.isProteinType(interactorType) || CvObjectUtils.isPeptideType(interactorType)) {
-            return newInstance(ProteinImpl.class.getName());
-        } else if (CvObjectUtils.isSmallMoleculeType(interactorType)) {
-            return newInstance(SmallMoleculeImpl.class.getName());
-        } else if (CvObjectUtils.isNucleicAcidType(interactorType)) {
-            return newInstance(NucleicAcidImpl.class.getName());
-        } else if (CvObjectUtils.isInteractionType(interactorType)) {
-            return newInstance(InteractionImpl.class.getName());
-        } else if (CvObjectUtils.isChildOfType(interactorType, CvInteractorType.BIOPOLYMER_MI_REF, true)) {
-            return newInstance(PolymerImpl.class.getName());
-        } else if (CvObjectUtils.isChildOfType(interactorType, CvInteractorType.POLYSACCHARIDE_MI_REF, true)) {
-            return newInstance(PolySaccharideImpl.class.getName());
+    public IntactInteractor newInstance(String interactorType) {
+        if (!getCvService().isInitialised()){
+            getCvService().loadData();
+        }
+        if (interactorType.equals(Protein.PROTEIN)) {
+           this.typeSelectItems = getCvService().getProteinTypeSelectItems();
+            return new IntactProtein("to set");
+        } else if (interactorType.equals(Protein.PEPTIDE)) {
+            this.typeSelectItems = getCvService().getProteinTypeSelectItems();
+            return new IntactProtein("to set", IntactUtils.createMIInteractorType(Protein.PEPTIDE, Protein.PEPTIDE_MI));
+        } else if (interactorType.equals(BioactiveEntity.BIOACTIVE_ENTITY)) {
+            this.typeSelectItems = getCvService().getBioactiveEntitySelectItems();
+            return new IntactBioactiveEntity("to set");
+        } else if (interactorType.equals(NucleicAcid.NULCEIC_ACID)) {
+            this.typeSelectItems = getCvService().getNucleicAcidSelectItems();
+            return new IntactNucleicAcid("to set");
+        } else if (interactorType.equals(Complex.COMPLEX)) {
+            this.typeSelectItems = getCvService().getComplexTypeSelectItems();
+            return new IntactComplex("to set");
+        } else if (interactorType.equals(Polymer.POLYMER)) {
+            this.typeSelectItems = getCvService().getPolymerTypeSelectItems();
+            return new IntactPolymer("to set");
+        } else if (interactorType.equals(InteractorPool.MOLECULE_SET)) {
+            this.typeSelectItems = getCvService().getMoleculeSetTypeSelectItems();
+            return new IntactInteractorPool("to set");
+        }
+        else if (interactorType.equals(Gene.GENE)) {
+            this.typeSelectItems = getCvService().getGeneTypeSelectItems();
+            return new IntactGene("to set");
         } else {
-            return newInstance(InteractorImpl.class.getName());
+            this.typeSelectItems = getCvService().getInteractorTypeSelectItems();
+            return new IntactInteractor("to set");
         }
     }
-
-    private Interactor newInstance(String type) {
-        Interactor obj = null;
-
-        try {
-            Class cvClass = Thread.currentThread().getContextClassLoader().loadClass(type);
-
-            obj = (Interactor) cvClass.newInstance();
-        } catch (Exception e) {
-            addErrorMessage("Problem creating interactor", "Class "+type);
-            e.printStackTrace();
-        }
-
-        return obj;
-    }
-
-    public String getMoleculeType() {
-        if( interactor != null && interactor.getCvInteractorType() != null) {
-            if( interactor.getCvInteractorType().getFullName() != null )
-                return StringUtils.capitalize( interactor.getCvInteractorType().getFullName() );
-            else
-                return StringUtils.capitalize( interactor.getCvInteractorType().getShortLabel() );
-        }
-
-        return "Interactor";
-    }
-
-    public boolean isOrganismApplicable() {
-        if (interactor == null || interactor.getCvInteractorType() == null) {
-            return true;
-        }
-
-        return !(CvInteractorType.SMALL_MOLECULE_MI_REF.equals(interactor.getCvInteractorType().getIdentifier()));
-    }
-
-//    public void validateSequence(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-//        String seq = getSequence();
-//
-//        if (seq != null) {
-//            if (seq.contains(" ") || seq.contains("\n") || seq.contains("\r")) {
-//                addErrorMessage("Invalid sequence", "Illegal characters were found in the sequence (e.g. spaces, return chars...)");
-//                FacesContext.getCurrentInstance().renderResponse();
-//            }
-//        }
-//    }
 
     public void cleanSequence(AjaxBehaviorEvent evt) {
         String seq = getSequence();
@@ -249,15 +251,17 @@ public class InteractorController extends AnnotatedObjectController {
         }
     }
 
-    public Interactor getInteractor() {
+    public IntactInteractor getInteractor() {
         return interactor;
     }
 
-    public void setInteractor( Interactor interactor ) {
+    public void setInteractor( IntactInteractor interactor ) {
         this.interactor = interactor;
 
         if (interactor != null){
             this.ac = interactor.getAc();
+
+            initialiseDefaultProperties(this.interactor);
         }
     }
 
@@ -277,15 +281,11 @@ public class InteractorController extends AnnotatedObjectController {
         }
     }
 
-    public boolean isPolymer() {
-        return interactor instanceof Polymer;
-    }
-
-    public CvInteractorType getNewInteractorType() {
+    public String getNewInteractorType() {
         return newInteractorType;
     }
 
-    public void setNewInteractorType(CvInteractorType newInteractorType) {
+    public void setNewInteractorType(String newInteractorType) {
         this.newInteractorType = newInteractorType;
     }
 
@@ -293,69 +293,283 @@ public class InteractorController extends AnnotatedObjectController {
         return ac;
     }
 
+    @Override
+    public int getXrefsSize() {
+        if (interactor == null){
+            return 0;
+        }
+        else{
+            return interactor.getDbXrefs().size();
+        }
+    }
+
+    @Override
+    public int getAliasesSize() {
+        if (interactor == null){
+            return 0;
+        }
+        else if (interactor.areAliasesInitialized()){
+            return interactor.getAliases().size();
+        }
+        else {
+            return getInteractorEditorService().countAliases(interactor);
+        }
+    }
+
+    @Override
+    public int getAnnotationsSize() {
+        if (interactor == null){
+            return 0;
+        }
+        else{
+            return interactor.getDbAnnotations().size();
+        }
+    }
+
+    public int getMembersPoolSize() {
+        if (!(interactor instanceof InteractorPool)){
+            return 0;
+        }
+        else{
+            return ((InteractorPool) interactor).size();
+        }
+    }
+
     public void setAc(String ac) {
         this.ac = ac;
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public boolean isNoUniprotUpdate() {
-        return super.isNoUniprotUpdate((Interactor)getAnnotatedObject());
+        return isNoUniprotUpdate;
     }
 
     @Override
-    public void doSave(boolean refreshCurrentView) {
-        ChangesController changesController = (ChangesController) getSpringContext().getBean("changesController");
-        PersistenceController persistenceController = getPersistenceController();
+    protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
+        IntactInteractor interactor = (IntactInteractor)annotatedObject;
+        if (!interactor.areAnnotationsInitialized()
+                || !interactor.areXrefsInitialized()
+                || !isCvInitialised(interactor.getInteractorType())) {
+            this.interactor = getInteractorEditorService().reloadFullyInitialisedInteractor(interactor);
+        }
 
-        doSaveIntact(refreshCurrentView, changesController, persistenceController);
+        if (interactor instanceof Protein) {
+            this.typeSelectItems = getCvService().getProteinTypeSelectItems();
+        } else if (interactor instanceof BioactiveEntity) {
+            this.typeSelectItems = getCvService().getBioactiveEntitySelectItems();
+        } else if (interactor instanceof NucleicAcid) {
+            this.typeSelectItems = getCvService().getNucleicAcidSelectItems();
+        } else if (interactor instanceof Complex) {
+            this.typeSelectItems = getCvService().getComplexTypeSelectItems();
+        } else if (interactor instanceof Polymer) {
+            this.typeSelectItems = getCvService().getPolymerTypeSelectItems();
+        } else if (interactor instanceof IntactInteractorPool) {
+            this.typeSelectItems = getCvService().getMoleculeSetTypeSelectItems();
+            if (!((IntactInteractorPool)interactor).areInteractorsInitialized()){
+                this.interactor = getInteractorEditorService().reloadFullyInitialisedInteractor(interactor);
+            }
+        }
+        else if (interactor instanceof Gene) {
+            this.typeSelectItems = getCvService().getGeneTypeSelectItems();
+        } else {
+            this.typeSelectItems = getCvService().getInteractorTypeSelectItems();
+        }
+    }
+
+    private boolean isCvInitialised(CvTerm cv) {
+        if (cv instanceof IntactCvTerm){
+            IntactCvTerm intactCv = (IntactCvTerm)cv;
+            return intactCv.areXrefsInitialized() && intactCv.areAnnotationsInitialized();
+        }
+        return true;
     }
 
     @Override
-    public String doSave() {
-        return super.doSave();
+    public Collection<String> collectParentAcsOfCurrentAnnotatedObject() {
+        return Collections.EMPTY_LIST;
     }
 
     @Override
-    public void doSaveIfNecessary(ActionEvent evt) {
-        super.doSaveIfNecessary(evt);
+    public Class<? extends IntactPrimaryObject> getAnnotatedObjectClass() {
+        return this.interactor != null ? this.interactor.getClass() : IntactInteractor.class;
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String getCautionMessage() {
-        if (interactor == null){
-            return null;
+    @Override
+    public boolean isAliasNotEditable(Alias alias) {
+        return false;
+    }
+
+    @Override
+    public boolean isAnnotationNotEditable(Annotation annot) {
+        return false;
+    }
+
+    @Override
+    public IntactDbSynchronizer getDbSynchronizer() {
+        return getEditorService().getIntactDao().getSynchronizerContext().getInteractorSynchronizer();
+    }
+
+    @Override
+    public String getObjectName() {
+        return interactor != null ? interactor.getInteractorType().getShortName() : "Interactor";
+    }
+
+    public List<Annotation> collectAnnotations() {
+        List<Annotation> annotations = new ArrayList<Annotation>(interactor.getDbAnnotations());
+        Collections.sort(annotations, new AuditableComparator());
+        // annotations are always initialised
+        return annotations;
+    }
+
+    public List<Interactor> collectPoolMembers() {
+        List<Interactor> members = new ArrayList<Interactor>((InteractorPool)this.interactor);
+        Collections.sort(members, new AuditableComparator());
+        // pool members are always initialised
+        return members;
+    }
+
+    public void removePoolMember(Interactor interactor) {
+
+        ((InteractorPool)interactor).remove(interactor);
+    }
+
+    public void importInteractor(ActionEvent evt) {
+        ParticipantImportController participantImportController = (ParticipantImportController) getSpringContext().getBean("participantImportController");
+        interactorCandidates = new ArrayList<ImportCandidate>(participantImportController.importParticipant(this.setMember));
+
+        if (interactorCandidates.size() == 1) {
+            interactorCandidates.get(0).setSelected(true);
         }
-        if (!Hibernate.isInitialized(interactor.getAnnotations())){
-            return getAnnotatedObjectHelper().findAnnotationText(getDaoFactory().getInteractorDao().getByAc(interactor.getAc()),
-                    CvTopic.CAUTION_MI_REF, getDaoFactory());
+    }
+
+    @Override
+    public void newAlias(ActionEvent evt) {
+        // aliases are not always initialised
+        if (!interactor.areAliasesInitialized()){
+            setInteractor(getInteractorEditorService().initialiseInteractorAliases(interactor));
         }
-        return findAnnotationText(CvTopic.CAUTION_MI_REF);
+
+        interactor.getAliases().add(new InteractorAlias("to set"));
+        setUnsavedChanges(true);
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String getInternalRemarkMessage() {
-        if (interactor == null){
-            return null;
+    @Override
+    public InteractorAlias newAlias(String alias, String aliasMI, String name) {
+        return new InteractorAlias(getCvService().findCvObject(IntactUtils.ALIAS_TYPE_OBJCLASS, aliasMI != null ? aliasMI : alias),
+                name);
+    }
+
+    @Override
+    public void removeAlias(Alias alias) {
+        // aliases are not always initialised
+        if (!interactor.areAliasesInitialized()){
+            setInteractor(getInteractorEditorService().initialiseInteractorAliases(interactor));
         }
-        if (!Hibernate.isInitialized(interactor.getAnnotations())){
-            return getAnnotatedObjectHelper().findAnnotationText(getDaoFactory().getInteractorDao().getByAc(interactor.getAc()),
-                    CvTopic.INTERNAL_REMARK, getDaoFactory());
+
+        interactor.getAliases().remove(alias);
+    }
+
+    public List<Alias> collectAliases() {
+        // aliases are not always initialised
+        if (!interactor.areAliasesInitialized()){
+            setInteractor(getInteractorEditorService().initialiseInteractorAliases(this.interactor));
         }
-        return findAnnotationText(CvTopic.INTERNAL_REMARK);
+
+        List<Alias> aliases = new ArrayList<Alias>(this.interactor.getAliases());
+        Collections.sort(aliases, new AuditableComparator());
+        return aliases;
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List collectAnnotations() {
-        return super.collectAnnotations();
+    public List<Xref> collectXrefs() {
+        List<Xref> xrefs = new ArrayList<Xref>(this.interactor.getDbXrefs());
+        Collections.sort(xrefs, new AuditableComparator());
+        return xrefs;
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List collectAliases() {
-        return super.collectAliases();
+    @Override
+    public void removeXref(Xref xref) {
+        this.interactor.getDbXrefs().remove(xref);
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List collectXrefs() {
-        return super.collectXrefs();
+    @Override
+    public void newAnnotation(ActionEvent evt) {
+        interactor.getDbAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic("to set", null)));
+        setUnsavedChanges(true);
+    }
+
+    @Override
+    public InteractorAnnotation newAnnotation(String topic, String topicMI, String text) {
+        return new InteractorAnnotation(getCvService().findCvObject(IntactUtils.TOPIC_OBJCLASS, topicMI != null ? topicMI: topic), text);
+    }
+
+    @Override
+    public void removeAnnotation(Annotation annotation) {
+         interactor.getDbAnnotations().remove(annotation);
+    }
+
+    public InteractorEditorService getInteractorEditorService() {
+        if (this.interactorEditorService == null){
+            this.interactorEditorService = ApplicationContextProvider.getBean("interactorEditorService");
+        }
+        return interactorEditorService;
+    }
+
+    public List<SelectItem> getTypeSelectItems() {
+        return typeSelectItems;
+    }
+
+    public String getSetMember() {
+        return setMember;
+    }
+
+    public void setSetMember(String setMember) {
+        this.setMember = setMember;
+    }
+
+    public List<ImportCandidate> getInteractorCandidates() {
+        return interactorCandidates;
+    }
+
+    public void setInteractorCandidates(List<ImportCandidate> interactorCandidates) {
+        this.interactorCandidates = interactorCandidates;
+    }
+
+    public void addInteractorToPool(ActionEvent evt) {
+        for (ImportCandidate importCandidate : interactorCandidates) {
+            if (importCandidate.isSelected()) {
+                // chain or isoform, we may have to update it later
+                if (importCandidate.isChain() || importCandidate.isIsoform()){
+                    Collection<String> parentAcs = new ArrayList<String>();
+
+                    getChangesController().markAsHiddenChange((IntactInteractor)importCandidate.getInteractor(), null, parentAcs,
+                            getEditorService().getIntactDao().getSynchronizerContext().getInteractorSynchronizer(),
+                            "Interactor "+interactor.getShortName());
+                }
+                ((InteractorPool)this.interactor).add((IntactInteractor) importCandidate.getInteractor());
+
+                // if the pool is a new pool, we don't need to add a unsaved notice because one already exists for creating a new participant
+                if (interactor.getAc() != null){
+                    setUnsavedChanges(true);
+                }
+            }
+        }
+    }
+
+    public void onTabChanged(TabChangeEvent e) {
+
+        // the xref tab is active
+        super.onTabChanged(e);
+
+        // all the tabs selectOneMenu are disabled, we can process the tabs specific to interaction
+        if (isAliasDisabled() && isXrefDisabled() && isAnnotationTopicDisabled()){
+            if (e.getTab().getId().equals("membersTab")){
+                isInteractorMemberTab = true;
+            }
+            else {
+                isInteractorMemberTab = false;
+            }
+        }
+        else {
+            isInteractorMemberTab = false;
+        }
     }
 }

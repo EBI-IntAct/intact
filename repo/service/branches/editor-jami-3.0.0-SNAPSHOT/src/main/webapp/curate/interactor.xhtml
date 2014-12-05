@@ -14,10 +14,6 @@
     <ui:param name="annotatedObjectController" value="#{interactorController}"/>
 
     <ui:param name="interactor" value="#{interactorController.interactor}" />
-    <ui:param name="participant" value="#{participantController.participant}" />
-    <ui:param name="interaction" value="#{interactionController.interaction}" />
-    <ui:param name="experiment" value="#{experimentController.experiment}" />
-    <ui:param name="publication" value="#{publicationController.publication}" />
 
     <ui:define name="metadata">
         <f:metadata>
@@ -27,26 +23,11 @@
         </f:metadata>
     </ui:define>
 
-    <ui:define name="breadcrumbs">
-        <p:breadCrumb rendered="#{publication != null}">
-            <p:menuitem ajax="false" onclick="loadDialog.show()" value="#{publication.shortLabel}" rendered="#{publication != null}"
-                        action="#{curateController.edit(publicationController.publication)}" process="@this"/>
-            <p:menuitem ajax="false" onclick="loadDialog.show()" value="#{publication.shortLabel} (#{publicationController.showCurationDepth})" rendered="#{publication != null}"
-                        action="#{curateController.edit(publicationController.publication)}" process="@this"/>
-            <p:menuitem ajax="false" onclick="loadDialog.show()" value="#{experiment.shortLabel}" rendered="#{experiment != null}"
-                        action="#{curateController.edit(experiment)}" process="@this"/>
-            <p:menuitem ajax="false" onclick="loadDialog.show()" value="#{interaction.shortLabel}" rendered="#{interaction != null}"
-                        action="#{curateController.edit(interaction)}" process="@this"/>
-            <p:menuitem value="#{participant.interactor.shortLabel}" rendered="#{participant != null}"/>
-        </p:breadCrumb>
-    </ui:define>
-
-
     <ui:define name="curateContent">
 
         <h:panelGroup id="info" rendered="#{interactor != null}">
 
-            <h2>#{interactorController.moleculeType}</h2>
+            <h2>#{interactorController.objectName}</h2>
 
             <p:panel id="basic" header="Interactor Details">
 
@@ -74,7 +55,7 @@
                                  size="10" readonly="true"/>
 
                     <h:outputLabel value="Shortlabel: " for="shortlabelTxt"/>
-                    <p:inputText id="shortlabelTxt" value="#{interactor.shortLabel}" size="30"
+                    <p:inputText id="shortlabelTxt" value="#{interactor.shortName}" size="30"
                                  validator="#{annotatedObjectController.validateAnnotatedObject}"
                                  valueChangeListener="#{interactorController.unsavedValueChange}"
                                  required="true" requiredMessage="Shortlabel is required" converter="trimmingConverter">
@@ -86,37 +67,28 @@
                                  valueChangeListener="#{interactorController.unsavedValueChange}" converter="trimmingConverter"/>
 
                     <h:outputLabel value="Organism: " for="organismTxt"/>
-                    <ia:inputBioSource id="organismTxt" value="#{interactor.bioSource}"
+                    <ia:inputBioSource id="organismTxt" value="#{interactor.organism}"
                                        valueChangeAwareObject="#{interactorController}"
-                                       beforeTimeoutEvent="ia_disableSave()" oncomplete="ia_enableSave()"
+                                       oncomplete="ia_enableSave()"
                                        update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"
-                                       selectItems="#{bioSourceService.bioSourceSelectItems}">
+                                       selectItems="#{bioSourceService.organismSelectItems}">
                         <ed:curation/>
                     </ia:inputBioSource>
 
                     <h:outputLabel value="Type: " for="interactorTxt"/>
-                    <p:inputText id="interactorTxt" value="#{interactorController.moleculeType}"
-                                 valueChangeListener="#{interactorController.unsavedValueChange}"
-                                 size="50"
-                                 readonly="true">
-                        <ed:curation/>
-                    </p:inputText>
+                    <ia:inputCvTerm id="interactorTxt" value="#{interactor.interactorType}"
+                                    selectItems="#{interactorController.typeSelectItems}"
+                                    cvIdentifier="MI:0313"
+                                    beforeTimeoutEvent="ia_disableSave()" oncomplete="ia_enableSave()"
+                                    required="true" requiredMessage="Interactor type is required"
+                                    update=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"
+                                    valueChangeAwareObject="#{interactorController}"
+                                    cvClass="uk.ac.ebi.intact.model.CvInteractorType"/>
 
-                    <!--<h:panelGroup id="seqSection" style="display:#{interactorController.changedSequence? 'block' : 'none'}}">-->
-                    <!--<h:outputText value=" " rendered="#{interactorController.changedSequence}"/>-->
-                    <!--<h:panelGroup rendered="#{interactorController.changedSequence}">-->
-                    <!--<ia:panelMessage level="warn" showIcon="true">-->
-                    <!--Sequence updated, illegal characters were found in the sequence and were replaced automatically-->
-                    <!--</ia:panelMessage>-->
-                    <!--</h:panelGroup>-->
-                    <!--</h:panelGroup>-->
-
-                    <h:outputLabel value="Sequence: " for="sequenceTxt"/>
+                    <h:outputLabel value="Sequence: " for="sequenceTxt" rendered="#{interactorController.isPolymer}"/>
                     <p:inputTextarea id="sequenceTxt" value="#{interactorController.sequence}"
                                      valueChangeListener="#{interactorController.unsavedValueChange}"
-                                     rows="5" cols="100" converter="trimmingConverter">
-                        <!--<f:ajax event="valueChange" timeout="0" listener="#{interactorController.cleanSequence}" execute="sequenceTxt"-->
-                        <!--render="basic messagesComponent"/>-->
+                                     rows="5" cols="100" converter="trimmingConverter" rendered="#{interactorController.isPolymer}">
                         <ed:curation/>
                     </p:inputTextarea>
 
@@ -130,6 +102,13 @@
             <p:tabView id="interactorTabs" dynamic="true">
 
                 <p:ajax event="tabChange" listener="#{interactorController.onTabChanged}" />
+                <p:tab id="membersTab" title="Set members (#{interactorController.membersPoolSize})" rendered="interactorController.interactorPool">
+
+                    <p:outputPanel id="membersPanel" autoUpdate="false">
+                        <ui:include src="pool_members_table.xhtml"/>
+                    </p:outputPanel>
+                </p:tab>
+
                 <ui:decorate template="propertiesTabs.xhtml">
                     <ui:param name="annotatedObjectSelectItems" value="#{cvObjectService.interactorTopicSelectItems}"/>
                 </ui:decorate>
