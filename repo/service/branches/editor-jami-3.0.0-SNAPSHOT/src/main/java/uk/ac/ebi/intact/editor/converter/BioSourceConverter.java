@@ -16,7 +16,7 @@
 package uk.ac.ebi.intact.editor.converter;
 
 import uk.ac.ebi.intact.core.context.IntactContext;
-import uk.ac.ebi.intact.editor.controller.curate.organism.BioSourceService;
+import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
 import uk.ac.ebi.intact.model.BioSource;
 
 import javax.faces.component.UIComponent;

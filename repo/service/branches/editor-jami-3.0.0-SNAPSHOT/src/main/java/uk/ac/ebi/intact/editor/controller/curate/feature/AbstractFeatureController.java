@@ -426,6 +426,8 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         }
 
         refreshRangeWrappers();
+
+        setDescription("Feature: "+feature.getShortName());
     }
 
     private boolean isCvInitialised(CvTerm cv) {

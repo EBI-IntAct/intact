@@ -1,11 +1,8 @@
 package uk.ac.ebi.intact.editor.controller.curate.institution;
 
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
-import org.hibernate.Hibernate;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.Alias;
 import psidev.psi.mi.jami.model.Annotation;
 import psidev.psi.mi.jami.model.Source;
@@ -18,7 +15,6 @@ import uk.ac.ebi.intact.editor.services.curate.institution.InstitutionService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.*;
-import uk.ac.ebi.intact.jami.model.lifecycle.Releasable;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
@@ -95,6 +91,8 @@ public class InstitutionController extends AnnotatedObjectController {
                 || !institution.areXrefsInitialized()) {
             this.institution = getInstitutionService().reloadFullyInitialisedSource(institution);
         }
+
+        setDescription("Institution "+institution.getShortName());
     }
 
     public void loadData(ComponentSystemEvent evt) {
@@ -295,7 +293,14 @@ public class InstitutionController extends AnnotatedObjectController {
     }
 
     public List<Alias> collectAliases() {
-        return super.collectAliases();
+        // aliases are not always initialised
+        if (!this.institution.areSynonymsInitialized()){
+            setInstitution(getInstitutionService().initialiseSourceSynonyms(this.institution));
+        }
+
+        List<Alias> aliases = new ArrayList<Alias>(this.institution.getSynonyms());
+        Collections.sort(aliases, new AuditableComparator());
+        return aliases;
     }
 
     public List<Xref> collectXrefs() {
