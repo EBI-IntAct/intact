@@ -17,23 +17,23 @@ package uk.ac.ebi.intact.editor.controller.curate.feature;
 
 import org.apache.commons.lang.StringUtils;
 import psidev.psi.mi.jami.exception.IllegalRangeException;
-import psidev.psi.mi.jami.model.Entity;
-import psidev.psi.mi.jami.model.Polymer;
-import psidev.psi.mi.jami.model.Range;
+import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.RangeUtils;
+import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
-import uk.ac.ebi.intact.jami.model.extension.AbstractIntactRange;
-import uk.ac.ebi.intact.jami.model.extension.AbstractIntactResultingSequence;
-import uk.ac.ebi.intact.jami.model.extension.IntactPosition;
+import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.EditableValueHolder;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.validator.ValidatorException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -48,11 +48,14 @@ public class RangeWrapper {
 
     private CvObjectService cvObjectService;
     private Class<? extends AbstractIntactResultingSequence> resultingSequenceClass;
+    private Class<? extends AbstractIntactXref> resSequenceXrefClass;
 
     private boolean isInvalid = false;
     private String badRangeInfo = null;
 
-    public RangeWrapper(AbstractIntactRange range, String sequence, CvObjectService cvService, Class<? extends AbstractIntactResultingSequence> resultingSequenceClass) {
+    public RangeWrapper(AbstractIntactRange range, String sequence, CvObjectService cvService,
+                        Class<? extends AbstractIntactResultingSequence> resultingSequenceClass,
+                        Class<? extends AbstractIntactXref> resSequenceXrefClass) {
         this.range = range;
         this.rangeAsString = RangeUtils.convertRangeToString(range);
         if (range.getParticipant() != null){
@@ -69,6 +72,7 @@ public class RangeWrapper {
 
         this.cvObjectService = cvService;
         this.resultingSequenceClass = resultingSequenceClass;
+        this.resSequenceXrefClass = resSequenceXrefClass;
 
         List<String> messages = RangeUtils.validateRange(this.range, this.sequence);
         isInvalid = !messages.isEmpty();
@@ -176,5 +180,26 @@ public class RangeWrapper {
         else{
             this.range.setResultingSequence(this.resultingSequenceClass.getConstructor(String.class, String.class).newInstance(RangeUtils.extractRangeSequence(this.range, this.sequence),null));
         }
+    }
+
+    public void newXref(ActionEvent evt) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        range.getResultingSequence().getXrefs().add(this.resSequenceXrefClass.getConstructor(CvTerm.class, String.class)
+                .newInstance(IntactUtils.createMIDatabase("to set", null), "to set"));
+    }
+
+    public void removeXref(Xref xref) {
+
+        this.range.getResultingSequence().getXrefs().remove(xref);
+    }
+
+    public List<Xref> collectXrefs() {
+
+        List<Xref> xrefs = new ArrayList<Xref>(this.range.getResultingSequence().getXrefs());
+        Collections.sort(xrefs, new AnnotatedObjectController.AuditableComparator());
+        return xrefs;
+    }
+
+    public boolean isXrefsTableEnabled(){
+        return !range.getResultingSequence().getXrefs().isEmpty();
     }
 }

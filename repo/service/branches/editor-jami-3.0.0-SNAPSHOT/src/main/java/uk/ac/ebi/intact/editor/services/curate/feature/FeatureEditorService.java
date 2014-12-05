@@ -175,7 +175,9 @@ public class FeatureEditorService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List<RangeWrapper> loadRangeWrappers(AbstractIntactFeature feature, String sequence, Class<? extends AbstractIntactResultingSequence> resultingSeqClass) {
+    public List<RangeWrapper> loadRangeWrappers(AbstractIntactFeature feature, String sequence,
+                                                Class<? extends AbstractIntactResultingSequence> resultingSeqClass,
+                                                Class<? extends AbstractIntactXref> xrefClass) {
         AbstractIntactFeature reloaded = getIntactDao().getEntityManager().merge(feature);
 
         List<RangeWrapper> rangeWrappers = new ArrayList<RangeWrapper>(feature.getRanges());
@@ -184,8 +186,12 @@ public class FeatureEditorService extends AbstractEditorService {
 
             initialisePosition(range.getStart());
             initialisePosition(range.getEnd());
+            if (range.getResultingSequence() != null){
+                initialiseXrefs(range.getResultingSequence().getXrefs());
+            }
 
-            rangeWrappers.add(new RangeWrapper(range, sequence, cvObjectService, resultingSeqClass));
+            rangeWrappers.add(new RangeWrapper(range, sequence, cvObjectService, resultingSeqClass,
+                    xrefClass));
         }
 
         getIntactDao().getEntityManager().detach(reloaded);

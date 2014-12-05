@@ -70,8 +70,10 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
 
     private Class<T> featureClass;
     private Class<? extends AbstractIntactResultingSequence> resultingSequenceClass;
+    private Class<? extends AbstractIntactXref> resultingSequenceXrefClass;
 
-    public AbstractFeatureController(Class<T> featureClass, Class<? extends AbstractIntactResultingSequence> resultingSeqClass) {
+    public AbstractFeatureController(Class<T> featureClass, Class<? extends AbstractIntactResultingSequence> resultingSeqClass,
+                                     Class<? extends AbstractIntactXref> resSequenceXrefClass) {
         if (featureClass == null){
              throw new IllegalArgumentException("the feature class cannot be null");
         }
@@ -80,6 +82,10 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
             throw new IllegalArgumentException("the resulting sequence class cannot be null");
         }
         this.resultingSequenceClass = resultingSeqClass;
+        if (resSequenceXrefClass == null){
+            throw new IllegalArgumentException("the resulting sequence xref class cannot be null");
+        }
+        this.resultingSequenceXrefClass = resSequenceXrefClass;
     }
 
     @Override
@@ -141,11 +147,12 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         if (feature.areRangesInitialized()){
              this.rangeWrappers = new ArrayList<RangeWrapper>(feature.getRanges().size());
             for (Object r : this.feature.getRanges()){
-                this.rangeWrappers.add(new RangeWrapper((AbstractIntactRange)r, sequence, getCvService(), resultingSequenceClass));
+                this.rangeWrappers.add(new RangeWrapper((AbstractIntactRange)r, sequence, getCvService(), resultingSequenceClass,
+                        resultingSequenceXrefClass));
             }
         }
         else{
-            this.rangeWrappers = getFeatureEditorService().loadRangeWrappers(feature, sequence, resultingSequenceClass);
+            this.rangeWrappers = getFeatureEditorService().loadRangeWrappers(feature, sequence, resultingSequenceClass, resultingSequenceXrefClass);
         }
 
         containsInvalidRanges = false;
@@ -223,7 +230,8 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
             intactRange.setResultingSequence(instantiateResultingSequence(RangeUtils.extractRangeSequence(intactRange, sequence), null));
 
             feature.getRanges().add(intactRange);
-            this.rangeWrappers.add(new RangeWrapper(intactRange, sequence, getCvService(), this.resultingSequenceClass));
+            this.rangeWrappers.add(new RangeWrapper(intactRange, sequence, getCvService(), this.resultingSequenceClass,
+                    this.resultingSequenceXrefClass));
             newRangeValue = null;
             setUnsavedChanges(true);
         }

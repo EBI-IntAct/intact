@@ -54,7 +54,7 @@ public class ModelledFeatureController extends AbstractFeatureController<IntactM
     private ModelledParticipantController modelledParticipantController;
 
     public ModelledFeatureController() {
-        super(IntactModelledFeature.class, ModelledResultingSequence.class);
+        super(IntactModelledFeature.class, ModelledResultingSequence.class, ModelledResultingSequenceXref.class);
     }
 
     @Override
