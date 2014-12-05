@@ -83,7 +83,8 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     private CvTerm detectionMethodToAdd=null;
 
     public FeatureController() {
-        super(IntactFeatureEvidence.class, ExperimentalResultingSequence.class);
+        super(IntactFeatureEvidence.class, ExperimentalResultingSequence.class,
+                ExperimentalResultingSequenceXref.class);
     }
 
     @Override

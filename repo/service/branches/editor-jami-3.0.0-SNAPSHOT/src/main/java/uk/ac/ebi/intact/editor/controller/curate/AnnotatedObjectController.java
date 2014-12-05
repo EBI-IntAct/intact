@@ -44,6 +44,7 @@ import uk.ac.ebi.intact.editor.controller.curate.interaction.ComplexController;
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
 import uk.ac.ebi.intact.editor.services.curate.experiment.ExperimentEditorService;
 import uk.ac.ebi.intact.editor.services.curate.feature.FeatureEditorService;
+import uk.ac.ebi.intact.editor.services.curate.institution.InstitutionService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.lifecycle.LifeCycleManager;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
@@ -1009,7 +1010,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
         }
         else if (ao instanceof IntactSource){
             IntactSource source = (IntactSource)ao;
-            annotations = getEditorService().initialiseSourceAnnotations(source).getAnnotations();
+            annotations = ((InstitutionService)ApplicationContextProvider.getBean("institutionService")).initialiseSourceAnnotations(source).getAnnotations();
         }
 
         if (annotations.isEmpty()){
@@ -1268,7 +1269,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
         return cvService;
     }
 
-    public class AuditableComparator<T extends Auditable> implements Comparator<T>{
+    public static class AuditableComparator<T extends Auditable> implements Comparator<T>{
 
         @Override
         public int compare(T auditable, T auditable2) {
