@@ -46,7 +46,6 @@ public class CvObjectController extends AnnotatedObjectController {
 
     private DualListModel<IntactCvTerm> parents;
     private Map<String, String> classMap;
-    private String definition;
 
     @PostConstruct
     public void initializeClassMap(){
@@ -316,6 +315,8 @@ public class CvObjectController extends AnnotatedObjectController {
             this.cvObject = getCvService().reloadFullyInitialisedCv(cv);
         }
         prepareView();
+
+        setDefinition("Cv Object: "+cv.getShortName());
     }
 
     @Override
@@ -428,7 +429,6 @@ public class CvObjectController extends AnnotatedObjectController {
 
     public void setDefinition(String definition) {
         if (this.cvObject != null){
-            this.definition = definition;
             this.cvObject.setDefinition(definition);
         }
     }

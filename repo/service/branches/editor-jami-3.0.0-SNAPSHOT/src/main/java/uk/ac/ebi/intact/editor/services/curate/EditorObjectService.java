@@ -393,11 +393,6 @@ public class EditorObjectService extends AbstractEditorService {
         return getIntactDao().getParticipantDao(AbstractIntactParticipant.class).countAliasesForParticipant(participant.getAc());
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countAliases(IntactOrganism organis) {
-        return getIntactDao().getOrganismDao().countAliasesForOrganism(organis.getAc());
-    }
-
     private void initialiseXrefs(Collection<Xref> xrefs) {
         for (Xref ref : xrefs){
             Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbAnnotations());

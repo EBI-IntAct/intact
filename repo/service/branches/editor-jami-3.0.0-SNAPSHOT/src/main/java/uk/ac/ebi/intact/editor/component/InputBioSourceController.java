@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.editor.controller.BaseController;
-import uk.ac.ebi.intact.editor.controller.curate.organism.BioSourceService;
+import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
 import uk.ac.ebi.intact.model.BioSource;
 
 import javax.faces.event.ActionEvent;

@@ -66,7 +66,7 @@
                                  size="10" readonly="true"/>
 
                     <h:outputLabel value="Shortlabel: " for="shortlabelTxt"/>
-                    <p:inputText id="shortlabelTxt" value="#{bioSourceController.bioSource.shortLabel}" size="30" converter="trimmingConverter"
+                    <p:inputText id="shortlabelTxt" value="#{bioSourceController.bioSource.commonName}" size="30" converter="trimmingConverter"
                                  validator="#{annotatedObjectController.validateAnnotatedObject}"
                                  valueChangeListener="#{bioSourceController.unsavedValueChange}"
                                  required="true" requiredMessage="Shortlabel is required">
@@ -74,21 +74,21 @@
                     </p:inputText>
 
                     <h:outputLabel value="Fullname: " for="fullnameTxt"/>
-                    <p:inputText id="fullnameTxt" value="#{bioSourceController.bioSource.fullName}" size="50" converter="trimmingConverter"
+                    <p:inputText id="fullnameTxt" value="#{bioSourceController.bioSource.scientificName}" size="50" converter="trimmingConverter"
                                  valueChangeListener="#{bioSourceController.unsavedValueChange}">
                         <ed:curation/>
                     </p:inputText>
 
                     <h:outputLabel value="Cell type: " for="cellTypeTxt"/>
-                    <h:selectOneMenu id="cellTypeTxt" value="#{bioSourceController.bioSource.cvCellType}"
-                                     valueChangeListener="#{bioSourceController.unsavedValueChange}">
+                    <h:selectOneMenu id="cellTypeTxt" value="#{bioSourceController.bioSource.cellType}"
+                                     valueChangeListener="#{bioSourceController.unsavedValueChange}" converter="cvObjectConverter">
                         <f:selectItems value="#{cvObjectService.cellTypeSelectItems}"/>
                         <ed:curation/>
                     </h:selectOneMenu>
 
                     <h:outputLabel value="Tissue: " for="tissueTxt"/>
-                    <h:selectOneMenu id="tissueTxt" value="#{bioSourceController.bioSource.cvTissue}"
-                                     valueChangeListener="#{bioSourceController.unsavedValueChange}">
+                    <h:selectOneMenu id="tissueTxt" value="#{bioSourceController.bioSource.tissue}"
+                                     valueChangeListener="#{bioSourceController.unsavedValueChange}" converter="cvObjectConverter">
                         <f:selectItems value="#{cvObjectService.tissueSelectItems}"/>
                         <ed:curation/>
                     </h:selectOneMenu>
@@ -102,7 +102,7 @@
             <p:tabView id="organismTabs" dynamic="true">
                 <p:ajax event="tabChange" listener="#{bioSourceController.onTabChanged}" />
 
-                <p:tab id="aliasesTab" title="Aliases (#{bioSourceController.objectAliasesSize})">
+                <p:tab id="aliasesTab" title="Aliases (#{bioSourceController.aliasesSize})">
                     <p:outputPanel id="aliasesPanel" autoUpdate="true">
                         <ui:decorate template="aliases_table.xhtml">
                             <ui:param name="annotatedObjectController" value="#{bioSourceController}"/>

@@ -1,22 +1,25 @@
 package uk.ac.ebi.intact.editor.controller.curate.organism;
 
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
-import org.hibernate.Hibernate;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.intact.bridges.taxonomy.TaxonomyTerm;
-import uk.ac.ebi.intact.bridges.taxonomy.UniprotTaxonomyService;
-import uk.ac.ebi.intact.core.context.IntactContext;
+import psidev.psi.mi.jami.bridges.fetcher.OrganismFetcher;
+import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
-import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
+import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.jami.model.extension.*;
+import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
+import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
+import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,45 +33,59 @@ import java.util.List;
 public class BioSourceController extends AnnotatedObjectController {
 
     private String ac;
-    private BioSource bioSource;
+    private IntactOrganism bioSource;
+
+    @Resource(name = "bioSourceService")
+    private transient BioSourceService bioSourceService;
+
+    @Resource(name = "taxonomyService")
+    private transient OrganismFetcher organismFetcher;
 
     @Override
-    public AnnotatedObject getAnnotatedObject() {
-        return bioSource;
+    public IntactPrimaryObject getAnnotatedObject() {
+        return getBioSource();
     }
 
     @Override
-    public IntactPrimaryObject getJamiObject() {
+    public void setAnnotatedObject(IntactPrimaryObject annotatedObject) {
+        setBioSource((IntactOrganism)annotatedObject);
+    }
+
+    @Override
+    protected AnnotatedObjectController getParentController() {
         return null;
     }
 
     @Override
-    public void setJamiObject(IntactPrimaryObject annotatedObject) {
+    protected String getPageContext() {
+        return "organism";
+    }
+
+    @Override
+    protected void loadCautionMessages() {
         // nothing to do
     }
 
     @Override
-    public void setAnnotatedObject(AnnotatedObject annotatedObject) {
-        this.bioSource = (BioSource) annotatedObject;
+    protected void generalLoadChecks() {
+        super.generalLoadChecks();
 
-        if (bioSource != null){
-            this.ac = annotatedObject.getAc();
+        // load biosource service if not done
+        if (!getBioSourceService().isInitialised()){
+            getBioSourceService().loadData();
         }
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void loadData(ComponentSystemEvent evt) {
         if (!FacesContext.getCurrentInstance().isPostback()) {
 
             if (ac != null) {
-                bioSource = loadByAc(getDaoFactory().getBioSourceDao(), ac);
-                if (bioSource != null){
-                    // initialise aliases
-                    Hibernate.initialize(bioSource.getAliases());
+                if ( bioSource == null || !ac.equals(bioSource.getAc())) {
+                    setBioSource(getBioSourceService().loadOrganismByAc(ac));
                 }
 
             } else {
-                bioSource = new BioSource();
+                bioSource = new IntactOrganism(-3);
             }
 
             if (bioSource == null) {
@@ -76,76 +93,62 @@ public class BioSourceController extends AnnotatedObjectController {
                 return;
             }
 
-            refreshTabsAndFocusXref();
-
-            if (!Hibernate.isInitialized(bioSource.getAliases())){
-                bioSource = loadByAc(getDaoFactory().getBioSourceDao(), bioSource.getAc());
-
-                Hibernate.initialize(bioSource.getAliases());
-            }
+            refreshTabs();
         }
 
         generalLoadChecks();
     }
 
     @Override
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String clone() {
+    protected EditorCloner<Organism, IntactOrganism> newClonerInstance() {
+        return new uk.ac.ebi.intact.editor.controller.curate.cloner.OrganismCloner();
+    }
 
-        String value = clone(bioSource, new BiosourceIntactCloner());
+    @Override
+    public void newXref(ActionEvent evt) {
+        // nothing to do
+    }
 
-        return value;
+    @Override
+    public <T extends AbstractIntactXref> T newXref(String db, String dbMI, String id, String secondaryId, String qualifier, String qualifierMI) {
+        return null;
     }
 
     public String newOrganism() {
-        BioSource bioSource = new BioSource();
-        setBioSource(bioSource);
+        IntactOrganism bioSource = new IntactOrganism(-3);
 
-        //getUnsavedChangeManager().markAsUnsaved(bioSource);
         changed();
+        setBioSource(bioSource);
         return navigateToObject(bioSource);
     }
 
     public void autoFill(ActionEvent evt) {
-        final String taxIdStr = bioSource.getTaxId();
-
-        if (taxIdStr == null || taxIdStr.isEmpty()) {
-            return;
-        }
+        final int taxIdStr = bioSource.getTaxId();
 
         try {
             final int taxId = Integer.valueOf(taxIdStr);
 
-            UniprotTaxonomyService uniprotTaxonomyService = new UniprotTaxonomyService();
-            final TaxonomyTerm term = uniprotTaxonomyService.getTaxonomyTerm(taxId);
+            final Organism term = getOrganismFetcher().fetchByTaxID(taxId);
+
+            if (term == null){
+                addErrorMessage("Problem auto-filling from Uniprot Taxonomy for "+taxId, "Cannot find organism with taxid "+taxId);
+            }
 
             String name;
 
-            if (term.getCommonName() != null) {
-                name = term.getCommonName();
+            if (term != null && term.getCommonName() != null) {
+                name = term.getCommonName().toLowerCase();
             } else {
-                name = term.getScientificName();
+                name = Integer.toString(taxId);
             }
 
-            String commonName = name.toLowerCase();
-
-            if (term.getMnemonic() != null){
-                bioSource.setShortLabel(term.getMnemonic().toLowerCase());
-            }
-            else {
-                bioSource.setShortLabel(commonName);
-            }
-
-            bioSource.setFullName(term.getScientificName());
-
-            if (!term.getSynonyms().isEmpty()){
-                CvAliasType synType = IntactContext.getCurrentInstance().getDaoFactory().getCvObjectDao(CvAliasType.class).getByPsiMiRef(CvAliasType.SYNONYM_MI_REF);
-                for (String syn : term.getSynonyms()){
-                    bioSource.getAliases().add(new BioSourceAlias(IntactContext.getCurrentInstance().getInstitution(), bioSource, synType, syn));
+            if (term != null){
+                this.bioSource.setCommonName(name);
+                this.bioSource.setScientificName(name);
+                for (Alias alias :term.getAliases()){
+                    this.bioSource.getAliases().add(new OrganismAlias(alias.getType(), alias.getName()));
                 }
             }
-
-            setTaxId(taxIdStr, commonName);
         } catch (Throwable e) {
             addErrorMessage("Problem auto-filling from Uniprot Taxonomy", e.getMessage());
             handleException(e);
@@ -154,41 +157,56 @@ public class BioSourceController extends AnnotatedObjectController {
 
     @Override
     public void doPostSave() {
-        EditorOrganismService organismService = (EditorOrganismService) getSpringContext().getBean("editorOrganismService");
-        organismService.clearAll();
-        BioSourceService bioSourceService = (BioSourceService) getSpringContext().getBean("bioSourceService");
-        bioSourceService.refresh(null);
+        getBioSourceService().clearAll();
     }
 
     public String getAc() {
         return ac;
     }
 
+    @Override
+    public int getXrefsSize() {
+        return 0;
+    }
+
+    @Override
+    public int getAliasesSize() {
+        if (bioSource == null){
+            return 0;
+        }
+        else{
+            return bioSource.getAliases().size();
+        }
+    }
+
+    @Override
+    public int getAnnotationsSize() {
+        return 0;
+    }
+
     public void setAc(String ac) {
         this.ac = ac;
     }
 
-    public BioSource getBioSource() {
+    public IntactOrganism getBioSource() {
         return bioSource;
     }
 
-    public void setBioSource(BioSource bioSource) {
+    public void setBioSource(IntactOrganism bioSource) {
         this.bioSource = bioSource;
-        this.ac = bioSource.getAc();
+        if (bioSource != null){
+            this.ac = bioSource.getAc();
 
-        refreshTabsAndFocusXref();
+            initialiseDefaultProperties(this.bioSource);
+        }
     }
 
     public void setTaxId(String taxId) {
-        setTaxId(taxId, null);
-    }
-
-    public void setTaxId(String taxId, String organismName) {
-        bioSource.setTaxId(taxId);
+        this.bioSource.setTaxId(Integer.parseInt(taxId));
     }
 
     public String getTaxId() {
-        return bioSource.getTaxId();
+        return Integer.toString(bioSource.getTaxId());
     }
 
     @Override
@@ -197,49 +215,116 @@ public class BioSourceController extends AnnotatedObjectController {
     }
 
     @Override
-    public void doSave(boolean refreshCurrentView) {
-        ChangesController changesController = (ChangesController) getSpringContext().getBean("changesController");
-        PersistenceController persistenceController = getPersistenceController();
-
-        doSaveIntact(refreshCurrentView, changesController, persistenceController);
+    public boolean isAliasNotEditable(Alias alias) {
+        return false;
     }
 
     @Override
-    public String doSave() {
-        return super.doSave();
+    public boolean isAnnotationNotEditable(Annotation annot) {
+        return false;
     }
 
     @Override
-    public void doSaveIfNecessary(ActionEvent evt) {
-        super.doSaveIfNecessary(evt);
+    public IntactDbSynchronizer getDbSynchronizer() {
+        return getEditorService().getIntactDao().getSynchronizerContext().getOrganismSynchronizer();
     }
 
     @Override
-    public String getCautionMessage() {
-        return null;
+    public String getObjectName() {
+        return "BioSource";
     }
 
     @Override
-    public String getCautionMessage(AnnotatedObject ao) {
-        return null;
+    protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
+        IntactOrganism organism = (IntactOrganism)annotatedObject;
+        if (!organism.areAliasesInitialized()
+                || (organism.getCellType() != null && !isCvInitialised(organism.getCellType()))
+                || (organism.getTissue() != null && !isCvInitialised(organism.getTissue()))) {
+            this.bioSource = getBioSourceService().reloadFullyInitialisedOrganism(organism);
+        }
+        setDescription("BioSource "+ organism.getCommonName());
+    }
+
+    private boolean isCvInitialised(CvTerm cv) {
+        if (cv instanceof IntactCvTerm){
+            IntactCvTerm intactCv = (IntactCvTerm)cv;
+            return intactCv.areXrefsInitialized() && intactCv.areAnnotationsInitialized();
+        }
+        return true;
     }
 
     @Override
-    public String getInternalRemarkMessage() {
-        return null;
-    }
-
-    public List collectAnnotations() {
+    public Collection<String> collectParentAcsOfCurrentAnnotatedObject() {
         return Collections.EMPTY_LIST;
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List collectAliases() {
-        return super.collectAliases();
+    @Override
+    public Class<? extends IntactPrimaryObject> getAnnotatedObjectClass() {
+        return IntactOrganism.class;
     }
 
-    public List collectXrefs() {
+    public List<Annotation> collectAnnotations() {
         return Collections.EMPTY_LIST;
     }
 
+    @Override
+    public void newAlias(ActionEvent evt) {
+        bioSource.getAliases().add(new OrganismAlias("to set"));
+        setUnsavedChanges(true);
+    }
+
+    @Override
+    public OrganismAlias newAlias(String alias, String aliasMI, String name) {
+        return new OrganismAlias(getCvService().findCvObject(IntactUtils.ALIAS_TYPE_OBJCLASS, aliasMI != null ? aliasMI : alias),
+                name);
+    }
+
+    @Override
+    public void removeAlias(Alias alias) {
+         bioSource.getAliases().remove(alias);
+    }
+
+    public List<Alias> collectAliases() {
+        List<Alias> aliases = new ArrayList<Alias>(this.bioSource.getAliases());
+        Collections.sort(aliases, new AuditableComparator());
+        return aliases;
+    }
+
+    public List<Xref> collectXrefs() {
+        return Collections.EMPTY_LIST;
+    }
+
+    @Override
+    public void removeXref(Xref xref) {
+         // nothing to do
+    }
+
+    @Override
+    public void newAnnotation(ActionEvent evt) {
+        // nothing to do
+    }
+
+    @Override
+    public <T extends AbstractIntactAnnotation> T newAnnotation(String topic, String topicMI, String text) {
+        return null;
+    }
+
+    @Override
+    public void removeAnnotation(Annotation annotation) {
+        // nothing to do
+    }
+
+    public BioSourceService getBioSourceService() {
+        if (this.bioSourceService == null){
+            this.bioSourceService = ApplicationContextProvider.getBean("bioSourceService");
+        }
+        return bioSourceService;
+    }
+
+    public OrganismFetcher getOrganismFetcher() {
+        if (this.organismFetcher == null){
+            this.organismFetcher = ApplicationContextProvider.getBean("taxonomyService");
+        }
+        return organismFetcher;
+    }
 }

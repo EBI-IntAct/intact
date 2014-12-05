@@ -34,7 +34,7 @@ import uk.ac.ebi.intact.editor.controller.admin.UserManagerController;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ExperimentCloner;
-import uk.ac.ebi.intact.editor.controller.curate.organism.BioSourceService;
+import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
 import uk.ac.ebi.intact.editor.services.curate.experiment.ExperimentEditorService;
 import uk.ac.ebi.intact.editor.util.LazyDataModelFactory;
@@ -213,8 +213,6 @@ public class ExperimentController extends AnnotatedObjectController {
         }
     }
 
-
-
     protected void refreshParentControllers() {
         // different loaded publication
         if (publicationController.getPublication() != experiment.getPublication()){
@@ -330,6 +328,8 @@ public class ExperimentController extends AnnotatedObjectController {
         }
 
         refreshInteractions();
+
+        setDescription("Experiment: "+experiment.getShortLabel());
     }
 
     private boolean isCvInitialised(CvTerm cv) {

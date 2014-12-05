@@ -19,7 +19,7 @@ import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
-import uk.ac.ebi.intact.editor.controller.curate.organism.BioSourceService;
+import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
@@ -70,13 +70,13 @@ public class ComplexCloner extends AbstractEditorCloner<Complex, IntactComplex> 
                 clone.setOrganism(host);
             }
             else{
-                IntactOrganism org = biosourceService.findOrganismByTaxid(host.getTaxId());
+                IntactOrganism org = biosourceService.findBiosourceByTaxid(host.getTaxId());
                 if (org == null){
                     org = new IntactOrganism(host.getTaxId(), host.getCommonName(), host.getScientificName());
                     organismService.saveOrUpdate(org);
                     biosourceService.clearAll();
                     biosourceService.loadData();
-                    org = biosourceService.findOrganismByTaxid(host.getTaxId());
+                    org = biosourceService.findBiosourceByTaxid(host.getTaxId());
                 }
                 clone.setOrganism(org);
             }

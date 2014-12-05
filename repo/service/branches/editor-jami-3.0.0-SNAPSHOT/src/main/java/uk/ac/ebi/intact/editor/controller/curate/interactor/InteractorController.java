@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.editor.controller.curate.cloner.InteractorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.ImportCandidate;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.ParticipantImportController;
 import uk.ac.ebi.intact.editor.services.curate.interactor.InteractorEditorService;
+import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.*;
@@ -58,6 +59,9 @@ public class InteractorController extends AnnotatedObjectController {
     @Resource(name = "interactorEditorService")
     private transient InteractorEditorService interactorEditorService;
 
+    @Resource(name = "bioSourceService")
+    private transient BioSourceService bioSourceService;
+
     private boolean isNoUniprotUpdate = false;
     private boolean isInteractorMemberTab = false;
 
@@ -67,6 +71,16 @@ public class InteractorController extends AnnotatedObjectController {
     private List<ImportCandidate> interactorCandidates;
 
     public InteractorController() {
+    }
+
+    @Override
+    protected void generalLoadChecks() {
+        super.generalLoadChecks();
+
+        // load biosource service if not done
+        if (!getBioSourceService().isInitialised()){
+            getBioSourceService().loadData();
+        }
     }
 
     @Override
@@ -373,6 +387,8 @@ public class InteractorController extends AnnotatedObjectController {
         } else {
             this.typeSelectItems = getCvService().getInteractorTypeSelectItems();
         }
+
+        setDescription("Interactor "+ interactor.getShortName());
     }
 
     private boolean isCvInitialised(CvTerm cv) {
@@ -571,5 +587,12 @@ public class InteractorController extends AnnotatedObjectController {
         else {
             isInteractorMemberTab = false;
         }
+    }
+
+    public BioSourceService getBioSourceService() {
+        if (this.bioSourceService == null){
+            this.bioSourceService = ApplicationContextProvider.getBean("bioSourceService");
+        }
+        return bioSourceService;
     }
 }
