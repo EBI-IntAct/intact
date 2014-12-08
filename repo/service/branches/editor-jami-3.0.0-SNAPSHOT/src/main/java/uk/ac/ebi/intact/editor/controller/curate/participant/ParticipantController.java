@@ -35,12 +35,9 @@ import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ParticipantEvidenceCloner;
+import uk.ac.ebi.intact.editor.controller.curate.interaction.*;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentController;
-import uk.ac.ebi.intact.editor.controller.curate.interaction.ImportCandidate;
-import uk.ac.ebi.intact.editor.controller.curate.interaction.InteractionController;
-import uk.ac.ebi.intact.editor.controller.curate.interaction.ParticipantImportController;
-import uk.ac.ebi.intact.editor.controller.curate.interaction.ParticipantWrapper;
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
 import uk.ac.ebi.intact.editor.controller.curate.util.IntactObjectComparator;
 import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
@@ -83,7 +80,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
 
     @Autowired
     private ExperimentController experimentController;
-
     @Autowired
     private InteractionController interactionController;
 
@@ -654,5 +650,42 @@ public class ParticipantController extends AbstractParticipantController<IntactP
         }
 
         getParticipant().getConfidences().remove(conf);
+    }
+
+    @Override
+    protected void postProcessDeletedEvent(UnsavedChange unsaved) {
+        if (unsaved.getUnsavedObject() instanceof IntactFeatureEvidence){
+            removeFeature((IntactFeatureEvidence)unsaved.getUnsavedObject());
+        }
+    }
+
+    public int getParametersSize() {
+        if (getParticipant() == null){
+            return 0;
+        }
+        else if (getParticipant().areParametersInitialized()){
+            return getParticipant().getParameters().size();
+        }
+        else{
+            return getParticipantEditorService().countParameters(getParticipant());
+        }
+    }
+
+    public int getConfidencesSize() {
+        if (getParticipant() == null){
+            return 0;
+        }
+        else if (getParticipant().areConfidencesInitialized()){
+            return getParticipant().getConfidences().size();
+        }
+        else{
+            return getParticipantEditorService().countConfidences(getParticipant());
+        }
+    }
+
+    @Override
+    public void unlinkFeature(FeatureWrapper wrapper) {
+        super.unlinkFeature(wrapper);
+        interactionController.reloadSingleParticipant(getParticipant());
     }
 }

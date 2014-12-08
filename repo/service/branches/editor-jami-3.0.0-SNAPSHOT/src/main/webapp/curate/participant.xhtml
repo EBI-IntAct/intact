@@ -160,7 +160,7 @@
 <p:tabView id="participantTabs" dynamic="true">
     <p:ajax event="tabChange" listener="#{participantController.onTabChanged}" />
 
-    <p:tab title="Features (#{participantController.featureSize})">
+    <p:tab id="featureTab" title="Features (#{participantController.featuresSize})">
 
         <div class="intact-buttonBar">
             <p:commandButton id="newFeatureBtn" value="New feature" action="#{featureController.newFeature(participantController.participant)}"
@@ -178,14 +178,38 @@
         <ui:param name="annotatedObjectSelectItems" value="#{cvObjectService.participantTopicSelectItems}"/>
     </ui:decorate>
 
-    <p:tab id="parametersTab" title="Parameters (#{participantController.parameterSize})">
+    <p:tab id="experimentalPreparationsTab" title="Experimental Preparation(s) (#{participantController.experimentalPreparationsSize})">
 
-        <p:outputPanel id="paramsPanel" autoUpdate="true">
+        <p:outputPanel id="preparationsPanel" autoUpdate="false">
+
+            <ui:decorate template="participant_preparation_table.xhtml">
+                <ui:param name="annotatedObjectController" value="#{participantController}"/>
+                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
+                <ui:param name="disablePreparationSelectItems" value="#{participantController.isExperimentalPreparationDisabled()}"/>
+            </ui:decorate>
+        </p:outputPanel>
+
+    </p:tab>
+
+    <p:tab id="identificationMethodsTab" title="Identification Method(s) (#{participantController.identificationMethodsSize})">
+
+        <p:outputPanel id="identificationPanel" autoUpdate="false">
+
+            <ui:decorate template="participant_identification_table.xhtml">
+                <ui:param name="annotatedObjectController" value="#{participantController}"/>
+                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
+                <ui:param name="disableIdentificationSelectItems" value="#{participantController.isIdentificationMethodDisabled()}"/>
+            </ui:decorate>
+        </p:outputPanel>
+
+    </p:tab>
+
+    <p:tab id="parametersTab" title="Parameters (#{participantController.parametersSize})">
+
+        <p:outputPanel id="paramsPanel" autoUpdate="false">
 
             <ui:decorate template="parameters_table.xhtml">
                 <ui:param name="annotatedObjectController" value="#{participantController}"/>
-                <ui:param name="parameterTypeSelectItems" value="#{cvObjectService.parameterTypeSelectItems}"/>
-                <ui:param name="parameterUnitSelectItems" value="#{cvObjectService.parameterUnitSelectItems}"/>
                 <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
                 <ui:param name="disableParameterSelectItems" value="#{participantController.isParameterDisabled()}"/>
             </ui:decorate>
@@ -193,14 +217,26 @@
 
     </p:tab>
 
-    <p:tab id="confidencesTab" title="Confidences (#{participantController.confidenceSize})">
+    <p:tab id="confidencesTab" title="Confidences (#{participantController.confidencesSize})">
 
-        <p:outputPanel id="confidencesPanel" autoUpdate="true">
+        <p:outputPanel id="confidencesPanel" autoUpdate="false">
             <ui:decorate template="confidences_table.xhtml">
                 <ui:param name="annotatedObjectController" value="#{participantController}"/>
-                <ui:param name="confidenceTypeSelectItems" value="#{cvObjectService.confidenceTypeSelectItems}"/>
                 <ui:param name="disableConfidenceSelectItems" value="#{participantController.isConfidenceDisabled()}"/>
                 <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
+            </ui:decorate>
+        </p:outputPanel>
+
+    </p:tab>
+
+    <p:tab id="causalityTab" title="Causal Relationship(s) (#{participantController.causalityStatementsSize})">
+
+        <p:outputPanel id="causalityPanel" autoUpdate="false">
+
+            <ui:decorate template="participant_causal_statements_table.xhtml">
+                <ui:param name="annotatedObjectController" value="#{participantController}"/>
+                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
+                <ui:param name="disableStatementSelectItems" value="#{participantController.isCausalRelationshipDisabled()}"/>
             </ui:decorate>
         </p:outputPanel>
 

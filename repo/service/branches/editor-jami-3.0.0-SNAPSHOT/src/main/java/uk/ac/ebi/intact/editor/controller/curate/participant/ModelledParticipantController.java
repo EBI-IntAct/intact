@@ -31,6 +31,7 @@ import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
+import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ModelledParticipantCloner;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.*;
@@ -281,6 +282,19 @@ public class ModelledParticipantController extends AbstractParticipantController
 
         refreshFeatures();
 
+        interactionController.reloadSingleParticipant(getParticipant());
+    }
+
+    @Override
+    protected void postProcessDeletedEvent(UnsavedChange unsaved) {
+        if (unsaved.getUnsavedObject() instanceof IntactModelledFeature){
+            removeFeature((IntactModelledFeature)unsaved.getUnsavedObject());
+        }
+    }
+
+    @Override
+    public void unlinkFeature(FeatureWrapper wrapper) {
+        super.unlinkFeature(wrapper);
         interactionController.reloadSingleParticipant(getParticipant());
     }
 }
