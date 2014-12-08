@@ -571,7 +571,7 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
         return true;
     }
 
-    public int getFeatureSize() {
+    public int getFeaturesSize() {
         if (participant == null){
             return 0;
         }
@@ -630,7 +630,7 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
 
     public List<Xref> collectXrefs() {
         // causal statements are not always initialised
-        if (!participant.areCausalRelationshipsInitialized()){
+        if (!participant.areXrefsInitialized()){
             setParticipant(getParticipantEditorService().initialiseParticipantXrefs(this.participant));
         }
 
@@ -642,7 +642,7 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
     @Override
     public void removeXref(Xref xref) {
         // causal statements are not always initialised
-        if (!participant.areCausalRelationshipsInitialized()){
+        if (!participant.areXrefsInitialized()){
             setParticipant(getParticipantEditorService().initialiseParticipantXrefs(this.participant));
         }
         this.participant.getXrefs().remove(xref);
@@ -740,5 +740,52 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
 
     public boolean isNoUniprotUpdate() {
         return isNoUniprotUpdate;
+    }
+
+    public void selectLinkedFeature(FeatureWrapper wrapper, AbstractIntactFeature linked){
+        wrapper.setSelectedLinkedFeature(linked);
+    }
+
+    public void unlinkFeature(FeatureWrapper wrapper) {
+        AbstractIntactFeature feature1 = wrapper.getFeature();
+        AbstractIntactFeature feature2 = wrapper.getSelectedLinkedFeature();
+        Iterator<Feature> featureIterator = feature1.getLinkedFeatures().iterator();
+        Iterator<Feature> feature2Iterator = feature2.getLinkedFeatures().iterator();
+        while (featureIterator.hasNext()){
+            AbstractIntactFeature f1 = (AbstractIntactFeature)featureIterator.next();
+            if (f1.getAc() == null && f1 == feature2){
+                featureIterator.remove();
+            }
+            else if (f1.getAc() != null && f1.getAc().equals(feature2.getAc())){
+                featureIterator.remove();
+            }
+        }
+        while (feature2Iterator.hasNext()){
+            AbstractIntactFeature f2 = (AbstractIntactFeature)feature2Iterator.next();
+            if (f2.getAc() == null && f2 == feature1){
+                feature2Iterator.remove();
+            }
+            else if (f2.getAc() != null && f2.getAc().equals(feature1.getAc())){
+                featureIterator.remove();
+            }
+        }
+
+        FeatureWrapper wrapperToRemove=null;
+        for (FeatureWrapper fw : featuresDataModel) {
+            if (fw.getFeature() == wrapper.getSelectedLinkedFeature()) {
+                wrapperToRemove = fw;
+                break;
+            }
+        }
+        if (wrapperToRemove != null){
+            wrapperToRemove.getLinkedFeatures().clear();
+            wrapperToRemove.getLinkedFeatures().addAll(feature2.getLinkedFeatures());
+        }
+
+        addInfoMessage("Feature unlinked", feature2.toString());
+        setUnsavedChanges(true);
+
+        wrapper.getLinkedFeatures().clear();
+        wrapper.getLinkedFeatures().addAll(feature1.getLinkedFeatures());
     }
 }

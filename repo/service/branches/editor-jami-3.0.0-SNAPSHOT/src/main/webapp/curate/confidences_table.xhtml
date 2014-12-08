@@ -21,13 +21,13 @@
                 <f:facet name="header">
                     <h:outputText value="Type"/>
                 </f:facet>
-                <h:selectOneMenu id="confidenceTypeSel" value="#{confidence.cvConfidenceType}" rendered="#{confidenceTypeSelectItems != null}"
+                <h:selectOneMenu id="confidenceTypeSel" value="#{confidence.cvConfidenceType}" rendered="#{cvObjectService.confidenceTypeSelectItems != null}"
                                  required="true" requiredMessage="Parameter type is required" disabled="#{disableConfidenceSelectItems}"
                         converter="cvObjectConverter">
-                    <f:selectItems value="#{confidenceTypeSelectItems}"/>
+                    <f:selectItems value="#{cvObjectService.confidenceTypeSelectItems}"/>
                     <p:ajax event="change" process="@this" oncomplete="markAsUnsaved()" update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"/>
                 </h:selectOneMenu>
-                <h:outputText value="#{confidence.type.shortName}" rendered="#{confidenceTypeSelectItems == null}"/>
+                <h:outputText value="#{confidence.type.shortName}" rendered="#{cvObjectService.confidenceTypeSelectItems == null}"/>
             </p:column>
            <p:column>
                 <f:facet name="header">
