@@ -24,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import psidev.psi.mi.jami.model.Feature;
 import psidev.psi.mi.jami.model.Position;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
+import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ModelledFeatureCloner;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.ComplexController;
@@ -219,5 +220,17 @@ public class ModelledFeatureController extends AbstractFeatureController<IntactM
     protected void generalLoadChecks() {
         super.generalLoadChecks();
         generalComplexLoadChecks();
+    }
+
+    @Override
+    protected void postProcessDeletedEvent(UnsavedChange unsaved) {
+        super.postProcessDeletedEvent(unsaved);
+        modelledParticipantController.reloadSingleFeature(getFeature());
+    }
+
+    @Override
+    public void newRange(ActionEvent evt) {
+        super.newRange(evt);
+        modelledParticipantController.reloadSingleFeature(getFeature());
     }
 }

@@ -115,6 +115,7 @@ public class CvObjectService extends AbstractEditorService {
     private List<SelectItem> complexTypeSelectItems;
 
     private List<SelectItem> evidenceTypeSelectItems;
+    private List<SelectItem> causalStatementSelectItems;
 
     private IntactCvTerm defaultExperimentalRole;
     private IntactCvTerm defaultBiologicalRole;
@@ -170,6 +171,7 @@ public class CvObjectService extends AbstractEditorService {
             this.polymerTypeSelectItems=null;
             this.moleculeSetTypeSelectItems=null;
             this.geneTypeSelectItems=null;
+            this.causalStatementSelectItems=null;
             isInitialised=false;
         }
     }
@@ -435,6 +437,7 @@ public class CvObjectService extends AbstractEditorService {
         }
 
         // feature role
+        featureRoleSelectItems = new ArrayList<SelectItem>();
         IntactCvTerm roleParent = getIntactDao().getCvTermDao().getByMIIdentifier("MI:0925", IntactUtils.TOPIC_OBJCLASS);
         SelectItem item2 = roleParent != null ? createSelectItem(roleParent, false):null;
         if (item2 != null){
@@ -444,12 +447,15 @@ public class CvObjectService extends AbstractEditorService {
             loadChildren(roleParent, featureRoleSelectItems, false, new HashSet<String>());
         }
 
-        // add all obsoletes and hidden now to the map of class objects
-        List<IntactCvTerm> allCvs = getIntactDao().getCvTermDao().getAll();
-        for ( IntactCvTerm cvObject : allCvs ) {
-            if (!cvObjectsByClass.containsKey(cvObject.getObjClass())){
-                cvObjectsByClass.put(cvObject.getObjClass(), cvObject);
-            }
+        // causal statements
+        causalStatementSelectItems = new ArrayList<SelectItem>();
+        IntactCvTerm causalParent = getIntactDao().getCvTermDao().getByMIIdentifier("MI:0xxx", IntactUtils.TOPIC_OBJCLASS);
+        SelectItem item3 = causalParent != null ? createSelectItem(causalParent, false):null;
+        if (item3 != null){
+            causalStatementSelectItems.add(item3);
+        }
+        if (causalParent != null){
+            loadChildren(causalParent, causalStatementSelectItems, false, new HashSet<String>());
         }
 
         isInitialised=true;
@@ -907,6 +913,10 @@ public class CvObjectService extends AbstractEditorService {
 
     public boolean isInitialised() {
         return isInitialised;
+    }
+
+    public List<SelectItem> getCausalStatementSelectItems() {
+        return causalStatementSelectItems;
     }
 
     public static class CvObjectComparator implements Comparator<IntactCvTerm> {

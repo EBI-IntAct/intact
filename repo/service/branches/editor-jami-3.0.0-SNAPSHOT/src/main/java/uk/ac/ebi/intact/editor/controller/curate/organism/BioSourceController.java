@@ -327,4 +327,9 @@ public class BioSourceController extends AnnotatedObjectController {
         }
         return organismFetcher;
     }
+
+    @Override
+    protected boolean areXrefsInitialised() {
+        return false;
+    }
 }

@@ -127,6 +127,11 @@ public class CvObjectController extends AnnotatedObjectController {
     }
 
     @Override
+    protected boolean areXrefsInitialised() {
+        return this.cvObject != null && this.cvObject.areXrefsInitialized();
+    }
+
+    @Override
     protected EditorCloner<CvTerm, IntactCvTerm> newClonerInstance() {
         return new CvTermCloner();
     }
@@ -431,5 +436,12 @@ public class CvObjectController extends AnnotatedObjectController {
         if (this.cvObject != null){
             this.cvObject.setDefinition(definition);
         }
+    }
+
+    @Override
+    public String doDelete() {
+        String value = super.doDelete();
+        getCvService().clearAll();
+        return value;
     }
 }

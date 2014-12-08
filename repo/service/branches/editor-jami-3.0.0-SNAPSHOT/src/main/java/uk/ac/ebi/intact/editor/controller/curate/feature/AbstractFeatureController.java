@@ -23,6 +23,7 @@ import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.RangeUtils;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
+import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.services.curate.feature.FeatureEditorService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
@@ -38,10 +39,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Abstract Feature controller.
@@ -453,6 +451,12 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
                 }
             }
         }
+
+        if (entity != null){
+            if (!((IntactInteractor)entity.getInteractor()).areXrefsInitialized()){
+                return false;
+            }
+        }
         return true;
     }
 
@@ -497,7 +501,7 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     }
 
     public List<Xref> collectXrefs() {
-        // aliases are not always initialised
+        // xrefs are not always initialised
         if (!feature.areXrefsInitialized()){
             setFeature(getFeatureEditorService().initialiseFeatureXrefs(this.feature));
         }
@@ -533,5 +537,35 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         return participantSelectItems;
     }
 
+
+    @Override
+    protected void postProcessDeletedEvent(UnsavedChange unsaved) {
+        if (unsaved.getUnsavedObject() instanceof AbstractIntactRange){
+            // only update if not lazy loaded
+            if (feature.areRangesInitialized()){
+                Iterator<Range> rangeIterator = feature.getRanges().iterator();
+                while (rangeIterator.hasNext()){
+                    AbstractIntactRange intactEv = (AbstractIntactRange)rangeIterator.next();
+                    if (intactEv.getAc() == null && unsaved.getParentObject() == intactEv){
+                        rangeIterator.remove();
+                    }
+                    else if (intactEv.getAc() != null && !intactEv.getAc().equals(unsaved.getParentObject().getAc())){
+                        rangeIterator.remove();
+                    }
+                }
+
+                refreshRangeWrappers();
+            }
+            else{
+                refreshRangeWrappers();
+            }
+        }
+    }
+
     protected abstract IntactDbSynchronizer getRangeSynchronzer();
+
+    @Override
+    protected boolean areXrefsInitialised() {
+        return this.feature != null && this.feature.areXrefsInitialized();
+    }
 }

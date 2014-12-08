@@ -16,7 +16,7 @@
                              update="parametersTable #{update}"/>
         </div>
 
-        <p:dataTable id="parametersTable" var="parameter" value="#{annotatedObjectController.collectParameters}">
+        <p:dataTable id="parametersTable" var="parameter" value="#{annotatedObjectController.collectParameters()}">
             <p:column>
                 <f:facet name="header">
                     <h:outputText value="Type"/>

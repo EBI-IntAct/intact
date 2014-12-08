@@ -25,6 +25,10 @@
 
     <ui:define name="curateContent">
 
+        <h:panelGroup rendered="#{interactor == null}">
+            No interactor loaded!
+        </h:panelGroup>
+
         <h:panelGroup id="info" rendered="#{interactor != null}">
 
             <h2>#{interactorController.objectName}</h2>

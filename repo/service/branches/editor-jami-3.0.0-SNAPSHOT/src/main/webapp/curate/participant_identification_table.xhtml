@@ -10,16 +10,16 @@
                 xmlns:ed="http://ebi.ac.uk/intact/editor/ui">
 
     <div class="intact-buttonBar">
-        <ia:inputSimpleCvObject id="newDetectTxt" cvIdentifier="MI:0003"
-                                value="#{featureController.detectionMethodToAdd}"
-                                selectItems="#{cvObjectService.featureDetectionMethodSelectItems}" rendered="#{disableMethodSelectItems}"/>
-        <p:commandButton id="newDetectBtn" value="Add Detection Method"
-                         actionListener="#{featureController.newDetectionMethod}"
-                         process="newDetectTxt"
-                         update="methodsTable #{update}"/>
+        <ia:inputSimpleCvObject id="newIdentTxt" cvIdentifier="MI:0002"
+                                value="#{participantController.identificationToAdd}"
+                                selectItems="#{cvObjectService.participantDetectionMethodSelectItems}" rendered="#{disableIdentificationSelectItems}"/>
+        <p:commandButton id="newIdentBtn" value="Add Identification Method (overrides experiment)"
+                         actionListener="#{participantController.addIdentificationMethod}"
+                         process="newIdentTxt"
+                         update="identificationsTable #{update}"/>
     </div>
 
-    <p:dataTable id="methodsTable" var="method" value="#{featureController.collectDetectionMethods()}">
+    <p:dataTable id="identificationsTable" var="method" value="#{participantController.collectIdentificationMethods()}">
         <p:column>
             <f:facet name="description">
                 <h:outputText value=""/>
@@ -30,10 +30,10 @@
             <f:facet name="header">
                 <h:outputText value="Actions"/>
             </f:facet>
-            <p:commandLink id="removeDetMethodBtn" styleClass="ui-icon ui-icon-closethick" process="removeDetMethodBtn"
-                           actionListener="#{annotatedObjectController.removeDetectionMethod(method)}"
+            <p:commandLink id="removeIdentMethodBtn" styleClass="ui-icon ui-icon-closethick" process="removeIdentMethodBtn"
+                           actionListener="#{annotatedObjectController.removeIdentificationMethod(method)}"
                            oncomplete="markAsUnsaved()"
-                           update="methodsTable #{update}"/>
+                           update="identificationsTable #{update}"/>
         </p:column>
     </p:dataTable>
 

@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.intact.core.persistence.dao.IntactObjectDao;
 import uk.ac.ebi.intact.core.persister.IntactCore;
 import uk.ac.ebi.intact.core.util.DebugUtil;
@@ -37,7 +38,17 @@ import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationControll
 import uk.ac.ebi.intact.editor.controller.curate.util.IntactObjectComparator;
 import uk.ac.ebi.intact.editor.controller.curate.util.ParticipantWrapperExperimentalRoleComparator;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
+import uk.ac.ebi.intact.jami.model.extension.AbstractIntactFeature;
+import uk.ac.ebi.intact.jami.model.extension.IntactParticipantEvidence;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.Confidence;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Feature;
+import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.Parameter;
+import uk.ac.ebi.intact.model.Publication;
 import uk.ac.ebi.intact.model.clone.IntactCloner;
 import uk.ac.ebi.intact.model.clone.IntactClonerException;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
@@ -1225,5 +1236,46 @@ public class InteractionController extends ParameterizableObjectController {
     @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public List collectXrefs() {
         return super.collectXrefs();
+    }
+
+    public void reloadSingleParticipant(IntactParticipantEvidence f){
+        if (!this.participant.areFeaturesInitialized()){
+            setParticipant(getParticipantEditorService().initialiseFeatures(this.participant));
+        }
+        Iterator<? extends psidev.psi.mi.jami.model.Feature> evIterator = participant.getFeatures().iterator();
+        boolean add = true;
+        while (evIterator.hasNext()){
+            AbstractIntactFeature intactEv = (AbstractIntactFeature)evIterator.next();
+            if (intactEv.getAc() == null && f == intactEv){
+                add = false;
+            }
+            else if (intactEv.getAc() != null && !intactEv.getAc().equals(f.getAc())){
+                evIterator.remove();
+            }
+        }
+
+        if (add){
+            participant.getFeatures().add(f);
+        }
+
+        refreshFeatures();
+    }
+
+    public void removeParticipant(IntactParticipantEvidence f){
+        if (!this.participant.areFeaturesInitialized()){
+            setParticipant(getParticipantEditorService().initialiseFeatures(this.participant));
+        }
+        Iterator<? extends psidev.psi.mi.jami.model.Feature> evIterator = participant.getFeatures().iterator();
+        while (evIterator.hasNext()){
+            AbstractIntactFeature intactEv = (AbstractIntactFeature)evIterator.next();
+            if (intactEv.getAc() == null && f == intactEv){
+                evIterator.remove();
+            }
+            else if (intactEv.getAc() != null && !intactEv.getAc().equals(f.getAc())){
+                evIterator.remove();
+            }
+        }
+
+        refreshFeatures();
     }
 }

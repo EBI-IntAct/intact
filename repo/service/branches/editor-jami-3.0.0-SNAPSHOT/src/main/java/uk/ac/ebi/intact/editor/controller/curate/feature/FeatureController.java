@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
+import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.FeatureEvidenceCloner;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
@@ -80,7 +81,7 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
 
     private boolean isParametersDisabled;
     private boolean isDetectionMethodDisabled;
-    private CvTerm detectionMethodToAdd=null;
+    private IntactCvTerm detectionMethodToAdd=null;
 
     public FeatureController() {
         super(IntactFeatureEvidence.class, ExperimentalResultingSequence.class,
@@ -406,11 +407,23 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
         return getEditorService().getIntactDao().getSynchronizerContext().getExperimentalRangeSynchronizer();
     }
 
-    public CvTerm getDetectionMethodToAdd() {
+    public IntactCvTerm getDetectionMethodToAdd() {
         return detectionMethodToAdd;
     }
 
-    public void setDetectionMethodToAdd(CvTerm detectionMethodToAdd) {
+    public void setDetectionMethodToAdd(IntactCvTerm detectionMethodToAdd) {
         this.detectionMethodToAdd = detectionMethodToAdd;
+    }
+
+    @Override
+    protected void postProcessDeletedEvent(UnsavedChange unsaved) {
+        super.postProcessDeletedEvent(unsaved);
+        participantController.reloadSingleFeature(getFeature());
+    }
+
+    @Override
+    public void newRange(ActionEvent evt) {
+        super.newRange(evt);
+        participantController.reloadSingleFeature(getFeature());
     }
 }
