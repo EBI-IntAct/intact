@@ -380,11 +380,9 @@ public abstract class AnnotatedObjectController extends BaseController implement
         }
     }
 
-    protected boolean areXrefsInitialised(){
-        return false;
-    }
+    protected abstract boolean areXrefsInitialised();
 
-    private boolean processDeleteEvents(String currentAc){
+    protected boolean processDeleteEvents(String currentAc){
         boolean delete = false;
         // delete from the unsaved manager
         final List<UnsavedChange> deletedObjects = new ArrayList(changesController.getAllUnsavedDeleted());
@@ -403,6 +401,8 @@ public abstract class AnnotatedObjectController extends BaseController implement
                     // remove the object to delete from its parent. If it is successful and the current object has been deleted, we can say that the save is successful
                     delete = editorService.doDelete(unsavedObject, unsaved.getDbSynchronizer());
 
+                    postProcessDeletedEvent(unsaved);
+
                 }
                 // the object to delete is different from the current object. Checks that the scope of this object to delete is the ac of the current object being saved
                 // if the scope is null or different, the object should not be deleted at this stage because we only save the current object and changes associated with it
@@ -410,11 +410,21 @@ public abstract class AnnotatedObjectController extends BaseController implement
                 else if (unsaved.getScope() != null && unsaved.getScope().equals(currentAc)) {
                     // remove the object to delete from its parent
                     delete = editorService.doDelete(unsavedObject, unsaved.getDbSynchronizer());
+
+                    postProcessDeletedEvent(unsaved);
                 }
+            }
+
+            if (delete){
+                changesController.removeFromDeleted(unsavedObject);
             }
         }
 
         return delete;
+    }
+
+    protected void postProcessDeletedEvent(UnsavedChange unsaved){
+         // nothing to do
     }
 
     private IntactPrimaryObject refresh(IntactPrimaryObject annotatedObject) {

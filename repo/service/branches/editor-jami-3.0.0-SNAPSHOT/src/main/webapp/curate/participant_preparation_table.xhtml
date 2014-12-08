@@ -9,17 +9,18 @@
                 xmlns:ia="http://java.sun.com/jsf/composite/intact-components"
                 xmlns:ed="http://ebi.ac.uk/intact/editor/ui">
 
+
     <div class="intact-buttonBar">
-        <ia:inputSimpleCvObject id="newDetectTxt" cvIdentifier="MI:0003"
-                                value="#{featureController.detectionMethodToAdd}"
-                                selectItems="#{cvObjectService.featureDetectionMethodSelectItems}" rendered="#{disableMethodSelectItems}"/>
-        <p:commandButton id="newDetectBtn" value="Add Detection Method"
-                         actionListener="#{featureController.newDetectionMethod}"
-                         process="newDetectTxt"
-                         update="methodsTable #{update}"/>
+        <ia:inputSimpleCvObject id="newPrepTxt" cvIdentifier="MI:0346"
+                                value="#{participantController.preparationToAdd}"
+                                selectItems="#{cvObjectService.participantExperimentalPreparationsSelectItems}" rendered="#{disablePreparationSelectItems}"/>
+        <p:commandButton id="newPrepBtn" value="Add Experimental Preparation"
+                         actionListener="#{participantController.addExperimentalPreparation}"
+                         process="newPrepTxt"
+                         update="preparationsTable #{update}"/>
     </div>
 
-    <p:dataTable id="methodsTable" var="method" value="#{featureController.collectDetectionMethods()}">
+    <p:dataTable id="preparationsTable" var="method" value="#{participantController.collectExperimentalPreparations()}">
         <p:column>
             <f:facet name="description">
                 <h:outputText value=""/>
@@ -30,13 +31,11 @@
             <f:facet name="header">
                 <h:outputText value="Actions"/>
             </f:facet>
-            <p:commandLink id="removeDetMethodBtn" styleClass="ui-icon ui-icon-closethick" process="removeDetMethodBtn"
-                           actionListener="#{annotatedObjectController.removeDetectionMethod(method)}"
+            <p:commandLink id="removePrepBtn" styleClass="ui-icon ui-icon-closethick" process="removePrepBtn"
+                           actionListener="#{annotatedObjectController.removeExperimentalPreparation(method)}"
                            oncomplete="markAsUnsaved()"
-                           update="methodsTable #{update}"/>
+                           update="preparationsTable #{update}"/>
         </p:column>
     </p:dataTable>
-
-
 
 </ui:composition>

@@ -144,7 +144,7 @@ public class InteractorController extends AnnotatedObjectController {
             setCautionMessage(caution != null ? caution.getValue() : null);
             Annotation internal = AnnotationUtils.collectFirstAnnotationWithTopic(this.interactor.getDbAnnotations(), null, "remark-internal");
             setInternalRemark(internal != null ? internal.getValue() : null);
-            Annotation noUniprotUpdate = AnnotationUtils.collectFirstAnnotationWithTopic(this.interactor.getDbAnnotations(), null, "remark-internal");
+            Annotation noUniprotUpdate = AnnotationUtils.collectFirstAnnotationWithTopic(this.interactor.getDbAnnotations(), null, "no-uniprot-update");
             this.isNoUniprotUpdate = noUniprotUpdate != null;
         }
     }
@@ -558,7 +558,7 @@ public class InteractorController extends AnnotatedObjectController {
 
                     getChangesController().markAsHiddenChange((IntactInteractor)importCandidate.getInteractor(), null, parentAcs,
                             getEditorService().getIntactDao().getSynchronizerContext().getInteractorSynchronizer(),
-                            "Interactor "+interactor.getShortName());
+                            "Interactor "+importCandidate.getInteractor().getShortName());
                 }
                 ((InteractorPool)this.interactor).add((IntactInteractor) importCandidate.getInteractor());
 
@@ -594,5 +594,10 @@ public class InteractorController extends AnnotatedObjectController {
             this.bioSourceService = ApplicationContextProvider.getBean("bioSourceService");
         }
         return bioSourceService;
+    }
+
+    @Override
+    protected boolean areXrefsInitialised() {
+        return this.interactor != null && this.interactor.areXrefsInitialized();
     }
 }

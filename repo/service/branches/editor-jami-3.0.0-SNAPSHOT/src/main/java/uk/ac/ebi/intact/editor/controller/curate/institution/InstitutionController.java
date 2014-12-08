@@ -338,4 +338,16 @@ public class InstitutionController extends AnnotatedObjectController {
         }
         return institutionService;
     }
+
+    @Override
+    public String doDelete() {
+        String value = super.doDelete();
+        getInstitutionService().clearAll();
+        return value;
+    }
+
+    @Override
+    protected boolean areXrefsInitialised() {
+        return this.institution != null && this.institution.areXrefsInitialized();
+    }
 }

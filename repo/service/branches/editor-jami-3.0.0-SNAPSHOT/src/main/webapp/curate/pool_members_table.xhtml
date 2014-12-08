@@ -15,7 +15,7 @@
 
         </div>
 
-        <p:dataTable id="setMembersTable" var="member" value="#{interactorController.collectPoolMembers}">
+        <p:dataTable id="setMembersTable" var="member" value="#{interactorController.collectPoolMembers()}">
             <p:column headerText="AC">
                 <h:link outcome="/curate/interactor" value="#{molecule.ac}" includeViewParams="true">
                     <f:param name="ac" value="#{molecule.ac}"/>

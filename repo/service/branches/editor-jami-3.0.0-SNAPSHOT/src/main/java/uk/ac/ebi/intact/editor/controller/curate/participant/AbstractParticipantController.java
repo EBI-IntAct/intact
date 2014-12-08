@@ -18,139 +18,119 @@ package uk.ac.ebi.intact.editor.controller.curate.participant;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.hibernate.Hibernate;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.SelectableDataModelWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.intact.core.persistence.dao.IntactObjectDao;
-import uk.ac.ebi.intact.core.persister.IntactCore;
+import psidev.psi.mi.jami.bridges.exception.BridgeFailedException;
+import psidev.psi.mi.jami.model.*;
+import psidev.psi.mi.jami.model.Alias;
+import psidev.psi.mi.jami.model.Annotation;
+import psidev.psi.mi.jami.model.Xref;
+import psidev.psi.mi.jami.utils.AnnotationUtils;
+import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
-import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentController;
-import uk.ac.ebi.intact.editor.controller.curate.interaction.ImportCandidate;
-import uk.ac.ebi.intact.editor.controller.curate.interaction.InteractionController;
-import uk.ac.ebi.intact.editor.controller.curate.interaction.ParticipantImportController;
-import uk.ac.ebi.intact.editor.controller.curate.interaction.ParticipantWrapper;
-import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
+import uk.ac.ebi.intact.editor.controller.curate.interaction.*;
 import uk.ac.ebi.intact.editor.controller.curate.util.IntactObjectComparator;
-import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
+import uk.ac.ebi.intact.editor.services.curate.participant.ParticipantEditorService;
 import uk.ac.ebi.intact.editor.util.SelectableCollectionDataModel;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.model.clone.IntactCloner;
-import uk.ac.ebi.intact.model.util.XrefUtils;
+import uk.ac.ebi.intact.jami.model.extension.*;
+import uk.ac.ebi.intact.jami.synchronizer.FinderException;
+import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
+import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
+import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
+import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
+import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
-import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
-/**
- * Participant controller.
- *
- * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id$
- */
-@Controller
-@Scope( "conversation.access" )
-@ConversationName( "general" )
-public class AbstractParticipantController extends ParameterizableObjectController {
+public abstract class AbstractParticipantController<T extends AbstractIntactParticipant> extends AnnotatedObjectController {
 
     private static final Log log = LogFactory.getLog( AbstractParticipantController.class );
 
-    private Component participant;
+    private T participant;
+    @Resource(name = "participantEditorService")
+    private transient ParticipantEditorService participantEditorService;
+
+    private Class<T> participantClass;
 
     private String interactor;
     private List<ImportCandidate> interactorCandidates;
 
-    private DataModel<Feature> featuresDataModel;
-    private Feature[] selectedFeatures;
-    private Feature featureToLink1;
-    private Feature featureToLink2;
-    private Range rangeFeatureLinked1;
-    private Range rangeFeatureLinked2;
-    private List<SelectItem> featureToLink1RangeSelectItems;
-    private List<SelectItem> featureToLink2RangeSelectItems;
-
-    private CvExperimentalPreparation preparationToAdd;
-    private CvIdentification identificationToAdd;
+    private DataModel<FeatureWrapper> featuresDataModel;
+    private FeatureWrapper[] selectedFeatures;
 
     /**
      * The AC of the participant to be loaded.
      */
     private String ac;
 
-    @Autowired
-    private PublicationController publicationController;
+    private boolean isFeatureDisabled=false;
+    private boolean isCausalRelationshipDisabled=true;
+    private CvTerm statementToAdd;
+    private Participant targetToAdd;
+    private String participantId;
+    private boolean isNoUniprotUpdate=false;
 
-    @Autowired
-    private ExperimentController experimentController;
+    private List<SelectItem> participantTargets=new ArrayList<SelectItem>();
 
-    @Autowired
-    private InteractionController interactionController;
-
-    private boolean isParameterDisabled;
-    private boolean isConfidenceDisabled;
-
-    public AbstractParticipantController() {
+    public AbstractParticipantController(Class<T> participantClass) {
+        if (this.participantClass == null){
+           throw new IllegalArgumentException("The participant class cannot be null");
+        }
+        this.participantClass = participantClass;
     }
 
     @Override
-    public AnnotatedObject getAnnotatedObject() {
+    public IntactPrimaryObject getAnnotatedObject() {
         return getParticipant();
     }
 
     @Override
-    public void setAnnotatedObject(AnnotatedObject annotatedObject) {
-        setParticipant((Component)annotatedObject);
+    public void setAnnotatedObject(IntactPrimaryObject annotatedObject) {
+        setParticipant((T)annotatedObject);
     }
 
     @Override
-    public IntactPrimaryObject getJamiObject() {
-        return null;
+    protected void loadCautionMessages() {
+        if (this.participant != null){
+            if (!participant.areAnnotationsInitialized()){
+                setParticipant(getParticipantEditorService().initialiseParticipantAnnotations(this.participant));
+            }
+
+            Annotation caution = AnnotationUtils.collectFirstAnnotationWithTopic(this.participant.getAnnotations(), Annotation.CAUTION_MI, Annotation.CAUTION);
+            setCautionMessage(caution != null ? caution.getValue() : null);
+            Annotation internal = AnnotationUtils.collectFirstAnnotationWithTopic(this.participant.getAnnotations(), null, "remark-internal");
+            setInternalRemark(internal != null ? internal.getValue() : null);
+
+            if (this.participant.getInteractor() instanceof IntactInteractor
+                    && !((IntactInteractor)participant.getInteractor()).areXrefsInitialized()){
+                setParticipant(getParticipantEditorService().reloadFullyInitialisedParticipant(this.participant));
+            }
+            this.participantId = this.participant.getInteractor().getPreferredIdentifier() != null ?
+                    this.participant.getInteractor().getPreferredIdentifier().getId():this.participant.getInteractor().getShortName();
+
+            Annotation noUniprotUpdate = AnnotationUtils.collectFirstAnnotationWithTopic(this.participant.getInteractor().getAnnotations(), null, "no-uniprot-update");
+            this.isNoUniprotUpdate = noUniprotUpdate != null;
+        }
     }
 
-    @Override
-    public void setJamiObject(IntactPrimaryObject annotatedObject) {
-        // nothing to do
-    }
-
-    @Override
-    public String goToParent() {
-        return "/curate/interaction?faces-redirect=true&includeViewParams=true";
-    }
-
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void loadData( ComponentSystemEvent event ) {
         if (!FacesContext.getCurrentInstance().isPostback()) {
 
             if ( ac != null ) {
                 if ( participant == null || !ac.equals( participant.getAc() ) ) {
-                    participant = loadByAc(getDaoFactory().getComponentDao(), ac);
-                    if (participant != null){
-                        // initialise xrefs
-                        Hibernate.initialize(participant.getXrefs());
-                        // initialise xrefs
-                        Hibernate.initialize(participant.getAnnotations());
-                        // initialise xrefs
-                        Hibernate.initialize(participant.getAliases());
-                        Hibernate.initialize(participant.getFeatures());
-                        Hibernate.initialize(participant.getExperimentalPreparations());
-                        Hibernate.initialize(participant.getParticipantDetectionMethods());
-                        Hibernate.initialize(participant.getExperimentalRoles());
-                    }
-
+                    setParticipant(getParticipantEditorService().loadParticipantByAc(ac, this.participantClass));
                 }
             } else {
                 if ( participant != null ) ac = participant.getAc();
@@ -161,95 +141,26 @@ public class AbstractParticipantController extends ParameterizableObjectControll
                 return;
             }
 
-            if (!Hibernate.isInitialized(participant.getXrefs())
-                    || !Hibernate.isInitialized(participant.getAnnotations())
-                    || !Hibernate.isInitialized(participant.getAliases())
-                    || !Hibernate.isInitialized(participant.getFeatures())
-                    || !Hibernate.isInitialized(participant.getXrefs())
-                    || !Hibernate.isInitialized(participant.getExperimentalPreparations())
-                    || !Hibernate.isInitialized(participant.getParticipantDetectionMethods())
-                    || !Hibernate.isInitialized(participant.getExperimentalRoles())){
-                participant = loadByAc(getDaoFactory().getComponentDao(), participant.getAc());
-                // initialise xrefs
-                Hibernate.initialize(participant.getXrefs());
-                // initialise xrefs
-                Hibernate.initialize(participant.getAnnotations());
-                // initialise xrefs
-                Hibernate.initialize(participant.getAliases());
-                Hibernate.initialize(participant.getFeatures());
-                Hibernate.initialize(participant.getExperimentalPreparations());
-                Hibernate.initialize(participant.getParticipantDetectionMethods());
-                Hibernate.initialize(participant.getExperimentalRoles());
-            }
-
-            featuresDataModel = new SelectableDataModelWrapper(new SelectableCollectionDataModel<Feature>(participant.getFeatures()), participant.getFeatures());
-
-            // check if the publication, experiment and interaction are null in their controllers (this happens when the
-            // participant page is loaded directly using a URL)
-
-            if (participant.getInteraction() != null){
-                if (interactionController.getInteraction() == null || !interactionController.getInteraction().getAc().equalsIgnoreCase(participant.getInteraction().getAc())){
-                    if( interactionController.getInteraction() == null ) {
-                        interactionController.setInteraction( participant.getInteraction() );
-                    }
-
-                    Collection<Experiment> experiments = participant.getInteraction().getExperiments();
-
-                    if (!IntactCore.isInitialized(experiments)){
-                        experiments = getDaoFactory().getExperimentDao().getByInteractionAc(participant.getInteraction().getAc());
-                    }
-                    if (!IntactCore.isInitialized(participant.getInteraction().getComponents())){
-                        Hibernate.initialize(participant.getInteraction().getComponents());
-                    }
-                    if( experiments.isEmpty()) {
-                        addWarningMessage( "The parent interaction of this participant isn't attached to an experiment",
-                                "Abort experiment loading." );
-                        return;
-                    }
-                    else{
-                        if ( publicationController.getPublication() == null ) {
-                            Publication publication = experiments.iterator().next().getPublication();
-                            publicationController.setPublication( publication );
-                        }
-                        if ( experimentController.getExperiment() == null ) {
-                            experimentController.setExperiment( experiments.iterator().next() );
-                        }
-                    }
-                }
-            }
-
-            if (participant.getInteractor() != null) {
-                interactor = participant.getInteractor().getShortLabel();
-            }
-
-            refreshTabsAndFocusXref();
+            refreshParentControllers();
+            refreshTabs();
         }
 
         generalLoadChecks();
     }
 
     @Override
-    protected <T extends AnnotatedObject> T loadByAc(IntactObjectDao<T> dao, String ac) {
-        T ao = (T) getChangesController().findByAc(ac);
+    public void refreshTabs(){
+        super.refreshTabs();
 
-        if (ao == null) {
-            Query query = getCoreEntityManager().createQuery("select f from Component f where f.ac = :ac and f.category = :evidence");
-            query.setParameter("ac", ac);
-            query.setParameter("evidence", "participant_evidence");
-            List<Component> components = query.getResultList();
-            if (components.size() == 1){
-                ao = (T)components.iterator().next();
-            }
-        }
-
-        return ao;
+        this.isFeatureDisabled = false;
+        this.isCausalRelationshipDisabled=true;
     }
 
-    @Override
-    public boolean doSaveDetails(){
-
-        return super.doSaveDetails();
+    protected void refreshParentControllers(){
+        initialiseParticipantTargets();
     }
+
+    protected abstract void initialiseParticipantTargets();
 
     @Override
     public void doPreSave() {
@@ -257,7 +168,7 @@ public class AbstractParticipantController extends ParameterizableObjectControll
         final List<UnsavedChange> transcriptCreated = getChangesController().getAllUnsavedProteinTranscripts();
 
         for (UnsavedChange unsaved : transcriptCreated) {
-            IntactObject transcript = unsaved.getUnsavedObject();
+            IntactPrimaryObject transcript = unsaved.getUnsavedObject();
 
             String currentAc = participant != null ? participant.getAc() : null;
 
@@ -265,144 +176,64 @@ public class AbstractParticipantController extends ParameterizableObjectControll
             // if the scope is null or different, the object should not be saved at this stage because we only save the current object and changes associated with it
             // if current ac is null, no unsaved event should be associated with it as this object has not been saved yet
             if (unsaved.getScope() != null && unsaved.getScope().equals(currentAc)){
-                getPersistenceController().doSaveMasterProteins(transcript);
+                try {
+                    getEditorService().doSaveMasterProteins(transcript);
+                } catch (BridgeFailedException e) {
+                    addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                } catch (SynchronizerException e) {
+                    addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                } catch (FinderException e) {
+                    addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                } catch (PersisterException e) {
+                    addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                }
                 getChangesController().removeFromHiddenChanges(unsaved);
             }
             else if (unsaved.getScope() == null && currentAc == null){
-                getPersistenceController().doSaveMasterProteins(transcript);
+                try {
+                    getEditorService().doSaveMasterProteins(transcript);
+                } catch (BridgeFailedException e) {
+                    addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                } catch (SynchronizerException e) {
+                    addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                } catch (FinderException e) {
+                    addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                } catch (PersisterException e) {
+                    addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                }
                 getChangesController().removeFromHiddenChanges(unsaved);
             }
         }
-
-        // save the interactor, if it didn't exist and the participant is just being updated
-        if (participant.getAc() != null && participant.getInteractor().getAc() == null) {
-            getCorePersister().saveOrUpdate(participant.getInteractor());
-        }
-
-        // the participant is not persisted, we can add it to the list of components in the interaction
-        if (participant.getAc() == null){
-            interactionController.getInteraction().addComponent(participant);
-        }
     }
 
     @Override
-    public Collection<String> collectParentAcsOfCurrentAnnotatedObject(){
-        Collection<String> parentAcs = new ArrayList<String>();
-
-        if (participant.getInteraction() != null){
-            addParentAcsTo(parentAcs, participant.getInteraction());
-        }
-
-        return parentAcs;
+    public Class<? extends IntactPrimaryObject> getAnnotatedObjectClass() {
+        return this.participantClass;
     }
 
     @Override
-    protected void refreshUnsavedChangesBeforeRevert(){
-        Collection<String> parentAcs = new ArrayList<String>();
-
-        if (participant.getInteraction() != null){
-            addParentAcsTo(parentAcs, participant.getInteraction());
-        }
-
-        getChangesController().revertComponent(participant, parentAcs);
-    }
-
-
-    /**
-     * Add all the parent acs of this interaction
-     * @param parentAcs
-     * @param inter
-     */
-    protected void addParentAcsTo(Collection<String> parentAcs, Interaction inter) {
-        if (inter.getAc() != null){
-            parentAcs.add(inter.getAc());
-        }
-
-        if (IntactCore.isInitialized(inter.getExperiments()) && !inter.getExperiments().isEmpty()){
-            for (Experiment exp : inter.getExperiments()){
-                addParentAcsTo(parentAcs, exp);
-            }
-        }
-        else if (interactionController.getExperiment() != null){
-            Experiment exp = interactionController.getExperiment();
-            addParentAcsTo(parentAcs, exp);
-        }
-        else if (!IntactCore.isInitialized(inter.getExperiments())){
-            Collection<Experiment> experiments = IntactCore.ensureInitializedExperiments(inter);
-
-            for (Experiment exp : experiments){
-                addParentAcsTo(parentAcs, exp);
-            }
-        }
-    }
-
-    public void removeExperimentalPreparation(CvExperimentalPreparation prep){
-        if (prep != null){
-            if (participant.getExperimentalPreparations().remove(prep)){
-                changed();
-            }
-            else{
-                addWarningMessage("The experimental preparation " + prep.getFullName()+" has not been removed.","The experimental preparation " + prep.getFullName()+" has not been removed because was not attached to this participant.");
-            }
-        }
-    }
-
-    public void addExperimentalPreparation(){
-        if (this.preparationToAdd != null){
-            if (!participant.getExperimentalPreparations().contains(this.preparationToAdd)){
-                participant.getExperimentalPreparations().add(this.preparationToAdd);
-                changed();
-            }
-            else{
-                addWarningMessage("The experimental preparation " + preparationToAdd.getFullName()+" was already attached to this participant.","The experimental preparation " + preparationToAdd.getFullName()+" was already attached to this participant.");
-            }
-        }
-    }
-
-    public void removeIdentificationMethod(CvIdentification prep){
-        if (prep != null){
-            if(participant.getParticipantDetectionMethods().remove(prep)){
-                changed();
-            }
-            else{
-                addWarningMessage("The identification method " + prep.getFullName() + " has not been removed.", "The identification method " + prep.getFullName() + " has not been removed because was not attached to this participant.");
-            }
-        }
-    }
-
-    public void addIdentificationMethod(){
-        if (this.identificationToAdd != null){
-            if (!participant.getParticipantDetectionMethods().contains(this.identificationToAdd)){
-                participant.getParticipantDetectionMethods().add(this.identificationToAdd);
-                changed();
-            }
-            else{
-                addWarningMessage("The identification method " + identificationToAdd.getFullName()+" was already attached to this participant.","The identification method " + identificationToAdd.getFullName()+" was already attached to this participant.");
-            }
-        }
+    public boolean isAliasNotEditable(Alias alias) {
+        return false;
     }
 
     @Override
-    public void doPostSave(){
-        interactionController.refreshParticipants();
+    public boolean isAnnotationNotEditable(Annotation annot) {
+        return false;
     }
 
-    @Override
-    protected IntactCloner newClonerInstance() {
-        return new ParticipantIntactCloner();
-    }
-
-    public String newParticipant(Interaction interaction) {
+    public String newParticipant(Interaction interaction) throws NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException, InstantiationException {
         this.interactor = null;
 
-        CvObjectService cvObjectService = (CvObjectService) getSpringContext().getBean("cvObjectService");
+        if (!getCvService().isInitialised()){
+            getCvService().loadData();
+        }
 
-        CvExperimentalRole defaultExperimentalRole = cvObjectService.getDefaultExperimentalRole();
-        CvBiologicalRole defaultBiologicalRole = cvObjectService.getDefaultBiologicalRole();
+        IntactCvTerm defaultBiologicalRole = getCvService().getDefaultBiologicalRole();
 
-        Component participant = new Component("N/A", interaction, new InteractorImpl(), defaultExperimentalRole, defaultBiologicalRole);
-        participant.setInteractor(null);
-        participant.setStoichiometry(getEditorConfig().getDefaultStoichiometry());
+        T participant = this.participantClass.getConstructor(Interactor.class).newInstance(new IntactInteractor("to set"));
+        participant.setStoichiometry(new IntactStoichiometry(getEditorConfig().getDefaultStoichiometry()));
+        participant.setBiologicalRole(defaultBiologicalRole);
 
         // by setting the interaction of a participant, we don't add the participant to the collection of participants for this interaction so if we revertJami, it will not affect anything.
         // when saving, it will be added to the list of participants for this interaction. we just have to refresh the list of participants
@@ -410,9 +241,6 @@ public class AbstractParticipantController extends ParameterizableObjectControll
 
         setParticipant(participant);
 
-        //interaction.addComponent(participant);
-
-        //getUnsavedChangeManager().markAsUnsaved(participant);
         changed();
 
         return navigateToObject(participant);
@@ -434,14 +262,10 @@ public class AbstractParticipantController extends ParameterizableObjectControll
                 if (importCandidate.isChain() || importCandidate.isIsoform()){
                     Collection<String> parentAcs = new ArrayList<String>();
 
-                    if (participant.getInteraction() != null){
-                        addParentAcsTo(parentAcs, participant.getInteraction());
-                    }
-
-                    getChangesController().markAsHiddenChange(importCandidate.getInteractor(), participant, parentAcs);
+                    getChangesController().markAsHiddenChange(importCandidate.getInteractor(), participant, parentAcs,
+                            getEditorService().getIntactDao().getSynchronizerContext().getInteractorSynchronizer(), "Interactor "+importCandidate.getInteractor().getShortName());
                 }
                 participant.setInteractor(importCandidate.getInteractor());
-
                 // if the participant is a new participant, we don't need to add a unsaved notice because one already exists for creating a new participant
                 if (participant.getAc() != null){
                     setUnsavedChanges(true);
@@ -450,144 +274,132 @@ public class AbstractParticipantController extends ParameterizableObjectControll
         }
     }
 
-    @Override
-    public String doDelete(){
-        if (!participant.getFeatures().isEmpty()){
-            for (Feature f : participant.getFeatures()){
-                if (f.getBoundDomain() != null){
-                    Feature bound = f.getBoundDomain();
-
-                    if (bound.getBoundDomain() != null && f.getAc() != null && f.getAc().equalsIgnoreCase(bound.getBoundDomain().getAc())){
-                        bound.setBoundDomain(null);
-                        getPersistenceController().doSave(bound);
-                    }
-                    else if (bound.getBoundDomain() != null && f.getAc() == null && f.equals(bound.getBoundDomain())){
-                        bound.setBoundDomain(null);
-                        getPersistenceController().doSave(bound);
-                    }
-
-                    f.setBoundDomain(null);
-                }
-            }
-        }
-
-        return super.doDelete();
-    }
-
-    public void markFeatureToDelete(Feature feature) {
+    public void markFeatureToDelete(AbstractIntactFeature feature) {
 
         // don't forget to unlink features first
         if (feature.getAc() == null) {
-            if (feature.getBoundDomain() != null){
-                Feature bound = feature.getBoundDomain();
-
-                if (bound.getBoundDomain() != null && bound.getBoundDomain().equals(feature)){
-                    bound.setBoundDomain(null);
-                    getChangesController().markAsUnsaved(bound);
-                }
-                feature.setBoundDomain(null);
+            for (Object object : feature.getLinkedFeatures()){
+               Feature linked = (Feature)object;
+                linked.getLinkedFeatures().remove(feature);
             }
+            feature.getLinkedFeatures().clear();
             participant.removeFeature(feature);
         } else {
-            if (feature.getBoundDomain() != null){
-                Feature bound = feature.getBoundDomain();
-
-                if (bound.getBoundDomain() != null && feature.getAc().equalsIgnoreCase(bound.getBoundDomain().getAc())){
-                    bound.setBoundDomain(null);
-                    getChangesController().markAsUnsaved(bound);
-                }
-                feature.setBoundDomain(null);
+            for (Object object : feature.getLinkedFeatures()){
+                Feature linked = (Feature)object;
+                linked.getLinkedFeatures().remove(feature);
             }
-
-            getChangesController().markToDelete(feature, feature.getComponent());
+            feature.getLinkedFeatures().clear();
+            Collection<String> parents = collectParentAcsOfCurrentAnnotatedObject();
+            if (this.participant.getAc() != null){
+                parents.add(this.participant.getAc());
+            }
+            getChangesController().markToDelete(feature, (AbstractIntactParameter)feature.getParticipant(),
+                    getEditorService().getIntactDao().getSynchronizerContext().getFeatureSynchronizer(), "Feature "+feature.getShortName(), parents);
         }
     }
 
     public void deleteSelectedFeatures(ActionEvent evt) {
-        for (Feature feature : selectedFeatures) {
-            markFeatureToDelete(feature);
+        for (FeatureWrapper feature : selectedFeatures) {
+            markFeatureToDelete(feature.getFeature());
         }
 
         addInfoMessage("Features to be deleted", selectedFeatures.length+" have been marked to be deleted");
     }
 
     public String getAc() {
-        if ( ac == null && participant != null ) {
-            return participant.getAc();
-        }
         return ac;
+    }
+
+    @Override
+    public int getXrefsSize() {
+        if (participant == null){
+            return 0;
+        }
+        else if (participant.areXrefsInitialized()){
+            return participant.getXrefs().size();
+        }
+        else{
+            return getParticipantEditorService().countXrefs(this.participant);
+        }
+    }
+
+    @Override
+    public int getAliasesSize() {
+        if (participant == null){
+            return 0;
+        }
+        else{
+            return getParticipantEditorService().countAliases(this.participant);
+        }
+    }
+
+    @Override
+    public int getAnnotationsSize() {
+        if (participant == null){
+            return 0;
+        }
+        else {
+            return participant.getAnnotations().size();
+        }
+    }
+
+    public int getCausalityStatementsSize() {
+        if (participant == null){
+            return 0;
+        }
+        else if (participant.areCausalRelationshipsInitialized()){
+            return participant.getCausalRelationships().size();
+        }
+        else{
+            return getParticipantEditorService().countCausalityStatements(this.participant);
+        }
     }
 
     public void setAc( String ac ) {
         this.ac = ac;
     }
 
-    public Component getParticipant() {
+    public T getParticipant() {
         return participant;
     }
 
-    public ParticipantWrapper getParticipantWrapper() {
-        return new ParticipantWrapper( participant, getChangesController(), interactionController );
-    }
-
-    @Override
-    public void refreshTabsAndFocusXref(){
-        refreshTabs();
-    }
-
-    @Override
-    public void refreshTabs(){
-        super.refreshTabsAndFocusXref();
-        this.isConfidenceDisabled = true;
-        this.isParameterDisabled = true;
-    }
-
-    public void setParticipant( Component participant ) {
+    public void setParticipant( T participant ) {
         this.participant = participant;
 
         if (participant != null){
             this.ac = participant.getAc();
+
+            initialiseDefaultProperties(participant);
         }
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String getAuthorGivenName() {
-        return findAliasName( CvAliasType.AUTHOR_ASSIGNED_NAME_MI_REF );
-    }
-
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public void setAuthorGivenName( String name ) {
-        addOrReplace(CvAliasType.AUTHOR_ASSIGNED_NAME_MI_REF, name  );
-    }
-
-    public CvExperimentalPreparation getFirstExperimentalPreparation( Component participant ) {
-        if( participant.getInteractor() != null ) {
-            if( ! participant.getExperimentalPreparations().isEmpty() ) {
-                return participant.getExperimentalPreparations().iterator().next();
-            }
-        }
-
-        return null;
-    }
-
-    public String participantPrimaryId(Component component) {
+    public String participantPrimaryId(T component) {
         if (component == null) return null;
-        if (component.getInteractor() == null) return null;
 
-        final Collection<InteractorXref> xrefs = XrefUtils.getIdentityXrefs(component.getInteractor());
+        if (component.getInteractor() instanceof IntactInteractor && !((IntactInteractor)participant.getInteractor()).areXrefsInitialized()){
+            component = getParticipantEditorService().reloadFullyInitialisedParticipant(component);
+        }
+
+        final Collection<Xref> xrefs = component.getInteractor().getIdentifiers();
 
         if (xrefs.isEmpty()) {
-            return component.getInteractor().getAc();
+            if (component.getInteractor() instanceof IntactInteractor){
+                return ((IntactInteractor)component.getInteractor()).getAc();
+            }
+            else{
+                return component.getInteractor().getShortName();
+            }
         }
 
         return joinIds(xrefs);
     }
 
-    private String joinIds(Collection<InteractorXref> xrefs) {
+    private String joinIds(Collection<Xref> xrefs) {
         Collection<String> ids = new ArrayList<String>(xrefs.size());
 
-        for (InteractorXref xref : xrefs) {
-            ids.add(xref.getPrimaryId());
+        for (Xref xref : xrefs) {
+            ids.add(xref.getId());
         }
 
         return StringUtils.join(ids, ", ");
@@ -609,138 +421,16 @@ public class AbstractParticipantController extends ParameterizableObjectControll
         this.interactorCandidates = interactorCandidates;
     }
 
-    public Feature[] getSelectedFeatures() {
+    public FeatureWrapper[] getSelectedFeatures() {
         return selectedFeatures;
     }
 
-    public void setSelectedFeatures(Feature[] selectedFeatures) {
+    public void setSelectedFeatures(FeatureWrapper[] selectedFeatures) {
         this.selectedFeatures = selectedFeatures;
     }
 
-    public Feature getFeatureToLink1() {
-        return featureToLink1;
-    }
-
-    public void setFeatureToLink1(Feature featureToLink1) {
-        this.featureToLink1 = featureToLink1;
-    }
-
-    public Feature getFeatureToLink2() {
-        return featureToLink2;
-    }
-
-    public void setFeatureToLink2(Feature featureToLink2) {
-        this.featureToLink2 = featureToLink2;
-    }
-
-    public Range getRangeFeatureLinked1() {
-        return rangeFeatureLinked1;
-    }
-
-    public void setRangeFeatureLinked1(Range rangeFeatureLinked1) {
-        this.rangeFeatureLinked1 = rangeFeatureLinked1;
-    }
-
-    public Range getRangeFeatureLinked2() {
-        return rangeFeatureLinked2;
-    }
-
-    public void setRangeFeatureLinked2(Range rangeFeatureLinked2) {
-        this.rangeFeatureLinked2 = rangeFeatureLinked2;
-    }
-
-    public List<SelectItem> getFeatureToLink1RangeSelectItems() {
-        return featureToLink1RangeSelectItems;
-    }
-
-    public void setFeatureToLink1RangeSelectItems(List<SelectItem> featureToLink1RangeSelectItems) {
-        this.featureToLink1RangeSelectItems = featureToLink1RangeSelectItems;
-    }
-
-    public List<SelectItem> getFeatureToLink2RangeSelectItems() {
-        return featureToLink2RangeSelectItems;
-    }
-
-    public void setFeatureToLink2RangeSelectItems(List<SelectItem> featureToLink2RangeSelectItems) {
-        this.featureToLink2RangeSelectItems = featureToLink2RangeSelectItems;
-    }
-
-    // Confidence
-    ///////////////////////////////////////////////
-
-    public void newConfidence() {
-        ComponentConfidence confidence = new ComponentConfidence();
-        participant.addConfidence(confidence);
-    }
-
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List<ComponentConfidence> getConfidences() {
-        if (participant == null) return Collections.EMPTY_LIST;
-
-        final List<ComponentConfidence> confidences = new ArrayList<ComponentConfidence>( IntactCore.ensureInitializedComponentConfidences(participant) );
-        Collections.sort( confidences, new IntactObjectComparator() );
-        return confidences;
-    }
-
-    @Override
-    public List<Parameter> getParameters() {
-        return super.getParameters();
-    }
-
-    public DataModel<Feature> getFeaturesDataModel() {
+    public DataModel<FeatureWrapper> getFeaturesDataModel() {
         return featuresDataModel;
-    }
-
-    public CvExperimentalRole getFirstExperimentalRole() {
-        if( ! participant.getExperimentalRoles().isEmpty() ) {
-            return participant.getExperimentalRoles().iterator().next();
-        }
-        return null;
-    }
-
-    public void setFirstExperimentalRole(CvExperimentalRole role) {
-        if( ! participant.getExperimentalRoles().contains(role) && role != null) {
-            participant.getExperimentalRoles().clear();
-            participant.getExperimentalRoles().add( role );
-        }
-    }
-
-    public boolean isParameterDisabled() {
-        return isParameterDisabled;
-    }
-
-    public void setParameterDisabled(boolean parameterDisabled) {
-        isParameterDisabled = parameterDisabled;
-    }
-
-    public boolean isConfidenceDisabled() {
-        return isConfidenceDisabled;
-    }
-
-    public void setConfidenceDisabled(boolean confidenceDisabled) {
-        isConfidenceDisabled = confidenceDisabled;
-    }
-
-    @Override
-    public void modifyClone(AnnotatedObject clone) {
-
-        updateParametersExperiment((Component)clone);
-
-        refreshTabs();
-    }
-
-    private void updateParametersExperiment(Component component) {
-        if (component.getInteraction() != null){
-            if (!component.getInteraction().getExperiments().isEmpty()){
-                Experiment exp = component.getInteraction().getExperiments().iterator().next();
-                // update component parameters if any
-                if (!component.getParameters().isEmpty()){
-                    for (ComponentParameter param : component.getParameters()){
-                        param.setExperiment(exp);
-                    }
-                }
-            }
-        }
     }
 
     public void onTabChanged(TabChangeEvent e) {
@@ -750,185 +440,305 @@ public class AbstractParticipantController extends ParameterizableObjectControll
 
         // all the tabs selectOneMenu are disabled, we can process the tabs specific to interaction
         if (isAliasDisabled() && isXrefDisabled() && isAnnotationTopicDisabled()){
-            if (e.getTab().getId().equals("parametersTab")){
-                isParameterDisabled = false;
-                isConfidenceDisabled = true;
+            if (e.getTab().getId().equals("featureTab")){
+                isFeatureDisabled = false;
+                isCausalRelationshipDisabled = true;
             }
-            else if (e.getTab().getId().equals("confidencesTab")){
-                isParameterDisabled = true;
-                isConfidenceDisabled = false;
+            else if (e.getTab().getId().equals("causalityTab")){
+                isFeatureDisabled = true;
+                isCausalRelationshipDisabled = false;
             }
             else {
-                isParameterDisabled = true;
-                isConfidenceDisabled = true;
+                isCausalRelationshipDisabled = true;
+                isFeatureDisabled = true;
             }
         }
         else {
-            isParameterDisabled = true;
-            isConfidenceDisabled = true;
+            isCausalRelationshipDisabled = true;
+            isFeatureDisabled = true;
         }
     }
 
-    public CvExperimentalPreparation getPreparationToAdd() {
-        return preparationToAdd;
+    public void refreshFeatures() {
+        if (!this.participant.areFeaturesInitialized()){
+            setParticipant(getParticipantEditorService().initialiseFeatures(this.participant));
+        }
+        List<FeatureWrapper> wrappers = new ArrayList<FeatureWrapper>(this.participant.getFeatures().size());
+
+        for ( Object obj : this.participant.getFeatures() ) {
+            wrappers.add( new FeatureWrapper( (AbstractIntactFeature)obj ) );
+        }
+
+        featuresDataModel = new SelectableDataModelWrapper(new SelectableCollectionDataModel<FeatureWrapper>(wrappers), wrappers);
     }
 
-    public void setPreparationToAdd(CvExperimentalPreparation preparationToAdd) {
-        this.preparationToAdd = preparationToAdd;
+
+    public void reloadSingleFeature(AbstractIntactFeature f){
+        if (!this.participant.areFeaturesInitialized()){
+            setParticipant(getParticipantEditorService().initialiseFeatures(this.participant));
+        }
+        Iterator<? extends Feature> evIterator = participant.getFeatures().iterator();
+        boolean add = true;
+        while (evIterator.hasNext()){
+            AbstractIntactFeature intactEv = (AbstractIntactFeature)evIterator.next();
+            if (intactEv.getAc() == null && f == intactEv){
+                add = false;
+            }
+            else if (intactEv.getAc() != null && !intactEv.getAc().equals(f.getAc())){
+                evIterator.remove();
+            }
+        }
+
+        if (add){
+            participant.getFeatures().add(f);
+        }
+
+        refreshFeatures();
     }
 
-    public CvIdentification getIdentificationToAdd() {
-        return identificationToAdd;
+    public void removeFeature(AbstractIntactFeature f){
+        if (!this.participant.areFeaturesInitialized()){
+            setParticipant(getParticipantEditorService().initialiseFeatures(this.participant));
+        }
+        Iterator<? extends Feature> evIterator = participant.getFeatures().iterator();
+        while (evIterator.hasNext()){
+            AbstractIntactFeature intactEv = (AbstractIntactFeature)evIterator.next();
+            if (intactEv.getAc() == null && f == intactEv){
+                evIterator.remove();
+            }
+            else if (intactEv.getAc() != null && !intactEv.getAc().equals(f.getAc())){
+                evIterator.remove();
+            }
+        }
+
+        refreshFeatures();
     }
 
-    public void setIdentificationToAdd(CvIdentification identificationToAdd) {
-        this.identificationToAdd = identificationToAdd;
-    }
     @Override
-    public void doSave(boolean refreshCurrentView) {
-        ChangesController changesController = (ChangesController) getSpringContext().getBean("changesController");
-        PersistenceController persistenceController = getPersistenceController();
-
-        doSaveIntact(refreshCurrentView, changesController, persistenceController);
-    }
-
-    @Override
-    public String doSave() {
-        return super.doSave();
-    }
-
-    @Override
-    public void doSaveIfNecessary(ActionEvent evt) {
-        super.doSaveIfNecessary(evt);
-    }
-
-    @Override
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String clone() {
-
-        String value = super.clone(getAnnotatedObject(), newClonerInstance());
-
-        return value;
-    }
-
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String getCautionMessage() {
-        if (participant == null){
-            return null;
+    protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
+        T part = (T) annotatedObject;
+        if (!part.areAnnotationsInitialized()
+                || !isCvInitialised(part.getBiologicalRole())
+                || !isInitialisedFeatures(part.getFeatures())
+                || !isInitialisedInteractor(part.getInteractor())
+                || !isInitialisedOtherProperties(part)) {
+            this.participant = getParticipantEditorService().reloadFullyInitialisedParticipant(part);
         }
-        if (!Hibernate.isInitialized(participant.getAnnotations())){
-            return getAnnotatedObjectHelper().findAnnotationText(getDaoFactory().getComponentDao().getByAc(participant.getAc()),
-                    CvTopic.CAUTION_MI_REF, getDaoFactory());
-        }
-        return findAnnotationText(CvTopic.CAUTION_MI_REF);
+
+        featuresDataModel = new SelectableDataModelWrapper(new SelectableCollectionDataModel<Feature>(participant.getFeatures()), participant.getFeatures());
+
+        interactor = participant.getInteractor().getShortName();
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String getInternalRemarkMessage() {
-        if (participant == null){
-            return null;
+    protected abstract boolean isInitialisedOtherProperties(T part);
+
+    protected boolean isInitialisedFeatures(Collection features){
+        if (!Hibernate.isInitialized(features)){
+             return false;
         }
-        if (!Hibernate.isInitialized(participant.getAnnotations())){
-            return getAnnotatedObjectHelper().findAnnotationText(getDaoFactory().getComponentDao().getByAc(participant.getAc()),
-                    CvTopic.INTERNAL_REMARK, getDaoFactory());
+
+        for (Object f : features){
+            AbstractIntactFeature feature = (AbstractIntactFeature)f;
+            if (!feature.areRangesInitialized()){
+                 return false;
+            }
+            if (!feature.areLinkedFeaturesInitialized()){
+                return false;
+            }
+            for (Object f2 : feature.getLinkedFeatures()){
+                AbstractIntactFeature feature2 = (AbstractIntactFeature)f2;
+                if (!feature2.areLinkedFeaturesInitialized()){
+                     return false;
+                }
+            }
         }
-        return findAnnotationText(CvTopic.INTERNAL_REMARK);
+        return true;
     }
 
+    protected boolean isCvInitialised(CvTerm cv) {
+        if (cv instanceof IntactCvTerm){
+            IntactCvTerm intactCv = (IntactCvTerm)cv;
+            return intactCv.areXrefsInitialized() && intactCv.areAnnotationsInitialized();
+        }
+        return true;
+    }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    protected boolean isInitialisedInteractor(Interactor entity) {
+
+        if (!((IntactInteractor)entity).areXrefsInitialized() || !((IntactInteractor)entity).areAnnotationsInitialized()){
+            return false;
+        }
+        return true;
+    }
+
     public int getFeatureSize() {
-        if (participant != null && Hibernate.isInitialized(participant.getFeatures())){
+        if (participant == null){
+            return 0;
+        }
+        else if (participant.areFeaturesInitialized()){
             return participant.getFeatures().size();
         }
-        else if (participant != null){
-            return getDaoFactory().getFeatureDao().getByComponentAc(participant.getAc()).size();
+        else{
+            return getParticipantEditorService().countFeatures(this.participant);
+        }
+    }
+
+    public List<Annotation> collectAnnotations() {
+        List<Annotation> annotations = new ArrayList<Annotation>(participant.getAnnotations());
+        Collections.sort(annotations, new AuditableComparator());
+        // annotations are always initialised
+        return annotations;
+    }
+
+    public List<CausalRelationship> collectCausalStatements() {
+        if (!participant.areCausalRelationshipsInitialized()){
+            setParticipant(getParticipantEditorService().initialiseCausalRelationships(participant));
+        }
+        List<CausalRelationship> statements = new ArrayList<CausalRelationship>(participant.getCausalRelationships());
+        Collections.sort(statements, new AuditableComparator());
+        // annotations are always initialised
+        return statements;
+    }
+
+    @Override
+    public void removeAlias(Alias alias) {
+        if (!participant.areAliasesInitialized()){
+            setParticipant(getParticipantEditorService().initialiseParticipantAliases(participant));
+        }
+
+        participant.getAliases().remove(alias);
+    }
+
+    public void removeCausalRelationship(CausalRelationship rel) {
+        if (!participant.areCausalRelationshipsInitialized()){
+            setParticipant(getParticipantEditorService().initialiseCausalRelationships(participant));
+        }
+
+        participant.getCausalRelationships().remove(rel);
+    }
+
+    public List<Alias> collectAliases() {
+        // aliases are not always initialised
+        if (!participant.areAliasesInitialized()){
+            setParticipant(getParticipantEditorService().initialiseParticipantAliases(this.participant));
+        }
+
+        List<Alias> aliases = new ArrayList<Alias>(this.participant.getAliases());
+        Collections.sort(aliases, new AuditableComparator());
+        return aliases;
+    }
+
+    public List<Xref> collectXrefs() {
+        // causal statements are not always initialised
+        if (!participant.areCausalRelationshipsInitialized()){
+            setParticipant(getParticipantEditorService().initialiseParticipantXrefs(this.participant));
+        }
+
+        List<Xref> xrefs = new ArrayList<Xref>(this.participant.getXrefs());
+        Collections.sort(xrefs, new AuditableComparator());
+        return xrefs;
+    }
+
+    @Override
+    public void removeXref(Xref xref) {
+        // causal statements are not always initialised
+        if (!participant.areCausalRelationshipsInitialized()){
+            setParticipant(getParticipantEditorService().initialiseParticipantXrefs(this.participant));
+        }
+        this.participant.getXrefs().remove(xref);
+    }
+
+    @Override
+    public void removeAnnotation(Annotation annotation) {
+         this.participant.getAnnotations().remove(annotation);
+    }
+
+    public ParticipantEditorService getParticipantEditorService() {
+        if (this.participantEditorService == null){
+            this.participantEditorService = ApplicationContextProvider.getBean("participantEditorService");
+        }
+        return participantEditorService;
+    }
+
+    public boolean isFeatureDisabled() {
+        return isFeatureDisabled;
+    }
+
+    public boolean isCausalRelationshipDisabled() {
+        return isCausalRelationshipDisabled;
+    }
+
+    public CvTerm getStatementToAdd() {
+        return statementToAdd;
+    }
+
+    public void setStatementToAdd(CvTerm statementToAdd) {
+        this.statementToAdd = statementToAdd;
+    }
+
+    public Participant getTargetToAdd() {
+        return targetToAdd;
+    }
+
+    public void setTargetToAdd(Participant targetToAdd) {
+        this.targetToAdd = targetToAdd;
+    }
+
+    public void newCausalRelationship(ActionEvent evt) {
+        // relationships are not always initialised
+        if (!participant.areCausalRelationshipsInitialized()){
+            setParticipant(getParticipantEditorService().initialiseCausalRelationships(participant));
+        }
+        if (this.targetToAdd != null && this.statementToAdd != null){
+            participant.getCausalRelationships().add(createCausalStatement(this.statementToAdd, this.targetToAdd));
+            setUnsavedChanges(true);
+        }
+    }
+
+    public List<SelectItem> getParticipantTargets() {
+        return participantTargets;
+    }
+
+    protected abstract CausalRelationship createCausalStatement(CvTerm statementToAdd, Participant targetToAdd);
+
+    @Override
+    protected boolean areXrefsInitialised() {
+        return this.participant != null && this.participant.areXrefsInitialized();
+    }
+
+    public int getMinStoichiometry(){
+        return this.participant.getStoichiometry() != null ? this.participant.getStoichiometry().getMinValue() : 0;
+    }
+
+    public int getMaxStoichiometry(){
+        return this.participant.getStoichiometry() != null ? this.participant.getStoichiometry().getMaxValue() : 0;
+    }
+
+    public void setMinStoichiometry(int stc){
+        if (this.participant.getStoichiometry() == null){
+            this.participant.setStoichiometry(new IntactStoichiometry(stc));
         }
         else {
-            return 0;
+            Stoichiometry stoichiometry = participant.getStoichiometry();
+            this.participant.setStoichiometry(new IntactStoichiometry(stc, Math.max(stc, stoichiometry.getMaxValue())));
         }
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int getParameterSize() {
-        if (participant != null && Hibernate.isInitialized(participant.getParameters())){
-            return participant.getParameters().size();
-        }
-        else if (participant != null){
-            return getDaoFactory().getComponentParameterDao().getByComponentAc(participant.getAc()).size();
+    public void setMaxStoichiometry(int stc){
+        if (this.participant.getStoichiometry() == null){
+            this.participant.setStoichiometry(new IntactStoichiometry(stc));
         }
         else {
-            return 0;
+            Stoichiometry stoichiometry = participant.getStoichiometry();
+            this.participant.setStoichiometry(new IntactStoichiometry(Math.min(stc, stoichiometry.getMinValue()), stc));
         }
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int getConfidenceSize() {
-        if (participant != null && Hibernate.isInitialized(participant.getConfidences())){
-            return participant.getConfidences().size();
-        }
-        else if (participant != null){
-            return getDaoFactory().getComponentConfidenceDao().getByComponentAc(participant.getAc()).size();
-        }
-        else {
-            return 0;
-        }
+    public String getParticipantPrimaryId() {
+        return this.participantId;
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List collectAnnotations() {
-        return super.collectAnnotations();
-    }
-
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List collectAliases() {
-        return super.collectAliases();
-    }
-
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List collectXrefs() {
-        return super.collectXrefs();
-    }
-
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List<CvExperimentalPreparation> getExperimentalPreparations() {
-        if (participant == null){
-            return Collections.EMPTY_LIST;
-        }
-        return new ArrayList<CvExperimentalPreparation>(IntactCore.ensureInitializedExperimentalPreparations(participant));
-    }
-
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List<CvIdentification> getIdentificationMethods() {
-        if (participant == null){
-            return Collections.EMPTY_LIST;
-        }
-        return new ArrayList<CvIdentification>(IntactCore.ensureInitializedParticipantIdentificationMethods(participant));
-    }
-
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public boolean isExperimentalPreparationsListEmpty() {
-        if (participant == null){
-            return true;
-        }
-        else if (Hibernate.isInitialized(participant.getExperimentalPreparations())){
-            return participant.getExperimentalPreparations().isEmpty();
-        }
-        else {
-            return getDaoFactory().getComponentDao().getExperimentalPreparationsForComponentAc(participant.getAc()).isEmpty();
-        }
-    }
-
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public boolean isIdentificationMethodsListEmpty() {
-        if (participant == null){
-            return true;
-        }
-        else if (Hibernate.isInitialized(participant.getParticipantDetectionMethods())){
-            return participant.getParticipantDetectionMethods().isEmpty();
-        }
-        else {
-            return getDaoFactory().getComponentDao().getParticipantIdentificationMethodsForComponentAc(participant.getAc()).isEmpty();
-        }
+    public boolean isNoUniprotUpdate() {
+        return isNoUniprotUpdate;
     }
 }

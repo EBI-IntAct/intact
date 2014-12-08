@@ -354,11 +354,6 @@ public class EditorObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countXrefs(AbstractIntactParticipant participant) {
-        return getIntactDao().getParticipantDao(AbstractIntactParticipant.class).countXrefsForParticipant(participant.getAc());
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public int countXrefs(IntactExperiment experiment) {
         return getIntactDao().getExperimentDao().countXrefsForExperiment(experiment.getAc());
     }
@@ -371,11 +366,6 @@ public class EditorObjectService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public int countXrefs(IntactInteractionEvidence interaction) {
         return getIntactDao().getInteractionDao().countXrefsForInteraction(interaction.getAc());
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countAnnotations(AbstractIntactParticipant participant) {
-        return getIntactDao().getParticipantDao(AbstractIntactParticipant.class).countAnnotationsForParticipant(participant.getAc());
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)

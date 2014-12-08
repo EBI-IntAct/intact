@@ -32,6 +32,7 @@ import psidev.psi.mi.jami.utils.AnnotationUtils;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
 import uk.ac.ebi.intact.editor.controller.admin.UserManagerController;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
+import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ExperimentCloner;
 import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
@@ -234,20 +235,25 @@ public class ExperimentController extends AnnotatedObjectController {
         // only update if not lazy loaded
         if (experiment.areInteractionEvidencesInitialized()){
             Iterator<InteractionEvidence> evIterator = experiment.getInteractionEvidences().iterator();
+            boolean add = true;
             while (evIterator.hasNext()){
                 IntactInteractionEvidence intactEv = (IntactInteractionEvidence)evIterator.next();
                 if (intactEv.getAc() == null && ev == intactEv){
-                    evIterator.remove();
+                    add = false;
                 }
                 else if (intactEv.getAc() != null && !intactEv.getAc().equals(ev.getAc())){
                     evIterator.remove();
                 }
             }
-            experiment.getInteractionEvidences().add(ev);
+            if (add){
+                experiment.getInteractionEvidences().add(ev);
+            }
         }
         else{
             refreshInteractions();
         }
+
+        publicationController.reloadSingleExperiment(experiment);
     }
 
     public void removeInteractionEvidence(IntactInteractionEvidence ev){
@@ -267,6 +273,8 @@ public class ExperimentController extends AnnotatedObjectController {
         else{
             refreshInteractions();
         }
+
+        publicationController.reloadSingleExperiment(experiment);
     }
 
     @Override
@@ -934,5 +942,17 @@ public class ExperimentController extends AnnotatedObjectController {
 
     public boolean isInteractionTab() {
         return isInteractionTab;
+    }
+
+    @Override
+    protected void postProcessDeletedEvent(UnsavedChange unsaved) {
+        if (unsaved.getUnsavedObject() instanceof IntactInteractionEvidence){
+            removeInteractionEvidence((IntactInteractionEvidence)unsaved.getUnsavedObject());
+        }
+    }
+
+    @Override
+    protected boolean areXrefsInitialised() {
+        return this.experiment != null && this.experiment.areXrefsInitialized();
     }
 }

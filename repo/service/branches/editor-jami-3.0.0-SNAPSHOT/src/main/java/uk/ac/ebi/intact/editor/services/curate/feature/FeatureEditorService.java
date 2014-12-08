@@ -245,6 +245,8 @@ public class FeatureEditorService extends AbstractEditorService {
     }
 
     private void initialiseParticipant(Entity participant) {
+        initialiseXrefs(((IntactInteractor)participant.getInteractor()).getDbXrefs());
+
         if (participant.getInteractor() instanceof IntactPolymer){
             // load sequence
             ((Polymer) participant.getInteractor()).getSequence();

@@ -1540,4 +1540,46 @@ public class ComplexController extends AnnotatedObjectController {
 
         doSaveJami(refreshCurrentView, changesController, persistenceController);
     }
+
+    public void reloadSingleParticipant(IntactModelledParticipant f){
+        if (!this.participant.areFeaturesInitialized()){
+            setParticipant(getParticipantEditorService().initialiseFeatures(this.participant));
+        }
+        Iterator<? extends psidev.psi.mi.jami.model.Feature> evIterator = participant.getFeatures().iterator();
+        boolean add = true;
+        while (evIterator.hasNext()){
+            AbstractIntactFeature intactEv = (AbstractIntactFeature)evIterator.next();
+            if (intactEv.getAc() == null && f == intactEv){
+                add = false;
+            }
+            else if (intactEv.getAc() != null && !intactEv.getAc().equals(f.getAc())){
+                evIterator.remove();
+            }
+        }
+
+        if (add){
+            participant.getFeatures().add(f);
+        }
+
+        refreshFeatures();
+    }
+
+    public void removeParticipant(IntactModelledParticipant f){
+        if (!this.participant.areFeaturesInitialized()){
+            setParticipant(getParticipantEditorService().initialiseFeatures(this.participant));
+        }
+        Iterator<? extends psidev.psi.mi.jami.model.Feature> evIterator = participant.getFeatures().iterator();
+        while (evIterator.hasNext()){
+            AbstractIntactFeature intactEv = (AbstractIntactFeature)evIterator.next();
+            if (intactEv.getAc() == null && f == intactEv){
+                evIterator.remove();
+            }
+            else if (intactEv.getAc() != null && !intactEv.getAc().equals(f.getAc())){
+                evIterator.remove();
+            }
+        }
+
+        refreshFeatures();
+    }
+
 }
