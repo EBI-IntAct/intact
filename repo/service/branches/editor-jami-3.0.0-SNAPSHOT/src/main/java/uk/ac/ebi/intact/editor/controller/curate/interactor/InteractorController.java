@@ -420,13 +420,18 @@ public class InteractorController extends AnnotatedObjectController {
     }
 
     @Override
+    public boolean isXrefNotEditable(Xref ref) {
+        return false;
+    }
+
+    @Override
     public IntactDbSynchronizer getDbSynchronizer() {
         return getEditorService().getIntactDao().getSynchronizerContext().getInteractorSynchronizer();
     }
 
     @Override
     public String getObjectName() {
-        return interactor != null ? interactor.getInteractorType().getShortName() : "Interactor";
+        return interactor != null ? interactor.getShortName() : null;
     }
 
     public List<Annotation> collectAnnotations() {

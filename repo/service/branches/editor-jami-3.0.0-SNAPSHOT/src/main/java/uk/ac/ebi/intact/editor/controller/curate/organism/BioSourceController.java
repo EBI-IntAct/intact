@@ -225,13 +225,18 @@ public class BioSourceController extends AnnotatedObjectController {
     }
 
     @Override
+    public boolean isXrefNotEditable(Xref ref) {
+        return false;
+    }
+
+    @Override
     public IntactDbSynchronizer getDbSynchronizer() {
         return getEditorService().getIntactDao().getSynchronizerContext().getOrganismSynchronizer();
     }
 
     @Override
     public String getObjectName() {
-        return "BioSource";
+        return this.bioSource != null ? this.bioSource.getCommonName() : null;
     }
 
     @Override

@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.editor.controller.curate.publication;
+package uk.ac.ebi.intact.editor.services.curate.publication;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
+import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 
-import javax.annotation.PostConstruct;
-import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.persistence.Query;
 import java.util.ArrayList;
@@ -34,31 +32,35 @@ import java.util.List;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-@Controller( "datasetPopulator" )
-@Lazy
-public class DatasetPopulator extends JpaAwareController {
+@Service
+public class DatasetPopulator extends AbstractEditorService {
 
     private static final Log log = LogFactory.getLog( DatasetPopulator.class );
 
     private List<String> allDatasets;
     private List<SelectItem> allDatasetSelectItems;
 
+    private boolean isInitialised = false;
+
     public DatasetPopulator() {
 
     }
 
-    @PostConstruct
-    public void loadData() {
-        refresh( null );
+    public synchronized void clearAll(){
+        if (isInitialised){
+            this.allDatasets=null;
+            this.allDatasetSelectItems=null;
+            isInitialised=false;
+        }
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public void refresh( ActionEvent evt ) {
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public synchronized void loadData( ) {
         if ( log.isInfoEnabled() ) log.info( "Loading datasets" );
 
-        final Query query = getCoreEntityManager()
-                .createQuery( "select distinct(a.annotationText) from Annotation a where a.cvTopic.identifier = :datasetTopicId order by a.annotationText asc" );
-        query.setParameter( "datasetTopicId", CvTopic.DATASET_MI_REF );
+        final Query query = getIntactDao().getEntityManager()
+                .createQuery("select distinct(a.value) from Annotation a where a.topic.shortName = :datasetTopic order by a.value asc");
+        query.setParameter( "datasetTopic", PublicationController.DATASET);
 
         allDatasets = query.getResultList();
 
@@ -93,5 +95,9 @@ public class DatasetPopulator extends JpaAwareController {
         }
 
         return selectItem;
+    }
+
+    public boolean isInitialised() {
+        return isInitialised;
     }
 }

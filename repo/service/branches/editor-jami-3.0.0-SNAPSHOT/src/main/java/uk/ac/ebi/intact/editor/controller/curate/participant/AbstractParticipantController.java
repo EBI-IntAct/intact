@@ -528,6 +528,13 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
         featuresDataModel = new SelectableDataModelWrapper(new SelectableCollectionDataModel<Feature>(participant.getFeatures()), participant.getFeatures());
 
         interactor = participant.getInteractor().getShortName();
+
+        setDescription("Participant: "+(participant.getAc() != null ? participant.getAc(): participant.getInteractor().getShortName()));
+    }
+
+    @Override
+    public String getObjectName() {
+        return participant != null && participant.getAc() != null ? participant.getAc() : participantId;
     }
 
     protected abstract boolean isInitialisedOtherProperties(T part);
@@ -787,5 +794,10 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
 
         wrapper.getLinkedFeatures().clear();
         wrapper.getLinkedFeatures().addAll(feature1.getLinkedFeatures());
+    }
+
+    @Override
+    public boolean isXrefNotEditable(Xref ref) {
+        return false;
     }
 }

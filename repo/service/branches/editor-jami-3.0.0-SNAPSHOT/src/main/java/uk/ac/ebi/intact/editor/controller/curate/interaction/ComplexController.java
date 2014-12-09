@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.hibernate.Hibernate;
+import org.joda.time.DateTime;
 import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AliasUtils;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
+import psidev.psi.mi.jami.utils.PublicationUtils;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
 import uk.ac.ebi.intact.editor.controller.admin.UserManagerController;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
@@ -54,6 +56,7 @@ import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.LifecycleEvent;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -1581,5 +1584,29 @@ public class ComplexController extends AnnotatedObjectController {
 
         refreshFeatures();
     }
+    public boolean isBackToCurationButtonRendered() {
+        return isButtonRendered(LifeCycleEventType.READY_FOR_CHECKING);
+    }
 
+    public boolean isBackToCheckingButtonRendered() {
+        boolean render = isButtonRendered(LifeCycleEvent.READY_FOR_RELEASE);
+
+        if (!render) {
+            render = isButtonRendered(CvLifecycleEventType.ACCEPTED);
+        }
+
+        return render;
+    }
+
+    private boolean isButtonRendered(CvLifecycleEventType eventType) {
+        LifecycleEvent event = PublicationUtils.getLastEventOfType(publication, eventType.identifier());
+
+        if (event == null) {
+            return false;
+        }
+
+        DateTime eventTime = new DateTime(event.getWhen());
+
+        return new DateTime().isBefore(eventTime.plusMinutes(getEditorConfig().getRevertDecisionTime()));
+    }
 }

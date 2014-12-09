@@ -308,11 +308,6 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     }
 
     @Override
-    public String getObjectName() {
-        return "Feature";
-    }
-
-    @Override
     public void newAlias(ActionEvent evt) {
         // aliases are not always initialised
         if (!getFeature().areAliasesInitialized()){

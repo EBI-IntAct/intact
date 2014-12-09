@@ -97,9 +97,10 @@
                 <h:outputLabel value="Author given name: " for="authorGivenNameTxt"/>
             </td>
             <td colspan="2">
-                <p:inputText id="authorGivenNameTxt" value="#{participantController.authorGivenName}" size="10" converter="trimmingConverter">
-                    <p:ajax event="change" update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:participantTabs,:editorForm:messagesComponent" process="@this"/>
-                </p:inputText>
+                <p:inputTextarea id="authorGivenNameTxt" value="#{participantController.authorGivenName}" size="70"
+                                 valueChangeListener="#{complexController.onAuthorAssignedNameChanged}">
+                    <ed:curation/>
+                </p:inputTextarea>
             </td>
         </tr>
         <tr>

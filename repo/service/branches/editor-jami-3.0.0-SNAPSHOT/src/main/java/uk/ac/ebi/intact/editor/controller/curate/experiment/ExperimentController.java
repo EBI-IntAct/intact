@@ -354,9 +354,6 @@ public class ExperimentController extends AnnotatedObjectController {
         if (experiment.getPublication() != null) {
             publicationController.reloadSingleExperiment(experiment);
         }
-        // refresh all interactions after saving
-        refreshInteractions();
-        publicationController.refreshDataModels();
         this.valuesToDeleteOnSave.clear();
     }
 
@@ -389,7 +386,7 @@ public class ExperimentController extends AnnotatedObjectController {
         experiment.setShortLabel(IntactUtils.generateAutomaticExperimentShortlabelFor(experiment, IntactUtils.MAX_SHORT_LABEL_LEN));
 
         if (publicationController.getPublication() != publication){
-            publicationController.setPublication(publication);
+            publicationController.setPublication((IntactPublication)publication);
         }
 
         if (publication.getPubmedId() != null) {
@@ -488,7 +485,7 @@ public class ExperimentController extends AnnotatedObjectController {
     private void globalPublicationDecision() {
         int expAccepted = getExperimentService().countAcceptedExperiments(publicationController.getAc());
         int expRejected = getExperimentService().countRejectedExperiments(publicationController.getAc());
-        int expSize = publicationController.getExperimentSize();
+        int expSize = publicationController.getExperimentsSize();
 
         boolean allActedUpon = ((expRejected+expAccepted) == expSize);
         boolean allAccepted = expAccepted == expSize;
@@ -531,28 +528,24 @@ public class ExperimentController extends AnnotatedObjectController {
         setUnsavedChanges(true);
         String newValue = (String) evt.getNewValue();
         if (newValue != null && newValue.length() > 0){
-            if (newValue != null){
-                updateAnnotation(Releasable.TO_BE_REVIEWED, null, newValue, experiment.getAnnotations());
-            }
-            else{
-                removeAnnotation(Releasable.TO_BE_REVIEWED, null, experiment.getAnnotations());
-            }
-            this.reasonForRejection = newValue;
+            updateAnnotation(Releasable.TO_BE_REVIEWED, null, newValue, experiment.getAnnotations());
         }
+        else{
+            removeAnnotation(Releasable.TO_BE_REVIEWED, null, experiment.getAnnotations());
+        }
+        this.reasonForRejection = newValue;
     }
 
     public void onCorrectionCommentChanged(ValueChangeEvent evt) {
         setUnsavedChanges(true);
         String newValue = (String) evt.getNewValue();
         if (newValue != null && newValue.length() > 0){
-            if (newValue != null){
-                updateAnnotation(Releasable.CORRECTION_COMMENT, null, newValue, experiment.getAnnotations());
-            }
-            else{
-                removeAnnotation(Releasable.CORRECTION_COMMENT, null, experiment.getAnnotations());
-            }
-            this.correctedComment = newValue;
+            updateAnnotation(Releasable.CORRECTION_COMMENT, null, newValue, experiment.getAnnotations());
         }
+        else{
+            removeAnnotation(Releasable.CORRECTION_COMMENT, null, experiment.getAnnotations());
+        }
+        this.correctedComment = newValue;
     }
 
     public void removeToBeReviewed(ActionEvent evt){
@@ -795,13 +788,18 @@ public class ExperimentController extends AnnotatedObjectController {
     }
 
     @Override
+    public boolean isXrefNotEditable(Xref ref) {
+        return false;
+    }
+
+    @Override
     public IntactDbSynchronizer getDbSynchronizer() {
         return getEditorService().getIntactDao().getSynchronizerContext().getExperimentSynchronizer();
     }
 
     @Override
     public String getObjectName() {
-        return "Experiment";
+        return this.experiment != null ? this.experiment.getShortLabel() : null;
     }
 
     public String getCorrectionComment() {
@@ -946,6 +944,7 @@ public class ExperimentController extends AnnotatedObjectController {
 
     @Override
     protected void postProcessDeletedEvent(UnsavedChange unsaved) {
+        super.postProcessDeletedEvent(unsaved);
         if (unsaved.getUnsavedObject() instanceof IntactInteractionEvidence){
             removeInteractionEvidence((IntactInteractionEvidence)unsaved.getUnsavedObject());
         }

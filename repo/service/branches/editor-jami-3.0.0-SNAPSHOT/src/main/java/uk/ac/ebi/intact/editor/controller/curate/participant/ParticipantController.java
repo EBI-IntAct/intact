@@ -341,14 +341,12 @@ public class ParticipantController extends AbstractParticipantController<IntactP
         setUnsavedChanges(true);
         String newValue = (String) evt.getNewValue();
         if (newValue != null && newValue.length() > 0){
-            if (newValue != null){
-                replaceOrCreateAlias(Alias.AUTHOR_ASSIGNED_NAME, Alias.AUTHOR_ASSIGNED_NAME_MI, newValue, getParticipant().getAliases());
-            }
-            else{
-                removeAlias(Alias.AUTHOR_ASSIGNED_NAME, Alias.AUTHOR_ASSIGNED_NAME_MI, null, getParticipant().getAliases());
-            }
-            this.authorAssignedName = newValue;
+            replaceOrCreateAlias(Alias.AUTHOR_ASSIGNED_NAME, Alias.AUTHOR_ASSIGNED_NAME_MI, newValue, getParticipant().getAliases());
         }
+        else{
+            removeAlias(Alias.AUTHOR_ASSIGNED_NAME, Alias.AUTHOR_ASSIGNED_NAME_MI, null, getParticipant().getAliases());
+        }
+        this.authorAssignedName = newValue;
     }
 
     public void removeAuthorAssignedName(ActionEvent evt){
@@ -482,11 +480,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     @Override
     public IntactDbSynchronizer getDbSynchronizer() {
         return getEditorService().getIntactDao().getSynchronizerContext().getParticipantEvidenceSynchronizer();
-    }
-
-    @Override
-    public String getObjectName() {
-        return "Participant";
     }
 
     public IntactCvTerm getPreparationToAdd() {
@@ -654,9 +647,11 @@ public class ParticipantController extends AbstractParticipantController<IntactP
 
     @Override
     protected void postProcessDeletedEvent(UnsavedChange unsaved) {
+        super.postProcessDeletedEvent(unsaved);
         if (unsaved.getUnsavedObject() instanceof IntactFeatureEvidence){
             removeFeature((IntactFeatureEvidence)unsaved.getUnsavedObject());
         }
+        interactionController.reloadSingleParticipant(getParticipant());
     }
 
     public int getParametersSize() {
