@@ -345,13 +345,18 @@ public class CvObjectController extends AnnotatedObjectController {
     }
 
     @Override
+    public boolean isXrefNotEditable(Xref ref) {
+        return false;
+    }
+
+    @Override
     public IntactDbSynchronizer getDbSynchronizer() {
         return getEditorService().getIntactDao().getSynchronizerContext().getCvSynchronizer(null);
     }
 
     @Override
     public String getObjectName() {
-        return "Cv Object";
+        return this.cvObject != null ? this.cvObject.getShortName() : null;
     }
 
     @Override

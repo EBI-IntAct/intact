@@ -50,24 +50,24 @@
                     <h:outputText value="#{experiment.shortLabel}" style="color:red; text-decoration:line-through"/>
                 </h:panelGroup>
             </p:column>
-             <p:column id="pubAc" rendered="#{readonly}" headerText="Publication ID" sortBy="#{experiment.publication}">
+             <p:column id="pubAc" rendered="#{readonly}" headerText="Publication ID" sortBy="#{experiment.publication.ac}">
                 <ot:separateConversationContext>
-                    <h:link outcome="/curate/publication" value="#{experiment.publication.shortLabel}"
+                    <h:link outcome="/curate/publication" value="#{experiment.publication.pubmedId}"
                             includeViewParams="true">
                         <f:param name="ac" value="#{experiment.publication.ac}"/>
                     </h:link>
                 </ot:separateConversationContext>
             </p:column>
             <p:column id="intDetMeth" headerText="Interaction detection method">
-                <h:outputText value="#{experiment.cvInteraction != null? experiment.cvInteraction.shortLabel : ''}"/>
+                <h:outputText value="#{experiment.interactionDetectionMethod != null? experiment.interactionDetectionMethod.shortName : ''}"/>
             </p:column>
             <p:column id="partDetMeth" headerText="Participant detection method">
                 <h:outputText
-                        value="#{experiment.cvIdentification != null? experiment.cvIdentification.shortLabel : ''}"/>
+                        value="#{experiment.participantIdentificationMethod != null? experiment.participantIdentificationMethod.shortName : ''}"/>
             </p:column>
             <p:column id="hostOrg" headerText="Host organism">
                 <h:outputText
-                        value="#{experiment.bioSource != null? experiment.bioSource.shortLabel : ''} (#{experiment.bioSource != null? experiment.bioSource.taxId : ''})"/>
+                        value="#{experiment.hostOrganism != null? experiment.hostOrganism.commonName : ''} (#{experiment.hostOrganism != null? experiment.hostOrganism.dbTaxId : ''})"/>
             </p:column>
             <p:column id="interactions" headerText="# Interactions">
                 <h:outputText value="#{experimentController.countInteractionsByExperiment(experiment)}"/>

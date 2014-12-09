@@ -155,11 +155,6 @@ public class ModelledFeatureController extends AbstractFeatureController<IntactM
     }
 
     @Override
-    public String getObjectName() {
-        return "Complex feature";
-    }
-
-    @Override
     protected void refreshParentControllers() {
         // different loaded participant
         if (modelledParticipantController.getParticipant() != getFeature().getParticipant()){

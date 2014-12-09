@@ -277,6 +277,11 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         }
     }
 
+    @Override
+    public String getObjectName() {
+        return this.feature != null ? this.feature.getShortName() : null;
+    }
+
     public List<RangeWrapper> getWrappedRanges() {
         return rangeWrappers;
     }
@@ -540,6 +545,7 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
 
     @Override
     protected void postProcessDeletedEvent(UnsavedChange unsaved) {
+        super.postProcessDeletedEvent(unsaved);
         if (unsaved.getUnsavedObject() instanceof AbstractIntactRange){
             // only update if not lazy loaded
             if (feature.areRangesInitialized()){
@@ -567,5 +573,10 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     @Override
     protected boolean areXrefsInitialised() {
         return this.feature != null && this.feature.areXrefsInitialized();
+    }
+
+    @Override
+    public boolean isXrefNotEditable(Xref ref) {
+        return false;
     }
 }

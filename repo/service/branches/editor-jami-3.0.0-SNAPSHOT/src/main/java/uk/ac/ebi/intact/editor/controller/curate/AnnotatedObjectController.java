@@ -16,36 +16,29 @@
 package uk.ac.ebi.intact.editor.controller.curate;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Hibernate;
 import org.primefaces.event.TabChangeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.bridges.exception.BridgeFailedException;
 import psidev.psi.mi.jami.bridges.fetcher.OntologyTermFetcher;
 import psidev.psi.mi.jami.bridges.ols.OlsOntologyTermFetcher;
 import psidev.psi.mi.jami.model.*;
-import psidev.psi.mi.jami.model.Alias;
-import psidev.psi.mi.jami.model.Annotation;
-import psidev.psi.mi.jami.model.Experiment;
-import psidev.psi.mi.jami.model.Interactor;
-import psidev.psi.mi.jami.model.Xref;
 import psidev.psi.mi.jami.utils.AliasUtils;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.editor.controller.BaseController;
-import uk.ac.ebi.intact.editor.controller.UserSessionController;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
-import uk.ac.ebi.intact.editor.services.curate.EditorObjectService;
-import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.ComplexController;
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
+import uk.ac.ebi.intact.editor.services.curate.EditorObjectService;
+import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.editor.services.curate.experiment.ExperimentEditorService;
 import uk.ac.ebi.intact.editor.services.curate.feature.FeatureEditorService;
 import uk.ac.ebi.intact.editor.services.curate.institution.InstitutionService;
 import uk.ac.ebi.intact.editor.services.curate.interactor.InteractorEditorService;
+import uk.ac.ebi.intact.editor.services.curate.participant.ParticipantEditorService;
+import uk.ac.ebi.intact.editor.services.curate.publication.PublicationEditorService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.lifecycle.LifeCycleManager;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
@@ -54,7 +47,6 @@ import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleEvent;
 import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleEventType;
 import uk.ac.ebi.intact.jami.model.lifecycle.Releasable;
-import uk.ac.ebi.intact.jami.model.user.Role;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
@@ -424,7 +416,26 @@ public abstract class AnnotatedObjectController extends BaseController implement
     }
 
     protected void postProcessDeletedEvent(UnsavedChange unsaved){
-         // nothing to do
+        if (unsaved.getParentObject() instanceof Publication){
+            Publication pub = (Publication)unsaved.getParentObject();
+            pub.getExperiments().remove(unsaved.getUnsavedObject());
+        }
+        else if (unsaved.getParentObject() instanceof Experiment){
+            Experiment pub = (Experiment)unsaved.getParentObject();
+            pub.getInteractionEvidences().remove(unsaved.getUnsavedObject());
+        }
+        else if (unsaved.getParentObject() instanceof Interaction){
+            Interaction pub = (Interaction)unsaved.getParentObject();
+            pub.getParticipants().remove(unsaved.getUnsavedObject());
+        }
+        else if (unsaved.getParentObject() instanceof Participant){
+            Participant pub = (Participant)unsaved.getParentObject();
+            pub.getFeatures().remove(unsaved.getUnsavedObject());
+        }
+        else if (unsaved.getParentObject() instanceof Feature){
+            Feature pub = (Feature)unsaved.getParentObject();
+            pub.getRanges().remove(unsaved.getUnsavedObject());
+        }
     }
 
     private IntactPrimaryObject refresh(IntactPrimaryObject annotatedObject) {
@@ -993,7 +1004,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
         Collection<Annotation> annotations = Collections.EMPTY_LIST;
         if (ao instanceof IntactPublication){
             IntactPublication publication = (IntactPublication)ao;
-            annotations = getEditorService().initialisePublicationAnnotations(publication).getAnnotations();
+            annotations = ((PublicationEditorService)ApplicationContextProvider.getBean("publicationEditorService")).initialisePublicationAnnotations(publication).getDbAnnotations();
         }
         else if (ao instanceof IntactExperiment){
             IntactExperiment experiment = (IntactExperiment)ao;
@@ -1005,11 +1016,11 @@ public abstract class AnnotatedObjectController extends BaseController implement
         }
         else if (ao instanceof IntactInteractor){
             IntactInteractor interactor = (IntactInteractor)ao;
-            annotations = ((InteractorEditorService)ApplicationContextProvider.getBean("interactorEditorService")).initialiseInteractorAnnotations(interactor).getAnnotations();
+            annotations = ((InteractorEditorService)ApplicationContextProvider.getBean("interactorEditorService")).initialiseInteractorAnnotations(interactor).getDbAnnotations();
         }
         else if (ao instanceof AbstractIntactParticipant){
             AbstractIntactParticipant participant = (AbstractIntactParticipant)ao;
-            annotations = getEditorService().initialiseParticipantAnnotations(participant).getAnnotations();
+            annotations = ((ParticipantEditorService)ApplicationContextProvider.getBean("participantEditorService")).initialiseParticipantAnnotations(participant).getAnnotations();
         }
         else if (ao instanceof AbstractIntactFeature){
             AbstractIntactFeature participant = (AbstractIntactFeature)ao;
@@ -1207,6 +1218,8 @@ public abstract class AnnotatedObjectController extends BaseController implement
     public abstract boolean isAliasNotEditable(Alias alias);
 
     public abstract boolean isAnnotationNotEditable(Annotation annot);
+
+    public abstract boolean isXrefNotEditable(Xref ref);
 
     /**
      * Bug jsf : selectOneMenu in a tab returns null if not active tab so we disable the selectOneMenu when it is disabled

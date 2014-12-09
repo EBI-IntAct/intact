@@ -28,7 +28,8 @@
                                 <h:outputText value="Database"/>
                             </f:facet>
                             <h:selectOneMenu id="databaseSel" value="#{xref.database}" required="true"
-                                             requiredMessage="Database for xref is required" disabled="#{annotatedObjectController.isXrefDisabled()}"
+                                             requiredMessage="Database for xref is required" disabled="#{annotatedObjectController.isXrefDisabled()
+                                 or annotatedObjectController.isXrefNotEditable(xref)}"
                                              converter="cvObjectConverter">
                                 <f:selectItems value="#{cvObjectService.databaseSelectItems}"/>
                                 <ed:curation/>
@@ -47,7 +48,9 @@
                             <p:inputText id="primaryIdTxt" value="#{xref.id}" widgetVar="primaryTxt_#{xrefIndex}"
                                          size="15" converter="trimmingConverter"
                                          onchange="jsXref_#{xrefIndex}.markSecondaryAsReadOnlyIfNecessary()"
-                                         required="true" requiredMessage="Primary identifier for xref is required">
+                                         required="true" requiredMessage="Primary identifier for xref is required"
+                                         disabled="#{annotatedObjectController.isXrefDisabled()
+                                 or annotatedObjectController.isXrefNotEditable(xref)}">
                                 <ed:curation/>
                                 <ui:insert name="syncValues"/>
                             </p:inputText>
@@ -77,7 +80,8 @@
                                 <h:outputText value="Secondary"/>
                             </f:facet>
                             <p:inputText id="secondaryTxt" widgetVar="secondaryTxt_#{xrefIndex}" value="#{xref.secondaryId}" size="15"
-                                         converter="trimmingConverter">
+                                         converter="trimmingConverter" disabled="#{annotatedObjectController.isXrefDisabled()
+                                 or annotatedObjectController.isXrefNotEditable(xref)}">
                                     <ed:curation/>
                             </p:inputText>
 
@@ -90,8 +94,9 @@
                             <f:facet name="header">
                                 <h:outputText value="Qualifier"/>
                             </f:facet>
-                            <h:selectOneMenu id="qualifierSel" value="#{xref.qualifier}" disabled="#{annotatedObjectController.isXrefDisabled()}"
-                                             converter="cvObjectConverter">
+                            <h:selectOneMenu id="qualifierSel" value="#{xref.qualifier}"
+                                             converter="cvObjectConverter" disabled="#{annotatedObjectController.isXrefDisabled()
+                                 or annotatedObjectController.isXrefNotEditable(xref)}">
                                 <f:selectItems value="#{cvObjectService.qualifierSelectItems}"/>
                                 <ed:curation/>
                             </h:selectOneMenu>
@@ -102,7 +107,8 @@
                             </f:facet>
                             <p:inputText value="#{xref.version}" size="5"
                                          onchange="editorCuration.setUnsavedChanges(true)"
-                                         converter="trimmingConverter"/>
+                                         converter="trimmingConverter" disabled="#{annotatedObjectController.isXrefDisabled()
+                                 or annotatedObjectController.isXrefNotEditable(xref)}"/>
                         </p:column>
                         <p:column>
                             <f:facet name="header">

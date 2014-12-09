@@ -221,11 +221,6 @@ public class ModelledParticipantController extends AbstractParticipantController
     }
 
     @Override
-    public String getObjectName() {
-        return "Complex participant";
-    }
-
-    @Override
     protected boolean isInitialisedOtherProperties(IntactModelledParticipant part) {
         return true;
     }
@@ -287,9 +282,11 @@ public class ModelledParticipantController extends AbstractParticipantController
 
     @Override
     protected void postProcessDeletedEvent(UnsavedChange unsaved) {
+        super.postProcessDeletedEvent(unsaved);
         if (unsaved.getUnsavedObject() instanceof IntactModelledFeature){
             removeFeature((IntactModelledFeature)unsaved.getUnsavedObject());
         }
+        interactionController.reloadSingleParticipant(getParticipant());
     }
 
     @Override

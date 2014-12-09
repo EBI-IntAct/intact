@@ -249,13 +249,18 @@ public class InstitutionController extends AnnotatedObjectController {
     }
 
     @Override
+    public boolean isXrefNotEditable(Xref ref) {
+        return false;
+    }
+
+    @Override
     public IntactDbSynchronizer getDbSynchronizer() {
         return getEditorService().getIntactDao().getSynchronizerContext().getSourceSynchronizer();
     }
 
     @Override
     public String getObjectName() {
-        return "Institution";
+        return this.institution != null ? this.institution.getShortName() : null;
     }
 
     public List<Annotation> collectAnnotations() {

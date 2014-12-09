@@ -22,21 +22,17 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.primefaces.model.DualListModel;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.CvTermUtils;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
-import uk.ac.ebi.intact.jami.model.extension.*;
+import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
+import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
-import javax.annotation.PostConstruct;
-import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 import javax.persistence.Query;
@@ -464,6 +460,18 @@ public class CvObjectService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactCvTerm loadCvByAc(String ac) {
         IntactCvTerm cv = getIntactDao().getEntityManager().find(IntactCvTerm.class, ac);
+
+        // initialise xrefs because are first tab visible
+        initialiseXrefs(cv.getDbXrefs());
+        // initialise annotations because needs caution
+        initialiseAnnotations(cv.getDbAnnotations());
+
+        return cv;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public IntactCvTerm loadCvByName(String name, String objClass) {
+        IntactCvTerm cv = getIntactDao().getCvTermDao().getByShortName(name, objClass);
 
         // initialise xrefs because are first tab visible
         initialiseXrefs(cv.getDbXrefs());
