@@ -57,6 +57,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
 import javax.persistence.Query;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -211,7 +212,8 @@ public class ParticipantController extends AbstractParticipantController<IntactP
         return new ParticipantEvidenceCloner();
     }
 
-    public String newParticipant(InteractionEvidence interaction) {
+    public String newParticipant(InteractionEvidence interaction) throws InvocationTargetException, NoSuchMethodException,
+            InstantiationException, IllegalAccessException {
         String value = super.newParticipant(interaction);
 
         CvTerm defaultExperimentalRole = getCvService().getDefaultExperimentalRole();

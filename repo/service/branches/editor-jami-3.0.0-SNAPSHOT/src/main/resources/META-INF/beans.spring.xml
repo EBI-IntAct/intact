@@ -37,7 +37,7 @@
     <bean id="proteinService" class="uk.ac.ebi.intact.util.ProteinServiceImpl"/>
 
     <!-- Biosource update -->
-    <bean id="editorBioSourceService" class="uk.ac.ebi.intact.editor.controller.curate.interaction.EditorBioSourceService">
+    <bean id="editorBioSourceService" class="uk.ac.ebi.intact.editor.services.curate.organism.EditorBioSourceService">
         <constructor-arg>
             <bean id="taxonomyService" class="uk.ac.ebi.intact.bridges.taxonomy.UniprotTaxonomyService"/>
         </constructor-arg>
