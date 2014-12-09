@@ -1778,7 +1778,6 @@ public class PublicationController extends AnnotatedObjectController {
         else{
             return false;
         }
-        CurationDepth
     }
 
     public List<Annotation> collectAnnotations() {

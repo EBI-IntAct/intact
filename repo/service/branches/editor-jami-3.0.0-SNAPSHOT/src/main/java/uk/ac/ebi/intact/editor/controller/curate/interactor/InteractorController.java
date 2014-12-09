@@ -5,6 +5,7 @@ import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import psidev.psi.mi.jami.bridges.exception.BridgeFailedException;
 import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
@@ -12,7 +13,7 @@ import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.InteractorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.ImportCandidate;
-import uk.ac.ebi.intact.editor.controller.curate.interaction.ParticipantImportController;
+import uk.ac.ebi.intact.editor.services.curate.interaction.ParticipantImportService;
 import uk.ac.ebi.intact.editor.services.curate.interactor.InteractorEditorService;
 import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
@@ -61,6 +62,9 @@ public class InteractorController extends AnnotatedObjectController {
 
     @Resource(name = "bioSourceService")
     private transient BioSourceService bioSourceService;
+
+    @Resource(name = "participantImportService")
+    private transient ParticipantImportService participantImportService;
 
     private boolean isNoUniprotUpdate = false;
     private boolean isInteractorMemberTab = false;
@@ -454,8 +458,11 @@ public class InteractorController extends AnnotatedObjectController {
     }
 
     public void importInteractor(ActionEvent evt) {
-        ParticipantImportController participantImportController = (ParticipantImportController) getSpringContext().getBean("participantImportController");
-        interactorCandidates = new ArrayList<ImportCandidate>(participantImportController.importParticipant(this.setMember));
+        try {
+            interactorCandidates = new ArrayList<ImportCandidate>(getParticipantImportService().importParticipant(this.setMember));
+        } catch (BridgeFailedException e) {
+            addErrorMessage("Cannot load interactor "+setMember, e.getCause()+": "+e.getMessage());
+        }
 
         if (interactorCandidates.size() == 1) {
             interactorCandidates.get(0).setSelected(true);
@@ -599,6 +606,13 @@ public class InteractorController extends AnnotatedObjectController {
             this.bioSourceService = ApplicationContextProvider.getBean("bioSourceService");
         }
         return bioSourceService;
+    }
+
+    public ParticipantImportService getParticipantImportService() {
+        if (this.participantImportService == null){
+            this.participantImportService = ApplicationContextProvider.getBean("participantImportService");
+        }
+        return participantImportService;
     }
 
     @Override
