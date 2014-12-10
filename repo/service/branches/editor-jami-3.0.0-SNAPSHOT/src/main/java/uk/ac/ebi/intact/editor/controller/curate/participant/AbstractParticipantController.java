@@ -757,4 +757,12 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
         }
         return participantImportService;
     }
+
+    @Override
+    protected void postProcessDeletedEvent(UnsavedChange unsaved) {
+        super.postProcessDeletedEvent(unsaved);
+        if (unsaved.getUnsavedObject() instanceof AbstractIntactFeature){
+            removeFeature((AbstractIntactFeature)unsaved.getUnsavedObject());
+        }
+    }
 }

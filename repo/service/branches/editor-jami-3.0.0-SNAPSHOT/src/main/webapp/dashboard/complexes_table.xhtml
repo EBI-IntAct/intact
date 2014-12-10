@@ -43,7 +43,7 @@
             <h:outputText value="#{complex.organism.commonName}" rendered="#{complex.organism != null}"/>
         </p:column>
         <p:column id="participants" headerText="# Participants">
-            <h:outputText value="#{complexController.countParticipantsByInteractionAc(complex.ac)}"/>
+            <h:outputText value="#{complexController.countParticipantsByInteraction(complex)}"/>
         </p:column>
         <p:column headerText="Owner" sortBy="#{complex.currentOwner}">
             <h:outputText value="#{complex.currentOwner.login}" rendered="#{complex.currentOwner != null}"/>

@@ -21,32 +21,14 @@ import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import psidev.psi.mi.jami.bridges.exception.BridgeFailedException;
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Organism;
-import uk.ac.ebi.intact.editor.config.EditorConfig;
-import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
-import uk.ac.ebi.intact.editor.controller.curate.util.CheckIdentifier;
-import uk.ac.ebi.intact.editor.services.curate.interaction.ParticipantImportService;
-import uk.ac.ebi.intact.jami.ApplicationContextProvider;
-import uk.ac.ebi.intact.jami.model.extension.IntactInteractionEvidence;
-import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
-import uk.ac.ebi.intact.jami.model.extension.IntactParticipantEvidence;
-import uk.ac.ebi.intact.jami.model.extension.IntactStoichiometry;
-import uk.ac.ebi.intact.jami.synchronizer.FinderException;
-import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
-import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
+import uk.ac.ebi.intact.jami.model.extension.*;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.faces.event.ActionEvent;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -149,7 +131,7 @@ public class ParticipantImportController extends AbstractParticipantImportContro
             parentAcs.add(inter.getAc());
         }
 
-        interactionController.addParentAcsTo(parentAcs, inter.getExperiment());
+        interactionController.addParentAcsTo(parentAcs, (IntactExperiment)inter.getExperiment());
     }
 
     public CvTerm getCvExperimentalRole() {
