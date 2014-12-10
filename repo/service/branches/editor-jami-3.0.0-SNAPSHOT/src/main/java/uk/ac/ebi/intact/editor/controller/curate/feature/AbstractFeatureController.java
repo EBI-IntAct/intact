@@ -552,10 +552,10 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
                 Iterator<Range> rangeIterator = feature.getRanges().iterator();
                 while (rangeIterator.hasNext()){
                     AbstractIntactRange intactEv = (AbstractIntactRange)rangeIterator.next();
-                    if (intactEv.getAc() == null && unsaved.getParentObject() == intactEv){
+                    if (intactEv.getAc() == null && unsaved.getUnsavedObject() == intactEv){
                         rangeIterator.remove();
                     }
-                    else if (intactEv.getAc() != null && !intactEv.getAc().equals(unsaved.getParentObject().getAc())){
+                    else if (intactEv.getAc() != null && !intactEv.getAc().equals(unsaved.getUnsavedObject().getAc())){
                         rangeIterator.remove();
                     }
                 }

@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.bridges.exception.BridgeFailedException;
 import psidev.psi.mi.jami.bridges.fetcher.ProteinFetcher;
-import psidev.psi.mi.jami.model.Annotation;
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Protein;
 import psidev.psi.mi.jami.model.Xref;
@@ -285,24 +284,6 @@ public class EditorObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactInteractionEvidence initialiseInteractionXrefs(IntactInteractionEvidence interaction) {
-        // reload IntactInteractionEvidence without flushing changes
-        IntactInteractionEvidence reloaded = getIntactDao().getEntityManager().merge(interaction);
-        Collection<Xref> xrefs = reloaded.getDbXrefs();
-        initialiseXrefs(xrefs);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactInteractionEvidence initialiseInteractionAnnotations(IntactInteractionEvidence interaction) {
-        // reload IntactInteractionEvidence without flushing changes
-        IntactInteractionEvidence reloaded = getIntactDao().getEntityManager().merge(interaction);
-        Collection<Annotation> annotations = reloaded.getDbAnnotations();
-        initialiseAnnotations(annotations);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void refresh(IntactPrimaryObject object) {
         getIntactDao().getEntityManager().refresh(object);
     }
@@ -315,32 +296,5 @@ public class EditorObjectService extends AbstractEditorService {
         getIntactDao().getEntityManager().detach(reloaded);
 
         return clone;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countXrefs(IntactInteractionEvidence interaction) {
-        return getIntactDao().getInteractionDao().countXrefsForInteraction(interaction.getAc());
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countAnnotations(IntactInteractionEvidence interaction) {
-        return getIntactDao().getInteractionDao().countAnnotationsForInteraction(interaction.getAc());
-    }
-
-    private void initialiseXrefs(Collection<Xref> xrefs) {
-        for (Xref ref : xrefs){
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbXrefs());
-            if (ref.getQualifier() != null){
-                Hibernate.initialize(((IntactCvTerm)ref.getQualifier()).getDbXrefs());
-            }
-        }
-    }
-
-    private void initialiseAnnotations(Collection<Annotation> annotations) {
-        for (Annotation annot : annotations){
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbXrefs());
-        }
     }
 }

@@ -36,6 +36,7 @@ import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.editor.services.curate.experiment.ExperimentEditorService;
 import uk.ac.ebi.intact.editor.services.curate.feature.FeatureEditorService;
 import uk.ac.ebi.intact.editor.services.curate.institution.InstitutionService;
+import uk.ac.ebi.intact.editor.services.curate.interaction.InteractionEditorService;
 import uk.ac.ebi.intact.editor.services.curate.interactor.InteractorEditorService;
 import uk.ac.ebi.intact.editor.services.curate.participant.ParticipantEditorService;
 import uk.ac.ebi.intact.editor.services.curate.publication.PublicationEditorService;
@@ -1012,7 +1013,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
         }
         else if (ao instanceof IntactInteractionEvidence){
             IntactInteractionEvidence interaction = (IntactInteractionEvidence)ao;
-            annotations = getEditorService().initialiseInteractionAnnotations(interaction).getAnnotations();
+            annotations = ((InteractionEditorService)ApplicationContextProvider.getBean("interactionEditorService")).initialiseInteractionAnnotations(interaction).getAnnotations();
         }
         else if (ao instanceof IntactInteractor){
             IntactInteractor interactor = (IntactInteractor)ao;
