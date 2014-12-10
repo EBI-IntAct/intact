@@ -300,26 +300,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
                 interactionController.reloadSingleParticipant(getParticipant());
             }
         }
-
-        super.refreshParentControllers();
-    }
-
-    @Override
-    protected void initialiseParticipantTargets() {
-        getParticipantTargets().clear();
-        getParticipantTargets().add(new SelectItem(null, "select participant", "select participant", false, false, true));
-        for (ParticipantWrapper wrapper : interactionController.getParticipants()){
-            if (getAc() == null && getParticipant() != wrapper.getParticipant()){
-                 getParticipantTargets().add(new SelectItem( wrapper.getParticipant(),
-                         wrapper.getParticipant().getInteractor().getShortName()+", "+wrapper.getParticipant().getAc(),
-                         wrapper.getParticipant().getInteractor().getFullName()));
-            }
-            else if (getAc() != null && !getAc().equals(wrapper.getParticipant().getAc())){
-                getParticipantTargets().add(new SelectItem( wrapper.getParticipant(),
-                        wrapper.getParticipant().getInteractor().getShortName()+", "+wrapper.getParticipant().getAc(),
-                        wrapper.getParticipant().getInteractor().getFullName()));
-            }
-        }
     }
 
     @Override
@@ -563,11 +543,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
         return new ParticipantEvidenceAnnotation(getCvService().findCvObject(IntactUtils.TOPIC_OBJCLASS, topicMI != null ? topicMI: topic), text);
     }
 
-    @Override
-    protected CausalRelationship createCausalStatement(CvTerm statementToAdd, Participant targetToAdd) {
-        return new ExperimentalCausalRelationship(statementToAdd, targetToAdd);
-    }
-
     public void reloadSingleFeature(IntactFeatureEvidence f){
         // only update if not lazy loaded
         if (getParticipant().areFeaturesInitialized()){
@@ -615,12 +590,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     @Override
     public void addInteractorToParticipant(ActionEvent evt) {
         super.addInteractorToParticipant(evt);
-        interactionController.reloadSingleParticipant(getParticipant());
-    }
-
-    @Override
-    public void newCausalRelationship(ActionEvent evt) {
-        super.newCausalRelationship(evt);
         interactionController.reloadSingleParticipant(getParticipant());
     }
 

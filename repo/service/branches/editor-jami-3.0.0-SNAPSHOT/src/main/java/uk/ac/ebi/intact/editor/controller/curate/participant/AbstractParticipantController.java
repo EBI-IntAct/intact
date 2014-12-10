@@ -76,13 +76,8 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
     private String ac;
 
     private boolean isFeatureDisabled=false;
-    private boolean isCausalRelationshipDisabled=true;
-    private CvTerm statementToAdd;
-    private Participant targetToAdd;
     private String participantId;
     private boolean isNoUniprotUpdate=false;
-
-    private List<SelectItem> participantTargets=new ArrayList<SelectItem>();
 
     public AbstractParticipantController(Class<T> participantClass) {
         if (this.participantClass == null){
@@ -153,14 +148,9 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
         super.refreshTabs();
 
         this.isFeatureDisabled = false;
-        this.isCausalRelationshipDisabled=true;
     }
 
-    protected void refreshParentControllers(){
-        initialiseParticipantTargets();
-    }
-
-    protected abstract void initialiseParticipantTargets();
+    protected abstract void refreshParentControllers();
 
     @Override
     public void doPreSave() {
@@ -442,19 +432,12 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
         if (isAliasDisabled() && isXrefDisabled() && isAnnotationTopicDisabled()){
             if (e.getTab().getId().equals("featureTab")){
                 isFeatureDisabled = false;
-                isCausalRelationshipDisabled = true;
-            }
-            else if (e.getTab().getId().equals("causalityTab")){
-                isFeatureDisabled = true;
-                isCausalRelationshipDisabled = false;
             }
             else {
-                isCausalRelationshipDisabled = true;
                 isFeatureDisabled = true;
             }
         }
         else {
-            isCausalRelationshipDisabled = true;
             isFeatureDisabled = true;
         }
     }
@@ -670,43 +653,6 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
     public boolean isFeatureDisabled() {
         return isFeatureDisabled;
     }
-
-    public boolean isCausalRelationshipDisabled() {
-        return isCausalRelationshipDisabled;
-    }
-
-    public CvTerm getStatementToAdd() {
-        return statementToAdd;
-    }
-
-    public void setStatementToAdd(CvTerm statementToAdd) {
-        this.statementToAdd = statementToAdd;
-    }
-
-    public Participant getTargetToAdd() {
-        return targetToAdd;
-    }
-
-    public void setTargetToAdd(Participant targetToAdd) {
-        this.targetToAdd = targetToAdd;
-    }
-
-    public void newCausalRelationship(ActionEvent evt) {
-        // relationships are not always initialised
-        if (!participant.areCausalRelationshipsInitialized()){
-            setParticipant(getParticipantEditorService().initialiseCausalRelationships(participant));
-        }
-        if (this.targetToAdd != null && this.statementToAdd != null){
-            participant.getCausalRelationships().add(createCausalStatement(this.statementToAdd, this.targetToAdd));
-            setUnsavedChanges(true);
-        }
-    }
-
-    public List<SelectItem> getParticipantTargets() {
-        return participantTargets;
-    }
-
-    protected abstract CausalRelationship createCausalStatement(CvTerm statementToAdd, Participant targetToAdd);
 
     @Override
     protected boolean areXrefsInitialised() {

@@ -13,23 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.editor.controller.curate.interaction;
+package uk.ac.ebi.intact.editor.services.curate.interaction;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import psidev.psi.mi.jami.model.CvTerm;
 import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
 import uk.ac.ebi.intact.editor.controller.curate.CurateController;
 import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentController;
+import uk.ac.ebi.intact.editor.controller.curate.interaction.ImportCandidate;
+import uk.ac.ebi.intact.editor.controller.curate.interaction.InteractionController;
+import uk.ac.ebi.intact.editor.controller.curate.interaction.ParticipantImportController;
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
+import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.jami.model.extension.IntactInteractionEvidence;
-import uk.ac.ebi.intact.jami.model.extension.IntactOrganism;
-import uk.ac.ebi.intact.jami.model.extension.IntactPublication;
+import uk.ac.ebi.intact.model.*;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ComponentSystemEvent;
@@ -45,24 +48,55 @@ import java.util.*;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-@Controller
-@Scope( "conversation.access" )
-@ConversationName( "general" )
-public class InteractionRemoteController extends BaseController {
+@Service
+public class InteractionRemoteService extends AbstractEditorService {
 
-    private String[] proteins;
-    private String pubRef;
+    public InteractionRemoteService() {
+    }
 
-    private Collection<IntactInteractionEvidence> interactions;
-    private IntactPublication publication;
-    private IntactOrganism experiment;
-    private List<SelectItem> experimentSelectItems;
+    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public List<IntactInteractionEvidence> loadInteractions( String[]  proteins) {
+        List<IntactInteractionEvidence> interactions = getIntactDao().getInteractionDao().getByInteractorIdentifier(protein);
 
-    private IntactOrganism hostOrganism;
-    private CvTerm cvInteraction;
-    private CvTerm cvIdentification;
+        Iterator<Interaction> iterator = interactions.iterator();
 
-    public InteractionRemoteController() {
+        if (pubRef != null) {
+            while (iterator.hasNext()) {
+                Interaction interaction = iterator.next();
+
+                for (Experiment exp : interaction.getExperiments()) {
+                    if (!exp.getPublication().getPublicationId().equals(pubRef)) {
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+
+        // redirect if one found
+        if (interactions.size() == 1) {
+            try {
+                HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+                HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+                response.sendRedirect(request.getContextPath()+"/interaction/"+interactions.iterator().next().getAc());
+
+                FacesContext.getCurrentInstance().responseComplete();
+            } catch (IOException e) {
+                handleException(e);
+            }
+        } else if (interactions.size() == 0) {
+            publication = getDaoFactory().getPublicationDao().getByPubmedId(pubRef);
+
+            if (publication != null) {
+                InteractionController interactionController = (InteractionController) getSpringContext().getBean("interactionController");
+
+                experimentSelectItems = new ArrayList<SelectItem>();
+                experimentSelectItems.add(new SelectItem(null, "-- Select experiment --", null, false, true, true));
+
+                for (Experiment exp : publication.getExperiments()) {
+                    experimentSelectItems.add(new SelectItem(exp, interactionController.completeExperimentLabel(exp)));
+                }
+            }
+        }
     }
 
     @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)

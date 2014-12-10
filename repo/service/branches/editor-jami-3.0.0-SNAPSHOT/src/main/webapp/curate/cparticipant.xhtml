@@ -145,19 +145,6 @@
                     <ui:param name="updateOnChange" value=":editorForm:basic"/>
                 </ui:decorate>
 
-                <p:tab id="causalityTab" title="Causal Relationship(s) (#{modelledParticipantController.causalityStatementsSize})">
-
-                    <p:outputPanel id="causalityPanel" autoUpdate="false">
-
-                        <ui:decorate template="participant_causal_statements_table.xhtml">
-                            <ui:param name="annotatedObjectController" value="#{modelledParticipantController}"/>
-                            <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
-                            <ui:param name="disableStatementSelectItems" value="#{modelledParticipantController.isCausalRelationshipDisabled()}"/>
-                        </ui:decorate>
-                    </p:outputPanel>
-
-                </p:tab>
-
             </p:tabView>
 
         </h:panelGroup>
