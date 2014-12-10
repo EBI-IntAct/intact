@@ -140,203 +140,210 @@
 
 <p:panel id="basic" header="Publication Details">
 
-    <p:outputPanel id="infoPanels">
+<p:outputPanel id="infoPanels">
 
-        <h:panelGroup rendered="#{publicationController.publicationToBeReviewed}">
-            <ia:panelMessage level="warn">
-                <b>To be reviewed: </b> #{publicationController.toBeReviewed}
-            </ia:panelMessage>
-        </h:panelGroup>
-
-        <h:panelGroup rendered="#{not empty publicationController.publicationOnHold}">
-            <ia:panelMessage level="warn">
-                This publication is <b>on-hold</b>. Reason: #{publicationController.onHold}
-            </ia:panelMessage>
-        </h:panelGroup>
-
-        <h:panelGroup rendered="#{publicationController.publication.pubmedId != null
-    and empty publicationController.publication.title and not publicationController.unassigned}">
-            <ia:panelMessage level="error">
-                This publication does not contain some essential data (e.g. title).
-                <p:commandButton value="Try to fix" actionListener="#{publicationController.doFormAutocomplete}"
-                                 ajax="false">
-                    <f:setPropertyActionListener value="#{true}" target="#{publicationController.unsavedChanges}"/>
-                </p:commandButton>
-
-            </ia:panelMessage>
-        </h:panelGroup>
-
-        <ui:include src="common_info_panels.xhtml">
-            <ui:param name="annotatedObjectController" value="#{publicationController}"/>
-        </ui:include>
-    </p:outputPanel>
-
-    <h:panelGroup rendered="#{publicationController.publication != null}">
-        <div id="auditInfo" class="intact-auditPanel" >
-            <ia:creatorUpdator annotatedObject="#{publicationController.publication}" />
-        </div>
+    <h:panelGroup rendered="#{publicationController.publicationToBeReviewed}">
+        <ia:panelMessage level="warn">
+            <b>To be reviewed: </b> #{publicationController.toBeReviewed}
+        </ia:panelMessage>
     </h:panelGroup>
 
-    <table class="intact-tableBasicForm">
-        <tr>
-            <td class="firstCell">
-                <h:outputLabel value="Identifier: " for="idTxt"/>
-            </td>
-            <td>
-                <p:inputText id="idTxt" value="#{publicationController.publication.pubmedId}"
-                             validator="#{annotatedObjectController.validateAnnotatedObject}"
-                             size="10"
-                             valueChangeListener="#{publicationController.publicationIdentifierChanged}"
+    <h:panelGroup rendered="#{not empty publicationController.publicationOnHold}">
+        <ia:panelMessage level="warn">
+            This publication is <b>on-hold</b>. Reason: #{publicationController.onHold}
+        </ia:panelMessage>
+    </h:panelGroup>
+
+    <h:panelGroup rendered="#{publicationController.publication.pubmedId != null
+    and empty publicationController.publication.title and not publicationController.unassigned}">
+        <ia:panelMessage level="error">
+            This publication does not contain some essential data (e.g. title).
+            <p:commandButton value="Try to fix" actionListener="#{publicationController.doFormAutocomplete}"
+                             ajax="false">
+                <f:setPropertyActionListener value="#{true}" target="#{publicationController.unsavedChanges}"/>
+            </p:commandButton>
+
+        </ia:panelMessage>
+    </h:panelGroup>
+
+    <ui:include src="common_info_panels.xhtml">
+        <ui:param name="annotatedObjectController" value="#{publicationController}"/>
+    </ui:include>
+</p:outputPanel>
+
+<h:panelGroup rendered="#{publicationController.publication != null}">
+    <div id="auditInfo" class="intact-auditPanel" >
+        <ia:creatorUpdator annotatedObject="#{publicationController.publication}" />
+    </div>
+</h:panelGroup>
+
+<table class="intact-tableBasicForm">
+    <tr>
+        <td class="firstCell">
+            <h:outputLabel value="Identifier: " for="idTxt"/>
+        </td>
+        <td>
+            <p:inputText id="idTxt" value="#{publicationController.publication.pubmedId}"
+                         validator="#{annotatedObjectController.validateAnnotatedObject}"
+                         size="10"
+                         valueChangeListener="#{publicationController.publicationIdentifierChanged}"
+                         converter="trimmingConverter"
+                         required="true" requiredMessage="Identifier is required">
+                <ed:curation/>
+            </p:inputText>
+
+            <p:commandButton id="autocompleteBtn" value="Auto-complete"
+                             actionListener="#{publicationController.doFormAutocomplete}" async="true"
+                             process="idTxt"
+                             update=":editorForm:basic,:editorForm:publicationTabs,:editorForm:changesPanel,:editorForm:messagesComponent,:editorForm:unsavedChangesInfo">
+                <f:setPropertyActionListener value="#{true}" target="#{publicationController.unsavedChanges}"/>
+            </p:commandButton>
+        </td>
+        <td style="padding-left: 45px;">
+            <h:outputLabel value="AC: " for="acTxt" styleClass="intact-disabled"/>
+            <p:inputText id="acTxt" value="#{publicationController.publication.ac}"
+                         size="10" readonly="true" styleClass="intact-disabled"/>
+        </td>
+        <td style="text-align:right;">
+            <h:panelGroup rendered="#{publicationController.isAssignedIMEx()}">
+                <h:outputLabel value="IMEx Id: " for="imexIdTxt" styleClass="intact-disabled"/>
+                <p:inputText id="imexIdTxt" value="#{publicationController.imexId}" size="10" readonly="true" styleClass="intact-disabled"/>
+            </h:panelGroup>
+            <h:panelGroup id="assignImexPanel" rendered="#{publicationController.isAssignableIMEx()}">
+                <p:commandButton id="assignImexBtn" value="Assign new IMEx ID" type="button"
+                                 onclick="if (confirm('Once a new IMEx id has been assigned, it cannot be reverted, are you sure you want to continue?')) { assignNewImexId() } else { return false }"/>
+            </h:panelGroup>
+
+            <p:remoteCommand name="assignNewImexId" actionListener="#{publicationController.assignNewImex}"
+                             update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:publicationTabs,:editorForm:messagesComponent,:editorForm:basic"
+                             onstart="assignImexDialog.show();"
+                             onerror="alert('Error: '+error+' '+status)"
+                             oncomplete="assignImexDialog.hide();"/>
+            <ia:loadingDialog widgetVar="assignImexDialog" message="Assigning IMEx identifier for #{curatorContextController.intactObjectSimpleName(annotatedObjectController.annotatedObject)}..."/>
+        </td>
+    </tr>
+    <tr>
+        <td class="firstCell">
+            <h:outputLabel value="Title: " for="titleTxt"/>
+        </td>
+        <td colspan="2">
+            <p:inputTextarea id="titleTxt" value="#{publicationController.publicationTitle}" cols="60" rows="1"
                              converter="trimmingConverter"
-                             required="true" requiredMessage="Identifier is required">
-                    <ed:curation/>
-                </p:inputText>
+                             valueChangeListener="#{publicationController.publicationTitleChanged}">
+                <ed:curation/>
+            </p:inputTextarea>
+        </td>
+        <td colspan="1" style="text-align: right;">
+            <h:outputLabel value="Year: " for="yearTxt"/>
+            <p:inputText id="yearTxt" value="#{publicationController.year}" size="4" maxlength="4"
+                         validatorMessage="Year provided is invalid"
+                         valueChangeListener="#{publicationController.publicationYearChanged}">
+                <f:converter converterId="javax.faces.Short" maxFractionDigits="0" pattern="#" />
+                <ed:curation/>
+            </p:inputText>
 
-                <p:commandButton id="autocompleteBtn" value="Auto-complete"
-                                 actionListener="#{publicationController.doFormAutocomplete}" async="true"
-                                 process="idTxt"
-                                 update=":editorForm:basic,:editorForm:publicationTabs,:editorForm:changesPanel,:editorForm:messagesComponent,:editorForm:unsavedChangesInfo">
-                    <f:setPropertyActionListener value="#{true}" target="#{publicationController.unsavedChanges}"/>
-                </p:commandButton>
-            </td>
-            <td style="padding-left: 45px;">
-                <h:outputLabel value="AC: " for="acTxt" styleClass="intact-disabled"/>
-                <p:inputText id="acTxt" value="#{publicationController.publication.ac}"
-                             size="10" readonly="true" styleClass="intact-disabled"/>
-            </td>
-            <td style="text-align:right;">
-                <h:panelGroup rendered="#{publicationController.isAssignedIMEx()}">
-                    <h:outputLabel value="IMEx Id: " for="imexIdTxt" styleClass="intact-disabled"/>
-                    <p:inputText id="imexIdTxt" value="#{publicationController.imexId}" size="10" readonly="true" styleClass="intact-disabled"/>
-                </h:panelGroup>
-                <h:panelGroup id="assignImexPanel" rendered="#{publicationController.isAssignableIMEx()}">
-                    <p:commandButton id="assignImexBtn" value="Assign new IMEx ID" type="button"
-                                     onclick="if (confirm('Once a new IMEx id has been assigned, it cannot be reverted, are you sure you want to continue?')) { assignNewImexId() } else { return false }"/>
-                </h:panelGroup>
+        </td>
+        <td style="text-align:right;">
+            <h:outputLabel value="Journal: " for="journalTxt"/>
+            <p:inputText id="journalTxt" value="#{publicationController.journal}" size="50" converter="trimmingConverter"
+                         valueChangeListener="#{publicationController.onJournalChanged}">
+                <ed:curation/>
+            </p:inputText>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="1" class="firstCell">
+            <h:outputLabel value="Contact email: " for="contactTxt"/>
+        </td>
+        <td colspan="2">
+            <p:inputText id="contactTxt" value="#{publicationController.contactEmail}" size="50" converter="trimmingConverter"
+                         valueChangeListener="#{publicationController.contactEmailChanged}">
+                <ed:curation/>
+            </p:inputText>
+        </td>
+        <td colspan="1" style="text-align: right;">
+            <h:outputLabel value="Authors: " for="authorsTxt"/>
+            <p:inputText id="authorsTxt" value="#{publicationController.authors}" size="50" converter="trimmingConverter"
+                         valueChangeListener="#{publicationController.onAuthorsChanged}">
+                <ed:curation/>
+            </p:inputText>
 
-                <p:remoteCommand name="assignNewImexId" actionListener="#{publicationController.assignNewImex}"
-                                 update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:publicationTabs,:editorForm:messagesComponent,:editorForm:basic"
-                                 onstart="assignImexDialog.show();"
-                                 onerror="alert('Error: '+error+' '+status)"
-                                 oncomplete="assignImexDialog.hide();"/>
-                <ia:loadingDialog widgetVar="assignImexDialog" message="Assigning IMEx identifier for #{curatorContextController.intactObjectSimpleName(annotatedObjectController.annotatedObject)}..."/>
-            </td>
-        </tr>
-        <tr>
+        </td>
+    </tr>
+    <tr>
+        <td class="firstCell">
+            <h:outputLabel value="Dataset(s): " for="datasetsMenu"/>
+        </td>
+        <td colspan="4">
+            <h:panelGroup id="datasetsMenu">
+                <ui:param name="datasetHeight"
+                          value="#{18 * fn:length(datasetPopulator.allDatasetSelectItems)}"/>
+                <h:selectManyMenu value="#{publicationController.datasetsToRemove}"
+                                  rendered="#{not empty datasetPopulator.allDatasetSelectItems}"
+                                  style="height:#{datasetHeight != 0? datasetHeight : 18}px">
+                    <f:selectItems value="#{datasetPopulator.allDatasetSelectItems}"/>
+                </h:selectManyMenu>
+
+                <p:commandButton value="Remove" actionListener="#{publicationController.removeDatasets}"
+                                 update=":editorForm:datasetsMenu,:editorForm:publicationTabs,:editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"
+                                 rendered="#{not empty datasetPopulator.allDatasetSelectItems}"/>
+                <h:selectOneMenu value="#{publicationController.datasetToAdd}">
+                    <f:selectItems value="#{datasetPopulator.allDatasetSelectItems}"/>
+                </h:selectOneMenu>
+                <p:commandButton value="Add" actionListener="#{publicationController.addDataset}"
+                                 update=":editorForm:datasetsMenu,:editorForm:publicationTabs,:editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"/>
+                <p:commandButton value="Create new dataset" onclick="createNewdatasetDlg.show();" rendered="#{userSessionController.hasRole('REVIEWER')}"/>
+            </h:panelGroup>
+        </td>
+    </tr>
+    <tr>
+        <td class="firstCell">
+            <h:outputLabel value="Curation depth: " for="curationDepthMenu"/>
+        </td>
+        <td colspan="3">
+            <h:panelGroup id="curationDepthMenu">
+                <h:selectOneMenu id="selectCurationDepth" value="#{publicationController.curationDepth}">
+                    <f:selectItem itemLabel="-- Not specified --"/>
+                    <f:selectItem itemLabel="IMEx" itemValue="IMEx"/>
+                    <f:selectItem itemLabel="MIMIx" itemValue="MIMIx"/>
+                    <f:selectItem itemLabel="rapid" itemValue="rapid_curation"/>
+                    <p:ajax event="change" update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:publicationTabs,:editorForm:messagesComponent,:editorForm:basic"
+                            process="@this" listener="#{publicationController.curationDepthChanged()}"/>
+                </h:selectOneMenu>
+            </h:panelGroup>
+        </td>
+    </tr>
+    <tr>
+        <h:panelGroup rendered="#{publicationController.publicationOnHold}">
             <td class="firstCell">
-                <h:outputLabel value="Title: " for="titleTxt"/>
-            </td>
-            <td colspan="2">
-                <p:inputTextarea id="titleTxt" value="#{publicationController.publicationTitle}" cols="60" rows="1"
-                                 converter="trimmingConverter"
-                                 valueChangeListener="#{publicationController.publicationTitleChanged}">
-                    <ed:curation/>
-                </p:inputTextarea>
-            </td>
-            <td colspan="1" style="text-align: right;">
-                <h:outputLabel value="Year: " for="yearTxt"/>
-                <p:inputText id="yearTxt" value="#{publicationController.year}" size="4" maxlength="4"
-                             validatorMessage="Year provided is invalid"
-                             valueChangeListener="#{publicationController.publicationYearChanged}">
-                    <f:converter converterId="javax.faces.Short" maxFractionDigits="0" pattern="#" />
-                    <ed:curation/>
-                </p:inputText>
-
-            </td>
-        </tr>
-        <tr>
-            <td colspan="1" class="firstCell">
-                <h:outputLabel value="Contact email: " for="contactTxt"/>
-            </td>
-            <td colspan="2">
-                <p:inputText id="contactTxt" value="#{publicationController.contactEmail}" size="50" converter="trimmingConverter"
-                             valueChangeListener="#{publicationController.contactEmailChanged}">
-                    <ed:curation/>
-                </p:inputText>
-            </td>
-            <td colspan="1" style="text-align: right;">
-                <h:outputLabel value="Authors: " for="authorsTxt"/>
-                <p:inputText id="authorsTxt" value="#{publicationController.authors}" size="50" converter="trimmingConverter"
-                             valueChangeListener="#{publicationController.onAuthorsChanged}">
-                    <ed:curation/>
-                </p:inputText>
-
-            </td>
-        </tr>
-        <tr>
-            <td class="firstCell">
-                <h:outputLabel value="Dataset(s): " for="datasetsMenu"/>
-            </td>
-            <td colspan="4">
-                <h:panelGroup id="datasetsMenu">
-                    <ui:param name="datasetHeight"
-                              value="#{18 * fn:length(datasetPopulator.allDatasetSelectItems)}"/>
-                    <h:selectManyMenu value="#{publicationController.datasetsToRemove}"
-                                      rendered="#{not empty datasetPopulator.allDatasetSelectItems}"
-                                      style="height:#{datasetHeight != 0? datasetHeight : 18}px">
-                        <f:selectItems value="#{datasetPopulator.allDatasetSelectItems}"/>
-                    </h:selectManyMenu>
-
-                    <p:commandButton value="Remove" actionListener="#{publicationController.removeDatasets}"
-                                     update=":editorForm:datasetsMenu,:editorForm:publicationTabs,:editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"
-                                     rendered="#{not empty datasetPopulator.allDatasetSelectItems}"/>
-                    <h:selectOneMenu value="#{publicationController.datasetToAdd}">
-                        <f:selectItems value="#{datasetPopulator.allDatasetSelectItems}"/>
-                    </h:selectOneMenu>
-                    <p:commandButton value="Add" actionListener="#{publicationController.addDataset}"
-                                     update=":editorForm:datasetsMenu,:editorForm:publicationTabs,:editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"/>
-                    <p:commandButton value="Create new dataset" onclick="createNewdatasetDlg.show();" rendered="#{userSessionController.hasRole('REVIEWER')}"/>
-                </h:panelGroup>
-            </td>
-        </tr>
-        <tr>
-            <td class="firstCell">
-                <h:outputLabel value="Curation depth: " for="curationDepthMenu"/>
+                <h:outputLabel value="On hold: " for="onHoldTxt"/>
             </td>
             <td colspan="3">
-                <h:panelGroup id="curationDepthMenu">
-                    <h:selectOneMenu id="selectCurationDepth" value="#{publicationController.curationDepth}">
-                        <f:selectItem itemLabel="-- Not specified --"/>
-                        <f:selectItem itemLabel="IMEx" itemValue="IMEx"/>
-                        <f:selectItem itemLabel="MIMIx" itemValue="MIMIx"/>
-                        <f:selectItem itemLabel="rapid" itemValue="rapid_curation"/>
-                        <p:ajax event="change" update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:publicationTabs,:editorForm:messagesComponent,:editorForm:basic"
-                                process="@this" listener="#{publicationController.curationDepthChanged()}"/>
-                    </h:selectOneMenu>
+                <h:panelGroup>
+                    <p:inputText id="onHoldTxt" value="#{publicationController.onHold}" size="70"
+                                 valueChangeListener="#{publicationController.onHoldChanged}">
+                        <ed:curation/>
+                    </p:inputText>
                 </h:panelGroup>
             </td>
-        </tr>
-        <tr>
-            <h:panelGroup rendered="#{publicationController.publicationOnHold}">
-                <td class="firstCell">
-                    <h:outputLabel value="On hold: " for="onHoldTxt"/>
-                </td>
-                <td colspan="3">
-                    <h:panelGroup>
-                        <p:inputText id="onHoldTxt" value="#{publicationController.onHold}" size="70"
-                                     valueChangeListener="#{publicationController.onHoldChanged}">
-                            <ed:curation/>
-                        </p:inputText>
-                    </h:panelGroup>
-                </td>
-            </h:panelGroup>
-        </tr>
-        <tr>
-            <h:panelGroup rendered="#{publicationController.publicationToBeReviewed}">
-                <td class="firstCell">
-                    <h:outputLabel value="To be reviewed: " for="toBeReviewedTxt"/>
-                </td>
-                <td colspan="3">
-                    <h:panelGroup>
-                        <p:inputText id="toBeReviewedTxt" value="#{publicationController.toBeReviewed}" size="70"
-                                     valueChangeListener="#{publicationController.onToBeReviewedChanged}">
-                            <ed:curation/>
-                        </p:inputText>
-                    </h:panelGroup>
-                </td>
-            </h:panelGroup>
-        </tr>
-    </table>
+        </h:panelGroup>
+    </tr>
+    <tr>
+        <h:panelGroup rendered="#{publicationController.publicationToBeReviewed}">
+            <td class="firstCell">
+                <h:outputLabel value="To be reviewed: " for="toBeReviewedTxt"/>
+            </td>
+            <td colspan="3">
+                <h:panelGroup>
+                    <p:inputText id="toBeReviewedTxt" value="#{publicationController.toBeReviewed}" size="70"
+                                 valueChangeListener="#{publicationController.onToBeReviewedChanged}">
+                        <ed:curation/>
+                    </p:inputText>
+                </h:panelGroup>
+            </td>
+        </h:panelGroup>
+    </tr>
+</table>
 
 </p:panel>
 

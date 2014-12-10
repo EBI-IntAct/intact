@@ -966,7 +966,7 @@ public class PublicationController extends AnnotatedObjectController {
             return 0;
         }
         else {
-            return publication.getDbAnnotations().size();
+            return publication.getAnnotations().size();
         }
     }
 
@@ -1746,22 +1746,10 @@ public class PublicationController extends AnnotatedObjectController {
         else if (AnnotationUtils.doesAnnotationHaveTopic(annot, null, Releasable.TO_BE_REVIEWED)){
             return true;
         }
-        else if (AnnotationUtils.doesAnnotationHaveTopic(annot, Annotation.CURATION_DEPTH_MI, Annotation.CURATION_DEPTH)){
-            return true;
-        }
         else if (AnnotationUtils.doesAnnotationHaveTopic(annot, Annotation.CONTACT_EMAIL_MI, Annotation.CONTACT_EMAIL)){
             return true;
         }
         else if (AnnotationUtils.doesAnnotationHaveTopic(annot, null, Releasable.ACCEPTED)){
-            return true;
-        }
-        else if (AnnotationUtils.doesAnnotationHaveTopic(annot, Annotation.PUBLICATION_JOURNAL_MI, Annotation.PUBLICATION_JOURNAL)){
-            return true;
-        }
-        else if (AnnotationUtils.doesAnnotationHaveTopic(annot, Annotation.PUBLICATION_YEAR_MI, Annotation.PUBLICATION_YEAR)){
-            return true;
-        }
-        else if (AnnotationUtils.doesAnnotationHaveTopic(annot, Annotation.AUTHOR_MI, Annotation.AUTHOR)){
             return true;
         }
         else {
