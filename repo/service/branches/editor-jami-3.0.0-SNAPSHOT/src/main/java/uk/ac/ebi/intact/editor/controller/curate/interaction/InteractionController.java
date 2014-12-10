@@ -1027,11 +1027,10 @@ public class InteractionController extends AnnotatedObjectController {
             setInteraction(getInteractionEditorService().initialiseParticipants(this.interaction));
         }
         Iterator<ParticipantEvidence> evIterator = interaction.getParticipants().iterator();
-        boolean add = true;
         while (evIterator.hasNext()){
             IntactParticipantEvidence intactEv = (IntactParticipantEvidence)evIterator.next();
             if (intactEv.getAc() == null && f == intactEv){
-                add = false;
+                evIterator.remove();
             }
             else if (intactEv.getAc() != null && !intactEv.getAc().equals(f.getAc())){
                 evIterator.remove();

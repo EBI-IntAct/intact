@@ -20,10 +20,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.*;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.ComplexCloner;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
-import uk.ac.ebi.intact.jami.model.extension.*;
+import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
+import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
+import uk.ac.ebi.intact.jami.model.extension.IntactInteractionEvidence;
+import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
 import uk.ac.ebi.intact.jami.model.lifecycle.ComplexLifeCycleEvent;
 import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleEvent;
+import uk.ac.ebi.intact.jami.synchronizer.FinderException;
+import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
+import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 
 import java.util.Collection;
 
@@ -210,6 +217,35 @@ public class ComplexEditorService extends AbstractEditorService {
         getIntactDao().getEntityManager().detach(reloaded);
 
         return reloaded;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public IntactComplex cloneInteractionEvidence(IntactInteractionEvidence ao, ComplexCloner cloner) throws SynchronizerException,
+            FinderException,PersisterException {
+
+        IntactInteractionEvidence reloaded = getIntactDao().getEntityManager().merge(ao);
+        IntactComplex clone = null;
+        try {
+            clone = cloner.cloneFromEvidence(ao, getIntactDao());
+        } catch (SynchronizerException e) {
+            // clear cache
+            getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().detach(reloaded);
+            throw e;
+        } catch (FinderException e) {
+            // clear cache
+            getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().detach(reloaded);
+            throw e;
+        } catch (PersisterException e) {
+            // clear cache
+            getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().detach(reloaded);
+            throw e;
+        }
+        getIntactDao().getEntityManager().detach(reloaded);
+
+        return clone;
     }
 
     private void initialiseXrefs(Collection<Xref> xrefs) {
