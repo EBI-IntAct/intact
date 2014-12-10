@@ -19,34 +19,25 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
-import org.hibernate.Hibernate;
 import org.joda.time.DateTime;
 import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.bridges.exception.BridgeFailedException;
 import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AliasUtils;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
-import psidev.psi.mi.jami.utils.PublicationUtils;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
-import uk.ac.ebi.intact.editor.controller.admin.UserManagerController;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
-import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ComplexCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ModelledParticipantCloner;
-import uk.ac.ebi.intact.editor.controller.curate.cloner.ParticipantEvidenceCloner;
 import uk.ac.ebi.intact.editor.controller.curate.util.ParticipantWrapperCreatedDateComparator;
-import uk.ac.ebi.intact.editor.controller.curate.util.ParticipantWrapperExperimentalRoleComparator;
 import uk.ac.ebi.intact.editor.services.curate.interaction.ComplexEditorService;
 import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
-import uk.ac.ebi.intact.jami.dao.CvTermDao;
 import uk.ac.ebi.intact.jami.lifecycle.ComplexBCLifecycleEventListener;
 import uk.ac.ebi.intact.jami.lifecycle.LifeCycleManager;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
@@ -61,16 +52,13 @@ import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
 import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
-import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.LifecycleEvent;
+import uk.ac.ebi.intact.jami.utils.ReleasableUtils;
 
 import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -814,201 +802,61 @@ public class ComplexController extends AnnotatedObjectController {
 
     public void claimOwnership(ActionEvent evt) {
 
-        IntactComplex reloadedComplex = null;
-        try {
-            reloadedComplex = (IntactComplex)getDbSynchronizer().synchronize(this.complex, false);
-            setComplex(reloadedComplex);
-            getLifecycleManager().getGlobalStatus().changeOwnership(complex, getCurrentJamiUser(), null);
+        getLifecycleManager().getGlobalStatus().changeOwnership(complex, getCurrentUser(), null);
 
-            // automatically set as curation in progress if no one was assigned before
-            if (isAssigned()) {
-                markAsCurationInProgress(evt);
-            }
-
-            addInfoMessage("Claimed Complex ownership", "You are now the owner of this complex");
-        } catch (FinderException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (PersisterException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (SynchronizerException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        }
-        getJamiEntityManager().detach(this.complex);
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public void markAsAssignedToMe(ActionEvent evt) {
-        getIntactTransactionSynchronization().registerDaoForSynchronization(getIntactDao());
-
-        IntactComplex reloadedComplex = null;
-        try {
-            reloadedComplex = (IntactComplex)getDbSynchronizer().synchronize(this.complex, false);
-            setComplex(reloadedComplex);
-            getLifecycleManager().getNewStatus().assignToCurator(complex, getCurrentJamiUser(), getCurrentJamiUser());
-
-            addInfoMessage("Ownership claimed", "The complex has been assigned to you");
-
+        // automatically set as curation in progress if no one was assigned before
+        if (isAssigned()) {
             markAsCurationInProgress(evt);
-        } catch (FinderException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (PersisterException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (SynchronizerException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
         }
-        getJamiEntityManager().detach(this.complex);
+
+        addInfoMessage("Claimed complex ownership", "You are now the owner of this complex");
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public void markAsAssignedToMe(ActionEvent evt) {
+        getLifecycleManager().getNewStatus().assignToCurator(complex, getCurrentUser(), getCurrentUser());
+
+        addInfoMessage("Ownership claimed", "The complex has been assigned to you");
+
+        markAsCurationInProgress(evt);
+    }
+
     public void markAsCurationInProgress(ActionEvent evt) {
 
-        if (!userSessionController.isJamiUserMe(complex.getCurrentOwner())) {
-            addErrorMessage("Cannot mark as curation in progress", "You are not the owner of this publication");
+        if (!userSessionController.isItMe(complex.getCurrentOwner())) {
+            addErrorMessage("Cannot mark as curation in progress", "You are not the owner of this complex");
             return;
         }
+        getLifecycleManager().getAssignedStatus().startCuration(complex, getCurrentUser());
 
-        getIntactTransactionSynchronization().registerDaoForSynchronization(getIntactDao());
-
-        IntactComplex reloadedComplex = null;
-        try {
-            reloadedComplex = (IntactComplex)getDbSynchronizer().synchronize(this.complex, false);
-            setComplex(reloadedComplex);
-            getLifecycleManager().getAssignedStatus().startCuration(complex, ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
-
-            addInfoMessage("Curation started", "Curation is now in progress");
-        } catch (FinderException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (PersisterException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (SynchronizerException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        }
-        getJamiEntityManager().detach(this.complex);
+        addInfoMessage("Curation started", "Curation is now in progress");
     }
 
-
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void markAsReadyForChecking(ActionEvent evt) {
-        if (!userSessionController.isJamiUserMe(complex.getCurrentOwner())) {
+        if (!userSessionController.isItMe(complex.getCurrentOwner())) {
             addErrorMessage("Cannot mark as Ready for checking", "You are not the owner of this complex");
             return;
         }
-        if (isBeenRejectedBefore()) {
-            correctionComment = this.complex.getCorrectionComment();
-        }
 
-        getIntactTransactionSynchronization().registerDaoForSynchronization(getIntactDao());
+        boolean sanityCheckPassed = true;
 
-        IntactComplex reloadedComplex = null;
-        try {
-            reloadedComplex = (IntactComplex)getDbSynchronizer().synchronize(this.complex, false);
-            setComplex(reloadedComplex);
-            // TODO run a proper sanity check
-            boolean sanityCheckPassed = true;
+        getLifecycleManager().getCurationInProgressStatus().readyForChecking(complex, correctionComment, sanityCheckPassed, getCurrentUser());
 
-            getLifecycleManager().getCurationInProgressStatus().readyForChecking(complex, correctionComment, sanityCheckPassed,
-                    ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
-
-            correctionComment = null;
-
-            addInfoMessage("Complex ready for checking", "Assigned to reviewer: " + complex.getCurrentReviewer().getLogin());
-        } catch (FinderException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (PersisterException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (SynchronizerException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        }
-        getJamiEntityManager().detach(this.complex);
+        addInfoMessage("Complex ready for checking", "Assigned to reviewer: " + complex.getCurrentReviewer().getLogin());
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void revertReadyForChecking(ActionEvent evt) {
-        if (!userSessionController.isJamiUserMe(complex.getCurrentOwner())) {
-            addErrorMessage("Cannot mark as Ready for checking", "You are not the owner of this complex");
-            return;
-        }
-        getIntactTransactionSynchronization().registerDaoForSynchronization(getIntactDao());
-        IntactComplex reloadedComplex = null;
-        try {
-            reloadedComplex = (IntactComplex)getDbSynchronizer().synchronize(this.complex, false);
-            setComplex(reloadedComplex);
-            getLifecycleManager().getReadyForCheckingStatus().revert(this.complex,
-                    ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
-
-            correctionComment = null;
-
-            addInfoMessage("Complex ready for checking", "Assigned to reviewer: " + complex.getCurrentReviewer().getLogin());
-        } catch (FinderException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (PersisterException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (SynchronizerException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        }
-        getJamiEntityManager().detach(this.complex);
+        getLifecycleManager().getReadyForCheckingStatus().revert(this.complex, getCurrentUser());
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void revertAccepted(ActionEvent evt) {
-        if (!userSessionController.isJamiUserMe(complex.getCurrentOwner())) {
-            addErrorMessage("Cannot mark as Ready for checking", "You are not the owner of this complex");
-            return;
+        if (isReadyForRelease()){
+            getLifecycleManager().getReadyForReleaseStatus().revert(this.complex, getCurrentUser());
         }
-
-        getIntactTransactionSynchronization().registerDaoForSynchronization(getIntactDao());
-        IntactComplex reloadedComplex = null;
-        try {
-            reloadedComplex = (IntactComplex)getDbSynchronizer().synchronize(this.complex, false);
-            setComplex(reloadedComplex);
-            getLifecycleManager().getReadyForReleaseStatus().revert(this.complex,
-                    ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
-
-        } catch (FinderException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (PersisterException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (SynchronizerException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
+        else {
+            LifeCycleEvent acceptedEvt = ReleasableUtils.getLastEventOfType(complex, LifeCycleEventType.ACCEPTED);
+            complex.getLifecycleEvents().remove(acceptedEvt);
+            complex.setStatus(LifeCycleStatus.READY_FOR_CHECKING);
         }
-        getJamiEntityManager().detach(this.complex);
     }
 
     public void removeOnHold(ActionEvent evt) {
@@ -1021,68 +869,20 @@ public class ComplexController extends AnnotatedObjectController {
         this.complex.removeToBeReviewed();
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void putOnHold(ActionEvent evt) {
-        getIntactTransactionSynchronization().registerDaoForSynchronization(getIntactDao());
-        IntactComplex reloadedComplex = null;
-        try {
-            reloadedComplex = (IntactComplex)getDbSynchronizer().synchronize(this.complex, false);
-            setComplex(reloadedComplex);
-            if (complex.getStatus().equals(LifeCycleStatus.READY_FOR_RELEASE)) {
-                getLifecycleManager().getReadyForReleaseStatus().putOnHold(complex, onHold,
-                        ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
-                addInfoMessage("On-hold added to complex", "Complex won't be released until the 'on hold' is removed");
-            } else if (complex.getStatus().equals(LifeCycleStatus.RELEASED)) {
-                getLifecycleManager().getReleasedStatus().putOnHold(complex, onHold,
-                        ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
-                addInfoMessage("On-hold added to released complex", "Data will be publicly visible until the next release");
-            }
-            else{
-                setOnHold(onHold);
-            }
-            this.onHold = this.complex.getOnHoldComment();
-
-        } catch (FinderException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (PersisterException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (SynchronizerException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
+        if (isReadyForRelease()) {
+            getLifecycleManager().getReadyForReleaseStatus().putOnHold(complex, onHold, getCurrentUser());
+            addInfoMessage("On-hold added to complex", "Complex won't be released until the 'on hold' is removed");
+        } else if (isReleased()) {
+            getLifecycleManager().getReleasedStatus().putOnHold(complex, onHold, getCurrentUser());
+            addInfoMessage("On-hold added to released complex", "Data will be publicly visible until the next release");
         }
-        getJamiEntityManager().detach(this.complex);
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void readyForReleaseFromOnHold(ActionEvent evt) {
-        getIntactTransactionSynchronization().registerDaoForSynchronization(getIntactDao());
-        IntactComplex reloadedComplex = null;
-        try {
-            reloadedComplex = (IntactComplex)getDbSynchronizer().synchronize(this.complex, false);
-            setComplex(reloadedComplex);
-            getLifecycleManager().getAcceptedOnHoldStatus().onHoldRemoved(complex, null,
-                    ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
-            this.onHold = null;
+        setOnHold(null);
 
-        } catch (FinderException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (PersisterException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (SynchronizerException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        }
-        getJamiEntityManager().detach(this.complex);
+        getLifecycleManager().getAcceptedOnHoldStatus().onHoldRemoved(complex, null, getCurrentUser());
     }
 
     public void setOnHold(String reason) {
@@ -1245,82 +1045,38 @@ public class ComplexController extends AnnotatedObjectController {
         return this.complex.hasCorrectionComment();
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void acceptComplex(ActionEvent evt) {
 
-        UserSessionController userSessionController = (UserSessionController) getSpringContext().getBean("userSessionController");
-        getIntactTransactionSynchronization().registerDaoForSynchronization(getIntactDao());
-        IntactComplex reloadedComplex = null;
-        try {
-            reloadedComplex = (IntactComplex)getDbSynchronizer().synchronize(this.complex, false);
-            setComplex(reloadedComplex);
-            getLifecycleManager().getReadyForCheckingStatus().accept(complex, "Accepted " + new SimpleDateFormat("yyyy-MMM-dd").format(new Date()).toUpperCase() + " by " + userSessionController.getCurrentUser().getLogin().toUpperCase(),
-                    ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
+        getLifecycleManager().getReadyForCheckingStatus().accept(complex, "Accepted " + new SimpleDateFormat("yyyy-MMM-dd").format(new Date()).toUpperCase() + " by " + userSessionController.getCurrentUser().getLogin().toUpperCase(),
+                getCurrentUser());
 
-            if (!complex.isOnHold()) {
-                lifecycleManager.getAcceptedStatus().readyForRelease(complex, "Accepted and not on-hold",
-                        ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
-            }
-
-        } catch (FinderException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (PersisterException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (SynchronizerException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
+        if (!complex.isOnHold()) {
+            lifecycleManager.getAcceptedStatus().readyForRelease(complex, "Accepted and not on-hold",
+                    getCurrentUser());
         }
-        getJamiEntityManager().detach(this.complex);
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void rejectComplex(ActionEvent evt) {
 
         rejectComplex(toBeReviewed);
 
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void rejectComplex(String reasonForRejection) {
-        getIntactTransactionSynchronization().registerDaoForSynchronization(getIntactDao());
-        IntactComplex reloadedComplex = null;
-        try {
-            reloadedComplex = (IntactComplex)getDbSynchronizer().synchronize(this.complex, false);
-            setComplex(reloadedComplex);
-            UserSessionController userSessionController = (UserSessionController) getSpringContext().getBean("userSessionController");
-            String date = "Rejected " + new SimpleDateFormat("yyyy-MMM-dd").format(new Date()).toUpperCase() + " by " + userSessionController.getCurrentUser().getLogin().toUpperCase();
+        String date = "Rejected " + new SimpleDateFormat("yyyy-MMM-dd").format(new Date()).toUpperCase() + " by " + userSessionController.getCurrentUser().getLogin().toUpperCase();
 
-            addInfoMessage("Complex rejected", "");
+        addInfoMessage("Complex rejected", "");
 
-            getLifecycleManager().getReadyForCheckingStatus().reject(this.complex, date + ". " + reasonForRejection,
-                    ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser());
+        getLifecycleManager().getReadyForCheckingStatus().reject(this.complex, date + ". " + reasonForRejection,
+                getCurrentUser());
 
-            this.toBeReviewed = this.complex.getToBeReviewedComment();
-
-        } catch (FinderException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (PersisterException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        } catch (SynchronizerException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot synchronize complex: " + e.getMessage(), e.getMessage());
-        }
-
-        getJamiEntityManager().detach(this.complex);
+        this.toBeReviewed = this.complex.getToBeReviewedComment();
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public String calculateStatusStyle(IntactComplex complex) {
+        if (!complex.areLifeCycleEventsInitialized()){
+            complex = getComplexEditorService().initialiseLifeCycleEvents(complex);
+        }
         if (isAccepted(complex)) {
             return "ia-accepted";
         }
@@ -1328,29 +1084,25 @@ public class ComplexController extends AnnotatedObjectController {
         int timesRejected = 0;
         int timesReadyForChecking = 0;
 
-        Collection<LifeCycleEvent> events = complex.areLifeCycleEventsInitialized() ? complex.getLifecycleEvents() :
-                getIntactDao().getComplexDao().getLifeCycleEventsForComplex(complex.getAc());
-
-        for (LifeCycleEvent evt : events) {
-            if (LifeCycleEventType.REJECTED.equals(evt.getEvent())) {
+        for (LifeCycleEvent evt : complex.getLifecycleEvents()) {
+            if (LifeCycleEventType.REJECTED == evt.getEvent()) {
                 timesRejected++;
-            } else if (LifeCycleEventType.READY_FOR_CHECKING.equals(evt.getEvent())) {
+            } else if (LifeCycleEventType.READY_FOR_CHECKING == evt.getEvent()) {
                 timesReadyForChecking++;
             }
         }
 
-        if (LifeCycleStatus.CURATION_IN_PROGRESS.equals(complex.getStatus()) && timesRejected > 0) {
+        if (complex.getStatus() == LifeCycleStatus.CURATION_IN_PROGRESS && timesRejected > 0) {
             return "ia-rejected";
-        } else if (LifeCycleStatus.READY_FOR_CHECKING.equals(complex.getStatus()) && timesReadyForChecking > 1) {
+        } else if (complex.getStatus() == LifeCycleStatus.READY_FOR_CHECKING && timesReadyForChecking > 1) {
             return "ia-corrected";
         }
 
         return "";
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public boolean isBeenRejectedBefore() {
-        for (LifeCycleEvent evt : collectLifecycleEvents()) {
+        for (LifeCycleEvent evt : complex.getLifecycleEvents()) {
             if (LifeCycleEventType.REJECTED.equals(evt.getEvent())) {
                 return true;
             }
@@ -1381,38 +1133,25 @@ public class ComplexController extends AnnotatedObjectController {
     }
 
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String newComplex(Interaction interactionEvidence) {
+    public String newComplex(IntactInteractionEvidence interactionEvidence) {
         if (interactionEvidence == null || interactionEvidence.getAc() == null) {
             addErrorMessage("Cannot create biological complex", "Interaction evidence is empty or not saved");
             return null;
         }
-        CvTermDao dao = getIntactDao().getCvTermDao();
-        CvTerm type = dao.getByMIIdentifier(Complex.COMPLEX_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS);
-        User user = ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser();
-        InteractionEvidence ev = getIntactDao().getInteractionDao().getByAc(interactionEvidence.getAc());
+        CvTerm type = getCvService().findCvObject(IntactUtils.INTERACTOR_TYPE_OBJCLASS, Complex.COMPLEX_MI);
+        User user = getCurrentUser();
         // the interaction evidence is loaded with jami
-        if (ev != null){
+        if (interactionEvidence != null){
             try {
-                IntactComplex complex = (IntactComplex) ComplexCloner.cloneInteraction(ev);
+                IntactComplex complex = getComplexEditorService().cloneInteractionEvidence(interactionEvidence, new ComplexCloner());
                 setComplex(complex);
             } catch (SynchronizerException e) {
-                // clear cache
-                getIntactDao().getSynchronizerContext().clearCache();
                 addErrorMessage("Cannot clone the interaction evidence as a complex: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
             } catch (FinderException e) {
-                // clear cache
-                getIntactDao().getSynchronizerContext().clearCache();
                 addErrorMessage("Cannot clone the interaction evidence as a complex: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
             } catch (PersisterException e) {
-                // clear cache
-                getIntactDao().getSynchronizerContext().clearCache();
                 addErrorMessage("Cannot clone the interaction evidence as a complex: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
             }
-        }
-        // the interaction evidence does not exist as it must be a complex
-        else {
-            setComplex((IntactComplex) ComplexCloner.cloneComplex(getIntactDao().getComplexDao().getByAc(interactionEvidence.getAc())));
         }
 
         this.complex.setInteractorType(type);
@@ -1430,18 +1169,16 @@ public class ComplexController extends AnnotatedObjectController {
         return "/curate/complex?faces-redirect=true";
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public String newComplex() {
 
-        CvTermDao dao = getIntactDao().getCvTermDao();
-        CvTerm type = dao.getByMIIdentifier(Complex.COMPLEX_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS);
+        CvTerm type = getCvService().findCvObject(IntactUtils.INTERACTOR_TYPE_OBJCLASS, Complex.COMPLEX_MI);
+        User user = getCurrentUser();
 
         setComplex(new IntactComplex("name to specify"));
         UserSessionController userSessionController = ApplicationContextProvider.getBean("userSessionController");
-        this.complex.setSource(userSessionController.getUserSource());
+        this.complex.setSource(userSessionController.getUserInstitution());
         this.complex.setCreatedDate(new Date());
         this.complex.setUpdatedDate(this.complex.getCreatedDate());
-        User user = ((UserManagerController)ApplicationContextProvider.getBean("userManagerController")).getCurrentUser();
         this.complex.setCreator(user.getLogin());
         this.complex.setUpdator(user.getLogin());
         this.complex.setInteractorType(type);
@@ -1457,7 +1194,7 @@ public class ComplexController extends AnnotatedObjectController {
 
     @Override
     public IntactDbSynchronizer getDbSynchronizer() {
-        return getIntactDao().getSynchronizerContext().getComplexSynchronizer();
+        return getEditorService().getIntactDao().getSynchronizerContext().getComplexSynchronizer();
     }
 
     @Override
@@ -1465,34 +1202,17 @@ public class ComplexController extends AnnotatedObjectController {
         return getName();
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int getParametersSize() {
-        if (this.complex.areParametersInitialized()){
-            return this.complex.getModelledParameters().size();
-        }
-        else{
-            // reload complex without flushing changes
-            return getIntactDao().getComplexDao().countParametersForComplex(this.ac);
-        }
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int getConfidencesSize() {
-        if (this.complex.areConfidencesInitialized()){
-            return this.complex.getModelledConfidences().size();
-        }
-        else{
-            // reload complex without flushing changes
-            return getIntactDao().getComplexDao().countConfidencesForComplex(this.ac);
-        }
-    }
-
     /**
      * No transactional as it should always be initialised when loaded recommended name and systematic name when loading the page
      * @return
      */
     public int getAliasesSize() {
-        return this.complex.getAliases().size();
+        if (this.complex == null){
+            return 0;
+        }
+        else{
+            return this.complex.getAliases().size();
+        }
     }
 
     /**
@@ -1500,90 +1220,85 @@ public class ComplexController extends AnnotatedObjectController {
      * @return
      */
     public int getAnnotationsSize() {
-        return this.complex.getAnnotations().size();
+        if (this.complex == null){
+            return 0;
+        }
+        else{
+            return this.complex.getAnnotations().size();
+        }
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public int getConfidencesSize() {
+        if (this.complex == null){
+            return 0;
+        }
+        else if (this.complex.areConfidencesInitialized()){
+            return this.complex.getModelledConfidences().size();
+        }
+        else{
+            return getComplexEditorService().countConfidences(this.complex);
+        }
+    }
+
+    public int getParametersSize() {
+        if (this.complex == null){
+            return 0;
+        }
+        else if (this.complex.areParametersInitialized()){
+            return this.complex.getModelledParameters().size();
+        }
+        else{
+            return getComplexEditorService().countParameters(this.complex);
+        }
+    }
+
+
     public int getXrefsSize() {
-        if (this.complex.areXrefsInitialized()){
+        if (this.complex == null){
+            return 0;
+        }
+        else if (this.complex.areXrefsInitialized()){
             return this.complex.getDbXrefs().size();
         }
         else{
-            return getIntactDao().getComplexDao().countXrefsForInteractor(this.ac);
+            return getComplexEditorService().countXrefs(this.complex);
         }
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public Collection<ModelledConfidence> collectConfidences() {
-        if (this.complex.areConfidencesInitialized()){
-            return this.complex.getModelledConfidences();
+    public List<Confidence> collectConfidences() {
+        if (!this.complex.areConfidencesInitialized()){
+            setComplex(getComplexEditorService().initialiseComplexConfidences(complex));
         }
-        else{
-            // reload complex without flushing changes
-            IntactComplex reloadedComplex = getJamiEntityManager().merge(this.complex);
-            Collection<ModelledConfidence> confs = reloadedComplex.getModelledConfidences();
-            setComplex(reloadedComplex);
-            Hibernate.initialize(confs);
-            getJamiEntityManager().detach(reloadedComplex);
-            return confs;
-        }
+        List<Confidence> confidences = new ArrayList<Confidence>(this.complex.getModelledConfidences());
+        Collections.sort(confidences, new AuditableComparator());
+        return confidences;
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public Collection<ModelledParameter> collectParameters() {
-        if (this.complex.areParametersInitialized()){
-            return this.complex.getModelledParameters();
+    public List<Parameter> collectParameters() {
+        if (!this.complex.areParametersInitialized()){
+            setComplex(getComplexEditorService().initialiseComplexParameters(complex));
         }
-        else{
-            // reload complex without flushing changes
-            IntactComplex reloadedComplex = getJamiEntityManager().merge(this.complex);
-            Collection<ModelledParameter> params = reloadedComplex.getModelledParameters();
-            setComplex(reloadedComplex);
-            Hibernate.initialize(params);
-            getJamiEntityManager().detach(reloadedComplex);
-            return params;
-        }
+        List<Parameter> params = new ArrayList<Parameter>(this.complex.getModelledParameters());
+        Collections.sort(params, new AuditableComparator());
+        return params;
     }
 
     public void removeConfidence(ModelledConfidence conf){
+        if (!this.complex.areConfidencesInitialized()){
+            setComplex(getComplexEditorService().initialiseComplexConfidences(complex));
+        }
         this.complex.getModelledConfidences().remove(conf);
     }
 
     public void removeParameter(ModelledParameter param){
+        if (!this.complex.areParametersInitialized()){
+            setComplex(getComplexEditorService().initialiseComplexParameters(complex));
+        }
         this.complex.getModelledParameters().remove(param);
     }
 
-    public void removeJamiAlias(Alias alias){
-        this.complex.getAliases().remove(alias);
-    }
-
-    public void removeJamiXref(Xref xref){
-        this.complex.getDbXrefs().remove(xref);
-    }
-
-    public void removeJamiAnnotation(Annotation annot){
-        this.complex.getAnnotations().remove(annot);
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public Collection<LifeCycleEvent> collectLifecycleEvents() {
-        if (this.complex.areLifeCycleEventsInitialized()){
-            return this.complex.getLifecycleEvents();
-        }
-        else{
-            // reload complex without flushing changes
-            IntactComplex reloadedComplex = getJamiEntityManager().merge(this.complex);
-            Collection<LifeCycleEvent> events = reloadedComplex.getLifecycleEvents();
-            Hibernate.initialize(events);
-            setComplex(reloadedComplex);
-            getJamiEntityManager().detach(reloadedComplex);
-            return events;
-        }
-    }
-
-    @Override
-    protected boolean isPublicationParent() {
-        return false;
+        return new ArrayList<LifeCycleEvent>(complex.getLifecycleEvents());
     }
 
     public LifeCycleManager getLifecycleManager() {
@@ -1604,23 +1319,14 @@ public class ComplexController extends AnnotatedObjectController {
         this.complex.removeCorrectionComment();
     }
 
-    @Override
-    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
-    public void doSave(boolean refreshCurrentView) {
-        ChangesController changesController = (ChangesController) getSpringContext().getBean("changesController");
-        PersistenceController persistenceController = getPersistenceController();
-
-        doSaveJami(refreshCurrentView, changesController, persistenceController);
-    }
-
     public void reloadSingleParticipant(IntactModelledParticipant f){
-        if (!this.participant.areFeaturesInitialized()){
-            setParticipant(getParticipantEditorService().initialiseFeatures(this.participant));
+        if (!this.complex.areParticipantsInitialized()){
+            setComplex(getComplexEditorService().initialiseParticipants(this.complex));
         }
-        Iterator<? extends psidev.psi.mi.jami.model.Feature> evIterator = participant.getFeatures().iterator();
+        Iterator<ModelledParticipant> evIterator = complex.getParticipants().iterator();
         boolean add = true;
         while (evIterator.hasNext()){
-            AbstractIntactFeature intactEv = (AbstractIntactFeature)evIterator.next();
+            IntactModelledParticipant intactEv = (IntactModelledParticipant)evIterator.next();
             if (intactEv.getAc() == null && f == intactEv){
                 add = false;
             }
@@ -1630,19 +1336,19 @@ public class ComplexController extends AnnotatedObjectController {
         }
 
         if (add){
-            participant.getFeatures().add(f);
+            complex.getParticipants().add(f);
         }
 
-        refreshFeatures();
+        refreshParticipants();
     }
 
     public void removeParticipant(IntactModelledParticipant f){
-        if (!this.participant.areFeaturesInitialized()){
-            setParticipant(getParticipantEditorService().initialiseFeatures(this.participant));
+        if (!this.complex.areParticipantsInitialized()){
+            setComplex(getComplexEditorService().initialiseParticipants(this.complex));
         }
-        Iterator<? extends psidev.psi.mi.jami.model.Feature> evIterator = participant.getFeatures().iterator();
+        Iterator<ModelledParticipant> evIterator = complex.getParticipants().iterator();
         while (evIterator.hasNext()){
-            AbstractIntactFeature intactEv = (AbstractIntactFeature)evIterator.next();
+            IntactModelledParticipant intactEv = (IntactModelledParticipant)evIterator.next();
             if (intactEv.getAc() == null && f == intactEv){
                 evIterator.remove();
             }
@@ -1651,24 +1357,25 @@ public class ComplexController extends AnnotatedObjectController {
             }
         }
 
-        refreshFeatures();
+        refreshParticipants();
     }
+
     public boolean isBackToCurationButtonRendered() {
         return isButtonRendered(LifeCycleEventType.READY_FOR_CHECKING);
     }
 
     public boolean isBackToCheckingButtonRendered() {
-        boolean render = isButtonRendered(LifeCycleEvent.READY_FOR_RELEASE);
+        boolean render = isButtonRendered(LifeCycleEventType.READY_FOR_RELEASE);
 
         if (!render) {
-            render = isButtonRendered(CvLifecycleEventType.ACCEPTED);
+            render = isButtonRendered(LifeCycleEventType.ACCEPTED);
         }
 
         return render;
     }
 
-    private boolean isButtonRendered(CvLifecycleEventType eventType) {
-        LifecycleEvent event = PublicationUtils.getLastEventOfType(publication, eventType.identifier());
+    private boolean isButtonRendered(LifeCycleEventType eventType) {
+        LifeCycleEvent event = ReleasableUtils.getLastEventOfType(complex, eventType);
 
         if (event == null) {
             return false;
