@@ -125,6 +125,7 @@ public class CvObjectService extends AbstractEditorService {
     public CvObjectService() {
     }
 
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public synchronized void clearAll(){
         if (isInitialised){
             this.allCvObjectMap.clear();
@@ -170,6 +171,8 @@ public class CvObjectService extends AbstractEditorService {
             this.causalStatementSelectItems=null;
             isInitialised=false;
         }
+
+        loadData();
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)

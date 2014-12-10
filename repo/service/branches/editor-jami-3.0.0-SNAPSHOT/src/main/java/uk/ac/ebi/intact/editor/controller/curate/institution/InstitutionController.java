@@ -119,7 +119,7 @@ public class InstitutionController extends AnnotatedObjectController {
 
     @Override
     public void doPostSave() {
-        getInstitutionService().clearAll();
+        getInstitutionService().loadInstitutions();
     }
 
     @Override
@@ -347,7 +347,7 @@ public class InstitutionController extends AnnotatedObjectController {
     @Override
     public String doDelete() {
         String value = super.doDelete();
-        getInstitutionService().clearAll();
+        getInstitutionService().loadInstitutions();
         return value;
     }
 

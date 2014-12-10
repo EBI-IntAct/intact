@@ -21,36 +21,28 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.SelectableDataModelWrapper;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.bridges.exception.BridgeFailedException;
 import psidev.psi.mi.jami.model.*;
-import psidev.psi.mi.jami.model.Alias;
-import psidev.psi.mi.jami.model.Annotation;
-import psidev.psi.mi.jami.model.Xref;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
-import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
-import uk.ac.ebi.intact.editor.controller.curate.interaction.*;
-import uk.ac.ebi.intact.editor.controller.curate.util.IntactObjectComparator;
+import uk.ac.ebi.intact.editor.controller.curate.interaction.FeatureWrapper;
+import uk.ac.ebi.intact.editor.controller.curate.interaction.ImportCandidate;
+import uk.ac.ebi.intact.editor.services.curate.interaction.ParticipantImportService;
 import uk.ac.ebi.intact.editor.services.curate.participant.ParticipantEditorService;
 import uk.ac.ebi.intact.editor.util.SelectableCollectionDataModel;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
-import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
 import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
-import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.SelectItem;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -61,6 +53,9 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
     private T participant;
     @Resource(name = "participantEditorService")
     private transient ParticipantEditorService participantEditorService;
+
+    @Resource(name = "participantImportService")
+    private transient ParticipantImportService participantImportService;
 
     private Class<T> participantClass;
 
@@ -237,11 +232,20 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
     }
 
     public void importInteractor(ActionEvent evt) {
-        ParticipantImportController participantImportController = (ParticipantImportController) getSpringContext().getBean("participantImportController");
-        interactorCandidates = new ArrayList<ImportCandidate>(participantImportController.importParticipant(interactor));
+        try {
+            interactorCandidates = new ArrayList<ImportCandidate>(getParticipantImportService().importParticipant(interactor));
 
-        if (interactorCandidates.size() == 1) {
-            interactorCandidates.get(0).setSelected(true);
+            if (interactorCandidates.size() == 1) {
+                interactorCandidates.get(0).setSelected(true);
+            }
+        } catch (BridgeFailedException e) {
+            addErrorMessage("Cannot load interactor "+interactor, e.getCause()+": "+e.getMessage());
+        } catch (FinderException e) {
+            addErrorMessage("Cannot load interactor " + interactor, e.getCause() + ": " + e.getMessage());
+        } catch (SynchronizerException e) {
+            addErrorMessage("Cannot load interactor " + interactor, e.getCause() + ": " + e.getMessage());
+        } catch (PersisterException e) {
+            addErrorMessage("Cannot load interactor " + interactor, e.getCause() + ": " + e.getMessage());
         }
     }
 
@@ -745,5 +749,12 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
     @Override
     public boolean isXrefNotEditable(Xref ref) {
         return false;
+    }
+
+    public ParticipantImportService getParticipantImportService() {
+        if (this.participantImportService == null){
+            this.participantImportService = ApplicationContextProvider.getBean("participantImportService");
+        }
+        return participantImportService;
     }
 }
