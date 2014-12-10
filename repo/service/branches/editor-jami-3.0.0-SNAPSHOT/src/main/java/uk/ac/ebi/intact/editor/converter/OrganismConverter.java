@@ -15,7 +15,6 @@
  */
 package uk.ac.ebi.intact.editor.converter;
 
-import uk.ac.ebi.intact.editor.services.curate.organism.EditorOrganismService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.extension.IntactOrganism;
 

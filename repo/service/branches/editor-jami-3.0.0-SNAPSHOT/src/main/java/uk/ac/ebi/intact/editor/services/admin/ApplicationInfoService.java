@@ -3,6 +3,8 @@ package uk.ac.ebi.intact.editor.services.admin;
 import com.google.common.collect.Maps;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Propagation;
@@ -38,6 +40,7 @@ import java.util.Map;
 /**
  */
 @Service
+@Scope( BeanDefinition.SCOPE_PROTOTYPE )
 public class ApplicationInfoService extends AbstractEditorService {
     private static final Log log = LogFactory.getLog(ApplicationInfoService.class);
     private Map<Class, PropertyConverter> supportedPrimitiveConverter = Maps.newHashMap();

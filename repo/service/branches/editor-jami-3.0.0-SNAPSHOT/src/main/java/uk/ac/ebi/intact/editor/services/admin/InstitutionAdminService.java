@@ -17,6 +17,8 @@ package uk.ac.ebi.intact.editor.services.admin;
 
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.SelectableDataModelWrapper;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +46,7 @@ import java.util.Map;
  * @version $Id$
  */
 @Service
+@Scope( BeanDefinition.SCOPE_PROTOTYPE )
 public class InstitutionAdminService extends AbstractEditorService {
 
     @Resource(name = "complexService")

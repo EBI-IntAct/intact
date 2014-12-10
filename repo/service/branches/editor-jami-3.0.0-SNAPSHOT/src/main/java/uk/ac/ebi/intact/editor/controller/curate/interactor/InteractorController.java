@@ -19,7 +19,10 @@ import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.*;
+import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
+import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
+import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.Resource;
@@ -71,7 +74,7 @@ public class InteractorController extends AnnotatedObjectController {
 
     private  List<SelectItem> typeSelectItems;
 
-    private String setMember = null;
+    private String[] setMembers = null;
     private List<ImportCandidate> interactorCandidates;
 
     public InteractorController() {
@@ -458,10 +461,19 @@ public class InteractorController extends AnnotatedObjectController {
     }
 
     public void importInteractor(ActionEvent evt) {
-        try {
-            interactorCandidates = new ArrayList<ImportCandidate>(getParticipantImportService().importParticipant(this.setMember));
-        } catch (BridgeFailedException e) {
-            addErrorMessage("Cannot load interactor "+setMember, e.getCause()+": "+e.getMessage());
+        interactorCandidates = new ArrayList<ImportCandidate>();
+        for (String member : setMembers){
+            try {
+                interactorCandidates.addAll(getParticipantImportService().importParticipant(member));
+            } catch (BridgeFailedException e) {
+                addErrorMessage("Cannot load interactor "+member, e.getCause()+": "+e.getMessage());
+            } catch (FinderException e) {
+                addErrorMessage("Cannot load interactor " + member, e.getCause() + ": " + e.getMessage());
+            } catch (SynchronizerException e) {
+                addErrorMessage("Cannot load interactor " + member, e.getCause() + ": " + e.getMessage());
+            } catch (PersisterException e) {
+                addErrorMessage("Cannot load interactor " + member, e.getCause() + ": " + e.getMessage());
+            }
         }
 
         if (interactorCandidates.size() == 1) {
@@ -545,12 +557,12 @@ public class InteractorController extends AnnotatedObjectController {
         return typeSelectItems;
     }
 
-    public String getSetMember() {
-        return setMember;
+    public String[] getSetMembers() {
+        return setMembers;
     }
 
-    public void setSetMember(String setMember) {
-        this.setMember = setMember;
+    public void setSetMembers(String[] setMember) {
+        this.setMembers = setMember;
     }
 
     public List<ImportCandidate> getInteractorCandidates() {

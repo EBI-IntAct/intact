@@ -17,6 +17,8 @@ package uk.ac.ebi.intact.editor.services.curate.publication;
 
 import org.hibernate.Hibernate;
 import org.primefaces.model.LazyDataModel;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;

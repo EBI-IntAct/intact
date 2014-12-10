@@ -18,6 +18,8 @@ package uk.ac.ebi.intact.editor.services.curate.interaction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +29,6 @@ import psidev.psi.mi.jami.bridges.uniprot.UniprotGeneFetcher;
 import psidev.psi.mi.jami.bridges.uniprot.UniprotProteinFetcher;
 import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.XrefUtils;
-import psidev.psi.mi.jami.utils.clone.InteractorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.CandidateType;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.ImportCandidate;
 import uk.ac.ebi.intact.editor.controller.curate.util.CheckIdentifier;
@@ -35,12 +36,16 @@ import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.jami.context.IntactConfiguration;
 import uk.ac.ebi.intact.jami.dao.InteractorDao;
 import uk.ac.ebi.intact.jami.model.extension.*;
+import uk.ac.ebi.intact.jami.synchronizer.FinderException;
+import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
+import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 
 import javax.annotation.Resource;
 import java.util.*;
 
 
 @Service
+@Scope( BeanDefinition.SCOPE_PROTOTYPE )
 public class ParticipantImportService extends AbstractEditorService {
 
     private static final Log log = LogFactory.getLog(ParticipantImportService.class);
@@ -59,9 +64,11 @@ public class ParticipantImportService extends AbstractEditorService {
 
     private final static String FEATURE_CHAIN = "PRO_";
 
-    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-    public Set<ImportCandidate> importParticipant(String participantToImport) throws BridgeFailedException {
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
+    public Set<ImportCandidate> importParticipant(String participantToImport) throws BridgeFailedException, SynchronizerException,
+            PersisterException, FinderException {
         log.debug("Importing participant: " + participantToImport);
+        attachDaoToTransactionManager();
 
         Set<ImportCandidate> candidates = importFromIntAct(participantToImport.toUpperCase());
 
@@ -167,7 +174,8 @@ public class ParticipantImportService extends AbstractEditorService {
     }
 
 
-    private Set<ImportCandidate> importFromUniprot(String participantToImport) throws BridgeFailedException {
+    private Set<ImportCandidate> importFromUniprot(String participantToImport) throws BridgeFailedException, SynchronizerException,
+            PersisterException, FinderException {
         Set<ImportCandidate> candidates = new HashSet<ImportCandidate>();
 
         final Collection<Protein> uniprotProteins = uniprotRemoteService.fetchByIdentifier(participantToImport);
@@ -183,7 +191,8 @@ public class ParticipantImportService extends AbstractEditorService {
     }
 
 
-    private Set<ImportCandidate> importFromChebi(String participantToImport) throws BridgeFailedException {
+    private Set<ImportCandidate> importFromChebi(String participantToImport) throws BridgeFailedException, SynchronizerException,
+            PersisterException, FinderException {
         Set<ImportCandidate> candidates = new HashSet<ImportCandidate>();
 
         final Collection<BioactiveEntity> smallMolecules = chebiFetcher.fetchByIdentifier(participantToImport);
@@ -196,7 +205,8 @@ public class ParticipantImportService extends AbstractEditorService {
         return candidates;
     }
 
-    private Set<ImportCandidate> importFromSwissProtWithEnsemblId(String participantToImport) throws BridgeFailedException {
+    private Set<ImportCandidate> importFromSwissProtWithEnsemblId(String participantToImport) throws BridgeFailedException, SynchronizerException,
+            PersisterException, FinderException {
         Set<ImportCandidate> candidates = new HashSet<ImportCandidate>();
 
         final Collection<Gene> genes = uniprotGeneFetcher.fetchByIdentifier(participantToImport);
@@ -266,35 +276,32 @@ public class ParticipantImportService extends AbstractEditorService {
         initialiseXrefs(((IntactCvTerm)term).getDbXrefs());
     }
 
-    private IntactProtein toProtein(ImportCandidate candidate) {
+    private IntactProtein toProtein(ImportCandidate candidate) throws PersisterException, FinderException, SynchronizerException {
         IntactProtein protein=null;
 
         // use the protein service to create proteins (not persist!)
         if (candidate.getUniprotProtein() != null) {
-            protein = new IntactProtein(candidate.getUniprotProtein().getShortName());
-            InteractorCloner.copyAndOverrideBasicPolymerProperties(candidate.getUniprotProtein(), protein);
+            protein = synchronizeIntactObject(candidate.getUniprotProtein(), getIntactDao().getSynchronizerContext().getProteinSynchronizer(), false);
         }
 
         return protein;
     }
 
-    private IntactBioactiveEntity toBioactiveEntity(BioactiveEntity candidate) {
+    private IntactBioactiveEntity toBioactiveEntity(BioactiveEntity candidate) throws PersisterException, FinderException, SynchronizerException {
         IntactBioactiveEntity entity=null;
 
         if (candidate != null) {
-            entity = new IntactBioactiveEntity(candidate.getShortName());
-            InteractorCloner.copyAndOverrideBasicInteractorProperties(candidate, entity);
+            entity = synchronizeIntactObject(candidate, getIntactDao().getSynchronizerContext().getBioactiveEntitySynchronizer(), false);
         }
 
         return entity;
     }
 
-    private IntactGene toGene(Gene candidate) {
+    private IntactGene toGene(Gene candidate) throws PersisterException, FinderException, SynchronizerException {
         IntactGene entity=null;
 
         if (candidate != null) {
-            entity = new IntactGene(candidate.getShortName());
-            InteractorCloner.copyAndOverrideBasicInteractorProperties(candidate, entity);
+            entity = synchronizeIntactObject(candidate, getIntactDao().getSynchronizerContext().getGeneSynchronizer(), false);
         }
 
         return entity;

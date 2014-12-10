@@ -15,42 +15,33 @@
  */
 package uk.ac.ebi.intact.editor.controller.curate.interaction;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import psidev.psi.mi.jami.bridges.chebi.ChebiFetcher;
 import psidev.psi.mi.jami.bridges.exception.BridgeFailedException;
-import psidev.psi.mi.jami.bridges.uniprot.UniprotGeneFetcher;
-import psidev.psi.mi.jami.bridges.uniprot.UniprotProteinFetcher;
-import psidev.psi.mi.jami.model.BioactiveEntity;
 import psidev.psi.mi.jami.model.CvTerm;
-import psidev.psi.mi.jami.model.Gene;
-import psidev.psi.mi.jami.model.Participant;
-import uk.ac.ebi.intact.editor.config.EditorConfig;
-import uk.ac.ebi.intact.editor.controller.admin.UserManagerController;
-import uk.ac.ebi.intact.editor.controller.curate.util.CheckIdentifier;
+import uk.ac.ebi.intact.editor.controller.BaseController;
+import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
+import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
+import uk.ac.ebi.intact.editor.services.curate.interaction.ParticipantImportService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
-import uk.ac.ebi.intact.jami.context.IntactConfiguration;
-import uk.ac.ebi.intact.jami.context.UserContext;
-import uk.ac.ebi.intact.jami.dao.CvTermDao;
-import uk.ac.ebi.intact.jami.dao.IntactDao;
-import uk.ac.ebi.intact.jami.dao.ModelledParticipantDao;
-import uk.ac.ebi.intact.jami.model.extension.*;
+import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
+import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
+import uk.ac.ebi.intact.jami.model.extension.IntactModelledParticipant;
+import uk.ac.ebi.intact.jami.model.extension.IntactStoichiometry;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
 import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
-import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
-import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.faces.event.ActionEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Marine Dumousseau (marine@ebi.ac.uk)
@@ -59,26 +50,23 @@ import java.util.*;
 @Controller
 @Scope("conversation.access")
 @ConversationName("general")
-public class ModelledParticipantImportController extends JpaAwareController {
+public class ModelledParticipantImportController extends BaseController {
 
     private static final Log log = LogFactory.getLog(ModelledParticipantImportController.class);
 
-    @Autowired
-    @Qualifier("proteinFetcher")
-    private UniprotProteinFetcher uniprotProteinFetcher;
+    @Resource(name = "participantImportService")
+    private transient ParticipantImportService participantImportService;
+
+    @Resource(name = "cvObjectService")
+    private transient CvObjectService cvService;
 
     @Autowired
-    @Qualifier("bioactiveEntityFetcher")
-    private ChebiFetcher chebiFetcher;
-
-    @Autowired
-    @Qualifier("geneFetcher")
-    private UniprotGeneFetcher uniprotGeneFetcher;
+    private ChangesController changesController;
 
     @Autowired
     private ComplexController interactionController;
 
-    private List<ImportJamiCandidate> importCandidates;
+    private List<ImportCandidate> importCandidates;
     private List<String> queriesNoResults;
     private String[] participantsToImport = new String[0];
 
@@ -88,28 +76,28 @@ public class ModelledParticipantImportController extends JpaAwareController {
 
     private final static String FEATURE_CHAIN = "PRO_";
 
-    @PostConstruct
-    public void init() {
-        EditorConfig editorConfig = getEditorConfig();
-        this.minStoichiometry = (int)editorConfig.getDefaultStoichiometry();
-        this.maxStoichiometry = (int)editorConfig.getDefaultStoichiometry();
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void importParticipants(ActionEvent evt) {
-        // set current user
-        getIntactDao().getUserContext().
-                setUser(((UserManagerController)ApplicationContextProvider.
-                        getBean("userManagerController")).
-                        getCurrentUser());
+        getParticipantImportService().getIntactDao().getUserContext().setUser(getCurrentUser());
 
-        importCandidates = new ArrayList<ImportJamiCandidate>();
+        this.minStoichiometry = getEditorConfig().getDefaultStoichiometry();
+        this.maxStoichiometry = getEditorConfig().getDefaultStoichiometry();
+
+        this.minStoichiometry = getEditorConfig().getDefaultStoichiometry();
+        this.maxStoichiometry = getEditorConfig().getDefaultStoichiometry();
+
+        CvObjectService cvObjectService = getCvService();
+
+        if (!cvObjectService.isInitialised()){
+            cvObjectService.loadData();
+        }
+
+        cvBiologicalRole = cvObjectService.getDefaultBiologicalRole();
+
+
+        importCandidates = new ArrayList<ImportCandidate>();
         queriesNoResults = new ArrayList<String>();
 
-        IntactDao intactDao = getIntactDao();
-        CvTermDao cvObjectService = intactDao.getCvTermDao();
-
-        cvBiologicalRole = cvObjectService.getByMIIdentifier(Participant.UNSPECIFIED_ROLE, IntactUtils.BIOLOGICAL_ROLE_OBJCLASS);
+        cvBiologicalRole = cvObjectService.getDefaultBiologicalRole();
 
         if (participantsToImport == null) {
             addErrorMessage("No participants to import", "Please add at least one identifier in the box");
@@ -130,12 +118,26 @@ public class ModelledParticipantImportController extends JpaAwareController {
             } else if (participantToImport.contains("*")) {
                 queriesNoResults.add(participantToImport + " (wildcards not allowed)");
             } else {
-                Set<ImportJamiCandidate> candidates = importParticipant(participantToImport);
-
-                if (candidates.isEmpty()) {
+                Set<ImportCandidate> candidates = null;
+                try {
+                    candidates = getParticipantImportService().importParticipant(participantToImport);
+                    if (candidates.isEmpty()) {
+                        queriesNoResults.add(participantToImport);
+                    } else {
+                        importCandidates.addAll(candidates);
+                    }
+                } catch (BridgeFailedException e) {
+                    addErrorMessage("Cannot load interactor " + participantToImport, e.getCause() + ": " + e.getMessage());
                     queriesNoResults.add(participantToImport);
-                } else {
-                    importCandidates.addAll(candidates);
+                } catch (FinderException e) {
+                    addErrorMessage("Cannot load interactor " + participantToImport, e.getCause() + ": " + e.getMessage());
+                    queriesNoResults.add(participantToImport);
+                } catch (SynchronizerException e) {
+                    addErrorMessage("Cannot load interactor " + participantToImport, e.getCause() + ": " + e.getMessage());
+                    queriesNoResults.add(participantToImport);
+                } catch (PersisterException e) {
+                    addErrorMessage("Cannot load interactor " + participantToImport, e.getCause() + ": " + e.getMessage());
+                    queriesNoResults.add(participantToImport);
                 }
             }
         }
@@ -143,15 +145,22 @@ public class ModelledParticipantImportController extends JpaAwareController {
         participantsToImport = new String[0];
     }
 
-    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public void importSelected(ActionEvent evt) {
         // set current user
-        getIntactDao().getUserContext().
-                setUser(((UserManagerController)ApplicationContextProvider.
-                        getBean("userManagerController")).
-                        getCurrentUser());
+        getParticipantImportService().getIntactDao().getUserContext().setUser(getCurrentUser());
 
-        for (ImportJamiCandidate candidate : importCandidates) {
+        this.minStoichiometry = getEditorConfig().getDefaultStoichiometry();
+        this.maxStoichiometry = getEditorConfig().getDefaultStoichiometry();
+
+        CvObjectService cvObjectService = getCvService();
+
+        if (!cvObjectService.isInitialised()){
+            cvObjectService.loadData();
+        }
+
+        cvBiologicalRole = cvObjectService.getDefaultBiologicalRole();
+
+        for (ImportCandidate candidate : importCandidates) {
             if (candidate.isSelected()) {
                 final IntactComplex interaction = interactionController.getComplex();
                 IntactModelledParticipant participant = toParticipant(candidate, interaction);
@@ -162,243 +171,25 @@ public class ModelledParticipantImportController extends JpaAwareController {
         }
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public Set<ImportJamiCandidate> importParticipant(String participantToImport) {
-        if (participantToImport == null) {
-            addErrorMessage("No participant to import", "Provide one or more accessions");
-            return Collections.EMPTY_SET;
-        }
-        log.debug("Importing participant: " + participantToImport);
-
-        Set<ImportJamiCandidate> candidates = importFromIntAct(participantToImport.toUpperCase());
-
-        if (candidates.isEmpty()) {     //It is not an IntAct one
-
-            CandidateType candidateType = detectCandidate(participantToImport.toUpperCase());
-
-            try {
-                switch (candidateType) {
-                    case BIO_ACTIVE_ENTITY:
-                        candidates = importFromChebi(participantToImport.toUpperCase());
-                        break;
-                    case GENE:
-                        candidates = importFromSwissProtWithEnsemblId(participantToImport.toUpperCase());
-                        break;
-                    case PROTEIN:
-                        candidates = importFromUniprot(participantToImport.toUpperCase());
-                        break;
-                }
-            } catch (Exception e) {
-                addErrorMessage("Cannot import participants", "Problem fetching participant: " + participantToImport);
-                handleException(e);
-                return Collections.EMPTY_SET;
-            }
-
-            // only pre-select those that match the query
-            for (ImportJamiCandidate candidate : candidates) {
-                candidate.setSelected(false);
-
-                for (String primaryAc : candidate.getPrimaryAcs()) {
-                    if (candidate.getQuery().equalsIgnoreCase(primaryAc)) {
-                        candidate.setSelected(true);
-                        break;
-                    }
-                    // for feature chains, in IntAct, we add the parent uniprot ac before the chain id so feature chains are never pre-selected
-                    else if (candidate.isChain() && primaryAc.toUpperCase().contains(FEATURE_CHAIN)) {
-                        int indexOfChain = primaryAc.indexOf(FEATURE_CHAIN);
-
-                        String chain_ac = primaryAc.substring(indexOfChain);
-
-                        if (candidate.getQuery().equalsIgnoreCase(chain_ac)) {
-                            candidate.setSelected(true);
-                            break;
-                        }
-                    }
-                }
-            }
-
-            candidates.addAll(candidates);
-
-        }
-
-        return candidates;
-    }
-
-    private CandidateType detectCandidate(String candidateId) {
-        if (CheckIdentifier.checkChebiId(candidateId)) {
-            return CandidateType.BIO_ACTIVE_ENTITY;
-        } else if (CheckIdentifier.checkEnsembleId(candidateId)) {
-            return CandidateType.GENE;
-        } else { //If the identifier is not one of the previous we suppose that is a UniprotKB
-            return CandidateType.PROTEIN;
-        }
-    }
-
-    private Set<ImportJamiCandidate> importFromIntAct(String participantToImport) {
-        Set<ImportJamiCandidate> candidates = new HashSet<ImportJamiCandidate>();
-
-        IntactConfiguration config = ApplicationContextProvider.getBean("intactJamiConfiguration");
-        IntactDao intactDao = getIntactDao();
-        final ModelledParticipantDao componentDao = intactDao.getModelledParticipantDao();
-        final uk.ac.ebi.intact.jami.dao.InteractorDao<IntactInteractor> interactorDao = intactDao.getInteractorDao(IntactInteractor.class);
-
-        // id
-        if (participantToImport.startsWith(config.getAcPrefix())) {
-            IntactInteractor interactor = interactorDao.getByAc(participantToImport);
-
-            if (interactor != null) {
-                candidates.add(toImportCandidate(participantToImport, interactor));
-            } else {
-                IntactModelledParticipant component = componentDao.getByAc(participantToImport);
-
-                if (component != null) {
-                    candidates.add(toImportCandidate(participantToImport, component.getInteractor()));
-                }
-            }
-        } else {
-            // identity xref
-            Collection<IntactInteractor> interactorsByXref = interactorDao.getByXref(participantToImport);
-
-            for (IntactInteractor interactorByXref : interactorsByXref) {
-                boolean add = false;
-
-                for (psidev.psi.mi.jami.model.Xref ref : interactorByXref.getIdentifiers()){
-                    if (psidev.psi.mi.jami.utils.XrefUtils.isXrefAnIdentifier(ref) && ref.getId().equalsIgnoreCase(participantToImport)){
-                        add = true;
-                    }
-                }
-
-                if (add){
-                    candidates.add(toImportCandidate(participantToImport, interactorByXref));
-                }
-            }
-
-            if (candidates.isEmpty()) {
-                // shortLabel
-                final Collection<IntactInteractor> interactorsByLabel = interactorDao.getByShortNameLike(participantToImport);
-
-                for (IntactInteractor interactor : interactorsByLabel) {
-                    candidates.add(toImportCandidate(participantToImport, interactor));
-                }
-            }
-        }
-
-        return candidates;
-    }
-
-
-    private Set<ImportJamiCandidate> importFromUniprot(String participantToImport) throws BridgeFailedException {
-        Set<ImportJamiCandidate> candidates = new HashSet<ImportJamiCandidate>();
-
-        final Collection<psidev.psi.mi.jami.model.Protein> uniprotProteins = uniprotProteinFetcher.fetchByIdentifier(participantToImport);
-
-        for (psidev.psi.mi.jami.model.Protein uniprotProtein : uniprotProteins) {
-            ImportJamiCandidate candidate = new ImportJamiCandidate(participantToImport, uniprotProtein);
-            candidate.setSource("uniprotkb");
-            candidate.setInteractor(uniprotProtein);
-            candidates.add(candidate);
-        }
-
-        return candidates;
-    }
-
-
-    private Set<ImportJamiCandidate> importFromChebi(String participantToImport) throws BridgeFailedException {
-        Set<ImportJamiCandidate> candidates = new HashSet<ImportJamiCandidate>();
-
-        final Collection<BioactiveEntity> smallMolecule = chebiFetcher.fetchByIdentifier(participantToImport);
-        for (BioactiveEntity entity : smallMolecule){
-            ImportJamiCandidate candidate = toImportCandidate(participantToImport, entity);
-            candidate.setSource("chebi");
-
-            candidates.add(candidate);
-        }
-
-        return candidates;
-    }
-
-    private Set<ImportJamiCandidate> importFromSwissProtWithEnsemblId(String participantToImport) throws BridgeFailedException {
-        Set<ImportJamiCandidate> candidates = new HashSet<ImportJamiCandidate>();
-
-        final Collection<Gene> genes = uniprotGeneFetcher.fetchByIdentifier(participantToImport);
-
-        for (Gene gene : genes) {
-            ImportJamiCandidate candidate = toImportCandidate(participantToImport, gene);
-            candidate.setSource("ensembl");
-
-            candidates.add(candidate);
-        }
-        return candidates;
-    }
-
-
-    private ImportJamiCandidate toImportCandidate(String participantToImport, psidev.psi.mi.jami.model.Interactor interactor) {
-        ImportJamiCandidate candidate = new ImportJamiCandidate(participantToImport, interactor);
-        candidate.setSource("intact");
-
-        final Collection<psidev.psi.mi.jami.model.Xref> identityXrefs = psidev.psi.mi.jami.utils.XrefUtils.collectAllXrefsHavingQualifier(interactor.getIdentifiers(),
-                psidev.psi.mi.jami.model.Xref.IDENTITY_MI, psidev.psi.mi.jami.model.Xref.IDENTITY);
-
-        if (!identityXrefs.isEmpty()) {
-            List<String> ids = new ArrayList<String>(identityXrefs.size());
-
-            for (psidev.psi.mi.jami.model.Xref xref : identityXrefs) {
-                ids.add(xref.getId());
-            }
-
-            candidate.setPrimaryAcs(ids);
-        }
-
-        Collection<psidev.psi.mi.jami.model.Xref> secondaryAcs = psidev.psi.mi.jami.utils.XrefUtils.collectAllXrefsHavingQualifier(interactor.getIdentifiers(),
-                psidev.psi.mi.jami.model.Xref.SECONDARY_MI, psidev.psi.mi.jami.model.Xref.SECONDARY);
-        List<String> secondaryIds = new ArrayList<String>(secondaryAcs.size());
-
-        for (psidev.psi.mi.jami.model.Xref xref : secondaryAcs) {
-            secondaryIds.add(xref.getId());
-        }
-
-        candidate.setSecondaryAcs(secondaryIds);
-
-        return candidate;
-    }
-
-    protected IntactModelledParticipant toParticipant(ImportJamiCandidate candidate, IntactComplex interaction) {
-        psidev.psi.mi.jami.model.Interactor interactor = candidate.getInteractor();
+    protected IntactModelledParticipant toParticipant(ImportCandidate candidate, IntactComplex interaction) {
+        IntactInteractor interactor = candidate.getInteractor();
 
         if (cvBiologicalRole == null) {
-            IntactDao intactDao = getIntactDao();
-            CvTermDao cvObjectService = intactDao.getCvTermDao();
+            CvObjectService cvObjectService = getCvService();
 
-            cvBiologicalRole = cvObjectService.getByMIIdentifier(Participant.UNSPECIFIED_ROLE, IntactUtils.BIOLOGICAL_ROLE_OBJCLASS);
+            if (!cvObjectService.isInitialised()){
+                cvObjectService.loadData();
+            }
+
+            if (cvBiologicalRole == null) {
+                cvBiologicalRole = cvObjectService.getDefaultBiologicalRole();
+            }
         }
 
-        IntactModelledParticipant component = null;
-        getIntactTransactionSynchronization().registerDaoForSynchronization(getIntactDao());
-        try {
-            component = new IntactModelledParticipant(getIntactDao().
-                    getSynchronizerContext().
-                    getInteractorSynchronizer().synchronize(interactor, true));
-        } catch (FinderException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot import interactor: " + e.getMessage(), ExceptionUtils.getFullStackTrace(e));
-        } catch (PersisterException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot import interactor: " + e.getMessage(), ExceptionUtils.getFullStackTrace(e));
-        } catch (SynchronizerException e) {
-            // clear cache
-            getIntactDao().getSynchronizerContext().clearCache();
-            addErrorMessage("Cannot import interactor: " + e.getMessage(), ExceptionUtils.getFullStackTrace(e));
-        }
-        UserContext jamiUserContext = getIntactDao().getUserContext();
-        component.setCreator(jamiUserContext.getUserId());
-        component.setUpdator(jamiUserContext.getUserId());
-        component.setCreated(new Date());
-        component.setUpdated(component.getCreated());
+        IntactModelledParticipant component = new IntactModelledParticipant(interactor);
         component.setInteraction(interaction);
-        component.setStoichiometry(new IntactStoichiometry(minStoichiometry,maxStoichiometry));
         component.setBiologicalRole(cvBiologicalRole);
+        component.setStoichiometry(new IntactStoichiometry(minStoichiometry, maxStoichiometry));
 
         if (candidate.isChain() || candidate.isIsoform()) {
             Collection<String> parentAcs = new ArrayList<String>();
@@ -408,6 +199,9 @@ public class ModelledParticipantImportController extends JpaAwareController {
 
                 addParentAcsTo(parentAcs, interaction);
             }
+
+            changesController.markAsHiddenChange(interactor, interaction, parentAcs,
+                    getParticipantImportService().getIntactDao().getSynchronizerContext().getInteractorSynchronizer(), "Interactor "+interactor.getShortName());
         }
 
         return component;
@@ -434,11 +228,11 @@ public class ModelledParticipantImportController extends JpaAwareController {
         this.participantsToImport = participantsToImport;
     }
 
-    public List<ImportJamiCandidate> getImportCandidates() {
+    public List<ImportCandidate> getImportCandidates() {
         return importCandidates;
     }
 
-    public void setImportCandidates(List<ImportJamiCandidate> importCandidates) {
+    public void setImportCandidates(List<ImportCandidate> importCandidates) {
         this.importCandidates = importCandidates;
     }
 
@@ -482,5 +276,19 @@ public class ModelledParticipantImportController extends JpaAwareController {
     public void setMaxStoichiometry(int stoichiometry) {
         this.maxStoichiometry = stoichiometry;
         this.minStoichiometry = Math.min(this.minStoichiometry, maxStoichiometry);
+    }
+
+    public ParticipantImportService getParticipantImportService() {
+        if (this.participantImportService == null){
+            this.participantImportService = ApplicationContextProvider.getBean("participantImportService");
+        }
+        return participantImportService;
+    }
+
+    public CvObjectService getCvService() {
+        if (this.cvService == null){
+            this.cvService = ApplicationContextProvider.getBean("cvObjectService");
+        }
+        return cvService;
     }
 }

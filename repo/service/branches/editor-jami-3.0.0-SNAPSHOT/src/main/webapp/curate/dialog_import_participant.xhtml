@@ -93,7 +93,7 @@
                     </p:column>
                     <p:column>
                         <f:facet name="header"><h:outputText value="IntAct label"/></f:facet>
-                        <h:outputText value="#{candidate.interactor.shortLabel}" rendered="#{candidate.interactor != null}"/>
+                        <h:outputText value="#{candidate.interactor.shortName}" rendered="#{candidate.interactor != null}"/>
                     </p:column>
                     <p:column>
                         <f:facet name="header"><h:outputText value="Query"/></f:facet>
@@ -118,35 +118,45 @@
                 <p:panel id="globalAttributesId" header="Global attributes" rendered="#{not empty participantImportController.importCandidates}">
                     <h:panelGrid columns="2">
                         <h:outputLabel value="Experimental role: " for="expRoleDialogTxt"/>
-                        <ia:inputCvObject id="expRoleDialogTxt" cvIdentifier="MI:0495"
+                        <ia:inputCvTerm id="expRoleDialogTxt" cvIdentifier="MI:0495"
                                           modal="false"
                                           value="#{participantImportController.cvExperimentalRole}"
-                                          selectItems="#{cvObjectService.experimentalRoleSelectItems}" />
+                                          selectItems="#{cvObjectService.experimentalRoleSelectItems}"
+                                          cvClass="uk.ac.ebi.intact.model.CvExperimentalRole"/>
 
                         <h:outputLabel value="Biological role: " for="bioRoleDialogTxt"/>
-                        <ia:inputCvObject id="bioRoleDialogTxt" cvIdentifier="MI:0500"
+                        <ia:inputCvTerm id="bioRoleDialogTxt" cvIdentifier="MI:0500"
                                           modal="false"
                                           value="#{participantImportController.cvBiologicalRole}"
-                                          selectItems="#{cvObjectService.biologicalRoleSelectItems}" />
+                                          selectItems="#{cvObjectService.biologicalRoleSelectItems}"
+                                          cvClass="uk.ac.ebi.intact.model.CvBiologicalRole"/>
 
                         <h:outputLabel value="Expressed in: " for="expressedInDialogTxt"/>
-                        <ia:inputBioSource id="expressedInDialogTxt" value="#{participantImportController.expressedIn}"
+                        <ia:inputOrganism id="expressedInDialogTxt" value="#{participantImportController.expressedIn}"
                                            modal="false"
                                            selectItems="#{bioSourceService.bioSourceSelectItems}"/>
-                        <h:outputLabel value="Stoichiometry: " for="stoichiometryDialogTxt"/>
-                        <p:spinner id="stoichiometryDialogTxt" value="#{participantImportController.stoichiometry}" min="0" stepFactor="1" size="3" maxlength="2"/>
+                        <h:outputLabel value="Min Stoichiometry: " for="minStoichiometryDialogTxt"/>
+                        <p:spinner id="minStoichiometryDialogTxt" value="#{participantImportController.minStoichiometry}" min="0" stepFactor="1" size="3"
+                                   maxlength="2"/>
+
+                        <h:outputLabel value="Max Stoichiometry: " for="maxStoichiometryDialogTxt"/>
+                        <p:spinner id="maxStoichiometryDialogTxt" value="#{participantImportController.maxStoichiometry}" min="0" stepFactor="1" size="3"
+                                   maxlength="2"/>
+
                         <h:outputLabel value="Experimental preparation(s): " for="deliveryDescription"/>
                         <!-- WARNING : the p:column and immediate = true are required to make the button remove in the p:dataList work-->
                         <h:panelGroup id="deliveryDescription">
-                            <p:dataList id="deliveryListInDialog" value="#{participantImportController.cvExperimentalPreparations}" var="delivery" type="definition" rendered="#{not empty participantImportController.cvExperimentalPreparations}" styleClass="dataList">
+                            <p:dataList id="deliveryListInDialog" value="#{participantImportController.cvExperimentalPreparations}" var="delivery"
+                                        type="definition" rendered="#{not empty participantImportController.cvExperimentalPreparations}" styleClass="dataList">
                                 <f:facet name="description">
                                     <h:outputText value=""/>
                                 </f:facet>
                                 <p:column>
                                     <p:panelGrid columns="2">
-                                        <h:outputText value="#{delivery.shortLabel}"/>
+                                        <h:outputText value="#{delivery.shortName}"/>
                                         <p:commandButton value="Remove"
-                                                         actionListener="#{participantImportController.removeExperimentalPreparation(delivery)}" update=":editorForm:interactionTabs:candidatesDialogContent:deliveryDescription"
+                                                         actionListener="#{participantImportController.removeExperimentalPreparation(delivery)}"
+                                                         update=":editorForm:interactionTabs:candidatesDialogContent:deliveryDescription"
                                                          process="@this" immediate="true"/>
                                     </p:panelGrid>
                                 </p:column>
@@ -170,7 +180,7 @@
                                 </f:facet>
                                 <p:column>
                                     <p:panelGrid columns="2">
-                                        <h:outputText value="#{identification.shortLabel}"/>
+                                        <h:outputText value="#{identification.shortName}"/>
                                         <p:commandButton value="Remove"
                                                          actionListener="#{participantImportController.removeIdentificationMethod(identification)}" update=":editorForm:interactionTabs:candidatesDialogContent:identificationDescription"
                                                          process="@this" immediate="true"/>

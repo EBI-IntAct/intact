@@ -85,7 +85,8 @@ public class BulkAnnotationController extends BaseController {
             aoClass = Thread.currentThread().getContextClassLoader().loadClass(aoClassName);
 
             try {
-                updatedAcs = bulkOperations.addAnnotation(new DefaultAnnotation(this.topic, this.value), acs, aoClass, replaceIfTopicExists);
+                getBulkOperations().getIntactDao().getUserContext().setUser(getCurrentUser());
+                updatedAcs = getBulkOperations().addAnnotation(new DefaultAnnotation(this.topic, this.value), acs, aoClass, replaceIfTopicExists);
             } catch (SynchronizerException e) {
                 addErrorMessage("Cannot add annotation " + this.topic, e.getCause() + ": " + e.getMessage());
             } catch (FinderException e) {

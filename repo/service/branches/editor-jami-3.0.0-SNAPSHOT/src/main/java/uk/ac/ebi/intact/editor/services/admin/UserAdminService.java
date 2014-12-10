@@ -4,6 +4,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.SelectableDataModelWrapper;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,7 @@ import java.util.*;
  * @since 2.0
  */
 @Service
+@Scope( BeanDefinition.SCOPE_PROTOTYPE )
 public class UserAdminService extends AbstractEditorService {
 
     private static final Log log = LogFactory.getLog( UserAdminService.class );
@@ -85,6 +88,7 @@ public class UserAdminService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public User saveUser(User user) throws SynchronizerException, FinderException, PersisterException {
+        attachDaoToTransactionManager();
         return synchronizeIntactObject(user, getIntactDao().getSynchronizerContext().getUserSynchronizer(), true);
     }
 
