@@ -15,32 +15,21 @@
  */
 package uk.ac.ebi.intact.editor.services.curate.interaction;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.intact.editor.controller.BaseController;
-import uk.ac.ebi.intact.editor.controller.UserSessionController;
-import uk.ac.ebi.intact.editor.controller.curate.CurateController;
-import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentController;
-import uk.ac.ebi.intact.editor.controller.curate.interaction.ImportCandidate;
-import uk.ac.ebi.intact.editor.controller.curate.interaction.InteractionController;
-import uk.ac.ebi.intact.editor.controller.curate.interaction.ParticipantImportController;
-import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
+import psidev.psi.mi.jami.model.ParticipantEvidence;
+import psidev.psi.mi.jami.model.Publication;
+import psidev.psi.mi.jami.model.Xref;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
+import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
 import uk.ac.ebi.intact.jami.model.extension.IntactInteractionEvidence;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
+import uk.ac.ebi.intact.jami.model.extension.IntactPublication;
 
-import javax.faces.context.FacesContext;
-import javax.faces.event.ComponentSystemEvent;
-import javax.faces.model.SelectItem;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * TODO comment this class header.
@@ -54,263 +43,54 @@ public class InteractionRemoteService extends AbstractEditorService {
     public InteractionRemoteService() {
     }
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public List<IntactInteractionEvidence> loadInteractions( String[]  proteins) {
-        List<IntactInteractionEvidence> interactions = getIntactDao().getInteractionDao().getByInteractorIdentifier(protein);
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public Collection<IntactInteractionEvidence> loadInteractions( String[]  proteins, String pubRef) {
+        Collection<IntactInteractionEvidence> interactions = getIntactDao().getInteractionDao().getByInteractorsPrimaryId(proteins);
 
-        Iterator<Interaction> iterator = interactions.iterator();
-
-        if (pubRef != null) {
-            while (iterator.hasNext()) {
-                Interaction interaction = iterator.next();
-
-                for (Experiment exp : interaction.getExperiments()) {
-                    if (!exp.getPublication().getPublicationId().equals(pubRef)) {
-                        iterator.remove();
-                    }
-                }
-            }
-        }
-
-        // redirect if one found
-        if (interactions.size() == 1) {
-            try {
-                HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-                HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
-                response.sendRedirect(request.getContextPath()+"/interaction/"+interactions.iterator().next().getAc());
-
-                FacesContext.getCurrentInstance().responseComplete();
-            } catch (IOException e) {
-                handleException(e);
-            }
-        } else if (interactions.size() == 0) {
-            publication = getDaoFactory().getPublicationDao().getByPubmedId(pubRef);
-
-            if (publication != null) {
-                InteractionController interactionController = (InteractionController) getSpringContext().getBean("interactionController");
-
-                experimentSelectItems = new ArrayList<SelectItem>();
-                experimentSelectItems.add(new SelectItem(null, "-- Select experiment --", null, false, true, true));
-
-                for (Experiment exp : publication.getExperiments()) {
-                    experimentSelectItems.add(new SelectItem(exp, interactionController.completeExperimentLabel(exp)));
-                }
-            }
-        }
-    }
-
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public void loadData( ComponentSystemEvent event ) {
-        interactions = getDaoFactory().getInteractionDao().getByInteractorsPrimaryId(true, proteins);
-
-        Iterator<Interaction> iterator = interactions.iterator();
+        Iterator<IntactInteractionEvidence> iterator = interactions.iterator();
 
         if (pubRef != null) {
             while (iterator.hasNext()) {
-                Interaction interaction = iterator.next();
-
-                for (Experiment exp : interaction.getExperiments()) {
-                    if (!exp.getPublication().getPublicationId().equals(pubRef)) {
+                IntactInteractionEvidence interaction = iterator.next();
+                if (interaction.getExperiment() != null && interaction.getExperiment().getPublication() != null){
+                    Publication pub = interaction.getExperiment().getPublication();
+                    if (pub.getPubmedId() != null && !pub.getPubmedId().equals(pubRef)) {
                         iterator.remove();
                     }
+                    else{
+                        for (ParticipantEvidence participant : interaction.getParticipants()){
+                            IntactInteractor interactor = (IntactInteractor)participant.getInteractor();
+                            Hibernate.initialize(interactor.getDbXrefs());
+                        }
+                    }
+                }
+                else{
+                    iterator.remove();
                 }
             }
         }
 
-        // redirect if one found
-        if (interactions.size() == 1) {
-            try {
-                HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-                HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
-                response.sendRedirect(request.getContextPath()+"/interaction/"+interactions.iterator().next().getAc());
-
-                FacesContext.getCurrentInstance().responseComplete();
-            } catch (IOException e) {
-                handleException(e);
-            }
-        } else if (interactions.size() == 0) {
-            publication = getDaoFactory().getPublicationDao().getByPubmedId(pubRef);
-
-            if (publication != null) {
-                InteractionController interactionController = (InteractionController) getSpringContext().getBean("interactionController");
-
-                experimentSelectItems = new ArrayList<SelectItem>();
-                experimentSelectItems.add(new SelectItem(null, "-- Select experiment --", null, false, true, true));
-
-                for (Experiment exp : publication.getExperiments()) {
-                    experimentSelectItems.add(new SelectItem(exp, interactionController.completeExperimentLabel(exp)));
-                }
-            }
-        }
-    }
-
-    public String createNewInteraction() {
-        if (experiment == null && (cvIdentification == null || cvInteraction == null || hostOrganism == null)) {
-            addErrorMessage("Fields missing", "Select a value from all the drop down lists for the experiments");
-            return null;
-        }
-
-        CurateController curateController = (CurateController) getSpringContext().getBean("curateController");
-
-        PublicationController publicationController = (PublicationController) getSpringContext().getBean("publicationController");
-
-        if (publication == null) {
-            // create one
-            publicationController.setIdentifier(pubRef);
-            publicationController.newEmpty();
-            publicationController.setUnsavedChanges(true);
-
-            publication = publicationController.getPublication();
-            publicationController.autocomplete(publication, pubRef);
-
-            publicationController.doSave(false);
-        } else {
-            publicationController.setPublication(publication);
-        }
-
-        ExperimentController experimentController = (ExperimentController) getSpringContext().getBean("experimentController");
-
-        if (experiment == null) {
-
-
-            experimentController.newExperiment(publication);
-            experimentController.setUnsavedChanges(true);
-
-            experiment = experimentController.getExperiment();
-            experiment.setCvIdentification(cvIdentification);
-            experiment.setBioSource(hostOrganism);
-            experiment.setCvInteraction(cvInteraction);
-
-            experimentController.doSave(false);
-
-        } else {
-            experimentController.setExperiment(experiment);
-        }
-
-        InteractionController interactionController = (InteractionController) getSpringContext().getBean("interactionController");
-        interactionController.newInteraction(publication, experiment);
-
-        ParticipantImportController participantImportController = (ParticipantImportController) getSpringContext().getBean("participantImportController");
-
-        List<ImportCandidate> candidates = new ArrayList<ImportCandidate>();
-
-        // we get the first result that matches the primaryId. If none, get the first element
-        for (String protein : proteins) {
-
-            Set<ImportCandidate> proteinCandidates = participantImportController.importParticipant(protein);
-
-            boolean candidateFound = false;
-
-            for (ImportCandidate candidate : proteinCandidates) {
-                if (candidate.getPrimaryAcs().contains(protein)) {
-                    candidates.add(candidate);
-                    candidateFound = true;
-                    break;
-                }
-            }
-
-            if (!candidateFound && !proteinCandidates.isEmpty()) {
-                candidates.add(proteinCandidates.iterator().next());
-            }
-        }
-
-        UserSessionController userSessionController = (UserSessionController) getSpringContext().getBean("userSessionController");
-
-        // import the proteins
-        Interaction interaction = interactionController.getInteraction();
-
-        CvExperimentalRole unspecifiedExpRole = participantImportController.getCvExperimentalRole();
-        CvBiologicalRole unspecifiedBioRole = participantImportController.getCvBiologicalRole();
-
-        for (ImportCandidate candidate : candidates) {
-            Interactor interactor = candidate.getInteractor();
-
-            Component component = new Component(userSessionController.getUserInstitution(), interaction, interactor, unspecifiedExpRole, unspecifiedBioRole);
-            interaction.addComponent(component);
-        }
-
-        // update the status of the controller
-        interactionController.refreshExperimentLists();
-        interactionController.refreshParticipants();
-        interactionController.updateShortLabel();
-        interactionController.setUnsavedChanges(true);
-
-        return curateController.edit(interaction);
-    }
-
-    public String[] getProteins() {
-        return proteins;
-    }
-
-    public void setProteins(String[] proteins) {
-        this.proteins = proteins;
-    }
-
-    public String getProteinsAsString() {
-        return StringUtils.join(proteins, ", ");
-    }
-
-    public String getPubRef() {
-        return pubRef;
-    }
-
-    public void setPubRef(String pubRef) {
-        this.pubRef = pubRef;
-    }
-
-    public Collection<Interaction> getInteractions() {
         return interactions;
     }
 
-    public void setInteractions(Collection<Interaction> interactions) {
-        this.interactions = interactions;
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public IntactPublication loadPublication( String pubRef) {
+        IntactPublication pub = getIntactDao().getPublicationDao().getByPubmedId(pubRef);
+
+        if (pub != null){
+            Hibernate.initialize(pub.getExperiments());
+            initialiseXrefs(pub.getDbXrefs());
+        }
+        return pub;
     }
 
-    public Publication getPublication() {
-        return publication;
-    }
-
-    public void setPublication(Publication publication) {
-        this.publication = publication;
-    }
-
-    public List<SelectItem> getExperimentSelectItems() {
-        return experimentSelectItems;
-    }
-
-    public void setExperimentSelectItems(List<SelectItem> experimentSelectItems) {
-        this.experimentSelectItems = experimentSelectItems;
-    }
-
-    public Experiment getExperiment() {
-        return experiment;
-    }
-
-    public void setExperiment(Experiment experiment) {
-        this.experiment = experiment;
-    }
-
-    public BioSource getHostOrganism() {
-        return hostOrganism;
-    }
-
-    public void setHostOrganism(BioSource hostOrganism) {
-        this.hostOrganism = hostOrganism;
-    }
-
-    public CvInteraction getCvInteraction() {
-        return cvInteraction;
-    }
-
-    public void setCvInteraction(CvInteraction cvInteraction) {
-        this.cvInteraction = cvInteraction;
-    }
-
-    public CvIdentification getCvIdentification() {
-        return cvIdentification;
-    }
-
-    public void setCvIdentification(CvIdentification cvIdentification) {
-        this.cvIdentification = cvIdentification;
+    private void initialiseXrefs(Collection<Xref> xrefs) {
+        for (Xref ref : xrefs){
+            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbAnnotations());
+            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbXrefs());
+            if (ref.getQualifier() != null){
+                Hibernate.initialize(((IntactCvTerm)ref.getQualifier()).getDbXrefs());
+            }
+        }
     }
 }

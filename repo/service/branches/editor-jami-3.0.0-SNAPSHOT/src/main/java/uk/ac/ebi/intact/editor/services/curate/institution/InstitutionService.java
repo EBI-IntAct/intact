@@ -51,7 +51,7 @@ public class InstitutionService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-    public void loadInstitutions( ) {
+    public synchronized void loadInstitutions( ) {
         if ( log.isDebugEnabled() ) log.debug( "Loading Institutions" );
 
         clearAll();

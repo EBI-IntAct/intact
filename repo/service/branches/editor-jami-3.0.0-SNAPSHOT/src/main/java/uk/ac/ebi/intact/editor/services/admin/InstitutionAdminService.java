@@ -89,7 +89,7 @@ public class InstitutionAdminService extends AbstractEditorService {
             deleteIntactObject(selectedInstitution, getIntactDao().getSourceDao());
         }
 
-        institutionService.clearAll();
+        institutionService.loadInstitutions();
     }
 
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
@@ -106,7 +106,7 @@ public class InstitutionAdminService extends AbstractEditorService {
             }
         }
 
-        institutionService.clearAll();
+        institutionService.loadInstitutions();
         return updated;
     }
 
@@ -187,7 +187,7 @@ public class InstitutionAdminService extends AbstractEditorService {
             }
         }
 
-        institutionService.clearAll();
+        institutionService.loadInstitutions();
 
         return updated;
     }

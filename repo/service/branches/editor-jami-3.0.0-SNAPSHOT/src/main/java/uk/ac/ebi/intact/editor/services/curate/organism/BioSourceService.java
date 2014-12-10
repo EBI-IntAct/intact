@@ -57,6 +57,8 @@ public class BioSourceService extends AbstractEditorService {
             this.organismSelectItems=null;
             isInitialised=false;
         }
+
+        loadData();
     }
 
 
