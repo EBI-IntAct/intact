@@ -21,8 +21,6 @@ import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import psidev.psi.mi.jami.model.CausalRelationship;
-import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.ModelledFeature;
 import psidev.psi.mi.jami.model.Participant;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
@@ -31,13 +29,11 @@ import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ModelledParticipantCloner;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.ComplexController;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.FeatureWrapper;
-import uk.ac.ebi.intact.editor.controller.curate.interaction.ParticipantWrapper;
 import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -83,26 +79,6 @@ public class ModelledParticipantController extends AbstractParticipantController
             else{
                 getParticipant().setInteraction(interactionController.getComplex());
                 interactionController.reloadSingleParticipant(getParticipant());
-            }
-        }
-
-        super.refreshParentControllers();
-    }
-
-    @Override
-    protected void initialiseParticipantTargets() {
-        getParticipantTargets().clear();
-        getParticipantTargets().add(new SelectItem(null, "select participant", "select participant", false, false, true));
-        for (ParticipantWrapper wrapper : interactionController.getParticipants()){
-            if (getAc() == null && getParticipant() != wrapper.getParticipant()){
-                getParticipantTargets().add(new SelectItem( wrapper.getParticipant(),
-                        wrapper.getParticipant().getInteractor().getShortName()+", "+wrapper.getParticipant().getAc(),
-                        wrapper.getParticipant().getInteractor().getFullName()));
-            }
-            else if (getAc() != null && !getAc().equals(wrapper.getParticipant().getAc())){
-                getParticipantTargets().add(new SelectItem( wrapper.getParticipant(),
-                        wrapper.getParticipant().getInteractor().getShortName()+", "+wrapper.getParticipant().getAc(),
-                        wrapper.getParticipant().getInteractor().getFullName()));
             }
         }
     }
@@ -197,11 +173,6 @@ public class ModelledParticipantController extends AbstractParticipantController
     }
 
     @Override
-    protected CausalRelationship createCausalStatement(CvTerm statementToAdd, Participant targetToAdd) {
-        return new ModelledCausalRelationship(statementToAdd, targetToAdd);
-    }
-
-    @Override
     public IntactDbSynchronizer getDbSynchronizer() {
         return getEditorService().getIntactDao().getSynchronizerContext().getModelledParticipantSynchronizer();
     }
@@ -214,12 +185,6 @@ public class ModelledParticipantController extends AbstractParticipantController
     @Override
     protected EditorCloner<Participant, IntactModelledParticipant> newClonerInstance() {
         return new ModelledParticipantCloner();
-    }
-
-    @Override
-    public void newCausalRelationship(ActionEvent evt) {
-        super.newCausalRelationship(evt);
-        interactionController.reloadSingleParticipant(getParticipant());
     }
 
     public void reloadSingleFeature(IntactModelledFeature f){

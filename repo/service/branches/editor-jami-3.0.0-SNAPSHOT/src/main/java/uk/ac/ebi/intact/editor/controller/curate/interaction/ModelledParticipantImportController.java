@@ -21,27 +21,15 @@ import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import psidev.psi.mi.jami.bridges.exception.BridgeFailedException;
-import psidev.psi.mi.jami.model.CvTerm;
-import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
-import uk.ac.ebi.intact.editor.services.curate.interaction.ParticipantImportService;
-import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
 import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
 import uk.ac.ebi.intact.jami.model.extension.IntactModelledParticipant;
 import uk.ac.ebi.intact.jami.model.extension.IntactStoichiometry;
-import uk.ac.ebi.intact.jami.synchronizer.FinderException;
-import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
-import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 
-import javax.annotation.Resource;
-import javax.faces.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author Marine Dumousseau (marine@ebi.ac.uk)
@@ -50,15 +38,9 @@ import java.util.Set;
 @Controller
 @Scope("conversation.access")
 @ConversationName("general")
-public class ModelledParticipantImportController extends BaseController {
+public class ModelledParticipantImportController extends AbstractParticipantImportController<IntactModelledParticipant> {
 
     private static final Log log = LogFactory.getLog(ModelledParticipantImportController.class);
-
-    @Resource(name = "participantImportService")
-    private transient ParticipantImportService participantImportService;
-
-    @Resource(name = "cvObjectService")
-    private transient CvObjectService cvService;
 
     @Autowired
     private ChangesController changesController;
@@ -66,130 +48,42 @@ public class ModelledParticipantImportController extends BaseController {
     @Autowired
     private ComplexController interactionController;
 
-    private List<ImportCandidate> importCandidates;
-    private List<String> queriesNoResults;
-    private String[] participantsToImport = new String[0];
-
-    private transient CvTerm cvBiologicalRole;
-    private int minStoichiometry;
-    private int maxStoichiometry;
-
-    private final static String FEATURE_CHAIN = "PRO_";
-
-    public void importParticipants(ActionEvent evt) {
-        getParticipantImportService().getIntactDao().getUserContext().setUser(getCurrentUser());
-
-        this.minStoichiometry = getEditorConfig().getDefaultStoichiometry();
-        this.maxStoichiometry = getEditorConfig().getDefaultStoichiometry();
-
-        this.minStoichiometry = getEditorConfig().getDefaultStoichiometry();
-        this.maxStoichiometry = getEditorConfig().getDefaultStoichiometry();
-
-        CvObjectService cvObjectService = getCvService();
-
-        if (!cvObjectService.isInitialised()){
-            cvObjectService.loadData();
-        }
-
-        cvBiologicalRole = cvObjectService.getDefaultBiologicalRole();
-
-
-        importCandidates = new ArrayList<ImportCandidate>();
-        queriesNoResults = new ArrayList<String>();
-
-        cvBiologicalRole = cvObjectService.getDefaultBiologicalRole();
-
-        if (participantsToImport == null) {
-            addErrorMessage("No participants to import", "Please add at least one identifier in the box");
-            return;
-        }
-
-        for (String participantToImport : participantsToImport) {
-            participantToImport = participantToImport.trim();
-
-            if (participantToImport.isEmpty()) {
-                continue;
-            }
-
-            // only import if the query has more than 4 chars (to avoid massive queries) {
-
-            if (participantToImport.length() < 4) {
-                queriesNoResults.add(participantToImport + " (short query - less than 4 chars.)");
-            } else if (participantToImport.contains("*")) {
-                queriesNoResults.add(participantToImport + " (wildcards not allowed)");
-            } else {
-                Set<ImportCandidate> candidates = null;
-                try {
-                    candidates = getParticipantImportService().importParticipant(participantToImport);
-                    if (candidates.isEmpty()) {
-                        queriesNoResults.add(participantToImport);
-                    } else {
-                        importCandidates.addAll(candidates);
-                    }
-                } catch (BridgeFailedException e) {
-                    addErrorMessage("Cannot load interactor " + participantToImport, e.getCause() + ": " + e.getMessage());
-                    queriesNoResults.add(participantToImport);
-                } catch (FinderException e) {
-                    addErrorMessage("Cannot load interactor " + participantToImport, e.getCause() + ": " + e.getMessage());
-                    queriesNoResults.add(participantToImport);
-                } catch (SynchronizerException e) {
-                    addErrorMessage("Cannot load interactor " + participantToImport, e.getCause() + ": " + e.getMessage());
-                    queriesNoResults.add(participantToImport);
-                } catch (PersisterException e) {
-                    addErrorMessage("Cannot load interactor " + participantToImport, e.getCause() + ": " + e.getMessage());
-                    queriesNoResults.add(participantToImport);
-                }
-            }
-        }
-
-        participantsToImport = new String[0];
+    @Override
+    protected void initialiseOtherProperties() {
+       // nothing to do
     }
 
-    public void importSelected(ActionEvent evt) {
-        // set current user
-        getParticipantImportService().getIntactDao().getUserContext().setUser(getCurrentUser());
+    @Override
+    protected void processAddedParticipant(IntactModelledParticipant participant) {
+        interactionController.addParticipant(participant);
 
-        this.minStoichiometry = getEditorConfig().getDefaultStoichiometry();
-        this.maxStoichiometry = getEditorConfig().getDefaultStoichiometry();
+        interactionController.setUnsavedChanges(true);
+    }
 
-        CvObjectService cvObjectService = getCvService();
-
-        if (!cvObjectService.isInitialised()){
-            cvObjectService.loadData();
-        }
-
-        cvBiologicalRole = cvObjectService.getDefaultBiologicalRole();
-
-        for (ImportCandidate candidate : importCandidates) {
-            if (candidate.isSelected()) {
-                final IntactComplex interaction = interactionController.getComplex();
-                IntactModelledParticipant participant = toParticipant(candidate, interaction);
-                interactionController.addParticipant(participant);
-
-                interactionController.setUnsavedChanges(true);
-            }
-        }
+    @Override
+    protected IntactModelledParticipant toParticipant(ImportCandidate candidate) {
+        return toParticipant(candidate, interactionController.getComplex());
     }
 
     protected IntactModelledParticipant toParticipant(ImportCandidate candidate, IntactComplex interaction) {
         IntactInteractor interactor = candidate.getInteractor();
 
-        if (cvBiologicalRole == null) {
+        if (getCvBiologicalRole() == null) {
             CvObjectService cvObjectService = getCvService();
 
             if (!cvObjectService.isInitialised()){
                 cvObjectService.loadData();
             }
 
-            if (cvBiologicalRole == null) {
-                cvBiologicalRole = cvObjectService.getDefaultBiologicalRole();
+            if (getCvBiologicalRole() == null) {
+                setCvBiologicalRole(cvObjectService.getDefaultBiologicalRole());
             }
         }
 
         IntactModelledParticipant component = new IntactModelledParticipant(interactor);
         component.setInteraction(interaction);
-        component.setBiologicalRole(cvBiologicalRole);
-        component.setStoichiometry(new IntactStoichiometry(minStoichiometry, maxStoichiometry));
+        component.setBiologicalRole(getCvBiologicalRole());
+        component.setStoichiometry(new IntactStoichiometry(getMinStoichiometry(), getMaxStoichiometry()));
 
         if (candidate.isChain() || candidate.isIsoform()) {
             Collection<String> parentAcs = new ArrayList<String>();
@@ -219,76 +113,7 @@ public class ModelledParticipantImportController extends BaseController {
         }
     }
 
-
-    public String[] getParticipantsToImport() {
-        return participantsToImport;
-    }
-
-    public void setParticipantsToImport(String[] participantsToImport) {
-        this.participantsToImport = participantsToImport;
-    }
-
-    public List<ImportCandidate> getImportCandidates() {
-        return importCandidates;
-    }
-
-    public void setImportCandidates(List<ImportCandidate> importCandidates) {
-        this.importCandidates = importCandidates;
-    }
-
-    public CvTerm getBiologicalRole() {
-        return cvBiologicalRole;
-    }
-
-    public void setBiologicalRole(CvTerm cvBiologicalRole) {
-        this.cvBiologicalRole = cvBiologicalRole;
-    }
-
-    public List<String> getQueriesNoResults() {
-        return queriesNoResults;
-    }
-
-    public void setQueriesNoResults(List<String> queriesNoResults) {
-        this.queriesNoResults = queriesNoResults;
-    }
-
     public ComplexController getInteractionController() {
         return interactionController;
-    }
-
-    public void setInteractionController(ComplexController interactionController) {
-        this.interactionController = interactionController;
-    }
-
-    public int getMinStoichiometry() {
-        return minStoichiometry;
-    }
-
-    public void setMinStoichiometry(int stoichiometry) {
-        this.minStoichiometry = stoichiometry;
-        this.maxStoichiometry = Math.max(minStoichiometry, this.maxStoichiometry);
-    }
-
-    public int getMaxStoichiometry() {
-        return maxStoichiometry;
-    }
-
-    public void setMaxStoichiometry(int stoichiometry) {
-        this.maxStoichiometry = stoichiometry;
-        this.minStoichiometry = Math.min(this.minStoichiometry, maxStoichiometry);
-    }
-
-    public ParticipantImportService getParticipantImportService() {
-        if (this.participantImportService == null){
-            this.participantImportService = ApplicationContextProvider.getBean("participantImportService");
-        }
-        return participantImportService;
-    }
-
-    public CvObjectService getCvService() {
-        if (this.cvService == null){
-            this.cvService = ApplicationContextProvider.getBean("cvObjectService");
-        }
-        return cvService;
     }
 }

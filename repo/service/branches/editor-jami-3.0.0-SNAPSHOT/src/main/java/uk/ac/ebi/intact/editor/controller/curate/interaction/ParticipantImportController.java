@@ -55,15 +55,9 @@ import java.util.*;
 @Controller
 @Scope("conversation.access")
 @ConversationName("general")
-public class ParticipantImportController extends BaseController {
+public class ParticipantImportController extends AbstractParticipantImportController<IntactParticipantEvidence> {
 
     private static final Log log = LogFactory.getLog(ParticipantImportController.class);
-
-    @Resource(name = "participantImportService")
-    private transient ParticipantImportService participantImportService;
-
-    @Resource(name = "cvObjectService")
-    private transient CvObjectService cvService;
 
     @Autowired
     private InteractionController interactionController;
@@ -71,119 +65,34 @@ public class ParticipantImportController extends BaseController {
     @Autowired
     private ChangesController changesController;
 
-    private List<ImportCandidate> importCandidates;
-    private List<String> queriesNoResults;
-    private String[] participantsToImport = new String[0];
-
     private CvTerm cvExperimentalRole;
-    private CvTerm cvBiologicalRole;
     private Organism expressedIn;
     private Collection<CvTerm> cvExperimentalPreparations = new ArrayList<CvTerm>();
     private Collection<CvTerm> cvIdentifications=new ArrayList<CvTerm>();
     private CvTerm preparationToAdd;
     private CvTerm identificationToAdd;
-    private int minStoichiometry;
-    private int maxStoichiometry;
 
-    @Resource(name = "editorConfig")
-    private transient EditorConfig editorConfig;
-
-    private final static String FEATURE_CHAIN = "PRO_";
-
-    public void importParticipants(ActionEvent evt) {
-        getParticipantImportService().getIntactDao().getUserContext().setUser(getCurrentUser());
-
-        importCandidates = new ArrayList<ImportCandidate>();
-        queriesNoResults = new ArrayList<String>();
-
-        this.minStoichiometry = getEditorConfig().getDefaultStoichiometry();
-        this.maxStoichiometry = getEditorConfig().getDefaultStoichiometry();
-
-        CvObjectService cvObjectService = getCvService();
-
-        if (!cvObjectService.isInitialised()){
-            cvObjectService.loadData();
-        }
-
-        cvExperimentalRole = cvObjectService.getDefaultExperimentalRole();
-        cvBiologicalRole = cvObjectService.getDefaultBiologicalRole();
-
-        if (participantsToImport == null) {
-            addErrorMessage("No participants to import", "Please add at least one identifier in the box");
-            return;
-        }
-
-        for (String participantToImport : participantsToImport) {
-            participantToImport = participantToImport.trim();
-
-            if (participantToImport.isEmpty()) {
-                continue;
-            }
-
-            // only import if the query has more than 4 chars (to avoid massive queries) {
-
-            if (participantToImport.length() < 4) {
-                queriesNoResults.add(participantToImport + " (short query - less than 4 chars.)");
-            } else if (participantToImport.contains("*")) {
-                queriesNoResults.add(participantToImport + " (wildcards not allowed)");
-            } else {
-                Set<ImportCandidate> candidates = null;
-                try {
-                    candidates = getParticipantImportService().importParticipant(participantToImport);
-                    if (candidates.isEmpty()) {
-                        queriesNoResults.add(participantToImport);
-                    } else {
-                        importCandidates.addAll(candidates);
-                    }
-                } catch (BridgeFailedException e) {
-                    addErrorMessage("Cannot load interactor " + participantToImport, e.getCause() + ": " + e.getMessage());
-                    queriesNoResults.add(participantToImport);
-                } catch (FinderException e) {
-                    addErrorMessage("Cannot load interactor " + participantToImport, e.getCause() + ": " + e.getMessage());
-                    queriesNoResults.add(participantToImport);
-                } catch (SynchronizerException e) {
-                    addErrorMessage("Cannot load interactor " + participantToImport, e.getCause() + ": " + e.getMessage());
-                    queriesNoResults.add(participantToImport);
-                } catch (PersisterException e) {
-                    addErrorMessage("Cannot load interactor " + participantToImport, e.getCause() + ": " + e.getMessage());
-                    queriesNoResults.add(participantToImport);
-                }
-            }
-        }
-
-        participantsToImport = new String[0];
+    @Override
+    protected void initialiseOtherProperties() {
+        cvExperimentalRole = getCvService().getDefaultExperimentalRole();
     }
 
-    public void importSelected(ActionEvent evt) {
-        getParticipantImportService().getIntactDao().getUserContext().setUser(getCurrentUser());
+    @Override
+    protected void processAddedParticipant(IntactParticipantEvidence participant) {
+        interactionController.addParticipant(participant);
 
-        this.minStoichiometry = getEditorConfig().getDefaultStoichiometry();
-        this.maxStoichiometry = getEditorConfig().getDefaultStoichiometry();
+        interactionController.setUnsavedChanges(true);
+    }
 
-        CvObjectService cvObjectService = getCvService();
-
-        if (!cvObjectService.isInitialised()){
-            cvObjectService.loadData();
-        }
-
-        cvExperimentalRole = cvObjectService.getDefaultExperimentalRole();
-        cvBiologicalRole = cvObjectService.getDefaultBiologicalRole();
-
-        for (ImportCandidate candidate : importCandidates) {
-            if (candidate.isSelected()) {
-                final IntactInteractionEvidence interaction = interactionController.getInteraction();
-                IntactParticipantEvidence participant = toParticipant(candidate, interaction);
-                interactionController.addParticipant(participant);
-
-                interactionController.setUnsavedChanges(true);
-            }
-        }
+    @Override
+    protected IntactParticipantEvidence toParticipant(ImportCandidate candidate) {
+        return toParticipant(candidate, interactionController.getInteraction());
     }
 
     protected IntactParticipantEvidence toParticipant(ImportCandidate candidate, IntactInteractionEvidence interaction) {
         IntactInteractor interactor = candidate.getInteractor();
 
-        if (cvExperimentalRole == null || cvBiologicalRole == null) {
+        if (cvExperimentalRole == null || getCvBiologicalRole() == null) {
             CvObjectService cvObjectService = getCvService();
 
             if (!cvObjectService.isInitialised()){
@@ -194,17 +103,17 @@ public class ParticipantImportController extends BaseController {
                 cvExperimentalRole = cvObjectService.getDefaultExperimentalRole();
             }
 
-            if (cvBiologicalRole == null) {
-                cvBiologicalRole = cvObjectService.getDefaultBiologicalRole();
+            if (getCvBiologicalRole() == null) {
+                setCvBiologicalRole(cvObjectService.getDefaultBiologicalRole());
             }
         }
 
         IntactParticipantEvidence component = new IntactParticipantEvidence(interactor);
         component.setInteraction(interaction);
         component.setExperimentalRole(cvExperimentalRole);
-        component.setBiologicalRole(cvBiologicalRole);
+        component.setBiologicalRole(getCvBiologicalRole());
         component.setExpressedInOrganism(expressedIn);
-        component.setStoichiometry(new IntactStoichiometry(minStoichiometry, maxStoichiometry));
+        component.setStoichiometry(new IntactStoichiometry(getMinStoichiometry(), getMaxStoichiometry()));
 
         if (candidate.isChain() || candidate.isIsoform()) {
             Collection<String> parentAcs = new ArrayList<String>();
@@ -216,7 +125,7 @@ public class ParticipantImportController extends BaseController {
             }
 
             changesController.markAsHiddenChange(interactor, interaction, parentAcs,
-                    getParticipantImportService().getIntactDao().getSynchronizerContext().getInteractorSynchronizer(), "Interactor "+interactor.getShortName());
+                    getParticipantImportService().getIntactDao().getSynchronizerContext().getInteractorSynchronizer(), "Interactor " + interactor.getShortName());
         }
 
         if (!cvExperimentalPreparations.isEmpty()) {
@@ -243,22 +152,6 @@ public class ParticipantImportController extends BaseController {
         interactionController.addParentAcsTo(parentAcs, inter.getExperiment());
     }
 
-    public String[] getParticipantsToImport() {
-        return participantsToImport;
-    }
-
-    public void setParticipantsToImport(String[] participantsToImport) {
-        this.participantsToImport = participantsToImport;
-    }
-
-    public List<ImportCandidate> getImportCandidates() {
-        return importCandidates;
-    }
-
-    public void setImportCandidates(List<ImportCandidate> importCandidates) {
-        this.importCandidates = importCandidates;
-    }
-
     public CvTerm getCvExperimentalRole() {
         return cvExperimentalRole;
     }
@@ -267,28 +160,8 @@ public class ParticipantImportController extends BaseController {
         this.cvExperimentalRole = cvExperimentalRole;
     }
 
-    public CvTerm getCvBiologicalRole() {
-        return cvBiologicalRole;
-    }
-
-    public void setCvBiologicalRole(CvTerm cvBiologicalRole) {
-        this.cvBiologicalRole = cvBiologicalRole;
-    }
-
-    public List<String> getQueriesNoResults() {
-        return queriesNoResults;
-    }
-
-    public void setQueriesNoResults(List<String> queriesNoResults) {
-        this.queriesNoResults = queriesNoResults;
-    }
-
     public InteractionController getInteractionController() {
         return interactionController;
-    }
-
-    public void setInteractionController(InteractionController interactionController) {
-        this.interactionController = interactionController;
     }
 
     public Organism getExpressedIn() {
@@ -349,44 +222,5 @@ public class ParticipantImportController extends BaseController {
                 cvIdentifications.add(this.identificationToAdd);
             }
         }
-    }
-
-    public ParticipantImportService getParticipantImportService() {
-        if (this.participantImportService == null){
-            this.participantImportService = ApplicationContextProvider.getBean("participantImportService");
-        }
-        return participantImportService;
-    }
-
-    public int getMinStoichiometry() {
-        return minStoichiometry;
-    }
-
-    public void setMinStoichiometry(int stoichiometry) {
-        this.minStoichiometry = stoichiometry;
-        this.maxStoichiometry = Math.max(minStoichiometry, this.maxStoichiometry);
-    }
-
-    public int getMaxStoichiometry() {
-        return maxStoichiometry;
-    }
-
-    public void setMaxStoichiometry(int stoichiometry) {
-        this.maxStoichiometry = stoichiometry;
-        this.minStoichiometry = Math.min(this.minStoichiometry, maxStoichiometry);
-    }
-
-    public EditorConfig getEditorConfig() {
-        if (this.editorConfig == null){
-            this.editorConfig = ApplicationContextProvider.getBean("editorConfig");
-        }
-        return editorConfig;
-    }
-
-    public CvObjectService getCvService() {
-        if (this.cvService == null){
-            this.cvService = ApplicationContextProvider.getBean("cvObjectService");
-        }
-        return cvService;
     }
 }
