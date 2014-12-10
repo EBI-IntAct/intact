@@ -52,7 +52,9 @@
                     Import interactor by UniprotKB accession, ChEBI accession, Ensembl accession, interactor accession, short label or xref:<br/>
                 </p>
 
-                <p:inputText id="searchInteractorPoolTxt" value="#{interactorController.setMember}" converter="trimmingConverter"/>
+                <p:inputTextarea id="searchInteractorPoolTxt" value="#{interactorController.setMembers}"
+                                 converter="arrayConverter"
+                                 cols="30" rows="5" autoResize="false"/>
             </h:panelGrid>
 
         </ia:panelDialogLayout>
@@ -111,7 +113,7 @@
                     </p:column>
                     <p:column>
                         <f:facet name="header"><h:outputText value="IntAct label"/></f:facet>
-                        <h:outputText value="#{candidate.interactor.shortLabel}" rendered="#{candidate.interactor != null}"/>
+                        <h:outputText value="#{candidate.interactor.shortName}" rendered="#{candidate.interactor != null}"/>
                     </p:column>
                     <p:column>
                         <f:facet name="header"><h:outputText value="Query"/></f:facet>

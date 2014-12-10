@@ -126,6 +126,8 @@ public class EditorObjectService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public void doSaveMasterProteins(IntactPrimaryObject intactObject) throws BridgeFailedException, SynchronizerException, FinderException, PersisterException {
         if (intactObject instanceof Protein){
+            attachDaoToTransactionManager();
+
             Protein proteinTranscript = (Protein) intactObject;
             Collection<psidev.psi.mi.jami.model.Xref> xrefsToDelete = new ArrayList<psidev.psi.mi.jami.model.Xref>(proteinTranscript.getXrefs().size());
 
@@ -138,8 +140,6 @@ public class EditorObjectService extends AbstractEditorService {
                         String primaryId = xref.getId().replaceAll("\\?", "");
 
                         Collection<Protein> proteins = proteinFetcher.fetchByIdentifier(primaryId);
-
-                        attachDaoToTransactionManager();
 
                         if (proteins.size() > 0){
                             xrefsToDelete.add(xref);

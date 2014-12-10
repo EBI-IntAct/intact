@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.editor.services.bulk;
 
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +39,7 @@ import java.util.Collection;
  * @version $Id$
  */
 @Service
+@Scope( BeanDefinition.SCOPE_PROTOTYPE )
 public class BulkOperationsService extends AbstractEditorService {
 
     /**
@@ -50,6 +53,7 @@ public class BulkOperationsService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public String[] addAnnotation(Annotation annotation, String[] acs, Class<? extends IntactPrimaryObject> aoClass, boolean replaceIfTopicMatch) throws
             SynchronizerException, FinderException, PersisterException {
+        attachDaoToTransactionManager();
         Collection<String> updatedAcs = new ArrayList<String>(acs.length);
 
         for (String ac : acs) {

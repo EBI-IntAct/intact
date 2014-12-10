@@ -74,6 +74,7 @@ public class InstitutionAdminController extends BaseController {
 
         int updated = 0;
         try {
+            getInstitutionAdminService().getIntactDao().getUserContext().setUser(getCurrentUser());
             updated = getInstitutionAdminService().mergeSelected(mergeDestinationInstitution, selectedInstitutions);
             addInfoMessage(selectedInstitutions.length + " iInstitutions merged", updated + " annotated objects updated");
         } catch (SynchronizerException e) {
@@ -88,6 +89,7 @@ public class InstitutionAdminController extends BaseController {
     public void deleteSelected(ActionEvent evt) {
 
         try {
+            getInstitutionAdminService().getIntactDao().getUserContext().setUser(getCurrentUser());
             getInstitutionAdminService().deleteSelected(selectedInstitutions);
         } catch (SynchronizerException e) {
             addErrorMessage("Cannot delete institutions ", e.getCause() + ": " + e.getMessage());
@@ -104,6 +106,7 @@ public class InstitutionAdminController extends BaseController {
             return;
         }
 
+        getInstitutionAdminService().getIntactDao().getUserContext().setUser(getCurrentUser());
         int updatedCount = getInstitutionAdminService().fixReleasableOwners(usersDualListModel.getTarget());
 
         addInfoMessage("Users object ownership fixed", "Updated annotated objects: "+updatedCount);

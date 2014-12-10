@@ -1,6 +1,7 @@
 package uk.ac.ebi.intact.editor.controller.admin;
 
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import psidev.psi.mi.jami.model.Source;
@@ -28,6 +29,7 @@ import java.util.Map;
  * @version $Id$
  */
 @Controller("applicationInfo")
+@Scope("session")
 @Lazy
 public class ApplicationInfoController extends BaseController {
 
@@ -66,6 +68,7 @@ public class ApplicationInfoController extends BaseController {
 
     public void saveApplicationProperties(ActionEvent evt) {
         try {
+            getApplicationInfoService().getIntactDao().getUserContext().setUser(getCurrentUser());
             getApplicationInfoService().saveApplicationProperties(this.application);
         } catch (SynchronizerException e) {
             addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
@@ -78,6 +81,7 @@ public class ApplicationInfoController extends BaseController {
 
     public void persistConfig(ActionEvent evt) {
         try {
+            getApplicationInfoService().getIntactDao().getUserContext().setUser(getCurrentUser());
             this.application = getApplicationInfoService().persistConfig(this.application, getEditorConfig(), getIntactConfiguration());
         } catch (SynchronizerException e) {
             addErrorMessage("Cannot save application details ", e.getCause()+": "+e.getMessage());
@@ -180,6 +184,7 @@ public class ApplicationInfoController extends BaseController {
         Source defaultSource = getIntactConfiguration().getDefaultInstitution();
         if (!(defaultSource instanceof IntactSource)){
             try {
+                getApplicationInfoService().getIntactDao().getUserContext().setUser(getCurrentUser());
                 defaultSource = getApplicationInfoService().synchronizeDefaultSource(defaultSource);
                 getIntactConfiguration().setDefaultInstitution((IntactSource)defaultSource);
             } catch (SynchronizerException e) {
