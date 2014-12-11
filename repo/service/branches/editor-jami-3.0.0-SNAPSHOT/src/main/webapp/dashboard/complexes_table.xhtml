@@ -25,7 +25,7 @@
             </ot:separateConversationContext>
         </p:column>
         <p:column>
-            <ui:include src="/curate/jcommon_column_notifications.xhtml">
+            <ui:include src="/curate/common_column_notifications.xhtml">
                 <ui:param name="annotatedObjectController" value="#{complexController}"/>
                 <ui:param name="ao" value="#{complex}"/>
             </ui:include>
@@ -51,8 +51,8 @@
         <p:column headerText="Reviewer" sortBy="#{complex.currentReviewer}">
             <h:outputText value="#{complex.currentReviewer.login}" rendered="#{complex.currentReviewer != null}"/>
         </p:column>
-        <p:column headerText="Status" sortBy="#{complex.status}">
-            <h:outputText value="#{complex.status}"/>
+        <p:column headerText="Status" sortBy="#{complex.status.shortLabel}">
+            <h:outputText value="#{complex.status.shortLabel}"/>
         </p:column>
     </p:dataTable>
 

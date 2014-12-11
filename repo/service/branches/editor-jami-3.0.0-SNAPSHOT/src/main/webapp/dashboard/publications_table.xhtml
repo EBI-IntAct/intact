@@ -17,9 +17,9 @@
                  paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  rowsPerPageTemplate="10,25,50"
                  rowStyleClass="#{publicationController.calculateStatusStyle(publication)}">
-        <p:column headerText="Pub. ID " sortBy="#{publication.shortLabel}">
+        <p:column headerText="Pub. ID " sortBy="#{publication.pubmedId}">
             <ot:separateConversationContext>
-                <h:link outcome="/curate/publication" value="#{publication.shortLabel}" includeViewParams="true">
+                <h:link outcome="/curate/publication" value="#{publication.pubmedId}" includeViewParams="true">
                     <f:param name="ac" value="#{publication.ac}"/>
                 </h:link>
             </ot:separateConversationContext>
@@ -30,8 +30,8 @@
                 <ui:param name="ao" value="#{publication}"/>
             </ui:include>
         </p:column>
-        <p:column headerText="Title" sortBy="#{publication.fullName}" style="width: 50%;">
-            <h:outputText value="#{publication.fullName}"/>
+        <p:column headerText="Title" sortBy="#{publication.title}" style="width: 50%;">
+            <h:outputText value="#{publication.title}"/>
         </p:column>
         <p:column headerText="# Exps.">
             <h:outputText value="#{publicationController.countExperiments(publication)}"/>
@@ -45,7 +45,7 @@
         <p:column headerText="Reviewer" sortBy="#{publication.currentReviewer}">
             <h:outputText value="#{publication.currentReviewer.login}" rendered="#{publication.currentReviewer != null}"/>
         </p:column>
-        <p:column headerText="Status" sortBy="#{publication.status}">
+        <p:column headerText="Status" sortBy="#{publication.status.shortLabel}">
             <h:outputText value="#{publication.status.shortLabel}" rendered="#{publication.status != null}"/>
         </p:column>
     </p:dataTable>
