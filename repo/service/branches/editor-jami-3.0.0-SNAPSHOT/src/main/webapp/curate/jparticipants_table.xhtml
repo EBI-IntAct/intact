@@ -80,8 +80,8 @@
                     </h:column>
                     <h:column>
                         <div id="feature_#{featureWrapper.feature.ac}"
-                             onmouseover="this.style.fontWeight = '#{!empty feature.linkedFeatures? 'bold' : 'inherit'}';"
-                             onmouseout="this.style.fontWeight = 'inherit';">
+                             onmouseover="ia_showLinkedFeatures(this, '#{featureWrapper.relatedFeatureDivs}', '#{!empty featureWrapper.linkedFeatures}')"
+                             onmouseout="ia_hideLinkedFeatures(this, '#{featureWrapper.relatedFeatureDivs}')">
                             <h:outputText value="#{featureWrapper.feature.shortName} #{featureWrapper.ranges}"/>
 
 

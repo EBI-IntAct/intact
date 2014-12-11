@@ -100,4 +100,22 @@ public class FeatureWrapper {
     public void setSelectedLinkedFeature(AbstractIntactFeature selectedLinkedFeature) {
         this.selectedLinkedFeature = selectedLinkedFeature;
     }
+
+    public String getRelatedFeatureDivs(){
+        StringBuffer buffer = new StringBuffer();
+        Iterator<AbstractIntactFeature> linkedIterator = this.linkedFeatures.iterator();
+        while ( linkedIterator.hasNext()){
+            AbstractIntactFeature linked = linkedIterator.next();
+            if (linked.getAc() != null){
+                 buffer.append("feature_").append(linked.getAc());
+            }
+            else{
+                buffer.append("feature_").append(Integer.toString(linked.hashCode()));
+            }
+            if (linkedIterator.hasNext()){
+                buffer.append(" ");
+            }
+        }
+        return buffer.toString();
+    }
 }
