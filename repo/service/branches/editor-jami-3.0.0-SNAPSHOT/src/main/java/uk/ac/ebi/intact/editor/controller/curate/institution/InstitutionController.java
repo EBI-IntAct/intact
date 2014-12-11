@@ -202,6 +202,9 @@ public class InstitutionController extends AnnotatedObjectController {
 
             initialiseDefaultProperties(this.institution);
         }
+        else{
+            this.ac = null;
+        }
     }
 
     public String getPostalAddress() {

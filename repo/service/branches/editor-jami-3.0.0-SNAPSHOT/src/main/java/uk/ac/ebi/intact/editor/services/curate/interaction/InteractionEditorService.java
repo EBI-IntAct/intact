@@ -94,6 +94,17 @@ public class InteractionEditorService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public IntactInteractionEvidence initialiseInteractionVariableParameterValues(IntactInteractionEvidence participantEvidence) {
+        // reload feature without flushing changes
+        IntactInteractionEvidence reloaded = getIntactDao().getEntityManager().merge(participantEvidence);
+        Collection<VariableParameterValueSet> parameters = reloaded.getVariableParameterValues();
+        initialiseVariableParameters(parameters);
+
+        getIntactDao().getEntityManager().detach(reloaded);
+        return reloaded;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactInteractionEvidence initialiseInteractionConfidences(IntactInteractionEvidence participantEvidence) {
         // reload feature without flushing changes
         IntactInteractionEvidence reloaded = getIntactDao().getEntityManager().merge(participantEvidence);
@@ -280,6 +291,14 @@ public class InteractionEditorService extends AbstractEditorService {
     private void initialiseExperiment(IntactExperiment experiment) {
         if (experiment.getParticipantIdentificationMethod() != null){
             initialiseCv(experiment.getParticipantIdentificationMethod());
+        }
+    }
+
+    private void initialiseVariableParameters(Collection<VariableParameterValueSet> parameters) {
+        for (VariableParameterValueSet set : parameters){
+            for (VariableParameterValue value : set){
+                Hibernate.initialize(((IntactVariableParameterValue)value).getInteractionParameterValues());
+            }
         }
     }
 }

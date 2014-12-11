@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.editor.controller.curate.interaction;
+package uk.ac.ebi.intact.editor.controller.curate.complex;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
+import uk.ac.ebi.intact.editor.controller.curate.interaction.AbstractParticipantImportController;
+import uk.ac.ebi.intact.editor.controller.curate.interaction.ImportCandidate;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
 import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;

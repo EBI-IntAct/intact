@@ -366,6 +366,9 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
 
             initialiseDefaultProperties(participant);
         }
+        else{
+            this.ac = null;
+        }
     }
 
     public String participantPrimaryId(T component) {

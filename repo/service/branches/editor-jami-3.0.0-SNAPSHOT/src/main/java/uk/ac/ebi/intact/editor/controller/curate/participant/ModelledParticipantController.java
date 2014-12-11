@@ -27,7 +27,7 @@ import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ModelledParticipantCloner;
-import uk.ac.ebi.intact.editor.controller.curate.interaction.ComplexController;
+import uk.ac.ebi.intact.editor.controller.curate.complex.ComplexController;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.FeatureWrapper;
 import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;

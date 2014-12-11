@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.editor.controller.curate.interaction;
+package uk.ac.ebi.intact.editor.controller.curate.complex;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
@@ -34,8 +34,10 @@ import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ComplexCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ModelledParticipantCloner;
+import uk.ac.ebi.intact.editor.controller.curate.interaction.FeatureWrapper;
+import uk.ac.ebi.intact.editor.controller.curate.interaction.ParticipantWrapper;
 import uk.ac.ebi.intact.editor.controller.curate.util.ParticipantWrapperCreatedDateComparator;
-import uk.ac.ebi.intact.editor.services.curate.interaction.ComplexEditorService;
+import uk.ac.ebi.intact.editor.services.curate.complex.ComplexEditorService;
 import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.lifecycle.ComplexBCLifecycleEventListener;
@@ -499,6 +501,9 @@ public class ComplexController extends AnnotatedObjectController {
             this.ac = complex.getAc();
 
             initialiseDefaultProperties(complex);
+        }
+        else{
+            this.ac = null;
         }
     }
 

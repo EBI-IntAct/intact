@@ -1,7 +1,6 @@
 package uk.ac.ebi.intact.editor.controller.curate;
 
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import psidev.psi.mi.jami.model.*;
@@ -12,7 +11,7 @@ import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentController
 import uk.ac.ebi.intact.editor.controller.curate.feature.FeatureController;
 import uk.ac.ebi.intact.editor.controller.curate.feature.ModelledFeatureController;
 import uk.ac.ebi.intact.editor.controller.curate.institution.InstitutionController;
-import uk.ac.ebi.intact.editor.controller.curate.interaction.ComplexController;
+import uk.ac.ebi.intact.editor.controller.curate.complex.ComplexController;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.InteractionController;
 import uk.ac.ebi.intact.editor.controller.curate.interactor.InteractorController;
 import uk.ac.ebi.intact.editor.controller.curate.organism.BioSourceController;

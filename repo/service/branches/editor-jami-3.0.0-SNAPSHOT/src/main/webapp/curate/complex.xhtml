@@ -9,7 +9,7 @@
                 xmlns:ia="http://java.sun.com/jsf/composite/intact-components"
                 xmlns:ed="http://ebi.ac.uk/intact/editor/ui"
 
-                template="/curate/curate_template.xhtml">
+                template="/curate/curate_complex_template.xhtml">
 
 <ui:param name="annotatedObjectController" value="#{complexController}"/>
 
@@ -365,7 +365,7 @@
 
     <p:tab id="parametersTab" title="Parameters (#{complexController.parametersSize})">
 
-        <p:outputPanel id="parametersPanel" autoUpdate="true">
+        <p:outputPanel id="parametersPanel" autoUpdate="false">
             <ui:decorate template="parameters_table.xhtml">
                 <ui:param name="annotatedObjectController" value="#{complexController}"/>
                 <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
@@ -377,7 +377,7 @@
 
     <p:tab id="confidencesTab" title="Confidences (#{complexController.confidencesSize})">
 
-        <p:outputPanel id="confidencesPanel" autoUpdate="true">
+        <p:outputPanel id="confidencesPanel" autoUpdate="false">
             <ui:decorate template="confidences_table.xhtml">
                 <ui:param name="annotatedObjectController" value="#{complexController}"/>
                 <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
