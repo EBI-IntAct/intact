@@ -91,6 +91,7 @@ public class MyNotesController extends BaseController {
 
         if (pref == null) {
             try {
+                getMyNotesService().getIntactDao().getUserContext().setUser(getCurrentUser());
                 getMyNotesService().saveNotes(user, "These are your notes. You can write anything you wish here. \nYou can link to publications like EBI-2928483 or an interaction EBI-2928497.\n" +
                         "You can use it as well for experiments, participants, etc.");
             }catch (SynchronizerException e) {
@@ -115,6 +116,7 @@ public class MyNotesController extends BaseController {
         User user = userSessionController.getCurrentUser();
 
         try {
+            getMyNotesService().getIntactDao().getUserContext().setUser(getCurrentUser());
             getMyNotesService().saveNotes(user, rawNotes);
         }catch (SynchronizerException e) {
             addErrorMessage("Cannot save user " + user.getLogin(), e.getCause() + ": " + e.getMessage());
