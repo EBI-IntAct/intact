@@ -146,13 +146,14 @@ Results for query: <b>#{searchController.query}</b>
             </h:panelGroup>
         </p:column>
         <p:column headerText="Type">
-            <h:outputText value="#{molecule.cvInteractorType.shortLabel}"/>
+            <h:outputText value="#{molecule.interactorType.shortName}"/>
         </p:column>
         <p:column headerText="Organism">
-            <h:outputText value="#{molecule.bioSource.shortLabel}"/>
+            <h:outputText value="#{molecule.organism.commonName}" rendered="#{molecule.organism != null}"/>
+            <h:outputText value="-" rendered="#{molecule.organism == null}"/>
         </p:column>
-        <p:column headerText="Short name" sortBy="#{molecule.shortLabel}">
-            <h:outputText value="#{molecule.shortLabel}"/>
+        <p:column headerText="Short name" sortBy="#{molecule.shortName}">
+            <h:outputText value="#{molecule.shortName}"/>
         </p:column>
         <p:column headerText="Full name" sortBy="#{molecule.fullName}">
             <h:outputText value="#{molecule.fullName}"/>
@@ -165,11 +166,21 @@ Results for query: <b>#{searchController.query}</b>
                     value="#{searchController.countInteractionsByMoleculeAc( molecule )}"
                     rendered="#{searchController.countInteractionsByMoleculeAc( molecule ) > 0}">
                 <f:param name="ac" value="#{molecule.ac}"/>
-                <f:param name="shortLabel" value="#{molecule.shortLabel}"/>
+                <f:param name="shortLabel" value="#{molecule.shortName}"/>
                 <f:param name="numInteractions" value="#{searchController.countInteractionsByMoleculeAc( molecule )}"/>
             </h:link>
         </p:column>
-
+        <p:column headerText="# Complexes">
+            <h:link id="linkRowComplexes" outcome="complexes" includeViewParams="true"
+                    value="#{searchController.countComplexesByMoleculeAc( molecule )}"
+                    rendered="#{searchController.countComplexesByMoleculeAc( molecule ) > 0 and searchController.complexSearchEnabled}">
+                <f:param name="ac" value="#{molecule.ac}"/>
+                <f:param name="shortLabel" value="#{molecule.shortName}"/>
+                <f:param name="numComplexes" value="#{searchController.countComplexesByMoleculeAc( molecule )}"/>
+            </h:link>
+            <h:outputText rendered="#{searchController.countComplexesByMoleculeAc( molecule ) > 0 and !searchController.complexSearchEnabled}"
+                    value="#{searchController.countComplexesByMoleculeAc( molecule )}"/>
+        </p:column>
 
     </p:dataTable>
 
@@ -184,8 +195,8 @@ Results for query: <b>#{searchController.query}</b>
                  paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  rowsPerPageTemplate="10,20,50,100"
                  dynamic="true">
-        <p:column headerText="Name" sortBy="#{cvobject.shortLabel}">
-            <h:link outcome="/curate/cvobject" value="#{cvobject.shortLabel}" includeViewParams="true">
+        <p:column headerText="Name" sortBy="#{cvobject.shortName}">
+            <h:link outcome="/curate/cvobject" value="#{cvobject.shortName}" includeViewParams="true">
                 <f:param name="ac" value="#{cvobject.ac}"/>
             </h:link>
         </p:column>
@@ -196,7 +207,7 @@ Results for query: <b>#{searchController.query}</b>
             </ui:include>
         </p:column>
         <p:column headerText="Type">
-            <h:outputText value="#{cvobject['class'].simpleName}"/>
+            <h:outputText value="#{cvobject.objClass}"/>
         </p:column>
         <p:column headerText="Identifier" sortBy="#{cvobject.identifier}">
             <h:outputText value="#{cvobject.identifier}"/>
@@ -217,8 +228,8 @@ Results for query: <b>#{searchController.query}</b>
                  paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  rowsPerPageTemplate="10,20,50,100"
                  dynamic="true">
-        <p:column headerText="Shortlabel" sortBy="#{organism.shortLabel}">
-            <h:link outcome="/curate/organism" value="#{organism.shortLabel}" includeViewParams="true">
+        <p:column headerText="Shortlabel" sortBy="#{organism.commonName}">
+            <h:link outcome="/curate/organism" value="#{organism.commonName}" includeViewParams="true">
                 <f:param name="ac" value="#{organism.ac}"/>
             </h:link>
         </p:column>
@@ -228,14 +239,14 @@ Results for query: <b>#{searchController.query}</b>
                 <ui:param name="ao" value="#{organism}"/>
             </ui:include>
         </p:column>
-        <p:column headerText="Short Name" sortBy="#{organism.shortLabel}">
-            <h:outputText value="#{organism.shortLabel}"/>
+        <p:column headerText="Short Name" sortBy="#{organism.commonName}">
+            <h:outputText value="#{organism.commonName}"/>
         </p:column>
-        <p:column headerText="Full Name" sortBy="#{organism.fullName}">
-            <h:outputText value="#{organism.fullName}"/>
+        <p:column headerText="Full Name" sortBy="#{organism.scientificName}">
+            <h:outputText value="#{organism.scientificName}"/>
         </p:column>
-        <p:column headerText="Tax ID" sortBy="#{organism.taxId}">
-            <h:outputText value="#{organism.taxId}"/>
+        <p:column headerText="Tax ID" sortBy="#{organism.dbTaxid}">
+            <h:outputText value="#{organism.dbTaxid}"/>
         </p:column>
         <p:column headerText="AC" sortBy="#{organism.ac}">
             <h:outputText value="#{organism.ac}"/>
@@ -245,7 +256,7 @@ Results for query: <b>#{searchController.query}</b>
                     value="#{searchController.countParticipantsExpressIn(organism.ac)}"
                     rendered="#{searchController.countParticipantsExpressIn(organism.ac) > 0}">
                 <f:param name="ac" value="#{organism.ac}"/>
-                <f:param name="shortLabel" value="#{organism.shortLabel}"/>
+                <f:param name="shortLabel" value="#{organism.commonName}"/>
                 <f:param name="numParticipants" value="#{searchController.countParticipantsExpressIn(organism.ac)}"/>
             </h:link>
         </p:column>
@@ -254,7 +265,7 @@ Results for query: <b>#{searchController.query}</b>
                     value="#{searchController.countExperimentsByHostOrganism(organism.ac)}"
                     rendered="#{searchController.countExperimentsByHostOrganism(organism.ac) > 0}">
                 <f:param name="ac" value="#{organism.ac}"/>
-                <f:param name="shortLabel" value="#{organism.shortLabel}"/>
+                <f:param name="shortLabel" value="#{organism.commonName}"/>
                 <f:param name="numExperiments" value="#{searchController.countExperimentsByHostOrganism(organism.ac)}"/>
             </h:link>
         </p:column>
@@ -263,9 +274,20 @@ Results for query: <b>#{searchController.query}</b>
                     value="#{searchController.countInteractorsByOrganism(organism.ac)}"
                     rendered="#{searchController.countInteractorsByOrganism(organism.ac) > 0}">
                 <f:param name="ac" value="#{organism.ac}"/>
-                <f:param name="shortLabel" value="#{organism.shortLabel}"/>
+                <f:param name="shortLabel" value="#{organism.commonName}"/>
                 <f:param name="numInteractors" value="#{searchController.countInteractorsByOrganism(organism.ac)}"/>
             </h:link>
+        </p:column>
+        <p:column headerText="Complexes by Organism">
+            <h:link outcome="/search/complex" includeViewParams="true"
+                    value="#{searchController.countComplexesByOrganism(organism.ac)}"
+                    rendered="#{searchController.countComplexesByOrganism(organism.ac) > 0 and searchController.complexSearchEnabled}">
+                <f:param name="ac" value="#{organism.ac}"/>
+                <f:param name="shortLabel" value="#{organism.commonName}"/>
+                <f:param name="numComplexes" value="#{searchController.countComplexesByOrganism(organism.ac)}"/>
+            </h:link>
+            <h:outputText rendered="#{searchController.countComplexesByOrganism( organism.ac ) > 0 and !searchController.complexSearchEnabled}"
+                          value="#{searchController.countComplexesByOrganism( organism.ac )}"/>
         </p:column>
 
     </p:dataTable>
@@ -282,7 +304,7 @@ Results for query: <b>#{searchController.query}</b>
                  rowsPerPageTemplate="10,20,50,100"
                  rows="10"
                  dynamic="true">
-        <p:column headerText="Name" sortBy="#{feature.shortLabel}">
+        <p:column headerText="Name" sortBy="#{feature.shortName}">
             <ot:separateConversationContext>
                 <h:link outcome="/curate/feature" value="#{feature.ac}" includeViewParams="true">
                     <f:param name="ac" value="#{feature.ac}"/>
@@ -295,8 +317,8 @@ Results for query: <b>#{searchController.query}</b>
                 <ui:param name="ao" value="#{feature}"/>
             </ui:include>
         </p:column>
-        <p:column headerText="Name" sortBy="#{feature.shortLabel}">
-            <h:outputText value="#{feature.shortLabel}"/>
+        <p:column headerText="Name" sortBy="#{feature.shortName}">
+            <h:outputText value="#{feature.shortName}"/>
         </p:column>
     </p:dataTable>
 
@@ -313,20 +335,20 @@ Results for query: <b>#{searchController.query}</b>
                  dynamic="true">
 
         <ui:param name="interactor" value="#{participant.interactor}"/>
-        <ui:param name="expRole" value="#{searchController.getExperimentalRoleForParticipantAc(participant)}"/>
+        <ui:param name="expRole" value="#{participant.experimentalRole.shortName}"/>
 
         <p:column style="width:16px">
             <p:rowToggler/>
         </p:column>
 
-        <p:column headerText="Name" sortBy="#{interactor.shortLabel}">
+        <p:column headerText="Name" sortBy="#{interactor.shortName}">
             <p:commandLink action="#{curateController.editByAc(participant.ac)}"
-                           value="#{interactor.shortLabel}"
+                           value="#{interactor.shortName}"
                            rendered="#{interactor != null and not changesController.isDeletedAc(participant.ac)}"
                            styleClass="#{participant.ac == null? 'intact-new' :''}"
                            ajax="false"/>
             <h:panelGroup rendered="#{changesController.isDeletedAc(participant.ac)}">
-                <h:outputText value="#{interactor.shortLabel}" styleClass="intact-deleted"/>
+                <h:outputText value="#{interactor.shortName}" styleClass="intact-deleted"/>
             </h:panelGroup>
 
             <h:panelGroup rendered="#{interactor == null}">
@@ -353,30 +375,33 @@ Results for query: <b>#{searchController.query}</b>
 
         <p:column headerText="Identity">
             <h:outputText id="participantId"
-                          value="#{interactionController.getInteractorIdentity(participant.interactor)}"
+                          value="#{searchController.getIdentityXref(participant.interactor)}"
                           styleClass="#{changesController.isDeletedAc(participant.ac)? 'intact-deleted' : ''}"/>
         </p:column>
 
         <p:column headerText="Expressed in">
-            <h:outputText value="#{participant.expressedIn != null? participant.expressedIn.shortLabel : ''}"/>
+            <h:outputText value="#{participant.expressedInOrganism != null? participant.expressedInOrganism.commonName : ''}"/>
         </p:column>
 
         <p:column headerText="Experimental role">
-            <h:outputText value="#{expRole != null? expRole.shortLabel : ''}"/>
+            <h:outputText value="#{expRole}"/>
         </p:column>
 
         <p:column headerText="Biological role">
 
             <h:outputText
-                    value="#{participant.cvBiologicalRole != null? participant.cvBiologicalRole.shortLabel : ''}"/>
+                    value="#{participant.biologicalRole != null? participant.biologicalRole.shortName : ''}"/>
         </p:column>
 
         <p:column headerText="# Features">
             <h:outputText value="#{searchController.countFeaturesByParticipantAc( participant )}"/>
         </p:column>
 
-        <p:column headerText="Stoich.">
-            <h:outputText id="stoichiometryTxt" value="#{participant.stoichiometry}"/>
+        <p:column headerText="Min Stoich.">
+            <h:outputText id="minStoichiometryTxt1" value="#{participant.stoichiometry.minValue}" rendered="#{participant.stoichiometry != null}"/>
+        </p:column>
+        <p:column headerText="Max Stoich.">
+            <h:outputText id="maxStoichiometryTxt2" value="#{participant.stoichiometry.maxValue}" rendered="#{participant.stoichiometry != null}"/>
         </p:column>
     </p:dataTable>
 
@@ -412,7 +437,7 @@ Results for query: <b>#{searchController.query}</b>
             </ot:separateConversationContext>
         </p:column>
         <p:column>
-            <ui:include src="/curate/jcommon_column_notifications.xhtml">
+            <ui:include src="/curate/common_column_notifications.xhtml">
                 <ui:param name="annotatedObjectController" value="#{modelledFeatureController}"/>
                 <ui:param name="ao" value="#{feature}"/>
             </ui:include>
@@ -440,7 +465,7 @@ Results for query: <b>#{searchController.query}</b>
             <p:rowToggler/>
         </p:column>
 
-        <p:column headerText="Name" sortBy="#{interactor.shortLabel}">
+        <p:column headerText="Name" sortBy="#{interactor.shortName}">
             <ot:separateConversationContext>
                 <h:link outcome="/curate/cparticipant" value="#{interactor.shortName}"
                         rendered="#{interactor != null and not changesController.isDeletedAc(participant.ac)}" includeViewParams="true">
@@ -463,7 +488,7 @@ Results for query: <b>#{searchController.query}</b>
         </p:column>
 
         <p:column>
-            <ui:include src="/curate/jcommon_column_notifications.xhtml">
+            <ui:include src="/curate/common_column_notifications.xhtml">
                 <ui:param name="annotatedObjectController" value="#{modelledParticipantController}"/>
                 <ui:param name="ao" value="#{participant}"/>
             </ui:include>
@@ -471,7 +496,7 @@ Results for query: <b>#{searchController.query}</b>
 
         <p:column headerText="Identity">
             <h:outputText id="modelledParticipantId"
-                          value="#{complexController.getInteractorIdentity(interactor.ac)}"
+                          value="#{complexController.getIdentityXref(interactor)}"
                           styleClass="#{changesController.isDeletedAc(participant.ac)? 'intact-deleted' : ''}"
                     rendered="#{interactor.ac != null}"/>
         </p:column>
