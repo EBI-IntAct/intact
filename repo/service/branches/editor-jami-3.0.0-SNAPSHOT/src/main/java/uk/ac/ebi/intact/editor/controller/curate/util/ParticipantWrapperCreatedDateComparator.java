@@ -3,6 +3,7 @@ package uk.ac.ebi.intact.editor.controller.curate.util;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.ParticipantWrapper;
 
 import java.util.Comparator;
+import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,22 +18,21 @@ public class ParticipantWrapperCreatedDateComparator implements Comparator<Parti
     @Override
     public int compare(ParticipantWrapper pw1, ParticipantWrapper pw2) {
         if (pw1 != null && pw2 != null) {
-            ExperimentalRoleComparator comparator = new ExperimentalRoleComparator();
-            int result = comparator.compare(pw1.getExperimentalRole(), pw2.getExperimentalRole());
-
-            //If they are identical we sort by author given name
-            if (result == 0) {
-                if (pw1.getAuthorGivenName() != null && pw2.getAuthorGivenName() != null) {
-                    return pw1.getAuthorGivenName().compareTo(pw2.getAuthorGivenName());
-                } else {
-                    if (pw1.getAuthorGivenName() == null && pw2.getAuthorGivenName() != null) {
-                        return -1;
-                    } else if (pw1.getAuthorGivenName() != null && pw2.getAuthorGivenName() == null) {
-                        return 1;
-                    }
+            Date created1 = pw1.getParticipant().getCreated();
+            Date created2 = pw2.getParticipant().getCreated();
+            if (created1 != null && created2 != null){
+                int comp = created1.compareTo(created2);
+                if (comp != 0){
+                    return comp;
                 }
-            } else {
-                return result;
+                else{
+                    return pw1.getParticipant().getInteractor().getShortName().compareTo(pw2.getParticipant().getInteractor().getShortName());
+                }
+            }
+            else if (created1 == null && created2 != null) {
+                return -1;
+            } else if (created1 != null && created2 == null) {
+                return 1;
             }
         } else {
             if (pw1 == null && pw2 != null) {

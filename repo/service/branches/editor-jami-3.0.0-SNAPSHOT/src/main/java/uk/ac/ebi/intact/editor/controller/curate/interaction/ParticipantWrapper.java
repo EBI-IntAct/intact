@@ -1,12 +1,16 @@
 package uk.ac.ebi.intact.editor.controller.curate.interaction;
 
 import psidev.psi.mi.jami.model.CvTerm;
+import psidev.psi.mi.jami.model.Xref;
 import uk.ac.ebi.intact.editor.controller.curate.util.ExperimentalRoleComparator;
 import uk.ac.ebi.intact.jami.model.extension.AbstractIntactFeature;
 import uk.ac.ebi.intact.jami.model.extension.AbstractIntactParticipant;
+import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
 import uk.ac.ebi.intact.jami.model.extension.IntactStoichiometry;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -20,6 +24,7 @@ public class ParticipantWrapper {
 
     private AbstractIntactParticipant participant;
     private List<FeatureWrapper> features;
+    private String interactorIdentity;
 
     public ParticipantWrapper( AbstractIntactParticipant participant) {
         this.participant = participant;
@@ -28,6 +33,19 @@ public class ParticipantWrapper {
         for (Object feature : participant.getFeatures()) {
             features.add(new FeatureWrapper((AbstractIntactFeature)feature));
         }
+
+        IntactInteractor interactor = (IntactInteractor)participant.getInteractor();
+
+        final Collection<Xref> identities = interactor.getIdentifiers();
+        StringBuilder sb = new StringBuilder(64);
+        for ( Iterator<Xref> iterator = identities.iterator(); iterator.hasNext(); ) {
+            Xref xref = iterator.next();
+            sb.append( xref.getId() );
+            if( iterator.hasNext() ) {
+                sb.append( "|" );
+            }
+        }
+        this.interactorIdentity = sb.toString();
     }
 
     public AbstractIntactParticipant getParticipant() {
@@ -78,5 +96,9 @@ public class ParticipantWrapper {
             return comparator.compare((CvTerm)cvExpRole1, (CvTerm) cvExpRole2);
         }
         return 0;
+    }
+
+    public String getInteractorIdentity() {
+        return interactorIdentity;
     }
 }

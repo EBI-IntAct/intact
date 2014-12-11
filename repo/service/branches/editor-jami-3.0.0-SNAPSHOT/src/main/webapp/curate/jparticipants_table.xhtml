@@ -32,12 +32,9 @@
             <ui:param name="interactor" value="#{participant.interactor}" />
 
             <p:column id="shortLabel" headerText="Name">
-                <p:commandLink onclick="load_participant.show()" action="#{modelledParticipantController.loadParticipant(participant)}"
-                               value="#{interactor.shortName}" rendered="#{participant.ac != null}"
-                               ajax="false"/>
-                <p:commandLink onclick="load_participant.show()" action="#{modelledParticipantController.loadParticipant(participant)}"
-                               value="#{interactor.shortName}" rendered="#{participant.ac == null}"
-                               styleClass="#{'intact-new'}"
+                <p:commandLink onclick="load_participant.show()" action="#{curateController.edit(participant)}"
+                               value="#{interactor.shortName}" rendered="#{interactor != null and not changesController.isDeletedAc(participant.ac)}"
+                               styleClass="#{participant.ac == null? 'intact-new' :''}"
                                ajax="false"/>
                 <h:panelGroup rendered="#{changesController.isDeletedAc(participant.ac)}">
                     <h:outputText value="#{interactor.shortName}" styleClass="intact-deleted"/>
@@ -45,9 +42,12 @@
             </p:column>
 
             <p:column id="ao">
-                <ui:include src="jcommon_column_notifications.xhtml">
+                <ui:include src="common_column_notifications.xhtml">
                     <ui:param name="annotatedObjectController" value="#{modelledParticipantController}"/>
                     <ui:param name="ao" value="#{participant}"/>
+                    <h:panelGroup rendered="#{annotatedObjectController.isNoUniprotUpdate(participant.interactor)}">
+                    <h:graphicImage alt="no uniprot update" library="images" name="no_uni_update.png"
+                                    title="No Uniprot Update"/>
                 </ui:include>
             </p:column>
 
@@ -60,7 +60,7 @@
 
                 <h:selectOneMenu id="bioRoleCv" value="#{wrapper.participant.biologicalRole}"
                                  rendered="#{value.rowCount lt 5}" disabled="#{complexController.isParticipantDisabled()}"
-                                 converter="cvTermConverter">
+                                 converter="cvObjectConverter">
                     <f:selectItems value="#{editorCvTermService.biologicalRoleSelectItems}" />
                     <p:ajax event="change" process="@this" oncomplete="markAsUnsaved()" update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"/>
                 </h:selectOneMenu>
