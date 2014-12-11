@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.services.search.SearchQueryService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
-import uk.ac.ebi.intact.jami.model.extension.IntactInteractionEvidence;
+import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
 
 import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
@@ -16,19 +16,21 @@ import javax.faces.event.ComponentSystemEvent;
 /**
  * Created with IntelliJ IDEA.
  * User: ntoro
- * Date: 19/03/2013
- * Time: 11:22
+ * Date: 26/03/2013
+ * Time: 11:21
  * To change this template use File | Settings | File Templates.
  */
-@Controller
+@Controller("complexOrganismController")
 @Scope( "conversation.access" )
 @ConversationName("search")
-public class SearchInteractionsMoleculeController extends BaseController {
+@SuppressWarnings("unchecked")
+public class SearchComplexOrganismController extends BaseController {
 
 	private String ac;
-	private LazyDataModel<IntactInteractionEvidence> interactions = null;
 	private String shortLabel;
-	private String numInteractions;
+	private String numComplexes;
+
+	private LazyDataModel<IntactComplex> complexes = null;
 
 	public String getAc() {
 		return ac;
@@ -45,13 +47,13 @@ public class SearchInteractionsMoleculeController extends BaseController {
 		if (!FacesContext.getCurrentInstance().isPostback()) {
 
 			if (ac != null) {
-				interactions = getSearchQueryService().loadInteractionsByMolecule(ac);
+				complexes = getSearchQueryService().loadComplexesByOrganism(ac);
 			}
 		}
 	}
 
-	public LazyDataModel<IntactInteractionEvidence> getInteractions() {
-		return interactions;
+	public LazyDataModel<IntactComplex> getComplexes() {
+		return complexes;
 	}
 
 	public String getShortLabel() {
@@ -62,12 +64,12 @@ public class SearchInteractionsMoleculeController extends BaseController {
 		this.shortLabel = shortLabel;
 	}
 
-	public void setNumInteractions(String numInteractions) {
-		this.numInteractions = numInteractions;
+	public void setNumComplexes(String numInteractors) {
+		this.numComplexes = numInteractors;
 	}
 
-	public String getNumInteractions() {
-		return numInteractions;
+	public String getNumComplexes() {
+		return numComplexes;
 	}
 
     public SearchQueryService getSearchQueryService() {
@@ -76,4 +78,7 @@ public class SearchInteractionsMoleculeController extends BaseController {
         }
         return searchQueryService;
     }
+
+
 }
+

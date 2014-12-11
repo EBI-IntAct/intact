@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.services.search.SearchQueryService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
-import uk.ac.ebi.intact.jami.model.extension.IntactInteractionEvidence;
+import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
 
 import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
@@ -23,12 +23,15 @@ import javax.faces.event.ComponentSystemEvent;
 @Controller
 @Scope( "conversation.access" )
 @ConversationName("search")
-public class SearchInteractionsMoleculeController extends BaseController {
+public class SearchComplexesMoleculeController extends BaseController {
 
 	private String ac;
-	private LazyDataModel<IntactInteractionEvidence> interactions = null;
+	private LazyDataModel<IntactComplex> interactions = null;
 	private String shortLabel;
 	private String numInteractions;
+
+    @Resource(name = "searchQueryService")
+    private transient SearchQueryService searchQueryService;
 
 	public String getAc() {
 		return ac;
@@ -38,19 +41,16 @@ public class SearchInteractionsMoleculeController extends BaseController {
 		this.ac = ac;
 	}
 
-    @Resource(name = "searchQueryService")
-    private transient SearchQueryService searchQueryService;
-
 	public void loadData(ComponentSystemEvent evt) {
 		if (!FacesContext.getCurrentInstance().isPostback()) {
 
 			if (ac != null) {
-				interactions = getSearchQueryService().loadInteractionsByMolecule(ac);
+				interactions = getSearchQueryService().loadComplexesByMolecule(ac);
 			}
 		}
 	}
 
-	public LazyDataModel<IntactInteractionEvidence> getInteractions() {
+	public LazyDataModel<IntactComplex> getComplexes() {
 		return interactions;
 	}
 
@@ -62,11 +62,11 @@ public class SearchInteractionsMoleculeController extends BaseController {
 		this.shortLabel = shortLabel;
 	}
 
-	public void setNumInteractions(String numInteractions) {
+	public void setNumComplexes(String numInteractions) {
 		this.numInteractions = numInteractions;
 	}
 
-	public String getNumInteractions() {
+	public String getNumComplexes() {
 		return numInteractions;
 	}
 

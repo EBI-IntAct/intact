@@ -4,11 +4,12 @@ import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.primefaces.model.LazyDataModel;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.intact.editor.util.LazyDataModelFactory;
-import uk.ac.ebi.intact.model.InteractorImpl;
+import uk.ac.ebi.intact.editor.controller.BaseController;
+import uk.ac.ebi.intact.editor.services.search.SearchQueryService;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
+import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
 
+import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ComponentSystemEvent;
 
@@ -23,13 +24,13 @@ import javax.faces.event.ComponentSystemEvent;
 @Scope( "conversation.access" )
 @ConversationName("search")
 @SuppressWarnings("unchecked")
-public class SearchInteractorOrganismController extends JpaAwareController {
+public class SearchInteractorOrganismController extends BaseController {
 
 	private String ac;
 	private String shortLabel;
 	private String numInteractors;
 
-	private LazyDataModel<InteractorImpl> interactors = null;
+	private LazyDataModel<IntactInteractor> interactors = null;
 
 	public String getAc() {
 		return ac;
@@ -39,24 +40,20 @@ public class SearchInteractorOrganismController extends JpaAwareController {
 		this.ac = ac;
 	}
 
-    @Transactional(value = "transactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    @Resource(name = "searchQueryService")
+    private transient SearchQueryService searchQueryService;
+
 	public void loadData(ComponentSystemEvent evt) {
 		if (!FacesContext.getCurrentInstance().isPostback()) {
 
 			if (ac != null) {
-				interactors = LazyDataModelFactory.createLazyDataModel(
-						getDaoFactory().getInteractorDao().getByBioSourceAc(ac)
-				);
+				interactors = getSearchQueryService().loadMoleculesByOrganism(ac);
 			}
 		}
 	}
 
-	public LazyDataModel<InteractorImpl> getInteractors() {
+	public LazyDataModel<IntactInteractor> getInteractors() {
 		return interactors;
-	}
-
-	public void setInteractors(LazyDataModel<InteractorImpl> interactors) {
-		this.interactors = interactors;
 	}
 
 	public String getShortLabel() {
@@ -76,5 +73,11 @@ public class SearchInteractorOrganismController extends JpaAwareController {
 	}
 
 
+    public SearchQueryService getSearchQueryService() {
+        if (this.searchQueryService == null){
+            this.searchQueryService = ApplicationContextProvider.getBean("searchQueryService");
+        }
+        return searchQueryService;
+    }
 }
 
