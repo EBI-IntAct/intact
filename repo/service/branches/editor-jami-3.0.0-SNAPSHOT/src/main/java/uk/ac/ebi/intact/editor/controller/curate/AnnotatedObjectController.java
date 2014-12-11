@@ -29,7 +29,7 @@ import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
-import uk.ac.ebi.intact.editor.controller.curate.interaction.ComplexController;
+import uk.ac.ebi.intact.editor.controller.curate.complex.ComplexController;
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
 import uk.ac.ebi.intact.editor.services.curate.EditorObjectService;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;

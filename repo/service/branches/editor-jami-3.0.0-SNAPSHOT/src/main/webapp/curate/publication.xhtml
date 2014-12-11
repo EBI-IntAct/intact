@@ -394,9 +394,9 @@
         </ui:define>
 
         <ui:define name="annotationSyncValues">
-            <ed:syncValue with="editorForm:onHoldTxt" rendered="#{annotation.topic != null and annotation.topic.shortName == 'on-hold'}"/>
-            <ed:syncValue with="editorForm:yearTxt" rendered="#{annotation.topic != null and annotation.topic.mIIdentifier == 'MI:0886'}"/>
-            <ed:syncValue with="editorForm:contactTxt" rendered="#{annotation.topic != null and annotation.topic.mIIdentifier == 'MI:0634'}"/>
+            <ed:syncValue with="editorForm:onHoldTxt" rendered="#{nnotation.topic.shortName == 'on-hold'}"/>
+            <ed:syncValue with="editorForm:yearTxt" rendered="#{annotation.topic.mIIdentifier != null and annotation.topic.mIIdentifier == 'MI:0886'}"/>
+            <ed:syncValue with="editorForm:contactTxt" rendered="#{annotation.topic.mIIdentifier != null and annotation.topic.mIIdentifier == 'MI:0634'}"/>
         </ui:define>
 
     </ui:decorate>

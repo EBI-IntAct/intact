@@ -284,6 +284,9 @@ public class InteractorController extends AnnotatedObjectController {
 
             initialiseDefaultProperties(this.interactor);
         }
+        else{
+            this.ac = null;
+        }
     }
 
     public String getSequence() {

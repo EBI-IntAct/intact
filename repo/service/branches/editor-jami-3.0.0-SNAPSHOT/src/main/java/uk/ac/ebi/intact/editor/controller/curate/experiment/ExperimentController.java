@@ -730,6 +730,9 @@ public class ExperimentController extends AnnotatedObjectController {
 
             initialiseDefaultProperties(this.experiment);
         }
+        else{
+            this.ac = null;
+        }
     }
 
     public LazyDataModel<IntactInteractionEvidence> getInteractionDataModel() {

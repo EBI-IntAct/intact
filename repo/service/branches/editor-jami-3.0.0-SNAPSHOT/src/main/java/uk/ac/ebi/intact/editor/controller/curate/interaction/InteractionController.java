@@ -103,6 +103,8 @@ public class InteractionController extends AnnotatedObjectController {
     private String imexId;
     private String figureLegend = null;
 
+    private List<ImportExperimentalCondition> conditionsToImport;
+
     public InteractionController() {
     }
 
@@ -417,7 +419,7 @@ public class InteractionController extends AnnotatedObjectController {
 
     @Override
     public boolean isAnnotationNotEditable(psidev.psi.mi.jami.model.Annotation annot) {
-        return false;
+        return AnnotationUtils.doesAnnotationHaveTopic(annot, Annotation.FIGURE_LEGEND_MI, Annotation.FIGURE_LEGEND);
     }
 
     @Override
@@ -563,7 +565,7 @@ public class InteractionController extends AnnotatedObjectController {
     private void updateShortLabel(IntactInteractionEvidence interaction) {
 
         if (interaction.getParticipants().isEmpty()){
-             return;
+            return;
         }
 
         String oldLabel = interaction.getShortName();
@@ -690,6 +692,9 @@ public class InteractionController extends AnnotatedObjectController {
 
             initialiseDefaultProperties(this.interaction);
         }
+        else{
+            this.ac = null;
+        }
     }
 
     public Collection<ParticipantWrapper> getParticipants() {
@@ -814,6 +819,11 @@ public class InteractionController extends AnnotatedObjectController {
         this.isVariableParametersDisabled = isVariableParametersDisabled;
     }
 
+    public boolean isVariableParametersTableEnabled(){
+        List<VariableParameter> variableParameters = experimentController.collectVariableParameters();
+        return !variableParameters.isEmpty();
+    }
+
     public void onTabChanged(TabChangeEvent e) {
 
         // the xref tab is active
@@ -840,6 +850,7 @@ public class InteractionController extends AnnotatedObjectController {
                 isVariableParametersDisabled = true;
             }
             else if (e.getTab().getId().equals("vparametersTab")){
+                loadConditionsToImport();
                 isParticipantDisabled = true;
                 isParameterDisabled = true;
                 isConfidenceDisabled = true;
@@ -908,7 +919,7 @@ public class InteractionController extends AnnotatedObjectController {
                 return false;
             }
             if (!((IntactParticipantEvidence)part).areFeaturesInitialized()){
-               return false;
+                return false;
             }
             for (FeatureEvidence f : part.getFeatures()){
                 if (!((IntactFeatureEvidence)f).areRangesInitialized()){
@@ -980,7 +991,7 @@ public class InteractionController extends AnnotatedObjectController {
             imexId = null;
             interaction.getXrefs().remove(xref);
         }
-         this.interaction.getDbXrefs().remove(xref);
+        this.interaction.getDbXrefs().remove(xref);
     }
 
     @Override
@@ -996,7 +1007,7 @@ public class InteractionController extends AnnotatedObjectController {
 
     @Override
     public void removeAnnotation(psidev.psi.mi.jami.model.Annotation annotation) {
-         interaction.getDbAnnotations().remove(annotation);
+        interaction.getDbAnnotations().remove(annotation);
     }
 
     public void reloadSingleParticipant(IntactParticipantEvidence f){
@@ -1045,5 +1056,58 @@ public class InteractionController extends AnnotatedObjectController {
             this.interactionEditorService = ApplicationContextProvider.getBean("interactionEditorService");
         }
         return interactionEditorService;
+    }
+
+    public void loadConditionsToImport(){
+        List<VariableParameter> params = experimentController.getExperiment() != null ? experimentController.collectVariableParameters() : Collections.EMPTY_LIST;
+
+        this.conditionsToImport = new ArrayList<ImportExperimentalCondition>();
+        for (VariableParameter param : params){
+             this.conditionsToImport.add(new ImportExperimentalCondition(param));
+        }
+    }
+
+    public List<ImportExperimentalCondition> getConditionsToImport() {
+        return conditionsToImport;
+    }
+
+    public void importExperimentalConditions(ActionEvent evt){
+        if (this.conditionsToImport == null || this.conditionsToImport.isEmpty()){
+            return;
+        }
+        VariableParameterValueSet newSet = new IntactVariableParameterValueSet();
+
+        for (ImportExperimentalCondition condition : this.conditionsToImport){
+           if (condition.getSelectedValue() != null){
+               newSet.add(condition.getSelectedValue());
+           }
+        }
+
+        if (!newSet.isEmpty()){
+            if (!this.interaction.areVariableParameterValuesInitialized()){
+                setInteraction(getInteractionEditorService().initialiseInteractionVariableParameterValues(this.interaction));
+            }
+            this.interaction.getVariableParameterValues().add(newSet);
+            setUnsavedChanges(true);
+        }
+        else{
+            addErrorMessage("No experimental conditions were selected so we could not import a new set of experimental conditions","No experimental conditions selected");
+        }
+    }
+
+    public List<VariableParameterValueSet> collectVariableParameterValues(){
+        if (!this.interaction.areVariableParameterValuesInitialized()){
+            setInteraction(getInteractionEditorService().initialiseInteractionVariableParameterValues(this.interaction));
+        }
+        List<VariableParameterValueSet> conditions = new ArrayList<VariableParameterValueSet>(this.interaction.getVariableParameterValues());
+        Collections.sort(conditions, new AuditableComparator());
+        return conditions;
+    }
+
+    public void removeVariableParameterValuesSet(VariableParameterValueSet toRemove){
+        if (!this.interaction.areVariableParameterValuesInitialized()){
+            setInteraction(getInteractionEditorService().initialiseInteractionVariableParameterValues(this.interaction));
+        }
+        this.interaction.getVariableParameterValues().remove(toRemove);
     }
 }

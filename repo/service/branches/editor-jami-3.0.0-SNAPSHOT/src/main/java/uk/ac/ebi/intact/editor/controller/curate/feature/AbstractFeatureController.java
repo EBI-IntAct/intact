@@ -349,6 +349,9 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
 
             initialiseDefaultProperties(this.feature);
         }
+        else{
+            this.ac = null;
+        }
     }
 
     public String getNewRangeValue() {

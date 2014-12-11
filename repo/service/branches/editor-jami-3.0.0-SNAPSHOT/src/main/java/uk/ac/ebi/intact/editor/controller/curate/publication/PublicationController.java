@@ -1036,6 +1036,9 @@ public class PublicationController extends AnnotatedObjectController {
 
             initialiseDefaultProperties(this.publication);
         }
+        else{
+            this.ac = null;
+        }
     }
 
     public String getJournal() {

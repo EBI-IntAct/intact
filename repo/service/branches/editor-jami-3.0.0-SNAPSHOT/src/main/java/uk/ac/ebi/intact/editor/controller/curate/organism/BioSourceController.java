@@ -199,6 +199,9 @@ public class BioSourceController extends AnnotatedObjectController {
 
             initialiseDefaultProperties(this.bioSource);
         }
+        else{
+            this.ac = null;
+        }
     }
 
     public void setTaxId(String taxId) {

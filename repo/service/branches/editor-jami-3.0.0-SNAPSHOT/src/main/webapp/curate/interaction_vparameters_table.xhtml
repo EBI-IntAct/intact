@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ia="http://java.sun.com/jsf/composite/intact-components"
+                xmlns:ed="http://ebi.ac.uk/intact/editor/ui">
+
+    <div class="intact-buttonBar">
+        <p:commandButton id="newConditionsSetBtn" value="Import new set of experimental conditions"
+                         type="button" onclick="importVariableParametersDialog.show()"/>
+        <ia:spacer height="10" />
+
+        <ui:include src="jdialog_import_vparameters.xhtml"/>
+    </div>
+
+    <p:dataTable id="vparametersTable" var="parametersSet" value="#{interactionController.collectVariableParameterValues}" rendered="#{interactionController.isVariableParametersDisabled()}">
+        <p:column>
+            <f:facet name="header">
+                <h:outputText value="Experimental conditions"/>
+            </f:facet>
+            <ui:repeat value="#{parametersSet}" var="variableValue">
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="Parameter description: " for="paramDescriptionTxt" rendered="#{variableValue.variableParameter != null}"/>
+
+                    <p:inputTextarea id="paramDescriptionTxt" value="#{variableValue.variableParameter.description}"
+                                     rows="4" cols="50" autoResize="false"
+                                     converter="trimmingConverter" readonly="true" rendered="#{variableValue.variableParameter != null}"/>
+
+                    <h:outputLabel value="Parameter Unit: " for="paramUnitTxt" rendered="#{variableValue.variableParameter != null and
+                    variableValue.variableParameter.unit != null}"/>
+
+                    <p:inputTextarea id="paramUnitTxt" value="#{variableValue.variableParameter.unit.shortName}"
+                                     rows="4" cols="50" autoResize="false"
+                                     converter="trimmingConverter" readonly="true" rendered="#{variableValue.variableParameter != null and
+                    variableValue.variableParameter.unit != null}"/>
+                    <h:outputLabel value="Value: " for="paramValueTxt"/>
+
+                    <p:inputText id="paramValueTxt" value="#{variableValue.variableParameter.unit.shortName}"
+                                     converter="trimmingConverter" readonly="true"/>
+                </h:panelGrid>
+
+            </ui:repeat>
+        </p:column>
+        <p:column>
+            <f:facet name="header">
+                <h:outputText value="Actions"/>
+            </f:facet>
+            <p:commandLink id="removeVariableParamBtn" styleClass="ui-icon ui-icon-closethick" process="removeVariableParamBtn"
+                           actionListener="#{interactionController.removeVariableParameterValuesSet(parametersSet)}"
+                           oncomplete="markAsUnsaved()"
+                           update="vparametersTable #{update}"/>
+        </p:column>
+    </p:dataTable>
+
+
+
+</ui:composition>

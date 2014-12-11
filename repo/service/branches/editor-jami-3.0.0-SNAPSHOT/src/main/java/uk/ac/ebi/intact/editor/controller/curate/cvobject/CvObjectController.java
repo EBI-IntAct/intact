@@ -283,6 +283,9 @@ public class CvObjectController extends AnnotatedObjectController {
 
             initialiseDefaultProperties(cvObject);
         }
+        else{
+            this.ac = null;
+        }
     }
 
     public String getCvClassName() {

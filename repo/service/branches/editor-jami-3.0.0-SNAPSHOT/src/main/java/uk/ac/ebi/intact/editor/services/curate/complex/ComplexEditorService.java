@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.editor.services.curate.interaction;
+package uk.ac.ebi.intact.editor.services.curate.complex;
 
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;

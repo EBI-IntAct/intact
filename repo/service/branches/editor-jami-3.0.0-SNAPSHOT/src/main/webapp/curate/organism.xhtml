@@ -103,7 +103,7 @@
                 <p:ajax event="tabChange" listener="#{bioSourceController.onTabChanged}" />
 
                 <p:tab id="aliasesTab" title="Aliases (#{bioSourceController.aliasesSize})">
-                    <p:outputPanel id="aliasesPanel" autoUpdate="true">
+                    <p:outputPanel id="aliasesPanel" autoUpdate="false">
                         <ui:decorate template="aliases_table.xhtml">
                             <ui:param name="annotatedObjectController" value="#{bioSourceController}"/>
                             <ui:param name="update" value=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent #{updateOnChange}"/>
