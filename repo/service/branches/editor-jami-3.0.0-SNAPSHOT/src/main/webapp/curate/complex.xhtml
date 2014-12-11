@@ -18,9 +18,8 @@
 <ui:define name="metadata">
     <f:metadata>
         <f:viewParam name="ac" value="#{complexController.ac}"/>
-        <f:event type="preRenderView" listener="#{editorCvTermService.loadDataIfNotDone}"/>
-        <f:event type="preRenderView" listener="#{editorOrganismService.loadDataIfNotDone}"/>
         <f:event type="preRenderView" listener="#{complexController.loadData}"/>
+        <f:event type="preRenderView" listener="#{userAdminController.loadData}"/>
         <f:event type="preRenderView" listener="#{curateController.setCurrentAnnotatedObjectController(complexController)}"/>
     </f:metadata>
 </ui:define>
@@ -38,12 +37,14 @@
                      action="#{complexController.doSave}" ajax="false"/>
     <p:commandButton value="Ready for checking"
                      styleClass="important-button-alt"
-                     rendered="#{complexController.curationInProgress and not complexController.beenRejectedBefore and userSessionController.isItMe(complexController.complex.currentOwner)}"
+                     rendered="#{complexController.curationInProgress and not complexController.beenRejectedBefore
+                     and userSessionController.isItMe(complexController.complex.currentOwner)}"
                      actionListener="#{complexController.markAsReadyForChecking}"
                      action="#{complexController.doSave}" ajax="false"/>
     <p:commandButton value="Ready for checking (Again)"
                      styleClass="important-button-alt"
-                     rendered="#{complexController.curationInProgress and complexController.beenRejectedBefore and userSessionController.isItMe(complexController.complex.currentOwner)}"
+                     rendered="#{complexController.curationInProgress and complexController.beenRejectedBefore
+                     and userSessionController.isItMe(complexController.complex.currentOwner)}"
                      actionListener="#{complexController.markAsReadyForChecking}"
                      action="#{complexController.doSave}" ajax="false"/>
     <p:commandButton value="Accept Complex"
@@ -58,16 +59,20 @@
                      action="#{complexController.doSave}" ajax="false"/>
     <p:commandButton value="Revert Accepted"
                      styleClass="important-button-alt"
-                     rendered="#{complexController.readyForRelease and !complexController.released and userSessionController.isItMe(complexController.complex.currentReviewer)}"
+                     rendered="#{complexController.readyForRelease and !complexController.released
+                     and userSessionController.isItMe(complexController.complex.currentReviewer)}"
                      actionListener="#{complexController.revertAccepted}"
                      action="#{complexController.doSave}" ajax="false"/>
     <p:commandButton value="Put on hold" type="button"
                      styleClass="important-button-bad"
-                     rendered="#{(complexController.readyForRelease or complexController.released) and (userSessionController.isItMe(complexController.complex.currentOwner) or userSessionController.isItMe(complexController.complex.currentReviewer))}"
+                     rendered="#{(complexController.readyForRelease or complexController.released)
+                     and (userSessionController.isItMe(complexController.complex.currentOwner)
+                     or userSessionController.isItMe(complexController.complex.currentReviewer))}"
                      onclick="putOnHoldDialog.show()"/>
     <p:commandButton value="Remove on hold"
                      styleClass="important-button-bad"
-                     rendered="#{complexController.complexOnHold and (userSessionController.isItMe(complexController.complex.currentOwner) or userSessionController.isItMe(complexController.complex.currentReviewer))}"
+                     rendered="#{complexController.complexOnHold and (userSessionController.isItMe(complexController.complex.currentOwner)
+                     or userSessionController.isItMe(complexController.complex.currentReviewer))}"
                      actionListener="#{complexController.removeOnHold}"
                      action="#{complexController.doSave}" ajax="false"/>
     <p:commandButton value="Remove to be reviewed"
@@ -77,7 +82,8 @@
                      action="#{complexController.doSave}" ajax="false"/>
     <p:commandButton value="Ready for Release (removes on-hold)"
                      styleClass="important-button-alt"
-                     rendered="#{complexController.acceptedOnHold and (userSessionController.isItMe(complexController.complex.currentReviewer) or userSessionController.isItMe(complexController.complex.currentOwner))}"
+                     rendered="#{complexController.acceptedOnHold and (userSessionController.isItMe(complexController.complex.currentReviewer)
+                     or userSessionController.isItMe(complexController.complex.currentOwner))}"
                      actionListener="#{complexController.readyForReleaseFromOnHold}"
                      action="#{complexController.doSave}" ajax="false"/>
     <p:commandButton value="Correction Comment" type="button"
@@ -86,7 +92,8 @@
                      onclick="correctionCommentDialog.show()"/>
     <p:commandButton value="Remove Correction Comment" actionListener="#{complexController.removeCorrectionComment}"
                      styleClass="important-button-alt"
-                     rendered="#{complexController.complexWithCorrectionComment and (userSessionController.isItMe(complexController.complex.currentOwner) or userSessionController.isItMe(complexController.complex.currentReviewer))}"
+                     rendered="#{complexController.complexWithCorrectionComment and (userSessionController.isItMe(complexController.complex.currentOwner)
+                     or userSessionController.isItMe(complexController.complex.currentReviewer))}"
                      action="#{complexController.doSave}" ajax="false"/>
     <p:commandButton value="Reject Complex" type="button"
                      styleClass="important-button-bad"
@@ -148,7 +155,7 @@
 
 <h:panelGroup rendered="#{interaction != null}">
     <div id="auditInfo" class="intact-auditPanel">
-        <ia:jcreatorUpdator annotatedObject="#{interaction}" />
+        <ia:creatorUpdator annotatedObject="#{interaction}" />
     </div>
 </h:panelGroup>
 
@@ -329,7 +336,7 @@
 <p:tabView id="complexTabs" dynamic="true" cache="false">
     <p:ajax event="tabChange" listener="#{complexController.onTabChanged}" onstart="loadDialog.show()" oncomplete="loadDialog.hide()"/>
 
-    <p:tab id="participantsTab" title="Participants (#{complexController.participants.rowCount})">
+    <p:tab id="participantsTab" title="Participants (#{complexController.participants.size()})">
 
         <p:panel style="padding:0">
             Participants:&#160;
@@ -351,21 +358,16 @@
         </p:outputPanel>
     </p:tab>
 
-    <ui:decorate template="jpropertiesTabs.xhtml">
+    <ui:decorate template="propertiesTabs.xhtml">
         <ui:param name="annotatedObjectSelectItems" value="#{editorCvTermService.complexTopicSelectItems}"/>
-        <ui:param name="databaseSelectItems" value="#{editorCvTermService.complexDatabaseSelectItems}"/>
-        <ui:param name="qualifierSelectItems" value="#{editorCvTermService.qualifierSelectItems}"/>
-        <ui:param name="aliasTypeSelectItems" value="#{editorCvTermService.aliasTypeSelectItems}"/>
         <ui:param name="updateOnChange" value=":editorForm:basic"/>
     </ui:decorate>
 
     <p:tab id="parametersTab" title="Parameters (#{complexController.parametersSize})">
 
         <p:outputPanel id="parametersPanel" autoUpdate="true">
-            <ui:decorate template="jparameters_table.xhtml">
+            <ui:decorate template="parameters_table.xhtml">
                 <ui:param name="annotatedObjectController" value="#{complexController}"/>
-                <ui:param name="parameterTypeSelectItems" value="#{editorCvTermService.parameterTypeSelectItems}"/>
-                <ui:param name="parameterUnitSelectItems" value="#{editorCvTermService.parameterUnitSelectItems}"/>
                 <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
                 <ui:param name="disableParameterSelectItems" value="#{complexController.isParameterDisabled()}"/>
             </ui:decorate>
@@ -376,9 +378,8 @@
     <p:tab id="confidencesTab" title="Confidences (#{complexController.confidencesSize})">
 
         <p:outputPanel id="confidencesPanel" autoUpdate="true">
-            <ui:decorate template="jconfidences_table.xhtml">
+            <ui:decorate template="confidences_table.xhtml">
                 <ui:param name="annotatedObjectController" value="#{complexController}"/>
-                <ui:param name="confidenceTypeSelectItems" value="#{editorCvTermService.confidenceTypeSelectItems}"/>
                 <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
                 <ui:param name="disableConfidenceSelectItems" value="#{complexController.isConfidenceDisabled()}"/>
             </ui:decorate>
@@ -403,7 +404,7 @@
 
             <h:selectOneMenu value="#{complexController.complex.currentReviewer}" hideNoSelectionOption="true"
                              rendered="#{(userSessionController.hasRole('ADMIN') and interaction.currentReviewer != null)}"
-                             disabled="#{complexController.isLifeCycleDisabled()}" converter="jamiUserConverter">
+                             disabled="#{complexController.isLifeCycleDisabled()}" converter="userConverter">
                 <f:selectItems value="#{userAdminController.complexReviewerSelectItems}"/>
                 <p:ajax event="change" process="@this" oncomplete="markAsUnsaved()" update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"/>
 
