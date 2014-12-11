@@ -22,14 +22,14 @@
 
     <ui:define name="content">
         <p:outputPanel>
-            Molecules with <b>#{interactorOrganismController.shortLabel}</b> involve.
+            Molecules with <b>#{interactorOrganismController.shortLabel}</b> involved.
             <hr/>
         </p:outputPanel>
         <p:accordionPanel autoHeight="false">
             <p:tab title="Molecules (#{interactorOrganismController.interactors.rowCount})"
                    rendered="#{interactorOrganismController.interactors.rowCount != 0}">
 
-                <p:dataTable id="searchMoleculeTable" var="molecule" value="#{interactorOrganismController.interactors}"
+                <p:dataTable id="searchMoleculeTable" var="molecule" value="#{interactorOrganismController.complexes}"
                              paginatorPosition="both"
                              paginator="true"
                              paginatorAlwaysVisible="false"
@@ -53,13 +53,13 @@
                         </h:panelGroup>
                     </p:column>
                     <p:column headerText="Type">
-                        <h:outputText value="#{molecule.cvInteractorType.shortLabel}"/>
+                        <h:outputText value="#{molecule.interactorType.shortName}"/>
                     </p:column>
                     <p:column headerText="Organism">
-                        <h:outputText value="#{molecule.bioSource.shortLabel}"/>
+                        <h:outputText value="#{molecule.organism.commonName}"/>
                     </p:column>
-                    <p:column headerText="Short name" sortBy="#{molecule.shortLabel}">
-                        <h:outputText value="#{molecule.shortLabel}"/>
+                    <p:column headerText="Short name" sortBy="#{molecule.shortName}">
+                        <h:outputText value="#{molecule.shortName}"/>
                     </p:column>
                     <p:column headerText="Full name" sortBy="#{molecule.fullName}">
                         <h:outputText value="#{molecule.fullName}"/>
@@ -71,12 +71,22 @@
                         <h:link id="linkRow" outcome="interactions" includeViewParams="true"
                                 value="#{searchController.countInteractionsByMoleculeAc( molecule )}" ajax="false">
                             <f:param name="ac" value="#{molecule.ac}"/>
-                            <f:param name="shortLabel" value="#{molecule.shortLabel}"/>
+                            <f:param name="shortLabel" value="#{molecule.shortName}"/>
                             <f:param name="numInteractions"
                                      value="#{searchController.countInteractionsByMoleculeAc( molecule )}"/>
                         </h:link>
                     </p:column>
-
+                    <p:column headerText="# Complexes">
+                        <h:link id="linkRowComplexes" outcome="complexes" includeViewParams="true"
+                                value="#{searchController.countComplexesByMoleculeAc( molecule )}"
+                                rendered="#{searchController.countComplexesByMoleculeAc( molecule ) > 0 and searchController.complexSearchEnabled}">
+                            <f:param name="ac" value="#{molecule.ac}"/>
+                            <f:param name="shortLabel" value="#{molecule.shortName}"/>
+                            <f:param name="numComplexes" value="#{searchController.countComplexesByMoleculeAc( molecule )}"/>
+                        </h:link>
+                        <h:outputText rendered="#{searchController.countComplexesByMoleculeAc( molecule ) > 0 and !searchController.complexSearchEnabled}"
+                                      value="#{searchController.countComplexesByMoleculeAc( molecule )}"/>
+                    </p:column>
 
                 </p:dataTable>
 

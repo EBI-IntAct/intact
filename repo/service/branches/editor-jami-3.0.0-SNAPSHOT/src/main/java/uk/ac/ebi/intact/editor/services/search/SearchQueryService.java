@@ -99,6 +99,56 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public LazyDataModel<IntactInteractor> loadMoleculesByOrganism( String organismAc ) {
+
+        log.info( "Searching for Molecules matching organism '" + organismAc + "'..." );
+
+        final HashMap<String, String> params = Maps.<String, String>newHashMap();
+        params.put( "ac", organismAc );
+
+        // all molecules but interactions
+        LazyDataModel<IntactInteractor> molecules = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+
+                "select distinct i " +
+                        "from IntactInteractor i join i.organism as o " +
+                        "where  o.ac = :ac " +
+
+                        "select count(distinct i) " +
+                        "from IntactInteractor i join i.organism as o " +
+                        "where o.ac = :ac" +
+
+                        params, "i", "updated", false );
+
+        log.info( "Molecules found: " + molecules.getRowCount() );
+        return molecules;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public LazyDataModel<IntactComplex> loadComplexesByOrganism( String organismAc ) {
+
+        log.info( "Searching for Complexes matching organism '" + organismAc + "'..." );
+
+        final HashMap<String, String> params = Maps.<String, String>newHashMap();
+        params.put( "ac", organismAc );
+
+        // all molecules but interactions
+        LazyDataModel<IntactComplex> molecules = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+
+                "select distinct i " +
+                        "from IntactComplex i join i.organism as o " +
+                        "where  o.ac = :ac " +
+
+                        "select count(distinct i) " +
+                        "from IntactComplex i join i.organism as o " +
+                        "where o.ac = :ac" +
+
+                        params, "i", "updated", false );
+
+        log.info( "Molecules found: " + molecules.getRowCount() );
+        return molecules;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public int countInteractionsByMoleculeAc( IntactInteractor molecule ) {
         return getIntactDao().getInteractionDao().countInteractionsInvolvingInteractor(molecule.getAc());
     }
@@ -169,6 +219,56 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public LazyDataModel<IntactInteractionEvidence>  loadInteractionsByMolecule( String moleculeAc ) {
+
+        log.info( "Searching for Interactions with molecule '" + moleculeAc + "'..." );
+
+        final HashMap<String, String> params = Maps.<String, String>newHashMap();
+        params.put( "ac", moleculeAc );
+
+        // Load experiment eagerly to avoid LazyInitializationException when rendering the view
+        LazyDataModel<IntactInteractionEvidence> interactions = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+
+                "select distinct i " +
+                        "from IntactInteractionEvidence i join i.participants as p join p.interactor as inter " +
+                        "where  inter.ac = :ac" +
+
+                        "select count(distinct i.ac) " +
+                        "from IntactInteractionEvidence i join i.participants as p join p.interactor as inter " +
+                        "where  inter.ac = :ac"+
+
+                        params, "i", "updated", false );
+
+        log.info( "Interactions found: " + interactions.getRowCount() );
+        return interactions;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public LazyDataModel<IntactComplex>  loadComplexesByMolecule( String moleculeAc ) {
+
+        log.info( "Searching for Complexes with molecule '" + moleculeAc + "'..." );
+
+        final HashMap<String, String> params = Maps.<String, String>newHashMap();
+        params.put( "ac", moleculeAc );
+
+        // Load experiment eagerly to avoid LazyInitializationException when rendering the view
+        LazyDataModel<IntactComplex> interactions = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+
+                "select distinct i " +
+                        "from IntactComplex i join i.participants as p join p.interactor as inter " +
+                        "where  inter.ac = :ac" +
+
+                        "select count(distinct i.ac) " +
+                        "from IntactComplex i join i.participants as p join p.interactor as inter " +
+                        "where  inter.ac = :ac"+
+
+                        params, "i", "updated", false );
+
+        log.info( "Interactions found: " + interactions.getRowCount() );
+        return interactions;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public LazyDataModel<IntactComplex> loadComplexes( String query, String originalQuery ) {
 
         log.info( "Searching for Complexes matching '" + query + "'..." );
@@ -232,6 +332,33 @@ public class SearchQueryService extends AbstractEditorService {
                                                                 "      or lower(x.id) like :query) ",
 
                                                                 params, "e", "updated", false );
+
+        log.info( "Experiment found: " + experiments.getRowCount() );
+        return experiments;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public LazyDataModel<IntactExperiment> loadExperimentsByHostOrganism( String organismAc ) {
+
+        log.info( "Searching for experiments matching organism '" + organismAc + "'..." );
+
+        final HashMap<String, String> params = Maps.<String, String>newHashMap();
+        params.put( "ac", organismAc );
+        params.put( "inferred", Experiment.INFERRED_BY_CURATOR );
+
+        LazyDataModel<IntactExperiment> experiments = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+
+                "select distinct e " +
+                        "from IntactExperiment e join e.hostOrganism as o " +
+                        "left join e.interactionDetectionMethod as d " +
+                        "where d.shortName <> :inferred and o.ac = :ac ",
+
+                "select count(distinct e) " +
+                        "from IntactExperiment e join e.hostOrganism as o " +
+                        "left join e.interactionDetectionMethod as d " +
+                        "where d.shortName <> :inferred and o.ac = :ac ",
+
+                params, "e", "updated", false );
 
         log.info( "Experiment found: " + experiments.getRowCount() );
         return experiments;
@@ -354,6 +481,30 @@ public class SearchQueryService extends AbstractEditorService {
                         "from IntactParticipantEvidence p left join p.xrefs as x " +
                         "where (p.ac = :ac " +
                         "      or lower(x.id) like :query) ",
+
+                params, "p", "updated", false);
+
+        log.info( "Participants found: " + participants.getRowCount() );
+        return participants;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public LazyDataModel<IntactParticipantEvidence> loadParticipantsByOrganism( String organismAc ) {
+        log.info( "Searching for participants with organism '" + organismAc + "'..." );
+
+        final HashMap<String, String> params = Maps.newHashMap();
+        params.put( "ac", organismAc );
+
+        // Load experiment eagerly to avoid LazyInitializationException when redering the view
+        LazyDataModel<IntactParticipantEvidence> participants = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+
+                "select distinct p " +
+                        "from IntactParticipantEvidence p join p.expressedInOrganism as o " +
+                        "where o.ac = :ac ",
+
+                "select count(distinct p) " +
+                        "from IntactParticipantEvidence p join p.expressedInOrganism as o " +
+                        "where o.ac = :ac ",
 
                 params, "p", "updated", false);
 
