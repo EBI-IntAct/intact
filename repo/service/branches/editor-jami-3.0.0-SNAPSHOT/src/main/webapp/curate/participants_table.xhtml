@@ -124,29 +124,30 @@
                     </h:column>
                     <h:column>
                         <div id="feature_#{featureWrapper.feature.ac}"
-                             onmouseover="this.style.fontWeight = '#{featureWrapper.feature.boundDomain != null? 'bold' : 'inherit'}'; document.getElementById('feature_#{featureWrapper.feature.boundDomain.ac}').style.fontWeight = '#{featureWrapper.feature.boundDomain != null? 'bold' : 'inherit'}'"
-                             onmouseout="this.style.fontWeight = 'inherit'; document.getElementById('feature_#{featureWrapper.feature.boundDomain.ac}').style.fontWeight = 'inherit'">
-                            <h:outputText value="#{featureWrapper.feature.shortLabel} #{featureWrapper.ranges}"/>
+                             onmouseover="ia_showLinkedFeatures(this, '#{featureWrapper.relatedFeatureDivs}', '#{!empty featureWrapper.linkedFeatures}')"
+                             onmouseout="ia_hideLinkedFeatures(this, '#{featureWrapper.relatedFeatureDivs}')">
+                            <h:outputText value="#{featureWrapper.feature.shortName} #{featureWrapper.ranges}"/>
+                            <h:panelGroup id="linkedFeaturePanelGroup" rendered="#{!empty featureWrapper.linkedFeatures}">
+                                <ui:repeat value="#{featureWrapper.linkedFeatures}" var="linked" varStatus="status">
+                                    <p:commandLink type="button" oncomplete="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}.show()"
+                                                   styleClass="ui-icon ui-icon-link" style="display:inline-block"
+                                                   title="Linked to #{linked.shortName}" action="#{interactionController.selectLinkedFeature(featureWrapper, linked)}"
+                                                   update=":editorForm:complexTabs:participantsTable">
+                                    </p:commandLink>
 
-
-                            <h:panelGroup rendered="#{featureWrapper.feature.boundDomain != null}">
-                                <p:commandLink type="button" onclick="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}.show()"
-                                               styleClass="ui-icon ui-icon-link" style="display:inline-block"
-                                               title="Linked to #{featureWrapper.feature.boundDomain.shortLabel}">
-                                </p:commandLink>
-
-
-
-
+                                    <p:outputPanel rendered="#{status.index lt (status.end - 1)}">
+                                        <br/>
+                                    </p:outputPanel>
+                                </ui:repeat>
                             </h:panelGroup>
                         </div>
 
                         <p:confirmDialog widgetVar="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}"
-                                         rendered="#{featureWrapper.feature.boundDomain != null}"
                                          message="Do you want to unlink this feature?" modal="true">
                             <p:commandButton value="Yes Sure"
-                                             actionListener="#{interactionController.unlinkFeature(featureWrapper.feature)}"
-                                             ajax="false"/>
+                                             actionListener="#{interactionController.unlinkFeature(featureWrapper)}"
+                                             update=":editorForm:complexTabs:participantsTable :editorForm:changesPanel :editorForm:messagesComponent :editorForm:unsavedChangesInfo"
+                                             onclick="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}.hide()"/>
                             <p:commandButton value="Not Yet" onclick="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}.hide()" />
                         </p:confirmDialog>
 
@@ -155,8 +156,18 @@
 
             </p:column>
 
-            <p:column headerText="Stoich.">
-                <p:spinner id="stoichiometryValue" value="#{participant.stoichiometry}" min="0" stepFactor="1" size="3" maxlength="2" onchange="markAsUnsaved()"/>
+            <p:column headerText="Min Stoich.">
+                <p:spinner id="minStoichiometryValue" value="#{wrapper.minStoichiometry}"
+                           min="0" stepFactor="1" maxlength="3" size="3">
+                    <p:ajax event="change" process="@this maxStoichiometryValue" oncomplete="markAsUnsaved()" update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent,:editorForm:basic"/>
+                </p:spinner>
+            </p:column>
+
+            <p:column headerText="Max Stoich.">
+                <p:spinner id="maxStoichiometryValue" value="#{wrapper.maxStoichiometry}"
+                           min="0" stepFactor="1" maxlength="3" size="3">
+                    <p:ajax event="change" process="@this minStoichiometryValue" oncomplete="markAsUnsaved()" update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent,:editorForm:basic"/>
+                </p:spinner>
             </p:column>
 
             <p:column headerText="Options">
