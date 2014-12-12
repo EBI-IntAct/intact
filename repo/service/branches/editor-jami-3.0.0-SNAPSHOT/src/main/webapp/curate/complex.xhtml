@@ -211,7 +211,7 @@
             <ia:inputCvTerm id="complexTypeTxt" cvIdentifier="MI:0314"
                             cvClass="uk.ac.ebi.intact.model.CvInteractorType"
                             value="#{interaction.interactorType}"
-                            selectItems="#{editorCvTermService.interactorTypeSelectItems}"
+                            selectItems="#{cvObjectService.interactorTypeSelectItems}"
                             required="true" requiredMessage="Complex type is required"
                             oncomplete="ia_enableSave()"
                             update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"
@@ -225,7 +225,7 @@
                               valueChangeAwareObject="#{complexController}"
                               oncomplete="ia_enableSave()"
                               update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"
-                              selectItems="#{editorOrganismService.organismSelectItems}">
+                              selectItems="#{bioSourceService.organismSelectItems}">
                 <ed:curation/>
             </ia:inputOrganism>
         </td>
@@ -238,7 +238,7 @@
             <ia:inputCvTerm id="interactionTypeTxt" cvIdentifier="MI:0190"
                             cvClass="uk.ac.ebi.intact.model.CvInteractionType"
                             value="#{interaction.interactionType}"
-                            selectItems="#{editorCvTermService.interactionTypeSelectItems}"
+                            selectItems="#{cvObjectService.interactionTypeSelectItems}"
                             required="true" requiredMessage="Interaction type is required"
                             oncomplete="ia_enableSave()"
                             update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"
@@ -253,7 +253,7 @@
             <ia:inputCvTerm id="ecoCodeTxt" cvIdentifier="MI:1331"
                             cvClass="uk.ac.ebi.intact.model.CvTopic"
                             value="#{interaction.evidenceType}"
-                            selectItems="#{editorCvTermService.evidenceTypeSelectItems}"
+                            selectItems="#{cvObjectService.evidenceTypeSelectItems}"
                             required="true" requiredMessage="ECO code is required"
                             oncomplete="ia_enableSave()"
                             update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"
@@ -358,10 +358,52 @@
         </p:outputPanel>
     </p:tab>
 
-    <ui:decorate template="propertiesTabs.xhtml">
-        <ui:param name="annotatedObjectSelectItems" value="#{editorCvTermService.complexTopicSelectItems}"/>
-        <ui:param name="updateOnChange" value=":editorForm:basic"/>
-    </ui:decorate>
+    <p:tab id="xrefsTab" title="Xrefs (#{annotatedObjectController.xrefsSize})">
+        <p:outputPanel id="xrefsPanel" autoUpdate="false">
+            <ui:decorate template="complex_xrefs_table.xhtml">
+
+                <ui:param name="annotatedObjectController" value="#{complexController}"/>
+                <ui:param name="update" value=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent,:editorForm:basic"/>
+                <ui:param name="valueChangeRender" value=":editorForm:basic :editorForm:changesPanel"/>
+                <ui:param name="valueChangeAwareObject" value="#{complexController}"/>
+
+                <ui:define name="syncValues">
+                    <ui:insert name="xrefSyncValues"/>
+                </ui:define>
+
+            </ui:decorate>
+        </p:outputPanel>
+
+    </p:tab>
+
+    <p:tab id="annotationsTab" title="Annotations (#{complexController.annotationsSize})">
+        <p:outputPanel id="annotationsPanel" autoUpdate="false">
+            <ui:decorate template="annotations_table.xhtml">
+                <ui:param name="annotatedObjectController" value="#{complexController}"/>
+                <ui:param name="topicSelectItems" value="#{cvObjectService.complexTopicSelectItems}"/>
+                <ui:param name="update" value=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent,:editorForm:basic"/>
+                <ui:param name="valueChangeRender" value=":editorForm:basic :editorForm:changesPanel"/>
+                <ui:param name="valueChangeAwareObject" value="#{complexController}"/>
+
+                <ui:define name="syncValues">
+                    <ui:insert name="annotationSyncValues"/>
+                </ui:define>
+
+            </ui:decorate>
+        </p:outputPanel>
+
+    </p:tab>
+    <p:tab id="aliasesTab" title="Aliases (#{complexController.aliasesSize})">
+        <p:outputPanel id="aliasesPanel" autoUpdate="false">
+            <ui:decorate template="aliases_table.xhtml">
+                <ui:param name="annotatedObjectController" value="#{complexController}"/>
+                <ui:param name="update" value=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent :editorForm:basic"/>
+                <ui:param name="valueChangeRender" value=":editorForm:basic :editorForm:changesPanel"/>
+            </ui:decorate>
+
+        </p:outputPanel>
+    </p:tab>
+
 
     <p:tab id="parametersTab" title="Parameters (#{complexController.parametersSize})">
 

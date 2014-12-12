@@ -45,7 +45,7 @@
                                actionListener="#{annotatedObjectController.removeAlias(alias)}"
                                oncomplete="markAsUnsaved()"
                                update="aliasTable,#{update}"
-                               />
+                               disabled="#{annotatedObjectController.isAliasNotEditable(alias)}"/>
             </p:column>
         </p:dataTable>
 
