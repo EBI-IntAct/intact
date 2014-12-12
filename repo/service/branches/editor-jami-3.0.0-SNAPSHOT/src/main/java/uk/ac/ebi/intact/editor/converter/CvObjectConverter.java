@@ -15,8 +15,8 @@
  */
 package uk.ac.ebi.intact.editor.converter;
 
-import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
 
 import javax.faces.component.UIComponent;
@@ -36,7 +36,10 @@ public class CvObjectConverter implements Converter {
     public Object getAsObject( FacesContext facesContext, UIComponent uiComponent, String ac ) throws ConverterException {
         if ( ac == null ) return null;
 
-        CvObjectService service = ( CvObjectService ) IntactContext.getCurrentInstance().getSpringContext().getBean( "cvObjectService" );
+        CvObjectService service = ApplicationContextProvider.getBean("cvObjectService");
+        if (!service.isInitialised()){
+            service.loadData();
+        }
         return service.findCvObjectByAc( ac );
     }
 

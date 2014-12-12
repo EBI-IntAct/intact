@@ -101,23 +101,25 @@ public class InteractorEditorService extends AbstractEditorService {
     public IntactInteractor loadInteractorByAc(String ac) {
         IntactInteractor interactor = getIntactDao().getEntityManager().find(IntactInteractor.class, ac);
 
-        // initialise xrefs because needs id
-        initialiseAnnotations(interactor.getDbAnnotations());
-        // initialise annotations because needs caution
-        initialiseAnnotations(interactor.getDbAnnotations());
+        if (interactor != null){
+            // initialise xrefs because needs id
+            initialiseAnnotations(interactor.getDbAnnotations());
+            // initialise annotations because needs caution
+            initialiseAnnotations(interactor.getDbAnnotations());
 
-        // load base types
-        if (interactor.getInteractorType() != null){
-            initialiseCv(interactor.getInteractorType());
-        }
+            // load base types
+            if (interactor.getInteractorType() != null){
+                initialiseCv(interactor.getInteractorType());
+            }
 
-        // load set members
-        if (interactor instanceof IntactInteractorPool){
-            initialiseInteractorMembers((IntactInteractorPool) interactor);
-        }
-        // load sequence
-        if (interactor instanceof IntactPolymer){
-            initialiseSequence((IntactPolymer) interactor);
+            // load set members
+            if (interactor instanceof IntactInteractorPool){
+                initialiseInteractorMembers((IntactInteractorPool) interactor);
+            }
+            // load sequence
+            if (interactor instanceof IntactPolymer){
+                initialiseSequence((IntactPolymer) interactor);
+            }
         }
 
         return interactor;

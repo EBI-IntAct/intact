@@ -469,10 +469,12 @@ public class CvObjectService extends AbstractEditorService {
     public IntactCvTerm loadCvByAc(String ac) {
         IntactCvTerm cv = getIntactDao().getEntityManager().find(IntactCvTerm.class, ac);
 
-        // initialise xrefs because are first tab visible
-        initialiseXrefs(cv.getDbXrefs());
-        // initialise annotations because needs caution
-        initialiseAnnotations(cv.getDbAnnotations());
+        if (cv != null){
+            // initialise xrefs because are first tab visible
+            initialiseXrefs(cv.getDbXrefs());
+            // initialise annotations because needs caution
+            initialiseAnnotations(cv.getDbAnnotations());
+        }
 
         return cv;
     }
@@ -481,11 +483,12 @@ public class CvObjectService extends AbstractEditorService {
     public IntactCvTerm loadCvByName(String name, String objClass) {
         IntactCvTerm cv = getIntactDao().getCvTermDao().getByShortName(name, objClass);
 
-        // initialise xrefs because are first tab visible
-        initialiseXrefs(cv.getDbXrefs());
-        // initialise annotations because needs caution
-        initialiseAnnotations(cv.getDbAnnotations());
-
+        if (cv != null){
+            // initialise xrefs because are first tab visible
+            initialiseXrefs(cv.getDbXrefs());
+            // initialise annotations because needs caution
+            initialiseAnnotations(cv.getDbAnnotations());
+        }
         return cv;
     }
 

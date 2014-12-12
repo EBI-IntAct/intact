@@ -137,10 +137,12 @@ public class InstitutionService extends AbstractEditorService {
     public IntactSource loadSourceByAc(String ac) {
         IntactSource cv = getIntactDao().getEntityManager().find(IntactSource.class, ac);
 
-        // initialise xrefs because are first tab visible
-        initialiseXrefs(cv.getDbXrefs());
-        // initialise annotations because needs caution, url, etc
-        initialiseAnnotations(cv.getDbAnnotations());
+        if (cv != null){
+            // initialise xrefs because are first tab visible
+            initialiseXrefs(cv.getDbXrefs());
+            // initialise annotations because needs caution, url, etc
+            initialiseAnnotations(cv.getDbAnnotations());
+        }
 
         return cv;
     }

@@ -86,14 +86,16 @@ public class BioSourceService extends AbstractEditorService {
     public IntactOrganism loadOrganismByAc(String ac) {
         IntactOrganism organism = getIntactDao().getEntityManager().find(IntactOrganism.class, ac);
 
-        // initialise aliases because first tab
-        initialiseAliases(organism.getAliases());
+        if (organism != null){
+            // initialise aliases because first tab
+            initialiseAliases(organism.getAliases());
 
-        if (organism.getCellType() != null){
-            initialiseCv(organism.getCellType());
-        }
-        if (organism.getTissue() != null){
-            initialiseCv(organism.getTissue());
+            if (organism.getCellType() != null){
+                initialiseCv(organism.getCellType());
+            }
+            if (organism.getTissue() != null){
+                initialiseCv(organism.getTissue());
+            }
         }
 
         return organism;

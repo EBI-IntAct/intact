@@ -130,20 +130,22 @@ public class FeatureEditorService extends AbstractEditorService {
     public <T extends AbstractIntactFeature> T loadFeatureByAc(String ac, Class<T> featureClass) {
         T feature = getIntactDao().getEntityManager().find(featureClass, ac);
 
-        // initialise annotations because needs caution
-        initialiseAnnotations(feature.getAnnotations());
+        if (feature != null){
+            // initialise annotations because needs caution
+            initialiseAnnotations(feature.getAnnotations());
 
-        // load base types
-        if (feature.getType() != null){
-            initialiseCv(feature.getType());
-        }
-        if (feature.getRole() != null){
-            initialiseCv(feature.getRole());
-        }
+            // load base types
+            if (feature.getType() != null){
+                initialiseCv(feature.getType());
+            }
+            if (feature.getRole() != null){
+                initialiseCv(feature.getRole());
+            }
 
-        // load participant interactor
-        if (feature.getParticipant() != null){
-            initialiseParticipant(feature.getParticipant());
+            // load participant interactor
+            if (feature.getParticipant() != null){
+                initialiseParticipant(feature.getParticipant());
+            }
         }
 
         return feature;

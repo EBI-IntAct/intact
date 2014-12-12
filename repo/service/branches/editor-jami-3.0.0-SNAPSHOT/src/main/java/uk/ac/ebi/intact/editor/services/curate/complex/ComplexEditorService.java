@@ -149,27 +149,29 @@ public class ComplexEditorService extends AbstractEditorService {
     public IntactComplex loadComplexByAc(String ac) {
         IntactComplex interaction = getIntactDao().getEntityManager().find(IntactComplex.class, ac);
 
-        // initialise annotations because needs caution
-        initialiseAnnotations(interaction.getDbAnnotations());
-        // initialise aliases
-        initialiseAliases(interaction.getAliases());
-        // initialise lifecycle events
-        initialiseLifeCycleEvents(interaction);
-        // initialise participants
-        Collection<ModelledParticipant> dets = interaction.getParticipants();
-        for (ModelledParticipant det : dets){
-            initialiseParticipant(det);
-        }
+        if (interaction != null){
+            // initialise annotations because needs caution
+            initialiseAnnotations(interaction.getDbAnnotations());
+            // initialise aliases
+            initialiseAliases(interaction.getAliases());
+            // initialise lifecycle events
+            initialiseLifeCycleEvents(interaction);
+            // initialise participants
+            Collection<ModelledParticipant> dets = interaction.getParticipants();
+            for (ModelledParticipant det : dets){
+                initialiseParticipant(det);
+            }
 
-        // load base types
-        if (interaction.getInteractionType() != null) {
-            initialiseCv(interaction.getInteractionType());
-        }
-        if (interaction.getInteractorType() != null) {
-            initialiseCv(interaction.getInteractorType());
-        }
-        if (interaction.getEvidenceType() != null) {
-            initialiseCv(interaction.getEvidenceType());
+            // load base types
+            if (interaction.getInteractionType() != null) {
+                initialiseCv(interaction.getInteractionType());
+            }
+            if (interaction.getInteractorType() != null) {
+                initialiseCv(interaction.getInteractorType());
+            }
+            if (interaction.getEvidenceType() != null) {
+                initialiseCv(interaction.getEvidenceType());
+            }
         }
 
         return interaction;

@@ -103,22 +103,24 @@ public class ExperimentEditorService extends AbstractEditorService {
     public IntactExperiment loadExperimentByAc(String ac) {
         IntactExperiment experiment = getIntactDao().getEntityManager().find(IntactExperiment.class, ac);
 
-        if (CvTermUtils.isCvTerm(experiment.getInteractionDetectionMethod(), Experiment.INFERRED_BY_CURATOR_MI,
-                Experiment.INFERRED_BY_CURATOR)){
-            return null;
+        if (experiment != null){
+            if (CvTermUtils.isCvTerm(experiment.getInteractionDetectionMethod(), Experiment.INFERRED_BY_CURATOR_MI,
+                    Experiment.INFERRED_BY_CURATOR)){
+                return null;
+            }
+
+            // initialise annotations because needs caution
+            initialiseAnnotations(experiment.getAnnotations());
+
+            // initialise publication annotations and xrefs
+            if (experiment.getPublication() != null){
+                initialiseXrefs(((IntactPublication)experiment.getPublication()).getDbXrefs());
+                initialiseAnnotations(((IntactPublication) experiment.getPublication()).getDbAnnotations());
+            }
+
+            initialiseCv(experiment.getInteractionDetectionMethod());
+            initialiseCv(experiment.getParticipantIdentificationMethod());
         }
-
-        // initialise annotations because needs caution
-        initialiseAnnotations(experiment.getAnnotations());
-
-        // initialise publication annotations and xrefs
-        if (experiment.getPublication() != null){
-            initialiseXrefs(((IntactPublication)experiment.getPublication()).getDbXrefs());
-            initialiseAnnotations(((IntactPublication) experiment.getPublication()).getDbAnnotations());
-        }
-
-        initialiseCv(experiment.getInteractionDetectionMethod());
-        initialiseCv(experiment.getParticipantIdentificationMethod());
 
         return experiment;
     }

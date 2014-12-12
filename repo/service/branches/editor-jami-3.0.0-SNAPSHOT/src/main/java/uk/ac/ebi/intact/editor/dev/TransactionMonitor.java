@@ -16,10 +16,7 @@
 package uk.ac.ebi.intact.editor.dev;
 
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * TODO comment this class header.
@@ -30,17 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 //@Controller
 @Aspect
 public class TransactionMonitor {
-
-//    @Around("execution(@org.springframework.transaction.annotation.Transactional * *(..))")
-//    public Object debugInfoForTransaction(ProceedingJoinPoint pjp) throws Throwable {
-//
-//        System.out.println("Method: "+pjp.getSignature()+" - Transaction: "+pjp.);
-//
-//       Object retVal = pjp.proceed();
-//
-//        return retVal;
-//
-//    }
 
     @Pointcut("execution(@org.springframework.transaction.annotation.Transactional * *(..))")
     public void transactionalMethod() {}

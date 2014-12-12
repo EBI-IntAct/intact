@@ -15,10 +15,9 @@
  */
 package uk.ac.ebi.intact.editor.converter;
 
+import uk.ac.ebi.intact.editor.services.curate.participant.ParticipantEditorService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
-import uk.ac.ebi.intact.jami.dao.IntactDao;
-import uk.ac.ebi.intact.jami.dao.ParticipantDao;
-import uk.ac.ebi.intact.jami.model.extension.IntactParticipantEvidence;
+import uk.ac.ebi.intact.jami.model.extension.AbstractIntactParticipant;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -29,26 +28,25 @@ import javax.faces.convert.FacesConverter;
 /**
  * @author Marine Dumousseau (marine@ebi.ac.uk)
  */
-@FacesConverter( value = "participantConverter", forClass = IntactParticipantEvidence.class )
+@FacesConverter( value = "participantConverter", forClass = AbstractIntactParticipant.class )
 public class ParticipantConverter implements Converter {
 
     @Override
     public Object getAsObject( FacesContext facesContext, UIComponent uiComponent, String ac ) throws ConverterException {
         if ( ac == null ) return null;
-        IntactDao dao = ApplicationContextProvider.getBean("intactDao");
-        ParticipantDao pDao = dao.getParticipantEvidenceDao();
-        return pDao.getByAc(ac);
+        ParticipantEditorService dao = ApplicationContextProvider.getBean("participantEditorService");
+        return dao.loadAnyParticipantByAc(ac);
     }
 
     @Override
     public String getAsString( FacesContext facesContext, UIComponent uiComponent, Object o ) throws ConverterException {
         if ( o == null ) return null;
 
-        if ( o instanceof IntactParticipantEvidence ) {
-            IntactParticipantEvidence part = ( IntactParticipantEvidence ) o;
+        if ( o instanceof AbstractIntactParticipant ) {
+            AbstractIntactParticipant part = ( AbstractIntactParticipant ) o;
             return part.getAc();
         } else {
-            throw new IllegalArgumentException( "Argument must be a modelled participant: " + o + " (" + o.getClass() + ")" );
+            throw new IllegalArgumentException( "Argument must be a participant: " + o + " (" + o.getClass() + ")" );
         }
     }
 }

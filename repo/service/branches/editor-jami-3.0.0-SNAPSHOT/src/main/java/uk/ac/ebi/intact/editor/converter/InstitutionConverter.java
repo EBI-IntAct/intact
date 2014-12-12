@@ -15,9 +15,8 @@
  */
 package uk.ac.ebi.intact.editor.converter;
 
+import uk.ac.ebi.intact.editor.services.curate.institution.InstitutionService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
-import uk.ac.ebi.intact.jami.dao.IntactDao;
-import uk.ac.ebi.intact.jami.dao.SourceDao;
 import uk.ac.ebi.intact.jami.model.extension.IntactSource;
 
 import javax.faces.component.UIComponent;
@@ -37,8 +36,8 @@ public class InstitutionConverter implements Converter {
     public Object getAsObject( FacesContext facesContext, UIComponent uiComponent, String ac ) throws ConverterException {
         if ( ac == null ) return null;
 
-        SourceDao institutionDao = ((IntactDao) ApplicationContextProvider.getBean("intactDao")).getSourceDao();
-        return institutionDao.getByAc( ac );
+        InstitutionService institutionService = ApplicationContextProvider.getBean("institutionService");
+        return institutionService.findInstitutionByAc( ac );
     }
 
     @Override
@@ -49,7 +48,7 @@ public class InstitutionConverter implements Converter {
             IntactSource institution = ( IntactSource ) o;
             return institution.getAc();
         } else {
-            throw new IllegalArgumentException( "Argument must be a CvObject: " + o + " (" + o.getClass() + ")" );
+            throw new IllegalArgumentException( "Argument must be an Institution: " + o + " (" + o.getClass() + ")" );
         }
     }
 }

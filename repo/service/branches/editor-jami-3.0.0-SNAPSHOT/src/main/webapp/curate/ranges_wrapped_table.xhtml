@@ -102,7 +102,7 @@
         <p:inputTextarea value="#{rangeWrapper.range.resultingSequence.newSequence}" cols="60" rows="3"/>
 
         <h:outputText value="Refers to participant:"/>
-        <h:selectOneMenu id="linkedParticipantMenu" value="#{rangeWrapper.participant}" converter="modelledParticipantConverter"
+        <h:selectOneMenu id="linkedParticipantMenu" value="#{rangeWrapper.participant}" converter="participantConverter"
                          rendered="#{annotatedObjetController.complexFeature}" disabled="#{!annotatedObjetController.complexFeature
                                  or annotatedObjetController.isRangeDisabled()}">
             <f:ajax event="valueChange" render=":editorForm:featureTabs:rangesPanel :editorForm:messagesComponent :editorForm:changesPanel :editorForm:unsavedChangesInfo"
