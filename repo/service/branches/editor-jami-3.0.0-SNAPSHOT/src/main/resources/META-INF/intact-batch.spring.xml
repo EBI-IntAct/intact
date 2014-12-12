@@ -5,7 +5,14 @@
            http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
     <import resource="classpath*:META-INF/psimi-batch-spring.xml"/>
-
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath*:/dbimporter.properties</value>
+            </list>
+        </property>
+    </bean>
     <!-- Job database: Initialize the datasource -->
 
     

@@ -196,13 +196,7 @@
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
-            classpath:/META-INF/intact-jami-spring.xml,
             classpath:/META-INF/beans.spring.xml,
-            classpath:/META-INF/jobs/*.spring.xml,
-            classpath:/META-INF/security/security.spring.xml,
-            classpath:/META-INF/intact-editor.spring.xml,
-            classpath:/META-INF/intact-batch.spring.xml,
-            classpath:/META-INF/orchestra.spring.xml,
             classpath:/META-INF/ws.spring.xml,
         </param-value>
     </context-param>
