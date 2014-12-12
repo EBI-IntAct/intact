@@ -15,11 +15,9 @@
  */
 package uk.ac.ebi.intact.editor.controller.admin;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobInstance;
-import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobExecutionNotRunningException;
 import org.springframework.batch.core.launch.NoSuchJobException;
@@ -117,7 +115,7 @@ public class AdminJobController extends BaseController {
     }
 
     public List<JobInstance> getJobInstances( String jobName ) {
-        return jobExplorer.getJobInstances( jobName, 0, 20 );
+        return jobExplorer.getJobInstances( jobName, 0, 10 );
     }
 
     public List<JobExecution> getJobExecutions( Long jobInstanceId ) {
@@ -130,6 +128,18 @@ public class AdminJobController extends BaseController {
 
     public List<StepExecution> getStepExecutions( JobExecution jobExecution ) {
         return new ArrayList<StepExecution>( jobExecution.getStepExecutions() );
+    }
+
+    public List<Throwable> getFailureExceptions( JobExecution jobExecution ) {
+        return new ArrayList<Throwable>( jobExecution.getFailureExceptions() );
+    }
+
+    public boolean hasJobFailed( JobExecution jobExecution ) {
+        return jobExecution.getExitStatus().getExitCode().equals(ExitStatus.FAILED);
+    }
+
+    public String printFullStackTrace( Throwable e ) {
+        return ExceptionUtils.getFullStackTrace(e);
     }
 
     public MIBatchJobManager getPsiMIJobManager() {
