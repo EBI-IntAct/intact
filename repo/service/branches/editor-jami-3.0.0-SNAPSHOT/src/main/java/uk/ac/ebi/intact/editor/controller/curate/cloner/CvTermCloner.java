@@ -1,10 +1,6 @@
 package uk.ac.ebi.intact.editor.controller.curate.cloner;
 
-import org.biojava.ontology.OntologyTerm;
-import psidev.psi.mi.jami.model.Alias;
-import psidev.psi.mi.jami.model.Annotation;
-import psidev.psi.mi.jami.model.CvTerm;
-import psidev.psi.mi.jami.model.Xref;
+import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.model.extension.CvTermAlias;
 import uk.ac.ebi.intact.jami.model.extension.CvTermAnnotation;
@@ -45,7 +41,7 @@ public class CvTermCloner extends AbstractCvTermCloner<CvTerm, IntactCvTerm>{
         IntactCvTerm clone = super.clone(cv, dao);
 
         if (cv instanceof OntologyTerm){
-            clone.setDefinition(((psidev.psi.mi.jami.model.OntologyTerm)cv).getDefinition());
+            clone.setDefinition(((OntologyTerm)cv).getDefinition());
         }
         return clone;
     }
