@@ -13,7 +13,9 @@
     <context:component-scan base-package="uk.ac.ebi.intact.jami"/>
     <context:component-scan base-package="uk.ac.ebi.intact.dataexchange" />
     <context:annotation-config/>
-    <tx:annotation-driven proxy-target-class="true"/>
+
+    <!-- so the @Transactional annotations work -->
+    <tx:annotation-driven transaction-manager="jamiTransactionManager"/>
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="ignoreUnresolvablePlaceholders" value="true"/>
@@ -23,9 +25,6 @@
             </list>
         </property>
     </bean>
-
-    <!-- so the @Transactional annotations work -->
-    <tx:annotation-driven transaction-manager="jamiTransactionManager"/>
 
     <!--
         Post-processor to perform exception translation on @Repository classes
