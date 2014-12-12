@@ -655,6 +655,16 @@ public class ComplexController extends AnnotatedObjectController {
         setUnsavedChanges(true);
     }
 
+    public void newComplexGOXref(ActionEvent evt) {
+        if (!this.complex.areXrefsInitialized()){
+            setComplex(getComplexEditorService().initialiseComplexXrefs(complex));
+        }
+        ComplexGOXref goRef = new ComplexGOXref("to set", (String)null);
+        goRef.setDatabase(getCvService().findCvObject(IntactUtils.DATABASE_OBJCLASS, Xref.GO_MI));
+        this.complex.getDbXrefs().add(goRef);
+        setUnsavedChanges(true);
+    }
+
     @Override
     public InteractorXref newXref(String db, String dbMI, String id, String secondaryId, String qualifier, String qualifierMI) {
         return new InteractorXref(getCvService().findCvObject(IntactUtils.DATABASE_OBJCLASS, dbMI != null ? dbMI : db),
@@ -756,6 +766,10 @@ public class ComplexController extends AnnotatedObjectController {
     @Override
     public boolean isXrefNotEditable(Xref ref) {
         return false;
+    }
+
+    public boolean isComplexGoRef(Xref ref) {
+        return ref instanceof ComplexGOXref;
     }
 
     @Override

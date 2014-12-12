@@ -47,7 +47,7 @@
                                actionListener="#{annotatedObjectController.removeAnnotation(annotation)}"
                                oncomplete="markAsUnsaved()"
                                update="annotationsTable,#{update}"
-                               />
+                               disabled="#{annotatedObjectController.isAnnotationNotEditable(annotation)}"/>
             </p:column>
         </p:dataTable>
 

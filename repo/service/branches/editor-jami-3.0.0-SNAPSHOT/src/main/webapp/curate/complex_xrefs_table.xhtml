@@ -18,6 +18,9 @@
                             <p:commandButton id="newXrefBtn" value="New Xref" actionListener="#{annotatedObjectController.newXref}"
                                              process="@this"
                                              update="xrefsTable #{update}"/>
+                         <p:commandButton id="newComplexGoXrefBtn" value="New complex GO Xref" actionListener="#{annotatedObjectController.newComplexGoXref}"
+                                          process="@this"
+                                          update="xrefsTable #{update}"/>
                     </div>
 
                     <p:dataTable id="xrefsTable" var="xref" value="#{annotatedObjectController.collectXrefs()}"
@@ -29,7 +32,7 @@
                             </f:facet>
                             <h:selectOneMenu id="databaseSel" value="#{xref.database}" required="true"
                                              requiredMessage="Database for xref is required" disabled="#{annotatedObjectController.isXrefDisabled()
-                                 or annotatedObjectController.isXrefNotEditable(xref)}"
+                                 or annotatedObjectController.isXrefNotEditable(xref) or complexController.isComplexGoRef(xref)}"
                                              converter="cvObjectConverter">
                                 <f:selectItems value="#{cvObjectService.databaseSelectItems}"/>
                                 <ed:curation/>
@@ -96,7 +99,7 @@
                             </f:facet>
                             <h:selectOneMenu id="qualifierSel" value="#{xref.qualifier}"
                                              converter="cvObjectConverter" disabled="#{annotatedObjectController.isXrefDisabled()
-                                 or annotatedObjectController.isXrefNotEditable(xref)}">
+                                 or annotatedObjectController.isXrefNotEditable(xref) or complexController.isComplexGoRef(xref)}">
                                 <f:selectItems value="#{cvObjectService.qualifierSelectItems}"/>
                                 <ed:curation/>
                             </h:selectOneMenu>
@@ -109,6 +112,29 @@
                                          onchange="editorCuration.setUnsavedChanges(true)"
                                          converter="trimmingConverter" disabled="#{annotatedObjectController.isXrefDisabled()
                                  or annotatedObjectController.isXrefNotEditable(xref)}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Pubmed Identifier"/>
+                            </f:facet>
+                            <p:inputText id="pubmedIdTxt" widgetVar="pubmedIdTxt_#{xrefIndex}" value="#{xref.pubmed}" size="15"
+                                         converter="trimmingConverter" disabled="#{annotatedObjectController.isXrefDisabled()
+                                 or annotatedObjectController.isXrefNotEditable(xref)}" rendered="#{complexController.isComplexGoRef(xref)}">
+                                <ed:curation/>
+                            </p:inputText>
+                            <h:outputText value="-" rendered="#{!complexController.isComplexGoRef(xref)}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Evidence code"/>
+                            </f:facet>
+                            <h:selectOneMenu id="evidenceCodeSel" value="#{xref.evidenceType}"
+                                             converter="cvObjectConverter" disabled="#{annotatedObjectController.isXrefDisabled()
+                                 or annotatedObjectController.isXrefNotEditable(xref) or complexController.isComplexGoRef(xref)}">
+                                <f:selectItems value="#{cvObjectService.evidenceTypeSelectItems}"/>
+                                <ed:curation/>
+                            </h:selectOneMenu>
+                            <h:outputText value="-" rendered="#{!complexController.isComplexGoRef(xref)}"/>
                         </p:column>
                         <p:column>
                             <f:facet name="header">
