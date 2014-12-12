@@ -117,7 +117,7 @@ public class AdminJobController extends BaseController {
     }
 
     public List<JobInstance> getJobInstances( String jobName ) {
-        return jobExplorer.getJobInstances( jobName, 0, 50 );
+        return jobExplorer.getJobInstances( jobName, 0, 20 );
     }
 
     public List<JobExecution> getJobExecutions( Long jobInstanceId ) {
