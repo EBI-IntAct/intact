@@ -11,8 +11,6 @@
 
     <!-- only scan annotations in this package -->
     <context:component-scan base-package="uk.ac.ebi.intact.jami"/>
-    <context:component-scan base-package="uk.ac.ebi.intact.dataexchange" />
-    <context:annotation-config/>
 
     <!-- so the @Transactional annotations work -->
     <tx:annotation-driven transaction-manager="jamiTransactionManager"/>
