@@ -13,8 +13,6 @@
          <h2>Compatibility Tools</h2>
 
         <h:panelGrid columns="2">
-            <p:commandButton value="Import XML/MITAB file" actionListener="#{compatibilityController.importDbFile}" update=":editorForm:messagesComponent"/>
-            <h:outputText value="Import a file into the database"/>
 
             <p:commandButton value="CvObject Sync" actionListener="#{cvObjectService.refresh}" update=":editorForm:messagesComponent"/>
             <h:outputText value="Updates the drop down lists for CvObjects if changes have been made externally"/>
