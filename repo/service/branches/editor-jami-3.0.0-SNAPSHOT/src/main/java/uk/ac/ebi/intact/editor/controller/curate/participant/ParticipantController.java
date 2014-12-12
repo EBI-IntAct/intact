@@ -78,8 +78,9 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     @Resource(name = "bioSourceService")
     private transient BioSourceService bioSourceService;
 
-    public ParticipantController() {
-        super(IntactParticipantEvidence.class);
+    @Override
+    public Class<IntactParticipantEvidence> getParticipantClass() {
+        return IntactParticipantEvidence.class;
     }
 
     @Override

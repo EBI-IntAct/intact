@@ -18,36 +18,24 @@ package uk.ac.ebi.intact.editor.controller.curate.feature;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
-import org.hibernate.Hibernate;
 import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
-import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.FeatureEvidenceCloner;
-import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentController;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.InteractionController;
 import uk.ac.ebi.intact.editor.controller.curate.participant.ParticipantController;
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
-import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ComponentSystemEvent;
-import javax.faces.validator.ValidatorException;
-import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -83,9 +71,19 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     private boolean isDetectionMethodDisabled;
     private IntactCvTerm detectionMethodToAdd=null;
 
-    public FeatureController() {
-        super(IntactFeatureEvidence.class, ExperimentalResultingSequence.class,
-                ExperimentalResultingSequenceXref.class);
+    @Override
+    public Class<IntactFeatureEvidence> getFeatureClass() {
+        return IntactFeatureEvidence.class;
+    }
+
+    @Override
+    public Class<? extends AbstractIntactResultingSequence> getResultingSequenceClass() {
+        return ExperimentalResultingSequence.class;
+    }
+
+    @Override
+    public Class<? extends AbstractIntactXref> getResultingSequenceXrefClass() {
+        return ExperimentalResultingSequenceXref.class;
     }
 
     @Override

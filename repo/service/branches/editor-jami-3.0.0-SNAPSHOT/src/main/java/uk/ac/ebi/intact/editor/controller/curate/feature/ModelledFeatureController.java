@@ -54,8 +54,19 @@ public class ModelledFeatureController extends AbstractFeatureController<IntactM
     @Autowired
     private ModelledParticipantController modelledParticipantController;
 
-    public ModelledFeatureController() {
-        super(IntactModelledFeature.class, ModelledResultingSequence.class, ModelledResultingSequenceXref.class);
+    @Override
+    public Class<IntactModelledFeature> getFeatureClass() {
+        return IntactModelledFeature.class;
+    }
+
+    @Override
+    public Class<? extends AbstractIntactResultingSequence> getResultingSequenceClass() {
+        return ModelledResultingSequence.class;
+    }
+
+    @Override
+    public Class<? extends AbstractIntactXref> getResultingSequenceXrefClass() {
+        return ModelledResultingSequenceXref.class;
     }
 
     @Override

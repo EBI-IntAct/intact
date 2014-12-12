@@ -54,8 +54,9 @@ public class ModelledParticipantController extends AbstractParticipantController
     @Autowired
     private ComplexController interactionController;
 
-    public ModelledParticipantController() {
-        super(IntactModelledParticipant.class);
+    @Override
+    public Class<IntactModelledParticipant> getParticipantClass() {
+        return IntactModelledParticipant.class;
     }
 
     @Override
