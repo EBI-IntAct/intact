@@ -123,4 +123,51 @@ public class UserAdminService extends AbstractEditorService {
     public User loadMentorReviewer(User user) {
         return UserUtils.getMentorReviewer(getIntactDao().getUserDao(), user);
     }
+
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
+    public void createDefaultUsers() throws SynchronizerException, FinderException, PersisterException {
+        User admin = getIntactDao().getUserDao().getByLogin( "admin" );
+        if ( admin == null ) {
+            admin = new User( "admin", "Admin", "N/A", "intact-admin@ebi.ac.uk" );
+            admin.setPassword( "d033e22ae348aeb5660fc2140aec35850c4da997" );
+
+            Role adminRole = getIntactDao().getRoleDao().getByName("ADMIN");
+            if (adminRole == null){
+                adminRole = new Role("ADMIN");
+                persistIntactObject(adminRole, getIntactDao().getRoleDao());
+            }
+            admin.addRole( adminRole );
+
+            persistIntactObject(admin, getIntactDao().getUserDao());
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
+    public void createDefaultRoles() throws SynchronizerException, FinderException, PersisterException {
+        final List<Role> allRoles = getIntactDao().getRoleDao().getAll();
+        addMissingRole( allRoles, "ADMIN" );
+        addMissingRole( allRoles, "CURATOR" );
+        addMissingRole( allRoles, "REVIEWER" );
+        addMissingRole( allRoles, "COMPLEX_CURATOR" );
+        addMissingRole( allRoles, "COMPLEX_REVIEWER" );
+
+        log.info( "After loadParticipants: found " + getIntactDao().getRoleDao().getAll().size() + " role(s) in the database." );
+    }
+
+    private void addMissingRole( List<Role> allRoles, String roleName ) throws SynchronizerException, FinderException, PersisterException {
+        boolean found = false;
+        for ( Role role : allRoles ) {
+            if ( role.getName().equals( roleName ) ) {
+                found = true;
+            }
+        }
+
+        if ( !found ) {
+            Role role = new Role( roleName );
+            persistIntactObject(role, getIntactDao().getRoleDao());
+            if ( log.isInfoEnabled() ) {
+                log.info( "Created user role: " + roleName );
+            }
+        }
+    }
 }

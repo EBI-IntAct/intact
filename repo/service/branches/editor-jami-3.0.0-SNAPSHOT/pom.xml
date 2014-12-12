@@ -29,9 +29,7 @@
         <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
 
-        <core.version>2.6.9</core.version>
         <spring.version>3.2.4.RELEASE</spring.version>
-        <psimi.version>1.8.5</psimi.version>
         <jami.version>1.1.0</jami.version>
         <jami.core.version>1.2.0</jami.core.version>
         <jami.bridges.version>1.1.0</jami.bridges.version>
@@ -193,175 +191,6 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
-            <id>integration-tests</id>
-            <properties>
-                <db.url>jdbc:h2:tcp:localhost:39102/intact-editor;DB_CLOSE_DELAY=-1;LOCK_MODE=0</db.url>
-                <db.driver>org.h2.Driver</db.driver>
-                <db.dialect>org.hibernate.dialect.H2Dialect</db.dialect>
-                <db.user>sa</db.user>
-                <db.password></db.password>
-                <db.hbm2ddl>update</db.hbm2ddl>
-                <ic.username></ic.username>
-                <ic.password></ic.password>
-                <ic.endpoint></ic.endpoint>
-                <update.log.directory>target/imex-report</update.log.directory>
-
-                <projectStage>Production</projectStage>
-                <userContext.scope>singleton</userContext.scope>
-
-                <daemon>true</daemon>
-            </properties>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <!-- start server before integration tests -->
-                                <id>start-h2</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
-                                <configuration>
-                                    <mainClass>uk.ac.ebi.intact.editor.StartH2Server</mainClass>
-                                    <classpathScope>test</classpathScope>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <!-- populate test data -->
-                                <id>create-test-data</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
-                                <configuration>
-                                    <mainClass>uk.ac.ebi.intact.editor.DataPopulator</mainClass>
-                                    <classpathScope>test</classpathScope>
-                                    <cleanupDaemonThreads>true</cleanupDaemonThreads>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <!-- stop server after integration tests -->
-                                <id>stop-h2</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
-                                <configuration>
-                                    <mainClass>uk.ac.ebi.intact.editor.StopH2Server</mainClass>
-                                    <classpathScope>test</classpathScope>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.10</version>
-                        <executions>
-                            <execution>
-                                <id>run-tests</id>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <argLine>-Xmx1024m -XX:MaxPermSize=250m</argLine>
-                        </configuration>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.mortbay.jetty</groupId>
-                        <artifactId>jetty-maven-plugin</artifactId>
-                        <version>7.2.0.RC0</version>
-                        <configuration>
-                            <connectors>
-                                <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-                                    <port>33442</port>
-                                    <maxIdleTime>600000</maxIdleTime>
-                                </connector>
-                            </connectors>
-                            <scanIntervalSeconds>0</scanIntervalSeconds>
-                            <webAppConfig>
-                                <contextPath>${jetty.contextPath}</contextPath>
-                                <jettyEnvXml>${project.build.outputDirectory}/META-INF/jetty-env.xml</jettyEnvXml>
-                            </webAppConfig>
-                            <stopPort>29966</stopPort>
-                            <stopKey>die!!!!</stopKey>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>start-jetty</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <daemon>${daemon}</daemon>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>stop-jetty</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>stop</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-
-                        <dependencies>
-                            <dependency>
-                                <groupId>javax.servlet.jsp</groupId>
-                                <artifactId>jsp-api</artifactId>
-                                <version>2.2</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>javax.el</groupId>
-                                <artifactId>el-api</artifactId>
-                                <version>2.2.1-b01</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.glassfish.web</groupId>
-                                <artifactId>el-impl</artifactId>
-                                <version>2.2.1-b01</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.mortbay.jetty</groupId>
-                                <artifactId>jsp-2.1-glassfish</artifactId>
-                                <version>9.1.1.B60.25.p2</version>
-                                <exclusions>
-                                    <exclusion>
-                                        <groupId>org.mortbay.jetty</groupId>
-                                        <artifactId>jsp-api-2.1</artifactId>
-                                    </exclusion>
-                                    <exclusion>
-                                        <groupId>org.mortbay.jetty</groupId>
-                                        <artifactId>start</artifactId>
-                                    </exclusion>
-                                    <exclusion>
-                                        <groupId>org.mortbay.jetty</groupId>
-                                        <artifactId>jetty-annotations</artifactId>
-                                    </exclusion>
-                                </exclusions>
-                            </dependency>
-                            <dependency>
-                                <groupId>com.h2database</groupId>
-                                <artifactId>h2</artifactId>
-                                <version>${h2.version}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 
     <dependencies>
@@ -465,12 +294,16 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.6.1</version>
-            <!--            <optional>true</optional>-->
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
             <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
         </dependency>
 
         <dependency>
@@ -678,6 +511,11 @@
                     <artifactId>spring-web</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
         </dependency>
 
         <!-- JAX RS -->
