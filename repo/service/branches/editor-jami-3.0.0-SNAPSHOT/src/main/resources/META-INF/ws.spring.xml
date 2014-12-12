@@ -15,13 +15,6 @@
 	<import resource="classpath:META-INF/cxf/cxf.xml"/>
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
 
-	<!-- Enable message logging using the CXF logging feature -->
-	<!--<cxf:bus>-->
-		<!--<cxf:features>-->
-			<!--<cxf:logging />-->
-		<!--</cxf:features>-->
-	<!--</cxf:bus>-->
-
     <bean name="exportService" class="uk.ac.ebi.intact.editor.ws.MiExportServiceImpl"/>
 
     <jaxrs:server id="exportServer" address="/export">
