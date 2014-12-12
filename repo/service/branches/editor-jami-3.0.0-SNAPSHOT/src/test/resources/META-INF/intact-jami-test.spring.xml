@@ -14,7 +14,7 @@
     <context:annotation-config/>
 
     <!-- so the @Transactional annotations work -->
-    <tx:annotation-driven transaction-manager="jamiTransactionManager" proxy-target-class="true"/>
+    <tx:annotation-driven transaction-manager="jamiTransactionManager"/>
 
     <!--
         Post-processor to perform exception translation on @Repository classes
