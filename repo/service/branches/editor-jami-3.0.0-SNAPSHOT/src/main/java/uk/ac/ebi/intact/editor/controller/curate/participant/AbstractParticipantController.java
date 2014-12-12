@@ -57,8 +57,6 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
     @Resource(name = "participantImportService")
     private transient ParticipantImportService participantImportService;
 
-    private Class<T> participantClass;
-
     private String interactor;
     private List<ImportCandidate> interactorCandidates;
 
@@ -74,12 +72,10 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
     private String participantId;
     private boolean isNoUniprotUpdate=false;
 
-    public AbstractParticipantController(Class<T> participantClass) {
-        if (this.participantClass == null){
-           throw new IllegalArgumentException("The participant class cannot be null");
-        }
-        this.participantClass = participantClass;
+    public AbstractParticipantController() {
     }
+
+    public abstract Class<T> getParticipantClass();
 
     @Override
     public IntactPrimaryObject getAnnotatedObject() {
@@ -120,7 +116,7 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
 
             if ( ac != null ) {
                 if ( participant == null || !ac.equals( participant.getAc() ) ) {
-                    setParticipant(getParticipantEditorService().loadParticipantByAc(ac, this.participantClass));
+                    setParticipant(getParticipantEditorService().loadParticipantByAc(ac, getParticipantClass()));
                 }
             } else {
                 if ( participant != null ) ac = participant.getAc();
@@ -193,7 +189,7 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
 
     @Override
     public Class<? extends IntactPrimaryObject> getAnnotatedObjectClass() {
-        return this.participantClass;
+        return getParticipantClass();
     }
 
     @Override
@@ -216,7 +212,7 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
 
         IntactCvTerm defaultBiologicalRole = getCvService().getDefaultBiologicalRole();
 
-        T participant = this.participantClass.getConstructor(Interactor.class).newInstance(new IntactInteractor("to set"));
+        T participant = getParticipantClass().getConstructor(Interactor.class).newInstance(new IntactInteractor("to set"));
         participant.setStoichiometry(new IntactStoichiometry(getEditorConfig().getDefaultStoichiometry()));
         participant.setBiologicalRole(defaultBiologicalRole);
 

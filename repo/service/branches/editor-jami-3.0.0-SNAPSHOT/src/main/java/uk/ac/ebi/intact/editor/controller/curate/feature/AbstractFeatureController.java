@@ -66,25 +66,14 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     @Resource(name = "featureEditorService")
     private transient FeatureEditorService featureEditorService;
 
-    private Class<T> featureClass;
-    private Class<? extends AbstractIntactResultingSequence> resultingSequenceClass;
-    private Class<? extends AbstractIntactXref> resultingSequenceXrefClass;
-
-    public AbstractFeatureController(Class<T> featureClass, Class<? extends AbstractIntactResultingSequence> resultingSeqClass,
-                                     Class<? extends AbstractIntactXref> resSequenceXrefClass) {
-        if (featureClass == null){
-             throw new IllegalArgumentException("the feature class cannot be null");
-        }
-        this.featureClass = featureClass;
-        if (resultingSeqClass == null){
-            throw new IllegalArgumentException("the resulting sequence class cannot be null");
-        }
-        this.resultingSequenceClass = resultingSeqClass;
-        if (resSequenceXrefClass == null){
-            throw new IllegalArgumentException("the resulting sequence xref class cannot be null");
-        }
-        this.resultingSequenceXrefClass = resSequenceXrefClass;
+    public AbstractFeatureController() {
     }
+
+    public abstract Class<T> getFeatureClass();
+
+    public abstract Class<? extends AbstractIntactResultingSequence> getResultingSequenceClass();
+
+    public abstract Class<? extends AbstractIntactXref> getResultingSequenceXrefClass();
 
     @Override
     public IntactPrimaryObject getAnnotatedObject() {
@@ -115,7 +104,7 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
 
             if ( ac != null ) {
                 if ( feature == null || !ac.equals( feature.getAc() ) ) {
-                    setFeature(getFeatureEditorService().loadFeatureByAc(ac, this.featureClass));
+                    setFeature(getFeatureEditorService().loadFeatureByAc(ac, getFeatureClass()));
                 }
             } else {
                 if ( feature != null ) ac = feature.getAc();
@@ -145,12 +134,12 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         if (feature.areRangesInitialized()){
              this.rangeWrappers = new ArrayList<RangeWrapper>(feature.getRanges().size());
             for (Object r : this.feature.getRanges()){
-                this.rangeWrappers.add(new RangeWrapper((AbstractIntactRange)r, sequence, getCvService(), resultingSequenceClass,
-                        resultingSequenceXrefClass));
+                this.rangeWrappers.add(new RangeWrapper((AbstractIntactRange)r, sequence, getCvService(), getResultingSequenceClass(),
+                        getResultingSequenceXrefClass()));
             }
         }
         else{
-            this.rangeWrappers = getFeatureEditorService().loadRangeWrappers(feature, sequence, resultingSequenceClass, resultingSequenceXrefClass);
+            this.rangeWrappers = getFeatureEditorService().loadRangeWrappers(feature, sequence, getResultingSequenceClass(), getResultingSequenceXrefClass());
         }
 
         containsInvalidRanges = false;
@@ -192,7 +181,7 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     }
 
     public String newFeature(Participant participant) throws InstantiationException, IllegalAccessException{
-        T feature = this.featureClass.newInstance();
+        T feature = getFeatureClass().newInstance();
         feature.setShortName(null);
         feature.setType(null);
         feature.setParticipant(participant);
@@ -228,8 +217,8 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
             intactRange.setResultingSequence(instantiateResultingSequence(RangeUtils.extractRangeSequence(intactRange, sequence), null));
 
             feature.getRanges().add(intactRange);
-            this.rangeWrappers.add(new RangeWrapper(intactRange, sequence, getCvService(), this.resultingSequenceClass,
-                    this.resultingSequenceXrefClass));
+            this.rangeWrappers.add(new RangeWrapper(intactRange, sequence, getCvService(), getResultingSequenceClass(),
+                    getResultingSequenceXrefClass()));
             newRangeValue = null;
             setUnsavedChanges(true);
         }
@@ -372,7 +361,7 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
 
     @Override
     public Class<? extends IntactPrimaryObject> getAnnotatedObjectClass() {
-        return featureClass;
+        return getFeatureClass();
     }
 
     @Override
