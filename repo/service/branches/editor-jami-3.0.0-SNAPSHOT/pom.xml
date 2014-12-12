@@ -266,6 +266,20 @@
             <groupId>uk.ac.ebi.intact.dataexchange</groupId>
             <artifactId>structured-abstract</artifactId>
             <version>${dataexchange.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>cpdetector</groupId>
+                    <artifactId>cpdetector</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>uk.ac.ebi.intact.core</groupId>
+                    <artifactId>intact-annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>uk.ac.ebi.intact.core</groupId>
+                    <artifactId>intact-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -282,6 +296,13 @@
                     <artifactId>spring-core</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- datetime -->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.6</version>
         </dependency>
 
         <!-- Logging -->
@@ -323,6 +344,14 @@
                     <groupId>cpdetector</groupId>
                     <artifactId>cpdetector</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>uk.ac.ebi.intact.core</groupId>
+                    <artifactId>intact-annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>uk.ac.ebi.intact.core</groupId>
+                    <artifactId>intact-core</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -334,6 +363,14 @@
                 <exclusion>
                     <groupId>cpdetector</groupId>
                     <artifactId>cpdetector</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>uk.ac.ebi.intact.core</groupId>
+                    <artifactId>intact-annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>uk.ac.ebi.intact.core</groupId>
+                    <artifactId>intact-core</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -347,6 +384,14 @@
                     <groupId>cpdetector</groupId>
                     <artifactId>cpdetector</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>uk.ac.ebi.intact.core</groupId>
+                    <artifactId>intact-annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>uk.ac.ebi.intact.core</groupId>
+                    <artifactId>intact-core</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -359,17 +404,13 @@
                     <groupId>cpdetector</groupId>
                     <artifactId>cpdetector</artifactId>
                 </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>
-            <artifactId>intact-psixml-dbimporter</artifactId>
-            <version>${dataexchange.version}</version>
-            <exclusions>
                 <exclusion>
-                    <groupId>cpdetector</groupId>
-                    <artifactId>cpdetector</artifactId>
+                    <groupId>uk.ac.ebi.intact.core</groupId>
+                    <artifactId>intact-annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>uk.ac.ebi.intact.core</groupId>
+                    <artifactId>intact-core</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
