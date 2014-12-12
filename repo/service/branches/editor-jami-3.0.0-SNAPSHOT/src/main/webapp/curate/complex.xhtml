@@ -112,8 +112,7 @@
 
 <ui:define name="toolsContextual">
     <p:submenu label="Export">
-        <ui:include src="export_submenu.xhtml">
-            <ui:param name="slug" value="interaction"/>
+        <ui:include src="complex_export_submenu.xhtml">
             <ui:param name="ac" value="#{complexController.ac}"/>
         </ui:include>
     </p:submenu>
