@@ -39,30 +39,30 @@
     <bean id="enricherCacheManager" class="uk.ac.ebi.intact.dataexchange.enricher.cache.EnricherCacheManager"/>
 
     <!-- readers -->
-    <bean id="errorResource" class="org.springframework.core.io.FileSystemResource">
+    <bean id="errorResource" class="org.springframework.core.io.FileSystemResource" scope="step" lazy-init="true">
         <constructor-arg value="#{jobParameters[error.file]}"/>
     </bean>
-    <bean id="complexReader" class="uk.ac.ebi.intact.editor.batch.admin.EditorComplexFileReader" lazy-init="true">
+    <bean id="complexReader" class="uk.ac.ebi.intact.editor.batch.admin.EditorComplexFileReader" scope="step" lazy-init="true">
         <property name="resource" ref="#{jobParameters[input.file]}"/>
         <property name="errorResource" ref="#{jobParameters[error.file]}"/>
     </bean>
-    <bean id="interactionReader" class="uk.ac.ebi.intact.editor.batch.admin.EditorInteractionFileReader" lazy-init="true">
+    <bean id="interactionReader" class="uk.ac.ebi.intact.editor.batch.admin.EditorInteractionFileReader" scope="step" lazy-init="true">
         <property name="resource" ref="#{jobParameters[input.file]}"/>
         <property name="errorResource" ref="#{jobParameters[error.file]}"/>
     </bean>
 
     <!-- processors -->
     <bean id="interactionEvidenceProcessor" class="uk.ac.ebi.intact.dataexchange.dbimporter.processor.IntactEnricherProcessor"
-          lazy-init="true">
+          lazy-init="true" scope="step">
         <property name="errorResource" ref="errorResource"/>
         <property name="enricher" ref="intactInteractionEvidenceEnricher"/>
     </bean>
     <bean id="complexProcessor" class="uk.ac.ebi.intact.dataexchange.dbimporter.processor.IntactEnricherProcessor"
-          lazy-init="true">
+          lazy-init="true" scope="step">
         <property name="errorResource" ref="errorResource"/>
         <property name="enricher" ref="intactComplexEnricher"/>
     </bean>
-    <bean id="interactionMixProcessor" class="uk.ac.ebi.intact.dataexchange.dbimporter.processor.IntactInteractionEnricherCompositeProcessor" lazy-init="true">
+    <bean id="interactionMixProcessor" class="uk.ac.ebi.intact.dataexchange.dbimporter.processor.IntactInteractionEnricherCompositeProcessor" lazy-init="true" scope="step">
         <property name="interactionEvidenceProcessor" ref="interactionEvidenceProcessor"/>
         <property name="complexProcessor" ref="complexProcessor"/>
     </bean>
