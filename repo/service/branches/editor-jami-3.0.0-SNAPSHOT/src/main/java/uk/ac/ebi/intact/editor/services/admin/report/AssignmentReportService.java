@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.editor.services.admin.report;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
+import org.apache.catalina.LifecycleEvent;
 import org.joda.time.DateTime;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -24,10 +25,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
+import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
+import uk.ac.ebi.intact.jami.model.extension.IntactPublication;
 import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleEvent;
 import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleEventType;
-import uk.ac.ebi.intact.model.CvLifecycleEventType;
-import uk.ac.ebi.intact.model.LifecycleEvent;
 
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
@@ -48,18 +49,20 @@ public class AssignmentReportService extends AbstractEditorService {
     public List<AssignmentInfo> calculatePublicationReviewerAssignments(Date fromDate, Date toDate) {
         List<AssignmentInfo> assignmentInfos = new ArrayList<AssignmentInfo>();
 
-        Query query = getIntactDao().getEntityManager().createQuery("select e from PublicationLifeCycleEvent e where " +
+        Query query = getIntactDao().getEntityManager().createQuery("select distinct p from Publication p join p.lifecycleEvents as e where " +
                 "e.cvEvent.shortName = :cvEvent and e.when >= :dateFrom and e.when <= :dateTo and e.note is null order by e.when");
         query.setParameter("cvEvent", LifeCycleEventType.READY_FOR_CHECKING.shortLabel());
         query.setParameter("dateFrom", fromDate);
         query.setParameter("dateTo", new DateTime(toDate).plusDays(1).minusSeconds(1).toDate());
 
-        List<LifecycleEvent> events = query.getResultList();
+        List<IntactPublication> pubs = query.getResultList();
 
         Multiset<String> multiset = HashMultiset.create();
 
-        for (LifecycleEvent event : events) {
-            multiset.add(event.getPublication().getCurrentReviewer().getLogin());
+        for (IntactPublication pub : pubs){
+            for (LifeCycleEvent event : pub.getLifecycleEvents()) {
+                multiset.add(pub.getCurrentReviewer().getLogin());
+            }
         }
 
         int total = multiset.size();
@@ -77,18 +80,20 @@ public class AssignmentReportService extends AbstractEditorService {
     public List<AssignmentInfo> calculateComplexReviewerAssignments(Date fromDate, Date toDate) {
         List<AssignmentInfo> assignmentInfos = new ArrayList<AssignmentInfo>();
 
-        Query query = getIntactDao().getEntityManager().createQuery("select e from ComplexLifeCycleEvent e where " +
+        Query query = getIntactDao().getEntityManager().createQuery("select distinct c from IntactComplex c join c.lifecycleEvents as e where " +
                 "e.cvEvent.shortName = :cvEvent and e.when >= :dateFrom and e.when <= :dateTo and e.note is null order by e.when");
         query.setParameter("cvEvent", LifeCycleEventType.READY_FOR_CHECKING.shortLabel());
         query.setParameter("dateFrom", fromDate);
         query.setParameter("dateTo", new DateTime(toDate).plusDays(1).minusSeconds(1).toDate());
 
-        List<LifecycleEvent> events = query.getResultList();
+        List<IntactComplex> complexes = query.getResultList();
 
         Multiset<String> multiset = HashMultiset.create();
 
-        for (LifecycleEvent event : events) {
-            multiset.add(event.getPublication().getCurrentReviewer().getLogin());
+        for (IntactComplex pub : complexes){
+            for (LifeCycleEvent event : pub.getLifecycleEvents()) {
+                multiset.add(pub.getCurrentReviewer().getLogin());
+            }
         }
 
         int total = multiset.size();
