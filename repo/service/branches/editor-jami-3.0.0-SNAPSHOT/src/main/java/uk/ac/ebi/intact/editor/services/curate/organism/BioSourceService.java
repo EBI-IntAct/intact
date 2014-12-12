@@ -27,9 +27,13 @@ import psidev.psi.mi.jami.model.Annotation;
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Xref;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.extension.*;
 
+import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.*;
 
 /**
@@ -145,6 +149,62 @@ public class BioSourceService extends AbstractEditorService {
         }
     }
 
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public List<IntactOrganism> loadAllBioSources( ) {
+        if ( log.isDebugEnabled() ) log.debug( "Loading BioSources" );
+
+        return getIntactDao().getOrganismDao().getAllSorted(0, Integer.MAX_VALUE, "commonName", true);
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public List<IntactOrganism> loadAllOrganisms( ) {
+        if ( log.isDebugEnabled() ) log.debug( "Loading BioSources" );
+
+        return new ArrayList<IntactOrganism>(getIntactDao().getOrganismDao().getAllOrganisms(false, false));
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public List<IntactOrganism> searchBioSources(String query) {
+
+        if (log.isTraceEnabled()) log.trace("Searching with query: "+query);
+
+        if (query == null) {
+            return Collections.EMPTY_LIST;
+        }
+
+        Query jpaQuery = getIntactDao().getEntityManager()
+                .createQuery("select b from IntactOrganism b " +
+                        "where lower(b.commonName) like lower(:commonName) or " +
+                        "lower(b.scientificName) like lower(:scientificName) or " +
+                        "b.dbTaxid = :taxId");
+        jpaQuery.setParameter("commonName", query+"%");
+        jpaQuery.setParameter("scientificName", query+"%");
+        jpaQuery.setParameter("taxId", query);
+
+
+        return jpaQuery.getResultList();
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public List<IntactOrganism> searchOrganisms(String query) {
+        if (log.isTraceEnabled()) log.trace("Searching with query: "+query);
+
+        if (query == null) {
+            return Collections.EMPTY_LIST;
+        }
+
+        Query jpaQuery = getIntactDao().getEntityManager()
+                .createQuery("select b from IntactOrganism b " +
+                        "where (lower(b.commonName) like lower(:commonName) or " +
+                        "lower(b.scientificName) like lower(:scientificName) or " +
+                        "b.dbTaxid = :taxId) and b.cellType is null and b.tissue is null");
+        jpaQuery.setParameter("commonName", query+"%");
+        jpaQuery.setParameter("scientificName", query+"%");
+        jpaQuery.setParameter("taxId", query);
+
+
+        return jpaQuery.getResultList();
+    }
 
     public IntactOrganism findBioSourceByAc( String ac ) {
         return acOrganismMap.get(ac);
