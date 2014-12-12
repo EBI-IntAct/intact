@@ -43,7 +43,7 @@ public class EditorAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
     private UserManagerController userManagerController;
-    @Resource(name = "userSessionservice")
+    @Resource(name = "userSessionService")
     private UserSessionService userSessionService;
 
     public Authentication authenticate( Authentication authentication ) throws AuthenticationException {
