@@ -20,6 +20,7 @@ import com.google.common.collect.Multimap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
+import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.DualListModel;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ import uk.ac.ebi.intact.jami.utils.IntactUtils;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 import javax.persistence.Query;
+import javax.swing.tree.TreeNode;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -227,6 +229,9 @@ public class CvObjectService extends AbstractEditorService {
                 if ( usedInClasses.length == 0 ) {
                     cvObjectsByUsedInClass.put(NO_CLASS, cvObject );
                 }
+            }
+            else{
+                Hibernate.initialize(cvObject.getDbAnnotations());
             }
         }
 
@@ -568,6 +573,34 @@ public class CvObjectService extends AbstractEditorService {
         getIntactDao().getEntityManager().detach(cv);
 
         return parents;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public org.primefaces.model.TreeNode loadCvTreeNode(String id, String cvClass) {
+        org.primefaces.model.TreeNode tree = null;
+        // reload cv
+        IntactCvTerm reloaded = getIntactDao().getCvTermDao().getByUniqueIdentifier(id, cvClass);
+        if (reloaded != null){
+            initialiseXrefs(reloaded.getDbXrefs());
+            initialiseAnnotations(reloaded.getDbAnnotations());
+            buildTreeNode(reloaded, tree);
+        }
+
+        return tree;
+    }
+
+    private org.primefaces.model.TreeNode buildTreeNode( IntactCvTerm cv, org.primefaces.model.TreeNode node ) {
+
+        org.primefaces.model.TreeNode childNode = new DefaultTreeNode(cv, node);
+
+        for ( OntologyTerm child : cv.getChildren() ) {
+            // load laxzy collections collections needed
+            Hibernate.initialize(((IntactCvTerm)child).getDbAnnotations());
+            Hibernate.initialize(((IntactCvTerm)child).getDbXrefs());
+            buildTreeNode( (IntactCvTerm)child, childNode );
+        }
+
+        return childNode;
     }
 
     private void initialiseXrefs(Collection<Xref> xrefs) {
