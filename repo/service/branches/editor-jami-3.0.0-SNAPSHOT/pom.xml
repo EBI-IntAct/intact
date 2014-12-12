@@ -506,6 +506,18 @@
         </dependency>
 
         <dependency>
+            <groupId>uk.ac.ebi.intact.dataexchange</groupId>
+            <artifactId>intact-db-importer</artifactId>
+            <version>${dataexchange.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>cpdetector</groupId>
+                    <artifactId>cpdetector</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
             <groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>
             <artifactId>intact-jami-mitab</artifactId>
             <version>${dataexchange.version}</version>
