@@ -7,17 +7,6 @@
     <import resource="classpath*:META-INF/psimi-batch-spring.xml"/>
 
     <!-- Job database: Initialize the datasource -->
-    <bean id="intactDataSourceInitializer" class="uk.ac.ebi.intact.core.batch.BatchDatasourceInitializer">
-        <property name="dataSource" ref="intactBatchDataSource"/>
-        <property name="initScripts" value="classpath*:/org/springframework/batch/core/schema-h2.sql"/>
-    </bean>
-
-    <bean id="intactBatchDataSource" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName" value="org.h2.Driver"/>
-        <property name="url" value="jdbc:h2:mem:editorbatch"/>
-        <property name="username" value="sa"/>
-        <property name="password" value=""/>
-    </bean>
 
     
     <bean id="editorJobLauncher"
