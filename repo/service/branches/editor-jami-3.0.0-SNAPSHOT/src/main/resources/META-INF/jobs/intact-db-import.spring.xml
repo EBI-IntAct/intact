@@ -14,11 +14,6 @@
 
     <context:component-scan base-package="uk.ac.ebi.intact.dataexchange.dbimporter" />
     <context:component-scan base-package="uk.ac.ebi.intact.dataexchange.enricher" />
-    <context:component-scan base-package="uk.ac.ebi.intact.jami" />
-
-    <import resource="classpath*:/META-INF/psimi-batch-spring.xml"/>
-    <context:annotation-config/>
-    <tx:annotation-driven proxy-target-class="true"/>
 
     <!-- intact enricher config -->
     <bean id="enricherConfig" class="uk.ac.ebi.intact.dataexchange.enricher.EnricherConfig"/>
