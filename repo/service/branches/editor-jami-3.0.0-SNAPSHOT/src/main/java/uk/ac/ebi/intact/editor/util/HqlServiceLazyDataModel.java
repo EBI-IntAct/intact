@@ -22,6 +22,7 @@ import org.primefaces.model.SortOrder;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.service.IntactService;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public class HqlServiceLazyDataModel<T extends IntactPrimaryObject> extends Lazy
 
     private static final Log log = LogFactory.getLog( HqlServiceLazyDataModel.class );
 
-    private IntactService service;
+    private IntactService<T> service;
     private String hqlQuery;
     private Map<String, String> queryParameters;
 
@@ -70,7 +71,7 @@ public class HqlServiceLazyDataModel<T extends IntactPrimaryObject> extends Lazy
 
         log.debug("HQL: " + queryToRun);
 
-        List<T> results = this.service.fetchIntactObjects(queryToRun, queryParameters, first, pageSize);
+        List<T> results = this.service.fetchIntactObjects(queryToRun, new HashMap<String, Object>(queryParameters), first, pageSize);
 
         log.debug("Returning "+results.size()+" results");
 
