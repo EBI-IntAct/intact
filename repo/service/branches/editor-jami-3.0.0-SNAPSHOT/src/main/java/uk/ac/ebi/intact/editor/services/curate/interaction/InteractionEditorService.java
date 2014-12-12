@@ -134,21 +134,23 @@ public class InteractionEditorService extends AbstractEditorService {
     public IntactInteractionEvidence loadInteractionByAc(String ac) {
         IntactInteractionEvidence interaction = getIntactDao().getEntityManager().find(IntactInteractionEvidence.class, ac);
 
-        // initialise experiment
-        initialiseExperiment((IntactExperiment)interaction.getExperiment());
-        // initialise annotations because needs caution
-        initialiseAnnotations(interaction.getDbAnnotations());
-        // initialise xrefs because of imex
-        initialiseXrefs(interaction.getDbXrefs());
-        // initialise participants
-        Collection<ParticipantEvidence> dets = interaction.getParticipants();
-        for (ParticipantEvidence det : dets){
-            initialiseParticipant(det);
-        }
+        if (interaction != null){
+            // initialise experiment
+            initialiseExperiment((IntactExperiment)interaction.getExperiment());
+            // initialise annotations because needs caution
+            initialiseAnnotations(interaction.getDbAnnotations());
+            // initialise xrefs because of imex
+            initialiseXrefs(interaction.getDbXrefs());
+            // initialise participants
+            Collection<ParticipantEvidence> dets = interaction.getParticipants();
+            for (ParticipantEvidence det : dets){
+                initialiseParticipant(det);
+            }
 
-        // load base types
-        if (interaction.getInteractionType() != null) {
-            initialiseCv(interaction.getInteractionType());
+            // load base types
+            if (interaction.getInteractionType() != null) {
+                initialiseCv(interaction.getInteractionType());
+            }
         }
 
         return interaction;

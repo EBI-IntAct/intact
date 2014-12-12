@@ -16,9 +16,8 @@
 package uk.ac.ebi.intact.editor.converter;
 
 
+import uk.ac.ebi.intact.editor.services.UserSessionService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
-import uk.ac.ebi.intact.jami.dao.IntactDao;
-import uk.ac.ebi.intact.jami.dao.UserDao;
 import uk.ac.ebi.intact.jami.model.user.User;
 
 import javax.faces.component.UIComponent;
@@ -38,8 +37,8 @@ public class UserConverter implements Converter {
     public Object getAsObject( FacesContext facesContext, UIComponent uiComponent, String loginName ) throws ConverterException {
         if ( loginName == null ) return null;
 
-        UserDao userDao = ((IntactDao) ApplicationContextProvider.getBean("intactDao")).getUserDao();
-        return userDao.getByLogin(loginName);
+        UserSessionService userService = ApplicationContextProvider.getBean("userSessionService");
+        return userService.loadUser(loginName);
     }
 
     @Override

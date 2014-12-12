@@ -180,19 +180,47 @@ public class ParticipantEditorService extends AbstractEditorService {
     public <T extends AbstractIntactParticipant> T loadParticipantByAc(String ac, Class<T> participantClass) {
         T participant = getIntactDao().getEntityManager().find(participantClass, ac);
 
-        // initialise annotations because needs caution
-        initialiseAnnotations(participant.getAnnotations());
+        if (participant != null){
+            // initialise annotations because needs caution
+            initialiseAnnotations(participant.getAnnotations());
 
-        // load base types
-        if (participant.getBiologicalRole() != null){
-            initialiseCv(participant.getBiologicalRole());
-        }
-        if (participant instanceof IntactParticipantEvidence){
-            initialiseCv(((IntactParticipantEvidence) participant).getExperimentalRole());
+            // load base types
+            if (participant.getBiologicalRole() != null){
+                initialiseCv(participant.getBiologicalRole());
+            }
+            if (participant instanceof IntactParticipantEvidence){
+                initialiseCv(((IntactParticipantEvidence) participant).getExperimentalRole());
+            }
+
+            // load participant interactor
+            initialiseInteractor((IntactInteractor)participant.getInteractor());
         }
 
-        // load participant interactor
-        initialiseInteractor((IntactInteractor)participant.getInteractor());
+        return participant;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public AbstractIntactParticipant loadAnyParticipantByAc(String ac) {
+        AbstractIntactParticipant participant = getIntactDao().getEntityManager().find(IntactParticipantEvidence.class, ac);
+        if (participant == null){
+            participant = getIntactDao().getEntityManager().find(IntactModelledParticipant.class, ac);
+        }
+
+        if (participant != null){
+            // initialise annotations because needs caution
+            initialiseAnnotations(participant.getAnnotations());
+
+            // load base types
+            if (participant.getBiologicalRole() != null){
+                initialiseCv(participant.getBiologicalRole());
+            }
+            if (participant instanceof IntactParticipantEvidence){
+                initialiseCv(((IntactParticipantEvidence) participant).getExperimentalRole());
+            }
+
+            // load participant interactor
+            initialiseInteractor((IntactInteractor)participant.getInteractor());
+        }
 
         return participant;
     }

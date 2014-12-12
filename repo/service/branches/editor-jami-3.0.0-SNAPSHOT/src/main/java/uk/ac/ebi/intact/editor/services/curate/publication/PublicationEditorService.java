@@ -121,18 +121,17 @@ public class PublicationEditorService extends AbstractEditorService {
             )){
                 return null;
             }
+            // initialise annotations because needs caution
+            initialiseAnnotations(publication.getDbAnnotations());
+            // initialise xrefs because needs pubmed
+            initialiseXrefs(publication.getDbXrefs());
+            // initialise status
+            initialiseCv(publication.getCvStatus());
+            // initialise experiments
+            initialiseEvidences(publication.getExperiments());
+            // initialise lifecycle events
+            initialiseLifeCycleEvents(publication);
         }
-
-        // initialise annotations because needs caution
-        initialiseAnnotations(publication.getDbAnnotations());
-        // initialise xrefs because needs pubmed
-        initialiseXrefs(publication.getDbXrefs());
-        // initialise status
-        initialiseCv(publication.getCvStatus());
-        // initialise experiments
-        initialiseEvidences(publication.getExperiments());
-        // initialise lifecycle events
-        initialiseLifeCycleEvents(publication);
 
         return publication;
     }
@@ -141,15 +140,13 @@ public class PublicationEditorService extends AbstractEditorService {
     public IntactPublication reloadFullyInitialisedPublication(IntactPublication exp) {
         IntactPublication reloaded = getIntactDao().getEntityManager().merge(exp);
 
-        if (reloaded != null){
-            if (reloaded.getPubmedId() != null && (
-                    "14681455".equals(reloaded.getPubmedId()) ||
-                            "unassigned638".equals(reloaded.getPubmedId()) ||
-                            "24288376".equals(reloaded.getPubmedId()) ||
-                            "24214965".equals(reloaded.getPubmedId())
-            )){
-                return null;
-            }
+        if (reloaded.getPubmedId() != null && (
+                "14681455".equals(reloaded.getPubmedId()) ||
+                        "unassigned638".equals(reloaded.getPubmedId()) ||
+                        "24288376".equals(reloaded.getPubmedId()) ||
+                        "24214965".equals(reloaded.getPubmedId())
+        )){
+            return null;
         }
 
         // initialise annotations because needs caution
