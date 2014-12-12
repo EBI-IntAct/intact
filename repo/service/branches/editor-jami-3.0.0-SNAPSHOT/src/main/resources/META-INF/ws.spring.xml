@@ -24,12 +24,9 @@
 
     <bean name="exportService" class="uk.ac.ebi.intact.editor.ws.MiExportServiceImpl"/>
 
-    <bean name="userExportService" class="uk.ac.ebi.intact.editor.ws.UserExportServiceImpl"/>
-
     <jaxrs:server id="exportServer" address="/export">
         <jaxrs:serviceBeans>
             <ref bean="exportService"/>
-            <ref bean="userExportService"/>
         </jaxrs:serviceBeans>
     </jaxrs:server>
 

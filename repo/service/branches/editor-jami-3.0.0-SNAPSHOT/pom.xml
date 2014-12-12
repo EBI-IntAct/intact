@@ -31,8 +31,6 @@
 
         <core.version>2.6.9</core.version>
         <spring.version>3.2.4.RELEASE</spring.version>
-        <bridges.version>2.1.12-SNAPSHOT</bridges.version>
-        <dbupdate.version>2.1.7</dbupdate.version>
         <psimi.version>1.8.5</psimi.version>
         <jami.version>1.1.0</jami.version>
         <jami.core.version>1.2.0</jami.core.version>
@@ -386,6 +384,18 @@
             <version>${jami.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>psidev.psi.mi.jami</groupId>
+            <artifactId>jami-html</artifactId>
+            <version>${jami.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>psidev.psi.mi.jami</groupId>
+            <artifactId>jami-interactionviewer-json</artifactId>
+            <version>${jami.version}</version>
+        </dependency>
+
         <!-- Bridges -->
         <dependency>
             <groupId>psidev.psi.mi.jami.bridges</groupId>
@@ -430,59 +440,6 @@
         </dependency>
 
         <dependency>
-            <groupId>uk.ac.ebi.intact.core</groupId>
-            <artifactId>intact-core</artifactId>
-            <version>${core.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>uk.ac.ebi.intact.core</groupId>
-            <artifactId>intact-batch</artifactId>
-            <version>${core.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>uk.ac.ebi.intact.core</groupId>
-                    <artifactId>intact-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>uk.ac.ebi.intact.dbupdate</groupId>
-            <artifactId>intact-proteins-update</artifactId>
-            <version>${dbupdate.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>uk.ac.ebi.intact.core</groupId>
-                    <artifactId>intact-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>uk.ac.ebi.intact.dbupdate</groupId>
-            <artifactId>intact-bioactiveentities-update</artifactId>
-            <version>${dbupdate.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>uk.ac.ebi.intact.core</groupId>
-                    <artifactId>intact-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>uk.ac.ebi.intact.dbupdate</groupId>
-            <artifactId>intact-genes-update</artifactId>
-            <version>${dbupdate.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>uk.ac.ebi.intact.core</groupId>
-                    <artifactId>intact-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
             <groupId>uk.ac.ebi.uniprot.kraken</groupId>
             <artifactId>uniprotjapi</artifactId>
             <version>LATEST</version>
@@ -496,19 +453,6 @@
                     <artifactId>spring-core</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <!-- PSIMI -->
-        <dependency>
-            <groupId>psidev.psi.mi</groupId>
-            <artifactId>psimitab</artifactId>
-            <version>${psimi.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>psidev.psi.mi</groupId>
-            <artifactId>psimitab-search</artifactId>
-            <version>${psimi.version}</version>
         </dependency>
 
         <!-- Logging -->
@@ -536,87 +480,44 @@
         </dependency>
 
         <!-- Intact -->
-        <dependency>
-            <groupId>uk.ac.ebi.intact.bridges</groupId>
-            <artifactId>intact-ontologies</artifactId>
-            <version>${bridges.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>
-            <artifactId>intact-psixml-exchange</artifactId>
+            <artifactId>intact-jami-xml</artifactId>
             <version>${dataexchange.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>cpdetector</groupId>
                     <artifactId>cpdetector</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>uk.ac.ebi.intact.core</groupId>
-                    <artifactId>intact-core</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>
-            <artifactId>intact-psimitab-converters</artifactId>
+            <artifactId>intact-jami-mitab</artifactId>
             <version>${dataexchange.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>cpdetector</groupId>
                     <artifactId>cpdetector</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>uk.ac.ebi.intact.core</groupId>
-                    <artifactId>intact-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>uk.ac.ebi.intact.dataexchange.imex</groupId>
-            <artifactId>imex-id-update</artifactId>
-            <version>${dataexchange.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>uk.ac.ebi.intact.core</groupId>
-                    <artifactId>intact-core</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>
-            <artifactId>intact-solr-core</artifactId>
+            <artifactId>intact-psixml-dbimporter</artifactId>
             <version>${dataexchange.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>org.apache.lucene</groupId>
-                    <artifactId>com.springsource.org.apache.lucene</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.solr</groupId>
-                    <artifactId>solr-lucene-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.solr</groupId>
-                    <artifactId>solr-lucene-highlighter</artifactId>
+                    <groupId>cpdetector</groupId>
+                    <artifactId>cpdetector</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
 
         <!-- other -->
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-core</artifactId>
-            <version>3.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-highlighter</artifactId>
-            <version>3.6.2</version>
-        </dependency>
 
         <dependency>
             <groupId>xerces</groupId>
