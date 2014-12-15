@@ -5,9 +5,9 @@ import org.primefaces.model.LazyDataModel;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.editor.controller.BaseController;
+import uk.ac.ebi.intact.editor.services.search.ExperimentSummary;
 import uk.ac.ebi.intact.editor.services.search.SearchQueryService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
-import uk.ac.ebi.intact.jami.model.extension.IntactExperiment;
 
 import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
@@ -30,7 +30,7 @@ public class SearchExperimentHostOrganismController extends BaseController {
 	private String shortLabel;
 	private String numExperiments;
 
-	private LazyDataModel<IntactExperiment> experiments = null;
+	private LazyDataModel<ExperimentSummary> experiments = null;
 
     @Resource(name = "searchQueryService")
     private transient SearchQueryService searchQueryService;
@@ -52,7 +52,7 @@ public class SearchExperimentHostOrganismController extends BaseController {
 		}
 	}
 
-	public LazyDataModel<IntactExperiment> getExperiments() {
+	public LazyDataModel<ExperimentSummary> getExperiments() {
 		return experiments;
 	}
 

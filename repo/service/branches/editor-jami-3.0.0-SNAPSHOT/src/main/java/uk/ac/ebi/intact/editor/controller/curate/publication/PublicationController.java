@@ -41,6 +41,8 @@ import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.services.curate.publication.DatasetPopulator;
 import uk.ac.ebi.intact.editor.services.curate.publication.PublicationEditorService;
+import uk.ac.ebi.intact.editor.services.search.ExperimentSummary;
+import uk.ac.ebi.intact.editor.services.search.ExperimentSummaryService;
 import uk.ac.ebi.intact.editor.util.LazyDataModelFactory;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.lifecycle.LifeCycleManager;
@@ -113,6 +115,9 @@ public class PublicationController extends AnnotatedObjectController {
     @Resource(name = "publicationEditorService")
     private transient PublicationEditorService publicationEditorService;
 
+    @Resource(name = "experimentSummaryService")
+    private transient ExperimentSummaryService experimentSummaryService;
+
     @Resource(name = "imexCentralManager")
     private transient ImexCentralManager imexCentralManager;
 
@@ -139,7 +144,10 @@ public class PublicationController extends AnnotatedObjectController {
     private String toBeReviewed = null;
     private String imexId=null;
 
+    private List<ExperimentSummary> experiments;
+
     public PublicationController() {
+        experiments = new ArrayList<ExperimentSummary>();
     }
 
     @Override
@@ -765,6 +773,7 @@ public class PublicationController extends AnnotatedObjectController {
 
         refreshDataModels();
         loadFormFields();
+        refreshExperiments();
 
         setDescription("Publication: "+(publication.getPubmedId() != null ? publication.getPubmedId() : publication.getShortLabel()));
     }
@@ -1766,10 +1775,16 @@ public class PublicationController extends AnnotatedObjectController {
         return xrefs;
     }
 
-    public List<Experiment> collectExperiments() {
-        List<Experiment> experiments = new ArrayList<Experiment>(publication.getExperiments());
-        Collections.sort(experiments, new AuditableComparator());
+    public List<ExperimentSummary> collectExperiments(){
         return experiments;
+    }
+
+    public void refreshExperiments() {
+        this.experiments = new ArrayList<ExperimentSummary>(publication.getExperiments().size());
+        for (Experiment exp : publication.getExperiments()){
+            ExperimentSummary summary = getExperimentSummaryService().createSummaryFrom((IntactExperiment)exp);
+            experiments.add(summary);
+        }
     }
 
     @Override
@@ -1880,5 +1895,12 @@ public class PublicationController extends AnnotatedObjectController {
 
     public void setExperimentTabDisabled(boolean isExperimentTabDisabled) {
         this.isExperimentTabDisabled = isExperimentTabDisabled;
+    }
+
+    public ExperimentSummaryService getExperimentSummaryService() {
+        if (this.experimentSummaryService == null){
+            this.experimentSummaryService = ApplicationContextProvider.getBean("experimentSummaryService");
+        }
+        return experimentSummaryService;
     }
 }

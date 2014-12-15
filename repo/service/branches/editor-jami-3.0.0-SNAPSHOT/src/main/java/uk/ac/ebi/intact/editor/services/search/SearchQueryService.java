@@ -38,6 +38,9 @@ public class SearchQueryService extends AbstractEditorService {
     @Resource(name = "complexSummaryService")
     private ComplexSummaryService complexSummaryService;
 
+    @Resource(name = "experimentSummaryService")
+    private ExperimentSummaryService experimentSummaryService;
+
     //////////////////
     // Constructors
 
@@ -316,7 +319,7 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactExperiment> loadExperiments( String query, String originalQuery ) {
+    public LazyDataModel<ExperimentSummary> loadExperiments( String query, String originalQuery ) {
 
         log.info( "Searching for experiments matching '" + query + "'..." );
 
@@ -325,7 +328,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", originalQuery );
         params.put( "inferred", Experiment.INFERRED_BY_CURATOR );
 
-        LazyDataModel<IntactExperiment> experiments = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+        LazyDataModel<ExperimentSummary> experiments = LazyDataModelFactory.createLazyDataModel( experimentSummaryService,
 
                                                                 "select distinct e " +
                                                                 "from IntactExperiment e left join e.xrefs as x " +
@@ -348,7 +351,7 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactExperiment> loadExperimentsByHostOrganism( String organismAc ) {
+    public LazyDataModel<ExperimentSummary> loadExperimentsByHostOrganism( String organismAc ) {
 
         log.info( "Searching for experiments matching organism '" + organismAc + "'..." );
 
@@ -356,7 +359,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", organismAc );
         params.put( "inferred", Experiment.INFERRED_BY_CURATOR );
 
-        LazyDataModel<IntactExperiment> experiments = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+        LazyDataModel<ExperimentSummary> experiments = LazyDataModelFactory.createLazyDataModel( experimentSummaryService,
 
                 "select distinct e " +
                         "from IntactExperiment e join e.hostOrganism as o " +
