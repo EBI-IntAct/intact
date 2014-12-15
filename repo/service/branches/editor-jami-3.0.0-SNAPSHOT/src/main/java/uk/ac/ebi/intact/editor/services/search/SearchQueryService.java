@@ -55,7 +55,7 @@ public class SearchQueryService extends AbstractEditorService {
                                                               "select count(distinct i) " +
                                                               "from IntactCvTerm i left join i.dbXrefs as x " +
                                                               "where   (i.ac = :ac " +
-                                                              "      or lower(i.shortLabel) like :query " +
+                                                              "      or lower(i.shortName) like :query " +
                                                               "      or lower(i.fullName) like :query " +
                                                               "      or lower(x.id) like :query )",
 
