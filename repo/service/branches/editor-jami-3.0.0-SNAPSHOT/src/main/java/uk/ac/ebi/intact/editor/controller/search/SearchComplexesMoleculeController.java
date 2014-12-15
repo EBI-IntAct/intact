@@ -5,9 +5,9 @@ import org.primefaces.model.LazyDataModel;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.editor.controller.BaseController;
+import uk.ac.ebi.intact.editor.services.dashboard.ComplexSummary;
 import uk.ac.ebi.intact.editor.services.search.SearchQueryService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
-import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
 
 import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
@@ -26,7 +26,7 @@ import javax.faces.event.ComponentSystemEvent;
 public class SearchComplexesMoleculeController extends BaseController {
 
 	private String ac;
-	private LazyDataModel<IntactComplex> interactions = null;
+	private LazyDataModel<ComplexSummary> interactions = null;
 	private String shortLabel;
 	private String numInteractions;
 
@@ -50,7 +50,7 @@ public class SearchComplexesMoleculeController extends BaseController {
 		}
 	}
 
-	public LazyDataModel<IntactComplex> getComplexes() {
+	public LazyDataModel<ComplexSummary> getComplexes() {
 		return interactions;
 	}
 
