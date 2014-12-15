@@ -83,8 +83,7 @@ public class SearchQueryService extends AbstractEditorService {
                                                               "where    ( i.ac = :ac " +
                                                               "      or lower(i.shortName) like :query " +
                                                               "      or lower(i.fullName) like :query " +
-                                                              "      or lower(x.id) like :query ) "
-                                                              ,
+                                                              "      or lower(x.id) like :query ) ",
                                                               "select count(distinct i) " +
                                                               "from IntactInteractor i left join i.dbXrefs as x " +
                                                               "where   (i.ac = :ac " +
