@@ -83,8 +83,8 @@ public class SearchQueryService extends AbstractEditorService {
                                                               "where    ( i.ac = :ac " +
                                                               "      or lower(i.shortName) like :query " +
                                                               "      or lower(i.fullName) like :query " +
-                                                              "      or lower(x.id) like :query ) " +
-
+                                                              "      or lower(x.id) like :query ) "
+                                                              ,
                                                               "select count(distinct i) " +
                                                               "from IntactInteractor i left join i.dbXrefs as x " +
                                                               "where   (i.ac = :ac " +
@@ -111,7 +111,7 @@ public class SearchQueryService extends AbstractEditorService {
 
                 "select distinct i " +
                         "from IntactInteractor i join i.organism as o " +
-                        "where  o.ac = :ac " +
+                        "where  o.ac = :ac ",
 
                         "select count(distinct i) " +
                         "from IntactInteractor i join i.organism as o " +
@@ -136,7 +136,7 @@ public class SearchQueryService extends AbstractEditorService {
 
                 "select distinct i " +
                         "from IntactComplex i join i.organism as o " +
-                        "where  o.ac = :ac " +
+                        "where  o.ac = :ac ",
 
                         "select count(distinct i) " +
                         "from IntactComplex i join i.organism as o " +
@@ -204,7 +204,7 @@ public class SearchQueryService extends AbstractEditorService {
                                                                  "from IntactInteractionEvidence i left join i.dbXrefs as x " +
                                                                  "where    (i.ac = :ac " +
                                                                  "      or lower(i.shortName) like :query " +
-                                                                 "      or lower(x.id) like :query )" +
+                                                                 "      or lower(x.id) like :query )",
 
                                                                  "select count(distinct i.ac) " +
                                                                  "from IntactInteractionEvidence i left join i.dbXrefs as x " +
@@ -231,7 +231,7 @@ public class SearchQueryService extends AbstractEditorService {
 
                 "select distinct i " +
                         "from IntactInteractionEvidence i join i.participants as p join p.interactor as inter " +
-                        "where  inter.ac = :ac" +
+                        "where  inter.ac = :ac",
 
                         "select count(distinct i.ac) " +
                         "from IntactInteractionEvidence i join i.participants as p join p.interactor as inter " +
@@ -256,7 +256,7 @@ public class SearchQueryService extends AbstractEditorService {
 
                 "select distinct i " +
                         "from IntactComplex i join i.participants as p join p.interactor as inter " +
-                        "where  inter.ac = :ac" +
+                        "where  inter.ac = :ac",
 
                         "select count(distinct i.ac) " +
                         "from IntactComplex i join i.participants as p join p.interactor as inter " +
