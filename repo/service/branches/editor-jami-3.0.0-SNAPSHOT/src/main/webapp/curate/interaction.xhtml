@@ -33,7 +33,7 @@
                     action="#{curateController.edit(publicationController.publication)}" process="@this"/>
         <p:menuitem ajax="false" onclick="loadDialog.show()" value="#{experiment.shortLabel}"
                     action="#{curateController.edit(experiment)}" process="@this"/>
-        <p:menuitem value="#{interaction.shortLabel}"/>
+        <p:menuitem value="#{interaction.shortName}"/>
     </p:breadCrumb>
 </ui:define>
 

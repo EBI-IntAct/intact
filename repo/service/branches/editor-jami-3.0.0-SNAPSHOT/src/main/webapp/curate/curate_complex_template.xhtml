@@ -17,7 +17,7 @@
         </h:panelGroup>
 
         <br/>
-        <h:outputText styleClass="subTitle" value="#{complexController.complex.status.shortLabel}"/>,
+        <h:outputText styleClass="subTitle" value="#{complexController.complex.status}"/>,
         <h:outputText styleClass="subTitle-text" value=" owned by "
                       rendered="#{complexController.complex.currentOwner != null}"/>
         <h:outputText styleClass="subTitle" value="#{complexController.complex.currentOwner.login}"
