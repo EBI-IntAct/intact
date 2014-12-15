@@ -89,7 +89,7 @@ public class SearchQueryService extends AbstractEditorService {
                                                               "where   (i.ac = :ac " +
                                                               "      or lower(i.shortName) like :query " +
                                                               "      or lower(i.fullName) like :query " +
-                                                              "      or lower(x.id) like :query )" +
+                                                              "      or lower(x.id) like :query )",
 
                                                               params, "i", "updated", false );
 
@@ -114,7 +114,7 @@ public class SearchQueryService extends AbstractEditorService {
 
                         "select count(distinct i) " +
                         "from IntactInteractor i join i.organism as o " +
-                        "where o.ac = :ac" +
+                        "where o.ac = :ac",
 
                         params, "i", "updated", false );
 
@@ -139,7 +139,7 @@ public class SearchQueryService extends AbstractEditorService {
 
                         "select count(distinct i) " +
                         "from IntactComplex i join i.organism as o " +
-                        "where o.ac = :ac" +
+                        "where o.ac = :ac",
 
                         params, "i", "updated", false );
 
@@ -209,7 +209,7 @@ public class SearchQueryService extends AbstractEditorService {
                                                                  "from IntactInteractionEvidence i left join i.dbXrefs as x " +
                                                                  "where    (i.ac = :ac " +
                                                                  "      or lower(i.shortName) like :query " +
-                                                                 "      or lower(x.id) like :query )"+
+                                                                 "      or lower(x.id) like :query )",
 
                                                                  params, "i", "updated", false );
 
@@ -234,7 +234,7 @@ public class SearchQueryService extends AbstractEditorService {
 
                         "select count(distinct i.ac) " +
                         "from IntactInteractionEvidence i join i.participants as p join p.interactor as inter " +
-                        "where  inter.ac = :ac"+
+                        "where  inter.ac = :ac",
 
                         params, "i", "updated", false );
 
@@ -259,7 +259,7 @@ public class SearchQueryService extends AbstractEditorService {
 
                         "select count(distinct i.ac) " +
                         "from IntactComplex i join i.participants as p join p.interactor as inter " +
-                        "where  inter.ac = :ac"+
+                        "where  inter.ac = :ac",
 
                         params, "i", "updated", false );
 
