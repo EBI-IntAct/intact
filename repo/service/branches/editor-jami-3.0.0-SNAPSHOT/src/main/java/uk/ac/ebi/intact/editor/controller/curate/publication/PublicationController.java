@@ -1270,16 +1270,6 @@ public class PublicationController extends AnnotatedObjectController {
                pub.getStatus() == LifeCycleStatus.RELEASED;
     }
 
-    public boolean isAccepted(IntactPublication pub) {
-        if (accepted != null && isAcceptedOrBeyond(pub)) return true;
-
-        if (!pub.areExperimentsInitialized()) {
-            pub = getPublicationEditorService().initialiseExperiments(pub);
-        }
-
-        return isAllExperimentsAccepted(pub.getExperiments());
-    }
-
     public void setAcceptedMessage(String message) {
         this.accepted = message;
     }
@@ -1506,34 +1496,6 @@ public class PublicationController extends AnnotatedObjectController {
         }
 
         return null;
-    }
-
-    public String calculateStatusStyle(IntactPublication publication) {
-        if (!publication.areLifeCycleEventsInitialized()){
-            publication = getPublicationEditorService().initialiseLifeCycleEvents(publication);
-        }
-        if (isAccepted(publication)) {
-            return "ia-accepted";
-        }
-
-        int timesRejected = 0;
-        int timesReadyForChecking = 0;
-
-        for (LifeCycleEvent evt : publication.getLifecycleEvents()) {
-            if (LifeCycleEventType.REJECTED == evt.getEvent()) {
-                timesRejected++;
-            } else if (LifeCycleEventType.READY_FOR_CHECKING == evt.getEvent()) {
-                timesReadyForChecking++;
-            }
-        }
-
-        if (publication.getStatus() == LifeCycleStatus.CURATION_IN_PROGRESS && timesRejected > 0) {
-            return "ia-rejected";
-        } else if (publication.getStatus() == LifeCycleStatus.READY_FOR_CHECKING && timesReadyForChecking > 1) {
-            return "ia-corrected";
-        }
-
-        return "";
     }
 
     public boolean isBeenRejectedBefore() {
