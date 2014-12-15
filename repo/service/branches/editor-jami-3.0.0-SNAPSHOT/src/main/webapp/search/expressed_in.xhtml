@@ -21,6 +21,10 @@
     </ui:define>
 
     <ui:define name="content">
+        <h:link outcome="search" value="&lt;&lt; Back to the search results" />
+        <br/>
+        <br/>
+
         <p:outputPanel>
             Participants with <b>#{expressInOrganismController.shortLabel}</b> involved.
             <hr/>
@@ -41,18 +45,18 @@
                     <ui:param name="expRole"
                               value="#{participant.experimentalRole.shortName}"/>
 
-                    <p:column style="width:16px">
-                        <p:rowToggler/>
+                    <p:column headerText="AC">
+                        <h:outputText value="#{participant.ac}" rendered="#{participant.ac != null}"/>
                     </p:column>
 
-                    <p:column headerText="Name" sortBy="#{interactor.shortname}">
+                    <p:column headerText="Name" sortBy="#{interactor.shortName}">
                         <p:commandLink action="#{curateController.editByAc(participant.ac)}"
-                                       value="#{interactor.shortname}"
+                                       value="#{interactor.shortName}"
                                        rendered="#{interactor != null and not changesController.isDeletedAc(participant.ac)}"
                                        styleClass="#{participant.ac == null? 'intact-new' :''}"
                                        ajax="false"/>
                         <h:panelGroup rendered="#{changesController.isDeletedAc(participant.ac)}">
-                            <h:outputText value="#{interactor.shortname}" styleClass="intact-deleted"/>
+                            <h:outputText value="#{interactor.shortName}" styleClass="intact-deleted"/>
                         </h:panelGroup>
                     </p:column>
 
@@ -75,7 +79,7 @@
 
                     <p:column headerText="Expressed in">
                         <h:outputText
-                                value="#{participant.expressedIn != null? participant.expressedIn.commonName : ''}"/>
+                                value="#{participant.expressedInOrganism != null? participant.expressedInOrganism.commonName : ''}"/>
                     </p:column>
 
                     <p:column headerText="Experimental role">

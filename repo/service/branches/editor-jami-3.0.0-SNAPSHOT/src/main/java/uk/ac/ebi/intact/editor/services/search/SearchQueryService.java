@@ -592,4 +592,22 @@ public class SearchQueryService extends AbstractEditorService {
         getIntactDao().getEntityManager().detach(reloaded);
         return xrefs.getId();
     }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public String getIdentifierCv( IntactCvTerm cv ) {
+        IntactCvTerm reloaded = getIntactDao().getEntityManager().merge(cv);
+        String id = "-";
+        if ( cv.getMIIdentifier() != null ) {
+            id= cv.getMIIdentifier();
+        }
+        else if ( cv.getMODIdentifier() != null ) {
+            id= cv.getMODIdentifier();
+        }
+        else if ( !cv.getIdentifiers().isEmpty() ) {
+            id= cv.getIdentifiers().iterator().next().getId();
+        }
+
+        getIntactDao().getEntityManager().detach(reloaded);
+        return id;
+    }
 }

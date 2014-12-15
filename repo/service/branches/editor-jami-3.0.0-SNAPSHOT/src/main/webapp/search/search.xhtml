@@ -167,8 +167,7 @@ Results for query: <b>#{searchController.query}</b>
         </p:column>
         <p:column headerText="# Interactions">
             <h:link id="linkRow" outcome="interactions" includeViewParams="true"
-                    value="#{searchController.countInteractionsByMoleculeAc( molecule )}"
-                    rendered="#{searchController.countInteractionsByMoleculeAc( molecule ) > 0}">
+                    value="#{searchController.countInteractionsByMoleculeAc( molecule )}">
                 <f:param name="ac" value="#{molecule.ac}"/>
                 <f:param name="shortLabel" value="#{molecule.shortName}"/>
                 <f:param name="numInteractions" value="#{searchController.countInteractionsByMoleculeAc( molecule )}"/>
@@ -177,13 +176,13 @@ Results for query: <b>#{searchController.query}</b>
         <p:column headerText="# Complexes">
             <h:link id="linkRowComplexes" outcome="complexes" includeViewParams="true"
                     value="#{searchController.countComplexesByMoleculeAc( molecule )}"
-                    rendered="#{searchController.countComplexesByMoleculeAc( molecule ) > 0 and searchController.complexSearchEnabled}">
+                    rendered="#{searchController.complexSearchEnabled}">
                 <f:param name="ac" value="#{molecule.ac}"/>
                 <f:param name="shortLabel" value="#{molecule.shortName}"/>
                 <f:param name="numComplexes" value="#{searchController.countComplexesByMoleculeAc( molecule )}"/>
             </h:link>
-            <h:outputText rendered="#{searchController.countComplexesByMoleculeAc( molecule ) > 0 and !searchController.complexSearchEnabled}"
-                    value="#{searchController.countComplexesByMoleculeAc( molecule )}"/>
+            <h:outputText rendered="#{!searchController.complexSearchEnabled}"
+                          value="#{searchController.countComplexesByMoleculeAc( molecule )}"/>
         </p:column>
 
     </p:dataTable>
@@ -211,10 +210,10 @@ Results for query: <b>#{searchController.query}</b>
             </ui:include>
         </p:column>
         <p:column headerText="Type">
-            <h:outputText value="#{cvobject.objClass}"/>
+            <h:outputText value="#{searchController.getType(cvobject)}"/>
         </p:column>
-        <p:column headerText="Identifier" sortBy="#{cvobject.identifier}">
-            <h:outputText value="#{cvobject.identifier}"/>
+        <p:column headerText="Identifier">
+            <h:outputText value="#{searchController.getIdentifier(cvobject)}"/>
         </p:column>
         <p:column headerText="AC" sortBy="#{cvobject.ac}">
             <h:outputText value="#{cvobject.ac}"/>
@@ -249,8 +248,8 @@ Results for query: <b>#{searchController.query}</b>
         <p:column headerText="Full Name" sortBy="#{organism.scientificName}">
             <h:outputText value="#{organism.scientificName}"/>
         </p:column>
-        <p:column headerText="Tax ID" sortBy="#{organism.dbTaxid}">
-            <h:outputText value="#{organism.dbTaxid}"/>
+        <p:column headerText="Tax ID" sortBy="#{organism.taxId}">
+            <h:outputText value="#{organism.taxId}"/>
         </p:column>
         <p:column headerText="AC" sortBy="#{organism.ac}">
             <h:outputText value="#{organism.ac}"/>
@@ -341,8 +340,8 @@ Results for query: <b>#{searchController.query}</b>
         <ui:param name="interactor" value="#{participant.interactor}"/>
         <ui:param name="expRole" value="#{participant.experimentalRole.shortName}"/>
 
-        <p:column style="width:16px">
-            <p:rowToggler/>
+        <p:column headerText="AC">
+            <h:outputText value="#{participant.ac}" rendered="#{participant.ac != null}"/>
         </p:column>
 
         <p:column headerText="Name" sortBy="#{interactor.shortName}">
@@ -465,8 +464,8 @@ Results for query: <b>#{searchController.query}</b>
 
         <ui:param name="interactor" value="#{participant.interactor}"/>
 
-        <p:column style="width:16px">
-            <p:rowToggler/>
+        <p:column headerText="AC">
+            <h:outputText value="#{participant.ac}" rendered="#{participant.ac != null}"/>
         </p:column>
 
         <p:column headerText="Name" sortBy="#{interactor.shortName}">
@@ -500,7 +499,7 @@ Results for query: <b>#{searchController.query}</b>
 
         <p:column headerText="Identity">
             <h:outputText id="modelledParticipantId"
-                          value="#{complexController.getIdentityXref(interactor)}"
+                          value="#{searchController.getIdentityXref(interactor)}"
                           styleClass="#{changesController.isDeletedAc(participant.ac)? 'intact-deleted' : ''}"
                     rendered="#{interactor.ac != null}"/>
         </p:column>

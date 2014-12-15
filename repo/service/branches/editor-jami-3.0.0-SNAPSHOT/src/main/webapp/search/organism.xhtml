@@ -21,6 +21,10 @@
     </ui:define>
 
     <ui:define name="content">
+        <h:link outcome="search" value="&lt;&lt; Back to the search results" />
+        <br/>
+        <br/>
+
         <p:outputPanel>
             Molecules with <b>#{interactorOrganismController.shortLabel}</b> involved.
             <hr/>
@@ -29,7 +33,7 @@
             <p:tab title="Molecules (#{interactorOrganismController.interactors.rowCount})"
                    rendered="#{interactorOrganismController.interactors.rowCount != 0}">
 
-                <p:dataTable id="searchMoleculeTable" var="molecule" value="#{interactorOrganismController.complexes}"
+                <p:dataTable id="searchMoleculeTable" var="molecule" value="#{interactorOrganismController.interactors}"
                              paginatorPosition="both"
                              paginator="true"
                              paginatorAlwaysVisible="false"
