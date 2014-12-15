@@ -61,7 +61,7 @@
             </p>
 
             <p:tabView id="publicationDashboard" dynamic="true" rendered="#{dashboardController.publicationTableEnabled}">
-                <p:ajax event="tabChange" onstart="loadDialog.show()" oncomplete="loadDialog.hide()"/>
+                <p:ajax event="tabChange" onstart="loadDialog.show()" oncomplete="loadDialog.hide()" onerror="loadDialog.hide()"/>
                 <p:tab title="Publications owned by you (#{dashboardController.ownedByUser.rowCount})">
                     <h:panelGroup rendered="#{dashboardController.ownedByUser.rowCount gt 0}">
                         <ui:include src="publications_table.xhtml">
@@ -89,7 +89,7 @@
             </p:tabView>
 
             <p:tabView id="complexesDashboard" dynamic="true" rendered="#{dashboardController.complexTableEnabled}">
-                <p:ajax event="tabChange" onstart="loadDialog.show()" oncomplete="loadDialog.hide()"/>
+                <p:ajax event="tabChange" onstart="loadDialog.show()" oncomplete="loadDialog.hide()" onerror="loadDialog.hide()"/>
                 <p:tab title="Biological Complexes owned by you (#{dashboardController.complexesOwnedByUser.rowCount})">
                     <h:panelGroup rendered="#{dashboardController.complexesOwnedByUser.rowCount gt 0}">
                         <ui:include src="complexes_table.xhtml">
