@@ -21,13 +21,17 @@
     </ui:define>
 
     <ui:define name="content">
+        <h:link outcome="search" value="&lt;&lt; Back to the search results" />
+        <br/>
+        <br/>
+
         <p:outputPanel>
         Biological complexes with <b>#{searchComplexesMoleculeController.shortLabel}</b> involve.
         <hr/>
         </p:outputPanel>
         <p:panel header="Biological complexes (#{searchComplexesMoleculeController.numComplexes})">
         <ui:include src="/dashboard/complexes_table.xhtml">
-            <ui:param name="complexesDataModel" value="#{complexOrganismController.complexes}"/>
+            <ui:param name="complexesDataModel" value="#{searchComplexesMoleculeController.complexes}"/>
         </ui:include>
         </p:panel>
     </ui:define>

@@ -364,6 +364,23 @@ public class SearchController extends BaseController {
         return searchService.getIdentityXref(molecule);
     }
 
+    public String getIdentifier( IntactCvTerm cv ) {
+        return searchService.getIdentifierCv(cv);
+    }
+
+    public String getType( IntactCvTerm cv ) {
+        if (cv.getObjClass() == null){
+            return "-";
+        }
+        int index = cv.getObjClass().lastIndexOf(".");
+        if (index >= 0 && index < cv.getObjClass().length()){
+            return cv.getObjClass().substring(index+1);
+        }
+        else{
+            return "-";
+        }
+    }
+
     public int countExperimentsForPublication( IntactPublication publication ) {
         return searchService.countExperimentsForPublication(publication);
     }

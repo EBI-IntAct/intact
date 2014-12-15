@@ -108,7 +108,7 @@
                 <h:outputLabel value="Expressed in: " for="expressedInTxt"/>
             </td>
             <td colspan="2">
-                <ia:inputBioSource id="expressedInTxt" value="#{participant.expressedIn}"
+                <ia:inputBioSource id="expressedInTxt" value="#{participant.expressedInOrganism}"
                                    selectItems="#{bioSourceService.bioSourceSelectItems}"
                                    update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"
                                    valueChangeAwareObject="#{participantController}"/>
