@@ -45,8 +45,8 @@
         <p:column headerText="Reviewer" sortBy="#{publication.currentReviewer}">
             <h:outputText value="#{publication.currentReviewer.login}" rendered="#{publication.currentReviewer != null}"/>
         </p:column>
-        <p:column headerText="Status" sortBy="#{publication.status.shortLabel}">
-            <h:outputText value="#{publication.status.shortLabel}" rendered="#{publication.status != null}"/>
+        <p:column headerText="Status" sortBy="#{publication.status}">
+            <h:outputText value="#{publication.status}" rendered="#{publication.status != null}"/>
         </p:column>
     </p:dataTable>
 
