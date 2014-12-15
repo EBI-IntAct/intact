@@ -187,7 +187,7 @@ public class SearchController extends BaseController {
                 }
 
                 Runnable runnable = null;
-                if ("molecule".equals(objType)){
+                if ("molecule".equals(objType) || "complex".equals(objType)){
                     runnable = new Runnable() {
                         @Override
                         public void run() {
@@ -466,36 +466,18 @@ public class SearchController extends BaseController {
     }
 
     public boolean hasNoResults() {
-        return publications == null || (publications.getRowCount() == 0)
-                && (experiments != null && experiments.getRowCount() == 0)
-                && (interactions != null && interactions.getRowCount() == 0)
-                && (molecules != null && molecules.getRowCount() == 0)
-                && (cvobjects != null && cvobjects.getRowCount() == 0)
-                && (features != null && features.getRowCount() == 0)
-                && (organisms != null && organisms.getRowCount() == 0)
-                && (participants != null && participants.getRowCount() == 0)
-                && (complexes != null && complexes.getRowCount() == 0)
-                && (modelledParticipants != null && modelledParticipants.getRowCount() == 0)
-                && (modelledFeatures != null && modelledFeatures.getRowCount() == 0);
+        return (publications == null || publications.getRowCount() == 0)
+                && (experiments == null || experiments.getRowCount() == 0)
+                && (interactions == null || interactions.getRowCount() == 0)
+                && (molecules == null || molecules.getRowCount() == 0)
+                && (cvobjects == null || cvobjects.getRowCount() == 0)
+                && (features == null || features.getRowCount() == 0)
+                && (organisms == null || organisms.getRowCount() == 0)
+                && (participants == null || participants.getRowCount() == 0)
+                && (complexes == null || complexes.getRowCount() == 0)
+                && (modelledParticipants == null || modelledParticipants.getRowCount() == 0)
+                && (modelledFeatures == null || modelledFeatures.getRowCount() == 0);
 
-    }
-
-    public boolean matchesSingleType() {
-        int matches = 0;
-
-        if ( publications != null && publications.getRowCount() > 0 ) matches++;
-        if ( experiments != null && experiments.getRowCount() > 0 ) matches++;
-        if ( interactions != null && interactions.getRowCount() > 0 ) matches++;
-        if ( molecules != null && molecules.getRowCount() > 0 ) matches++;
-        if ( cvobjects != null && cvobjects.getRowCount() > 0 ) matches++;
-        if ( features != null && features.getRowCount() > 0 ) matches++;
-        if ( organisms != null && organisms.getRowCount() > 0 ) matches++;
-        if ( participants != null && participants.getRowCount() > 0 ) matches++;
-        if ( complexes != null && complexes.getRowCount() > 0 ) matches++;
-        if ( modelledParticipants != null && modelledParticipants.getRowCount() > 0 ) matches++;
-        if ( modelledFeatures != null && modelledFeatures.getRowCount() > 0 ) matches++;
-
-        return matches == 1;
     }
 
     public int countInteractionsByMoleculeAc( IntactInteractor molecule ) {
@@ -529,7 +511,6 @@ public class SearchController extends BaseController {
     public int countComplexesByOrganism( String biosourceAc ) {
         return searchService.countComplexesByOrganism(biosourceAc);
     }
-
 
     public String getIdentityXref( IntactInteractor molecule ) {
         return searchService.getIdentityXref(molecule);
