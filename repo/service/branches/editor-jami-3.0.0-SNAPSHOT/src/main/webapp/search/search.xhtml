@@ -95,7 +95,7 @@ Results for query: <b>#{searchController.query}</b>
 <p:accordionPanel autoHeight="false">
 
 <p:tab title="Publications (#{searchController.publications.rowCount})"
-       rendered="#{searchController.publicationSearchEnabled and searchController.publications.rowCount != 0}">
+       rendered="#{searchController.publicationSearchEnabled and searchController.publications != null and searchController.publications.rowCount != 0}">
 
     <ui:include src="/dashboard/publications_table.xhtml">
         <ui:param name="publicationsDataModel" value="#{searchController.publications}"/>
@@ -104,7 +104,7 @@ Results for query: <b>#{searchController.query}</b>
 </p:tab>
 
 <p:tab title="Experiments (#{searchController.experiments.rowCount})"
-       rendered="#{searchController.publicationSearchEnabled and searchController.experiments.rowCount != 0}">
+       rendered="#{searchController.publicationSearchEnabled and searchController.experiments != null and searchController.experiments.rowCount != 0}">
 
     <ui:include src="/curate/experiments_table.xhtml">
         <ui:param name="value" value="#{searchController.experiments}"/>
@@ -115,7 +115,7 @@ Results for query: <b>#{searchController.query}</b>
 </p:tab>
 
 <p:tab title="Interactions (#{searchController.interactions.rowCount})"
-       rendered="#{searchController.publicationSearchEnabled and searchController.interactions.rowCount != 0}">
+       rendered="#{searchController.publicationSearchEnabled and searchController.interactions != null and searchController.interactions.rowCount != 0}">
 
     <ui:include src="/curate/interactions_table.xhtml">
         <ui:param name="value" value="#{searchController.interactions}"/>
@@ -125,7 +125,7 @@ Results for query: <b>#{searchController.query}</b>
 </p:tab>
 
 <p:tab title="Molecules (#{searchController.molecules.rowCount})"
-       rendered="#{searchController.molecules.rowCount != 0}">
+       rendered="#{searchController.molecules != null and searchController.molecules.rowCount != 0}">
 
     <p:dataTable id="searchMoleculeTable" var="molecule" value="#{searchController.molecules}"
                  paginatorPosition="both"
@@ -190,7 +190,7 @@ Results for query: <b>#{searchController.query}</b>
 </p:tab>
 
 <p:tab title="Controlled Vocabularies (#{searchController.cvobjects.rowCount})"
-       rendered="#{searchController.cvobjects.rowCount != 0}">
+       rendered="#{searchController.cvobjects != null and searchController.cvobjects.rowCount != 0}">
 
     <p:dataTable id="searchCvObjectTable" var="cvobject" value="#{searchController.cvobjects}"
                  paginatorPosition="both"
@@ -223,7 +223,7 @@ Results for query: <b>#{searchController.query}</b>
 </p:tab>
 
 <p:tab title="Organisms (#{searchController.organisms.rowCount})"
-       rendered="#{searchController.organisms.rowCount != 0}">
+       rendered="#{searchController.organisms != null and searchController.organisms.rowCount != 0}">
 
     <p:dataTable id="organismFeaturesTable" var="organism" value="#{searchController.organisms}"
                  paginatorPosition="both"
@@ -298,7 +298,7 @@ Results for query: <b>#{searchController.query}</b>
 </p:tab>
 
 <p:tab title="Features (#{searchController.features.rowCount})"
-       rendered="#{searchController.publicationSearchEnabled and searchController.features.rowCount != 0}">
+       rendered="#{searchController.publicationSearchEnabled and searchController.features != null and searchController.features.rowCount != 0}">
 
     <p:dataTable id="searchFeaturesTable" var="feature" value="#{searchController.features}"
                  paginatorPosition="both"
@@ -328,7 +328,7 @@ Results for query: <b>#{searchController.query}</b>
 </p:tab>
 
 <p:tab title="Participants (#{searchController.participants.rowCount})"
-       rendered="#{searchController.publicationSearchEnabled and searchController.participants.rowCount != 0}">
+       rendered="#{searchController.publicationSearchEnabled and searchController.participants != null and searchController.participants.rowCount != 0}">
 
     <p:dataTable id="searchParticipantsTable" var="participant" value="#{searchController.participants}"
                  paginatorPosition="both"
@@ -413,7 +413,7 @@ Results for query: <b>#{searchController.query}</b>
 <br/>
 
 <p:tab title="Biological Complexes (#{searchController.complexes.rowCount})"
-       rendered="#{searchController.complexSearchEnabled and searchController.complexes.rowCount != 0}">
+       rendered="#{searchController.complexSearchEnabled and searchController.complexes != null and searchController.complexes.rowCount != 0}">
 
     <ui:include src="/dashboard/complexes_table.xhtml">
         <ui:param name="complexesDataModel" value="#{searchController.complexes}"/>
@@ -423,7 +423,7 @@ Results for query: <b>#{searchController.query}</b>
 
 
 <p:tab title="Complex Features (#{searchController.modelledFeatures.rowCount})"
-       rendered="#{searchController.complexSearchEnabled and searchController.modelledFeatures.rowCount != 0}">
+       rendered="#{searchController.complexSearchEnabled and searchController.modelledFeatures != null and searchController.modelledFeatures.rowCount != 0}">
 
     <p:dataTable id="searchModelledFeaturesTable" var="feature" value="#{searchController.modelledFeatures}"
                  paginatorPosition="both"
@@ -453,7 +453,7 @@ Results for query: <b>#{searchController.query}</b>
 </p:tab>
 
 <p:tab title="Complex Participants (#{searchController.modelledParticipants.rowCount})"
-       rendered="#{searchController.complexSearchEnabled and searchController.modelledParticipants.rowCount != 0}">
+       rendered="#{searchController.complexSearchEnabled and searchController.modelledParticipants != null and searchController.modelledParticipants.rowCount != 0}">
 
     <p:dataTable id="searchModelledParticipantsTable" var="participant" value="#{searchController.modelledParticipants}"
                  paginatorPosition="both"
