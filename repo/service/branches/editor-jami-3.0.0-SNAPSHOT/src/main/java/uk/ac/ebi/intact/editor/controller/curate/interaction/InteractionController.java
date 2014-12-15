@@ -226,7 +226,7 @@ public class InteractionController extends AnnotatedObjectController {
         }
 
         if (publicationController.getPublication() != null) {
-            List<Experiment> experiments = publicationController.collectExperiments();
+            List<Experiment> experiments = publicationController.refreshExperiments();
 
             // publication does have experiments so we can propose them
             if (!experiments.isEmpty()){

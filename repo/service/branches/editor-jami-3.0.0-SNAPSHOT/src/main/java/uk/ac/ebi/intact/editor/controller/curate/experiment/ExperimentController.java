@@ -403,16 +403,6 @@ public class ExperimentController extends AnnotatedObjectController {
         return navigateToObject(experiment);
     }
 
-    public int countInteractionsByExperiment( IntactExperiment experiment ) {
-
-        if (experiment.areInteractionEvidencesInitialized()){
-            return experiment.getInteractionEvidences().size();
-        }
-        else{
-            return getExperimentService().countInteractions(experiment);
-        }
-    }
-
     public void acceptExperiment(ActionEvent actionEvent) {
 
         UserSessionController userSessionController = (UserSessionController) getSpringContext().getBean("userSessionController");
@@ -591,24 +581,6 @@ public class ExperimentController extends AnnotatedObjectController {
 
     public String getAcceptedMessage() {
         return accepted;
-    }
-
-    public boolean isAccepted(IntactExperiment exp) {
-        if (exp.areAnnotationsInitialized()){
-            return AnnotationUtils.collectFirstAnnotationWithTopic(exp.getAnnotations(), null, Releasable.ACCEPTED) != null;
-        }
-        else{
-            return getExperimentService().isAccepted(exp);
-        }
-    }
-
-    public boolean isToBeReviewed(IntactExperiment exp) {
-        if (exp.areAnnotationsInitialized()){
-            return AnnotationUtils.collectFirstAnnotationWithTopic(exp.getAnnotations(), null, Releasable.TO_BE_REVIEWED) != null;
-        }
-        else{
-            return getExperimentService().isRejected(exp);
-        }
     }
 
     public void copyPublicationAnnotations(ActionEvent evt) {

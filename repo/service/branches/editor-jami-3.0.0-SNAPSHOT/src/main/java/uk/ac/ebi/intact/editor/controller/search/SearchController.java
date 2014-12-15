@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
 import uk.ac.ebi.intact.editor.services.dashboard.ComplexSummary;
 import uk.ac.ebi.intact.editor.services.dashboard.PublicationSummary;
+import uk.ac.ebi.intact.editor.services.search.ExperimentSummary;
 import uk.ac.ebi.intact.editor.services.search.SearchQueryService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.extension.*;
@@ -49,7 +50,7 @@ public class SearchController extends BaseController {
 
     private LazyDataModel<PublicationSummary> publications;
 
-    private LazyDataModel<IntactExperiment> experiments;
+    private LazyDataModel<ExperimentSummary> experiments;
 
     private LazyDataModel<IntactInteractionEvidence> interactions;
 
@@ -548,7 +549,7 @@ public class SearchController extends BaseController {
         return publications;
     }
 
-    public LazyDataModel<IntactExperiment> getExperiments() {
+    public LazyDataModel<ExperimentSummary> getExperiments() {
         return experiments;
     }
 

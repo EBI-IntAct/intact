@@ -65,10 +65,10 @@ public class ComplexSummaryService extends AbstractEditorService implements Inta
     @Transactional(propagation = Propagation.REQUIRED, value = "jamiTransactionManager", readOnly = true)
     public List<ComplexSummary> fetchIntactObjects(int first, int max) {
         List<Complex> pubs = this.complexService.fetchIntactObjects(first, max);
-        return getPublicationSummaries(pubs);
+        return getComplexSummaries(pubs);
     }
 
-    private List<ComplexSummary> getPublicationSummaries(List<Complex> pubs) {
+    private List<ComplexSummary> getComplexSummaries(List<Complex> pubs) {
         List<ComplexSummary> summaryList = new ArrayList<ComplexSummary>(pubs.size());
         for (Complex pub : pubs){
             summaryList.add(createSummaryFrom((IntactComplex)pub));
@@ -91,13 +91,13 @@ public class ComplexSummaryService extends AbstractEditorService implements Inta
     @Override
     @Transactional(propagation = Propagation.REQUIRED, value = "jamiTransactionManager", readOnly = true)
     public List<ComplexSummary> fetchIntactObjects(String query, Map<String, Object> parameters, int first, int max) {
-        return getPublicationSummaries(complexService.fetchIntactObjects(query, parameters, first, max));
+        return getComplexSummaries(complexService.fetchIntactObjects(query, parameters, first, max));
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, value = "jamiTransactionManager", readOnly = true)
     public List<ComplexSummary> fetchIntactObjects(String query, Map<String, Object> parameters) {
-        return getPublicationSummaries(complexService.fetchIntactObjects(query, parameters));
+        return getComplexSummaries(complexService.fetchIntactObjects(query, parameters));
     }
 
     @Override
@@ -109,7 +109,7 @@ public class ComplexSummaryService extends AbstractEditorService implements Inta
     @Override
     @Transactional(propagation = Propagation.REQUIRED, value = "jamiTransactionManager", readOnly = true)
     public List<ComplexSummary> fetchIntactObjects(int first, int max, boolean loadLazyCollections) {
-        return getPublicationSummaries(complexService.fetchIntactObjects(first, max, loadLazyCollections));
+        return getComplexSummaries(complexService.fetchIntactObjects(first, max, loadLazyCollections));
     }
 
     @Override
@@ -121,13 +121,13 @@ public class ComplexSummaryService extends AbstractEditorService implements Inta
     @Override
     @Transactional(propagation = Propagation.REQUIRED, value = "jamiTransactionManager", readOnly = true)
     public List<ComplexSummary> fetchIntactObjects(String query, Map<String, Object> parameters, int first, int max, boolean loadLazyCollections) {
-        return getPublicationSummaries(complexService.fetchIntactObjects(query, parameters, first, max, loadLazyCollections));
+        return getComplexSummaries(complexService.fetchIntactObjects(query, parameters, first, max, loadLazyCollections));
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, value = "jamiTransactionManager", readOnly = true)
     public List<ComplexSummary> fetchIntactObjects(String query, Map<String, Object> parameters, boolean loadLazyCollections) {
-        return getPublicationSummaries(complexService.fetchIntactObjects(query, parameters, loadLazyCollections));
+        return getComplexSummaries(complexService.fetchIntactObjects(query, parameters, loadLazyCollections));
     }
 
     @Override
