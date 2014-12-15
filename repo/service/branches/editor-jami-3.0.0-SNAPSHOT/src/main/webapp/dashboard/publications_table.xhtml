@@ -17,9 +17,9 @@
                  paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  rowsPerPageTemplate="10,25,50"
                  rowStyleClass="#{publicationController.calculateStatusStyle(publication)}">
-        <p:column headerText="Pub. ID " sortBy="#{publication.pubmedId}">
+        <p:column headerText="Pub. ID " sortBy="#{publication.shortLabel}">
             <ot:separateConversationContext>
-                <h:link outcome="/curate/publication" value="#{publication.pubmedId}" includeViewParams="true">
+                <h:link outcome="/curate/publication" value="#{publication.shortLabel}" includeViewParams="true">
                     <f:param name="ac" value="#{publication.ac}"/>
                 </h:link>
             </ot:separateConversationContext>
