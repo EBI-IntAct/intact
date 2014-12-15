@@ -276,9 +276,10 @@
 
             <h:panelGrid columns="2">
                 <h:outputLabel for="interactorTxt" value="Type: "/>
-                <ia:inputCvObject id="interactorTxt" value="#{interactorController.newInteractorType}"
+                <ia:inputCvTerm id="interactorTxt" value="#{interactorController.newInteractorType}"
                                   selectItems="#{cvObjectService.interactorTypeSelectItems}"
-                                  cvIdentifier="MI:0313"/>
+                                  cvIdentifier="MI:0313"
+                        cvClass="uk.ac.ebi.intact.model.CvInteractorType"/>
             </h:panelGrid>
 
         </ia:panelDialogLayout>
