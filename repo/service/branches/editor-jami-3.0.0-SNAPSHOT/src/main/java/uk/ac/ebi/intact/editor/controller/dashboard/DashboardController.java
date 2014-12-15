@@ -38,11 +38,10 @@ import javax.faces.event.ComponentSystemEvent;
 @Controller
 @Scope( "session" )
 public class DashboardController extends BaseController {
-    public static final String[] DEFAULT_STATUS_SHOWN = new String[]{"PL:0004", "PL:0007", "PL:0008"};
+    public static final String[] DEFAULT_STATUS_SHOWN = new String[]{"new", "curation in progress", "ready for checking"};
     private LazyDataModel<IntactPublication> allPublications;
     private LazyDataModel<IntactPublication> ownedByUser;
     private LazyDataModel<IntactPublication> reviewedByUser;
-
     private LazyDataModel<IntactComplex> allComplexes;
     private LazyDataModel<IntactComplex> complexesOwnedByUser;
     private LazyDataModel<IntactComplex> complexesReviewedByUser;
