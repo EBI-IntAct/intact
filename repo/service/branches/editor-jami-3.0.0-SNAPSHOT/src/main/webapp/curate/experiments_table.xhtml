@@ -67,7 +67,7 @@
             </p:column>
             <p:column id="hostOrg" headerText="Host organism">
                 <h:outputText
-                        value="#{experiment.hostOrganism != null? experiment.hostOrganism.commonName : ''} (#{experiment.hostOrganism != null? experiment.hostOrganism.dbTaxid : ''})"/>
+                        value="#{experiment.hostOrganism != null? experiment.hostOrganism.commonName : ''} (#{experiment.hostOrganism != null? experiment.hostOrganism.taxId : ''})"/>
             </p:column>
             <p:column id="interactions" headerText="# Interactions">
                 <h:outputText value="#{experimentController.countInteractionsByExperiment(experiment)}"/>
