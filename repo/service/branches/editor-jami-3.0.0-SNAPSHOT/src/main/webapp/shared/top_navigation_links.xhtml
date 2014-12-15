@@ -20,20 +20,18 @@
         </li>
         <li>
 
+            <p:commandLink id="advsearchNavLink" value="Advanced Search" action="/search/advanced_search?faces-redirect=true"
+                           styleClass="#{selected == 'curate'? 'searchd' : ''}"
+                           ajax="false" immediate="true"/>
+        </li>
+        <li>
+
             <p:commandLink id="curateNavLink" value="Curate" action="/curate/curate?faces-redirect=true&amp;includeViewParams=true"
                            rendered="#{userSessionController.hasRole('CURATOR')  or userSessionController.hasRole('COMPLEX_CURATOR')}"
                            ajax="false"
                            styleClass="#{selected == 'curate'? 'top-bar-selected' : ''}"
                            immediate="true"/>
         </li>
-        <!--<li>-->
-
-            <!--<p:commandLink id="sanityCheckNavLink" value="Sanity Check" action="/sanity/sanityDashboard?faces-redirect=true&amp;includeViewParams=true"-->
-                           <!--rendered="#{userSessionController.hasRole('CURATOR')}"-->
-                           <!--ajax="false"-->
-                           <!--styleClass="#{selected == 'sanity'? 'top-bar-selected' : ''}"-->
-                           <!--immediate="true"/>-->
-        <!--</li>-->
         <li>
 
             <p:commandLink id="bulkOpNavLink" value="Bulk Op." action="/bulk/bulk_default?faces-redirect=true&amp;includeViewParams=true"
