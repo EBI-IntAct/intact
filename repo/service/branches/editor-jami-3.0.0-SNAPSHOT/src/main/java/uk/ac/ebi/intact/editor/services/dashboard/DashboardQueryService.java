@@ -21,20 +21,26 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.editor.util.LazyDataModelFactory;
-import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
-import uk.ac.ebi.intact.jami.model.extension.IntactPublication;
+
+import javax.annotation.Resource;
 
 /**
  */
 @Service
 public class DashboardQueryService extends AbstractEditorService {
 
+    @Resource(name = "publicationSummaryService")
+    private PublicationSummaryService publicationSummaryService;
+
+    @Resource(name = "complexSummaryService")
+    private ComplexSummaryService complexSummaryService;
+
     public DashboardQueryService() {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactPublication> loadAllPublications(String additionalSql){
-         return  LazyDataModelFactory.createLazyDataModel(getIntactDao().getEntityManager(),
+    public LazyDataModel<PublicationSummary> loadAllPublications(String additionalSql){
+         return  LazyDataModelFactory.createLazyDataModel(publicationSummaryService,
                  "select p from IntactPublication p left join fetch p.dbXrefs as x where " +
                          "(p.shortLabel <> '14681455' and p.shortLabel <> 'unassigned638' " +
                          "and p.shortLabel <> '24288376' and p.shortLabel <> '24214965') and ( " + additionalSql+" )",
@@ -42,8 +48,8 @@ public class DashboardQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactPublication> loadPublicationsOwnedBy(String userLogin, String additionalSql){
-        return LazyDataModelFactory.createLazyDataModel(getIntactDao().getEntityManager(),
+    public LazyDataModel<PublicationSummary> loadPublicationsOwnedBy(String userLogin, String additionalSql){
+        return LazyDataModelFactory.createLazyDataModel(publicationSummaryService,
                 "select p from IntactPublication p left join fetch p.dbXrefs as x where " +
                         "(p.shortLabel <> '14681455' and p.shortLabel <> 'unassigned638' " +
                         "and p.shortLabel <> '24288376' and p.shortLabel <> '24214965') and upper(p.currentOwner.login) = '" + userLogin + "'" +
@@ -54,8 +60,8 @@ public class DashboardQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactPublication> loadPublicationsReviewedBy(String userLogin, String additionalSql){
-        return LazyDataModelFactory.createLazyDataModel(getIntactDao().getEntityManager(),
+    public LazyDataModel<PublicationSummary> loadPublicationsReviewedBy(String userLogin, String additionalSql){
+        return LazyDataModelFactory.createLazyDataModel(publicationSummaryService,
                 "select p from IntactPublication p left join fetch p.dbXrefs as x where " +
                         "(p.shortLabel <> '14681455' and p.shortLabel <> 'unassigned638' " +
                         "and p.shortLabel <> '24288376' and p.shortLabel <> '24214965') and upper(p.currentReviewer.login) = '" + userLogin + "'" +
@@ -66,15 +72,15 @@ public class DashboardQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactComplex> loadAllComplexes(String additionalSql){
-        return LazyDataModelFactory.createLazyDataModel(getIntactDao().getEntityManager(),
+    public LazyDataModel<ComplexSummary> loadAllComplexes(String additionalSql){
+        return LazyDataModelFactory.createLazyDataModel(complexSummaryService,
                 "select p from IntactComplex p where " + additionalSql,
                 "select count(distinct p.ac) from IntactComplex p where " + additionalSql, "p", "updated", false);
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactComplex> loadComplexesOwnedBy(String userLogin, String additionalSql){
-        return LazyDataModelFactory.createLazyDataModel(getIntactDao().getEntityManager(),
+    public LazyDataModel<ComplexSummary> loadComplexesOwnedBy(String userLogin, String additionalSql){
+        return LazyDataModelFactory.createLazyDataModel(complexSummaryService,
                 "select p from IntactComplex p where upper(p.currentOwner.login) = '" + userLogin + "'" +
                         " and (" + additionalSql + ")",
                 "select count(distinct p.ac) from IntactComplex p where upper(p.currentOwner.login) = '" + userLogin + "'" +
@@ -83,8 +89,8 @@ public class DashboardQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactComplex> loadComplexesReviewedBy(String userLogin, String additionalSql){
-        return LazyDataModelFactory.createLazyDataModel(getIntactDao().getEntityManager(),
+    public LazyDataModel<ComplexSummary> loadComplexesReviewedBy(String userLogin, String additionalSql){
+        return LazyDataModelFactory.createLazyDataModel(complexSummaryService,
                 "select p from IntactComplex p where upper(p.currentReviewer.login) = '" + userLogin + "'" +
                         " and (" + additionalSql + ")",
                 "select count(distinct p.ac) from IntactComplex p where upper(p.currentReviewer.login) = '" + userLogin + "'" +

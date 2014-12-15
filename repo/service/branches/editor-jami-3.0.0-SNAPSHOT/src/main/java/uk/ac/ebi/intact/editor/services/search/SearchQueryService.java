@@ -574,11 +574,6 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countInteractionsForPublication( IntactPublication publication ) {
-        return getIntactDao().getPublicationDao().countInteractionsForPublication(publication.getAc());
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public String getIdentityXref( IntactInteractor molecule ) {
         IntactInteractor reloaded = getIntactDao().getEntityManager().merge(molecule);
         // TODO handle multiple identities (return xref and iterate to display them all)

@@ -192,28 +192,6 @@ public class ComplexController extends AnnotatedObjectController {
         return true;
     }
 
-    public String extractName(IntactComplex complex){
-        if (!complex.areAliasesInitialized()){
-            complex = getComplexEditorService().initialiseComplexAliases(complex);
-        }
-        String name = complex.getShortName();
-        Collection<Alias> aliases = complex.getAliases();
-        Alias recName = AliasUtils.collectFirstAliasWithType(aliases, Alias.COMPLEX_RECOMMENDED_NAME_MI, Alias.COMPLEX_RECOMMENDED_NAME);
-        if (recName != null){
-            name = recName.getName();
-        }
-        else{
-            recName = AliasUtils.collectFirstAliasWithType(aliases, Alias.COMPLEX_SYSTEMATIC_NAME_MI, Alias.COMPLEX_SYSTEMATIC_NAME);
-            if (recName != null){
-                name = recName.getName();
-            }
-            else if (!aliases.isEmpty()){
-                name = aliases.iterator().next().getName();
-            }
-        }
-        return name;
-    }
-
     public String getOrganism(){
         return this.complex.getOrganism() != null ? this.complex.getOrganism().getCommonName():"organism unknown";
     }
@@ -405,10 +383,6 @@ public class ComplexController extends AnnotatedObjectController {
 
     public String getAc() {
         return ac;
-    }
-
-    public int countParticipantsByInteraction( IntactComplex interaction) {
-        return getComplexEditorService().countParticipants(interaction);
     }
 
     public void cloneParticipant(ParticipantWrapper participantWrapper) {
@@ -1033,13 +1007,6 @@ public class ComplexController extends AnnotatedObjectController {
                 complex.getStatus() == LifeCycleStatus.RELEASED;
     }
 
-    public boolean isAccepted(IntactComplex pub) {
-        return pub.getStatus() == LifeCycleStatus.ACCEPTED ||
-                pub.getStatus() == LifeCycleStatus.ACCEPTED_ON_HOLD ||
-                pub.getStatus() == LifeCycleStatus.READY_FOR_RELEASE ||
-                pub.getStatus() == LifeCycleStatus.RELEASED;
-    }
-
     public boolean isToBeReviewed(IntactComplex pub) {
         return pub.isToBeReviewed();
     }
@@ -1090,34 +1057,6 @@ public class ComplexController extends AnnotatedObjectController {
                 getCurrentUser());
 
         this.toBeReviewed = this.complex.getToBeReviewedComment();
-    }
-
-    public String calculateStatusStyle(IntactComplex complex) {
-        if (!complex.areLifeCycleEventsInitialized()){
-            complex = getComplexEditorService().initialiseLifeCycleEvents(complex);
-        }
-        if (isAccepted(complex)) {
-            return "ia-accepted";
-        }
-
-        int timesRejected = 0;
-        int timesReadyForChecking = 0;
-
-        for (LifeCycleEvent evt : complex.getLifecycleEvents()) {
-            if (LifeCycleEventType.REJECTED == evt.getEvent()) {
-                timesRejected++;
-            } else if (LifeCycleEventType.READY_FOR_CHECKING == evt.getEvent()) {
-                timesReadyForChecking++;
-            }
-        }
-
-        if (complex.getStatus() == LifeCycleStatus.CURATION_IN_PROGRESS && timesRejected > 0) {
-            return "ia-rejected";
-        } else if (complex.getStatus() == LifeCycleStatus.READY_FOR_CHECKING && timesReadyForChecking > 1) {
-            return "ia-corrected";
-        }
-
-        return "";
     }
 
     public boolean isBeenRejectedBefore() {
