@@ -72,6 +72,8 @@ public class SearchController extends BaseController {
     private boolean isPublicationSearchEnabled = false;
     private boolean isComplexSearchEnabled = false;
 
+    private String objType = null;
+
     @Autowired
     private UserSessionController userSessionController;
 
@@ -100,7 +102,192 @@ public class SearchController extends BaseController {
         this.query = null;
     }
 
-    public String doSearch() {
+    public String doQuickObjectSearch() {
+        this.query = quickQuery;
+        if (this.objType == null){
+            return doQuickSearch();
+        }
+        else{
+            refreshUserRoles();
+
+            log.info( "Searching for '" + query + "'..." );
+
+            if ( !StringUtils.isEmpty( query ) ) {
+                final String originalQuery = query.trim();
+                String q = prepareQuery();
+
+                // TODO implement simple prefix for the search query so that one can aim at an AC, shortlabel, PMID...
+
+                // Note: the search is NOT case sensitive !!!
+                // Note: the search includes wildcards automatically
+                final String finalQuery = q;
+
+                ExecutorService executorService = initExecutorService();
+
+                this.publications = null;
+                this.experiments = null;
+                this.interactions = null;
+                this.features = null;
+                this.participants = null;
+                this.molecules = null;
+                this.cvobjects = null;
+                this.organisms = null;
+                this.complexes = null;
+                this.modelledFeatures = null;
+                this.modelledParticipants = null;
+
+                if (isPublicationSearchEnabled){
+                    Runnable runnable=null;
+                    if ("publication".equals(objType)){
+                        runnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                publications = getSearchService().loadPublication( finalQuery, originalQuery );
+                            }
+                        };
+                    }
+                    else if ("experiment".equals(objType)){
+                        runnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                experiments = getSearchService().loadExperiments( finalQuery, originalQuery );
+                            }
+                        };
+                    }
+                    else if ("interaction".equals(objType)){
+                        runnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                interactions = getSearchService().loadInteractions( finalQuery, originalQuery );
+                            }
+                        };
+                    }
+                    else if ("participant".equals(objType)){
+                        runnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                features = getSearchService().loadFeatures( finalQuery, originalQuery );
+                            }
+                        };
+                    }
+                    else if ("feature".equals(objType)){
+                        runnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                participants = getSearchService().loadParticipants(finalQuery, originalQuery);
+                            }
+                        };
+                    }
+
+                    if (runnable != null){
+                        runningTasks.add(executorService.submit(runnable));
+                    }
+                }
+
+                Runnable runnable = null;
+                if ("molecule".equals(objType)){
+                    runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            molecules = getSearchService().loadMolecules( finalQuery, originalQuery );
+                        }
+                    };
+                }
+                else if ("cv".equals(objType)){
+                    runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            cvobjects = getSearchService().loadCvObjects( finalQuery, originalQuery );
+                        }
+                    };
+                }
+                else if ("organism".equals(objType)){
+                    runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            organisms = getSearchService().loadOrganisms( finalQuery, originalQuery );
+                        }
+                    };
+                }
+
+                if (runnable != null){
+                    runningTasks.add(executorService.submit(runnable));
+                }
+
+                if (isComplexSearchEnabled){
+                    if ("complex".equals(objType)){
+                        runnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                complexes = getSearchService().loadComplexes( finalQuery, originalQuery );
+                            }
+                        };
+
+                    }
+                    else if ("cparticipant".equals(objType)){
+                        runnable= new Runnable() {
+                            @Override
+                            public void run() {
+                                modelledParticipants = getSearchService().loadModelledParticipants(finalQuery, originalQuery);
+                            }
+                        };
+                    }
+                    else if ("cfeature".equals(objType)){
+                        runnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                modelledFeatures = getSearchService().loadModelledFeatures(finalQuery, originalQuery);
+                            }
+                        };
+                    }
+
+                    if (runnable != null){
+                        runningTasks.add(executorService.submit(runnable));
+                    }
+                }
+
+                checkAndResumeTasks();
+            } else {
+                resetSearchResults();
+            }
+
+            return "search.results";
+        }
+    }
+
+    private ExecutorService initExecutorService() {
+        SearchThreadConfig threadConfig = (SearchThreadConfig) getSpringContext().getBean("searchThreadConfig");
+
+        ExecutorService executorService = threadConfig.getExecutorService();
+
+        if (runningTasks == null){
+            runningTasks = new ArrayList<Future>();
+        }
+        else {
+            runningTasks.clear();
+        }
+        return executorService;
+    }
+
+    private String prepareQuery() {
+        String q = query.toLowerCase().trim();
+
+        q = q.replaceAll( "\\*", "%" );
+        q = q.replaceAll( "\\?", "%" );
+        if ( !q.startsWith( "%" ) ) {
+            q = "%" + q;
+        }
+        if ( !q.endsWith( "%" ) ) {
+            q = q + "%";
+        }
+
+        if ( !query.equals( q ) ) {
+            log.info( "Updated query: '" + q + "'" );
+        }
+        return q;
+    }
+
+    private void refreshUserRoles() {
         if (userSessionController.hasRole(Role.ROLE_CURATOR) || userSessionController.hasRole(Role.ROLE_REVIEWER) ){
             isPublicationSearchEnabled = true;
         }
@@ -113,25 +300,16 @@ public class SearchController extends BaseController {
         else{
             isComplexSearchEnabled = false;
         }
+    }
+
+    public String doSearch() {
+        refreshUserRoles();
 
         log.info( "Searching for '" + query + "'..." );
 
         if ( !StringUtils.isEmpty( query ) ) {
             final String originalQuery = query.trim();
-            String q = query.toLowerCase().trim();
-
-            q = q.replaceAll( "\\*", "%" );
-            q = q.replaceAll( "\\?", "%" );
-            if ( !q.startsWith( "%" ) ) {
-                q = "%" + q;
-            }
-            if ( !q.endsWith( "%" ) ) {
-                q = q + "%";
-            }
-
-            if ( !query.equals( q ) ) {
-                log.info( "Updated query: '" + q + "'" );
-            }
+            String q = prepareQuery();
 
             // TODO implement simple prefix for the search query so that one can aim at an AC, shortlabel, PMID...
 
@@ -139,16 +317,7 @@ public class SearchController extends BaseController {
             // Note: the search includes wildcards automatically
             final String finalQuery = q;
 
-            SearchThreadConfig threadConfig = (SearchThreadConfig) getSpringContext().getBean("searchThreadConfig");
-
-            ExecutorService executorService = threadConfig.getExecutorService();
-
-            if (runningTasks == null){
-                runningTasks = new ArrayList<Future>();
-            }
-            else {
-                runningTasks.clear();
-            }
+            ExecutorService executorService = initExecutorService();
 
             if (isPublicationSearchEnabled){
                 Runnable runnablePub = new Runnable() {
@@ -473,5 +642,13 @@ public class SearchController extends BaseController {
             this.searchService = ApplicationContextProvider.getBean("searchQueryService");
         }
         return searchService;
+    }
+
+    public String getObjType() {
+        return objType;
+    }
+
+    public void setObjType(String objType) {
+        this.objType = objType;
     }
 }
