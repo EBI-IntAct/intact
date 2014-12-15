@@ -56,7 +56,7 @@ public class UserAdminController extends AbstractUserController {
 
     ///////////////
     // Actions
-    public synchronized void loadData( ComponentSystemEvent event ) {
+    public void loadData( ComponentSystemEvent event ) {
 
         if (!FacesContext.getCurrentInstance().isPostback()) {
             refreshContext();
