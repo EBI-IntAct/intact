@@ -10,9 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.Experiment;
 import psidev.psi.mi.jami.model.Xref;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
+import uk.ac.ebi.intact.editor.services.dashboard.ComplexSummary;
+import uk.ac.ebi.intact.editor.services.dashboard.ComplexSummaryService;
+import uk.ac.ebi.intact.editor.services.dashboard.PublicationSummary;
+import uk.ac.ebi.intact.editor.services.dashboard.PublicationSummaryService;
 import uk.ac.ebi.intact.editor.util.LazyDataModelFactory;
 import uk.ac.ebi.intact.jami.model.extension.*;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 
 /**
@@ -26,6 +31,12 @@ import java.util.HashMap;
 public class SearchQueryService extends AbstractEditorService {
 
     private static final Log log = LogFactory.getLog( SearchQueryService.class );
+
+    @Resource(name = "publicationSummaryService")
+    private PublicationSummaryService publicationSummaryService;
+
+    @Resource(name = "complexSummaryService")
+    private ComplexSummaryService complexSummaryService;
 
     //////////////////
     // Constructors
@@ -123,7 +134,7 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactComplex> loadComplexesByOrganism( String organismAc ) {
+    public LazyDataModel<ComplexSummary> loadComplexesByOrganism( String organismAc ) {
 
         log.info( "Searching for Complexes matching organism '" + organismAc + "'..." );
 
@@ -131,7 +142,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", organismAc );
 
         // all molecules but interactions
-        LazyDataModel<IntactComplex> molecules = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+        LazyDataModel<ComplexSummary> molecules = LazyDataModelFactory.createLazyDataModel( complexSummaryService,
 
                 "select distinct i " +
                         "from IntactComplex i join i.organism as o " +
@@ -243,7 +254,7 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactComplex>  loadComplexesByMolecule( String moleculeAc ) {
+    public LazyDataModel<ComplexSummary>  loadComplexesByMolecule( String moleculeAc ) {
 
         log.info( "Searching for Complexes with molecule '" + moleculeAc + "'..." );
 
@@ -251,7 +262,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", moleculeAc );
 
         // Load experiment eagerly to avoid LazyInitializationException when rendering the view
-        LazyDataModel<IntactComplex> interactions = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+        LazyDataModel<ComplexSummary> interactions = LazyDataModelFactory.createLazyDataModel( complexSummaryService,
 
                 "select distinct i " +
                         "from IntactComplex i join i.participants as p join p.interactor as inter " +
@@ -268,7 +279,7 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactComplex> loadComplexes( String query, String originalQuery ) {
+    public LazyDataModel<ComplexSummary> loadComplexes( String query, String originalQuery ) {
 
         log.info( "Searching for Complexes matching '" + query + "'..." );
 
@@ -276,7 +287,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "query", query );
         params.put( "ac", originalQuery );
         // Load experiment eagerly to avoid LazyInitializationException when rendering the view
-        LazyDataModel<IntactComplex> complexes = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+        LazyDataModel<ComplexSummary> complexes = LazyDataModelFactory.createLazyDataModel( complexSummaryService,
 
                 "select distinct i " +
                         "from IntactComplex i left join i.dbXrefs as x " +
@@ -364,7 +375,7 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactPublication> loadPublication( String query, String originalQuery ) {
+    public LazyDataModel<PublicationSummary> loadPublication( String query, String originalQuery ) {
         log.info( "Searching for publications matching '" + query + "'..." );
 
         final HashMap<String, String> params = Maps.<String, String>newHashMap();
@@ -375,7 +386,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "pdbOnHold", "24288376" );
         params.put( "chemblOnHold", "24214965" );
 
-        LazyDataModel<IntactPublication> publications = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+        LazyDataModel<PublicationSummary> publications = LazyDataModelFactory.createLazyDataModel( publicationSummaryService,
 
                                                                  "select distinct p " +
                                                                  "from IntactPublication p left join p.dbXrefs as x " +
@@ -566,11 +577,6 @@ public class SearchQueryService extends AbstractEditorService {
 
         log.info( "Complex Participants found: " + modelledParticipants.getRowCount() );
         return modelledParticipants;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countExperimentsForPublication( IntactPublication publication ) {
-        return getIntactDao().getPublicationDao().countExperimentsForPublication(publication.getAc());
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)

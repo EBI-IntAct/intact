@@ -11,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.editor.application.SearchThreadConfig;
 import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
+import uk.ac.ebi.intact.editor.services.dashboard.ComplexSummary;
+import uk.ac.ebi.intact.editor.services.dashboard.PublicationSummary;
 import uk.ac.ebi.intact.editor.services.search.SearchQueryService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.extension.*;
@@ -45,7 +47,7 @@ public class SearchController extends BaseController {
 
     private int threadTimeOut = 10;
 
-    private LazyDataModel<IntactPublication> publications;
+    private LazyDataModel<PublicationSummary> publications;
 
     private LazyDataModel<IntactExperiment> experiments;
 
@@ -61,7 +63,7 @@ public class SearchController extends BaseController {
 
     private LazyDataModel<IntactParticipantEvidence> participants;
 
-    private LazyDataModel<IntactComplex> complexes;
+    private LazyDataModel<ComplexSummary> complexes;
 
     private LazyDataModel<IntactModelledParticipant> modelledParticipants;
 
@@ -550,14 +552,6 @@ public class SearchController extends BaseController {
         }
     }
 
-    public int countExperimentsForPublication( IntactPublication publication ) {
-        return searchService.countExperimentsForPublication(publication);
-    }
-
-    public int countInteractionsForPublication( IntactPublication publication ) {
-        return searchService.countInteractionsForPublication(publication);
-    }
-
     ///////////////////////////
     // Getters and Setters
 
@@ -569,7 +563,7 @@ public class SearchController extends BaseController {
         this.query = query;
     }
 
-    public LazyDataModel<IntactPublication> getPublications() {
+    public LazyDataModel<PublicationSummary> getPublications() {
         return publications;
     }
 
@@ -601,7 +595,7 @@ public class SearchController extends BaseController {
         return participants;
     }
 
-    public LazyDataModel<IntactComplex> getComplexes() {
+    public LazyDataModel<ComplexSummary> getComplexes() {
         return complexes;
     }
 
