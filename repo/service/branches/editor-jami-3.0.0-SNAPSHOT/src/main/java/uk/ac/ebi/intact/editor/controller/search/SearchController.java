@@ -58,7 +58,7 @@ public class SearchController extends BaseController {
 
     private LazyDataModel<IntactFeatureEvidence> features;
 
-    private LazyDataModel<IntactOrganism> organisms;
+    private LazyDataModel<OrganismSummary> organisms;
 
     private LazyDataModel<IntactParticipantEvidence> participants;
 
@@ -487,21 +487,6 @@ public class SearchController extends BaseController {
         return searchService.countModelledFeaturesByParticipantAc(ac);
     }
 
-	public int countParticipantsExpressIn( String biosourceAc ) {
-		return searchService.countParticipantsExpressIn(biosourceAc);
-	}
-
-	public int countExperimentsByHostOrganism( String biosourceAc ) {
-		return searchService.countExperimentsByHostOrganism(biosourceAc);
-	}
-
-	public int countInteractorsByOrganism( String biosourceAc ) {
-		return searchService.countInteractorsByOrganism(biosourceAc);
-	}
-
-    public int countComplexesByOrganism( String biosourceAc ) {
-        return searchService.countComplexesByOrganism(biosourceAc);
-    }
 
     ///////////////////////////
     // Getters and Setters
@@ -538,7 +523,7 @@ public class SearchController extends BaseController {
         return features;
     }
 
-    public LazyDataModel<IntactOrganism> getOrganisms() {
+    public LazyDataModel<OrganismSummary> getOrganisms() {
         return organisms;
     }
 
