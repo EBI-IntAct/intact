@@ -15,10 +15,13 @@
  */
 package uk.ac.ebi.intact.editor.config.property;
 
+import org.springframework.stereotype.Component;
+
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
+@Component
 public class IntegerPropertyConverter implements PropertyConverter<Integer> {
 
     public IntegerPropertyConverter() {
