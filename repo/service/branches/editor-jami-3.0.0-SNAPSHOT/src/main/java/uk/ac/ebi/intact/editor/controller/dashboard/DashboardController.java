@@ -22,9 +22,9 @@ import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
 import uk.ac.ebi.intact.editor.services.dashboard.DashboardQueryService;
+import uk.ac.ebi.intact.editor.services.summary.ComplexSummary;
+import uk.ac.ebi.intact.editor.services.summary.PublicationSummary;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
-import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
-import uk.ac.ebi.intact.jami.model.extension.IntactPublication;
 import uk.ac.ebi.intact.jami.model.user.Role;
 
 import javax.annotation.Resource;
@@ -39,12 +39,12 @@ import javax.faces.event.ComponentSystemEvent;
 @Scope( "session" )
 public class DashboardController extends BaseController {
     public static final String[] DEFAULT_STATUS_SHOWN = new String[]{"new", "curation in progress", "ready for checking"};
-    private LazyDataModel<IntactPublication> allPublications;
-    private LazyDataModel<IntactPublication> ownedByUser;
-    private LazyDataModel<IntactPublication> reviewedByUser;
-    private LazyDataModel<IntactComplex> allComplexes;
-    private LazyDataModel<IntactComplex> complexesOwnedByUser;
-    private LazyDataModel<IntactComplex> complexesReviewedByUser;
+    private LazyDataModel<PublicationSummary> allPublications;
+    private LazyDataModel<PublicationSummary> ownedByUser;
+    private LazyDataModel<PublicationSummary> reviewedByUser;
+    private LazyDataModel<ComplexSummary> allComplexes;
+    private LazyDataModel<ComplexSummary> complexesOwnedByUser;
+    private LazyDataModel<ComplexSummary> complexesReviewedByUser;
 
     private boolean hideAcceptedAndReleased;
     private String[] statusToShow;
@@ -118,15 +118,15 @@ public class DashboardController extends BaseController {
         }
     }
 
-    public LazyDataModel<IntactPublication> getAllPublications() {
+    public LazyDataModel<PublicationSummary> getAllPublications() {
         return allPublications;
     }
 
-    public LazyDataModel<IntactPublication> getOwnedByUser() {
+    public LazyDataModel<PublicationSummary> getOwnedByUser() {
         return ownedByUser;
     }
 
-    public LazyDataModel<IntactPublication> getReviewedByUser() {
+    public LazyDataModel<PublicationSummary> getReviewedByUser() {
         return reviewedByUser;
     }
 
@@ -146,15 +146,15 @@ public class DashboardController extends BaseController {
         this.statusToShow = statusToShow;
     }
 
-    public LazyDataModel<IntactComplex> getAllComplexes() {
+    public LazyDataModel<ComplexSummary> getAllComplexes() {
         return allComplexes;
     }
 
-    public LazyDataModel<IntactComplex> getComplexesOwnedByUser() {
+    public LazyDataModel<ComplexSummary> getComplexesOwnedByUser() {
         return complexesOwnedByUser;
     }
 
-    public LazyDataModel<IntactComplex> getComplexesReviewedByUser() {
+    public LazyDataModel<ComplexSummary> getComplexesReviewedByUser() {
         return complexesReviewedByUser;
     }
 
