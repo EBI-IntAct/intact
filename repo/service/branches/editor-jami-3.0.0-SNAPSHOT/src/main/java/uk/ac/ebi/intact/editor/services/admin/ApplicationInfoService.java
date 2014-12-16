@@ -114,7 +114,7 @@ public class ApplicationInfoService extends AbstractEditorService {
         persistIntactConfigProperties(jamiConfiguration, application);
 
         // persist the application object
-        persistIntactObject(application, getIntactDao().getApplicationDao());
+        updateIntactObject(application, getIntactDao().getApplicationDao());
 
         return getIntactDao().getApplicationDao().getByKey(application.getKey());
     }
