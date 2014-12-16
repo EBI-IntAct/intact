@@ -1005,35 +1005,75 @@ public abstract class AnnotatedObjectController extends BaseController implement
         Collection<Annotation> annotations = Collections.EMPTY_LIST;
         if (ao instanceof IntactPublication){
             IntactPublication publication = (IntactPublication)ao;
-            annotations = ((PublicationEditorService)ApplicationContextProvider.getBean("publicationEditorService")).initialisePublicationAnnotations(publication).getDbAnnotations();
+            if (publication.areAnnotationsInitialized()){
+               annotations = publication.getAnnotations();
+            }
+            else{
+                annotations = ((PublicationEditorService)ApplicationContextProvider.getBean("publicationEditorService")).initialisePublicationAnnotations(publication).getDbAnnotations();
+            }
         }
         else if (ao instanceof IntactExperiment){
             IntactExperiment experiment = (IntactExperiment)ao;
-            annotations = ((ExperimentEditorService)ApplicationContextProvider.getBean("experimentEditorService")).initialiseExperimentAnnotations(experiment).getAnnotations();
+            if (experiment.areAnnotationsInitialized()){
+                annotations = experiment.getAnnotations();
+            }
+            else{
+                annotations = ((ExperimentEditorService)ApplicationContextProvider.getBean("experimentEditorService")).initialiseExperimentAnnotations(experiment).getAnnotations();
+            }
         }
         else if (ao instanceof IntactInteractionEvidence){
             IntactInteractionEvidence interaction = (IntactInteractionEvidence)ao;
-            annotations = ((InteractionEditorService)ApplicationContextProvider.getBean("interactionEditorService")).initialiseInteractionAnnotations(interaction).getAnnotations();
+            if (interaction.areAnnotationsInitialized()){
+                annotations = interaction.getAnnotations();
+            }
+            else{
+                annotations = ((InteractionEditorService)ApplicationContextProvider.getBean("interactionEditorService")).initialiseInteractionAnnotations(interaction).getAnnotations();
+            }
         }
         else if (ao instanceof IntactInteractor){
             IntactInteractor interactor = (IntactInteractor)ao;
-            annotations = ((InteractorEditorService)ApplicationContextProvider.getBean("interactorEditorService")).initialiseInteractorAnnotations(interactor).getDbAnnotations();
+            if (interactor.areAnnotationsInitialized()){
+                annotations = interactor.getAnnotations();
+            }
+            else{
+                annotations = ((InteractorEditorService)ApplicationContextProvider.getBean("interactorEditorService")).initialiseInteractorAnnotations(interactor).getDbAnnotations();
+            }
         }
         else if (ao instanceof AbstractIntactParticipant){
             AbstractIntactParticipant participant = (AbstractIntactParticipant)ao;
-            annotations = ((ParticipantEditorService)ApplicationContextProvider.getBean("participantEditorService")).initialiseParticipantAnnotations(participant).getAnnotations();
+            if (participant.areAnnotationsInitialized()){
+                annotations = participant.getAnnotations();
+            }
+            else{
+                annotations = ((ParticipantEditorService)ApplicationContextProvider.getBean("participantEditorService")).initialiseParticipantAnnotations(participant).getAnnotations();
+            }
         }
         else if (ao instanceof AbstractIntactFeature){
             AbstractIntactFeature participant = (AbstractIntactFeature)ao;
-            annotations = ((FeatureEditorService)ApplicationContextProvider.getBean("featureEditorService")).initialiseFeatureAnnotations(participant).getAnnotations();
+            if (participant.areAnnotationsInitialized()){
+                annotations = participant.getAnnotations();
+            }
+            else{
+                annotations = ((FeatureEditorService)ApplicationContextProvider.getBean("featureEditorService")).initialiseFeatureAnnotations(participant).getAnnotations();
+            }
         }
         else if (ao instanceof IntactCvTerm){
             IntactCvTerm cv = (IntactCvTerm)ao;
-            annotations = getCvService().initialiseCvAnnotations(cv).getAnnotations();
+            if (cv.areAnnotationsInitialized()){
+                annotations = cv.getAnnotations();
+            }
+            else{
+                annotations = getCvService().initialiseCvAnnotations(cv).getAnnotations();
+            }
         }
         else if (ao instanceof IntactSource){
             IntactSource source = (IntactSource)ao;
-            annotations = ((InstitutionService)ApplicationContextProvider.getBean("institutionService")).initialiseSourceAnnotations(source).getAnnotations();
+            if (source.areAnnotationsInitialized()){
+                annotations = source.getAnnotations();
+            }
+            else{
+                annotations = ((InstitutionService)ApplicationContextProvider.getBean("institutionService")).initialiseSourceAnnotations(source).getAnnotations();
+            }
         }
 
         if (annotations.isEmpty()){
@@ -1053,25 +1093,6 @@ public abstract class AnnotatedObjectController extends BaseController implement
 
     public void setInternalRemark(String internalRemark) {
         this.internalRemark = internalRemark;
-    }
-
-    public boolean isNoUniprotUpdate(Interactor interactor) {
-        Collection<Annotation> annots = Collections.EMPTY_LIST;
-        if (interactor == null) return false;
-        else if (interactor instanceof IntactInteractor){
-            IntactInteractor intactInteractor = (IntactInteractor)interactor;
-            annots = ((InteractorEditorService)ApplicationContextProvider.getBean("interactorEditorService")).
-                    initialiseInteractorAnnotations(intactInteractor).getAnnotations();
-        }
-        else{
-            annots = interactor.getAnnotations();
-        }
-
-        if (annots.isEmpty()){
-            return false;
-        }
-        Annotation caution = AnnotationUtils.collectFirstAnnotationWithTopic(annots, null, NON_UNIPROT);
-        return caution != null ? true : false;
     }
 
     public boolean isUnsavedChanges() {

@@ -167,6 +167,18 @@ public class InteractorController extends AnnotatedObjectController {
         }
     }
 
+    public String getIdentityXref( IntactInteractor molecule ) {
+        // TODO handle multiple identities (return xref and iterate to display them all)
+        Xref xrefs = molecule.getPreferredIdentifier();
+
+
+        if ( xrefs == null ) {
+            return "-";
+        }
+
+        return xrefs.getId();
+    }
+
     public void loadData( ComponentSystemEvent event ) {
         if (!FacesContext.getCurrentInstance().isPostback()) {
 
@@ -367,6 +379,20 @@ public class InteractorController extends AnnotatedObjectController {
         return isNoUniprotUpdate;
     }
 
+    public boolean isNoUniprotUpdate(Interactor interactor) {
+        Collection<Annotation> annots = Collections.EMPTY_LIST;
+        if (interactor == null) return false;
+        else{
+            annots = interactor.getAnnotations();
+        }
+
+        if (annots.isEmpty()){
+            return false;
+        }
+        Annotation caution = AnnotationUtils.collectFirstAnnotationWithTopic(annots, null, AnnotatedObjectController.NON_UNIPROT);
+        return caution != null ? true : false;
+    }
+
     @Override
     protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
         IntactInteractor interactor = (IntactInteractor)annotatedObject;
@@ -456,6 +482,10 @@ public class InteractorController extends AnnotatedObjectController {
         Collections.sort(members, new AuditableComparator());
         // pool members are always initialised
         return members;
+    }
+
+    public void refreshPoolMembers(){
+
     }
 
     public void removePoolMember(Interactor interactor) {
