@@ -246,7 +246,7 @@ public class CvObjectService extends AbstractEditorService {
         final List<IntactCvTerm>participantTopics = getSortedTopicList( "uk.ac.ebi.intact.model.Component", cvObjectsByUsedInClass);
         final List<IntactCvTerm>featureTopics = getSortedTopicList( "uk.ac.ebi.intact.model.Feature", cvObjectsByUsedInClass);
         final List<IntactCvTerm>cvObjectTopics = getSortedTopicList( "uk.ac.ebi.intact.model.CvObject", cvObjectsByUsedInClass);
-        final List<IntactCvTerm>complexTopics = getSortedTopicList(IntactComplex.class.getCanonicalName(), cvObjectsByClass);
+        final List<IntactCvTerm>complexTopics = getSortedTopicList(IntactComplex.class.getCanonicalName(), cvObjectsByUsedInClass);
         complexTopics.addAll(interactionTopics);
         final List<IntactCvTerm>noClassTopics = getSortedTopicList( NO_CLASS, cvObjectsByUsedInClass);
 
