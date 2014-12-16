@@ -116,6 +116,8 @@ public class UserAdminController extends AbstractUserController {
             addErrorMessage("Cannot save user " + user.getLogin(), e.getCause() + ": " + e.getMessage());
         } catch (PersisterException e) {
             addErrorMessage("Cannot save user " + user.getLogin(), e.getCause() + ": " + e.getMessage());
+        } catch (Throwable e) {
+            addErrorMessage("Cannot save user " + user.getLogin(), e.getCause() + ": " + e.getMessage());
         }
 
         // reset properties before redirecting to the user list.
