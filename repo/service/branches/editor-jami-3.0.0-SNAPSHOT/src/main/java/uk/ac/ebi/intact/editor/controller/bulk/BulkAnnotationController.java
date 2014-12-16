@@ -96,7 +96,7 @@ public class BulkAnnotationController extends BaseController {
             }
 
             if (acs.length > 0 && updatedAcs.length == 0) {
-                addErrorMessage("Operation failed", "None of the ACs could be updated (do they exist?)");
+                addErrorMessage("Operation failed. The acs may not exist in the database", "None of the ACs could be updated (do they exist?)");
                 couldNotUpdateAcs = acs;
             } else if (acs.length != updatedAcs.length) {
                 List<String> acsList = Arrays.asList(acs);
