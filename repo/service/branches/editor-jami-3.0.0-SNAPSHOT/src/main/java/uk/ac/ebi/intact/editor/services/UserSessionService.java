@@ -82,6 +82,9 @@ public class UserSessionService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
     public Source getUserInstitution(User user) {
+        if (user == null){
+            return null;
+        }
         Preference instiPref = user.getPreference(AbstractUserController.INSTITUTION_AC);
         IntactConfiguration jamiConfiguration = ApplicationContextProvider.getBean("intactJamiConfiguration");
 
