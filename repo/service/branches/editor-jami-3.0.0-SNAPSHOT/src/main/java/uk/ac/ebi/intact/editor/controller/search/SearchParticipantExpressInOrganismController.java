@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.services.search.SearchQueryService;
+import uk.ac.ebi.intact.editor.services.summary.ParticipantSummary;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
-import uk.ac.ebi.intact.jami.model.extension.IntactParticipantEvidence;
 
 import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
@@ -30,7 +30,7 @@ public class SearchParticipantExpressInOrganismController extends BaseController
 	private String shortLabel;
 	private String numParticipants;
 
-	private LazyDataModel<IntactParticipantEvidence> participants = null;
+	private LazyDataModel<ParticipantSummary> participants = null;
 
     @Resource(name = "searchQueryService")
     private transient SearchQueryService searchQueryService;
@@ -52,7 +52,7 @@ public class SearchParticipantExpressInOrganismController extends BaseController
 		}
 	}
 
-	public LazyDataModel<IntactParticipantEvidence> getParticipants() {
+	public LazyDataModel<ParticipantSummary> getParticipants() {
 		return participants;
 	}
 

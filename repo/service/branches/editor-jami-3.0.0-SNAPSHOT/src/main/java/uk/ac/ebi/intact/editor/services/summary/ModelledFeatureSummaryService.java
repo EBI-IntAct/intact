@@ -138,22 +138,22 @@ public class ModelledFeatureSummaryService extends AbstractEditorService impleme
 
     @Override
     public void saveOrUpdate(FeatureSummary object) throws PersisterException, FinderException, SynchronizerException {
-        throw new UnsupportedOperationException("The feature evidence summary service is read only");
+        throw new UnsupportedOperationException("The modelled feature summary service is read only");
     }
 
     @Override
     public void saveOrUpdate(Collection<? extends FeatureSummary> objects) throws SynchronizerException, PersisterException, FinderException {
-        throw new UnsupportedOperationException("The feature evidence summary service is read only");
+        throw new UnsupportedOperationException("The modelled feature summary service is read only");
     }
 
     @Override
     public void delete(FeatureSummary object) throws PersisterException, FinderException, SynchronizerException {
-        throw new UnsupportedOperationException("The feature evidence summary service is read only");
+        throw new UnsupportedOperationException("The modelled feature summary service is read only");
     }
 
     @Override
     public void delete(Collection<? extends FeatureSummary> objects) throws SynchronizerException, PersisterException, FinderException {
-        throw new UnsupportedOperationException("The feature evidence summary service is read only");
+        throw new UnsupportedOperationException("The modelled feature summary service is read only");
     }
 
     public FeatureSummary createSummaryFrom(IntactModelledFeature pub){
