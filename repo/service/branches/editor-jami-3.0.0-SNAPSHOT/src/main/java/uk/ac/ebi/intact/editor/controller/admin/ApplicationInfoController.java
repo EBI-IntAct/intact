@@ -198,4 +198,8 @@ public class ApplicationInfoController extends BaseController {
 
         return (IntactSource)defaultSource;
     }
+
+    public void setDefaultInstitution(IntactSource source){
+        getIntactConfiguration().setDefaultInstitution(source);
+    }
 }
