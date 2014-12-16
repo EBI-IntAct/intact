@@ -43,6 +43,9 @@ public class SearchQueryService extends AbstractEditorService {
     @Resource(name = "moleculeSummaryService")
     private MoleculeSummaryService moleculeSummaryService;
 
+    @Resource(name = "cvSummaryService")
+    private CvSummaryService cvSummaryService;
+
     //////////////////
     // Constructors
 
@@ -50,7 +53,7 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactCvTerm> loadCvObjects( String query, String originalQuery ) {
+    public LazyDataModel<CvSummary> loadCvObjects( String query, String originalQuery ) {
 
         log.info( "Searching for CvObject matching '" + query + "'..." );
 
@@ -59,7 +62,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", originalQuery );
 
         // all cvobjects
-        LazyDataModel<IntactCvTerm> cvobjects = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+        LazyDataModel<CvSummary> cvobjects = LazyDataModelFactory.createLazyDataModel( this.cvSummaryService,
 
                                                               "select distinct i " +
                                                               "from IntactCvTerm i left join i.dbXrefs as x " +
@@ -572,23 +575,5 @@ public class SearchQueryService extends AbstractEditorService {
 
         log.info( "Complex Participants found: " + modelledParticipants.getRowCount() );
         return modelledParticipants;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String getIdentifierCv( IntactCvTerm cv ) {
-        IntactCvTerm reloaded = getIntactDao().getEntityManager().merge(cv);
-        String id = "-";
-        if ( cv.getMIIdentifier() != null ) {
-            id= cv.getMIIdentifier();
-        }
-        else if ( cv.getMODIdentifier() != null ) {
-            id= cv.getMODIdentifier();
-        }
-        else if ( !cv.getIdentifiers().isEmpty() ) {
-            id= cv.getIdentifiers().iterator().next().getId();
-        }
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return id;
     }
 }
