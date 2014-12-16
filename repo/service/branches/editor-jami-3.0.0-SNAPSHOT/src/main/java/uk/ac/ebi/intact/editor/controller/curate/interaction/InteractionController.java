@@ -37,6 +37,7 @@ import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentController
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
 import uk.ac.ebi.intact.editor.controller.curate.util.ParticipantWrapperExperimentalRoleComparator;
 import uk.ac.ebi.intact.editor.services.curate.interaction.InteractionEditorService;
+import uk.ac.ebi.intact.editor.services.summary.ExperimentSummary;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.*;
@@ -226,12 +227,12 @@ public class InteractionController extends AnnotatedObjectController {
         }
 
         if (publicationController.getPublication() != null) {
-            List<Experiment> experiments = publicationController.refreshExperiments();
+            List<ExperimentSummary> experiments = publicationController.collectExperiments();
 
             // publication does have experiments so we can propose them
             if (!experiments.isEmpty()){
-                for ( Experiment e : experiments ) {
-                    String description = completeExperimentLabel((IntactExperiment)e);
+                for ( ExperimentSummary e : experiments ) {
+                    String description = completeExperimentLabel((IntactExperiment)e.getExperiment());
                     experimentSelectItems.add(new SelectItem(e, description, publicationController.getTitle()));
                 }
             }
