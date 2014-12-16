@@ -38,6 +38,8 @@ import uk.ac.ebi.intact.editor.controller.curate.cloner.ExperimentCloner;
 import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
 import uk.ac.ebi.intact.editor.services.curate.experiment.ExperimentEditorService;
+import uk.ac.ebi.intact.editor.services.summary.InteractionSummary;
+import uk.ac.ebi.intact.editor.services.summary.InteractionSummaryService;
 import uk.ac.ebi.intact.editor.util.LazyDataModelFactory;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
@@ -71,7 +73,7 @@ public class ExperimentController extends AnnotatedObjectController {
 
     private IntactExperiment experiment;
     private String ac;
-    private LazyDataModel<IntactInteractionEvidence> interactionDataModel;
+    private LazyDataModel<InteractionSummary> interactionDataModel;
 
     private String reasonForRejection;
     private String correctedComment;
@@ -93,6 +95,9 @@ public class ExperimentController extends AnnotatedObjectController {
 
     @Resource(name = "bioSourceService")
     private transient BioSourceService biosourceService;
+
+    @Resource(name = "interactionSummaryService")
+    private transient InteractionSummaryService interactionSummaryService;
 
     private boolean isInteractionTab = true;
     private boolean isVariableParameterTab = false;
@@ -310,15 +315,16 @@ public class ExperimentController extends AnnotatedObjectController {
         if (experiment == null) return;
 
         if (experiment.areInteractionEvidencesInitialized()){
-            List<IntactInteractionEvidence> evidences = new ArrayList<IntactInteractionEvidence>(experiment.getInteractionEvidences().size());
-            for (InteractionEvidence ev : evidences){
-                evidences.add((IntactInteractionEvidence)ev);
+            List<InteractionSummary> evidences = new ArrayList<InteractionSummary>(experiment.getInteractionEvidences().size());
+            for (InteractionEvidence ev : experiment.getInteractionEvidences()){
+                evidences.add(getInteractionSummaryService().createSummaryFrom((IntactInteractionEvidence)ev));
             }
             interactionDataModel = LazyDataModelFactory.createLazyDataModel(evidences);
         }
         else{
-            interactionDataModel = LazyDataModelFactory.createLazyDataModel(getExperimentService().getIntactDao().getEntityManager(),
+            interactionDataModel = LazyDataModelFactory.createLazyDataModel(getInteractionSummaryService(),
                     "select i from IntactInteractionEvidence i join i.dbExperiments as exp where exp.ac = '" + experiment.getAc() + "'",
+                    "select count(distinct i.ac) from IntactInteractionEvidence i join i.dbExperiments as exp where exp.ac = '" + experiment.getAc() + "'",
                     "i", "ac", true);
         }
     }
@@ -707,7 +713,7 @@ public class ExperimentController extends AnnotatedObjectController {
         }
     }
 
-    public LazyDataModel<IntactInteractionEvidence> getInteractionDataModel() {
+    public LazyDataModel<InteractionSummary> getInteractionDataModel() {
         return interactionDataModel;
     }
 
@@ -907,6 +913,13 @@ public class ExperimentController extends AnnotatedObjectController {
             this.biosourceService = ApplicationContextProvider.getBean("bioSourceService");
         }
         return biosourceService;
+    }
+
+    public InteractionSummaryService getInteractionSummaryService() {
+        if (this.interactionSummaryService == null){
+            this.interactionSummaryService = ApplicationContextProvider.getBean("interactionSummaryService");
+        }
+        return interactionSummaryService;
     }
 
     public boolean isVariableParameterTab() {

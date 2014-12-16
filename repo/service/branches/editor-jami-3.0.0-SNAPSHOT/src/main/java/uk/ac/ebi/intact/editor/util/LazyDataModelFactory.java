@@ -78,6 +78,10 @@ public class LazyDataModelFactory {
         return createLazyDataModel( entityManager, query, countQuery, Maps.<String, String>newHashMap(), null, null, false);
     }
 
+    public static LazyDataModel createLazyDataModel( IntactService service, String query, String countQuery ) {
+        return createLazyDataModel( service, query, countQuery, Maps.<String, String>newHashMap(), null, null, false);
+    }
+
     public static LazyDataModel createLazyDataModel( EntityManager entityManager,
                                                      String query,
                                                      String countQuery,

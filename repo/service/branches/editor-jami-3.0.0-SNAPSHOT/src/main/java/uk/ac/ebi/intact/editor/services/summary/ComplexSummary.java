@@ -1,4 +1,4 @@
-package uk.ac.ebi.intact.editor.services.dashboard;
+package uk.ac.ebi.intact.editor.services.summary;
 
 /**
  * Class that summarizes a complex for the dashboard

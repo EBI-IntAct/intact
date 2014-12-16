@@ -20,6 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
+import uk.ac.ebi.intact.editor.services.summary.ComplexSummary;
+import uk.ac.ebi.intact.editor.services.summary.ComplexSummaryService;
+import uk.ac.ebi.intact.editor.services.summary.PublicationSummary;
+import uk.ac.ebi.intact.editor.services.summary.PublicationSummaryService;
 import uk.ac.ebi.intact.editor.util.LazyDataModelFactory;
 
 import javax.annotation.Resource;
