@@ -49,6 +49,12 @@ public class SearchQueryService extends AbstractEditorService {
     @Resource(name = "organismSummaryService")
     private OrganismSummaryService organismSummaryService;
 
+    @Resource(name = "featureEvidenceSummaryService")
+    private FeatureEvidenceSummaryService featureEvidenceSummaryService;
+
+    @Resource(name = "modelledFeatureSummaryService")
+    private ModelledFeatureSummaryService modelledFeatureSummaryService;
+
     //////////////////
     // Constructors
 
@@ -392,14 +398,14 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactFeatureEvidence> loadFeatures( String query, String originalQuery ) {
+    public LazyDataModel<FeatureSummary> loadFeatures( String query, String originalQuery ) {
         log.info( "Searching for features matching '" + query + "' or AC '"+originalQuery+"'..." );
 
         final HashMap<String, String> params = Maps.<String, String>newHashMap();
         params.put( "query", query );
         params.put( "ac", originalQuery );
 
-        LazyDataModel<IntactFeatureEvidence> features = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+        LazyDataModel<FeatureSummary> features = LazyDataModelFactory.createLazyDataModel( featureEvidenceSummaryService,
 
                                                                  "select distinct p " +
                                                                  "from IntactFeatureEvidence p left join p.dbXrefs as x " +
@@ -504,14 +510,14 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactModelledFeature>  loadModelledFeatures(String query, String originalQuery) {
+    public LazyDataModel<FeatureSummary>  loadModelledFeatures(String query, String originalQuery) {
         log.info( "Searching for complex features matching '" + query + "' or AC '"+originalQuery+"'..." );
 
         final HashMap<String, String> params = Maps.<String, String>newHashMap();
         params.put( "query", query );
         params.put( "ac", originalQuery );
 
-        LazyDataModel<IntactModelledFeature>  modelledFeatures = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+        LazyDataModel<FeatureSummary>  modelledFeatures = LazyDataModelFactory.createLazyDataModel( modelledFeatureSummaryService,
 
                 "select distinct p " +
                         "from IntactModelledFeature p left join p.dbXrefs as x " +
