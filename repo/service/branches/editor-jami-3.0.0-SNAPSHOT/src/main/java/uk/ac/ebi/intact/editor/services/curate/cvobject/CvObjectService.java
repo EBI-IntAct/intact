@@ -113,7 +113,6 @@ public class CvObjectService extends AbstractEditorService {
     private List<SelectItem> complexTypeSelectItems;
 
     private List<SelectItem> evidenceTypeSelectItems;
-    private List<SelectItem> causalStatementSelectItems;
 
     private IntactCvTerm defaultExperimentalRole;
     private IntactCvTerm defaultBiologicalRole;
@@ -170,7 +169,6 @@ public class CvObjectService extends AbstractEditorService {
             this.polymerTypeSelectItems=null;
             this.moleculeSetTypeSelectItems=null;
             this.geneTypeSelectItems=null;
-            this.causalStatementSelectItems=null;
             isInitialised=false;
         }
 
@@ -451,17 +449,6 @@ public class CvObjectService extends AbstractEditorService {
             loadChildren(roleParent, featureRoleSelectItems, false, new HashSet<String>());
         }
 
-        // causal statements
-        causalStatementSelectItems = new ArrayList<SelectItem>();
-        IntactCvTerm causalParent = getIntactDao().getCvTermDao().getByMIIdentifier("MI:0xxx", IntactUtils.TOPIC_OBJCLASS);
-        SelectItem item3 = causalParent != null ? createSelectItem(causalParent, false):null;
-        if (item3 != null){
-            causalStatementSelectItems.add(item3);
-        }
-        if (causalParent != null){
-            loadChildren(causalParent, causalStatementSelectItems, false, new HashSet<String>());
-        }
-
         isInitialised=true;
     }
 
@@ -640,7 +627,7 @@ public class CvObjectService extends AbstractEditorService {
             Collections.sort( list, new CvObjectComparator() );
             return list;
         } else {
-            return Collections.EMPTY_LIST;
+            return new ArrayList<IntactCvTerm>();
         }
     }
 
@@ -650,7 +637,7 @@ public class CvObjectService extends AbstractEditorService {
             Collections.sort( list, new CvObjectComparator() );
             return list;
         } else {
-            return Collections.EMPTY_LIST;
+            return new ArrayList<IntactCvTerm>();
         }
     }
 
@@ -960,10 +947,6 @@ public class CvObjectService extends AbstractEditorService {
 
     public boolean isInitialised() {
         return isInitialised;
-    }
-
-    public List<SelectItem> getCausalStatementSelectItems() {
-        return causalStatementSelectItems;
     }
 
     public static class CvObjectComparator implements Comparator<IntactCvTerm> {
