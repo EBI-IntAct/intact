@@ -9,9 +9,9 @@
                 xmlns:ia="http://java.sun.com/jsf/composite/intact-components"
                 xmlns:ot="http://myfaces.apache.org/orchestra">
 
-    <h:panelGroup id="featuresTable">
+    <h:panelGroup>
 
-        <p:dataTable id="searchFeaturesTable" var="feature" value="#{features}"
+        <p:dataTable var="feature" value="#{features}"
                      paginatorPosition="both"
                      paginator="true" paginatorAlwaysVisible="false"
                      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
