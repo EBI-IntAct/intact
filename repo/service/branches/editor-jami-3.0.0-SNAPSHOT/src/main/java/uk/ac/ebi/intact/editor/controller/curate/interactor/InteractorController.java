@@ -506,6 +506,8 @@ public class InteractorController extends AnnotatedObjectController {
                 addErrorMessage("Cannot load interactor " + member, e.getCause() + ": " + e.getMessage());
             } catch (PersisterException e) {
                 addErrorMessage("Cannot load interactor " + member, e.getCause() + ": " + e.getMessage());
+            } catch (Throwable e) {
+                addErrorMessage("Cannot load interactor " + member, e.getCause() + ": " + e.getMessage());
             }
         }
 

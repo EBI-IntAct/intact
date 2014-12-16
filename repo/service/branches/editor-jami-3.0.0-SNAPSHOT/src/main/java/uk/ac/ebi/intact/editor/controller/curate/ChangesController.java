@@ -638,6 +638,8 @@ public class ChangesController extends BaseController implements UserListener {
             addErrorMessage("Cannot save changes ", e.getCause() + ": " + e.getMessage());
         } catch (PersisterException e) {
             addErrorMessage("Cannot save changes ", e.getCause() + ": " + e.getMessage());
+        }catch (Throwable e) {
+            addErrorMessage("Cannot save changes ", e.getCause() + ": " + e.getMessage());
         }
 
         // refresh current view now

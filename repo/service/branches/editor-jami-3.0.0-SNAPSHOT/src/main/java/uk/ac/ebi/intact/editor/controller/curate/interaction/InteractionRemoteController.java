@@ -17,18 +17,13 @@ package uk.ac.ebi.intact.editor.controller.curate.interaction;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
-import org.openqa.selenium.html5.ApplicationCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.bridges.exception.BridgeFailedException;
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Experiment;
-import psidev.psi.mi.jami.utils.comparator.experiment.ExperimentComparator;
 import uk.ac.ebi.intact.editor.controller.BaseController;
-import uk.ac.ebi.intact.editor.controller.UserSessionController;
 import uk.ac.ebi.intact.editor.controller.curate.CurateController;
 import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentController;
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
@@ -48,7 +43,10 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * TODO comment this class header.
@@ -195,6 +193,8 @@ public class InteractionRemoteController extends BaseController {
             } catch (SynchronizerException e) {
                 addErrorMessage("Cannot load interactor " + protein, e.getCause() + ": " + e.getMessage());
             } catch (PersisterException e) {
+                addErrorMessage("Cannot load interactor " + protein, e.getCause() + ": " + e.getMessage());
+            } catch (Throwable e) {
                 addErrorMessage("Cannot load interactor " + protein, e.getCause() + ": " + e.getMessage());
             }
         }

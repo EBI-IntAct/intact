@@ -66,6 +66,8 @@ public class ReviewerAvailabilityController extends BaseController {
             addErrorMessage("Cannot save reviewer availabilities ", e.getCause() + ": " + e.getMessage());
         } catch (PersisterException e) {
             addErrorMessage("Cannot save reviewer availabilities ", e.getCause() + ": " + e.getMessage());
+        } catch (Throwable e) {
+            addErrorMessage("Cannot save reviewer availabilities ", e.getCause() + ": " + e.getMessage());
         }
 
         try {
@@ -77,6 +79,8 @@ public class ReviewerAvailabilityController extends BaseController {
         } catch (FinderException e) {
             addErrorMessage("Cannot save complex reviewer availabilities ", e.getCause() + ": " + e.getMessage());
         } catch (PersisterException e) {
+            addErrorMessage("Cannot save complex reviewer availabilities ", e.getCause() + ": " + e.getMessage());
+        } catch (Throwable e) {
             addErrorMessage("Cannot save complex reviewer availabilities ", e.getCause() + ": " + e.getMessage());
         }
     }

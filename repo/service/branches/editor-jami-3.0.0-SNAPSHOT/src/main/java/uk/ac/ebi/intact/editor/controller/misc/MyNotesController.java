@@ -100,6 +100,8 @@ public class MyNotesController extends BaseController {
                 addErrorMessage("Cannot save user " + user.getLogin(), e.getCause() + ": " + e.getMessage());
             } catch (PersisterException e) {
                 addErrorMessage("Cannot save user " + user.getLogin(), e.getCause() + ": " + e.getMessage());
+            }catch (Throwable e) {
+                addErrorMessage("Cannot save user " + user.getLogin(), e.getCause() + ": " + e.getMessage());
             }
         }
 
@@ -123,6 +125,8 @@ public class MyNotesController extends BaseController {
         } catch (FinderException e) {
             addErrorMessage("Cannot save user " + user.getLogin(), e.getCause() + ": " + e.getMessage());
         } catch (PersisterException e) {
+            addErrorMessage("Cannot save user " + user.getLogin(), e.getCause() + ": " + e.getMessage());
+        }catch (Throwable e) {
             addErrorMessage("Cannot save user " + user.getLogin(), e.getCause() + ": " + e.getMessage());
         }
 

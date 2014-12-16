@@ -93,6 +93,8 @@ public class BulkAnnotationController extends BaseController {
                 addErrorMessage("Cannot add annotation " + this.topic, e.getCause() + ": " + e.getMessage());
             } catch (PersisterException e) {
                 addErrorMessage("Cannot add annotation " + this.topic, e.getCause() + ": " + e.getMessage());
+            } catch (Throwable e) {
+                addErrorMessage("Cannot add annotation " + this.topic, e.getCause() + ": " + e.getMessage());
             }
 
             if (acs.length > 0 && updatedAcs.length == 0) {

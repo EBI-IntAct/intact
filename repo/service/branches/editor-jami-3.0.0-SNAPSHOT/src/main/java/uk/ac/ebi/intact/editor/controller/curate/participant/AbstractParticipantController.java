@@ -167,6 +167,8 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
                     addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
                 } catch (PersisterException e) {
                     addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                }  catch (Throwable e) {
+                    addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
                 }
                 getChangesController().removeFromHiddenChanges(unsaved);
             }
@@ -180,6 +182,8 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
                 } catch (FinderException e) {
                     addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
                 } catch (PersisterException e) {
+                    addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                } catch (Throwable e) {
                     addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
                 }
                 getChangesController().removeFromHiddenChanges(unsaved);

@@ -76,6 +76,8 @@ public class ApplicationInfoController extends BaseController {
             addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
         } catch (PersisterException e) {
             addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+        }catch (Throwable e) {
+            addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
         }
     }
 
@@ -88,6 +90,8 @@ public class ApplicationInfoController extends BaseController {
         } catch (FinderException e) {
             addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
         } catch (PersisterException e) {
+            addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+        }catch (Throwable e) {
             addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
         }
     }
@@ -192,6 +196,8 @@ public class ApplicationInfoController extends BaseController {
             } catch (FinderException e) {
                 addErrorMessage("Cannot save default source "+defaultSource, e.getCause() + ": " + e.getMessage());
             } catch (PersisterException e) {
+                addErrorMessage("Cannot save default source "+defaultSource, e.getCause() + ": " + e.getMessage());
+            }catch (Throwable e) {
                 addErrorMessage("Cannot save default source "+defaultSource, e.getCause() + ": " + e.getMessage());
             }
         }

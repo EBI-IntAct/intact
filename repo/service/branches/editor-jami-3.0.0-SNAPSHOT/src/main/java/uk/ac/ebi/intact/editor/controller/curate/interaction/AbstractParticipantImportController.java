@@ -125,6 +125,9 @@ public abstract class AbstractParticipantImportController<T extends AbstractInta
                 } catch (PersisterException e) {
                     addErrorMessage("Cannot load interactor " + participantToImport, e.getCause() + ": " + e.getMessage());
                     queriesNoResults.add(participantToImport);
+                } catch (Throwable e) {
+                    addErrorMessage("Cannot load interactor " + participantToImport, e.getCause() + ": " + e.getMessage());
+                    queriesNoResults.add(participantToImport);
                 }
             }
         }

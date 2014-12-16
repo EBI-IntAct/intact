@@ -383,6 +383,8 @@ public class ExperimentController extends AnnotatedObjectController {
                 addErrorMessage("Cannot delete value "+v.toString(), e.getCause() + ": " + e.getMessage());
             } catch (PersisterException e) {
                 addErrorMessage("Cannot delete value "+v.toString(), e.getCause() + ": " + e.getMessage());
+            }  catch (Throwable e) {
+                addErrorMessage("Cannot delete value "+v.toString(), e.getCause() + ": " + e.getMessage());
             }
         }
     }
