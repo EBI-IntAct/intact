@@ -131,6 +131,33 @@ public class UserAdminController extends AbstractUserController {
         return "admin.users.list";
     }
 
+    public String deleteUser() {
+        User user = getUser();
+
+        try {
+            getUserAdminService().deleteUser(user);
+            addInfoMessage( "User " + user.getLogin() + " was deleted successfully", "" );
+        } catch (SynchronizerException e) {
+            addErrorMessage("Cannot delete user " + user.getLogin(), e.getCause() + ": " + e.getMessage());
+        } catch (FinderException e) {
+            addErrorMessage("Cannot delete user " + user.getLogin(), e.getCause() + ": " + e.getMessage());
+        } catch (PersisterException e) {
+            addErrorMessage("Cannot delete user " + user.getLogin(), e.getCause() + ": " + e.getMessage());
+        } catch (Throwable e) {
+            addErrorMessage("Cannot delete user " + user.getLogin(), e.getCause() + ": " + e.getMessage());
+        }
+
+        // reset properties before redirecting to the user list.
+        setUser(null);
+        setLoginParam(null);
+
+        this.reviewerSelectItems=null;
+        this.complexReviewerSelectItems=null;
+        this.allReviewerSelectItems=null;
+
+        return "admin.users.list";
+    }
+
     public String newUser() {
         loginParam = null;
         setUser(new User("to set", "to set","to set","to set"));

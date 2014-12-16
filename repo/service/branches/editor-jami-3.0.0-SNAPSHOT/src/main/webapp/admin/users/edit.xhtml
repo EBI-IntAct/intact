@@ -77,6 +77,7 @@
             <p:inputTextarea id="notesArea" value="#{userAdminController.rawNotes}" rows="10" cols="80"/>
 
             <h:commandButton action="#{userAdminController.saveUser}" value="Save"/>
+            <h:commandButton action="#{userAdminController.deleteUser}" value="Delete"/>
             <h:link outcome="admin.users.list" value="Cancel"/>
         </h:panelGrid>
 

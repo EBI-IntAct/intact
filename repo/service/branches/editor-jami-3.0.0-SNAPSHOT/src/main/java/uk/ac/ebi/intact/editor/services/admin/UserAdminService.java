@@ -92,6 +92,12 @@ public class UserAdminService extends AbstractEditorService {
         return synchronizeIntactObject(user, getIntactDao().getSynchronizerContext().getUserSynchronizer(), true);
     }
 
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
+    public void deleteUser(User user) throws SynchronizerException, FinderException, PersisterException {
+        attachDaoToTransactionManager();
+        deleteIntactObject(user, getIntactDao().getUserDao());
+    }
+
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public DualListModel<String> loadRoles( User user ) {
 
