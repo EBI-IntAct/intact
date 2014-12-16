@@ -91,9 +91,11 @@ public abstract class AbstractUserController extends BaseController {
         return this.institution;
     }
 
-    public void setInstitution(IntactSource institution) {
+    public void setInstitution(Source institution) {
         if (institution != null) {
-            setPreference(INSTITUTION_AC, institution.getAc());
+            if (institution instanceof IntactSource){
+                setPreference(INSTITUTION_AC, ((IntactSource)institution).getAc());
+            }
             setPreference(INSTITUTION_NAME, institution.getShortName());
         }
         this.institution = institution;
@@ -138,7 +140,6 @@ public abstract class AbstractUserController extends BaseController {
     }
 
     protected void refreshContext(){
-        this.user = null;
         this.institution = null;
         this.mentor = null;
     }
