@@ -23,9 +23,7 @@
         <!-- TODO: if the user is disabled, show the line red. -->
         <p:dataTable id="usersTable" var="user" value="#{userAdminController.allUsers}"
                      paginator="true" paginatorAlwaysVisible="false" rows="50"
-                     dynamic="true" style="width:98%"
-                     selection="#{userAdminController.selectedUsers}" >
-            <p:column selectionMode="multiple"/>
+                     dynamic="true" style="width:98%">
             <p:column>
                 <f:facet name="header">
                     <h:outputText value="Login"/>

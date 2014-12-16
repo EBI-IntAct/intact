@@ -94,6 +94,8 @@ public class UserSessionController extends BaseController implements DisposableB
                 addErrorMessage("Cannot notify last activity of user " + currentUser, e.getCause() + ": " + e.getMessage());
             } catch (PersisterException e) {
                 addErrorMessage("Cannot notify last activity of user " + currentUser, e.getCause() + ": " + e.getMessage());
+            } catch (Throwable e) {
+                addErrorMessage("Cannot notify last activity of user " + currentUser, e.getCause() + ": " + e.getMessage());
             }
         }
     }

@@ -61,6 +61,8 @@ public class UserProfileController extends AbstractUserController {
             addErrorMessage("Cannot save user " + user.getLogin(), e.getCause() + ": " + e.getMessage());
         } catch (PersisterException e) {
             addErrorMessage("Cannot save user " + user.getLogin(), e.getCause() + ": " + e.getMessage());
+        } catch (Throwable e) {
+            addErrorMessage("Cannot save user " + user.getLogin(), e.getCause() + ": " + e.getMessage());
         }
 
         return "/dashboard/dashboard";

@@ -291,6 +291,8 @@ public class InteractionController extends AnnotatedObjectController {
                     addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
                 } catch (PersisterException e) {
                     addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                }  catch (Throwable e) {
+                    addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
                 }
 
                 getChangesController().removeFromHiddenChanges(unsaved);
@@ -306,6 +308,8 @@ public class InteractionController extends AnnotatedObjectController {
                 } catch (FinderException e) {
                     addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
                 } catch (PersisterException e) {
+                    addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                } catch (Throwable e) {
                     addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
                 }
                 getChangesController().removeFromHiddenChanges(unsaved);

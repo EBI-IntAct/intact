@@ -83,6 +83,8 @@ public class InstitutionAdminController extends BaseController {
             addErrorMessage("Cannot merge institutions ", e.getCause() + ": " + e.getMessage());
         } catch (PersisterException e) {
             addErrorMessage("Cannot merge institutions ", e.getCause() + ": " + e.getMessage());
+        } catch (Throwable e) {
+            addErrorMessage("Cannot merge institutions ", e.getCause() + ": " + e.getMessage());
         }
     }
 
@@ -96,6 +98,8 @@ public class InstitutionAdminController extends BaseController {
         } catch (FinderException e) {
             addErrorMessage("Cannot delete institutions ", e.getCause() + ": " + e.getMessage());
         } catch (PersisterException e) {
+            addErrorMessage("Cannot delete institutions ", e.getCause() + ": " + e.getMessage());
+        } catch (Throwable e) {
             addErrorMessage("Cannot delete institutions ", e.getCause() + ": " + e.getMessage());
         }
     }
