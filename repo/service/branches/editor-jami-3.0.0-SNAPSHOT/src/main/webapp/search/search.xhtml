@@ -182,12 +182,6 @@ Results for query: <b>#{searchController.query}</b>
                 <f:param name="ac" value="#{organism.ac}"/>
             </h:link>
         </p:column>
-        <p:column>
-            <ui:include src="/curate/common_column_notifications.xhtml">
-                <ui:param name="annotatedObjectController" value="#{bioSourceController}"/>
-                <ui:param name="ao" value="#{organism}"/>
-            </ui:include>
-        </p:column>
         <p:column headerText="Short Name" sortBy="#{organism.commonName}">
             <h:outputText value="#{organism.commonName}"/>
         </p:column>
@@ -202,41 +196,41 @@ Results for query: <b>#{searchController.query}</b>
         </p:column>
         <p:column headerText="Participants Express In">
             <h:link outcome="/search/expressed_in" includeViewParams="true"
-                    value="#{searchController.countParticipantsExpressIn(organism.ac)}"
-                    rendered="#{searchController.countParticipantsExpressIn(organism.ac) > 0}">
+                    value="#{organism.numberParticipants}"
+                    rendered="#{organism.numberParticipants > 0}">
                 <f:param name="ac" value="#{organism.ac}"/>
                 <f:param name="shortLabel" value="#{organism.commonName}"/>
-                <f:param name="numParticipants" value="#{searchController.countParticipantsExpressIn(organism.ac)}"/>
+                <f:param name="numParticipants" value="#{organism.numberParticipants}"/>
             </h:link>
         </p:column>
         <p:column headerText="Experiments by Host Organism">
             <h:link outcome="/search/host_organism" includeViewParams="true"
-                    value="#{searchController.countExperimentsByHostOrganism(organism.ac)}"
-                    rendered="#{searchController.countExperimentsByHostOrganism(organism.ac) > 0}">
+                    value="#{organism.numberExperiments}"
+                    rendered="#{organism.numberExperiments > 0}">
                 <f:param name="ac" value="#{organism.ac}"/>
                 <f:param name="shortLabel" value="#{organism.commonName}"/>
-                <f:param name="numExperiments" value="#{searchController.countExperimentsByHostOrganism(organism.ac)}"/>
+                <f:param name="numExperiments" value="#{organism.numberExperiments}"/>
             </h:link>
         </p:column>
         <p:column headerText="Interactors by Organism">
             <h:link outcome="/search/organism" includeViewParams="true"
-                    value="#{searchController.countInteractorsByOrganism(organism.ac)}"
-                    rendered="#{searchController.countInteractorsByOrganism(organism.ac) > 0}">
+                    value="#{organism.numberMolecules}"
+                    rendered="#{organism.numberMolecules > 0}">
                 <f:param name="ac" value="#{organism.ac}"/>
                 <f:param name="shortLabel" value="#{organism.commonName}"/>
-                <f:param name="numInteractors" value="#{searchController.countInteractorsByOrganism(organism.ac)}"/>
+                <f:param name="numInteractors" value="#{organism.numberMolecules}"/>
             </h:link>
         </p:column>
         <p:column headerText="Complexes by Organism">
             <h:link outcome="/search/complex" includeViewParams="true"
-                    value="#{searchController.countComplexesByOrganism(organism.ac)}"
-                    rendered="#{searchController.countComplexesByOrganism(organism.ac) > 0 and searchController.complexSearchEnabled}">
+                    value="#{organism.numberComplexes}"
+                    rendered="#{organism.numberComplexes > 0 and searchController.complexSearchEnabled}">
                 <f:param name="ac" value="#{organism.ac}"/>
                 <f:param name="shortLabel" value="#{organism.commonName}"/>
-                <f:param name="numComplexes" value="#{searchController.countComplexesByOrganism(organism.ac)}"/>
+                <f:param name="numComplexes" value="#{organism.numberComplexes}"/>
             </h:link>
-            <h:outputText rendered="#{searchController.countComplexesByOrganism( organism.ac ) > 0 and !searchController.complexSearchEnabled}"
-                          value="#{searchController.countComplexesByOrganism( organism.ac )}"/>
+            <h:outputText rendered="#{organism.numberComplexes > 0 and !searchController.complexSearchEnabled}"
+                          value="#{organism.numberComplexes}"/>
         </p:column>
 
     </p:dataTable>

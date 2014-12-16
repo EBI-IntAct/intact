@@ -1,7 +1,5 @@
 package uk.ac.ebi.intact.editor.services.summary;
 
-import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
-
 /**
  * Class that summarizes a complex for the dashboard
  *
@@ -12,18 +10,13 @@ import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
 
 public class OrganismSummary {
     private String ac;
-    private String caution;
-    private String internalRemark;
-    private boolean isNoUniprotUpdate=false;
-    private String interactorType;
-    private String organism;
-    private String shortName;
-    private String fullName;
-    private String identityXref;
-    private int numberInteractions;
+    private String commonName;
+    private String scientificName;
+    private int taxId;
+    private int numberParticipants;
+    private int numberExperiments;
     private int numberComplexes;
-
-    private IntactInteractor molecule;
+    private int numberMolecules;
 
     public String getAc() {
         return ac;
@@ -33,76 +26,44 @@ public class OrganismSummary {
         this.ac = ac;
     }
 
-    public String getCaution() {
-        return caution;
+    public String getCommonName() {
+        return commonName;
     }
 
-    public void setCaution(String caution) {
-        this.caution = caution;
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
     }
 
-    public String getInternalRemark() {
-        return internalRemark;
+    public String getScientificName() {
+        return scientificName;
     }
 
-    public void setInternalRemark(String internalRemark) {
-        this.internalRemark = internalRemark;
+    public void setScientificName(String scientificName) {
+        this.scientificName = scientificName;
     }
 
-    public boolean isNoUniprotUpdate() {
-        return isNoUniprotUpdate;
+    public int getTaxId() {
+        return taxId;
     }
 
-    public void setNoUniprotUpdate(boolean isNoUniprotUpdate) {
-        this.isNoUniprotUpdate = isNoUniprotUpdate;
+    public void setTaxId(int taxId) {
+        this.taxId = taxId;
     }
 
-    public String getInteractorType() {
-        return interactorType;
+    public int getNumberParticipants() {
+        return numberParticipants;
     }
 
-    public void setInteractorType(String interactorType) {
-        this.interactorType = interactorType;
+    public void setNumberParticipants(int numberParticipants) {
+        this.numberParticipants = numberParticipants;
     }
 
-    public String getOrganism() {
-        return organism;
+    public int getNumberExperiments() {
+        return numberExperiments;
     }
 
-    public void setOrganism(String organism) {
-        this.organism = organism;
-    }
-
-    public String getShortName() {
-        return shortName;
-    }
-
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getIdentityXref() {
-        return identityXref;
-    }
-
-    public void setIdentityXref(String identityXref) {
-        this.identityXref = identityXref;
-    }
-
-    public int getNumberInteractions() {
-        return numberInteractions;
-    }
-
-    public void setNumberInteractions(int numberInteractions) {
-        this.numberInteractions = numberInteractions;
+    public void setNumberExperiments(int numberExperiments) {
+        this.numberExperiments = numberExperiments;
     }
 
     public int getNumberComplexes() {
@@ -113,11 +74,11 @@ public class OrganismSummary {
         this.numberComplexes = numberComplexes;
     }
 
-    public IntactInteractor getMolecule() {
-        return molecule;
+    public int getNumberMolecules() {
+        return numberMolecules;
     }
 
-    public void setMolecule(IntactInteractor molecule) {
-        this.molecule = molecule;
+    public void setNumberMolecules(int numberMolecules) {
+        this.numberMolecules = numberMolecules;
     }
 }

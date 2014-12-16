@@ -46,6 +46,9 @@ public class SearchQueryService extends AbstractEditorService {
     @Resource(name = "cvSummaryService")
     private CvSummaryService cvSummaryService;
 
+    @Resource(name = "organismSummaryService")
+    private OrganismSummaryService organismSummaryService;
+
     //////////////////
     // Constructors
 
@@ -175,26 +178,6 @@ public class SearchQueryService extends AbstractEditorService {
     public int countModelledFeaturesByParticipantAc( String ac ) {
         return getIntactDao().getModelledParticipantDao().countFeaturesForParticipant(ac);
     }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countParticipantsExpressIn( String biosourceAc ) {
-		return getIntactDao().getParticipantEvidenceDao().countParticipantsByExpressedInOrganism(biosourceAc);
-	}
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countComplexesByOrganism( String biosourceAc ) {
-        return getIntactDao().getComplexDao().countComplexesByOrganism(biosourceAc);
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countExperimentsByHostOrganism( String biosourceAc ) {
-		return getIntactDao().getExperimentDao().countExperimentsByHostOrganism(biosourceAc);
-	}
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countInteractorsByOrganism( String biosourceAc ) {
-		return getIntactDao().getInteractorDao(IntactInteractor.class).countInteractorsByOrganism(biosourceAc);
-	}
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public LazyDataModel<InteractionSummary>  loadInteractions( String query, String originalQuery ) {
@@ -439,7 +422,7 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactOrganism> loadOrganisms( String query, String originalQuery ) {
+    public LazyDataModel<OrganismSummary> loadOrganisms( String query, String originalQuery ) {
         log.info( "Searching for organisms matching '" + query + "'..." );
 
         final HashMap<String, String> params = Maps.newHashMap();
@@ -447,7 +430,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", originalQuery );
 
         // Load experiment eagerly to avoid LazyInitializationException when redering the view
-        LazyDataModel<IntactOrganism> organisms = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+        LazyDataModel<OrganismSummary> organisms = LazyDataModelFactory.createLazyDataModel( organismSummaryService,
 
                                                                  "select distinct b " +
                                                                  "from IntactOrganism b " +
