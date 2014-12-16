@@ -69,6 +69,10 @@ public abstract class AbstractEditorService implements EditorService {
             getIntactDao().getSynchronizerContext().clearCache();
             throw e;
         }
+        catch (Throwable e){
+            getIntactDao().getSynchronizerContext().clearCache();
+            throw new PersisterException(e.getMessage(), e);
+        }
     }
 
     protected <T extends Auditable> void persistIntactObject(T intactObject, IntactBaseDao<T> dao) throws SynchronizerException,
@@ -87,6 +91,10 @@ public abstract class AbstractEditorService implements EditorService {
         catch (PersisterException e){
             getIntactDao().getSynchronizerContext().clearCache();
             throw e;
+        }
+        catch (Throwable e){
+            getIntactDao().getSynchronizerContext().clearCache();
+            throw new PersisterException(e.getMessage(), e);
         }
     }
 
@@ -107,6 +115,10 @@ public abstract class AbstractEditorService implements EditorService {
             getIntactDao().getSynchronizerContext().clearCache();
             throw e;
         }
+        catch (Throwable e){
+            getIntactDao().getSynchronizerContext().clearCache();
+            throw new PersisterException(e.getMessage(), e);
+        }
     }
 
     protected <T extends Auditable,I> T synchronizeIntactObject(I intactObject, IntactDbSynchronizer<I,T> synchronizer, boolean persist) throws SynchronizerException,
@@ -125,6 +137,10 @@ public abstract class AbstractEditorService implements EditorService {
         catch (PersisterException e){
             getIntactDao().getSynchronizerContext().clearCache();
             throw e;
+        }
+        catch (Throwable e){
+            getIntactDao().getSynchronizerContext().clearCache();
+            throw new PersisterException(e.getMessage(), e);
         }
     }
 
