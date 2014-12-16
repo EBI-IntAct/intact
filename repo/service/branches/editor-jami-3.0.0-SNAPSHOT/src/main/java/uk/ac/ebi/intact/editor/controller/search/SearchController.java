@@ -54,7 +54,7 @@ public class SearchController extends BaseController {
 
     private LazyDataModel<MoleculeSummary> molecules;
 
-    private LazyDataModel<IntactCvTerm> cvobjects;
+    private LazyDataModel<CvSummary> cvobjects;
 
     private LazyDataModel<IntactFeatureEvidence> features;
 
@@ -503,23 +503,6 @@ public class SearchController extends BaseController {
         return searchService.countComplexesByOrganism(biosourceAc);
     }
 
-    public String getIdentifier( IntactCvTerm cv ) {
-        return searchService.getIdentifierCv(cv);
-    }
-
-    public String getType( IntactCvTerm cv ) {
-        if (cv.getObjClass() == null){
-            return "-";
-        }
-        int index = cv.getObjClass().lastIndexOf(".");
-        if (index >= 0 && index < cv.getObjClass().length()){
-            return cv.getObjClass().substring(index+1);
-        }
-        else{
-            return "-";
-        }
-    }
-
     ///////////////////////////
     // Getters and Setters
 
@@ -547,7 +530,7 @@ public class SearchController extends BaseController {
         return molecules;
     }
 
-    public LazyDataModel<IntactCvTerm> getCvobjects() {
+    public LazyDataModel<CvSummary> getCvobjects() {
         return cvobjects;
     }
 

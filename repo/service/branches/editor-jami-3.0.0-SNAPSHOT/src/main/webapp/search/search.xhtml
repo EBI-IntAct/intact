@@ -150,16 +150,16 @@ Results for query: <b>#{searchController.query}</b>
             </h:link>
         </p:column>
         <p:column>
-            <ui:include src="/curate/common_column_notifications.xhtml">
-                <ui:param name="annotatedObjectController" value="#{cvObjectController}"/>
-                <ui:param name="ao" value="#{cvobject}"/>
-            </ui:include>
+            <h:panelGroup rendered="#{cvobject.caution != null}">
+                <h:graphicImage alt="caution" library="images" name="warn.gif"
+                                title="#{cvobject.caution}"/>
+            </h:panelGroup>
         </p:column>
         <p:column headerText="Type">
-            <h:outputText value="#{searchController.getType(cvobject)}"/>
+            <h:outputText value="#{cvobject.type}"/>
         </p:column>
         <p:column headerText="Identifier">
-            <h:outputText value="#{searchController.getIdentifier(cvobject)}"/>
+            <h:outputText value="#{cvobject.identifier}"/>
         </p:column>
         <p:column headerText="AC" sortBy="#{cvobject.ac}">
             <h:outputText value="#{cvobject.ac}"/>
