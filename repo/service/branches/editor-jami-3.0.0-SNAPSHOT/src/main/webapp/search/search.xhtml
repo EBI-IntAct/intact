@@ -250,7 +250,7 @@ Results for query: <b>#{searchController.query}</b>
 <p:tab title="Participants (#{searchController.participants.rowCount})"
        rendered="#{searchController.publicationSearchEnabled and searchController.participants != null and searchController.participants.rowCount != 0}">
 
-    <ui:include src="participants_table.xhtml.xhtml">
+    <ui:include src="participants_table.xhtml">
         <ui:param name="participants" value="#{searchController.participants}"/>
     </ui:include>
 
