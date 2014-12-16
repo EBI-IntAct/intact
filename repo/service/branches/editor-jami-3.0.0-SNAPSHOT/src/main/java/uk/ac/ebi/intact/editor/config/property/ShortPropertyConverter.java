@@ -15,10 +15,13 @@
  */
 package uk.ac.ebi.intact.editor.config.property;
 
+import org.springframework.stereotype.Component;
+
 /**
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
+@Component
 public class ShortPropertyConverter implements PropertyConverter<Short> {
 
     public ShortPropertyConverter() {
