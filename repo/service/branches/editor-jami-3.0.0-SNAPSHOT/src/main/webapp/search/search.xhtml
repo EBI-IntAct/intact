@@ -127,7 +127,7 @@ Results for query: <b>#{searchController.query}</b>
 <p:tab title="Molecules (#{searchController.molecules.rowCount})"
        rendered="#{searchController.molecules != null and searchController.molecules.rowCount != 0}">
 
-    <ui:include src="/curate/molecules_table.xhtml">
+    <ui:include src="/search/molecules_table.xhtml">
         <ui:param name="molecules" value="#{searchController.molecules}"/>
         <ui:param name="complexSearchEnabled" value="#{searchController.complexSearchEnabled}"/>
     </ui:include>
@@ -240,30 +240,10 @@ Results for query: <b>#{searchController.query}</b>
 <p:tab title="Features (#{searchController.features.rowCount})"
        rendered="#{searchController.publicationSearchEnabled and searchController.features != null and searchController.features.rowCount != 0}">
 
-    <p:dataTable id="searchFeaturesTable" var="feature" value="#{searchController.features}"
-                 paginatorPosition="both"
-                 paginator="true" paginatorAlwaysVisible="false"
-                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                 rowsPerPageTemplate="10,20,50,100"
-                 rows="10"
-                 dynamic="true">
-        <p:column headerText="Name" sortBy="#{feature.shortName}">
-            <ot:separateConversationContext>
-                <h:link outcome="/curate/feature" value="#{feature.ac}" includeViewParams="true">
-                    <f:param name="ac" value="#{feature.ac}"/>
-                </h:link>
-            </ot:separateConversationContext>
-        </p:column>
-        <p:column>
-            <ui:include src="/curate/common_column_notifications.xhtml">
-                <ui:param name="annotatedObjectController" value="#{featureController}"/>
-                <ui:param name="ao" value="#{feature}"/>
-            </ui:include>
-        </p:column>
-        <p:column headerText="Name" sortBy="#{feature.shortName}">
-            <h:outputText value="#{feature.shortName}"/>
-        </p:column>
-    </p:dataTable>
+    <ui:include src="features_table.xhtml">
+        <ui:param name="features" value="#{searchController.features}"/>
+        <ui:param name="slug" value="feature"/>
+    </ui:include>
 
 </p:tab>
 
@@ -365,30 +345,10 @@ Results for query: <b>#{searchController.query}</b>
 <p:tab title="Complex Features (#{searchController.modelledFeatures.rowCount})"
        rendered="#{searchController.complexSearchEnabled and searchController.modelledFeatures != null and searchController.modelledFeatures.rowCount != 0}">
 
-    <p:dataTable id="searchModelledFeaturesTable" var="feature" value="#{searchController.modelledFeatures}"
-                 paginatorPosition="both"
-                 paginator="true" paginatorAlwaysVisible="false"
-                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                 rowsPerPageTemplate="10,20,50,100"
-                 rows="10"
-                 dynamic="true">
-        <p:column headerText="Name" sortBy="#{feature.shortName}">
-            <ot:separateConversationContext>
-                <h:link outcome="/curate/cfeature" value="#{feature.ac}" includeViewParams="true">
-                    <f:param name="ac" value="#{feature.ac}"/>
-                </h:link>
-            </ot:separateConversationContext>
-        </p:column>
-        <p:column>
-            <ui:include src="/curate/common_column_notifications.xhtml">
-                <ui:param name="annotatedObjectController" value="#{modelledFeatureController}"/>
-                <ui:param name="ao" value="#{feature}"/>
-            </ui:include>
-        </p:column>
-        <p:column headerText="Name" sortBy="#{feature.shortName}">
-            <h:outputText value="#{feature.shortName}"/>
-        </p:column>
-    </p:dataTable>
+    <ui:include src="features_table.xhtml">
+        <ui:param name="features" value="#{searchController.modelledFeatures}"/>
+        <ui:param name="slug" value="cfeature"/>
+    </ui:include>
 
 </p:tab>
 

@@ -56,7 +56,7 @@ public class SearchController extends BaseController {
 
     private LazyDataModel<CvSummary> cvobjects;
 
-    private LazyDataModel<IntactFeatureEvidence> features;
+    private LazyDataModel<FeatureSummary> features;
 
     private LazyDataModel<OrganismSummary> organisms;
 
@@ -66,7 +66,7 @@ public class SearchController extends BaseController {
 
     private LazyDataModel<IntactModelledParticipant> modelledParticipants;
 
-    private LazyDataModel<IntactModelledFeature> modelledFeatures;
+    private LazyDataModel<FeatureSummary> modelledFeatures;
 
     private List<Future> runningTasks;
 
@@ -519,7 +519,7 @@ public class SearchController extends BaseController {
         return cvobjects;
     }
 
-    public LazyDataModel<IntactFeatureEvidence> getFeatures() {
+    public LazyDataModel<FeatureSummary> getFeatures() {
         return features;
     }
 
@@ -539,7 +539,7 @@ public class SearchController extends BaseController {
         return modelledParticipants;
     }
 
-    public LazyDataModel<IntactModelledFeature> getModelledFeatures() {
+    public LazyDataModel<FeatureSummary> getModelledFeatures() {
         return modelledFeatures;
     }
 
