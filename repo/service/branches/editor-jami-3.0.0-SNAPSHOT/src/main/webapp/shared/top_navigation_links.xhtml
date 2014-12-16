@@ -34,7 +34,7 @@
         </li>
         <li>
 
-            <p:commandLink id="bulkOpNavLink" value="Bulk Op." action="/bulk/bulk_default?faces-redirect=true&amp;includeViewParams=true"
+            <p:commandLink id="bulkOpNavLink" value="Bulk Op." action="/bulk/bulk_add_annotation?faces-redirect=true&amp;includeViewParams=true"
                            rendered="#{userSessionController.hasRole('CURATOR') or userSessionController.hasRole('COMPLEX_CURATOR')}"
                            ajax="false"
                            styleClass="#{selected == 'bulk'? 'top-bar-selected' : ''}"
