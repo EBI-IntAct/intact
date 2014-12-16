@@ -11,7 +11,6 @@ import psidev.psi.mi.jami.model.Experiment;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.editor.services.summary.*;
 import uk.ac.ebi.intact.editor.util.LazyDataModelFactory;
-import uk.ac.ebi.intact.jami.model.extension.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -54,6 +53,12 @@ public class SearchQueryService extends AbstractEditorService {
 
     @Resource(name = "modelledFeatureSummaryService")
     private ModelledFeatureSummaryService modelledFeatureSummaryService;
+
+    @Resource(name = "participantEvidenceSummaryService")
+    private ParticipantEvidenceSummaryService participantEvidenceSummaryService;
+
+    @Resource(name = "modelledParticipantSummaryService")
+    private ModelledParticipantSummaryService modelledParticipantSummaryService;
 
     //////////////////
     // Constructors
@@ -173,16 +178,6 @@ public class SearchQueryService extends AbstractEditorService {
 
         log.info( "Molecules found: " + molecules.getRowCount() );
         return molecules;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countFeaturesByParticipantAc( IntactParticipantEvidence comp ) {
-        return getIntactDao().getParticipantEvidenceDao().countFeaturesForParticipant(comp.getAc());
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countModelledFeaturesByParticipantAc( String ac ) {
-        return getIntactDao().getModelledParticipantDao().countFeaturesForParticipant(ac);
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
@@ -459,7 +454,7 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactParticipantEvidence> loadParticipants( String query, String originalQuery ) {
+    public LazyDataModel<ParticipantSummary> loadParticipants( String query, String originalQuery ) {
         log.info( "Searching for participants matching '" + query + "'..." );
 
         final HashMap<String, String> params = Maps.newHashMap();
@@ -467,7 +462,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", originalQuery );
 
         // Load experiment eagerly to avoid LazyInitializationException when redering the view
-        LazyDataModel<IntactParticipantEvidence> participants = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+        LazyDataModel<ParticipantSummary> participants = LazyDataModelFactory.createLazyDataModel( participantEvidenceSummaryService,
 
                 "select distinct p " +
                         "from IntactParticipantEvidence p left join p.xrefs as x " +
@@ -486,14 +481,14 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactParticipantEvidence> loadParticipantsByOrganism( String organismAc ) {
+    public LazyDataModel<ParticipantSummary> loadParticipantsByOrganism( String organismAc ) {
         log.info( "Searching for participants with organism '" + organismAc + "'..." );
 
         final HashMap<String, String> params = Maps.newHashMap();
         params.put( "ac", organismAc );
 
         // Load experiment eagerly to avoid LazyInitializationException when redering the view
-        LazyDataModel<IntactParticipantEvidence> participants = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+        LazyDataModel<ParticipantSummary> participants = LazyDataModelFactory.createLazyDataModel( participantEvidenceSummaryService,
 
                 "select distinct p " +
                         "from IntactParticipantEvidence p join p.expressedInOrganism as o " +
@@ -540,7 +535,7 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactModelledParticipant> loadModelledParticipants(String finalQuery, String originalQuery) {
+    public LazyDataModel<ParticipantSummary> loadModelledParticipants(String finalQuery, String originalQuery) {
         log.info( "Searching for complex participants matching '" + finalQuery + "'..." );
 
         final HashMap<String, String> params = Maps.newHashMap();
@@ -548,7 +543,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", originalQuery );
 
         // Load experiment eagerly to avoid LazyInitializationException when redering the view
-        LazyDataModel<IntactModelledParticipant> modelledParticipants = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+        LazyDataModel<ParticipantSummary> modelledParticipants = LazyDataModelFactory.createLazyDataModel( modelledParticipantSummaryService,
 
                 "select distinct p " +
                         "from IntactModelledParticipant p left join p.xrefs as x " +

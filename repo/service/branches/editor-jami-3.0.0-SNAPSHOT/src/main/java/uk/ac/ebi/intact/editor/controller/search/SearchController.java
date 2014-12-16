@@ -11,10 +11,9 @@ import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.editor.application.SearchThreadConfig;
 import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
-import uk.ac.ebi.intact.editor.services.summary.*;
 import uk.ac.ebi.intact.editor.services.search.SearchQueryService;
+import uk.ac.ebi.intact.editor.services.summary.*;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
-import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.model.user.Role;
 
 import javax.annotation.Resource;
@@ -60,11 +59,11 @@ public class SearchController extends BaseController {
 
     private LazyDataModel<OrganismSummary> organisms;
 
-    private LazyDataModel<IntactParticipantEvidence> participants;
+    private LazyDataModel<ParticipantSummary> participants;
 
     private LazyDataModel<ComplexSummary> complexes;
 
-    private LazyDataModel<IntactModelledParticipant> modelledParticipants;
+    private LazyDataModel<ParticipantSummary> modelledParticipants;
 
     private LazyDataModel<FeatureSummary> modelledFeatures;
 
@@ -479,14 +478,6 @@ public class SearchController extends BaseController {
 
     }
 
-    public int countFeaturesByParticipantAc( IntactParticipantEvidence comp ) {
-        return searchService.countFeaturesByParticipantAc(comp);
-    }
-
-    public int countModelledFeaturesByParticipantAc( String ac ) {
-        return searchService.countModelledFeaturesByParticipantAc(ac);
-    }
-
 
     ///////////////////////////
     // Getters and Setters
@@ -527,7 +518,7 @@ public class SearchController extends BaseController {
         return organisms;
     }
 
-    public LazyDataModel<IntactParticipantEvidence> getParticipants() {
+    public LazyDataModel<ParticipantSummary> getParticipants() {
         return participants;
     }
 
@@ -535,7 +526,7 @@ public class SearchController extends BaseController {
         return complexes;
     }
 
-    public LazyDataModel<IntactModelledParticipant> getModelledParticipants() {
+    public LazyDataModel<ParticipantSummary> getModelledParticipants() {
         return modelledParticipants;
     }
 

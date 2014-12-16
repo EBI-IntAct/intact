@@ -30,82 +30,9 @@
             <hr/>
         </p:outputPanel>
         <p:accordionPanel autoHeight="false">
-            <p:tab title="Participants (#{expressInOrganismController.participants.rowCount})"
-                   rendered="#{expressInOrganismController.participants.rowCount != 0}">
-
-                <p:dataTable id="searchParticipantsTable" var="participant"
-                             value="#{expressInOrganismController.participants}"
-                             paginator="true"
-                             paginatorAlwaysVisible="false"
-                             rows="10"
-                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                             rowsPerPageTemplate="10,20,50,100">
-
-                    <ui:param name="interactor" value="#{participant.interactor}"/>
-                    <ui:param name="expRole"
-                              value="#{participant.experimentalRole.shortName}"/>
-
-                    <p:column headerText="AC">
-                        <h:outputText value="#{participant.ac}" rendered="#{participant.ac != null}"/>
-                    </p:column>
-
-                    <p:column headerText="Name" sortBy="#{interactor.shortName}">
-                        <p:commandLink action="#{curateController.editByAc(participant.ac)}"
-                                       value="#{interactor.shortName}"
-                                       rendered="#{interactor != null and not changesController.isDeletedAc(participant.ac)}"
-                                       styleClass="#{participant.ac == null? 'intact-new' :''}"
-                                       ajax="false"/>
-                        <h:panelGroup rendered="#{changesController.isDeletedAc(participant.ac)}">
-                            <h:outputText value="#{interactor.shortName}" styleClass="intact-deleted"/>
-                        </h:panelGroup>
-                    </p:column>
-
-                    <p:column>
-                        <ui:include src="/curate/common_column_notifications.xhtml">
-                            <ui:param name="annotatedObjectController" value="#{participantController}"/>
-                            <ui:param name="ao" value="#{participant}"/>
-                        </ui:include>
-                        <h:panelGroup rendered="#{annotatedObjectController.isNoUniprotUpdate(participant.interactor)}">
-                            <h:graphicImage alt="no uniprot update" library="images" name="no_uni_update.png"
-                                            title="No Uniprot Update"/>
-                        </h:panelGroup>
-                    </p:column>
-
-                    <p:column headerText="Identity">
-                        <h:outputText id="participantId"
-                                      value="#{searchController.getIdentityXref(participant.interactor)}"
-                                      styleClass="#{changesController.isDeletedAc(participant.ac)? 'intact-deleted' : ''}"/>
-                    </p:column>
-
-                    <p:column headerText="Expressed in">
-                        <h:outputText
-                                value="#{participant.expressedInOrganism != null? participant.expressedInOrganism.commonName : ''}"/>
-                    </p:column>
-
-                    <p:column headerText="Experimental role">
-                        <h:outputText value="#{expRole}"/>
-                    </p:column>
-
-                    <p:column headerText="Biological role">
-
-                        <h:outputText
-                                value="#{participant.biologicalRole != null? participant.biologicalRole.shortName : ''}"/>
-                    </p:column>
-
-                    <p:column headerText="# Features">
-                        <h:outputText value="#{searchController.countFeaturesByParticipantAc( participant )}"/>
-                    </p:column>
-
-                    <p:column headerText="Min Stoich.">
-                        <h:outputText id="minStoichiometryTxt" value="#{participant.stoichiometry.minValue}" rendered="#{participant.stoichiometry != null}"/>
-                    </p:column>
-
-                    <p:column headerText="Max Stoich.">
-                        <h:outputText id="maxStoichiometryTxt" value="#{participant.stoichiometry.maxValue}" rendered="#{participant.stoichiometry != null}"/>
-                    </p:column>
-                </p:dataTable>
-
-            </p:tab>
+            <ui:include src="participants_table.xhtml.xhtml">
+                <ui:param name="participants" value="#{expressInOrganismController.participants}"/>
+            </ui:include>
         </p:accordionPanel>
 
     </ui:define>
