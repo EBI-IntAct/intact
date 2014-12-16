@@ -148,7 +148,7 @@ BEGIN
 
             SELECT count( distinct p.ac ) INTO v_publications
             FROM ia_publication e
-            WHERE e.shortlabel <> '14681455'
+            WHERE e.shortlabel <> '14681455' AND
                   e.created <= v_date;
 
             DBMS_OUTPUT.PUT_LINE( 'CREATE: ' || to_char( v_date )||': '||to_char(v_interaction_number)||' '||to_char(v_binary_interactions)||' '||to_char(v_complex_interactions)||' '||to_char(v_experiment_number)||' '||to_char(v_term_number) ||' '||to_char(v_publications));
