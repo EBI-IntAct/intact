@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.services.search.SearchQueryService;
+import uk.ac.ebi.intact.editor.services.summary.InteractionSummary;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
-import uk.ac.ebi.intact.jami.model.extension.IntactInteractionEvidence;
 
 import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
@@ -26,7 +26,7 @@ import javax.faces.event.ComponentSystemEvent;
 public class SearchInteractionsMoleculeController extends BaseController {
 
 	private String ac;
-	private LazyDataModel<IntactInteractionEvidence> interactions = null;
+	private LazyDataModel<InteractionSummary> interactions = null;
 	private String shortLabel;
 	private String numInteractions;
 
@@ -50,7 +50,7 @@ public class SearchInteractionsMoleculeController extends BaseController {
 		}
 	}
 
-	public LazyDataModel<IntactInteractionEvidence> getInteractions() {
+	public LazyDataModel<InteractionSummary> getInteractions() {
 		return interactions;
 	}
 

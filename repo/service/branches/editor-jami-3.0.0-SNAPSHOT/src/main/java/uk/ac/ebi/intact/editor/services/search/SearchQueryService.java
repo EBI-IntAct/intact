@@ -10,10 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.Experiment;
 import psidev.psi.mi.jami.model.Xref;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
-import uk.ac.ebi.intact.editor.services.dashboard.ComplexSummary;
-import uk.ac.ebi.intact.editor.services.dashboard.ComplexSummaryService;
-import uk.ac.ebi.intact.editor.services.dashboard.PublicationSummary;
-import uk.ac.ebi.intact.editor.services.dashboard.PublicationSummaryService;
+import uk.ac.ebi.intact.editor.services.summary.*;
 import uk.ac.ebi.intact.editor.util.LazyDataModelFactory;
 import uk.ac.ebi.intact.jami.model.extension.*;
 
@@ -40,6 +37,9 @@ public class SearchQueryService extends AbstractEditorService {
 
     @Resource(name = "experimentSummaryService")
     private ExperimentSummaryService experimentSummaryService;
+
+    @Resource(name = "interactionSummaryService")
+    private InteractionSummaryService interactionSummaryService;
 
     //////////////////
     // Constructors
@@ -202,7 +202,7 @@ public class SearchQueryService extends AbstractEditorService {
 	}
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactInteractionEvidence>  loadInteractions( String query, String originalQuery ) {
+    public LazyDataModel<InteractionSummary>  loadInteractions( String query, String originalQuery ) {
 
         log.info( "Searching for Interactions matching '" + query + "'..." );
 
@@ -211,7 +211,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", originalQuery );
 
         // Load experiment eagerly to avoid LazyInitializationException when rendering the view
-        LazyDataModel<IntactInteractionEvidence> interactions = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+        LazyDataModel<InteractionSummary> interactions = LazyDataModelFactory.createLazyDataModel( interactionSummaryService,
 
                                                                  "select distinct i " +
                                                                  "from IntactInteractionEvidence i left join i.dbXrefs as x " +
@@ -232,7 +232,7 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactInteractionEvidence>  loadInteractionsByMolecule( String moleculeAc ) {
+    public LazyDataModel<InteractionSummary>  loadInteractionsByMolecule( String moleculeAc ) {
 
         log.info( "Searching for Interactions with molecule '" + moleculeAc + "'..." );
 
@@ -240,7 +240,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", moleculeAc );
 
         // Load experiment eagerly to avoid LazyInitializationException when rendering the view
-        LazyDataModel<IntactInteractionEvidence> interactions = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+        LazyDataModel<InteractionSummary> interactions = LazyDataModelFactory.createLazyDataModel( interactionSummaryService,
 
                 "select distinct i " +
                         "from IntactInteractionEvidence i join i.participants as p join p.interactor as inter " +

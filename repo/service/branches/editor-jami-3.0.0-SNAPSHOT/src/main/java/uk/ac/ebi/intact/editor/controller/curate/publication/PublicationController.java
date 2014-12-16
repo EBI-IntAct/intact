@@ -41,8 +41,10 @@ import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.services.curate.publication.DatasetPopulator;
 import uk.ac.ebi.intact.editor.services.curate.publication.PublicationEditorService;
-import uk.ac.ebi.intact.editor.services.search.ExperimentSummary;
-import uk.ac.ebi.intact.editor.services.search.ExperimentSummaryService;
+import uk.ac.ebi.intact.editor.services.summary.ExperimentSummary;
+import uk.ac.ebi.intact.editor.services.summary.ExperimentSummaryService;
+import uk.ac.ebi.intact.editor.services.summary.InteractionSummary;
+import uk.ac.ebi.intact.editor.services.summary.InteractionSummaryService;
 import uk.ac.ebi.intact.editor.util.LazyDataModelFactory;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.lifecycle.LifeCycleManager;
@@ -104,7 +106,7 @@ public class PublicationController extends AnnotatedObjectController {
 
     private boolean isLifeCycleDisabled;
 
-    private LazyDataModel<IntactInteractionEvidence> interactionDataModel;
+    private LazyDataModel<InteractionSummary> interactionDataModel;
 
     @Autowired
     private UserSessionController userSessionController;
@@ -117,6 +119,9 @@ public class PublicationController extends AnnotatedObjectController {
 
     @Resource(name = "experimentSummaryService")
     private transient ExperimentSummaryService experimentSummaryService;
+
+    @Resource(name = "interactionSummaryService")
+    private transient InteractionSummaryService interactionSummaryService;
 
     @Resource(name = "imexCentralManager")
     private transient ImexCentralManager imexCentralManager;
@@ -234,7 +239,7 @@ public class PublicationController extends AnnotatedObjectController {
     }
 
     public void refreshDataModels() {
-        interactionDataModel = getPublicationEditorService().refreshDataModels(this.publication);
+        interactionDataModel = getInteractionSummaryService().refreshDataModels(this.publication);
     }
 
     private void loadFormFields() {
@@ -1590,7 +1595,7 @@ public class PublicationController extends AnnotatedObjectController {
         return datasetPopulator;
     }
 
-    public LazyDataModel<IntactInteractionEvidence> getInteractionDataModel() {
+    public LazyDataModel<InteractionSummary> getInteractionDataModel() {
         return interactionDataModel;
     }
 
@@ -1850,6 +1855,7 @@ public class PublicationController extends AnnotatedObjectController {
         if (add){
             publication.getExperiments().add(exp);
         }
+        refreshExperiments();
         refreshDataModels();
     }
 
@@ -1864,6 +1870,7 @@ public class PublicationController extends AnnotatedObjectController {
                 evIterator.remove();
             }
         }
+        refreshExperiments();
         refreshDataModels();
     }
 
@@ -1902,5 +1909,12 @@ public class PublicationController extends AnnotatedObjectController {
             this.experimentSummaryService = ApplicationContextProvider.getBean("experimentSummaryService");
         }
         return experimentSummaryService;
+    }
+
+    public InteractionSummaryService getInteractionSummaryService() {
+        if (this.interactionSummaryService == null){
+            this.interactionSummaryService = ApplicationContextProvider.getBean("interactionSummaryService");
+        }
+        return interactionSummaryService;
     }
 }

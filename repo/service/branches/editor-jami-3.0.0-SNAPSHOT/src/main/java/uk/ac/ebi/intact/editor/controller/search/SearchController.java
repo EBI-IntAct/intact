@@ -11,9 +11,10 @@ import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.editor.application.SearchThreadConfig;
 import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
-import uk.ac.ebi.intact.editor.services.dashboard.ComplexSummary;
-import uk.ac.ebi.intact.editor.services.dashboard.PublicationSummary;
-import uk.ac.ebi.intact.editor.services.search.ExperimentSummary;
+import uk.ac.ebi.intact.editor.services.summary.ComplexSummary;
+import uk.ac.ebi.intact.editor.services.summary.InteractionSummary;
+import uk.ac.ebi.intact.editor.services.summary.PublicationSummary;
+import uk.ac.ebi.intact.editor.services.summary.ExperimentSummary;
 import uk.ac.ebi.intact.editor.services.search.SearchQueryService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.extension.*;
@@ -52,7 +53,7 @@ public class SearchController extends BaseController {
 
     private LazyDataModel<ExperimentSummary> experiments;
 
-    private LazyDataModel<IntactInteractionEvidence> interactions;
+    private LazyDataModel<InteractionSummary> interactions;
 
     private LazyDataModel<IntactInteractor> molecules;
 
@@ -553,7 +554,7 @@ public class SearchController extends BaseController {
         return experiments;
     }
 
-    public LazyDataModel<IntactInteractionEvidence> getInteractions() {
+    public LazyDataModel<InteractionSummary> getInteractions() {
         return interactions;
     }
 

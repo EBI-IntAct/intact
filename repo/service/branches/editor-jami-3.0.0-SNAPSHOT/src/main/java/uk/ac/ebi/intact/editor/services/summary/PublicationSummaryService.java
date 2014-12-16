@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.editor.services.dashboard;
+package uk.ac.ebi.intact.editor.services.summary;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;

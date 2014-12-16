@@ -198,16 +198,6 @@ public class PublicationEditorService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactInteractionEvidence> refreshDataModels(IntactPublication publication) {
-        return LazyDataModelFactory.createLazyDataModel(getIntactDao().getEntityManager(),
-                "select i from IntactInteractionEvidence i join fetch i.dbExperiments as exp " +
-                        "where exp.publication.ac = '" + publication.getAc() + "' order by exp.shortLabel asc",
-                "select count(i) from IntactInteractionEvidence i join i.dbExperiments as exp " +
-                        "where exp.publication.ac = '" + publication.getAc() + "'"
-        );
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public boolean doesDatasetAlreadyExist(String datasetName) {
         String sql = "select distinct a.value from PublicationAnnotation a where a.topic.shortName = :dataset and lower(a.value) like :name";
         Query query = getIntactDao().getEntityManager().createQuery(sql);

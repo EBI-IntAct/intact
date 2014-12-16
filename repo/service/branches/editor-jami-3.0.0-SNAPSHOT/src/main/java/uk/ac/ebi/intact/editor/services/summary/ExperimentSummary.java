@@ -1,4 +1,4 @@
-package uk.ac.ebi.intact.editor.services.search;
+package uk.ac.ebi.intact.editor.services.summary;
 
 import uk.ac.ebi.intact.jami.model.extension.IntactExperiment;
 
