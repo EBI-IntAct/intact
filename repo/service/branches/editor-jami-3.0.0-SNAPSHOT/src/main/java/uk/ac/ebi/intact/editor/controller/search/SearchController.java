@@ -11,10 +11,7 @@ import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.editor.application.SearchThreadConfig;
 import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
-import uk.ac.ebi.intact.editor.services.summary.ComplexSummary;
-import uk.ac.ebi.intact.editor.services.summary.InteractionSummary;
-import uk.ac.ebi.intact.editor.services.summary.PublicationSummary;
-import uk.ac.ebi.intact.editor.services.summary.ExperimentSummary;
+import uk.ac.ebi.intact.editor.services.summary.*;
 import uk.ac.ebi.intact.editor.services.search.SearchQueryService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.extension.*;
@@ -55,7 +52,7 @@ public class SearchController extends BaseController {
 
     private LazyDataModel<InteractionSummary> interactions;
 
-    private LazyDataModel<IntactInteractor> molecules;
+    private LazyDataModel<MoleculeSummary> molecules;
 
     private LazyDataModel<IntactCvTerm> cvobjects;
 
@@ -482,14 +479,6 @@ public class SearchController extends BaseController {
 
     }
 
-    public int countInteractionsByMoleculeAc( IntactInteractor molecule ) {
-        return searchService.countInteractionsByMoleculeAc(molecule);
-    }
-
-    public int countComplexesByMoleculeAc( IntactInteractor molecule ) {
-        return searchService.countComplexesByMoleculeAc(molecule);
-    }
-
     public int countFeaturesByParticipantAc( IntactParticipantEvidence comp ) {
         return searchService.countFeaturesByParticipantAc(comp);
     }
@@ -512,10 +501,6 @@ public class SearchController extends BaseController {
 
     public int countComplexesByOrganism( String biosourceAc ) {
         return searchService.countComplexesByOrganism(biosourceAc);
-    }
-
-    public String getIdentityXref( IntactInteractor molecule ) {
-        return searchService.getIdentityXref(molecule);
     }
 
     public String getIdentifier( IntactCvTerm cv ) {
@@ -558,7 +543,7 @@ public class SearchController extends BaseController {
         return interactions;
     }
 
-    public LazyDataModel<IntactInteractor> getMolecules() {
+    public LazyDataModel<MoleculeSummary> getMolecules() {
         return molecules;
     }
 

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.Experiment;
-import psidev.psi.mi.jami.model.Xref;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.editor.services.summary.*;
 import uk.ac.ebi.intact.editor.util.LazyDataModelFactory;
@@ -40,6 +39,9 @@ public class SearchQueryService extends AbstractEditorService {
 
     @Resource(name = "interactionSummaryService")
     private InteractionSummaryService interactionSummaryService;
+
+    @Resource(name = "moleculeSummaryService")
+    private MoleculeSummaryService moleculeSummaryService;
 
     //////////////////
     // Constructors
@@ -81,7 +83,7 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactInteractor> loadMolecules( String query, String originalQuery ) {
+    public LazyDataModel<MoleculeSummary> loadMolecules( String query, String originalQuery ) {
 
         log.info( "Searching for Molecules matching '" + query + "'..." );
 
@@ -90,7 +92,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", originalQuery );
 
         // all molecules but interactions
-        LazyDataModel<IntactInteractor> molecules = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+        LazyDataModel<MoleculeSummary> molecules = LazyDataModelFactory.createLazyDataModel( moleculeSummaryService,
 
                                                               "select distinct i " +
                                                               "from IntactInteractor i left join i.dbXrefs as x " +
@@ -112,7 +114,7 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public LazyDataModel<IntactInteractor> loadMoleculesByOrganism( String organismAc ) {
+    public LazyDataModel<MoleculeSummary> loadMoleculesByOrganism( String organismAc ) {
 
         log.info( "Searching for Molecules matching organism '" + organismAc + "'..." );
 
@@ -120,7 +122,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", organismAc );
 
         // all molecules but interactions
-        LazyDataModel<IntactInteractor> molecules = LazyDataModelFactory.createLazyDataModel( getIntactDao().getEntityManager(),
+        LazyDataModel<MoleculeSummary> molecules = LazyDataModelFactory.createLazyDataModel( moleculeSummaryService,
 
                 "select distinct i " +
                         "from IntactInteractor i join i.organism as o " +
@@ -159,16 +161,6 @@ public class SearchQueryService extends AbstractEditorService {
 
         log.info( "Molecules found: " + molecules.getRowCount() );
         return molecules;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countInteractionsByMoleculeAc( IntactInteractor molecule ) {
-        return getIntactDao().getInteractionDao().countInteractionsInvolvingInteractor(molecule.getAc());
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public int countComplexesByMoleculeAc( IntactInteractor molecule ) {
-        return getIntactDao().getComplexDao().countComplexesInvolvingInteractor(molecule.getAc());
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
@@ -580,21 +572,6 @@ public class SearchQueryService extends AbstractEditorService {
 
         log.info( "Complex Participants found: " + modelledParticipants.getRowCount() );
         return modelledParticipants;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public String getIdentityXref( IntactInteractor molecule ) {
-        IntactInteractor reloaded = getIntactDao().getEntityManager().merge(molecule);
-        // TODO handle multiple identities (return xref and iterate to display them all)
-        Xref xrefs = reloaded.getPreferredIdentifier();
-
-
-        if ( xrefs == null ) {
-            return "-";
-        }
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return xrefs.getId();
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
