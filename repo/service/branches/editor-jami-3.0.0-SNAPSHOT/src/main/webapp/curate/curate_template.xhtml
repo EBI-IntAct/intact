@@ -59,7 +59,7 @@
                 <p:menuitem id="openByPmidItem" value="by PMID..." onclick="openByPmidDlg.show(); "/>
             </p:submenu>
             <p:menuitem id="saveItem" value="Save" oncomplete="save()" icon="/resources/images/save.gif"
-                        rendered="#{annotatedObjectController.annotatedObject != null or annotatedObjectController.jamiObject != null}"/>
+                        rendered="#{annotatedObjectController.annotatedObject != null}"/>
         </p:submenu>
 
         <p:submenu label="Tools" rendered="#{annotatedObjectController.annotatedObject != null or annotatedObjectController.jamiObject != null}">
@@ -97,16 +97,11 @@
 
     </script>
 
-    <h:panelGroup rendered="#{annotatedObjectController.annotatedObject == null and annotatedObjectController.jamiObject == null}">
+    <h:panelGroup rendered="#{annotatedObjectController.annotatedObject == null}">
         <ui:insert name="emptyCurateContent"/>
     </h:panelGroup>
 
     <h:panelGroup rendered="#{annotatedObjectController.annotatedObject != null and changesController.isDeletedAc(annotatedObjectController.annotatedObject.ac)}">
-        <ia:panelMessage level="info">
-            <h:outputText value="This object will be deleted on save."/>
-        </ia:panelMessage>
-    </h:panelGroup>
-    <h:panelGroup rendered="#{annotatedObjectController.jamiObject != null and changesController.isDeletedAc(annotatedObjectController.jamiObject.ac)}">
         <ia:panelMessage level="info">
             <h:outputText value="This object will be deleted on save."/>
         </ia:panelMessage>
