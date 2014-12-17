@@ -27,10 +27,12 @@ import org.springframework.batch.core.launch.NoSuchJobExecutionException;
 import org.springframework.batch.core.launch.NoSuchJobInstanceException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import psidev.psi.mi.jami.batch.MIBatchJobManager;
+import uk.ac.ebi.intact.dataexchange.dbimporter.writer.AbstractIntactDbImporter;
 import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 
@@ -39,8 +41,7 @@ import javax.faces.component.UIParameter;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -125,17 +126,17 @@ public class AdminJobController extends BaseController {
     }
 
     public List<JobExecution> getRunningJobExecutions( String jobName ) {
-        return new ArrayList<JobExecution>( getJobExplorer().findRunningJobExecutions( jobName ) );
+        return new ArrayList<JobExecution>( getJobExplorer().findRunningJobExecutions(jobName) );
     }
 
     public List<JobInstance> getJobInstances( String jobName ) {
-        return getJobExplorer().getJobInstances( jobName, 0, 10 );
+        return getJobExplorer().getJobInstances(jobName, 0, 10);
     }
 
     public List<JobExecution> getJobExecutions( Long jobInstanceId ) {
         if ( jobInstanceId > 0 ) {
-            JobInstance jobInstance = getJobExplorer().getJobInstance( jobInstanceId );
-            return getJobExplorer().getJobExecutions( jobInstance );
+            JobInstance jobInstance = getJobExplorer().getJobInstance(jobInstanceId);
+            return getJobExplorer().getJobExecutions(jobInstance);
         }
         return new ArrayList<JobExecution>();
     }
@@ -145,11 +146,29 @@ public class AdminJobController extends BaseController {
     }
 
     public List<Throwable> getFailureExceptions( JobExecution jobExecution ) {
-        return new ArrayList<Throwable>( jobExecution.getFailureExceptions() );
+
+        return new ArrayList<Throwable>( jobExecution.getAllFailureExceptions() );
+    }
+
+    public Map<String,String> getImportStatistics( JobExecution jobExecution ) {
+        Collection<StepExecution> stepExecutions = jobExecution.getStepExecutions();
+        Map<String,String> statistics = new HashMap<String, String>();
+        if (!stepExecutions.isEmpty()){
+            StepExecution firstStep = stepExecutions.iterator().next();
+            ExecutionContext stepContext = firstStep.getExecutionContext();
+
+            for (Map.Entry<String, Object> entry : stepContext.entrySet()){
+                // persisted count
+                if (entry.getKey().startsWith(AbstractIntactDbImporter.PERSIST_MAP_COUNT)){
+                    statistics.put(entry.getKey().substring(entry.getKey().lastIndexOf("_")+1), Integer.toString((Integer)entry.getValue()));
+                }
+            }
+        }
+        return statistics;
     }
 
     public boolean hasJobFailed( JobExecution jobExecution ) {
-        return jobExecution.getExitStatus().getExitCode().equals(ExitStatus.FAILED);
+        return jobExecution.getExitStatus().equals(ExitStatus.FAILED);
     }
 
     public String printFullStackTrace( Throwable e ) {
