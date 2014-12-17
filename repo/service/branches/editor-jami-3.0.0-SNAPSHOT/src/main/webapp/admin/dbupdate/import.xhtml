@@ -8,12 +8,6 @@
 
 <f:view contentType="text/html">
 
-    <ui:define name="metadata">
-        <f:metadata>
-            <f:event type="preRenderView" listener="#{dbImportController.initFileImport}"/>
-        </f:metadata>
-    </ui:define>
-
     <h:head>
         <title>#{title != null? title : 'Editor'}</title>
         <link rel="stylesheet" type="text/css"
@@ -56,14 +50,15 @@
                 <h:form id="fileUpload" enctype="multipart/form-data">
                     <p:fileUpload value="#{dbImportController.uploadedFile}" mode="simple"/>
                     <br/><br/>
-                    <p:commandButton value="Upload File containing interaction evidences" ajax="false" actionListener="#{dbImportController.launchFileImport}"
+                    <p:commandButton value="Upload interaction evidences" ajax="false" actionListener="#{dbImportController.launchFileImport}"
                                      update=":fileUploadPanel"/>
                 </h:form>
-
+                <br/>
+                <br/>
                 <h:form id="complexFileUpload" enctype="multipart/form-data">
                     <p:fileUpload value="#{dbImportController.uploadedFile}" mode="simple"/>
                     <br/><br/>
-                    <p:commandButton value="Upload File containing biological complexes" ajax="false" actionListener="#{dbImportController.launchComplexFileImport}"
+                    <p:commandButton value="Upload biological complexes" ajax="false" actionListener="#{dbImportController.launchComplexFileImport}"
                                      update=":fileUploadPanel"/>
                 </h:form>
 

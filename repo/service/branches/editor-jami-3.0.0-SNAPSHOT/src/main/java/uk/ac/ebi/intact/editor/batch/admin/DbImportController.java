@@ -154,6 +154,10 @@ public class DbImportController extends BaseController {
         return uploadedFile;
     }
 
+    public void setUploadedFile(UploadedFile uploadedFile) {
+        this.uploadedFile = uploadedFile;
+    }
+
     public String getJobId() {
         return jobId;
     }
