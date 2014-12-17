@@ -48,7 +48,7 @@
 
             <h:panelGroup id="fileUploadPanel">
                 <h:form id="fileUpload" enctype="multipart/form-data">
-                    <p:fileUpload value="#{dbImportController.uploadedFile}" mode="simple"/>
+                    <p:fileUpload value="#{dbImportController.uploadedFile}" mode="simple" required="true" requiredMessage="File containing interaction evidence has to be provided"/>
                     <br/><br/>
                     <p:commandButton value="Upload interaction evidences" ajax="false" actionListener="#{dbImportController.launchFileImport}"
                                      update=":fileUploadPanel"/>
@@ -56,12 +56,13 @@
                 <br/>
                 <br/>
                 <h:form id="complexFileUpload" enctype="multipart/form-data">
-                    <p:fileUpload value="#{dbImportController.uploadedFile}" mode="simple"/>
+                    <p:fileUpload value="#{dbImportController.uploadedFile}" mode="simple" required="true" requiredMessage="File containing complexes has to be provided"/>
                     <br/><br/>
                     <p:commandButton value="Upload biological complexes" ajax="false" actionListener="#{dbImportController.launchComplexFileImport}"
                                      update=":fileUploadPanel"/>
                 </h:form>
-
+                <br/>
+                <br/>
                 <h:outputText value="Job running #{dbImportController.jobId}" rendered="#{dbImportController.jobId != null}"/>
             </h:panelGroup>
 
