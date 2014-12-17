@@ -58,7 +58,7 @@ public class DbImportController extends BaseController {
     }
 
     public void launchFileImport(ActionEvent evt) {
-        if (this.uploadedFile != null){
+        if (this.uploadedFile != null && this.uploadedFile.getFileName() != null){
             File[] files = saveUploadedFileTemporarily();
             if (files != null){
                 try {
@@ -100,7 +100,7 @@ public class DbImportController extends BaseController {
     }
 
     public void launchComplexFileImport(ActionEvent evt) {
-        if (this.uploadedFile != null){
+        if (this.uploadedFile != null && this.uploadedFile.getFileName() != null){
             File[] files = saveUploadedFileTemporarily();
             if (files != null){
                 try {
