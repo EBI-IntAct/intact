@@ -36,7 +36,7 @@
     </bean>
 
     <!-- listener -->
-    <bean id="temporaryFileDeleter" class="uk.ac.ebi.intact.editor.batch.admin.TemporaryFileDeleter">
+    <bean id="temporaryFileDeleter" class="uk.ac.ebi.intact.editor.batch.admin.TemporaryFileDeleter" scope="step" lazy-init="true">
         <property name="filesToDeletes">
             <list>
                 <value>#{jobParameters['error.file']}</value>
@@ -118,14 +118,18 @@
             <batch:listener ref="temporaryFileDeleter"/>
         </batch:listeners>
 
-        <batch:step id="complexStep" parent="complexEnricherStep"/>
+        <batch:step id="complexStep" parent="complexEnricherStep">
+            <batch:end on="FAILED"/>
+        </batch:step>
     </batch:job>
     <batch:job id="interactionMixImport" job-repository="basicBatchJobRepository" parent="basicBatchJob">
 
         <batch:listeners>
-            <batch:listener ref="basicJobLoggerListener"/>
+            <batch:listener ref="temporaryFileDeleter"/>
         </batch:listeners>
 
-        <batch:step id="interactionMixStep" parent="interactionEnricherStep"/>
+        <batch:step id="interactionMixStep" parent="interactionEnricherStep">
+            <batch:end on="FAILED"/>
+        </batch:step>
     </batch:job>
 </beans>
