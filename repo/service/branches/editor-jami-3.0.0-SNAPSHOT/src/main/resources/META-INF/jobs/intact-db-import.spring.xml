@@ -26,15 +26,15 @@
 
     <!-- readers -->
     <bean id="errorResource" class="org.springframework.core.io.FileSystemResource" scope="step" lazy-init="true">
-        <constructor-arg value="#{jobParameters[error.file]}"/>
+        <constructor-arg value="file://#{jobParameters['error.file']}"/>
     </bean>
     <bean id="complexReader" class="uk.ac.ebi.intact.editor.batch.admin.EditorComplexFileReader" scope="step" lazy-init="true">
-        <property name="resource" ref="#{jobParameters[input.file]}"/>
-        <property name="errorResource" ref="#{jobParameters[error.file]}"/>
+        <property name="resource" value="file://#{jobParameters['input.file']}"/>
+        <property name="errorResource" ref="errorResource"/>
     </bean>
     <bean id="interactionReader" class="uk.ac.ebi.intact.editor.batch.admin.EditorInteractionFileReader" scope="step" lazy-init="true">
-        <property name="resource" ref="#{jobParameters[input.file]}"/>
-        <property name="errorResource" ref="#{jobParameters[error.file]}"/>
+        <property name="resource" value="file://#{jobParameters['input.file']}"/>
+        <property name="errorResource" ref="errorResource"/>
     </bean>
 
     <!-- processors -->
