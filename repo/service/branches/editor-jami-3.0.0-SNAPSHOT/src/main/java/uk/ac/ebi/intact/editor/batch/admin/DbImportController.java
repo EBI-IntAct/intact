@@ -18,9 +18,12 @@ package uk.ac.ebi.intact.editor.batch.admin;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.primefaces.model.UploadedFile;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.launch.JobInstanceAlreadyExistsException;
-import org.springframework.batch.core.launch.NoSuchJobException;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import psidev.psi.mi.jami.batch.MIBatchJobManager;
@@ -45,31 +48,13 @@ public class DbImportController extends BaseController {
     @Resource( name = "psiMIJobManager" )
     private transient MIBatchJobManager psiMIJobManager;
 
+    @Resource( name = "intactJobLauncher" )
+    private transient JobLauncher intactJobLauncher;
+
     private UploadedFile uploadedFile;
     private String jobId = null;
 
     public DbImportController() {
-    }
-
-    public void launchJob(String name, String param) {
-
-        try {
-            jobId = getPsiMIJobManager().startJobWithParameters(name, param);
-
-            addInfoMessage( "Job started", "Job ID: " + jobId );
-        } catch ( JobParametersInvalidException e ) {
-            addErrorMessage( "Invalid job parameters", "Job Param: " + param );
-            e.printStackTrace();
-            jobId = null;
-        } catch (JobInstanceAlreadyExistsException e) {
-            addErrorMessage( "Job already running", "Job Param: " + param);
-            e.printStackTrace();
-            jobId = null;
-        } catch (NoSuchJobException e) {
-            addErrorMessage( "No such job exist", "Job Param: " + param );
-            e.printStackTrace();
-            jobId = null;
-        }
     }
 
     public void launchFileImport(ActionEvent evt) {
@@ -77,20 +62,28 @@ public class DbImportController extends BaseController {
             File[] files = saveUploadedFileTemporarily();
             if (files != null){
                 try {
-                    jobId = getPsiMIJobManager().startJobWithParameters("interactionMixImport",
-                            "input.file="+files[0].getAbsolutePath()+",error.file="+files[1].getAbsolutePath());
+                    JobParametersBuilder builder = new JobParametersBuilder();
+                    this.jobId = "interactionMixImport_"+System.currentTimeMillis();
+
+                    getIntactJobLauncher().run((Job)ApplicationContextProvider.getBean("interactionMixImport"),
+                            builder.addString("MIJobId", jobId).addString("input.file", files[0].getAbsolutePath())
+                            .addString("error.file", files[1].getAbsolutePath()).toJobParameters());
 
                     addInfoMessage( "Job started", "Job ID: " + jobId );
                 } catch ( JobParametersInvalidException e ) {
                     addErrorMessage( "Invalid job parameters", "Job Param: " + "input.file="+files[0].getAbsolutePath()+"error.file"+files[1].getAbsolutePath() );
                     e.printStackTrace();
                     jobId = null;
-                } catch (JobInstanceAlreadyExistsException e) {
+                } catch (JobExecutionAlreadyRunningException e) {
                     addErrorMessage( "Job already running", "Job Param: " + "input.file="+files[0].getAbsolutePath()+"error.file"+files[1].getAbsolutePath());
                     e.printStackTrace();
                     jobId = null;
-                } catch (NoSuchJobException e) {
-                    addErrorMessage( "No such job exist", "Job Param: " + "input.file="+files[0].getAbsolutePath()+"error.file"+files[1].getAbsolutePath() );
+                } catch (JobRestartException e) {
+                    addErrorMessage( "Job cannot be restarted", "Job Param: " + "input.file="+files[0].getAbsolutePath()+"error.file"+files[1].getAbsolutePath());
+                    e.printStackTrace();
+                    jobId = null;
+                } catch (JobInstanceAlreadyCompleteException e) {
+                    addErrorMessage( "Job already finished", "Job Param: " + "input.file="+files[0].getAbsolutePath()+"error.file"+files[1].getAbsolutePath());
                     e.printStackTrace();
                     jobId = null;
                 }
@@ -111,19 +104,27 @@ public class DbImportController extends BaseController {
             File[] files = saveUploadedFileTemporarily();
             if (files != null){
                 try {
-                    jobId = getPsiMIJobManager().startJobWithParameters("complexImport",
-                            "input.file="+files[0].getAbsolutePath()+",error.file="+files[1].getAbsolutePath());
+                    JobParametersBuilder builder = new JobParametersBuilder();
+                    this.jobId = "complexImport_"+System.currentTimeMillis();
+
+                    getIntactJobLauncher().run((Job)ApplicationContextProvider.getBean("complexImport"),
+                            builder.addString("MIJobId", jobId).addString("input.file", files[0].getAbsolutePath())
+                                    .addString("error.file", files[1].getAbsolutePath()).toJobParameters());
                     addInfoMessage( "Job started", "Job ID: " + jobId );
                 } catch ( JobParametersInvalidException e ) {
                     addErrorMessage( "Invalid job parameters", "Job Param: " + "input.file="+files[0].getAbsolutePath()+"error.file"+files[1].getAbsolutePath() );
                     e.printStackTrace();
                     jobId = null;
-                } catch (JobInstanceAlreadyExistsException e) {
+                } catch (JobExecutionAlreadyRunningException e) {
                     addErrorMessage( "Job already running", "Job Param: " + "input.file="+files[0].getAbsolutePath()+"error.file"+files[1].getAbsolutePath());
                     e.printStackTrace();
                     jobId = null;
-                } catch (NoSuchJobException e) {
-                    addErrorMessage( "No such job exist", "Job Param: " + "input.file="+files[0].getAbsolutePath()+"error.file"+files[1].getAbsolutePath() );
+                } catch (JobRestartException e) {
+                    addErrorMessage( "Job cannot be restarted", "Job Param: " + "input.file="+files[0].getAbsolutePath()+"error.file"+files[1].getAbsolutePath());
+                    e.printStackTrace();
+                    jobId = null;
+                } catch (JobInstanceAlreadyCompleteException e) {
+                    addErrorMessage( "Job already finished", "Job Param: " + "input.file="+files[0].getAbsolutePath()+"error.file"+files[1].getAbsolutePath());
                     e.printStackTrace();
                     jobId = null;
                 }
@@ -148,6 +149,13 @@ public class DbImportController extends BaseController {
             this.psiMIJobManager = ApplicationContextProvider.getBean("psiMIJobManager");
         }
         return psiMIJobManager;
+    }
+
+    public JobLauncher getIntactJobLauncher() {
+        if (this.intactJobLauncher == null){
+            this.intactJobLauncher = ApplicationContextProvider.getBean("intactJobLauncher");
+        }
+        return intactJobLauncher;
     }
 
     public UploadedFile getUploadedFile() {
