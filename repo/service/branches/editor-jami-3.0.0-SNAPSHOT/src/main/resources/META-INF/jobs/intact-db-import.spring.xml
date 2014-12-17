@@ -28,13 +28,21 @@
     <bean id="errorResource" class="org.springframework.core.io.FileSystemResource" scope="step" lazy-init="true">
         <constructor-arg value="file://#{jobParameters['error.file']}"/>
     </bean>
-    <bean id="complexReader" class="uk.ac.ebi.intact.editor.batch.admin.EditorComplexFileReader" scope="step" lazy-init="true">
+    <bean id="complexReader" class="uk.ac.ebi.intact.dataexchange.dbimporter.reader.ComplexFileReader" scope="step" lazy-init="true">
         <property name="resource" value="file://#{jobParameters['input.file']}"/>
-        <property name="errorResource" ref="errorResource"/>
     </bean>
-    <bean id="interactionReader" class="uk.ac.ebi.intact.editor.batch.admin.EditorInteractionFileReader" scope="step" lazy-init="true">
+    <bean id="interactionReader" class="uk.ac.ebi.intact.dataexchange.dbimporter.reader.InteractionFileReader" scope="step" lazy-init="true">
         <property name="resource" value="file://#{jobParameters['input.file']}"/>
-        <property name="errorResource" ref="errorResource"/>
+    </bean>
+
+    <!-- listener -->
+    <bean id="temporaryFileDeleter" class="uk.ac.ebi.intact.editor.batch.admin.TemporaryFileDeleter">
+        <property name="filesToDeletes">
+            <list>
+                <value>#{jobParameters['error.file']}</value>
+                <value>#{jobParameters['input.file']}</value>
+            </list>
+        </property>
     </bean>
 
     <!-- processors -->
@@ -107,7 +115,7 @@
     <batch:job id="complexImport" job-repository="basicBatchJobRepository" parent="basicBatchJob">
 
         <batch:listeners>
-            <batch:listener ref="basicJobLoggerListener"/>
+            <batch:listener ref="temporaryFileDeleter"/>
         </batch:listeners>
 
         <batch:step id="complexStep" parent="complexEnricherStep"/>
