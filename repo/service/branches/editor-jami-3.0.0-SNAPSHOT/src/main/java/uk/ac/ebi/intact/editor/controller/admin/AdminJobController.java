@@ -16,6 +16,8 @@
 package uk.ac.ebi.intact.editor.controller.admin;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -34,7 +36,9 @@ import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 
 import javax.annotation.Resource;
 import javax.faces.component.UIParameter;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ComponentSystemEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +58,17 @@ public class AdminJobController extends BaseController {
     @Resource( name = "intactJobExplorer" )
     private transient JobExplorer jobExplorer;
 
+    private static final Log log = LogFactory.getLog(AdminJobController.class);
+
     public AdminJobController() {
+    }
+
+    public void load( ComponentSystemEvent event ) {
+
+        if (!FacesContext.getCurrentInstance().isPostback()) {
+
+            log.debug( "Load job summary" );
+        }
     }
 
     public List<String> getJobNames() {
