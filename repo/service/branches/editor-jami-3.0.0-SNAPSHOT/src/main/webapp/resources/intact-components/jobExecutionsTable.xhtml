@@ -57,7 +57,7 @@
                 <f:facet name="header">
                     <h:outputText value="Statistics"/>
                 </f:facet>
-                <ui:repeat value="#{adminController.getImportStatistics(jobExecution)}" var="mapEntry">
+                <ui:repeat value="#{adminJobController.getImportStatistics(jobExecution)}" var="mapEntry">
                     <h:outputText value="#{mapEntry.key}: #{mapEntry.value}"/>
                     <br/>
                 </ui:repeat>
