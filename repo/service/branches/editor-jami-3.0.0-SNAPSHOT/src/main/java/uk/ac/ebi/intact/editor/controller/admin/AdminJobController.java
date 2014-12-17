@@ -21,10 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.JobExecutionNotRunningException;
-import org.springframework.batch.core.launch.NoSuchJobException;
-import org.springframework.batch.core.launch.NoSuchJobExecutionException;
-import org.springframework.batch.core.launch.NoSuchJobInstanceException;
+import org.springframework.batch.core.launch.*;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.item.ExecutionContext;
@@ -58,6 +55,9 @@ public class AdminJobController extends BaseController {
 
     @Resource( name = "intactJobExplorer" )
     private transient JobExplorer jobExplorer;
+
+    @Resource( name = "intactJobLauncher" )
+    private transient JobLauncher intactJobLauncher;
 
     private static final Log log = LogFactory.getLog(AdminJobController.class);
 
@@ -187,5 +187,12 @@ public class AdminJobController extends BaseController {
             this.jobExplorer = ApplicationContextProvider.getBean("intactJobExplorer");
         }
         return jobExplorer;
+    }
+
+    public JobLauncher getIntactJobLauncher() {
+        if (this.intactJobLauncher == null){
+            this.intactJobLauncher = ApplicationContextProvider.getBean("intactJobLauncher");
+        }
+        return intactJobLauncher;
     }
 }
