@@ -125,17 +125,17 @@ public class AdminJobController extends BaseController {
     }
 
     public List<JobExecution> getRunningJobExecutions( String jobName ) {
-        return new ArrayList<JobExecution>( jobExplorer.findRunningJobExecutions( jobName ) );
+        return new ArrayList<JobExecution>( getJobExplorer().findRunningJobExecutions( jobName ) );
     }
 
     public List<JobInstance> getJobInstances( String jobName ) {
-        return jobExplorer.getJobInstances( jobName, 0, 10 );
+        return getJobExplorer().getJobInstances( jobName, 0, 10 );
     }
 
     public List<JobExecution> getJobExecutions( Long jobInstanceId ) {
         if ( jobInstanceId > 0 ) {
-            JobInstance jobInstance = jobExplorer.getJobInstance( jobInstanceId );
-            return jobExplorer.getJobExecutions( jobInstance );
+            JobInstance jobInstance = getJobExplorer().getJobInstance( jobInstanceId );
+            return getJobExplorer().getJobExecutions( jobInstance );
         }
         return new ArrayList<JobExecution>();
     }
