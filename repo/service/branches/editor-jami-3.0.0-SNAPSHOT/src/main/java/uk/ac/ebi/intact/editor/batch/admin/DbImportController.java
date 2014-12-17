@@ -78,7 +78,7 @@ public class DbImportController extends BaseController {
             if (files != null){
                 try {
                     jobId = getPsiMIJobManager().startJobWithParameters("interactionMixImport",
-                            "input.file="+files[0].getAbsolutePath()+"error.file"+files[1].getAbsolutePath());
+                            "input.file="+files[0].getAbsolutePath()+",error.file="+files[1].getAbsolutePath());
 
                     addInfoMessage( "Job started", "Job ID: " + jobId );
                 } catch ( JobParametersInvalidException e ) {
@@ -112,7 +112,7 @@ public class DbImportController extends BaseController {
             if (files != null){
                 try {
                     jobId = getPsiMIJobManager().startJobWithParameters("complexImport",
-                            "input.file="+files[0].getAbsolutePath()+"error.file"+files[1].getAbsolutePath());
+                            "input.file="+files[0].getAbsolutePath()+",error.file="+files[1].getAbsolutePath());
                     addInfoMessage( "Job started", "Job ID: " + jobId );
                 } catch ( JobParametersInvalidException e ) {
                     addErrorMessage( "Invalid job parameters", "Job Param: " + "input.file="+files[0].getAbsolutePath()+"error.file"+files[1].getAbsolutePath() );
