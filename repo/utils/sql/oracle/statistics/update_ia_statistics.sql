@@ -146,7 +146,7 @@ BEGIN
             FROM IA_ControlledVocab
             WHERE created <= v_date;
 
-            SELECT count( distinct p.ac ) INTO v_publications
+            SELECT count( distinct e.ac ) INTO v_publications
             FROM ia_publication e
             WHERE e.shortlabel <> '14681455' AND
                   e.created <= v_date;
