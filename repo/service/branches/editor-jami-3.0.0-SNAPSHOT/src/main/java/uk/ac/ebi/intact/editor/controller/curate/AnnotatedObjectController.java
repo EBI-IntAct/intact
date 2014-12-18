@@ -1156,16 +1156,19 @@ public abstract class AnnotatedObjectController extends BaseController implement
     protected boolean isParentObjectNotSaved() {
         AnnotatedObjectController parentController = getParentController();
         if (parentController == null){
-            return true;
+            return false;
         }
         else{
-            if (parentController.getAnnotatedObject().getAc() == null){
+            if (parentController.getAnnotatedObject() == null){
+                return false;
+            }
+            else if (parentController.getAnnotatedObject().getAc() == null){
                 return true;
             }
             // check with the root parent controller
             while (parentController.getParentController() != null){
                 parentController = parentController.getParentController();
-                if (parentController.getAnnotatedObject().getAc() == null){
+                if (parentController.getAnnotatedObject() != null && parentController.getAnnotatedObject().getAc() == null){
                     return true;
                 }
             }

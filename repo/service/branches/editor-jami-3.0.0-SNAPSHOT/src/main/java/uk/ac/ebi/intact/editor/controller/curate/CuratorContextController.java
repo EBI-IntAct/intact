@@ -63,17 +63,17 @@ public class CuratorContextController extends BaseController {
         else if (io instanceof ModelledFeature){
             return "Complex Feature";
         }
+        else if (io instanceof Source){
+            return "Institution";
+        }
         else if (io instanceof CvTerm){
-            return "Complex Feature";
+            return "Controlled vocabulary";
         }
         else if (io instanceof Organism){
             return "Organism";
         }
         else if (io instanceof Interactor){
             return "Interactor";
-        }
-        else if (io instanceof Source){
-            return "Institution";
         }
         return "";
     }
