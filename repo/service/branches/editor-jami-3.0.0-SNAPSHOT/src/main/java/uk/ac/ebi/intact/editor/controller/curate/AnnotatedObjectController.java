@@ -554,7 +554,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
 
     protected void refreshUnsavedChangesBeforeRevert() {
         if (getAnnotatedObject() != null){
-            changesController.revert(getAnnotatedObject());
+            changesController.removeFromUnsaved(getAnnotatedObject(), Collections.EMPTY_LIST);
         }
     }
 
