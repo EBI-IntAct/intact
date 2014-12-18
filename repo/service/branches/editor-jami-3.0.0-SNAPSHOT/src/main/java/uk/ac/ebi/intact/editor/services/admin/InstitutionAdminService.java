@@ -93,7 +93,7 @@ public class InstitutionAdminService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
-    public int fixReleasableOwners(List<uk.ac.ebi.intact.jami.model.user.User> selectedUsers) {
+    public int fixReleasableOwners(List<uk.ac.ebi.intact.jami.model.user.User> selectedUsers) throws PersisterException{
 
         int updated = 0;
         for (uk.ac.ebi.intact.jami.model.user.User selected : selectedUsers){
@@ -101,8 +101,13 @@ public class InstitutionAdminService extends AbstractEditorService {
 
             if (userInstitution instanceof IntactSource) {
 
-                updated += publicationService.replaceSource((IntactSource)userInstitution, selected.getLogin());
-                updated += complexService.replaceSource((IntactSource)userInstitution, selected.getLogin());
+                try{
+                    updated += publicationService.replaceSource((IntactSource)userInstitution, selected.getLogin());
+                    updated += complexService.replaceSource((IntactSource)userInstitution, selected.getLogin());
+                }
+                catch (Throwable e){
+                     throw new PersisterException("Cannot update institutions ", e);
+                }
             }
         }
 

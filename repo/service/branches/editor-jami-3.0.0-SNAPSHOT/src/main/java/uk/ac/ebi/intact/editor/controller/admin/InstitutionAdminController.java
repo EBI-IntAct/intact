@@ -111,9 +111,13 @@ public class InstitutionAdminController extends BaseController {
         }
 
         getInstitutionAdminService().getIntactDao().getUserContext().setUser(getCurrentUser());
-        int updatedCount = getInstitutionAdminService().fixReleasableOwners(usersDualListModel.getTarget());
-
-        addInfoMessage("Users object ownership fixed", "Updated annotated objects: "+updatedCount);
+        int updatedCount = 0;
+        try {
+            updatedCount = getInstitutionAdminService().fixReleasableOwners(usersDualListModel.getTarget());
+            addInfoMessage("Users object ownership fixed", "Updated annotated objects: "+updatedCount);
+        } catch (Throwable e) {
+            addErrorMessage("Problem updating user annotated objects", e.getCause()+": "+e.getMessage());
+        }
     }
 
     public IntactSource[] getSelectedInstitutions() {

@@ -89,7 +89,7 @@
                             itemLabel="#{user.firstName} #{user.lastName} (#{institutionAdminService.getInstitutionNameFor(user)})" itemValue="#{user}">
                 </p:pickList>
 
-                <p:commandButton value="Fix" actionListener="#{institutionAdminController.fixAnnotatedObjectOwners}" update=":editorForm:messagesComponent, :editorForm:institutionTab"/>
+                <p:commandButton value="Fix" actionListener="#{institutionAdminController.fixReleasableOwners}" update=":editorForm:messagesComponent, :editorForm:institutionTab"/>
             </p:tab>
         </p:tabView>
 
