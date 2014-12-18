@@ -23,6 +23,7 @@ import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.services.admin.InstitutionAdminService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.extension.IntactSource;
+import uk.ac.ebi.intact.jami.model.user.User;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
 import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
@@ -58,12 +59,18 @@ public class InstitutionAdminController extends BaseController {
 
     public void load(ComponentSystemEvent event) {
         if (!FacesContext.getCurrentInstance().isPostback()) {
-            List<uk.ac.ebi.intact.jami.model.user.User> usersSelected = new ArrayList<uk.ac.ebi.intact.jami.model.user.User>();
-
-            institutionsDataModel = getInstitutionAdminService().getAllInstitutions();
-
-            usersDualListModel = getInstitutionAdminService().createUserDualListModel(usersSelected);
+            reloadDataModels();
         }
+    }
+
+    private void reloadDataModels() {
+        List<User> usersSelected = new ArrayList<User>();
+
+        institutionsDataModel = getInstitutionAdminService().getAllInstitutions();
+
+        usersDualListModel = getInstitutionAdminService().createUserDualListModel(usersSelected);
+
+        selectedInstitutions = null;
     }
 
     public void mergeSelected(ActionEvent evt) {
@@ -76,7 +83,7 @@ public class InstitutionAdminController extends BaseController {
         try {
             getInstitutionAdminService().getIntactDao().getUserContext().setUser(getCurrentUser());
             updated = getInstitutionAdminService().mergeSelected(mergeDestinationInstitution, selectedInstitutions);
-            addInfoMessage(selectedInstitutions.length + " iInstitutions merged", updated + " annotated objects updated");
+            addInfoMessage(selectedInstitutions.length + " Institutions merged", updated + " annotated objects updated");
         } catch (SynchronizerException e) {
             addErrorMessage("Cannot merge institutions ", e.getCause() + ": " + e.getMessage());
         } catch (FinderException e) {
@@ -86,6 +93,8 @@ public class InstitutionAdminController extends BaseController {
         } catch (Throwable e) {
             addErrorMessage("Cannot merge institutions ", e.getCause() + ": " + e.getMessage());
         }
+
+        reloadDataModels();
     }
 
     public void deleteSelected(ActionEvent evt) {
@@ -102,6 +111,8 @@ public class InstitutionAdminController extends BaseController {
         } catch (Throwable e) {
             addErrorMessage("Cannot delete institutions ", e.getCause() + ": " + e.getMessage());
         }
+
+        reloadDataModels();
     }
 
     public void fixReleasableOwners(ActionEvent evt) {
@@ -118,6 +129,8 @@ public class InstitutionAdminController extends BaseController {
         } catch (Throwable e) {
             addErrorMessage("Problem updating user annotated objects", e.getCause()+": "+e.getMessage());
         }
+
+        reloadDataModels();
     }
 
     public IntactSource[] getSelectedInstitutions() {
