@@ -54,6 +54,7 @@ import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.event.ComponentSystemEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -105,7 +106,14 @@ public class InteractionController extends AnnotatedObjectController {
     private String figureLegend = null;
 
     private CvTerm newConfidenceType;
-    private CvTerm newConfidenceValue;
+    private String newConfidenceValue;
+
+    private CvTerm newParameterType;
+    private Double newParameterFactor;
+    private CvTerm newParameterUnit;
+    private Integer newParameterBase;
+    private Integer newParameterExponent;
+    private Double newParameterUncertainty;
 
     private List<ImportExperimentalCondition> conditionsToImport;
 
@@ -779,14 +787,31 @@ public class InteractionController extends AnnotatedObjectController {
     // Confidence
     ///////////////////////////////////////////////
 
-    public void newConfidence() {
+    public void newConfidence(ActionEvent evt) {
         if (this.newConfidenceType != null && this.newConfidenceValue != null){
-            InteractionEvidenceConfidence confidence = new InteractionEvidenceConfidence(IntactUtils.createMIConfidenceType("to set", null), "to set");
+            InteractionEvidenceConfidence confidence = new InteractionEvidenceConfidence(this.newConfidenceType, this.newConfidenceValue);
             interaction.getConfidences().add(confidence);
             doSave(false);
         }
         else{
             addErrorMessage("Cannot add new confidence as it does not have any type/value", "Missing confidence type/value");
+        }
+    }
+
+    public void newParameter(ActionEvent evt) {
+        if (this.newParameterType != null && this.newParameterFactor != null
+                && this.newParameterBase != null && this.newParameterExponent != null){
+            FeatureEvidenceParameter param = new FeatureEvidenceParameter(this.newParameterType, new ParameterValue(new BigDecimal(this.newParameterFactor), this.newParameterBase.shortValue(),
+                    this.newParameterExponent.shortValue()));
+            if (this.newParameterUncertainty != null){
+                param.setUncertainty(new BigDecimal(this.newParameterUncertainty));
+            }
+            param.setUnit(this.newParameterUnit);
+            this.interaction.getParameters().add(param);
+            doSave(false);
+        }
+        else{
+            addErrorMessage("Cannot add new parameter as it does not have any type/value", "Missing parameter type/value");
         }
     }
 
@@ -1143,11 +1168,15 @@ public class InteractionController extends AnnotatedObjectController {
         this.interaction.getConfidences().remove(conf);
     }
 
-    public CvTerm getNewConfidenceValue() {
+    public void removeParameter(Parameter param){
+        this.interaction.getParameters().remove(param);
+    }
+
+    public String getNewConfidenceValue() {
         return newConfidenceValue;
     }
 
-    public void setNewConfidenceValue(CvTerm newConfidenceValue) {
+    public void setNewConfidenceValue(String newConfidenceValue) {
         this.newConfidenceValue = newConfidenceValue;
     }
 
@@ -1157,5 +1186,53 @@ public class InteractionController extends AnnotatedObjectController {
 
     public void setNewConfidenceType(CvTerm newConfidenceType) {
         this.newConfidenceType = newConfidenceType;
+    }
+
+    public CvTerm getNewParameterType() {
+        return newParameterType;
+    }
+
+    public void setNewParameterType(CvTerm newParameterType) {
+        this.newParameterType = newParameterType;
+    }
+
+    public Double getNewParameterFactor() {
+        return newParameterFactor;
+    }
+
+    public void setNewParameterFactor(Double newParameterFactor) {
+        this.newParameterFactor = newParameterFactor;
+    }
+
+    public CvTerm getNewParameterUnit() {
+        return newParameterUnit;
+    }
+
+    public void setNewParameterUnit(CvTerm newParameterUnit) {
+        this.newParameterUnit = newParameterUnit;
+    }
+
+    public Integer getNewParameterBase() {
+        return newParameterBase;
+    }
+
+    public void setNewParameterBase(Integer newParameterBase) {
+        this.newParameterBase = newParameterBase;
+    }
+
+    public Integer getNewParameterExponent() {
+        return newParameterExponent;
+    }
+
+    public void setNewParameterExponent(Integer newParameterExponent) {
+        this.newParameterExponent = newParameterExponent;
+    }
+
+    public Double getNewParameterUncertainty() {
+        return newParameterUncertainty;
+    }
+
+    public void setNewParameterUncertainty(Double newParameterUncertainty) {
+        this.newParameterUncertainty = newParameterUncertainty;
     }
 }

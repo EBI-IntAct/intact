@@ -10,9 +10,36 @@
                 xmlns:ed="http://ebi.ac.uk/intact/editor/ui">
 
         <div class="intact-buttonBar">
-            <p:commandButton id="newParamBtn" value="New Parameter"
+            <h:panelGrid id="newParamTxt" columns="12">
+                <h:outputLabel value="Type: " for="paramType1Sel"/>
+                <h:selectOneMenu id="paramType1Sel" value="#{annotatedObjectController.newParameterType}" disabled="#{disableParameterSelectItems}"
+                                 >
+                    <f:selectItems value="#{cvObjectService.parameterTypeSelectItems}"/>
+                </h:selectOneMenu>
+                <h:outputLabel value="Value: " for="paramFactor1Txt"/>
+                <p:inputText id="paramFactor1Txt" value="#{annotatedObjectController.newParameterFactor}">
+                    <f:convertNumber/>
+                </p:inputText>
+                <h:outputLabel value="Unit: " for="paramUnit1Sel"/>
+                <h:selectOneMenu id="paramUnit1Sel" value="#{annotatedObjectController.newParameterUnit}" disabled="#{disableParameterSelectItems}">
+                    <f:selectItems value="#{cvObjectService.parameterUnitSelectItems}"/>
+                </h:selectOneMenu>
+                <h:outputLabel value="Base: " for="paramBase1Txt"/>
+                <p:inputText id="paramBase1Txt" value="#{annotatedObjectController.newParameterBase}">
+                    <f:convertNumber/>
+                </p:inputText>
+                <h:outputLabel value="Exponent: " for="paramExponent1Txt"/>
+                <p:inputText id="paramExponent1Txt" value="#{annotatedObjectController.newParameterExponent}">
+                    <f:convertNumber/>
+                </p:inputText>
+                <h:outputLabel value="Uncertainty: " for="paramUncertainty1Txt"/>
+                <p:inputText id="paramUncertainty1Txt" value="#{annotatedObjectController.newParameterUncertainty}">
+                    <f:convertNumber/>
+                </p:inputText>
+            </h:panelGrid>
+            <p:commandButton id="newParamBtn" value="Add New Parameter"
                              actionListener="#{annotatedObjectController.newParameter}"
-                             process="newParamBtn"
+                             process="newParamTxt"
                              update="parametersTable #{update}"/>
         </div>
 

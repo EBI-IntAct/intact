@@ -117,7 +117,14 @@ public class ComplexController extends AnnotatedObjectController {
     private CvTerm newXrefEvidenceCode;
 
     private CvTerm newConfidenceType;
-    private CvTerm newConfidenceValue;
+    private String newConfidenceValue;
+
+    private CvTerm newParameterType;
+    private Double newParameterFactor;
+    private CvTerm newParameterUnit;
+    private Integer newParameterBase;
+    private Integer newParameterExponent;
+    private Double newParameterUncertainty;
 
     public ComplexController() {
     }
@@ -537,9 +544,9 @@ public class ComplexController extends AnnotatedObjectController {
     // Confidence
     ///////////////////////////////////////////////
 
-    public void newConfidence() {
+    public void newConfidence(ActionEvent evet) {
         if (this.newConfidenceType != null && this.newConfidenceValue != null){
-            ComplexConfidence confidence = new ComplexConfidence(IntactUtils.createMIConfidenceType("to set", null), "to set");
+            ComplexConfidence confidence = new ComplexConfidence(this.newConfidenceType, this.newConfidenceValue);
             complex.getModelledConfidences().add(confidence);
             doSave(false);
         }
@@ -548,13 +555,21 @@ public class ComplexController extends AnnotatedObjectController {
         }
     }
 
-    public void newParameter() {
-        if (!complex.areParametersInitialized()){
-            setComplex(getComplexEditorService().initialiseComplexParameters(complex));
+    public void newParameter(ActionEvent evt) {
+        if (this.newParameterType != null && this.newParameterFactor != null
+                && this.newParameterBase != null && this.newParameterExponent != null){
+            ComplexParameter param = new ComplexParameter(this.newParameterType, new ParameterValue(new BigDecimal(this.newParameterFactor), this.newParameterBase.shortValue(),
+                    this.newParameterExponent.shortValue()));
+            if (this.newParameterUncertainty != null){
+                param.setUncertainty(new BigDecimal(this.newParameterUncertainty));
+            }
+            param.setUnit(this.newParameterUnit);
+            complex.getModelledParameters().add(param);
+            doSave(false);
         }
-        ComplexParameter param = new ComplexParameter(IntactUtils.createMIParameterType("to set", null), new ParameterValue(new BigDecimal(0)));
-        complex.getModelledParameters().add(param);
-        setUnsavedChanges(true);
+        else{
+            addErrorMessage("Cannot add new parameter as it does not have any type/value", "Missing parameter type/value");
+        }
     }
 
     public boolean isParticipantDisabled() {
@@ -1275,9 +1290,6 @@ public class ComplexController extends AnnotatedObjectController {
     }
 
     public void removeParameter(ModelledParameter param){
-        if (!this.complex.areParametersInitialized()){
-            setComplex(getComplexEditorService().initialiseComplexParameters(complex));
-        }
         this.complex.getModelledParameters().remove(param);
     }
 
@@ -1400,11 +1412,11 @@ public class ComplexController extends AnnotatedObjectController {
         this.newXrefPubmed = newXrefPubmed;
     }
 
-    public CvTerm getNewConfidenceValue() {
+    public String getNewConfidenceValue() {
         return newConfidenceValue;
     }
 
-    public void setNewConfidenceValue(CvTerm newConfidenceValue) {
+    public void setNewConfidenceValue(String newConfidenceValue) {
         this.newConfidenceValue = newConfidenceValue;
     }
 
@@ -1414,5 +1426,53 @@ public class ComplexController extends AnnotatedObjectController {
 
     public void setNewConfidenceType(CvTerm newConfidenceType) {
         this.newConfidenceType = newConfidenceType;
+    }
+
+    public Double getNewParameterUncertainty() {
+        return newParameterUncertainty;
+    }
+
+    public void setNewParameterUncertainty(Double newParameterUncertainty) {
+        this.newParameterUncertainty = newParameterUncertainty;
+    }
+
+    public Integer getNewParameterExponent() {
+        return newParameterExponent;
+    }
+
+    public void setNewParameterExponent(Integer newParameterExponent) {
+        this.newParameterExponent = newParameterExponent;
+    }
+
+    public Integer getNewParameterBase() {
+        return newParameterBase;
+    }
+
+    public void setNewParameterBase(Integer newParameterBase) {
+        this.newParameterBase = newParameterBase;
+    }
+
+    public CvTerm getNewParameterUnit() {
+        return newParameterUnit;
+    }
+
+    public void setNewParameterUnit(CvTerm newParameterUnit) {
+        this.newParameterUnit = newParameterUnit;
+    }
+
+    public Double getNewParameterFactor() {
+        return newParameterFactor;
+    }
+
+    public void setNewParameterFactor(Double newParameterFactor) {
+        this.newParameterFactor = newParameterFactor;
+    }
+
+    public CvTerm getNewParameterType() {
+        return newParameterType;
+    }
+
+    public void setNewParameterType(CvTerm newParameterType) {
+        this.newParameterType = newParameterType;
     }
 }
