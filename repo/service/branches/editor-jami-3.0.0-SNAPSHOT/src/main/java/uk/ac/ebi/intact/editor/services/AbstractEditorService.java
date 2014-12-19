@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.editor.services;
 import uk.ac.ebi.intact.jami.dao.IntactBaseDao;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.interceptor.IntactTransactionSynchronization;
+import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.audit.Auditable;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
@@ -144,9 +145,9 @@ public abstract class AbstractEditorService implements EditorService {
         }
     }
 
-    protected <T extends Auditable> T reattachIntactObjectIfTransient(T intactObject, IntactBaseDao<T> dao){
+    protected <T extends IntactPrimaryObject> T reattachIntactObjectIfTransient(T intactObject, IntactBaseDao<T> dao){
         // merge current user because detached
-        if (dao.isTransient(intactObject)){
+        if (dao.isTransient(intactObject) && intactObject.getAc() != null){
             return getIntactDao().getEntityManager().merge(intactObject);
         }
 

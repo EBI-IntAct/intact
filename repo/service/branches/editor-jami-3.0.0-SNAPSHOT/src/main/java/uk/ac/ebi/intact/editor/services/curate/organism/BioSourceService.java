@@ -74,11 +74,13 @@ public class BioSourceService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactOrganism initialiseOrganismAliases(IntactOrganism interactor) {
         // reload interactor without flushing changes
-        IntactOrganism reloaded = getIntactDao().getEntityManager().merge(interactor);
+        IntactOrganism reloaded = reattachIntactObjectIfTransient(interactor, getIntactDao().getOrganismDao());
         Collection<Alias> aliases = reloaded.getAliases();
         initialiseAliases(aliases);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        if (reloaded.getAc() != null){
+            getIntactDao().getEntityManager().detach(reloaded);
+        }
         return reloaded;
     }
 
@@ -103,19 +105,21 @@ public class BioSourceService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactOrganism reloadFullyInitialisedOrganism(IntactOrganism organism) {
-        IntactOrganism reloaded = getIntactDao().getEntityManager().merge(organism);
+        IntactOrganism reloaded = reattachIntactObjectIfTransient(organism, getIntactDao().getOrganismDao());
 
         // initialise aliases because first tab
         initialiseAliases(reloaded.getAliases());
 
         if (organism.getCellType() != null){
-            initialiseCv(organism.getCellType());
+            initialiseCv(reloaded.getCellType());
         }
         if (organism.getTissue() != null){
-            initialiseCv(organism.getTissue());
+            initialiseCv(reloaded.getTissue());
         }
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        if (reloaded.getAc() != null){
+            getIntactDao().getEntityManager().detach(reloaded);
+        }
 
         return reloaded;
     }
