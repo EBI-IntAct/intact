@@ -515,6 +515,11 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     }
 
     @Override
+    public ParticipantEvidenceAnnotation newAnnotation(CvTerm annotation, String text) {
+        return new ParticipantEvidenceAnnotation(annotation, text);
+    }
+
+    @Override
     public boolean isAliasNotEditable(Alias alias) {
         return AliasUtils.doesAliasHaveType(alias, Alias.AUTHOR_ASSIGNED_NAME_MI, Alias.AUTHOR_ASSIGNED_NAME);
     }

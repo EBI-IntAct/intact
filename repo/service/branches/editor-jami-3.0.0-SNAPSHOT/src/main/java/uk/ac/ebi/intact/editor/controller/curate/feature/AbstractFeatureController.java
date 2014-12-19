@@ -488,6 +488,11 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         this.feature.getAliases().add(newAlias);
     }
 
+    @Override
+    protected void addNewAnnotation(AbstractIntactAnnotation newAnnot) {
+        this.feature.getAnnotations().add(newAnnot);
+    }
+
     public List<Alias> collectAliases() {
         // aliases are not always initialised
         if (!feature.areAliasesInitialized()){

@@ -603,6 +603,11 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
         participant.getAliases().remove(alias);
     }
 
+    @Override
+    protected void addNewAnnotation(AbstractIntactAnnotation newAnnot) {
+        this.participant.getAnnotations().add(newAnnot);
+    }
+
     public void removeCausalRelationship(CausalRelationship rel) {
         if (!participant.areCausalRelationshipsInitialized()){
             setParticipant(getParticipantEditorService().initialiseCausalRelationships(participant));

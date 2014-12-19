@@ -113,6 +113,9 @@ public abstract class AnnotatedObjectController extends BaseController implement
     private CvTerm newAliasType;
     private String newAliasName;
 
+    private CvTerm newTopic;
+    private String newAnnotationDescription;
+
     public AnnotatedObjectController() {
     }
 
@@ -844,7 +847,23 @@ public abstract class AnnotatedObjectController extends BaseController implement
     // ANNOTATIONS
     ///////////////////////////////////////////////
 
-    public abstract void newAnnotation(ActionEvent evt);
+    public void newAnnotation(ActionEvent evt){
+        if (this.newTopic != null){
+            // new annot
+            AbstractIntactAnnotation newAnnot = newAnnotation(this.newTopic, this.newAnnotationDescription);
+            // add annot
+            addNewAnnotation(newAnnot);
+            // save changes
+            doSave();
+        }
+        else{
+            addErrorMessage("Cannot add new annotation as it does not have any topics", "Missing annotation topic");
+        }
+    }
+
+    protected abstract void addNewAnnotation(AbstractIntactAnnotation newAnnot);
+
+    public abstract <T extends AbstractIntactAnnotation> T newAnnotation(CvTerm annotation, String text);
 
     public abstract <T extends AbstractIntactAnnotation> T newAnnotation(String topic, String topicMI, String text);
 
@@ -1436,5 +1455,21 @@ public abstract class AnnotatedObjectController extends BaseController implement
 
     public void setNewAliasName(String newAliasName) {
         this.newAliasName = newAliasName;
+    }
+
+    public CvTerm getNewTopic() {
+        return newTopic;
+    }
+
+    public void setNewTopic(CvTerm newTopic) {
+        this.newTopic = newTopic;
+    }
+
+    public String getNewAnnotationDescription() {
+        return newAnnotationDescription;
+    }
+
+    public void setNewAnnotationDescription(String newAnnotationDescription) {
+        this.newAnnotationDescription = newAnnotationDescription;
     }
 }
