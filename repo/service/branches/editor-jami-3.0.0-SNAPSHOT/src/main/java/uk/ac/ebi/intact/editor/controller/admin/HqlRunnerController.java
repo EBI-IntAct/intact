@@ -139,8 +139,8 @@ public class HqlRunnerController extends BaseController {
     }
 
     public HqlQueryService getHqlQueryService() {
-        if (this.hqlQuery == null){
-            this.hqlQuery = ApplicationContextProvider.getBean("hqlQueryService");
+        if (this.hqlQueryService == null){
+            this.hqlQueryService = ApplicationContextProvider.getBean("hqlQueryService");
         }
         return hqlQueryService;
     }
