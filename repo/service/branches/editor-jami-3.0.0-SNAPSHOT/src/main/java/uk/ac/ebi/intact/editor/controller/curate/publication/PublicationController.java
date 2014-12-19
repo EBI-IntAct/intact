@@ -762,11 +762,6 @@ public class PublicationController extends AnnotatedObjectController {
     }
 
     @Override
-    protected boolean areXrefsInitialised() {
-        return publication != null && publication.areXrefsInitialized();
-    }
-
-    @Override
     protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
         IntactPublication publication = (IntactPublication)annotatedObject;
         if (!publication.areAnnotationsInitialized()
@@ -835,9 +830,23 @@ public class PublicationController extends AnnotatedObjectController {
     }
 
     @Override
-    public void newXref(ActionEvent evt) {
-        this.publication.getDbXrefs().add(new PublicationXref(IntactUtils.createMIDatabase("to set", null), "to set"));
-        setUnsavedChanges(true);
+    protected void addNewXref(AbstractIntactXref newRef) {
+        if (XrefUtils.isXrefAnIdentifier(newRef) || XrefUtils.doesXrefHaveQualifier(newRef, null, "intact-secondary")
+                || XrefUtils.doesXrefHaveQualifier(newRef, Xref.PRIMARY_MI, Xref.PRIMARY)){
+            this.publication.getIdentifiers().add(newRef);
+            this.identifier = this.publication.getPubmedId();
+        }
+        else{
+            this.publication.getXrefs().add(newRef);
+            this.imexId = this.publication.getImexId();
+        }
+    }
+
+    @Override
+    protected PublicationXref newXref(CvTerm db, String id, String secondaryId, String version, CvTerm qualifier) {
+        PublicationXref ref = new PublicationXref(db, id, version, qualifier);
+        ref.setSecondaryId(secondaryId);
+        return ref;
     }
 
     @Override
@@ -1794,21 +1803,12 @@ public class PublicationController extends AnnotatedObjectController {
 
     @Override
     public void removeXref(Xref xref) {
-        if (XrefUtils.isXrefFromDatabase(xref, Xref.PUBMED_MI, Xref.PUBMED)
-                && XrefUtils.doesXrefHaveQualifier(xref, Xref.PRIMARY_MI, Xref.PRIMARY)
-                && xref.getId().equals(identifier)){
-            identifier = null;
-            publication.getIdentifiers().remove(xref);
+
+        if (!this.publication.getIdentifiers().remove(xref)){
+            this.publication.getXrefs().remove(xref);
         }
-        else if (XrefUtils.isXrefFromDatabase(xref, Xref.IMEX_MI, Xref.IMEX)
-                && XrefUtils.doesXrefHaveQualifier(xref, Xref.IMEX_PRIMARY_MI, Xref.IMEX_PRIMARY)
-                && xref.getId().equals(imexId)){
-            imexId = null;
-            publication.getXrefs().remove(xref);
-        }
-        else{
-            publication.getDbXrefs().remove(xref);
-        }
+        this.identifier = this.publication.getPubmedId();
+        this.imexId = this.publication.getImexId();
     }
 
     @Override

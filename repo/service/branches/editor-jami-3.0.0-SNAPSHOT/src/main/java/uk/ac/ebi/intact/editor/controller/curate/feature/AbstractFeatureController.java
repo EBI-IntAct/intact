@@ -22,6 +22,7 @@ import psidev.psi.mi.jami.exception.IllegalRangeException;
 import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.RangeUtils;
+import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.services.curate.feature.FeatureEditorService;
@@ -510,12 +511,10 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
 
     @Override
     public void removeXref(Xref xref) {
-        // xrefs are not always initialised
-        if (!feature.areXrefsInitialized()){
-            setFeature(getFeatureEditorService().initialiseFeatureXrefs(this.feature));
-        }
 
-        this.feature.getDbXrefs().remove(xref);
+        if (!this.feature.getIdentifiers().remove(xref)){
+            this.feature.getXrefs().remove(xref);
+        }
     }
 
     @Override
@@ -562,13 +561,19 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
 
     protected abstract IntactDbSynchronizer getRangeSynchronzer();
 
-    @Override
-    protected boolean areXrefsInitialised() {
-        return this.feature != null && this.feature.areXrefsInitialized();
-    }
 
     @Override
     public boolean isXrefNotEditable(Xref ref) {
         return false;
+    }
+
+    @Override
+    protected void addNewXref(AbstractIntactXref newRef) {
+        if (XrefUtils.isXrefAnIdentifier(newRef) || XrefUtils.doesXrefHaveQualifier(newRef, null, "intact-secondary")){
+            this.feature.getIdentifiers().add(newRef);
+        }
+        else{
+            this.feature.getXrefs().add(newRef);
+        }
     }
 }

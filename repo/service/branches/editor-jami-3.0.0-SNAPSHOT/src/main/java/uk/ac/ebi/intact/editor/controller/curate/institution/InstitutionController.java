@@ -3,11 +3,9 @@ package uk.ac.ebi.intact.editor.controller.curate.institution;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import psidev.psi.mi.jami.model.Alias;
-import psidev.psi.mi.jami.model.Annotation;
-import psidev.psi.mi.jami.model.Source;
-import psidev.psi.mi.jami.model.Xref;
+import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
+import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.InstitutionCloner;
@@ -128,9 +126,20 @@ public class InstitutionController extends AnnotatedObjectController {
     }
 
     @Override
-    public void newXref(ActionEvent evt) {
-        institution.getDbXrefs().add(new SourceXref(IntactUtils.createMIDatabase("to set", null), "to set"));
-        setUnsavedChanges(true);
+    protected void addNewXref(AbstractIntactXref newRef) {
+        if (XrefUtils.isXrefAnIdentifier(newRef) || XrefUtils.doesXrefHaveQualifier(newRef, null, "intact-secondary")){
+            this.institution.getIdentifiers().add(newRef);
+        }
+        else{
+            this.institution.getXrefs().add(newRef);
+        }
+    }
+
+    @Override
+    protected SourceXref newXref(CvTerm db, String id, String secondaryId, String version, CvTerm qualifier) {
+        SourceXref ref = new SourceXref(db, id, version, qualifier);
+        ref.setSecondaryId(secondaryId);
+        return ref;
     }
 
     @Override
@@ -319,7 +328,9 @@ public class InstitutionController extends AnnotatedObjectController {
 
     @Override
     public void removeXref(Xref xref) {
-        this.institution.getDbXrefs().remove(xref);
+        if (!this.institution.getIdentifiers().remove(xref)){
+            this.institution.getXrefs().remove(xref);
+        }
     }
 
     @Override
@@ -352,10 +363,5 @@ public class InstitutionController extends AnnotatedObjectController {
         String value = super.doDelete();
         getInstitutionService().loadInstitutions();
         return value;
-    }
-
-    @Override
-    protected boolean areXrefsInitialised() {
-        return this.institution != null && this.institution.areXrefsInitialized();
     }
 }

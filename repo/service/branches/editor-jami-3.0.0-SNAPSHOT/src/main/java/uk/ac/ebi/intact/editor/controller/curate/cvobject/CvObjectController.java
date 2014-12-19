@@ -11,15 +11,13 @@ import psidev.psi.mi.jami.model.Annotation;
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Xref;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
+import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.CvTermCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
-import uk.ac.ebi.intact.jami.model.extension.CvTermAlias;
-import uk.ac.ebi.intact.jami.model.extension.CvTermAnnotation;
-import uk.ac.ebi.intact.jami.model.extension.CvTermXref;
-import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
+import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
@@ -127,19 +125,26 @@ public class CvObjectController extends AnnotatedObjectController {
     }
 
     @Override
-    protected boolean areXrefsInitialised() {
-        return this.cvObject != null && this.cvObject.areXrefsInitialized();
-    }
-
-    @Override
     protected EditorCloner<CvTerm, IntactCvTerm> newClonerInstance() {
         return new CvTermCloner();
     }
 
+
     @Override
-    public void newXref(ActionEvent evt) {
-        this.cvObject.getDbXrefs().add(new CvTermXref(IntactUtils.createMIDatabase("to set", null), "to set"));
-        setUnsavedChanges(true);
+    protected void addNewXref(AbstractIntactXref newRef) {
+        if (XrefUtils.isXrefAnIdentifier(newRef) || XrefUtils.doesXrefHaveQualifier(newRef, null, "intact-secondary")){
+            this.cvObject.getIdentifiers().add(newRef);
+        }
+        else{
+            this.cvObject.getXrefs().add(newRef);
+        }
+    }
+
+    @Override
+    protected CvTermXref newXref(CvTerm db, String id, String secondaryId, String version, CvTerm qualifier) {
+        CvTermXref ref = new CvTermXref(db, id, version, qualifier);
+        ref.setSecondaryId(secondaryId);
+        return ref;
     }
 
     @Override
@@ -404,7 +409,9 @@ public class CvObjectController extends AnnotatedObjectController {
 
     @Override
     public void removeXref(Xref xref) {
-        this.cvObject.getDbXrefs().remove(xref);
+        if (!this.cvObject.getIdentifiers().remove(xref)){
+            this.cvObject.getXrefs().remove(xref);
+        }
     }
 
     @Override

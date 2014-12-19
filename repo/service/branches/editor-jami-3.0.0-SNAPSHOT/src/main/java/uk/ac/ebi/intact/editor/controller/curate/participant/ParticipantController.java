@@ -215,14 +215,10 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     }
 
     @Override
-    public void newXref(ActionEvent evt) {
-        // xrefs are not always initialised
-        if (!getParticipant().areXrefsInitialized()){
-            setParticipant(getParticipantEditorService().initialiseParticipantXrefs(getParticipant()));
-        }
-
-        getParticipant().getXrefs().add(new ParticipantEvidenceXref(IntactUtils.createMIDatabase("to set", null), "to set"));
-        setUnsavedChanges(true);
+    protected ParticipantEvidenceXref newXref(CvTerm db, String id, String secondaryId, String version, CvTerm qualifier) {
+        ParticipantEvidenceXref ref = new ParticipantEvidenceXref(db, id, version, qualifier);
+        ref.setSecondaryId(secondaryId);
+        return ref;
     }
 
     @Override

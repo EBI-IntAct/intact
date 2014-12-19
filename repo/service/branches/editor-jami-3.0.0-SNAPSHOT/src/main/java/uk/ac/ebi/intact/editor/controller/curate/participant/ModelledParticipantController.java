@@ -21,6 +21,7 @@ import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.ModelledFeature;
 import psidev.psi.mi.jami.model.Participant;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
@@ -132,14 +133,10 @@ public class ModelledParticipantController extends AbstractParticipantController
     }
 
     @Override
-    public void newXref(ActionEvent evt) {
-        // xrefs are not always initialised
-        if (!getParticipant().areXrefsInitialized()){
-            setParticipant(getParticipantEditorService().initialiseParticipantXrefs(getParticipant()));
-        }
-
-        getParticipant().getXrefs().add(new ModelledParticipantXref(IntactUtils.createMIDatabase("to set", null), "to set"));
-        setUnsavedChanges(true);
+    protected ModelledParticipantXref newXref(CvTerm db, String id, String secondaryId, String version, CvTerm qualifier) {
+        ModelledParticipantXref ref = new ModelledParticipantXref(db, id, version, qualifier);
+        ref.setSecondaryId(secondaryId);
+        return ref;
     }
 
     @Override

@@ -110,6 +110,16 @@ public class BioSourceController extends AnnotatedObjectController {
     }
 
     @Override
+    protected void addNewXref(AbstractIntactXref newRef) {
+
+    }
+
+    @Override
+    protected <T extends AbstractIntactXref> T newXref(CvTerm db, String id, String secondaryId, String version, CvTerm qualifier) {
+        return null;
+    }
+
+    @Override
     public <T extends AbstractIntactXref> T newXref(String db, String dbMI, String id, String secondaryId, String qualifier, String qualifierMI) {
         return null;
     }
@@ -334,10 +344,5 @@ public class BioSourceController extends AnnotatedObjectController {
             this.organismFetcher = ApplicationContextProvider.getBean("taxonomyService");
         }
         return organismFetcher;
-    }
-
-    @Override
-    protected boolean areXrefsInitialised() {
-        return false;
     }
 }

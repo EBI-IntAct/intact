@@ -358,10 +358,21 @@ public class InteractionController extends AnnotatedObjectController {
     }
 
     @Override
-    public void newXref(ActionEvent evt) {
+    protected void addNewXref(AbstractIntactXref newRef) {
+        if (XrefUtils.isXrefAnIdentifier(newRef) || XrefUtils.doesXrefHaveQualifier(newRef, null, "intact-secondary")){
+            this.interaction.getIdentifiers().add(newRef);
+        }
+        else{
+            this.interaction.getXrefs().add(newRef);
+            this.imexId = this.interaction.getImexId();
+        }
+    }
 
-        this.interaction.getDbXrefs().add(new InteractionXref(IntactUtils.createMIDatabase("to set", null), "to set"));
-        setUnsavedChanges(true);
+    @Override
+    protected InteractionXref newXref(CvTerm db, String id, String secondaryId, String version, CvTerm qualifier) {
+        InteractionXref ref = new InteractionXref(db, id, version, qualifier);
+        ref.setSecondaryId(secondaryId);
+        return ref;
     }
 
     @Override
@@ -886,10 +897,6 @@ public class InteractionController extends AnnotatedObjectController {
         return interaction != null ? interaction.getShortName():null;
     }
 
-    @Override
-    protected boolean areXrefsInitialised() {
-        return interaction.areXrefsInitialized();
-    }
 
     @Override
     protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
@@ -990,13 +997,10 @@ public class InteractionController extends AnnotatedObjectController {
 
     @Override
     public void removeXref(Xref xref) {
-        if (XrefUtils.isXrefFromDatabase(xref, Xref.IMEX_MI, Xref.IMEX)
-                && XrefUtils.doesXrefHaveQualifier(xref, Xref.IMEX_PRIMARY_MI, Xref.IMEX_PRIMARY)
-                && xref.getId().equals(imexId)){
-            imexId = null;
-            interaction.getXrefs().remove(xref);
+        if (!this.interaction.getIdentifiers().remove(xref)){
+            this.interaction.getXrefs().remove(xref);
         }
-        this.interaction.getDbXrefs().remove(xref);
+        imexId = this.interaction.getImexId();
     }
 
     @Override

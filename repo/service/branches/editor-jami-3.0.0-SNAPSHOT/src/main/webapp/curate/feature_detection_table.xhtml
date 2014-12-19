@@ -12,7 +12,8 @@
     <div class="intact-buttonBar">
         <ia:inputSimpleCvObject id="newDetectTxt" cvIdentifier="MI:0003"
                                 value="#{featureController.detectionMethodToAdd}"
-                                selectItems="#{cvObjectService.featureDetectionMethodSelectItems}" rendered="#{disableMethodSelectItems}"/>
+                                selectItems="#{cvObjectService.featureDetectionMethodSelectItems}" rendered="#{disableMethodSelectItems}"
+                                cvClass="uk.ac.ebi.intact.model.CvFeatureIdentification"/>
         <p:commandButton id="newDetectBtn" value="Add Detection Method"
                          actionListener="#{featureController.newDetectionMethod}"
                          process="newDetectTxt"

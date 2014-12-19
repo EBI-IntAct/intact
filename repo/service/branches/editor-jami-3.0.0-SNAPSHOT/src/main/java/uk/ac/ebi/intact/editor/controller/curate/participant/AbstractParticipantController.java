@@ -638,10 +638,6 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
 
     @Override
     public void removeXref(Xref xref) {
-        // causal statements are not always initialised
-        if (!participant.areXrefsInitialized()){
-            setParticipant(getParticipantEditorService().initialiseParticipantXrefs(this.participant));
-        }
         this.participant.getXrefs().remove(xref);
     }
 
@@ -659,11 +655,6 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
 
     public boolean isFeatureDisabled() {
         return isFeatureDisabled;
-    }
-
-    @Override
-    protected boolean areXrefsInitialised() {
-        return this.participant != null && this.participant.areXrefsInitialized();
     }
 
     public int getMinStoichiometry(){
@@ -767,5 +758,10 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
         if (unsaved.getUnsavedObject() instanceof AbstractIntactFeature){
             removeFeature((AbstractIntactFeature)unsaved.getUnsavedObject());
         }
+    }
+
+    @Override
+    protected void addNewXref(AbstractIntactXref newRef) {
+        this.participant.getXrefs().add(newRef);
     }
 }

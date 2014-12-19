@@ -104,6 +104,12 @@ public abstract class AnnotatedObjectController extends BaseController implement
     private String internalRemark;
     private String description;
 
+    private CvTerm newDatabase;
+    private String newXrefId;
+    private String newSecondaryId;
+    private String newXrefVersion;
+    private CvTerm newQualifier;
+
     public AnnotatedObjectController() {
     }
 
@@ -311,12 +317,6 @@ public abstract class AnnotatedObjectController extends BaseController implement
                 FacesContext.getCurrentInstance().renderResponse();
             }
             else{
-                // adjust any xref, just if the curator introduced a value in the primaryId of the xref
-                // and clicked on save without focusing on another field first (which would trigger
-                // a change event and field the values with ajax)
-                if (areXrefsInitialised()) {
-                    xrefChanged();
-                }
 
                 // annotated objects specific tasks to prepare the save/delete
                 doPreSave();
@@ -372,8 +372,6 @@ public abstract class AnnotatedObjectController extends BaseController implement
             handleException(t);
         }
     }
-
-    protected abstract boolean areXrefsInitialised();
 
     protected boolean processDeleteEvents(String currentAc){
         boolean delete = false;
@@ -635,42 +633,39 @@ public abstract class AnnotatedObjectController extends BaseController implement
     // XREFS
     ///////////////////////////////////////////////
 
-    public void xrefChanged() {
+    public void xrefChanged(AbstractIntactXref xref) {
 
         CvTerm goDb = null;
 
-        for (Object obj : collectXrefs()) {
-            AbstractIntactXref xref = (AbstractIntactXref)obj;
-            if (xref.getId() != null &&
-                    (xref.getId().startsWith("go:") ||
-                            xref.getId().startsWith("GO:"))) {
+        if (xref.getId() != null &&
+                (xref.getId().startsWith("go:") ||
+                        xref.getId().startsWith("GO:"))) {
 
-                xref.setId(xref.getId().toUpperCase());
+            xref.setId(xref.getId().toUpperCase());
 
-                if (xref.getAc() == null){
-                    try {
-                        OntologyTerm goTerm = getGoServerProxy().fetchByIdentifier(xref.getId(), Xref.GO.toUpperCase());
+            if (xref.getAc() == null){
+                try {
+                    OntologyTerm goTerm = getGoServerProxy().fetchByIdentifier(xref.getId(), Xref.GO.toUpperCase());
 
-                        if (goTerm != null) {
-                            if (goDb == null)
-                                goDb = IntactUtils.createMIDatabase(psidev.psi.mi.jami.model.Xref.GO,
-                                        psidev.psi.mi.jami.model.Xref.GO_MI);
+                    if (goTerm != null) {
+                        if (goDb == null)
+                            goDb = IntactUtils.createMIDatabase(psidev.psi.mi.jami.model.Xref.GO,
+                                    psidev.psi.mi.jami.model.Xref.GO_MI);
 
-                            xref.setDatabase(goDb);
-                            xref.setSecondaryId(goTerm.getFullName());
+                        xref.setDatabase(goDb);
+                        xref.setSecondaryId(goTerm.getFullName());
 
-                            Collection<OntologyTerm> parents = new ArrayList<OntologyTerm>(goTerm.getParents());
-                            // we have a root term
-                            if (parents.isEmpty()) {
-                                parents.add(goTerm);
-                            }
-                            CvTerm qualifier = calculateQualifier(parents);
-                            xref.setQualifier(qualifier);
+                        Collection<OntologyTerm> parents = new ArrayList<OntologyTerm>(goTerm.getParents());
+                        // we have a root term
+                        if (parents.isEmpty()) {
+                            parents.add(goTerm);
                         }
-                    } catch (Throwable e) {
-                        handleException(e);
-                        return;
+                        CvTerm qualifier = calculateQualifier(parents);
+                        xref.setQualifier(qualifier);
                     }
+                } catch (Throwable e) {
+                    handleException(e);
+                    return;
                 }
             }
         }
@@ -707,9 +702,26 @@ public abstract class AnnotatedObjectController extends BaseController implement
         return terms;
     }
 
-    public abstract void newXref(ActionEvent evt);
+    public void newXref(ActionEvent evt){
+        if (this.newDatabase != null && this.newXrefId != null){
+            AbstractIntactXref newRef = newXref(this.newDatabase, this.newXrefId, this.newSecondaryId, this.newXrefVersion, this.newQualifier);
+            // check if go
+            xrefChanged(newRef);
+            // add xref to object
+            addNewXref(newRef);
+            // save
+            doSave(false);
+        }
+        else{
+            addErrorMessage("Cannot add new xref as the database and/or primary identifier is(are) missing","No database/primary identifier provided");
+        }
+    }
 
-    public abstract <T extends AbstractIntactXref> T newXref(String db, String dbMI, String id, String secondaryId, String qualifier, String qualifierMI);
+    protected abstract void addNewXref(AbstractIntactXref newRef);
+
+    protected abstract <T extends AbstractIntactXref> T newXref(CvTerm db, String id, String secondaryId, String version, CvTerm qualifier);
+
+    protected abstract <T extends AbstractIntactXref> T newXref(String db, String dbMI, String id, String secondaryId, String qualifier, String qualifierMI);
 
     public abstract List<psidev.psi.mi.jami.model.Xref> collectXrefs();
 
@@ -1349,5 +1361,45 @@ public abstract class AnnotatedObjectController extends BaseController implement
                 }
             }
         }
+    }
+
+    public CvTerm getNewDatabase() {
+        return newDatabase;
+    }
+
+    public void setNewDatabase(CvTerm newDatabase) {
+        this.newDatabase = newDatabase;
+    }
+
+    public String getNewXrefId() {
+        return newXrefId;
+    }
+
+    public void setNewXrefId(String newXrefId) {
+        this.newXrefId = newXrefId;
+    }
+
+    public String getNewSecondaryId() {
+        return newSecondaryId;
+    }
+
+    public void setNewSecondaryId(String newSecondaryId) {
+        this.newSecondaryId = newSecondaryId;
+    }
+
+    public CvTerm getNewQualifier() {
+        return newQualifier;
+    }
+
+    public void setNewQualifier(CvTerm newQualifier) {
+        this.newQualifier = newQualifier;
+    }
+
+    public String getNewXrefVersion() {
+        return newXrefVersion;
+    }
+
+    public void setNewXrefVersion(String newXrefVersion) {
+        this.newXrefVersion = newXrefVersion;
     }
 }

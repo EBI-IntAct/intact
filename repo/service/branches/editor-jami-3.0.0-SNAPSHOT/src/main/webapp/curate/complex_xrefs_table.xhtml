@@ -14,13 +14,42 @@
         <table style="#{style}">
             <tr>
                 <td>
+                    <h:panelGrid id="newXrefTxt" columns="10">
+                        <h:outputLabel value="Database: " for="databaseSel1"/>
+                        <h:selectOneMenu id="databaseSel1" value="#{annotatedObjectController.newDatabase}" disabled="#{annotatedObjectController.isXrefDisabled()}"
+                                         converter="cvObjectConverter">
+                            <f:selectItems value="#{cvObjectService.databaseSelectItems}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Identifier: " for="primaryId1Txt"/>
+                        <p:inputText id="primaryId1Txt" value="#{annotatedObjectController.newXrefId}" size="15" converter="trimmingConverter"
+                                     disabled="#{annotatedObjectController.isXrefDisabled()}">
+                        </p:inputText>
+                        <h:outputLabel value="Secondary: " for="secondary1Txt"/>
+                        <p:inputText id="secondary1Txt" value="#{annotatedObjectController.newSecondaryId}" size="15"
+                                     converter="trimmingConverter" disabled="#{annotatedObjectController.isXrefDisabled()}">
+                        </p:inputText>
+                        <h:outputLabel value="Qualifier: " for="qualifier1Sel"/>
+                        <h:selectOneMenu id="qualifier1Sel" value="#{annotatedObjectController.newQualifier}"
+                                         converter="cvObjectConverter" disabled="#{annotatedObjectController.isXrefDisabled()}">
+                            <f:selectItems value="#{cvObjectService.qualifierSelectItems}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Version: " for="version1Txt"/>
+                        <p:inputText id="version1Txt" value="#{annotatedObjectController.newXrefVersion}" size="5"
+                                     converter="trimmingConverter" disabled="#{annotatedObjectController.isXrefDisabled()}"/>
+                        <h:outputLabel value="PubmedId (for GO annotations only): " for="pubmedId1Txt"/>
+                        <p:inputText id="pubmedId1Txt" value="#{complexController.newXrefPubmed}" size="15"
+                                     converter="trimmingConverter" disabled="#{annotatedObjectController.isXrefDisabled()}">
+                        </p:inputText>
+                        <h:outputLabel value="Evidence code (for GO annotations only): " for="evidenceCode1Sel"/>
+                        <h:selectOneMenu id="evidenceCode1Sel" value="#{complexController.newXrefEvidenceCode}"
+                                         converter="cvObjectConverter" disabled="#{annotatedObjectController.isXrefDisabled()}">
+                            <f:selectItems value="#{cvObjectService.evidenceTypeSelectItems}"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
                      <div class="intact-buttonBar">
                             <p:commandButton id="newXrefBtn" value="New Xref" actionListener="#{annotatedObjectController.newXref}"
-                                             process="@this"
+                                             process="newXrefTxt"
                                              update="xrefsTable #{update}"/>
-                         <p:commandButton id="newComplexGoXrefBtn" value="New complex GO Xref" actionListener="#{annotatedObjectController.newComplexGoXref}"
-                                          process="@this"
-                                          update="xrefsTable #{update}"/>
                     </div>
 
                     <p:dataTable id="xrefsTable" var="xref" value="#{annotatedObjectController.collectXrefs()}"

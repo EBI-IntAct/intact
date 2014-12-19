@@ -208,14 +208,10 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     }
 
     @Override
-    public void newXref(ActionEvent evt) {
-        // xrefs are not always initialised
-        if (!getFeature().areXrefsInitialized()){
-            setFeature(getFeatureEditorService().initialiseFeatureXrefs(getFeature()));
-        }
-
-        getFeature().getDbXrefs().add(new FeatureEvidenceXref(IntactUtils.createMIDatabase("to set", null), "to set"));
-        setUnsavedChanges(true);
+    protected FeatureEvidenceXref newXref(CvTerm db, String id, String secondaryId, String version, CvTerm qualifier) {
+        FeatureEvidenceXref ref = new FeatureEvidenceXref(db, id, version, qualifier);
+        ref.setSecondaryId(secondaryId);
+        return ref;
     }
 
     @Override
