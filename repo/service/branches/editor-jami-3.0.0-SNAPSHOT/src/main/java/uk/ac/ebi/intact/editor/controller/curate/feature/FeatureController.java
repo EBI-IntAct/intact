@@ -331,13 +331,9 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     }
 
     public void newDetectionMethod(ActionEvent evt) {
-        // aliases are not always initialised
-        if (!getFeature().areDetectionMethodsInitialized()){
-            setFeature(getFeatureEditorService().initialiseFeatureDetectionMethods(getFeature()));
-        }
         if (this.detectionMethodToAdd != null){
             getFeature().getDetectionMethods().add(this.detectionMethodToAdd);
-            setUnsavedChanges(true);
+            doSave(false);
         }
     }
 
@@ -352,10 +348,6 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     }
 
     public void removeDetectionMethod(CvTerm cv) {
-        // methods are not always initialised
-        if (!getFeature().areDetectionMethodsInitialized()){
-            setFeature(getFeatureEditorService().initialiseFeatureDetectionMethods(getFeature()));
-        }
 
         getFeature().getDetectionMethods().remove(cv);
     }

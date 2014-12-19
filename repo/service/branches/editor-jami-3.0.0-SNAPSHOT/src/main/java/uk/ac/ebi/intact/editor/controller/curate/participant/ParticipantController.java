@@ -140,9 +140,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
 
     public void removeExperimentalPreparation(CvTerm prep){
         if (prep != null){
-            if (!getParticipant().areExperimentalPreparationsInitialized()){
-                setParticipant(getParticipantEditorService().initialiseParticipantExperimentalPreparations(getParticipant()));
-            }
             if (getParticipant().getExperimentalPreparations().remove(prep)){
                 changed();
             }
@@ -154,25 +151,14 @@ public class ParticipantController extends AbstractParticipantController<IntactP
 
     public void addExperimentalPreparation(){
         if (this.preparationToAdd != null){
-            if (!getParticipant().areExperimentalPreparationsInitialized()){
-                setParticipant(getParticipantEditorService().initialiseParticipantExperimentalPreparations(getParticipant()));
-            }
-            if (!getParticipant().getExperimentalPreparations().contains(this.preparationToAdd)){
-                getParticipant().getExperimentalPreparations().add(this.preparationToAdd);
-                changed();
-            }
-            else{
-                addWarningMessage("The experimental preparation " + preparationToAdd.getFullName()+" was already attached to this participant.","The experimental preparation " + preparationToAdd.getFullName()+" was already attached to this participant.");
-            }
+            getParticipant().getExperimentalPreparations().add(this.preparationToAdd);
+            doSave(false);
         }
     }
 
     public void removeIdentificationMethod(CvTerm prep){
         if (prep != null){
-            if (!getParticipant().areIdentificationMethodsInitialized()){
-                setParticipant(getParticipantEditorService().initialiseParticipantIdentificationMethods(getParticipant()));
-            }
-            if (getParticipant().getDbIdentificationMethods().remove(prep)){
+            if (getParticipant().getIdentificationMethods().remove(prep)){
                 changed();
             }
             else{
@@ -183,16 +169,8 @@ public class ParticipantController extends AbstractParticipantController<IntactP
 
     public void addIdentificationMethod(){
         if (this.identificationToAdd != null){
-            if (!getParticipant().areIdentificationMethodsInitialized()){
-                setParticipant(getParticipantEditorService().initialiseParticipantIdentificationMethods(getParticipant()));
-            }
-            if (!getParticipant().getDbIdentificationMethods().contains(this.identificationToAdd)){
-                getParticipant().getDbIdentificationMethods().add(this.identificationToAdd);
-                changed();
-            }
-            else{
-                addWarningMessage("The identification method " + identificationToAdd.getFullName()+" was already attached to this participant.","The identification method " + identificationToAdd.getFullName()+" was already attached to this participant.");
-            }
+            getParticipant().getIdentificationMethods().add(this.identificationToAdd);
+            doSave(false);
         }
     }
 

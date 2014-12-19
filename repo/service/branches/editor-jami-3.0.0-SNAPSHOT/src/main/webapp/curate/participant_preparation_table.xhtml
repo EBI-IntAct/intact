@@ -11,10 +11,11 @@
 
 
     <div class="intact-buttonBar">
-        <ia:inputSimpleCvObject id="newPrepTxt" cvIdentifier="MI:0346"
-                                value="#{participantController.preparationToAdd}"
-                                cvClass="uk.ac.ebi.intact.model.CvExperimentalPreparation"
-                                selectItems="#{cvObjectService.participantExperimentalPreparationsSelectItems}" rendered="#{disablePreparationSelectItems}"/>
+        <h:selectOneMenu id="newPrepTxt" value="#{participantController.preparationToAdd}"
+                         disabled="#{disablePreparationSelectItems}"
+                         converter="cvObjectConverter">
+            <f:selectItems value="#{cvObjectService.participantExperimentalPreparationsSelectItems}"/>
+        </h:selectOneMenu>
         <p:commandButton id="newPrepBtn" value="Add Experimental Preparation"
                          actionListener="#{participantController.addExperimentalPreparation}"
                          process="newPrepTxt"
