@@ -18,7 +18,7 @@
         <p:commandButton id="newIdentBtn" value="Add Identification Method (overrides experiment)"
                          actionListener="#{participantController.addIdentificationMethod}"
                          process="newIdentTxt"
-                         update="identificationsTable #{update}"/>
+                         update="newIdentTxt identificationsTable #{update}"/>
     </div>
 
     <p:dataTable id="identificationsTable" var="method" value="#{participantController.collectIdentificationMethods()}">

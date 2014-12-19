@@ -19,7 +19,7 @@
         <p:commandButton id="newPrepBtn" value="Add Experimental Preparation"
                          actionListener="#{participantController.addExperimentalPreparation}"
                          process="newPrepTxt"
-                         update="preparationsTable #{update}"/>
+                         update="newPrepTxt preparationsTable #{update}"/>
     </div>
 
     <p:dataTable id="preparationsTable" var="method" value="#{participantController.collectExperimentalPreparations()}">

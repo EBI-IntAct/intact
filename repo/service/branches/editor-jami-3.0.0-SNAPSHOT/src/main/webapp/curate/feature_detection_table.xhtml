@@ -18,7 +18,7 @@
         <p:commandButton id="newDetectBtn" value="Add Detection Method"
                          actionListener="#{featureController.newDetectionMethod}"
                          process="newDetectTxt"
-                         update="methodsTable #{update}"/>
+                         update="newDetectTxt methodsTable #{update}"/>
     </div>
 
     <p:dataTable id="methodsTable" var="method" value="#{featureController.collectDetectionMethods()}">

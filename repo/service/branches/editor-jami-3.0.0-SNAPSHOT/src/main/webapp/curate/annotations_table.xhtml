@@ -17,12 +17,12 @@
             <f:selectItems value="#{annotatedObjectSelectItems}"/>
         </h:selectOneMenu>
         <h:outputLabel value="Description: " for="annotation1Txt"/>
-        <p:inputTextarea id="annotation1Txt" value="#{annotatedObjectController.newAnnotationDescription}" rows="4" cols="50" autoResize="false"
+        <p:inputTextarea id="annotation1Txt" value="#{annotatedObjectController.newAnnotationDescription}" rows="1" cols="50" autoResize="false"
                          converter="trimmingConverter" disabled="#{annotatedObjectController.isAnnotationTopicDisabled()}">
         </p:inputTextarea>
         <p:commandButton id="newAnnotBtn" value="Add New Annotation" actionListener="#{annotatedObjectController.newAnnotation}"
                          process="newAnnotationTxt"
-                         update="annotationsTable #{update}"/>
+                         update="newAnnotationTxt annotationsTable #{update}"/>
     </h:panelGrid>
 
     <p:dataTable id="annotationsTable" var="annotation" value="#{annotatedObjectController.collectAnnotations()}"

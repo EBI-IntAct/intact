@@ -38,7 +38,7 @@
                                      converter="trimmingConverter" disabled="#{annotatedObjectController.isXrefDisabled()}"/>
                         <p:commandButton id="newXrefBtn" value="Add new Xref" actionListener="#{annotatedObjectController.newXref}"
                                          process="newXrefTxt"
-                                         update="xrefsTable #{update}"/>
+                                         update="newXrefTxt xrefsTable #{update}"/>
                     </h:panelGrid>
 
                     <p:dataTable id="xrefsTable" var="xref" value="#{annotatedObjectController.collectXrefs()}"

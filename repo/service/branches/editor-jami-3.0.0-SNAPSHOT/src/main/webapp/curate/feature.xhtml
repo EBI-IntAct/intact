@@ -130,7 +130,7 @@
             <br/>
 
             <p:tabView id="featureTabs" dynamic="true">
-                <p:ajax event="tabChange" listener="#{featureController.onTabChanged}" />
+                <p:ajax event="tabChange" listener="#{featureController.onTabChanged}" onstart="loadDialog.show()" oncomplete="loadDialog.hide()"/>
 
                 <p:tab id="rangesTab" title="Ranges (#{featureController.featureRangeSize})">
 
