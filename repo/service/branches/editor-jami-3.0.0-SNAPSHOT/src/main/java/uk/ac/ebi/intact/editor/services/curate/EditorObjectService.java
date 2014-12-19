@@ -168,7 +168,7 @@ public class EditorObjectService extends AbstractEditorService {
         }
     }
 
-    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public Collection<String> findObjectDuplicates(IntactPrimaryObject jamiObject, IntactDbSynchronizer dbSynchronizer){
         // if the annotated object does not have an ac, check if another one similar exists in the db
         if (jamiObject.getAc() == null) {
