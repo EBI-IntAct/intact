@@ -159,7 +159,7 @@
 <br/>
 
 <p:tabView id="participantTabs" dynamic="true">
-    <p:ajax event="tabChange" listener="#{participantController.onTabChanged}" />
+    <p:ajax event="tabChange" listener="#{participantController.onTabChanged}" onstart="loadDialog.show()" oncomplete="loadDialog.hide()"/>
 
     <p:tab id="featureTab" title="Features (#{participantController.featuresSize})">
 

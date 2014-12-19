@@ -22,7 +22,7 @@
         <p:commandButton id="newParamBtn" value="Add New Variable Parameter"
                          actionListener="#{experimentController.newVariableParameter}"
                          process="newParamTxt"
-                         update="vparametersTable #{update}"/>
+                         update="newParamTxt vparametersTable #{update}"/>
     </h:panelGrid>
 
     <p:dataTable id="vparametersTable" var="parameter" value="#{experimentController.collectVariableParameters}" rendered="#{experimentController.isVariableParameterTab()}">

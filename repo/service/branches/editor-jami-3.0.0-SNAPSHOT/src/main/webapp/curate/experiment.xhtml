@@ -150,7 +150,7 @@
 
         <p:tabView id="experimentTabs" dynamic="true">
 
-            <p:ajax event="tabChange" listener="#{experimentController.onTabChanged}" />
+            <p:ajax event="tabChange" listener="#{experimentController.onTabChanged}" onstart="loadDialog.show()" oncomplete="loadDialog.hide()"/>
 
             <p:tab id="interactionsTab" title="Interactions (#{experimentController.interactionDataModel.rowCount})">
                 <div class="intact-buttonBar">
