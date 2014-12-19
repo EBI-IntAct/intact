@@ -159,9 +159,8 @@ public class ModelledParticipantController extends AbstractParticipantController
     }
 
     @Override
-    public void newAlias(ActionEvent evt) {
-        getParticipant().getAliases().add(new ModelledParticipantAlias(IntactUtils.createMIAliasType("to set", null), "to set"));
-        setUnsavedChanges(true);
+    public ModelledParticipantAlias newAlias(CvTerm aliasType, String name) {
+        return new ModelledParticipantAlias(aliasType, name);
     }
 
     @Override

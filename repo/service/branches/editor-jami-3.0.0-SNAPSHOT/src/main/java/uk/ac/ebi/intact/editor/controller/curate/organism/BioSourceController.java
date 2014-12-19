@@ -292,6 +292,16 @@ public class BioSourceController extends AnnotatedObjectController {
     }
 
     @Override
+    protected void addNewAlias(AbstractIntactAlias newAlias) {
+        bioSource.getAliases().add(newAlias);
+    }
+
+    @Override
+    public OrganismAlias newAlias(CvTerm aliasType, String name) {
+        return new OrganismAlias(aliasType, name);
+    }
+
+    @Override
     public OrganismAlias newAlias(String alias, String aliasMI, String name) {
         return new OrganismAlias(getCvService().findCvObject(IntactUtils.ALIAS_TYPE_OBJCLASS, aliasMI != null ? aliasMI : alias),
                 name);

@@ -677,11 +677,6 @@ public class ComplexController extends AnnotatedObjectController {
          this.complex.getAnnotations().remove(annotation);
     }
 
-    @Override
-    public void newAlias(ActionEvent evt) {
-        this.complex.getAliases().add(new InteractorAlias("to set"));
-        setUnsavedChanges(true);
-    }
 
     @Override
     public InteractorAlias newAlias(String alias, String aliasMI, String name) {
@@ -710,6 +705,16 @@ public class ComplexController extends AnnotatedObjectController {
         Collections.sort(annotations, new AuditableComparator());
         // annotations are always initialised
         return annotations;
+    }
+
+    @Override
+    protected void addNewAlias(AbstractIntactAlias newAlias) {
+        this.complex.getAliases().add(newAlias);
+    }
+
+    @Override
+    public InteractorAlias newAlias(CvTerm aliasType, String name) {
+        return new InteractorAlias(aliasType, name);
     }
 
     @Override

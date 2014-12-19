@@ -479,12 +479,13 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
 
     @Override
     public void removeAlias(Alias alias) {
-        // aliases are not always initialised
-        if (!feature.areAliasesInitialized()){
-            setFeature(getFeatureEditorService().initialiseFeatureAliases(this.feature));
-        }
 
         this.feature.getAliases().remove(alias);
+    }
+
+    @Override
+    protected void addNewAlias(AbstractIntactAlias newAlias) {
+        this.feature.getAliases().add(newAlias);
     }
 
     public List<Alias> collectAliases() {

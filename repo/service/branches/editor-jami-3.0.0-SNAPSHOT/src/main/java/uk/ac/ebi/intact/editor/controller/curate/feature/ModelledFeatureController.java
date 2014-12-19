@@ -123,6 +123,11 @@ public class ModelledFeatureController extends AbstractFeatureController<IntactM
     }
 
     @Override
+    public ModelledFeatureAlias newAlias(CvTerm aliasType, String name) {
+        return new ModelledFeatureAlias(aliasType, name);
+    }
+
+    @Override
     public ModelledFeatureAlias newAlias(String alias, String aliasMI, String name) {
         return new ModelledFeatureAlias(getCvService().findCvObject(IntactUtils.ALIAS_TYPE_OBJCLASS, aliasMI != null ? aliasMI : alias),
                 name);

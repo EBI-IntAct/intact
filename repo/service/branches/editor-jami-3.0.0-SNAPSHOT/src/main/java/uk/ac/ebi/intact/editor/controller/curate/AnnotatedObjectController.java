@@ -110,6 +110,9 @@ public abstract class AnnotatedObjectController extends BaseController implement
     private String newXrefVersion;
     private CvTerm newQualifier;
 
+    private CvTerm newAliasType;
+    private String newAliasName;
+
     public AnnotatedObjectController() {
     }
 
@@ -928,7 +931,23 @@ public abstract class AnnotatedObjectController extends BaseController implement
     // ALIASES
     ///////////////////////////////////////////////
 
-    public abstract void newAlias(ActionEvent evt);
+    public void newAlias(ActionEvent evt){
+        if (this.newAliasName != null && this.newAliasType != null){
+            // create new alias
+            AbstractIntactAlias newAlias = newAlias(this.newAliasType, this.newAliasName);
+            // add alias
+            addNewAlias(newAlias);
+            // save
+            doSave(true);
+        }
+        else{
+            addErrorMessage("Cannot add the new alias as it does not have a name and/or type", "Alias without name and/or type");
+        }
+    }
+
+    protected abstract void addNewAlias(AbstractIntactAlias newAlias);
+
+    public abstract <T extends AbstractIntactAlias> T newAlias(CvTerm aliasType, String name);
 
     public abstract <T extends AbstractIntactAlias> T newAlias(String alias, String aliasMI, String name);
 
@@ -1401,5 +1420,21 @@ public abstract class AnnotatedObjectController extends BaseController implement
 
     public void setNewXrefVersion(String newXrefVersion) {
         this.newXrefVersion = newXrefVersion;
+    }
+
+    public CvTerm getNewAliasType() {
+        return newAliasType;
+    }
+
+    public void setNewAliasType(CvTerm newAliasType) {
+        this.newAliasType = newAliasType;
+    }
+
+    public String getNewAliasName() {
+        return newAliasName;
+    }
+
+    public void setNewAliasName(String newAliasName) {
+        this.newAliasName = newAliasName;
     }
 }
