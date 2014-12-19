@@ -792,6 +792,9 @@ public class InteractionController extends AnnotatedObjectController {
             InteractionEvidenceConfidence confidence = new InteractionEvidenceConfidence(this.newConfidenceType, this.newConfidenceValue);
             interaction.getConfidences().add(confidence);
             doSave(false);
+
+            this.newConfidenceValue = null;
+            this.newConfidenceType = null;
         }
         else{
             addErrorMessage("Cannot add new confidence as it does not have any type/value", "Missing confidence type/value");
@@ -809,6 +812,13 @@ public class InteractionController extends AnnotatedObjectController {
             param.setUnit(this.newParameterUnit);
             this.interaction.getParameters().add(param);
             doSave(false);
+
+            this.newParameterBase = null;
+            this.newParameterFactor = null;
+            this.newParameterType = null;
+            this.newParameterUncertainty = null;
+            this.newParameterUnit = null;
+            this.newParameterExponent = null;
         }
         else{
             addErrorMessage("Cannot add new parameter as it does not have any type/value", "Missing parameter type/value");

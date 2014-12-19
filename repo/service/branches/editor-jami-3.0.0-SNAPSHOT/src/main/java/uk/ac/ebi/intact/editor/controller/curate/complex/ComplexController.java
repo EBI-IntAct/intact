@@ -549,6 +549,9 @@ public class ComplexController extends AnnotatedObjectController {
             ComplexConfidence confidence = new ComplexConfidence(this.newConfidenceType, this.newConfidenceValue);
             complex.getModelledConfidences().add(confidence);
             doSave(false);
+
+            this.newConfidenceValue = null;
+            this.newConfidenceType = null;
         }
         else{
             addErrorMessage("Cannot add new confidence as it does not have any type/value", "Missing confidence type/value");
@@ -566,6 +569,13 @@ public class ComplexController extends AnnotatedObjectController {
             param.setUnit(this.newParameterUnit);
             complex.getModelledParameters().add(param);
             doSave(false);
+
+            this.newParameterBase = null;
+            this.newParameterFactor = null;
+            this.newParameterType = null;
+            this.newParameterUncertainty = null;
+            this.newParameterUnit = null;
+            this.newParameterExponent = null;
         }
         else{
             addErrorMessage("Cannot add new parameter as it does not have any type/value", "Missing parameter type/value");

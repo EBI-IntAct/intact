@@ -9,8 +9,7 @@
                 xmlns:ia="http://java.sun.com/jsf/composite/intact-components"
                 xmlns:ed="http://ebi.ac.uk/intact/editor/ui">
 
-        <div class="intact-buttonBar">
-            <h:panelGrid id="newParamTxt" columns="12">
+            <h:panelGrid id="newParamTxt" columns="13" class="intact-buttonBar">
                 <h:outputLabel value="Type: " for="paramType1Sel"/>
                 <h:selectOneMenu id="paramType1Sel" value="#{annotatedObjectController.newParameterType}" disabled="#{disableParameterSelectItems}"
                                  >
@@ -36,12 +35,11 @@
                 <p:inputText id="paramUncertainty1Txt" value="#{annotatedObjectController.newParameterUncertainty}">
                     <f:convertNumber/>
                 </p:inputText>
+                <p:commandButton id="newParamBtn" value="Add New Parameter"
+                                 actionListener="#{annotatedObjectController.newParameter}"
+                                 process="newParamTxt"
+                                 update="parametersTable #{update}"/>
             </h:panelGrid>
-            <p:commandButton id="newParamBtn" value="Add New Parameter"
-                             actionListener="#{annotatedObjectController.newParameter}"
-                             process="newParamTxt"
-                             update="parametersTable #{update}"/>
-        </div>
 
         <p:dataTable id="parametersTable" var="parameter" value="#{annotatedObjectController.collectParameters()}">
             <p:column>
