@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import psidev.psi.mi.jami.bridges.exception.BridgeFailedException;
 import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
+import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
@@ -109,9 +110,20 @@ public class InteractorController extends AnnotatedObjectController {
     }
 
     @Override
-    public void newXref(ActionEvent evt) {
-        interactor.getDbXrefs().add(new InteractorXref(IntactUtils.createMIDatabase("to set", null), "to set"));
-        setUnsavedChanges(true);
+    protected void addNewXref(AbstractIntactXref newRef) {
+        if (XrefUtils.isXrefAnIdentifier(newRef) || XrefUtils.doesXrefHaveQualifier(newRef, null, "intact-secondary")){
+            this.interactor.getIdentifiers().add(newRef);
+        }
+        else{
+            this.interactor.getXrefs().add(newRef);
+        }
+    }
+
+    @Override
+    protected InteractorXref newXref(CvTerm db, String id, String secondaryId, String version, CvTerm qualifier) {
+        InteractorXref ref = new InteractorXref(db, id, version, qualifier);
+        ref.setSecondaryId(secondaryId);
+        return ref;
     }
 
     @Override
@@ -562,7 +574,9 @@ public class InteractorController extends AnnotatedObjectController {
 
     @Override
     public void removeXref(Xref xref) {
-        this.interactor.getDbXrefs().remove(xref);
+        if (!this.interactor.getIdentifiers().remove(xref)){
+            this.interactor.getXrefs().remove(xref);
+        }
     }
 
     @Override
@@ -660,10 +674,5 @@ public class InteractorController extends AnnotatedObjectController {
             this.participantImportService = ApplicationContextProvider.getBean("participantImportService");
         }
         return participantImportService;
-    }
-
-    @Override
-    protected boolean areXrefsInitialised() {
-        return this.interactor != null && this.interactor.areXrefsInitialized();
     }
 }

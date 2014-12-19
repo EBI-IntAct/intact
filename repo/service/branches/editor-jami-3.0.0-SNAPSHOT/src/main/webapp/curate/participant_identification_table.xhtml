@@ -12,6 +12,7 @@
     <div class="intact-buttonBar">
         <ia:inputSimpleCvObject id="newIdentTxt" cvIdentifier="MI:0002"
                                 value="#{participantController.identificationToAdd}"
+                                cvClass="uk.ac.ebi.intact.model.CvIdentification"
                                 selectItems="#{cvObjectService.participantDetectionMethodSelectItems}" rendered="#{disableIdentificationSelectItems}"/>
         <p:commandButton id="newIdentBtn" value="Add Identification Method (overrides experiment)"
                          actionListener="#{participantController.addIdentificationMethod}"

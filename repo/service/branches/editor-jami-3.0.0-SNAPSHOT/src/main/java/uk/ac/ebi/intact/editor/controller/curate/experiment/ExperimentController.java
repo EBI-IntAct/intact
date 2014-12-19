@@ -287,15 +287,17 @@ public class ExperimentController extends AnnotatedObjectController {
         return new ExperimentCloner(false);
     }
 
-    @Override
-    public void newXref(ActionEvent evt) {
-        // xrefs are not always initialised
-        if (!experiment.areXrefsInitialized()){
-            setExperiment(getExperimentService().initialiseExperimentXrefs(this.experiment));
-        }
 
-        this.experiment.getXrefs().add(new ExperimentXref(IntactUtils.createMIDatabase("to set", null), "to set"));
-        setUnsavedChanges(true);
+    @Override
+    protected void addNewXref(AbstractIntactXref newRef) {
+         this.experiment.getXrefs().add(newRef);
+    }
+
+    @Override
+    protected ExperimentXref newXref(CvTerm db, String id, String secondaryId, String version, CvTerm qualifier) {
+        ExperimentXref ref = new ExperimentXref(db, id, version, qualifier);
+        ref.setSecondaryId(secondaryId);
+        return ref;
     }
 
     @Override
@@ -938,10 +940,5 @@ public class ExperimentController extends AnnotatedObjectController {
         if (unsaved.getUnsavedObject() instanceof IntactInteractionEvidence){
             removeInteractionEvidence((IntactInteractionEvidence)unsaved.getUnsavedObject());
         }
-    }
-
-    @Override
-    protected boolean areXrefsInitialised() {
-        return this.experiment != null && this.experiment.areXrefsInitialized();
     }
 }

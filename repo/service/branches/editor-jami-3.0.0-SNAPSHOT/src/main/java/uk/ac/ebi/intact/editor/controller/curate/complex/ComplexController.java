@@ -28,6 +28,8 @@ import psidev.psi.mi.jami.bridges.exception.BridgeFailedException;
 import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AliasUtils;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
+import psidev.psi.mi.jami.utils.CvTermUtils;
+import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
@@ -111,6 +113,9 @@ public class ComplexController extends AnnotatedObjectController {
     private String description = null;
     private String complexProperties = null;
 
+    private String newXrefPubmed;
+    private CvTerm newXrefEvidenceCode;
+
     public ComplexController() {
     }
 
@@ -126,11 +131,6 @@ public class ComplexController extends AnnotatedObjectController {
 
     public String getName(){
         return this.name;
-    }
-
-    @Override
-    protected boolean areXrefsInitialised() {
-        return this.complex.areXrefsInitialized();
     }
 
     @Override
@@ -625,22 +625,34 @@ public class ComplexController extends AnnotatedObjectController {
     }
 
     @Override
-    public void newXref(ActionEvent evt) {
-        if (!this.complex.areXrefsInitialized()){
-           setComplex(getComplexEditorService().initialiseComplexXrefs(complex));
+    protected void addNewXref(AbstractIntactXref newRef) {
+        if (XrefUtils.isXrefAnIdentifier(newRef) || XrefUtils.doesXrefHaveQualifier(newRef, null, "intact-secondary")){
+            this.complex.getIdentifiers().add(newRef);
         }
-        this.complex.getDbXrefs().add(new InteractorXref(IntactUtils.createMIDatabase("to set", null), "to set"));
-        setUnsavedChanges(true);
+        else{
+            this.complex.getXrefs().add(newRef);
+        }
     }
 
-    public void newComplexGOXref(ActionEvent evt) {
-        if (!this.complex.areXrefsInitialized()){
-            setComplex(getComplexEditorService().initialiseComplexXrefs(complex));
+    @Override
+    protected InteractorXref newXref(CvTerm db, String id, String secondaryId, String version, CvTerm qualifier) {
+        if (CvTermUtils.isCvTerm(db, Xref.GO_MI, Xref.GO) && (this.newXrefEvidenceCode != null || this.newXrefPubmed != null)){
+            ComplexGOXref goRef = new ComplexGOXref(id, version, qualifier);
+            goRef.setSecondaryId(secondaryId);
+            goRef.setPubmed(this.newXrefPubmed);
+            goRef.setEvidenceType(this.newXrefEvidenceCode);
+            goRef.setDatabase(getCvService().findCvObject(IntactUtils.DATABASE_OBJCLASS, Xref.GO_MI));
+            return goRef;
         }
-        ComplexGOXref goRef = new ComplexGOXref("to set", (String)null);
-        goRef.setDatabase(getCvService().findCvObject(IntactUtils.DATABASE_OBJCLASS, Xref.GO_MI));
-        this.complex.getDbXrefs().add(goRef);
-        setUnsavedChanges(true);
+        else{
+            InteractorXref ref = new InteractorXref(db, id, version, qualifier);
+            ref.setSecondaryId(secondaryId);
+
+            if (this.newXrefPubmed != null || this.newXrefEvidenceCode != null){
+                addWarningMessage("Ignored pubmed id and evidence code as they are only added to go references", "Ignored pubmed id and evidence code");
+            }
+            return ref;
+        }
     }
 
     @Override
@@ -763,10 +775,8 @@ public class ComplexController extends AnnotatedObjectController {
 
     @Override
     public void removeXref(Xref xref) {
-        if (!this.complex.areXrefsInitialized()){
-            setComplex(getComplexEditorService().initialiseComplexXrefs(this.complex));
-        }
-        this.complex.getDbXrefs().remove(xref);
+        this.complex.getXrefs().remove(xref);
+        this.complex.getIdentifiers().remove(xref);
     }
 
     public boolean isNewPublication() {
@@ -1360,5 +1370,21 @@ public class ComplexController extends AnnotatedObjectController {
             this.bioSourceService = ApplicationContextProvider.getBean("bioSourceService");
         }
         return bioSourceService;
+    }
+
+    public CvTerm getNewXrefEvidenceCode() {
+        return newXrefEvidenceCode;
+    }
+
+    public void setNewXrefEvidenceCode(CvTerm newXrefEvidenceCode) {
+        this.newXrefEvidenceCode = newXrefEvidenceCode;
+    }
+
+    public String getNewXrefPubmed() {
+        return newXrefPubmed;
+    }
+
+    public void setNewXrefPubmed(String newXrefPubmed) {
+        this.newXrefPubmed = newXrefPubmed;
     }
 }
