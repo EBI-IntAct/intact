@@ -19,6 +19,7 @@ import uk.ac.ebi.intact.jami.utils.IntactUtils;
 import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ComponentSystemEvent;
+import javax.faces.event.ValueChangeEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,6 +36,9 @@ public class InstitutionController extends AnnotatedObjectController {
 
     private String ac;
     private IntactSource institution;
+
+    private String url;
+    private String postalAddress;
 
     @Resource(name = "institutionService")
     private transient InstitutionService institutionService;
@@ -78,6 +82,9 @@ public class InstitutionController extends AnnotatedObjectController {
             setCautionMessage(caution != null ? caution.getValue() : null);
             Annotation internal = AnnotationUtils.collectFirstAnnotationWithTopic(this.institution.getAnnotations(), null, "remark-internal");
             setInternalRemark(internal != null ? internal.getValue() : null);
+
+            this.url = this.institution.getUrl();
+            this.postalAddress = this.institution.getPostalAddress();
         }
     }
 
@@ -216,19 +223,45 @@ public class InstitutionController extends AnnotatedObjectController {
     }
 
     public String getPostalAddress() {
-        return this.institution != null ? this.institution.getPostalAddress():null;
+        return this.postalAddress;
     }
 
     public void setPostalAddress(String address) {
-        this.institution.setPostalAddress(address);
+        this.postalAddress = address;
     }
 
     public String getUrl() {
-        return this.institution != null ? this.institution.getUrl():null;
+        return this.url;
     }
 
     public void setUrl(String address) {
-        this.institution.setUrl(address);
+        this.url = address;
+    }
+
+    public void onUrlChanged(ValueChangeEvent evt) {
+        setUnsavedChanges(true);
+        String newValue = (String) evt.getNewValue();
+        if (newValue == null || newValue.length() == 0){
+            this.institution.setUrl(null);
+            this.url = null;
+        }
+        else{
+            this.institution.setUrl(newValue);
+            this.url = newValue;
+        }
+    }
+
+    public void onPostalAddressChanged(ValueChangeEvent evt) {
+        setUnsavedChanges(true);
+        String newValue = (String) evt.getNewValue();
+        if (newValue == null || newValue.length() == 0){
+            this.institution.setPostalAddress(null);
+            this.postalAddress = null;
+        }
+        else{
+            this.institution.setPostalAddress(newValue);
+            this.postalAddress = newValue;
+        }
     }
 
     @Override
