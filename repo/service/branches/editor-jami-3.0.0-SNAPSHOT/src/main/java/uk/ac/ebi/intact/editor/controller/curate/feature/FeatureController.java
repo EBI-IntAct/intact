@@ -71,6 +71,13 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     private boolean isDetectionMethodDisabled;
     private IntactCvTerm detectionMethodToAdd=null;
 
+    private CvTerm newParameterType;
+    private Double newParameterFactor;
+    private CvTerm newParameterUnit;
+    private Integer newParameterBase;
+    private Integer newParameterExponent;
+    private Double newParameterUncertainty;
+
     @Override
     public Class<IntactFeatureEvidence> getFeatureClass() {
         return IntactFeatureEvidence.class;
@@ -307,14 +314,20 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     }
 
     public void newParameter(ActionEvent evt) {
-        // aliases are not always initialised
-        if (!getFeature().areParametersInitialized()){
-            setFeature(getFeatureEditorService().initialiseFeatureParameters(getFeature()));
+        if (this.newParameterType != null && this.newParameterFactor != null
+                && this.newParameterBase != null && this.newParameterExponent != null){
+            FeatureEvidenceParameter param = new FeatureEvidenceParameter(this.newParameterType, new ParameterValue(new BigDecimal(this.newParameterFactor), this.newParameterBase.shortValue(),
+                    this.newParameterExponent.shortValue()));
+            if (this.newParameterUncertainty != null){
+                param.setUncertainty(new BigDecimal(this.newParameterUncertainty));
+            }
+            param.setUnit(this.newParameterUnit);
+            getFeature().getParameters().add(param);
+            doSave(false);
         }
-
-        getFeature().getParameters().add(new FeatureEvidenceParameter(IntactUtils.createMIParameterType("to set", null),
-                new ParameterValue(new BigDecimal(0))));
-        setUnsavedChanges(true);
+        else{
+            addErrorMessage("Cannot add new parameter as it does not have any type/value", "Missing parameter type/value");
+        }
     }
 
     public void newDetectionMethod(ActionEvent evt) {
@@ -335,11 +348,6 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     }
 
     public void removeParameter(Parameter parameter) {
-        // parameters are not always initialised
-        if (!getFeature().areParametersInitialized()){
-            setFeature(getFeatureEditorService().initialiseFeatureParameters(getFeature()));
-        }
-
         getFeature().getParameters().remove(parameter);
     }
 
@@ -407,5 +415,53 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     public void newRange(ActionEvent evt) {
         super.newRange(evt);
         participantController.reloadSingleFeature(getFeature());
+    }
+
+    public Double getNewParameterUncertainty() {
+        return newParameterUncertainty;
+    }
+
+    public void setNewParameterUncertainty(Double newParameterUncertainty) {
+        this.newParameterUncertainty = newParameterUncertainty;
+    }
+
+    public Integer getNewParameterExponent() {
+        return newParameterExponent;
+    }
+
+    public void setNewParameterExponent(Integer newParameterExponent) {
+        this.newParameterExponent = newParameterExponent;
+    }
+
+    public Integer getNewParameterBase() {
+        return newParameterBase;
+    }
+
+    public void setNewParameterBase(Integer newParameterBase) {
+        this.newParameterBase = newParameterBase;
+    }
+
+    public CvTerm getNewParameterUnit() {
+        return newParameterUnit;
+    }
+
+    public void setNewParameterUnit(CvTerm newParameterUnit) {
+        this.newParameterUnit = newParameterUnit;
+    }
+
+    public Double getNewParameterFactor() {
+        return newParameterFactor;
+    }
+
+    public void setNewParameterFactor(Double newParameterFactor) {
+        this.newParameterFactor = newParameterFactor;
+    }
+
+    public CvTerm getNewParameterType() {
+        return newParameterType;
+    }
+
+    public void setNewParameterType(CvTerm newParameterType) {
+        this.newParameterType = newParameterType;
     }
 }

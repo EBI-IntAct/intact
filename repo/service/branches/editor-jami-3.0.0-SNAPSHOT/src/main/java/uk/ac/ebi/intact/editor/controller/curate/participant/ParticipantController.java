@@ -43,6 +43,7 @@ import javax.annotation.Resource;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -76,7 +77,14 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     private String authorAssignedName=null;
 
     private CvTerm newConfidenceType;
-    private CvTerm newConfidenceValue;
+    private String newConfidenceValue;
+
+    private CvTerm newParameterType;
+    private Double newParameterFactor;
+    private CvTerm newParameterUnit;
+    private Integer newParameterBase;
+    private Integer newParameterExponent;
+    private Double newParameterUncertainty;
 
     @Resource(name = "bioSourceService")
     private transient BioSourceService bioSourceService;
@@ -325,14 +333,31 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     // Confidence
     ///////////////////////////////////////////////
 
-    public void newConfidence() {
+    public void newConfidence(ActionEvent action) {
         if (this.newConfidenceType != null && this.newConfidenceValue != null){
-            ParticipantEvidenceConfidence confidence = new ParticipantEvidenceConfidence(IntactUtils.createMIConfidenceType("to set", null), "to set");
+            ParticipantEvidenceConfidence confidence = new ParticipantEvidenceConfidence(this.newConfidenceType, this.newConfidenceValue);
             getParticipant().getConfidences().add(confidence);
             doSave(false);
         }
         else{
             addErrorMessage("Cannot add new confidence as it does not have any type/value", "Missing confidence type/value");
+        }
+    }
+
+    public void newParameter(ActionEvent evt) {
+        if (this.newParameterType != null && this.newParameterFactor != null
+                && this.newParameterBase != null && this.newParameterExponent != null){
+            FeatureEvidenceParameter param = new FeatureEvidenceParameter(this.newParameterType, new ParameterValue(new BigDecimal(this.newParameterFactor), this.newParameterBase.shortValue(),
+                    this.newParameterExponent.shortValue()));
+            if (this.newParameterUncertainty != null){
+                param.setUncertainty(new BigDecimal(this.newParameterUncertainty));
+            }
+            param.setUnit(this.newParameterUnit);
+            getParticipant().getParameters().add(param);
+            doSave(false);
+        }
+        else{
+            addErrorMessage("Cannot add new parameter as it does not have any type/value", "Missing parameter type/value");
         }
     }
 
@@ -597,9 +622,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     }
 
     public void removeParameter(Confidence conf) {
-        if (!getParticipant().areConfidencesInitialized()){
-            setParticipant(getParticipantEditorService().initialiseParticipantConfidences(getParticipant()));
-        }
 
         getParticipant().getConfidences().remove(conf);
     }
@@ -643,11 +665,11 @@ public class ParticipantController extends AbstractParticipantController<IntactP
         interactionController.reloadSingleParticipant(getParticipant());
     }
 
-    public CvTerm getNewConfidenceValue() {
+    public String getNewConfidenceValue() {
         return newConfidenceValue;
     }
 
-    public void setNewConfidenceValue(CvTerm newConfidenceValue) {
+    public void setNewConfidenceValue(String newConfidenceValue) {
         this.newConfidenceValue = newConfidenceValue;
     }
 
@@ -657,5 +679,53 @@ public class ParticipantController extends AbstractParticipantController<IntactP
 
     public void setNewConfidenceType(CvTerm newConfidenceType) {
         this.newConfidenceType = newConfidenceType;
+    }
+
+    public Integer getNewParameterExponent() {
+        return newParameterExponent;
+    }
+
+    public void setNewParameterExponent(Integer newParameterExponent) {
+        this.newParameterExponent = newParameterExponent;
+    }
+
+    public Double getNewParameterUncertainty() {
+        return newParameterUncertainty;
+    }
+
+    public void setNewParameterUncertainty(Double newParameterUncertainty) {
+        this.newParameterUncertainty = newParameterUncertainty;
+    }
+
+    public Integer getNewParameterBase() {
+        return newParameterBase;
+    }
+
+    public void setNewParameterBase(Integer newParameterBase) {
+        this.newParameterBase = newParameterBase;
+    }
+
+    public CvTerm getNewParameterUnit() {
+        return newParameterUnit;
+    }
+
+    public void setNewParameterUnit(CvTerm newParameterUnit) {
+        this.newParameterUnit = newParameterUnit;
+    }
+
+    public Double getNewParameterFactor() {
+        return newParameterFactor;
+    }
+
+    public void setNewParameterFactor(Double newParameterFactor) {
+        this.newParameterFactor = newParameterFactor;
+    }
+
+    public CvTerm getNewParameterType() {
+        return newParameterType;
+    }
+
+    public void setNewParameterType(CvTerm newParameterType) {
+        this.newParameterType = newParameterType;
     }
 }
