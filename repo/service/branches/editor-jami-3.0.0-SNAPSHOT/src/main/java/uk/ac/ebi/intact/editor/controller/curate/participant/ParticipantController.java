@@ -497,9 +497,8 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     }
 
     @Override
-    public void newAlias(ActionEvent evt) {
-         getParticipant().getAliases().add(new ParticipantEvidenceAlias(IntactUtils.createMIAliasType("to set", null), "to set"));
-        setUnsavedChanges(true);
+    public ParticipantEvidenceAlias newAlias(CvTerm aliasType, String name) {
+        return new ParticipantEvidenceAlias(aliasType, name);
     }
 
     @Override

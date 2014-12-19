@@ -1769,6 +1769,16 @@ public class PublicationController extends AnnotatedObjectController {
     }
 
     @Override
+    protected void addNewAlias(AbstractIntactAlias newAlias) {
+        // nothing to do
+    }
+
+    @Override
+    public <T extends AbstractIntactAlias> T newAlias(CvTerm aliasType, String name) {
+        return null;
+    }
+
+    @Override
     public <T extends AbstractIntactAlias> T newAlias(String alias, String aliasMI, String name) {
         return null;
     }

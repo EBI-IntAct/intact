@@ -599,9 +599,6 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
 
     @Override
     public void removeAlias(Alias alias) {
-        if (!participant.areAliasesInitialized()){
-            setParticipant(getParticipantEditorService().initialiseParticipantAliases(participant));
-        }
 
         participant.getAliases().remove(alias);
     }
@@ -683,6 +680,11 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
             Stoichiometry stoichiometry = participant.getStoichiometry();
             this.participant.setStoichiometry(new IntactStoichiometry(Math.min(stc, stoichiometry.getMinValue()), stc));
         }
+    }
+
+    @Override
+    protected void addNewAlias(AbstractIntactAlias newAlias) {
+        this.participant.getAliases().add(newAlias);
     }
 
     public String getParticipantPrimaryId() {

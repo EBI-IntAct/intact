@@ -302,14 +302,8 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     }
 
     @Override
-    public void newAlias(ActionEvent evt) {
-        // aliases are not always initialised
-        if (!getFeature().areAliasesInitialized()){
-            setFeature(getFeatureEditorService().initialiseFeatureAliases(getFeature()));
-        }
-
-        getFeature().getAliases().add(new FeatureEvidenceAlias("to set"));
-        setUnsavedChanges(true);
+    public FeatureEvidenceAlias newAlias(CvTerm aliasType, String name) {
+        return new FeatureEvidenceAlias(aliasType, name);
     }
 
     public void newParameter(ActionEvent evt) {

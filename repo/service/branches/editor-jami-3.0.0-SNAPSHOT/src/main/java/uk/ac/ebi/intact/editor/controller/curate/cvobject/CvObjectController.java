@@ -368,22 +368,17 @@ public class CvObjectController extends AnnotatedObjectController {
     }
 
     @Override
-    public void newAlias(ActionEvent evt) {
-        // aliases are not always initialised
-        if (!cvObject.areSynonymsInitialized()){
-            setCvObject(getCvService().initialiseCvSynonyms(this.cvObject));
-        }
+    protected void addNewAlias(AbstractIntactAlias newAlias) {
+         this.cvObject.getSynonyms().add(newAlias);
+    }
 
-        this.cvObject.getSynonyms().add(new CvTermAlias(IntactUtils.createMIAliasType("to set", null), "to set"));
-        setUnsavedChanges(true);
+    @Override
+    public CvTermAlias newAlias(CvTerm aliasType, String name) {
+        return new CvTermAlias(aliasType, name);
     }
 
     @Override
     public void removeAlias(Alias alias) {
-        // aliases are not always initialised
-        if (!cvObject.areSynonymsInitialized()){
-            setCvObject(getCvService().initialiseCvSynonyms(this.cvObject));
-        }
 
         this.cvObject.getSynonyms().remove(alias);
     }

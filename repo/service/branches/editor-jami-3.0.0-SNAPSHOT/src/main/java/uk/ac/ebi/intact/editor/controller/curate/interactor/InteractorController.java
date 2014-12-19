@@ -529,14 +529,13 @@ public class InteractorController extends AnnotatedObjectController {
     }
 
     @Override
-    public void newAlias(ActionEvent evt) {
-        // aliases are not always initialised
-        if (!interactor.areAliasesInitialized()){
-            setInteractor(getInteractorEditorService().initialiseInteractorAliases(interactor));
-        }
+    protected void addNewAlias(AbstractIntactAlias newAlias) {
+         this.interactor.getAliases().add(newAlias);
+    }
 
-        interactor.getAliases().add(new InteractorAlias("to set"));
-        setUnsavedChanges(true);
+    @Override
+    public InteractorAlias newAlias(CvTerm aliasType, String name) {
+        return new InteractorAlias(aliasType, name);
     }
 
     @Override
@@ -547,10 +546,6 @@ public class InteractorController extends AnnotatedObjectController {
 
     @Override
     public void removeAlias(Alias alias) {
-        // aliases are not always initialised
-        if (!interactor.areAliasesInitialized()){
-            setInteractor(getInteractorEditorService().initialiseInteractorAliases(interactor));
-        }
 
         interactor.getAliases().remove(alias);
     }

@@ -10,7 +10,16 @@
                 xmlns:ed="http://ebi.ac.uk/intact/editor/ui">
 
         <div class="intact-buttonBar">
-            <p:commandButton id="newAliasBtn" value="New Alias" process="newAliasBtn"
+            <h:panelGrid id="newAliasTxt" columns="10">
+                <h:outputLabel value="Type: " for="aliasType1Sel"/>
+                <h:selectOneMenu id="aliasType1Sel" value="#{annotatedObjectController.newAliasType}" disabled="#{annotatedObjectController.isAliasDisabled()}" converter="cvObjectConverter">
+                    <f:selectItems value="#{cvObjectService.aliasTypeSelectItems}"/>
+                </h:selectOneMenu>
+                <h:outputLabel value="Name: " for="aliasName1Txt"/>
+                <p:inputText id="aliasName1Txt"  value="#{annotatedObjectController.newAliasName}" size="50" converter="trimmingConverter"
+                             disabled="#{annotatedObjectController.isAliasDisabled()}"/>
+            </h:panelGrid>
+            <p:commandButton id="newAliasBtn" value="Add New Alias" process="newAliasTxt"
                              actionListener="#{annotatedObjectController.newAlias}"
                              update="aliasTable #{update}"/>
         </div>
@@ -25,6 +34,7 @@
                                  requiredMessage="Alias type is required" disabled="#{annotatedObjectController.isAliasDisabled()
                                  or annotatedObjectController.isAliasNotEditable(alias)}" converter="cvObjectConverter">
                     <f:selectItems value="#{cvObjectService.aliasTypeSelectItems}"/>
+                    <ed:curation/>
                 </h:selectOneMenu>
             </p:column>
             <p:column>

@@ -283,14 +283,13 @@ public class InstitutionController extends AnnotatedObjectController {
     }
 
     @Override
-    public void newAlias(ActionEvent evt) {
-        // aliases are not always initialised
-        if (!this.institution.areSynonymsInitialized()){
-            setInstitution(getInstitutionService().initialiseSourceSynonyms(this.institution));
-        }
+    protected void addNewAlias(AbstractIntactAlias newAlias) {
+        this.institution.getSynonyms().add(newAlias);
+    }
 
-        this.institution.getSynonyms().add(new FeatureEvidenceAlias("to set"));
-        setUnsavedChanges(true);
+    @Override
+    public SourceAlias newAlias(CvTerm aliasType, String name) {
+        return new SourceAlias(aliasType, name);
     }
 
     @Override
@@ -301,10 +300,6 @@ public class InstitutionController extends AnnotatedObjectController {
 
     @Override
     public void removeAlias(Alias alias) {
-        // aliases are not always initialised
-        if (!this.institution.areSynonymsInitialized()){
-            setInstitution(getInstitutionService().initialiseSourceSynonyms(this.institution));
-        }
 
         this.institution.getSynonyms().remove(alias);
     }
