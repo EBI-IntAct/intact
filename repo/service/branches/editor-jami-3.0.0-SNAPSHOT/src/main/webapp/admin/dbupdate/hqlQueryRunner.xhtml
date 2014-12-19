@@ -20,7 +20,7 @@
             <p:inputTextarea id="nativeQueryArea" value="#{hqlRunnerController.nativeQuery}" rows="5" cols="80"/>
 
             <br/>
-            <p:commandButton value="Get SQL Results" actionListener="#{hqlRunnerController.runNativeQuery}"
+            <p:commandButton id="sqlNatibeBtn" value="Get SQL Results" actionListener="#{hqlRunnerController.runNativeQuery}"
                              process="nativeQueryArea"
                              update=":editorForm:nativequeryPanel, :editorForm:messagesComponent"/>
 
@@ -39,7 +39,7 @@
             <p:inputTextarea id="queryArea" value="#{hqlRunnerController.hqlQuery}" rows="5" cols="80"/>
 
             <br/>
-            <p:commandButton value="Get JAMI HQL Results" actionListener="#{hqlRunnerController.runQuery}"
+            <p:commandButton id="hqlBtn" value="Get JAMI HQL Results" actionListener="#{hqlRunnerController.runQuery}"
                              process="queryArea"
                              update=":editorForm:queryPanel, :editorForm:messagesComponent"/>
 
