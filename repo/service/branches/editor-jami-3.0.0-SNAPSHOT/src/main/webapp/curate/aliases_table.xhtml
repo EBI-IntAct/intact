@@ -10,7 +10,7 @@
                 xmlns:ed="http://ebi.ac.uk/intact/editor/ui">
 
         <div class="intact-buttonBar">
-            <h:panelGrid id="newAliasTxt" columns="10">
+            <h:panelGrid id="newAliasTxt" columns="4">
                 <h:outputLabel value="Type: " for="aliasType1Sel"/>
                 <h:selectOneMenu id="aliasType1Sel" value="#{annotatedObjectController.newAliasType}" disabled="#{annotatedObjectController.isAliasDisabled()}" converter="cvObjectConverter">
                     <f:selectItems value="#{cvObjectService.aliasTypeSelectItems}"/>

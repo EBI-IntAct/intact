@@ -375,9 +375,8 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     }
 
     @Override
-    public void newAnnotation(ActionEvent evt) {
-        getFeature().getAnnotations().add(new FeatureEvidenceAnnotation(IntactUtils.createMITopic("to set", null)));
-        setUnsavedChanges(true);
+    public FeatureEvidenceAnnotation newAnnotation(CvTerm annotation, String text) {
+        return new FeatureEvidenceAnnotation(annotation, text);
     }
 
     @Override

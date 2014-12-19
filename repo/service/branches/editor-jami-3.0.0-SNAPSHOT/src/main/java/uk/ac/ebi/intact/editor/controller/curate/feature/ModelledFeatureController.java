@@ -107,6 +107,11 @@ public class ModelledFeatureController extends AbstractFeatureController<IntactM
     }
 
     @Override
+    public ModelledFeatureAnnotation newAnnotation(CvTerm annotation, String text) {
+        return new ModelledFeatureAnnotation(annotation, text);
+    }
+
+    @Override
     public ModelledFeatureAnnotation newAnnotation(String topic, String topicMI, String text) {
         return new ModelledFeatureAnnotation(getCvService().findCvObject(IntactUtils.TOPIC_OBJCLASS, topicMI != null ? topicMI: topic), text);
     }

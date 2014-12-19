@@ -884,18 +884,17 @@ public class ExperimentController extends AnnotatedObjectController {
 
     @Override
     public void removeXref(Xref xref) {
-        // xrefs are not always initialised
-        if (!experiment.areXrefsInitialized()){
-            setExperiment(getExperimentService().initialiseExperimentXrefs(this.experiment));
-        }
-
         experiment.getXrefs().remove(xref);
     }
 
     @Override
-    public void newAnnotation(ActionEvent evt) {
-        experiment.getAnnotations().add(new ExperimentAnnotation(IntactUtils.createMITopic("to set", null)));
-        setUnsavedChanges(true);
+    protected void addNewAnnotation(AbstractIntactAnnotation newAnnot) {
+        experiment.getAnnotations().add(newAnnot);
+    }
+
+    @Override
+    public ExperimentAnnotation newAnnotation(CvTerm annotation, String text) {
+        return new ExperimentAnnotation(annotation, text);
     }
 
     @Override

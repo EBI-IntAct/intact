@@ -23,7 +23,6 @@ import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
 import java.util.*;
 
@@ -410,9 +409,13 @@ public class CvObjectController extends AnnotatedObjectController {
     }
 
     @Override
-    public void newAnnotation(ActionEvent evt) {
-        this.cvObject.getAnnotations().add(new CvTermAnnotation(IntactUtils.createMITopic("to set", null)));
-        setUnsavedChanges(true);
+    protected void addNewAnnotation(AbstractIntactAnnotation newAnnot) {
+        this.cvObject.getAnnotations().add(newAnnot);
+    }
+
+    @Override
+    public CvTermAnnotation newAnnotation(CvTerm annotation, String text) {
+        return new CvTermAnnotation(annotation, text);
     }
 
     @Override

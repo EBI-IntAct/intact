@@ -1014,9 +1014,13 @@ public class InteractionController extends AnnotatedObjectController {
     }
 
     @Override
-    public void newAnnotation(ActionEvent evt) {
-        interaction.getDbAnnotations().add(new InteractionAnnotation(IntactUtils.createMITopic("to set", null)));
-        setUnsavedChanges(true);
+    protected void addNewAnnotation(AbstractIntactAnnotation newAnnot) {
+         this.interaction.getAnnotations().add(newAnnot);
+    }
+
+    @Override
+    public InteractionAnnotation newAnnotation(CvTerm annotation, String text) {
+        return new InteractionAnnotation(annotation, text);
     }
 
     @Override

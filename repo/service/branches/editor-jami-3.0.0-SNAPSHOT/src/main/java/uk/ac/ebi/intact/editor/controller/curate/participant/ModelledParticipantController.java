@@ -154,6 +154,11 @@ public class ModelledParticipantController extends AbstractParticipantController
     }
 
     @Override
+    public ModelledParticipantAnnotation newAnnotation(CvTerm annotation, String text) {
+        return new ModelledParticipantAnnotation(annotation, text);
+    }
+
+    @Override
     public ModelledParticipantAnnotation newAnnotation(String topic, String topicMI, String text) {
         return new ModelledParticipantAnnotation(getCvService().findCvObject(IntactUtils.TOPIC_OBJCLASS, topicMI != null ? topicMI: topic), text);
     }

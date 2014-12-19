@@ -1822,9 +1822,13 @@ public class PublicationController extends AnnotatedObjectController {
     }
 
     @Override
-    public void newAnnotation(ActionEvent evt) {
-        publication.getAnnotations().add(new PublicationAnnotation(IntactUtils.createMITopic("to set", null)));
-        setUnsavedChanges(true);
+    protected void addNewAnnotation(AbstractIntactAnnotation newAnnot) {
+         this.publication.getAnnotations().add(newAnnot);
+    }
+
+    @Override
+    public PublicationAnnotation newAnnotation(CvTerm annotation, String text) {
+        return new PublicationAnnotation(annotation, text);
     }
 
     @Override

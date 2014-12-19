@@ -333,6 +333,16 @@ public class BioSourceController extends AnnotatedObjectController {
     }
 
     @Override
+    protected void addNewAnnotation(AbstractIntactAnnotation newAnnot) {
+        // nothing to do
+    }
+
+    @Override
+    public <T extends AbstractIntactAnnotation> T newAnnotation(CvTerm annotation, String text) {
+        return null;
+    }
+
+    @Override
     public <T extends AbstractIntactAnnotation> T newAnnotation(String topic, String topicMI, String text) {
         return null;
     }

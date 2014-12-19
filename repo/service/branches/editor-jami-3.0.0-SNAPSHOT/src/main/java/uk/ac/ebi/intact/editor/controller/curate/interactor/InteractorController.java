@@ -575,9 +575,13 @@ public class InteractorController extends AnnotatedObjectController {
     }
 
     @Override
-    public void newAnnotation(ActionEvent evt) {
-        interactor.getDbAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic("to set", null)));
-        setUnsavedChanges(true);
+    protected void addNewAnnotation(AbstractIntactAnnotation newAnnot) {
+        this.interactor.getAnnotations().add(newAnnot);
+    }
+
+    @Override
+    public InteractorAnnotation newAnnotation(CvTerm annotation, String text) {
+        return new InteractorAnnotation(annotation, text);
     }
 
     @Override

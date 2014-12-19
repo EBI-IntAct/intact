@@ -661,10 +661,15 @@ public class ComplexController extends AnnotatedObjectController {
                 id, secondaryId, getCvService().findCvObject(IntactUtils.QUALIFIER_OBJCLASS, qualifierMI != null ? qualifierMI : qualifier));
     }
 
+
     @Override
-    public void newAnnotation(ActionEvent evt) {
-        this.complex.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic("to set", null)));
-        setUnsavedChanges(true);
+    protected void addNewAnnotation(AbstractIntactAnnotation newAnnot) {
+         this.complex.getAnnotations().add(newAnnot);
+    }
+
+    @Override
+    public InteractorAnnotation newAnnotation(CvTerm annotation, String text) {
+        return new InteractorAnnotation(annotation, text);
     }
 
     @Override

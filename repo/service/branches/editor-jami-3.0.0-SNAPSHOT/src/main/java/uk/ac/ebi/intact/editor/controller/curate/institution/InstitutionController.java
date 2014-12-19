@@ -18,7 +18,6 @@ import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -329,9 +328,13 @@ public class InstitutionController extends AnnotatedObjectController {
     }
 
     @Override
-    public void newAnnotation(ActionEvent evt) {
-        this.institution.getAnnotations().add(new SourceAnnotation(IntactUtils.createMITopic("to set", null)));
-        setUnsavedChanges(true);
+    protected void addNewAnnotation(AbstractIntactAnnotation newAnnot) {
+        this.institution.getAnnotations().add(newAnnot);
+    }
+
+    @Override
+    public SourceAnnotation newAnnotation(CvTerm annotation, String text) {
+        return new SourceAnnotation(annotation, text);
     }
 
     @Override
