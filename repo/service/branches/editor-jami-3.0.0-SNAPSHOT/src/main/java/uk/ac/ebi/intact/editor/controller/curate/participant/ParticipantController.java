@@ -153,6 +153,8 @@ public class ParticipantController extends AbstractParticipantController<IntactP
         if (this.preparationToAdd != null){
             getParticipant().getExperimentalPreparations().add(this.preparationToAdd);
             doSave(false);
+
+            this.preparationToAdd = null;
         }
     }
 
@@ -171,6 +173,8 @@ public class ParticipantController extends AbstractParticipantController<IntactP
         if (this.identificationToAdd != null){
             getParticipant().getIdentificationMethods().add(this.identificationToAdd);
             doSave(false);
+
+            this.identificationToAdd = null;
         }
     }
 
@@ -316,6 +320,8 @@ public class ParticipantController extends AbstractParticipantController<IntactP
             ParticipantEvidenceConfidence confidence = new ParticipantEvidenceConfidence(this.newConfidenceType, this.newConfidenceValue);
             getParticipant().getConfidences().add(confidence);
             doSave(false);
+            this.newConfidenceValue = null;
+            this.newConfidenceType = null;
         }
         else{
             addErrorMessage("Cannot add new confidence as it does not have any type/value", "Missing confidence type/value");
@@ -333,6 +339,13 @@ public class ParticipantController extends AbstractParticipantController<IntactP
             param.setUnit(this.newParameterUnit);
             getParticipant().getParameters().add(param);
             doSave(false);
+
+            this.newParameterBase = null;
+            this.newParameterFactor = null;
+            this.newParameterType = null;
+            this.newParameterUncertainty = null;
+            this.newParameterUnit = null;
+            this.newParameterExponent = null;
         }
         else{
             addErrorMessage("Cannot add new parameter as it does not have any type/value", "Missing parameter type/value");

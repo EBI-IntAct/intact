@@ -324,6 +324,13 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
             param.setUnit(this.newParameterUnit);
             getFeature().getParameters().add(param);
             doSave(false);
+
+            this.newParameterBase = null;
+            this.newParameterFactor = null;
+            this.newParameterType = null;
+            this.newParameterUncertainty = null;
+            this.newParameterUnit = null;
+            this.newParameterExponent = null;
         }
         else{
             addErrorMessage("Cannot add new parameter as it does not have any type/value", "Missing parameter type/value");
@@ -334,6 +341,8 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
         if (this.detectionMethodToAdd != null){
             getFeature().getDetectionMethods().add(this.detectionMethodToAdd);
             doSave(false);
+
+            this.detectionMethodToAdd = null;
         }
     }
 

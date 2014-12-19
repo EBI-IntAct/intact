@@ -863,6 +863,9 @@ public class ExperimentController extends AnnotatedObjectController {
         if (this.newParameterDescription != null){
             experiment.addVariableParameter(new IntactVariableParameter(this.newParameterDescription, this.newParameterUnit));
             doSave(false);
+
+            this.newParameterDescription = null;
+            this.newParameterUnit = null;
         }
         else{
             addErrorMessage("The variable parameter description cannot be null","Missing parameter description");
@@ -873,6 +876,9 @@ public class ExperimentController extends AnnotatedObjectController {
         if (this.newValue != null){
             param.getVariableValues().add(new IntactVariableParameterValue(newValue, param, newValueOrder));
             doSave(false);
+
+            this.newValue = null;
+            this.newValueOrder = null;
         }
         else{
            addErrorMessage("The value is required and cannot be null","Missing parameter value");

@@ -10,58 +10,56 @@
                 xmlns:ed="http://ebi.ac.uk/intact/editor/ui">
 
 
-        <div class="intact-buttonBar">
-            <h:panelGrid id="newAnnotationTxt" columns="4">
-                <h:outputLabel value="Topic: " for="annotationTopic1Sel"/>
-                <h:selectOneMenu id="annotationTopic1Sel" value="#{annotatedObjectController.newTopic}" disabled="#{annotatedObjectController.isAnnotationTopicDisabled()}"
-                                 converter="cvObjectConverter">
-                    <f:selectItems value="#{annotatedObjectSelectItems}"/>
-                </h:selectOneMenu>
-                <h:outputLabel value="Description: " for="annotation1Txt"/>
-                <p:inputTextarea id="annotation1Txt" value="#{annotatedObjectController.newAnnotationDescription}" rows="4" cols="50" autoResize="false"
-                                 converter="trimmingConverter" disabled="#{annotatedObjectController.isAnnotationTopicDisabled()}">
-                </p:inputTextarea>
-            </h:panelGrid>
-                <p:commandButton id="newAnnotBtn" value="Add New Annotation" actionListener="#{annotatedObjectController.newAnnotation}"
-                                 process="newAnnotationTxt"
-                                 update="annotationsTable #{update}"/>
-        </div>
+    <h:panelGrid id="newAnnotationTxt" columns="5" class="intact-buttonBar">
+        <h:outputLabel value="Topic: " for="annotationTopic1Sel"/>
+        <h:selectOneMenu id="annotationTopic1Sel" value="#{annotatedObjectController.newTopic}" disabled="#{annotatedObjectController.isAnnotationTopicDisabled()}"
+                         converter="cvObjectConverter">
+            <f:selectItems value="#{annotatedObjectSelectItems}"/>
+        </h:selectOneMenu>
+        <h:outputLabel value="Description: " for="annotation1Txt"/>
+        <p:inputTextarea id="annotation1Txt" value="#{annotatedObjectController.newAnnotationDescription}" rows="4" cols="50" autoResize="false"
+                         converter="trimmingConverter" disabled="#{annotatedObjectController.isAnnotationTopicDisabled()}">
+        </p:inputTextarea>
+        <p:commandButton id="newAnnotBtn" value="Add New Annotation" actionListener="#{annotatedObjectController.newAnnotation}"
+                         process="newAnnotationTxt"
+                         update="annotationsTable #{update}"/>
+    </h:panelGrid>
 
-        <p:dataTable id="annotationsTable" var="annotation" value="#{annotatedObjectController.collectAnnotations()}"
-                     rendered="#{!annotatedObjectController.isAnnotationTopicDisabled()}">
-            <p:column>
-                <f:facet name="header">
-                    <h:outputText value="Topic"/>
-                </f:facet>
-                <h:selectOneMenu id="annotationTopicSel" value="#{annotation.topic}"
-                                 required="true" requiredMessage="Topic is required" disabled="#{annotatedObjectController.isAnnotationTopicDisabled()
+    <p:dataTable id="annotationsTable" var="annotation" value="#{annotatedObjectController.collectAnnotations()}"
+                 rendered="#{!annotatedObjectController.isAnnotationTopicDisabled()}">
+        <p:column>
+            <f:facet name="header">
+                <h:outputText value="Topic"/>
+            </f:facet>
+            <h:selectOneMenu id="annotationTopicSel" value="#{annotation.topic}"
+                             required="true" requiredMessage="Topic is required" disabled="#{annotatedObjectController.isAnnotationTopicDisabled()
                                  or annotatedObjectController.isAnnotationNotEditable(annotation)}" converter="cvObjectConverter">
-                    <f:selectItems value="#{annotatedObjectSelectItems}"/>
-                    <ed:curation/>
-                </h:selectOneMenu>
-            </p:column>
-            <p:column>
-                <f:facet name="header">
-                    <h:outputText value="Text"/>
-                </f:facet>
-                <p:inputTextarea id="annotationTxt" value="#{annotation.value}" rows="4" cols="50" autoResize="false"
-                                 converter="trimmingConverter" disabled="#{annotatedObjectController.isAnnotationNotEditable(annotation)}">
-                    <ed:curation/>
-                    <ui:insert name="syncValues"/>
-                </p:inputTextarea>
+                <f:selectItems value="#{annotatedObjectSelectItems}"/>
+                <ed:curation/>
+            </h:selectOneMenu>
+        </p:column>
+        <p:column>
+            <f:facet name="header">
+                <h:outputText value="Text"/>
+            </f:facet>
+            <p:inputTextarea id="annotationTxt" value="#{annotation.value}" rows="4" cols="50" autoResize="false"
+                             converter="trimmingConverter" disabled="#{annotatedObjectController.isAnnotationNotEditable(annotation)}">
+                <ed:curation/>
+                <ui:insert name="syncValues"/>
+            </p:inputTextarea>
 
-            </p:column>
-            <p:column>
-                <f:facet name="header">
-                     <h:outputText value="Actions"/>
-                </f:facet>
-                <p:commandLink id="removeAnnotBtn" styleClass="ui-icon ui-icon-closethick" process="removeAnnotBtn"
-                               actionListener="#{annotatedObjectController.removeAnnotation(annotation)}"
-                               oncomplete="markAsUnsaved()"
-                               update="annotationsTable,#{update}"
-                               disabled="#{annotatedObjectController.isAnnotationNotEditable(annotation)}"/>
-            </p:column>
-        </p:dataTable>
+        </p:column>
+        <p:column>
+            <f:facet name="header">
+                <h:outputText value="Actions"/>
+            </f:facet>
+            <p:commandLink id="removeAnnotBtn" styleClass="ui-icon ui-icon-closethick" process="removeAnnotBtn"
+                           actionListener="#{annotatedObjectController.removeAnnotation(annotation)}"
+                           oncomplete="markAsUnsaved()"
+                           update="annotationsTable,#{update}"
+                           disabled="#{annotatedObjectController.isAnnotationNotEditable(annotation)}"/>
+        </p:column>
+    </p:dataTable>
 
 
 

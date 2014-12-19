@@ -14,7 +14,7 @@
         <table style="#{style}">
             <tr>
                 <td>
-                    <h:panelGrid id="newXrefTxt" columns="10">
+                    <h:panelGrid id="newXrefTxt" columns="11" class="intact-buttonBar">
                         <h:outputLabel value="Database: " for="databaseSel1"/>
                         <h:selectOneMenu id="databaseSel1" value="#{annotatedObjectController.newDatabase}" disabled="#{annotatedObjectController.isXrefDisabled()}"
                                          converter="cvObjectConverter">
@@ -36,12 +36,10 @@
                         <h:outputLabel value="Version: " for="version1Txt"/>
                         <p:inputText id="version1Txt" value="#{annotatedObjectController.newXrefVersion}" size="5"
                                      converter="trimmingConverter" disabled="#{annotatedObjectController.isXrefDisabled()}"/>
+                        <p:commandButton id="newXrefBtn" value="Add new Xref" actionListener="#{annotatedObjectController.newXref}"
+                                         process="newXrefTxt"
+                                         update="xrefsTable #{update}"/>
                     </h:panelGrid>
-                     <div class="intact-buttonBar">
-                            <p:commandButton id="newXrefBtn" value="Add new Xref" actionListener="#{annotatedObjectController.newXref}"
-                                             process="newXrefTxt"
-                                             update="xrefsTable #{update}"/>
-                    </div>
 
                     <p:dataTable id="xrefsTable" var="xref" value="#{annotatedObjectController.collectXrefs()}"
                                  rowIndexVar="xrefIndex"

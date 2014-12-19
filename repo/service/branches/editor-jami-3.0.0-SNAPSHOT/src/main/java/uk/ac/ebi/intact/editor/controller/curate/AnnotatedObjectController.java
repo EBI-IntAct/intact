@@ -717,6 +717,12 @@ public abstract class AnnotatedObjectController extends BaseController implement
             addNewXref(newRef);
             // save
             doSave(false);
+
+            this.newDatabase = null;
+            this.newXrefId = null;
+            this.newXrefVersion = null;
+            this.newQualifier = null;
+            this.newSecondaryId = null;
         }
         else{
             addErrorMessage("Cannot add new xref as the database and/or primary identifier is(are) missing","No database/primary identifier provided");
@@ -855,6 +861,9 @@ public abstract class AnnotatedObjectController extends BaseController implement
             addNewAnnotation(newAnnot);
             // save changes
             doSave(false);
+
+            this.newTopic = null;
+            this.newAnnotationDescription = null;
         }
         else{
             addErrorMessage("Cannot add new annotation as it does not have any topics", "Missing annotation topic");
@@ -958,6 +967,9 @@ public abstract class AnnotatedObjectController extends BaseController implement
             addNewAlias(newAlias);
             // save
             doSave(false);
+
+            this.newAliasType= null;
+            this.newAliasName = null;
         }
         else{
             addErrorMessage("Cannot add the new alias as it does not have a name and/or type", "Alias without name and/or type");

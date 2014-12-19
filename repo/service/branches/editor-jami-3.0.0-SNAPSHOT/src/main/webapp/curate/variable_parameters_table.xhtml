@@ -9,23 +9,21 @@
                 xmlns:ia="http://java.sun.com/jsf/composite/intact-components"
                 xmlns:ed="http://ebi.ac.uk/intact/editor/ui">
 
-    <div class="intact-buttonBar">
-        <h:panelGrid id="newParamTxt" columns="4">
-            <h:outputLabel value="Description: " for="paramDescription1Txt"/>
-            <p:inputTextarea id="paramDescription1Txt" value="#{experimentController.newParameterDescription}" rows="4" cols="50" autoResize="false"
-                             converter="trimmingConverter">
-            </p:inputTextarea>
-            <h:outputLabel value="Unit: " for="paramUnit1Sel"/>
-            <h:selectOneMenu id="paramUnit1Sel" value="#{experimentController.newParameterUnit}" disabled="#{!experimentController.isVariableParameterTab()}"
-                             converter="cvObjectConverter">
-                <f:selectItems value="#{cvObjectService.parameterUnitSelectItems}"/>
-            </h:selectOneMenu>
-        </h:panelGrid>
+    <h:panelGrid id="newParamTxt" columns="5" class="intact-buttonBar">
+        <h:outputLabel value="Description: " for="paramDescription1Txt"/>
+        <p:inputTextarea id="paramDescription1Txt" value="#{experimentController.newParameterDescription}" rows="4" cols="50" autoResize="false"
+                         converter="trimmingConverter">
+        </p:inputTextarea>
+        <h:outputLabel value="Unit: " for="paramUnit1Sel"/>
+        <h:selectOneMenu id="paramUnit1Sel" value="#{experimentController.newParameterUnit}" disabled="#{!experimentController.isVariableParameterTab()}"
+                         converter="cvObjectConverter">
+            <f:selectItems value="#{cvObjectService.parameterUnitSelectItems}"/>
+        </h:selectOneMenu>
         <p:commandButton id="newParamBtn" value="Add New Variable Parameter"
                          actionListener="#{experimentController.newVariableParameter}"
                          process="newParamTxt"
                          update="vparametersTable #{update}"/>
-    </div>
+    </h:panelGrid>
 
     <p:dataTable id="vparametersTable" var="parameter" value="#{experimentController.collectVariableParameters}" rendered="#{experimentController.isVariableParameterTab()}">
         <p:column>
