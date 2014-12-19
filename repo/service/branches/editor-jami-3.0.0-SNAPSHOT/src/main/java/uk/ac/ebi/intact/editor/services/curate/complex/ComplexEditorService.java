@@ -67,81 +67,95 @@ public class ComplexEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactComplex initialiseComplexXrefs(IntactComplex interaction) {
         // reload IntactInteractionEvidence without flushing changes
-        IntactComplex reloaded = getIntactDao().getEntityManager().merge(interaction);
+        IntactComplex reloaded = reattachIntactObjectIfTransient(interaction, getIntactDao().getComplexDao());
         Collection<Xref> xrefs = reloaded.getDbXrefs();
         initialiseXrefs(xrefs);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        if (reloaded.getAc() != null){
+            getIntactDao().getEntityManager().detach(reloaded);
+        }
         return reloaded;
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactComplex initialiseComplexAliases(IntactComplex interaction) {
         // reload IntactInteractionEvidence without flushing changes
-        IntactComplex reloaded = getIntactDao().getEntityManager().merge(interaction);
+        IntactComplex reloaded = reattachIntactObjectIfTransient(interaction, getIntactDao().getComplexDao());
         Collection<Alias> alias = reloaded.getAliases();
         initialiseAliases(alias);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        if (reloaded.getAc() != null){
+            getIntactDao().getEntityManager().detach(reloaded);
+        }
         return reloaded;
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactComplex initialiseComplexAnnotations(IntactComplex interaction) {
         // reload IntactInteractionEvidence without flushing changes
-        IntactComplex reloaded = getIntactDao().getEntityManager().merge(interaction);
+        IntactComplex reloaded = reattachIntactObjectIfTransient(interaction, getIntactDao().getComplexDao());
         Collection<Annotation> annotations = reloaded.getDbAnnotations();
         initialiseAnnotations(annotations);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        if (reloaded.getAc() != null){
+            getIntactDao().getEntityManager().detach(reloaded);
+        }
         return reloaded;
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactComplex initialiseComplexParameters(IntactComplex participantEvidence) {
         // reload feature without flushing changes
-        IntactComplex reloaded = getIntactDao().getEntityManager().merge(participantEvidence);
+        IntactComplex reloaded = reattachIntactObjectIfTransient(participantEvidence, getIntactDao().getComplexDao());
         Collection<ModelledParameter> parameters = reloaded.getModelledParameters();
         initialiseParameters(parameters);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        if (reloaded.getAc() != null){
+            getIntactDao().getEntityManager().detach(reloaded);
+        }
         return reloaded;
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactComplex initialiseComplexConfidences(IntactComplex participantEvidence) {
         // reload feature without flushing changes
-        IntactComplex reloaded = getIntactDao().getEntityManager().merge(participantEvidence);
+        IntactComplex reloaded = reattachIntactObjectIfTransient(participantEvidence, getIntactDao().getComplexDao());
         Collection<ModelledConfidence> dets = reloaded.getModelledConfidences();
         for (ModelledConfidence det : dets){
             initialiseConfidence(det);
         }
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        if (reloaded.getAc() != null){
+            getIntactDao().getEntityManager().detach(reloaded);
+        }
         return reloaded;
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactComplex initialiseParticipants(IntactComplex participantEvidence) {
         // reload feature without flushing changes
-        IntactComplex reloaded = getIntactDao().getEntityManager().merge(participantEvidence);
+        IntactComplex reloaded = reattachIntactObjectIfTransient(participantEvidence, getIntactDao().getComplexDao());
         Collection<ModelledParticipant> dets = reloaded.getParticipants();
         for (ModelledParticipant det : dets){
             initialiseParticipant(det);
         }
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        if (reloaded.getAc() != null){
+            getIntactDao().getEntityManager().detach(reloaded);
+        }
         return reloaded;
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactComplex initialiseLifeCycleEvents(IntactComplex publication) {
         // reload participant without flushing changes
-        IntactComplex reloaded = getIntactDao().getEntityManager().merge(publication);
+        IntactComplex reloaded = reattachIntactObjectIfTransient(publication, getIntactDao().getComplexDao());
         Collection<LifeCycleEvent> evidences = reloaded.getLifecycleEvents();
         initialiseEvents(evidences);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        if (reloaded.getAc() != null){
+            getIntactDao().getEntityManager().detach(reloaded);
+        }
         return reloaded;
     }
 
@@ -179,7 +193,7 @@ public class ComplexEditorService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactComplex reloadFullyInitialisedComplex(IntactComplex interactor) {
-        IntactComplex reloaded = getIntactDao().getEntityManager().merge(interactor);
+        IntactComplex reloaded = reattachIntactObjectIfTransient(interactor, getIntactDao().getComplexDao());
 
         // initialise annotations because needs caution
         initialiseAnnotations(reloaded.getDbAnnotations());
@@ -204,19 +218,23 @@ public class ComplexEditorService extends AbstractEditorService {
             initialiseCv(reloaded.getEvidenceType());
         }
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        if (reloaded.getAc() != null){
+            getIntactDao().getEntityManager().detach(reloaded);
+        }
 
         return reloaded;
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactInteractor reloadFullyInitialisedInteractor(IntactInteractor interactor) {
-        IntactInteractor reloaded = getIntactDao().getEntityManager().merge(interactor);
+        IntactInteractor reloaded = reattachIntactObjectIfTransient(interactor, getIntactDao().getInteractorDao(IntactInteractor.class));
 
         // initialise xrefs because of identifiers
         initialiseXrefs(reloaded.getDbXrefs());
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        if (reloaded.getAc() != null){
+            getIntactDao().getEntityManager().detach(reloaded);
+        }
 
         return reloaded;
     }
@@ -225,7 +243,7 @@ public class ComplexEditorService extends AbstractEditorService {
     public IntactComplex cloneInteractionEvidence(IntactInteractionEvidence ao, ComplexCloner cloner) throws SynchronizerException,
             FinderException,PersisterException {
 
-        IntactInteractionEvidence reloaded = getIntactDao().getEntityManager().merge(ao);
+        IntactInteractionEvidence reloaded = reattachIntactObjectIfTransient(ao, getIntactDao().getInteractionDao());
         IntactComplex clone = null;
         try {
             clone = cloner.cloneFromEvidence(ao, getIntactDao());
@@ -245,7 +263,9 @@ public class ComplexEditorService extends AbstractEditorService {
             getIntactDao().getEntityManager().detach(reloaded);
             throw e;
         }
-        getIntactDao().getEntityManager().detach(reloaded);
+        if (reloaded.getAc() != null){
+            getIntactDao().getEntityManager().detach(reloaded);
+        }
 
         return clone;
     }
