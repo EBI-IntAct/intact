@@ -10,10 +10,11 @@
                 xmlns:ed="http://ebi.ac.uk/intact/editor/ui">
 
     <div class="intact-buttonBar">
-        <ia:inputSimpleCvObject id="newDetectTxt" cvIdentifier="MI:0003"
-                                value="#{featureController.detectionMethodToAdd}"
-                                selectItems="#{cvObjectService.featureDetectionMethodSelectItems}" rendered="#{disableMethodSelectItems}"
-                                cvClass="uk.ac.ebi.intact.model.CvFeatureIdentification"/>
+        <h:selectOneMenu id="newDetectTxt" value="#{featureController.detectionMethodToAdd}"
+                         disabled="#{disableMethodSelectItems}"
+                         converter="cvObjectConverter">
+            <f:selectItems value="#{cvObjectService.featureDetectionMethodSelectItems}"/>
+        </h:selectOneMenu>
         <p:commandButton id="newDetectBtn" value="Add Detection Method"
                          actionListener="#{featureController.newDetectionMethod}"
                          process="newDetectTxt"
