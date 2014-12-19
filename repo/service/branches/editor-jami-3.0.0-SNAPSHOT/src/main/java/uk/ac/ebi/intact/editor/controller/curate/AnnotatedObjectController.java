@@ -854,7 +854,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
             // add annot
             addNewAnnotation(newAnnot);
             // save changes
-            doSave();
+            doSave(false);
         }
         else{
             addErrorMessage("Cannot add new annotation as it does not have any topics", "Missing annotation topic");
@@ -957,7 +957,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
             // add alias
             addNewAlias(newAlias);
             // save
-            doSave(true);
+            doSave(false);
         }
         else{
             addErrorMessage("Cannot add the new alias as it does not have a name and/or type", "Alias without name and/or type");

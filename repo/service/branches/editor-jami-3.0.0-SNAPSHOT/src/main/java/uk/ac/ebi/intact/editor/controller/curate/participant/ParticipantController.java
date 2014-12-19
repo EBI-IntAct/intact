@@ -75,6 +75,9 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     private boolean isIdentificationMethodDisabled;
     private String authorAssignedName=null;
 
+    private CvTerm newConfidenceType;
+    private CvTerm newConfidenceValue;
+
     @Resource(name = "bioSourceService")
     private transient BioSourceService bioSourceService;
 
@@ -323,12 +326,14 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     ///////////////////////////////////////////////
 
     public void newConfidence() {
-        if (!getParticipant().areConfidencesInitialized()){
-           setParticipant(getParticipantEditorService().initialiseParticipantConfidences(getParticipant()));
+        if (this.newConfidenceType != null && this.newConfidenceValue != null){
+            ParticipantEvidenceConfidence confidence = new ParticipantEvidenceConfidence(IntactUtils.createMIConfidenceType("to set", null), "to set");
+            getParticipant().getConfidences().add(confidence);
+            doSave(false);
         }
-        ParticipantEvidenceConfidence confidence = new ParticipantEvidenceConfidence(IntactUtils.createMIConfidenceType("to set", null), "to set");
-        getParticipant().getConfidences().add(confidence);
-        setUnsavedChanges(true);
+        else{
+            addErrorMessage("Cannot add new confidence as it does not have any type/value", "Missing confidence type/value");
+        }
     }
 
     public List<Confidence> collectConfidences() {
@@ -587,9 +592,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     }
 
     public void removeConfidence(Confidence conf) {
-        if (!getParticipant().areConfidencesInitialized()){
-            setParticipant(getParticipantEditorService().initialiseParticipantConfidences(getParticipant()));
-        }
 
         getParticipant().getConfidences().remove(conf);
     }
@@ -639,5 +641,21 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     public void unlinkFeature(FeatureWrapper wrapper) {
         super.unlinkFeature(wrapper);
         interactionController.reloadSingleParticipant(getParticipant());
+    }
+
+    public CvTerm getNewConfidenceValue() {
+        return newConfidenceValue;
+    }
+
+    public void setNewConfidenceValue(CvTerm newConfidenceValue) {
+        this.newConfidenceValue = newConfidenceValue;
+    }
+
+    public CvTerm getNewConfidenceType() {
+        return newConfidenceType;
+    }
+
+    public void setNewConfidenceType(CvTerm newConfidenceType) {
+        this.newConfidenceType = newConfidenceType;
     }
 }

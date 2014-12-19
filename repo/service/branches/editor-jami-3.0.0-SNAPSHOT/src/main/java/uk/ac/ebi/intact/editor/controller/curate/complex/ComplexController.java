@@ -116,6 +116,9 @@ public class ComplexController extends AnnotatedObjectController {
     private String newXrefPubmed;
     private CvTerm newXrefEvidenceCode;
 
+    private CvTerm newConfidenceType;
+    private CvTerm newConfidenceValue;
+
     public ComplexController() {
     }
 
@@ -535,12 +538,14 @@ public class ComplexController extends AnnotatedObjectController {
     ///////////////////////////////////////////////
 
     public void newConfidence() {
-        if (!complex.areConfidencesInitialized()){
-            setComplex(getComplexEditorService().initialiseComplexConfidences(complex));
+        if (this.newConfidenceType != null && this.newConfidenceValue != null){
+            ComplexConfidence confidence = new ComplexConfidence(IntactUtils.createMIConfidenceType("to set", null), "to set");
+            complex.getModelledConfidences().add(confidence);
+            doSave(false);
         }
-        ComplexConfidence confidence = new ComplexConfidence(IntactUtils.createMIConfidenceType("to set", null), "to set");
-        complex.getModelledConfidences().add(confidence);
-        setUnsavedChanges(true);
+        else{
+            addErrorMessage("Cannot add new confidence as it does not have any type/value", "Missing confidence type/value");
+        }
     }
 
     public void newParameter() {
@@ -1266,9 +1271,6 @@ public class ComplexController extends AnnotatedObjectController {
     }
 
     public void removeConfidence(ModelledConfidence conf){
-        if (!this.complex.areConfidencesInitialized()){
-            setComplex(getComplexEditorService().initialiseComplexConfidences(complex));
-        }
         this.complex.getModelledConfidences().remove(conf);
     }
 
@@ -1396,5 +1398,21 @@ public class ComplexController extends AnnotatedObjectController {
 
     public void setNewXrefPubmed(String newXrefPubmed) {
         this.newXrefPubmed = newXrefPubmed;
+    }
+
+    public CvTerm getNewConfidenceValue() {
+        return newConfidenceValue;
+    }
+
+    public void setNewConfidenceValue(CvTerm newConfidenceValue) {
+        this.newConfidenceValue = newConfidenceValue;
+    }
+
+    public CvTerm getNewConfidenceType() {
+        return newConfidenceType;
+    }
+
+    public void setNewConfidenceType(CvTerm newConfidenceType) {
+        this.newConfidenceType = newConfidenceType;
     }
 }
