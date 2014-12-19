@@ -103,6 +103,12 @@ public class ExperimentController extends AnnotatedObjectController {
     private boolean isVariableParameterTab = false;
     private List<IntactVariableParameterValue> valuesToDeleteOnSave;
 
+    private String newParameterDescription;
+    private CvTerm newParameterUnit;
+
+    private String newValue;
+    private Integer newValueOrder;
+
     public ExperimentController() {
         valuesToDeleteOnSave = new ArrayList<IntactVariableParameterValue>();
     }
@@ -854,26 +860,26 @@ public class ExperimentController extends AnnotatedObjectController {
     }
 
     public void newVariableParameter(ActionEvent evt){
-        // parameters are not always initialised
-        if (!experiment.areVariableParametersInitialized()){
-            setExperiment(getExperimentService().initialiseExperimentVariableParameters(this.experiment));
+        if (this.newParameterDescription != null){
+            experiment.addVariableParameter(new IntactVariableParameter(this.newParameterDescription, this.newParameterUnit));
+            doSave(false);
         }
-
-        experiment.addVariableParameter(new IntactVariableParameter("to set"));
-        setUnsavedChanges(true);
+        else{
+            addErrorMessage("The variable parameter description cannot be null","Missing parameter description");
+        }
     }
 
     public void newVariableParameterValue(VariableParameter param){
-        param.getVariableValues().add(new IntactVariableParameterValue("to set", param));
-        setUnsavedChanges(true);
+        if (this.newValue != null){
+            param.getVariableValues().add(new IntactVariableParameterValue(newValue, param, newValueOrder));
+            doSave(false);
+        }
+        else{
+           addErrorMessage("The value is required and cannot be null","Missing parameter value");
+        }
     }
 
     public void removeVariableParameter(VariableParameter param){
-        // parameters are not always initialised
-        if (!experiment.areVariableParametersInitialized()){
-            setExperiment(getExperimentService().initialiseExperimentVariableParameters(this.experiment));
-        }
-
         experiment.removeVariableParameter(param);
     }
 
@@ -949,5 +955,37 @@ public class ExperimentController extends AnnotatedObjectController {
         if (unsaved.getUnsavedObject() instanceof IntactInteractionEvidence){
             removeInteractionEvidence((IntactInteractionEvidence)unsaved.getUnsavedObject());
         }
+    }
+
+    public String getNewParameterDescription() {
+        return newParameterDescription;
+    }
+
+    public void setNewParameterDescription(String newParameterDescription) {
+        this.newParameterDescription = newParameterDescription;
+    }
+
+    public CvTerm getNewParameterUnit() {
+        return newParameterUnit;
+    }
+
+    public void setNewParameterUnit(CvTerm newParameterUnit) {
+        this.newParameterUnit = newParameterUnit;
+    }
+
+    public Integer getNewValueOrder() {
+        return newValueOrder;
+    }
+
+    public void setNewValueOrder(Integer newValueOrder) {
+        this.newValueOrder = newValueOrder;
+    }
+
+    public String getNewValue() {
+        return newValue;
+    }
+
+    public void setNewValue(String newValue) {
+        this.newValue = newValue;
     }
 }

@@ -10,9 +10,20 @@
                 xmlns:ed="http://ebi.ac.uk/intact/editor/ui">
 
     <div class="intact-buttonBar">
-        <p:commandButton id="newParamBtn" value="New Variable Parameter"
+        <h:panelGrid id="newParamTxt" columns="4">
+            <h:outputLabel value="Description: " for="paramDescription1Txt"/>
+            <p:inputTextarea id="paramDescription1Txt" value="#{experimentController.newParameterDescription}" rows="4" cols="50" autoResize="false"
+                             converter="trimmingConverter">
+            </p:inputTextarea>
+            <h:outputLabel value="Unit: " for="paramUnit1Sel"/>
+            <h:selectOneMenu id="paramUnit1Sel" value="#{experimentController.newParameterUnit}" disabled="#{!experimentController.isVariableParameterTab()}"
+                             converter="cvObjectConverter">
+                <f:selectItems value="#{cvObjectService.parameterUnitSelectItems}"/>
+            </h:selectOneMenu>
+        </h:panelGrid>
+        <p:commandButton id="newParamBtn" value="Add New Variable Parameter"
                          actionListener="#{experimentController.newVariableParameter}"
-                         process="newParamBtn"
+                         process="newParamTxt"
                          update="vparametersTable #{update}"/>
     </div>
 
@@ -31,8 +42,8 @@
             <f:facet name="header">
                 <h:outputText value="Unit"/>
             </f:facet>
-            <h:selectOneMenu id="paramUnitSel" value="#{parameter.unit}" rendered="#{parameterUnitSelectItems != null}" disabled="#{not experimentController.isVariableParameterTab()}"
-                    converter="cvObjectConverter">
+            <h:selectOneMenu id="paramUnitSel" value="#{parameter.unit}" rendered="#{parameterUnitSelectItems != null}" disabled="#{!experimentController.isVariableParameterTab()}"
+                             converter="cvObjectConverter">
                 <f:selectItems value="#{cvObjectService.parameterUnitSelectItems}"/>
                 <ed:curation/>
             </h:selectOneMenu>
@@ -42,9 +53,17 @@
             <f:facet name="header">
                 <h:outputText value="Values"/>
             </f:facet>
-            <p:commandButton id="newValueBtn" value="New Parameter Value"
+            <h:panelGrid id="newValueTxt" columns="4">
+                <h:outputLabel value="Value: " for="valueInputTxt"/>
+                <p:inputText id="valueInputTxt" value="#{experimentController.newValue}" converter="trimmingConverter"/>
+                <h:outputLabel value="Order: " for="valueOrderTxt"/>
+                <p:inputText id="valueOrderTxt" value="#{experimentController.newValueOrder}">
+                    <f:convertNumber/>
+                </p:inputText>
+            </h:panelGrid>
+            <p:commandButton id="newValueBtn" value="Add New Parameter Value"
                              actionListener="#{experimentController.newVariableParameterValue(parameter)}"
-                             process="newValueBtn"
+                             process="newValueTxt"
                              update="vparamValueList"/>
             <h:panelGroup id="vparamValueList" rendered="#{not empty parameter.variableValues}">
                 <ul>
