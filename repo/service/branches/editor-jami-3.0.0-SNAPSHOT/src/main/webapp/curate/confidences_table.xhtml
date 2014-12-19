@@ -10,9 +10,19 @@
                 xmlns:ed="http://ebi.ac.uk/intact/editor/ui">
 
         <div class="intact-buttonBar">
+            <h:panelGrid id="newConfidenceTxt" columns="4">
+                <h:outputLabel value="Type: " for="confidenceType1Sel"/>
+                <h:selectOneMenu id="confidenceType1Sel" value="#{annotatedObjectController.newConfidenceType}" rendered="#{cvObjectService.confidenceTypeSelectItems != null}"
+                                 disabled="#{disableConfidenceSelectItems}"
+                                 converter="cvObjectConverter">
+                    <f:selectItems value="#{cvObjectService.confidenceTypeSelectItems}"/>
+                </h:selectOneMenu>
+                <h:outputLabel value="Value: " for="confidenceValue1Txt"/>
+                <p:inputText id="confidenceValue1Txt" value="#{annotatedObjectController.newConfidenceValue}" converter="trimmingConverter"/>
+            </h:panelGrid>
             <p:commandButton id="newConfidenceBtn" value="New Confidence"
                              actionListener="#{annotatedObjectController.newConfidence}"
-                             process="newConfidenceBtn"
+                             process="newConfidenceTxt"
                              update="confidencesTable #{update}"/>
         </div>
 
