@@ -187,6 +187,14 @@ public class CvObjectController extends AnnotatedObjectController {
         IntactCvTerm obj = new IntactCvTerm("to set");
         obj.setObjClass(cvClassName);
 
+        // if the cv does not have any parents, try to add one by default
+        if (this.classMap.containsKey(cvClassName)){
+            IntactCvTerm parent = getCvService().loadCvByIdentifier(this.classMap.get(cvClassName), cvClassName);
+            if (parent != null){
+                obj.getParents().add(parent);
+            }
+        }
+
         setUnsavedChanges(true);
         return obj;
     }
@@ -205,7 +213,7 @@ public class CvObjectController extends AnnotatedObjectController {
 
         // if the cv does not have any parents, try to add one by default
         if (this.classMap.containsKey(cvClassName) && cvObject.getParents().isEmpty()){
-            IntactCvTerm parent = getCvService().findCvObjectByIdentifier(cvClassName, this.classMap.get(cvClassName));
+            IntactCvTerm parent = getCvService().loadCvByIdentifier(this.classMap.get(cvClassName), cvClassName);
             if (parent != null){
                 this.cvObject.getParents().add(parent);
             }

@@ -20,10 +20,12 @@ import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.interceptor.IntactTransactionSynchronization;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.audit.Auditable;
+import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
 import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
+import uk.ac.ebi.intact.jami.synchronizer.impl.CvTermSynchronizer;
 
 import javax.annotation.Resource;
 
@@ -125,6 +127,10 @@ public abstract class AbstractEditorService implements EditorService {
     protected <T extends Auditable,I> T synchronizeIntactObject(I intactObject, IntactDbSynchronizer<I,T> synchronizer, boolean persist) throws SynchronizerException,
             FinderException, PersisterException {
         try{
+
+            if (intactObject instanceof IntactCvTerm && synchronizer instanceof CvTermSynchronizer){
+                ((CvTermSynchronizer)synchronizer).setObjClass(((IntactCvTerm)intactObject).getObjClass());
+            }
             return synchronizer.synchronize(intactObject, persist);
         }
         catch (SynchronizerException e){
