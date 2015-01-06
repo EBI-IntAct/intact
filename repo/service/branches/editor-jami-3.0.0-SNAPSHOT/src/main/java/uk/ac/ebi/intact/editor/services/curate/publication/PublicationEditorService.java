@@ -67,7 +67,7 @@ public class PublicationEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactPublication initialisePublicationAnnotations(IntactPublication publication) {
         // reload publication without flushing changes
-        IntactPublication reloaded = getIntactDao().getEntityManager().merge(publication);
+        IntactPublication reloaded = reattachIntactObjectIfTransient(publication, getIntactDao().getPublicationDao());
         Collection<Annotation> annotations = reloaded.getDbAnnotations();
         initialiseAnnotations(annotations);
 
@@ -78,7 +78,7 @@ public class PublicationEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactPublication initialisePublicationXrefs(IntactPublication publication) {
         // reload publication without flushing changes
-        IntactPublication reloaded = getIntactDao().getEntityManager().merge(publication);
+        IntactPublication reloaded = reattachIntactObjectIfTransient(publication, getIntactDao().getPublicationDao());
         Collection<Xref> xrefs = reloaded.getDbXrefs();
         initialiseXrefs(xrefs);
 
@@ -89,7 +89,7 @@ public class PublicationEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactPublication initialiseExperiments(IntactPublication publication) {
         // reload participant without flushing changes
-        IntactPublication reloaded = getIntactDao().getEntityManager().merge(publication);
+        IntactPublication reloaded = reattachIntactObjectIfTransient(publication, getIntactDao().getPublicationDao());
         Collection<Experiment> evidences = reloaded.getExperiments();
         initialiseEvidences(evidences);
 
@@ -100,7 +100,7 @@ public class PublicationEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactPublication initialiseLifeCycleEvents(IntactPublication publication) {
         // reload participant without flushing changes
-        IntactPublication reloaded = getIntactDao().getEntityManager().merge(publication);
+        IntactPublication reloaded = reattachIntactObjectIfTransient(publication, getIntactDao().getPublicationDao());
         Collection<LifeCycleEvent> evidences = reloaded.getLifecycleEvents();
         initialiseEvents(evidences);
 
@@ -138,7 +138,7 @@ public class PublicationEditorService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactPublication reloadFullyInitialisedPublication(IntactPublication exp) {
-        IntactPublication reloaded = getIntactDao().getEntityManager().merge(exp);
+        IntactPublication reloaded = reattachIntactObjectIfTransient(exp, getIntactDao().getPublicationDao());
 
         if (reloaded.getPubmedId() != null && (
                 "14681455".equals(reloaded.getPubmedId()) ||

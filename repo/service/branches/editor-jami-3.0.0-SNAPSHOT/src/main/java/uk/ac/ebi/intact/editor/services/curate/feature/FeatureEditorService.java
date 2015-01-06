@@ -72,7 +72,7 @@ public class FeatureEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public <T extends AbstractIntactFeature> T initialiseFeatureAnnotations(T feature) {
         // reload feature without flushing changes
-        T reloaded = getIntactDao().getEntityManager().merge(feature);
+        T reloaded = reattachIntactObjectIfTransient(feature, (uk.ac.ebi.intact.jami.dao.IntactBaseDao<T>) getIntactDao().getFeatureDao(feature.getClass()));
         Collection<psidev.psi.mi.jami.model.Annotation> annotations = (Collection<psidev.psi.mi.jami.model.Annotation>)reloaded.getAnnotations();
         initialiseAnnotations(annotations);
 
@@ -83,7 +83,7 @@ public class FeatureEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public <T extends AbstractIntactFeature> T initialiseFeatureXrefs(T feature) {
         // reload feature without flushing changes
-        T reloaded = getIntactDao().getEntityManager().merge(feature);
+        T reloaded = reattachIntactObjectIfTransient(feature, (uk.ac.ebi.intact.jami.dao.IntactBaseDao<T>) getIntactDao().getFeatureDao(feature.getClass()));
         Collection<Xref> xrefs = (Collection<Xref>)reloaded.getXrefs();
         initialiseXrefs(xrefs);
 
@@ -94,7 +94,7 @@ public class FeatureEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public <T extends AbstractIntactFeature> T initialiseFeatureAliases(T feature) {
         // reload feature without flushing changes
-        T reloaded = getIntactDao().getEntityManager().merge(feature);
+        T reloaded = reattachIntactObjectIfTransient(feature, (uk.ac.ebi.intact.jami.dao.IntactBaseDao<T>) getIntactDao().getFeatureDao(feature.getClass()));
         Collection<Alias> aliases = (Collection<Alias>)reloaded.getAliases();
         initialiseAliases(aliases);
 
@@ -105,7 +105,7 @@ public class FeatureEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactFeatureEvidence initialiseFeatureParameters(IntactFeatureEvidence feature) {
         // reload feature without flushing changes
-        IntactFeatureEvidence reloaded = getIntactDao().getEntityManager().merge(feature);
+        IntactFeatureEvidence reloaded = reattachIntactObjectIfTransient(feature, getIntactDao().getFeatureEvidenceDao());
         Collection<Parameter> parameters = reloaded.getParameters();
         initialiseParameters(parameters);
 
@@ -116,7 +116,7 @@ public class FeatureEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactFeatureEvidence initialiseFeatureDetectionMethods(IntactFeatureEvidence feature) {
         // reload feature without flushing changes
-        IntactFeatureEvidence reloaded = getIntactDao().getEntityManager().merge(feature);
+        IntactFeatureEvidence reloaded = reattachIntactObjectIfTransient(feature, getIntactDao().getFeatureEvidenceDao());
         Collection<CvTerm> dets = reloaded.getDetectionMethods();
         for (CvTerm det : dets){
             initialiseCv(det);
@@ -180,7 +180,7 @@ public class FeatureEditorService extends AbstractEditorService {
     public List<RangeWrapper> loadRangeWrappers(AbstractIntactFeature feature, String sequence,
                                                 Class<? extends AbstractIntactResultingSequence> resultingSeqClass,
                                                 Class<? extends AbstractIntactXref> xrefClass) {
-        AbstractIntactFeature reloaded = getIntactDao().getEntityManager().merge(feature);
+        AbstractIntactFeature reloaded = reattachIntactObjectIfTransient(feature, (uk.ac.ebi.intact.jami.dao.IntactBaseDao<AbstractIntactFeature>) getIntactDao().getFeatureDao(feature.getClass()));
 
         List<RangeWrapper> rangeWrappers = new ArrayList<RangeWrapper>(feature.getRanges());
         for (Object r : feature.getRanges()){

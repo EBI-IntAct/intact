@@ -58,7 +58,7 @@ public class ExperimentEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactExperiment initialiseExperimentAnnotations(IntactExperiment experiment) {
         // reload participant without flushing changes
-        IntactExperiment reloaded = getIntactDao().getEntityManager().merge(experiment);
+        IntactExperiment reloaded = reattachIntactObjectIfTransient(experiment, getIntactDao().getExperimentDao());
         Collection<psidev.psi.mi.jami.model.Annotation> annotations = reloaded.getAnnotations();
         initialiseAnnotations(annotations);
 
@@ -69,7 +69,7 @@ public class ExperimentEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactExperiment initialiseExperimentVariableParameters(IntactExperiment experiment) {
         // reload participant without flushing changes
-        IntactExperiment reloaded = getIntactDao().getEntityManager().merge(experiment);
+        IntactExperiment reloaded = reattachIntactObjectIfTransient(experiment, getIntactDao().getExperimentDao());
         Collection<VariableParameter> parameters = reloaded.getVariableParameters();
         initialiseVariableParameters(parameters);
 
@@ -80,7 +80,7 @@ public class ExperimentEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactExperiment initialiseInteractionEvidences(IntactExperiment experiment) {
         // reload participant without flushing changes
-        IntactExperiment reloaded = getIntactDao().getEntityManager().merge(experiment);
+        IntactExperiment reloaded = reattachIntactObjectIfTransient(experiment, getIntactDao().getExperimentDao());
         Collection<InteractionEvidence> evidences = reloaded.getInteractionEvidences();
         initialiseEvidences(evidences);
 
@@ -91,7 +91,7 @@ public class ExperimentEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactExperiment initialiseExperimentXrefs(IntactExperiment experiment) {
         // reload participant without flushing changes
-        IntactExperiment reloaded = getIntactDao().getEntityManager().merge(experiment);
+        IntactExperiment reloaded = reattachIntactObjectIfTransient(experiment, getIntactDao().getExperimentDao());
         Collection<Xref> xrefs = reloaded.getXrefs();
         initialiseXrefs(xrefs);
 
@@ -159,7 +159,7 @@ public class ExperimentEditorService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactExperiment reloadFullyInitialisedExperiment(IntactExperiment exp) {
-        IntactExperiment reloaded = getIntactDao().getEntityManager().merge(exp);
+        IntactExperiment reloaded = reattachIntactObjectIfTransient(exp, getIntactDao().getExperimentDao());
 
         // initialise annotations because needs caution
         initialiseAnnotations(reloaded.getAnnotations());
@@ -195,7 +195,7 @@ public class ExperimentEditorService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public boolean isAccepted(IntactExperiment exp) {
-        IntactExperiment reloaded = getIntactDao().getEntityManager().merge(exp);
+        IntactExperiment reloaded = reattachIntactObjectIfTransient(exp, getIntactDao().getExperimentDao());
 
         boolean accepted = AnnotationUtils.collectAllAnnotationsHavingTopic(reloaded.getAnnotations(), null, Releasable.ACCEPTED)!=null;
 
@@ -206,7 +206,7 @@ public class ExperimentEditorService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public boolean isRejected(IntactExperiment exp) {
-        IntactExperiment reloaded = getIntactDao().getEntityManager().merge(exp);
+        IntactExperiment reloaded = reattachIntactObjectIfTransient(exp, getIntactDao().getExperimentDao());
 
         boolean accepted = AnnotationUtils.collectAllAnnotationsHavingTopic(reloaded.getAnnotations(), null, Releasable.TO_BE_REVIEWED)!=null;
 

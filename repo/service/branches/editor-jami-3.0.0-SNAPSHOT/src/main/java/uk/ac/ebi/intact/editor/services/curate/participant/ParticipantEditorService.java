@@ -83,7 +83,7 @@ public class ParticipantEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public <T extends AbstractIntactParticipant> T initialiseParticipantAnnotations(T participant) {
         // reload feature without flushing changes
-        T reloaded = getIntactDao().getEntityManager().merge(participant);
+        T reloaded = (T)reattachIntactObjectIfTransient(participant, (uk.ac.ebi.intact.jami.dao.IntactBaseDao<AbstractIntactParticipant>) getIntactDao().getParticipantDao(participant.getClass()));
         Collection<Annotation> annotations = (Collection<Annotation>)reloaded.getAnnotations();
         initialiseAnnotations(annotations);
 
@@ -94,7 +94,7 @@ public class ParticipantEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public <T extends AbstractIntactParticipant> T initialiseParticipantXrefs(T participant) {
         // reload feature without flushing changes
-        T reloaded = getIntactDao().getEntityManager().merge(participant);
+        T reloaded = (T)reattachIntactObjectIfTransient(participant, (uk.ac.ebi.intact.jami.dao.IntactBaseDao<AbstractIntactParticipant>) getIntactDao().getParticipantDao(participant.getClass()));
         Collection<Xref> xrefs = (Collection<Xref>)reloaded.getXrefs();
         initialiseXrefs(xrefs);
 
@@ -105,7 +105,7 @@ public class ParticipantEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public <T extends AbstractIntactParticipant> T initialiseParticipantAliases(T participant) {
         // reload feature without flushing changes
-        T reloaded = getIntactDao().getEntityManager().merge(participant);
+        T reloaded = (T)reattachIntactObjectIfTransient(participant, (uk.ac.ebi.intact.jami.dao.IntactBaseDao<AbstractIntactParticipant>) getIntactDao().getParticipantDao(participant.getClass()));
         Collection<Alias> aliases = (Collection<Alias>)reloaded.getAliases();
         initialiseAliases(aliases);
 
@@ -116,7 +116,7 @@ public class ParticipantEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactParticipantEvidence initialiseParticipantParameters(IntactParticipantEvidence participantEvidence) {
         // reload feature without flushing changes
-        IntactParticipantEvidence reloaded = getIntactDao().getEntityManager().merge(participantEvidence);
+        IntactParticipantEvidence reloaded = reattachIntactObjectIfTransient(participantEvidence, getIntactDao().getParticipantEvidenceDao());
         Collection<Parameter> parameters = reloaded.getParameters();
         initialiseParameters(parameters);
 
@@ -127,7 +127,7 @@ public class ParticipantEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactParticipantEvidence initialiseParticipantIdentificationMethods(IntactParticipantEvidence participantEvidence) {
         // reload feature without flushing changes
-        IntactParticipantEvidence reloaded = getIntactDao().getEntityManager().merge(participantEvidence);
+        IntactParticipantEvidence reloaded = reattachIntactObjectIfTransient(participantEvidence, getIntactDao().getParticipantEvidenceDao());
         Collection<CvTerm> dets = reloaded.getDbIdentificationMethods();
         for (CvTerm det : dets){
             initialiseCv(det);
@@ -140,7 +140,7 @@ public class ParticipantEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactParticipantEvidence initialiseParticipantExperimentalPreparations(IntactParticipantEvidence participantEvidence) {
         // reload feature without flushing changes
-        IntactParticipantEvidence reloaded = getIntactDao().getEntityManager().merge(participantEvidence);
+        IntactParticipantEvidence reloaded = reattachIntactObjectIfTransient(participantEvidence, getIntactDao().getParticipantEvidenceDao());
         Collection<CvTerm> dets = reloaded.getExperimentalPreparations();
         for (CvTerm det : dets){
             initialiseCv(det);
@@ -153,7 +153,7 @@ public class ParticipantEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactParticipantEvidence initialiseParticipantConfidences(IntactParticipantEvidence participantEvidence) {
         // reload feature without flushing changes
-        IntactParticipantEvidence reloaded = getIntactDao().getEntityManager().merge(participantEvidence);
+        IntactParticipantEvidence reloaded = reattachIntactObjectIfTransient(participantEvidence, getIntactDao().getParticipantEvidenceDao());
         Collection<Confidence> dets = reloaded.getConfidences();
         for (Confidence det : dets){
             initialiseConfidence(det);
@@ -227,7 +227,7 @@ public class ParticipantEditorService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public <T extends AbstractIntactParticipant> T reloadFullyInitialisedParticipant(T participant) {
-        T reloaded = getIntactDao().getEntityManager().merge(participant);
+        T reloaded = (T)reattachIntactObjectIfTransient(participant, (uk.ac.ebi.intact.jami.dao.IntactBaseDao<AbstractIntactParticipant>) getIntactDao().getParticipantDao(participant.getClass()));
 
         // initialise annotations because needs caution
         initialiseAnnotations(reloaded.getAnnotations());

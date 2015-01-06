@@ -56,7 +56,7 @@ public class InteractorEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactInteractor initialiseInteractorAnnotations(IntactInteractor interactor) {
         // reload IntactInteractor without flushing changes
-        IntactInteractor reloaded = getIntactDao().getEntityManager().merge(interactor);
+        IntactInteractor reloaded = reattachIntactObjectIfTransient(interactor, getIntactDao().getInteractorDao(IntactInteractor.class));
         Collection<Annotation> annotations = reloaded.getDbAnnotations();
         initialiseAnnotations(annotations);
 
@@ -67,7 +67,7 @@ public class InteractorEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactInteractor initialiseInteractorXrefs(IntactInteractor interactor) {
         // reload IntactInteractor without flushing changes
-        IntactInteractor reloaded = getIntactDao().getEntityManager().merge(interactor);
+        IntactInteractor reloaded = reattachIntactObjectIfTransient(interactor, getIntactDao().getInteractorDao(IntactInteractor.class));
         Collection<Xref> xrefs = reloaded.getDbXrefs();
         initialiseXrefs(xrefs);
 
@@ -78,7 +78,7 @@ public class InteractorEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactInteractor initialiseInteractorAliases(IntactInteractor interactor) {
         // reload interactor without flushing changes
-        IntactInteractor reloaded = getIntactDao().getEntityManager().merge(interactor);
+        IntactInteractor reloaded = reattachIntactObjectIfTransient(interactor, getIntactDao().getInteractorDao(IntactInteractor.class));
         Collection<Alias> aliases = reloaded.getDbAliases();
         initialiseAliases(aliases);
 
@@ -89,7 +89,7 @@ public class InteractorEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactInteractorPool initialisePoolMembers(IntactInteractorPool pool) {
         // reload feature without flushing changes
-        IntactInteractorPool reloaded = getIntactDao().getEntityManager().merge(pool);
+        IntactInteractorPool reloaded = reattachIntactObjectIfTransient(pool, getIntactDao().getInteractorPoolDao());
         Collection<Interactor> interactors = reloaded;
         initialiseInteractorMembers(interactors);
 
@@ -127,7 +127,7 @@ public class InteractorEditorService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactInteractor reloadFullyInitialisedInteractor(IntactInteractor interactor) {
-        IntactInteractor reloaded = getIntactDao().getEntityManager().merge(interactor);
+        IntactInteractor reloaded = reattachIntactObjectIfTransient(interactor, getIntactDao().getInteractorDao(IntactInteractor.class));
 
         // initialise xrefs because needs id
         initialiseAnnotations(reloaded.getDbAnnotations());

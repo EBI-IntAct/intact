@@ -277,7 +277,12 @@ public class EditorObjectService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public Releasable initialiseLifecycleEvents(Releasable releasable) {
         // reload complex without flushing changes
-        Releasable reloaded = getIntactDao().getEntityManager().merge(releasable);
+        Releasable reloaded = releasable;
+        // merge current user because detached
+        if (!getIntactDao().getEntityManager().contains(releasable) && ((IntactPrimaryObject)releasable).getAc() != null){
+            reloaded = getIntactDao().getEntityManager().merge(releasable);
+        }
+
         Collection<LifeCycleEvent> events = reloaded.getLifecycleEvents();
         Hibernate.initialize(events);
         return reloaded;
@@ -291,7 +296,12 @@ public class EditorObjectService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public <T extends IntactPrimaryObject> T cloneAnnotatedObject(T ao, EditorCloner cloner) {
 
-        T reloaded = getIntactDao().getEntityManager().merge(ao);
+        T reloaded = ao;
+        // merge current user because detached
+        if (!getIntactDao().getEntityManager().contains(ao) && ao.getAc() != null){
+            reloaded = getIntactDao().getEntityManager().merge(ao);
+        }
+
         T clone = (T)cloner.clone(ao, getIntactDao());
         getIntactDao().getEntityManager().detach(reloaded);
 

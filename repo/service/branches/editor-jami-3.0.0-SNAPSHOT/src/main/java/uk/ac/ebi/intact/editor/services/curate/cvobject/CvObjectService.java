@@ -481,7 +481,8 @@ public class CvObjectService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactCvTerm reloadFullyInitialisedCv(IntactCvTerm cv) {
-        IntactCvTerm reloaded = getIntactDao().getEntityManager().merge(cv);
+
+        IntactCvTerm reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getCvTermDao());
 
         // initialise xrefs because are first tab visible
         initialiseXrefs(reloaded.getDbXrefs());
@@ -496,7 +497,7 @@ public class CvObjectService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactCvTerm initialiseCvXrefs(IntactCvTerm cv) {
         // reload IntactInteractionEvidence without flushing changes
-        IntactCvTerm reloaded = getIntactDao().getEntityManager().merge(cv);
+        IntactCvTerm reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getCvTermDao());
         Collection<Xref> xrefs = reloaded.getDbXrefs();
         initialiseXrefs(xrefs);
 
@@ -522,7 +523,7 @@ public class CvObjectService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactCvTerm initialiseCvAnnotations(IntactCvTerm cv) {
         // reload cv without flushing changes
-        IntactCvTerm reloaded = getIntactDao().getEntityManager().merge(cv);
+        IntactCvTerm reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getCvTermDao());
         Collection<Annotation> annotations = reloaded.getDbAnnotations();
         initialiseAnnotations(annotations);
 
@@ -533,7 +534,7 @@ public class CvObjectService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactCvTerm initialiseCvSynonyms(IntactCvTerm cv) {
         // reload cv without flushing changes
-        IntactCvTerm reloaded = getIntactDao().getEntityManager().merge(cv);
+        IntactCvTerm reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getCvTermDao());
         Collection<Alias> aliases = reloaded.getSynonyms();
         initialiseAliases(aliases);
 
@@ -544,12 +545,12 @@ public class CvObjectService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public DualListModel<IntactCvTerm> loadParentsList(IntactCvTerm cv) {
         // reload cv without flushing changes
-        IntactCvTerm reloaded = getIntactDao().getEntityManager().merge(cv);
+        IntactCvTerm reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getCvTermDao());
 
         List<IntactCvTerm> cvObjectsByClass = new ArrayList<IntactCvTerm>(getIntactDao().getCvTermDao().getByObjClass(reloaded.getObjClass()));
         List<IntactCvTerm> existingParents = new ArrayList<IntactCvTerm>(reloaded.getParents().size());
         for (OntologyTerm parent : reloaded.getParents()){
-            IntactCvTerm reloadedParent = (IntactCvTerm)getIntactDao().getEntityManager().merge(parent);
+            IntactCvTerm reloadedParent = reattachIntactObjectIfTransient((IntactCvTerm)parent, getIntactDao().getCvTermDao());
             Hibernate.initialize(reloadedParent.getDbXrefs());
 
             getIntactDao().getEntityManager().detach(reloadedParent);
