@@ -480,6 +480,19 @@ public class CvObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public IntactCvTerm loadCvByIdentifier(String id, String objClass) {
+        IntactCvTerm cv = getIntactDao().getCvTermDao().getByUniqueIdentifier(id, objClass);
+
+        if (cv != null){
+            // initialise xrefs because are first tab visible
+            initialiseXrefs(cv.getDbXrefs());
+            // initialise annotations because needs caution
+            initialiseAnnotations(cv.getDbAnnotations());
+        }
+        return cv;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactCvTerm reloadFullyInitialisedCv(IntactCvTerm cv) {
 
         IntactCvTerm reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getCvTermDao());
@@ -559,6 +572,8 @@ public class CvObjectService extends AbstractEditorService {
 
         List<IntactCvTerm> cvObjectsByClass = new ArrayList<IntactCvTerm>(getIntactDao().getCvTermDao().getByObjClass(reloaded.getObjClass()));
         List<IntactCvTerm> existingParents = new ArrayList<IntactCvTerm>(reloaded.getParents().size());
+
+        // reload parents
         for (OntologyTerm parent : reloaded.getParents()){
             IntactCvTerm reloadedParent = reattachIntactObjectIfTransient((IntactCvTerm)parent, getIntactDao().getCvTermDao());
             Hibernate.initialize(reloadedParent.getDbXrefs());
@@ -567,6 +582,9 @@ public class CvObjectService extends AbstractEditorService {
 
             getIntactDao().getEntityManager().detach(reloadedParent);
         }
+
+        // remove parents from source
+        cvObjectsByClass.removeAll(existingParents);
 
         Collections.sort( existingParents, new CvObjectComparator() );
         Collections.sort( cvObjectsByClass, new CvObjectComparator() );
