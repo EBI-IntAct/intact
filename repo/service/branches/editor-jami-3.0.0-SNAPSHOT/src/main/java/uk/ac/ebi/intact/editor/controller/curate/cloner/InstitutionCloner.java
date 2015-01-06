@@ -14,7 +14,7 @@ import uk.ac.ebi.intact.jami.model.extension.IntactSource;
  * @since <pre>02/12/14</pre>
  */
 
-public class InstitutionCloner extends AbstractCvTermCloner<Source, IntactSource>{
+public class  InstitutionCloner extends AbstractCvTermCloner<Source, IntactSource>{
     @Override
     protected Annotation instantiateAnnotation(CvTerm topic, String value) {
         return new CvTermAnnotation(topic, value);
