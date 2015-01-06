@@ -49,7 +49,7 @@ public abstract class AbstractEditorService implements EditorService {
         return afterCommitExecutor;
     }
 
-    public void attachDaoToTransactionManager(){
+    protected void attachDaoToTransactionManager(){
         getAfterCommitExecutor().registerDaoForSynchronization(getIntactDao());
     }
 

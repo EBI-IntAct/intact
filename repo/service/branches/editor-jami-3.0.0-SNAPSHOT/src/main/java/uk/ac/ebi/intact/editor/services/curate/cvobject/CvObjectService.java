@@ -553,6 +553,8 @@ public class CvObjectService extends AbstractEditorService {
             IntactCvTerm reloadedParent = reattachIntactObjectIfTransient((IntactCvTerm)parent, getIntactDao().getCvTermDao());
             Hibernate.initialize(reloadedParent.getDbXrefs());
 
+            existingParents.add(reloadedParent);
+
             getIntactDao().getEntityManager().detach(reloadedParent);
         }
 
