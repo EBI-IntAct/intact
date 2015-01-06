@@ -43,6 +43,9 @@ public class CvTermCloner extends AbstractCvTermCloner<CvTerm, IntactCvTerm>{
         if (cv instanceof OntologyTerm){
             clone.setDefinition(((OntologyTerm)cv).getDefinition());
         }
+        else if (cv instanceof IntactCvTerm){
+            clone.setObjClass(((IntactCvTerm)cv).getObjClass());
+        }
         return clone;
     }
 }
