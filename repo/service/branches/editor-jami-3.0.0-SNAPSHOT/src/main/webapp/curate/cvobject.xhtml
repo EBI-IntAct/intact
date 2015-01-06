@@ -90,7 +90,7 @@
                             <p:pickList id="parentsPick" value="#{cvObjectController.parents}"
                                         var="p"
                                         itemLabel="#{p.shortName}"
-                                        itemValue="#{p}" converter="cvObjectConverter"/>
+                                        itemValue="#{p}" converter="cvTermConverter" onTransfer="markAsUnsaved()"/>
                         </td>
                     </tr>
 

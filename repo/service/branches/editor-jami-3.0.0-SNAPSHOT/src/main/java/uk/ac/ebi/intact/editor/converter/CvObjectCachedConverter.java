@@ -26,11 +26,12 @@ import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 
 /**
+ * Cv
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
 @FacesConverter( value = "cvObjectConverter", forClass = IntactCvTerm.class )
-public class CvObjectConverter implements Converter {
+public class CvObjectCachedConverter implements Converter {
 
     @Override
     public Object getAsObject( FacesContext facesContext, UIComponent uiComponent, String ac ) throws ConverterException {
