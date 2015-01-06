@@ -24,6 +24,7 @@ import uk.ac.ebi.intact.jami.utils.IntactUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ComponentSystemEvent;
+import javax.faces.event.ValueChangeEvent;
 import java.util.*;
 
 /**
@@ -43,6 +44,8 @@ public class CvObjectController extends AnnotatedObjectController {
 
     private DualListModel<IntactCvTerm> parents;
     private Map<String, String> classMap;
+
+    private String definition;
 
     @PostConstruct
     public void initializeClassMap(){
@@ -120,6 +123,8 @@ public class CvObjectController extends AnnotatedObjectController {
             setCautionMessage(caution != null ? caution.getValue() : null);
             Annotation internal = AnnotationUtils.collectFirstAnnotationWithTopic(this.cvObject.getAnnotations(), null, "remark-internal");
             setInternalRemark(internal != null ? internal.getValue() : null);
+
+            this.definition = this.cvObject.getDefinition();
         }
     }
 
@@ -197,6 +202,19 @@ public class CvObjectController extends AnnotatedObjectController {
 
         setUnsavedChanges(true);
         return obj;
+    }
+
+    public void onDefinitionChanged(ValueChangeEvent evt) {
+        setUnsavedChanges(true);
+        String newValue = (String) evt.getNewValue();
+        if (newValue == null || newValue.length() == 0){
+            this.cvObject.setDefinition(null);
+            this.definition = null;
+        }
+        else{
+            this.cvObject.setDefinition(newValue);
+            this.definition = newValue;
+        }
     }
 
     @Override
@@ -339,7 +357,7 @@ public class CvObjectController extends AnnotatedObjectController {
         }
         prepareView();
 
-        setDescription("Cv Object: "+cv.getShortName());
+        setDescription("Cv Object: " + cv.getShortName());
     }
 
     @Override
@@ -450,16 +468,11 @@ public class CvObjectController extends AnnotatedObjectController {
     }
 
     public String getDefinition() {
-        if (cvObject == null){
-           return null;
-        }
-        return this.cvObject.getDefinition();
+        return this.definition;
     }
 
     public void setDefinition(String definition) {
-        if (this.cvObject != null){
-            this.cvObject.setDefinition(definition);
-        }
+        this.definition = definition;
     }
 
     @Override
