@@ -17,10 +17,7 @@ package uk.ac.ebi.intact.editor.controller.curate.cloner;
 
 import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
-import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
-import uk.ac.ebi.intact.jami.model.extension.InteractorAlias;
-import uk.ac.ebi.intact.jami.model.extension.InteractorAnnotation;
-import uk.ac.ebi.intact.jami.model.extension.InteractorXref;
+import uk.ac.ebi.intact.jami.model.extension.*;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -54,7 +51,9 @@ public class InteractorCloner extends AbstractEditorCloner<Interactor, IntactInt
 
             for (Object obj: interactor.getIdentifiers()){
                 Xref ref = (Xref)obj;
-                clone.getIdentifiers().add(new InteractorXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
+                if (ref.getDatabase() instanceof IntactCvTerm){
+                    clone.getIdentifiers().add(new InteractorXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
+                }
             }
 
             for (Object obj : interactor.getXrefs()){

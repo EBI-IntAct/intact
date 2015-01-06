@@ -52,7 +52,10 @@ public class FeatureEvidenceCloner extends AbstractEditorCloner<FeatureEvidence,
 
         for (Object obj: feature.getIdentifiers()){
             Xref ref = (Xref)obj;
-            clone.getIdentifiers().add(new FeatureEvidenceXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
+            // excludes AC
+            if (ref.getDatabase() instanceof IntactCvTerm){
+                clone.getIdentifiers().add(new FeatureEvidenceXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
+            }
         }
 
         for (Object obj : feature.getXrefs()){

@@ -302,7 +302,7 @@ public class EditorObjectService extends AbstractEditorService {
             reloaded = getIntactDao().getEntityManager().merge(ao);
         }
 
-        T clone = (T)cloner.clone(ao, getIntactDao());
+        T clone = (T)cloner.clone(reloaded, getIntactDao());
         getIntactDao().getEntityManager().detach(reloaded);
 
         return clone;

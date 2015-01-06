@@ -7,6 +7,7 @@
                 xmlns:fn="http://java.sun.com/jsp/jstl/functions"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ia="http://java.sun.com/jsf/composite/intact-components"
+                xmlns:ed="http://ebi.ac.uk/intact/editor/ui"
 
                 template="/curate/curate_template.xhtml">
 
@@ -79,7 +80,9 @@
                         </td>
                         <td>
                             <p:inputTextarea id="definitionTxt" value="#{cvObjectController.definition}" rows="4" cols="50" autoResize="false"
-                                             converter="trimmingConverter" onchange="markAsUnsaved()"/>
+                                             converter="trimmingConverter" valueChangeListener="#{cvObjectController.onDefinitionChanged}">
+                                <ed:curation/>
+                            </p:inputTextarea>
                         </td>
                     </tr>
                     <tr>
