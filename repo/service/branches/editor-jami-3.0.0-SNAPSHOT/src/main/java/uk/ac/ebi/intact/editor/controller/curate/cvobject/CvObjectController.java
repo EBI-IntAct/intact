@@ -328,7 +328,7 @@ public class CvObjectController extends AnnotatedObjectController {
         }
         prepareView();
 
-        setDefinition("Cv Object: "+cv.getShortName());
+        setDescription("Cv Object: "+cv.getShortName());
     }
 
     @Override
