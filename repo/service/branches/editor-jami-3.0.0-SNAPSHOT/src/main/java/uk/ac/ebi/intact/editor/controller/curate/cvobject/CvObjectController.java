@@ -194,14 +194,14 @@ public class CvObjectController extends AnnotatedObjectController {
     @Override
     public void doPreSave() {
 
+        if (!cvObject.areParentsInitialized()){
+            this.cvObject = getCvService().initialiseCvParents(this.cvObject);
+        }
         Collection<IntactCvTerm> parentsToRemove = CollectionUtils.subtract(cvObject.getParents(), parents.getTarget());
         Collection<IntactCvTerm> parentsToAdd = CollectionUtils.subtract(parents.getTarget(), cvObject.getParents());
 
         cvObject.getParents().removeAll(parentsToRemove);
         cvObject.getParents().addAll(parentsToAdd);
-
-        // refresh cv service
-        getCvService().clearAll();
 
         // if the cv does not have any parents, try to add one by default
         if (this.classMap.containsKey(cvClassName) && cvObject.getParents().isEmpty()){
@@ -210,6 +210,9 @@ public class CvObjectController extends AnnotatedObjectController {
                 this.cvObject.getParents().add(parent);
             }
         }
+
+        // refresh cv service
+        getCvService().clearAll();
 
         super.doPreSave();
     }
@@ -456,5 +459,17 @@ public class CvObjectController extends AnnotatedObjectController {
         String value = super.doDelete();
         getCvService().clearAll();
         return value;
+    }
+
+    public String getObjClass(){
+        if (this.cvObject == null){
+           return null;
+        }
+        else if (this.cvObject.getObjClass() == null){
+            return "Cv Object";
+        }
+        else{
+            return "Cv Object: "+this.cvObject.getObjClass().substring(this.cvObject.getObjClass().lastIndexOf(".")+1);
+        }
     }
 }

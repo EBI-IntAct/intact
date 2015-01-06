@@ -532,6 +532,16 @@ public class CvObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public IntactCvTerm initialiseCvParents(IntactCvTerm cv) {
+        // reload cv without flushing changes
+        IntactCvTerm reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getCvTermDao());
+        Hibernate.initialize(reloaded.getParents());
+
+        getIntactDao().getEntityManager().detach(cv);
+        return reloaded;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactCvTerm initialiseCvSynonyms(IntactCvTerm cv) {
         // reload cv without flushing changes
         IntactCvTerm reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getCvTermDao());

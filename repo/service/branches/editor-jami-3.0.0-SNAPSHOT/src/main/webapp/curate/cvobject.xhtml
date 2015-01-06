@@ -29,7 +29,7 @@
 
         <h:panelGroup id="info" rendered="#{cvObjectController.cvObject != null}">
 
-            <h2>CV Object: #{cvObjectController.cvObject['class'].simpleName}</h2>
+            <h2>#{cvObjectController.objClass}</h2>
 
             <p:panel id="basic" header="CV Object Details">
 
@@ -90,8 +90,7 @@
                             <p:pickList id="parentsPick" value="#{cvObjectController.parents}"
                                         var="p"
                                         itemLabel="#{p.shortName}"
-                                        itemValue="#{p}" converter="cvObjectConverter"
-                                        valueChangeListener="#{cvObjectController.changed}"/>
+                                        itemValue="#{p}" converter="cvObjectConverter"/>
                         </td>
                     </tr>
 
