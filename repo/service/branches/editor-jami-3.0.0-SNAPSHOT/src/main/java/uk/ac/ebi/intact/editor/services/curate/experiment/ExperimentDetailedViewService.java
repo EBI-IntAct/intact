@@ -46,7 +46,7 @@ public class ExperimentDetailedViewService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
     public ExperimentWrapper loadExperimentWrapper( IntactExperiment experiment ) {
-        IntactExperiment reloaded = getIntactDao().getEntityManager().merge(experiment);
+        IntactExperiment reloaded = reattachIntactObjectIfTransient(experiment, getIntactDao().getExperimentDao());
 
         ExperimentWrapper experimentWrapper = new ExperimentWrapper(experiment);
 

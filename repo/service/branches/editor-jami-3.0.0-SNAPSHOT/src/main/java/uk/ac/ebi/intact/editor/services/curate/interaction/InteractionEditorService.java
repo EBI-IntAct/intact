@@ -63,7 +63,7 @@ public class InteractionEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactInteractionEvidence initialiseInteractionXrefs(IntactInteractionEvidence interaction) {
         // reload IntactInteractionEvidence without flushing changes
-        IntactInteractionEvidence reloaded = getIntactDao().getEntityManager().merge(interaction);
+        IntactInteractionEvidence reloaded = reattachIntactObjectIfTransient(interaction, getIntactDao().getInteractionDao());
         Collection<Xref> xrefs = reloaded.getDbXrefs();
         initialiseXrefs(xrefs);
 
@@ -74,7 +74,7 @@ public class InteractionEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactInteractionEvidence initialiseInteractionAnnotations(IntactInteractionEvidence interaction) {
         // reload IntactInteractionEvidence without flushing changes
-        IntactInteractionEvidence reloaded = getIntactDao().getEntityManager().merge(interaction);
+        IntactInteractionEvidence reloaded = reattachIntactObjectIfTransient(interaction, getIntactDao().getInteractionDao());
         Collection<Annotation> annotations = reloaded.getDbAnnotations();
         initialiseAnnotations(annotations);
 
@@ -85,7 +85,7 @@ public class InteractionEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactInteractionEvidence initialiseInteractionParameters(IntactInteractionEvidence participantEvidence) {
         // reload feature without flushing changes
-        IntactInteractionEvidence reloaded = getIntactDao().getEntityManager().merge(participantEvidence);
+        IntactInteractionEvidence reloaded = reattachIntactObjectIfTransient(participantEvidence, getIntactDao().getInteractionDao());
         Collection<Parameter> parameters = reloaded.getParameters();
         initialiseParameters(parameters);
 
@@ -105,9 +105,9 @@ public class InteractionEditorService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactInteractionEvidence initialiseInteractionConfidences(IntactInteractionEvidence participantEvidence) {
+    public IntactInteractionEvidence initialiseInteractionConfidences(IntactInteractionEvidence interaction) {
         // reload feature without flushing changes
-        IntactInteractionEvidence reloaded = getIntactDao().getEntityManager().merge(participantEvidence);
+        IntactInteractionEvidence reloaded = reattachIntactObjectIfTransient(interaction, getIntactDao().getInteractionDao());
         Collection<Confidence> dets = reloaded.getConfidences();
         for (Confidence det : dets){
             initialiseConfidence(det);
@@ -118,9 +118,9 @@ public class InteractionEditorService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactInteractionEvidence initialiseParticipants(IntactInteractionEvidence participantEvidence) {
+    public IntactInteractionEvidence initialiseParticipants(IntactInteractionEvidence interaction) {
         // reload feature without flushing changes
-        IntactInteractionEvidence reloaded = getIntactDao().getEntityManager().merge(participantEvidence);
+        IntactInteractionEvidence reloaded = reattachIntactObjectIfTransient(interaction, getIntactDao().getInteractionDao());
         Collection<ParticipantEvidence> dets = reloaded.getParticipants();
         for (ParticipantEvidence det : dets){
             initialiseParticipant(det);
@@ -172,8 +172,8 @@ public class InteractionEditorService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactInteractionEvidence reloadFullyInitialisedInteraction(IntactInteractionEvidence interactor) {
-        IntactInteractionEvidence reloaded = getIntactDao().getEntityManager().merge(interactor);
+    public IntactInteractionEvidence reloadFullyInitialisedInteraction(IntactInteractionEvidence interaction) {
+        IntactInteractionEvidence reloaded = reattachIntactObjectIfTransient(interaction, getIntactDao().getInteractionDao());
 
         // initialise experiment
         initialiseExperiment((IntactExperiment)reloaded.getExperiment());
@@ -199,7 +199,7 @@ public class InteractionEditorService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactInteractor reloadFullyInitialisedInteractor(IntactInteractor interactor) {
-        IntactInteractor reloaded = getIntactDao().getEntityManager().merge(interactor);
+        IntactInteractor reloaded = reattachIntactObjectIfTransient(interactor, getIntactDao().getInteractorDao(IntactInteractor.class));
 
         // initialise xrefs because of identifiers
         initialiseXrefs(reloaded.getDbXrefs());

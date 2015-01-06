@@ -90,7 +90,7 @@ public class InstitutionService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactSource initialiseSourceXrefs(IntactSource cv) {
         // reload IntactInteractionEvidence without flushing changes
-        IntactSource reloaded = getIntactDao().getEntityManager().merge(cv);
+        IntactSource reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getSourceDao());
         Collection<Xref> xrefs = reloaded.getDbXrefs();
         initialiseXrefs(xrefs);
         getIntactDao().getEntityManager().detach(reloaded);
@@ -100,7 +100,7 @@ public class InstitutionService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactSource initialiseSourceAnnotations(IntactSource cv) {
         // reload IntactInteractionEvidence without flushing changes
-        IntactSource reloaded = getIntactDao().getEntityManager().merge(cv);
+        IntactSource reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getSourceDao());
         Collection<Annotation> annotations = reloaded.getDbAnnotations();
         initialiseAnnotations(annotations);
         getIntactDao().getEntityManager().detach(reloaded);
@@ -111,7 +111,7 @@ public class InstitutionService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactSource initialiseSourceSynonyms(IntactSource cv) {
         // reload IntactInteractionEvidence without flushing changes
-        IntactSource reloaded = getIntactDao().getEntityManager().merge(cv);
+        IntactSource reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getSourceDao());
         Collection<Alias> aliases = reloaded.getSynonyms();
         initialiseAliases(aliases);
         getIntactDao().getEntityManager().detach(reloaded);

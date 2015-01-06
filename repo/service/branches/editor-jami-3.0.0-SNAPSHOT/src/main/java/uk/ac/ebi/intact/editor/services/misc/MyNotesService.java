@@ -44,7 +44,7 @@ public class MyNotesService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public void saveNotes(User user, String rawNotes) throws SynchronizerException, FinderException, PersisterException {
 
-        User reloaded = getIntactDao().getEntityManager().merge(user);
+        User reloaded = reattachIntactObjectIfTransient(user, getIntactDao().getUserDao());
 
         Preference pref = user.getPreference(UserAdminController.RAW_NOTES);
         pref.setValue(rawNotes);
