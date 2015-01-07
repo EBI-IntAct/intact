@@ -845,8 +845,6 @@ public abstract class AnnotatedObjectController extends BaseController implement
     }
 
     protected String navigateToObject(IntactPrimaryObject annotatedObject) {
-        setAnnotatedObject(annotatedObject);
-        initialiseDefaultProperties(annotatedObject);
         return curateController.newIntactObject(annotatedObject);
     }
 

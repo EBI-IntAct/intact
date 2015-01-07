@@ -245,7 +245,7 @@ public class InteractorController extends AnnotatedObjectController {
 
         setUnsavedChanges(true);
 
-        return navigateToObject(interactor);
+        return "/curate/interactor";
     }
 
     public IntactInteractor newInstance(String interactorType) {
@@ -271,7 +271,12 @@ public class InteractorController extends AnnotatedObjectController {
         } else if (interactorType.equals(Complex.COMPLEX)) {
             this.typeSelectItems = getCvService().getComplexTypeSelectItems();
             this.topicRootTerm = Complex.COMPLEX_MI;
-            return new IntactComplex("to set");
+            IntactComplex complex = new IntactComplex("to set");
+            // set source
+            complex.setSource(getUserSessionController().getUserInstitution());
+            // set evidence code
+            complex.setEvidenceType(getCvService().loadCvByIdentifier("ECO:0000000", IntactUtils.DATABASE_OBJCLASS));
+            return complex;
         } else if (interactorType.equals(Polymer.POLYMER)) {
             this.typeSelectItems = getCvService().getPolymerTypeSelectItems();
             this.topicRootTerm = Polymer.POLYMER_MI;
