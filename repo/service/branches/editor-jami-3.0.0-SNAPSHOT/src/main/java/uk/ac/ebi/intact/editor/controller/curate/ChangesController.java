@@ -645,13 +645,24 @@ public class ChangesController extends BaseController implements UserListener {
         // refresh current view now
         final AnnotatedObjectController currentAoController = curateController.getCurrentAnnotatedObjectController();
         currentAoController.forceRefreshCurrentViewObject();
+
+        getUnsavedChangesForCurrentUser().clear();
+        getHiddenUnsavedChangesForCurrentUser().clear();
     }
 
     public void revertAll(ActionEvent actionEvent) {
+        CurateController curateController = ApplicationContextProvider.getBean("curateController");
 
         Collection<UnsavedChange> changes = new ArrayList(getUnsavedChangesForCurrentUser());
 
         getEditorService().revertAll(changes);
+
+        // refresh current view now
+        final AnnotatedObjectController currentAoController = curateController.getCurrentAnnotatedObjectController();
+        currentAoController.forceRefreshCurrentViewObject();
+
+        getUnsavedChangesForCurrentUser().clear();
+        getHiddenUnsavedChangesForCurrentUser().clear();
     }
 
     public EditorObjectService getEditorService() {
