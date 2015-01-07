@@ -261,6 +261,30 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public LazyDataModel<MoleculeSummary>  loadMoleculeSetsByMolecule( String moleculeAc ) {
+
+        log.info( "Searching for Molecule sets with molecule '" + moleculeAc + "'..." );
+
+        final HashMap<String, String> params = Maps.<String, String>newHashMap();
+        params.put( "ac", moleculeAc );
+        // Load experiment eagerly to avoid LazyInitializationException when rendering the view
+        LazyDataModel<MoleculeSummary> interactions = LazyDataModelFactory.createLazyDataModel( moleculeSummaryService,
+
+                "select distinct i " +
+                        "from IntactInteractorPool i join i.interactors as inter " +
+                        "where  inter.ac = :ac",
+
+                "select count(distinct i.ac) " +
+                        "from IntactInteractorPool i join i.interactors as inter " +
+                        "where  inter.ac = :ac",
+
+                params, "i", "updated, i.ac", false );
+
+        log.info( "Interactions found: " + interactions.getRowCount() );
+        return interactions;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public LazyDataModel<ComplexSummary> loadComplexes( String query, String originalQuery ) {
 
         log.info( "Searching for Complexes matching '" + query + "'..." );

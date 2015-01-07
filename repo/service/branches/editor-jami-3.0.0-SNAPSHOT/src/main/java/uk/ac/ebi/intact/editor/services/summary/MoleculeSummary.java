@@ -22,6 +22,7 @@ public class MoleculeSummary {
     private String identityXref;
     private int numberInteractions;
     private int numberComplexes;
+    private int numberMoleculeSets;
 
     private IntactInteractor molecule;
 
@@ -119,5 +120,13 @@ public class MoleculeSummary {
 
     public void setMolecule(IntactInteractor molecule) {
         this.molecule = molecule;
+    }
+
+    public int getNumberMoleculeSets() {
+        return numberMoleculeSets;
+    }
+
+    public void setNumberMoleculeSets(int numberMoleculeSets) {
+        this.numberMoleculeSets = numberMoleculeSets;
     }
 }

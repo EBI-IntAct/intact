@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.Annotation;
 import psidev.psi.mi.jami.model.Interactor;
+import psidev.psi.mi.jami.model.InteractorPool;
 import psidev.psi.mi.jami.model.Xref;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
@@ -137,6 +138,11 @@ public class MoleculeSummaryService extends AbstractEditorService implements Int
         return getIntactDao().getComplexDao().countComplexesInvolvingInteractor(molecule.getAc());
     }
 
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public int countMoleculeSetsByMoleculeAc(IntactInteractor pub) {
+        return getIntactDao().getInteractorPoolDao().countMoleculeSetsInvolvingInteractor(pub.getAc());
+    }
+
     @Override
     public void saveOrUpdate(MoleculeSummary object) throws PersisterException, FinderException, SynchronizerException {
         throw new UnsupportedOperationException("The molecule summary service is read only");
@@ -172,15 +178,40 @@ public class MoleculeSummaryService extends AbstractEditorService implements Int
     }
 
     private String getIdentityXref( IntactInteractor molecule ) {
-        // TODO handle multiple identities (return xref and iterate to display them all)
-        Xref xrefs = molecule.getPreferredIdentifier();
+        if (molecule instanceof InteractorPool){
+            StringBuffer buffer = new StringBuffer();
+            Iterator<Interactor> poolIterator = ((InteractorPool)molecule).iterator();
+            if (!poolIterator.hasNext()){
+                Xref xrefs = molecule.getPreferredIdentifier();
 
 
-        if ( xrefs == null ) {
-            return "-";
+                if ( xrefs == null ) {
+                    return "-";
+                }
+
+                return xrefs.getId();
+            }
+            else{
+                while (poolIterator.hasNext()){
+                    Interactor member = poolIterator.next();
+                    buffer.append(getIdentityXref((IntactInteractor)member));
+                    if (poolIterator.hasNext()){
+                        buffer.append(", ");
+                    }
+                }
+                return buffer.toString();
+            }
         }
+        else{
+            Xref xrefs = molecule.getPreferredIdentifier();
 
-        return xrefs.getId();
+
+            if ( xrefs == null ) {
+                return "-";
+            }
+
+            return xrefs.getId();
+        }
     }
 
     public MoleculeSummary createSummaryFrom(IntactInteractor pub, boolean countInteractions){
@@ -195,10 +226,12 @@ public class MoleculeSummaryService extends AbstractEditorService implements Int
         if (countInteractions){
             summary.setNumberComplexes(countComplexesByMoleculeAc(pub));
             summary.setNumberInteractions(countInteractionsByMoleculeAc(pub));
+            summary.setNumberMoleculeSets(countMoleculeSetsByMoleculeAc(pub));
         }
         else{
             summary.setNumberInteractions(0);
             summary.setNumberComplexes(0);
+            summary.setNumberMoleculeSets(0);
         }
         summary.setMolecule(pub);
         Annotation caution = AnnotationUtils.collectFirstAnnotationWithTopic(pub.getAnnotations(), Annotation.CAUTION_MI, Annotation.CAUTION);
