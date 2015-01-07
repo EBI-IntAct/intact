@@ -395,4 +395,15 @@ public class InstitutionController extends AnnotatedObjectController {
         getInstitutionService().loadInstitutions();
         return value;
     }
+
+    public String getShortName(){
+        if (this.institution == null || this.institution.getShortName().equals("to set")){
+            return null;
+        }
+        return this.institution.getShortName();
+    }
+
+    public void setShortName(String name){
+        this.institution.setShortName(name);
+    }
 }

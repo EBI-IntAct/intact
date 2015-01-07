@@ -81,14 +81,14 @@
 
                     <h:outputLabel value="Cell type: " for="cellTypeTxt"/>
                     <h:selectOneMenu id="cellTypeTxt" value="#{bioSourceController.bioSource.cellType}"
-                                     valueChangeListener="#{bioSourceController.unsavedValueChange}" converter="cvObjectConverter">
+                                     onchange="markAsUnsaved()" converter="cvObjectConverter">
                         <f:selectItems value="#{cvObjectService.cellTypeSelectItems}"/>
                         <ed:curation/>
                     </h:selectOneMenu>
 
                     <h:outputLabel value="Tissue: " for="tissueTxt"/>
                     <h:selectOneMenu id="tissueTxt" value="#{bioSourceController.bioSource.tissue}"
-                                     valueChangeListener="#{bioSourceController.unsavedValueChange}" converter="cvObjectConverter">
+                                     converter="cvObjectConverter" onchange="markAsUnsaved()">
                         <f:selectItems value="#{cvObjectService.tissueSelectItems}"/>
                         <ed:curation/>
                     </h:selectOneMenu>

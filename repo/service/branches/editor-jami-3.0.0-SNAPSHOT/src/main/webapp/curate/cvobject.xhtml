@@ -52,7 +52,7 @@
                             <h:outputLabel value="Shortlabel: " for="shortlabelTxt"/>
                         </td>
                         <td>
-                            <p:inputText id="shortlabelTxt" value="#{cvObjectController.cvObject.shortName}" size="30"
+                            <p:inputText id="shortlabelTxt" value="#{cvObjectController.shortName}" size="30"
                                          validator="#{annotatedObjectController.validateAnnotatedObject}"
                                          converter="trimmingConverter"
                                          required="true" requiredMessage="Shortlabel is required"
