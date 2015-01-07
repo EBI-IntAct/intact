@@ -42,12 +42,6 @@ public class InteractionEvidenceCloner extends AbstractEditorCloner<InteractionE
         clone.setInferred(evidence.isInferred());
         clone.setNegative(evidence.isNegative());
 
-        for (Xref ref : evidence.getIdentifiers()){
-            if (ref.getDatabase() instanceof IntactCvTerm){
-                clone.getIdentifiers().add(new InteractionXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
-            }
-        }
-
         for (Xref ref : evidence.getXrefs()){
             if (!XrefUtils.isXrefFromDatabase(ref, Xref.IMEX_MI, Xref.IMEX)
                     && !XrefUtils.doesXrefHaveQualifier(ref, Xref.PRIMARY_MI, Xref.PRIMARY)){

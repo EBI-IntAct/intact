@@ -49,13 +49,6 @@ public class InteractorCloner extends AbstractEditorCloner<Interactor, IntactInt
                 clone.getAliases().add(new InteractorAlias(alias.getType(), alias.getName()));
             }
 
-            for (Object obj: interactor.getIdentifiers()){
-                Xref ref = (Xref)obj;
-                if (ref.getDatabase() instanceof IntactCvTerm){
-                    clone.getIdentifiers().add(new InteractorXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
-                }
-            }
-
             for (Object obj : interactor.getXrefs()){
                 Xref ref = (Xref)obj;
                 clone.getXrefs().add(new InteractorXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
