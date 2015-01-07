@@ -46,8 +46,9 @@
                     <ui:param name="annotatedObjectController" value="#{modelledParticipantController}"/>
                     <ui:param name="ao" value="#{participant}"/>
                     <h:panelGroup rendered="#{annotatedObjectController.isNoUniprotUpdate(participant.interactor)}">
-                    <h:graphicImage alt="no uniprot update" library="images" name="no_uni_update.png"
-                                    title="No Uniprot Update"/>
+                        <h:graphicImage alt="no uniprot update" library="images" name="no_uni_update.png"
+                                        title="No Uniprot Update"/>
+                    </h:panelGroup>
                 </ui:include>
             </p:column>
 

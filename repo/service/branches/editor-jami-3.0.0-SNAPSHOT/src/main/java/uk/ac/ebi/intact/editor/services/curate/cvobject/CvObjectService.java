@@ -371,7 +371,7 @@ public class CvObjectService extends AbstractEditorService {
         IntactCvTerm nucleicAcidTypeParent = getIntactDao().getCvTermDao().getByMIIdentifier(NucleicAcid.NULCEIC_ACID_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS);
         SelectItem itemNucleicAcid = nucleicAcidTypeParent != null ? createSelectItem(nucleicAcidTypeParent, true):null;
         if (itemNucleicAcid != null){
-            nucleicAcidSelectItems.add(item);
+            nucleicAcidSelectItems.add(itemNucleicAcid);
         }
         if (nucleicAcidTypeParent != null){
             loadChildren(nucleicAcidTypeParent, nucleicAcidSelectItems, false, new HashSet<String>());
@@ -612,8 +612,18 @@ public class CvObjectService extends AbstractEditorService {
 
     private org.primefaces.model.TreeNode buildTreeNode( IntactCvTerm cv, org.primefaces.model.TreeNode node ) {
 
-        org.primefaces.model.TreeNode childNode = new DefaultTreeNode(cv, node);
-
+        org.primefaces.model.TreeNode childNode = null;
+        // the parent is not null, we just append new child
+        if (node != null){
+            childNode = new DefaultTreeNode(cv, node);
+        }
+        // the parent is null. We add the root if no children
+        else{
+            childNode = new DefaultTreeNode();
+            if (cv.getChildren().isEmpty()){
+                buildTreeNode(cv, childNode);
+            }
+        }
         for ( OntologyTerm child : cv.getChildren() ) {
             // load laxzy collections collections needed
             Hibernate.initialize(((IntactCvTerm)child).getDbAnnotations());
