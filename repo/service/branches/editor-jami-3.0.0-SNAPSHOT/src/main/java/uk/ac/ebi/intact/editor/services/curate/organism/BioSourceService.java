@@ -156,6 +156,7 @@ public class BioSourceService extends AbstractEditorService {
             acOrganismMap.put(bioSource.getAc(), bioSource);
             taxidOrganismMap.put(bioSource.getTaxId(), bioSource);
         }
+        isInitialised = true;
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
