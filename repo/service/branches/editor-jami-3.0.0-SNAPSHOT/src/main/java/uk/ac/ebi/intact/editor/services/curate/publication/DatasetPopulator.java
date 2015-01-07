@@ -59,7 +59,7 @@ public class DatasetPopulator extends AbstractEditorService {
         if ( log.isInfoEnabled() ) log.info( "Loading datasets" );
 
         final Query query = getIntactDao().getEntityManager()
-                .createQuery("select distinct(a.value) from Annotation a where a.topic.shortName = :datasetTopic order by a.value asc");
+                .createQuery("select distinct(a.value) from PublicationAnnotation a where a.topic.shortName = :datasetTopic order by a.value asc");
         query.setParameter( "datasetTopic", PublicationController.DATASET);
 
         allDatasets = query.getResultList();
