@@ -19,6 +19,7 @@ import uk.ac.ebi.intact.editor.controller.curate.participant.ModelledParticipant
 import uk.ac.ebi.intact.editor.controller.curate.participant.ParticipantController;
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
 import uk.ac.ebi.intact.editor.services.curate.EditorObjectService;
+import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.*;
@@ -26,6 +27,7 @@ import uk.ac.ebi.intact.jami.model.user.Role;
 
 import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ComponentSystemEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -46,6 +48,9 @@ public class CurateController extends BaseController {
     private String acToOpen;
 
     private AnnotatedObjectController currentAnnotatedObjectController;
+
+    @Resource(name = "cvObjectService")
+    private transient CvObjectService cvObjectService;
 
     public String edit(IntactPrimaryObject intactObject) {
         String suffix = (intactObject.getAc() != null)? "?faces-redirect=true&includeViewParams=true" : "";
@@ -326,5 +331,22 @@ public class CurateController extends BaseController {
             return true;
         }
         return false;
+    }
+
+    public void loadCvsIfNecessary( ComponentSystemEvent event ) {
+        if (!FacesContext.getCurrentInstance().isPostback()) {
+
+            // load cv service if not done
+            if (!getCvObjectService().isInitialised()){
+                getCvObjectService().loadData();
+            }
+        }
+    }
+
+    public CvObjectService getCvObjectService() {
+        if (this.cvObjectService == null){
+            this.cvObjectService = ApplicationContextProvider.getBean("cvObjectService");
+        }
+        return cvObjectService;
     }
 }
