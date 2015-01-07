@@ -408,7 +408,7 @@ public class CvObjectService extends AbstractEditorService {
         // gene type
         this.geneTypeSelectItems = new ArrayList<SelectItem>();
         IntactCvTerm geneTypeParent = getIntactDao().getCvTermDao().getByMIIdentifier(Gene.GENE_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS);
-        SelectItem itemGene = complexTypeParent != null ? createSelectItem(geneTypeParent, true):null;
+        SelectItem itemGene = geneTypeParent != null ? createSelectItem(geneTypeParent, true):null;
         if (itemGene != null){
             geneTypeSelectItems.add(item);
         }
