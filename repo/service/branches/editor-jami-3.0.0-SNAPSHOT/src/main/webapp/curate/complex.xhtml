@@ -210,7 +210,7 @@
             <ia:inputCvTerm id="complexTypeTxt" cvIdentifier="MI:0314"
                             cvClass="uk.ac.ebi.intact.model.CvInteractorType"
                             value="#{interaction.interactorType}"
-                            selectItems="#{cvObjectService.interactorTypeSelectItems}"
+                            selectItems="#{cvObjectService.complexTypeSelectItems}"
                             required="true" requiredMessage="Complex type is required"
                             oncomplete="ia_enableSave()"
                             update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"
