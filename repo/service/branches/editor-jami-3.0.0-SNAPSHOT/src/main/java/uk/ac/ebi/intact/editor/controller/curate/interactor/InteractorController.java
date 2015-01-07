@@ -416,6 +416,11 @@ public class InteractorController extends AnnotatedObjectController {
             this.interactor = getInteractorEditorService().reloadFullyInitialisedInteractor(interactor);
         }
 
+        // initialise cv service if not done yet
+        if (!getCvService().isInitialised()){
+            getCvService().loadData();
+        }
+
         if (interactor instanceof Protein) {
             this.typeSelectItems = getCvService().getProteinTypeSelectItems();
         } else if (interactor instanceof BioactiveEntity) {

@@ -103,7 +103,7 @@ public class InteractorEditorService extends AbstractEditorService {
 
         if (interactor != null){
             // initialise xrefs because needs id
-            initialiseAnnotations(interactor.getDbAnnotations());
+            initialiseXrefs(interactor.getDbXrefs());
             // initialise annotations because needs caution
             initialiseAnnotations(interactor.getDbAnnotations());
 
@@ -130,7 +130,7 @@ public class InteractorEditorService extends AbstractEditorService {
         IntactInteractor reloaded = reattachIntactObjectIfTransient(interactor, getIntactDao().getInteractorDao(IntactInteractor.class));
 
         // initialise xrefs because needs id
-        initialiseAnnotations(reloaded.getDbAnnotations());
+        initialiseXrefs(reloaded.getDbXrefs());
         // initialise annotations because needs caution
         initialiseAnnotations(reloaded.getDbAnnotations());
 

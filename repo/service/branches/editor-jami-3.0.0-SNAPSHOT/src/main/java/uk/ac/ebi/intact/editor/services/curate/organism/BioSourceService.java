@@ -137,7 +137,7 @@ public class BioSourceService extends AbstractEditorService {
         taxidOrganismMap = new HashMap<Integer, IntactOrganism>();
 
         bioSourceSelectItems.add( new SelectItem( null, "-- Select BioSource --", "-- Select BioSource --", false, false, true ) );
-
+        organismSelectItems.add( new SelectItem( null, "-- Select Organism --", "-- Select Organism --", false, false, true ) );
         for (IntactOrganism bioSource : allBioSources) {
 
             SelectItem item = new SelectItem(bioSource, bioSource.getCommonName(), bioSource.getScientificName());
