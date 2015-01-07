@@ -280,16 +280,16 @@
         <td colspan="4">
             <h:panelGroup id="datasetsMenu">
                 <ui:param name="datasetHeight"
-                          value="#{18 * fn:length(datasetPopulator.allDatasetSelectItems)}"/>
+                          value="#{18 * fn:length(publicationController.datasetsSelectItems)}"/>
                 <h:selectManyMenu value="#{publicationController.datasetsToRemove}"
-                                  rendered="#{not empty datasetPopulator.allDatasetSelectItems}"
+                                  rendered="#{not empty publicationController.datasetsSelectItems}"
                                   style="height:#{datasetHeight != 0? datasetHeight : 18}px">
-                    <f:selectItems value="#{datasetPopulator.allDatasetSelectItems}"/>
+                    <f:selectItems value="#{publicationController.datasetsSelectItems}"/>
                 </h:selectManyMenu>
 
                 <p:commandButton value="Remove" actionListener="#{publicationController.removeDatasets}"
                                  update=":editorForm:datasetsMenu,:editorForm:publicationTabs,:editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"
-                                 rendered="#{not empty datasetPopulator.allDatasetSelectItems}"/>
+                                 rendered="#{not empty publicationController.datasetsSelectItems}"/>
                 <h:selectOneMenu value="#{publicationController.datasetToAdd}">
                     <f:selectItems value="#{datasetPopulator.allDatasetSelectItems}"/>
                 </h:selectOneMenu>
@@ -398,7 +398,7 @@
         </ui:define>
 
         <ui:define name="annotationSyncValues">
-            <ed:syncValue with="editorForm:onHoldTxt" rendered="#{nnotation.topic.shortName == 'on-hold'}"/>
+            <ed:syncValue with="editorForm:onHoldTxt" rendered="#{annotation.topic.shortName == 'on-hold'}"/>
             <ed:syncValue with="editorForm:yearTxt" rendered="#{annotation.topic.mIIdentifier != null and annotation.topic.mIIdentifier == 'MI:0886'}"/>
             <ed:syncValue with="editorForm:contactTxt" rendered="#{annotation.topic.mIIdentifier != null and annotation.topic.mIIdentifier == 'MI:0634'}"/>
         </ui:define>

@@ -63,6 +63,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
@@ -150,6 +151,8 @@ public class PublicationController extends AnnotatedObjectController {
     private String imexId=null;
 
     private List<ExperimentSummary> experiments;
+
+    private  List<SelectItem> datasetsSelectItems;
 
     public PublicationController() {
         experiments = new ArrayList<ExperimentSummary>();
@@ -246,6 +249,17 @@ public class PublicationController extends AnnotatedObjectController {
         // reset previous dataset actions in the form
         this.datasetsToRemove = null;
         this.datasetToAdd = null;
+        this.datasetsSelectItems = new ArrayList<SelectItem>();
+
+        Collection<Annotation> datasets = AnnotationUtils.collectAllAnnotationsHavingTopic(this.publication.getAnnotations(), DATASET_MI_REF, DATASET);
+        for (Annotation annot : datasets){
+            if (annot.getValue() != null){
+                SelectItem item = getDatasetPopulator().createSelectItem(annot.getValue());
+                if (item != null){
+                    this.datasetsSelectItems.add(item);
+                }
+            }
+        }
 
         // load curationDepth
         this.curationDepth = this.publication.getCurationDepth().toString();
@@ -873,10 +887,15 @@ public class PublicationController extends AnnotatedObjectController {
                 }
             }
 
+            // register new dataset in list of existing datasets
+            SelectItem item = getDatasetPopulator().createSelectItem(datasetToAdd);
+            if (item != null){
+                this.datasetsSelectItems.add(item);
+            }
+
             // reset the dataset to add as it has already been added
             datasetToAdd = null;
             setUnsavedChanges(true);
-            getDatasetPopulator().clearAll();
         }
     }
 
@@ -909,6 +928,12 @@ public class PublicationController extends AnnotatedObjectController {
                         getChangesController().markAsUnsaved((IntactExperiment)experiment, getEditorService().getIntactDao().getSynchronizerContext().getExperimentSynchronizer(),
                                 "Experiment: "+((IntactExperiment)experiment).getShortLabel(), parentAcs);
                     }
+                }
+
+                // register new dataset in list of existing datasets
+                SelectItem item = getDatasetPopulator().createSelectItem(newDataset);
+                if (item != null){
+                    this.datasetsSelectItems.add(item);
                 }
 
                 // reset the dataset to add as it has already been added
@@ -1930,5 +1955,9 @@ public class PublicationController extends AnnotatedObjectController {
             this.interactionSummaryService = ApplicationContextProvider.getBean("interactionSummaryService");
         }
         return interactionSummaryService;
+    }
+
+    public List<SelectItem> getDatasetsSelectItems(){
+        return datasetsSelectItems;
     }
 }
