@@ -56,7 +56,7 @@
                                  size="10" readonly="true"/>
 
                     <h:outputLabel value="Shortlabel: " for="shortlabelTxt"/>
-                    <p:inputText id="shortlabelTxt" value="#{institutionController.institution.shortName}" size="30" converter="trimmingConverter"
+                    <p:inputText id="shortlabelTxt" value="#{institutionController.shortName}" size="30" converter="trimmingConverter"
                                  validator="#{annotatedObjectController.validateAnnotatedObject}"
                                  valueChangeListener="#{institutionController.unsavedValueChange}"
                                  required="true" requiredMessage="Shortlabel is required">

@@ -159,6 +159,15 @@ public class BioSourceController extends AnnotatedObjectController {
                     this.bioSource.getAliases().add(new OrganismAlias(alias.getType(), alias.getName()));
                 }
             }
+
+            if (this.bioSource.getCellType() != null){
+                this.bioSource.setCommonName(this.bioSource.getCommonName()+"-"+this.bioSource.getCellType().getShortName());
+            }
+            if (this.bioSource.getTissue() != null){
+                this.bioSource.setCommonName(this.bioSource.getCommonName()+"-"+this.bioSource.getTissue().getShortName());
+            }
+
+            changed();
         } catch (Throwable e) {
             addErrorMessage("Problem auto-filling from Uniprot Taxonomy", e.getMessage());
             handleException(e);
@@ -219,6 +228,9 @@ public class BioSourceController extends AnnotatedObjectController {
     }
 
     public String getTaxId() {
+        if (bioSource == null || (bioSource.getAc() == null && bioSource.getTaxId() == -3)){
+            return null;
+        }
         return Integer.toString(bioSource.getTaxId());
     }
 
@@ -283,12 +295,6 @@ public class BioSourceController extends AnnotatedObjectController {
 
     public List<Annotation> collectAnnotations() {
         return Collections.EMPTY_LIST;
-    }
-
-    @Override
-    public void newAlias(ActionEvent evt) {
-        bioSource.getAliases().add(new OrganismAlias("to set"));
-        setUnsavedChanges(true);
     }
 
     @Override

@@ -493,4 +493,15 @@ public class CvObjectController extends AnnotatedObjectController {
             return "Cv Object: "+this.cvObject.getObjClass().substring(this.cvObject.getObjClass().lastIndexOf(".")+1);
         }
     }
+
+    public String getShortName(){
+        if (this.cvObject == null || this.cvObject.getShortName().equals("to set")){
+            return null;
+        }
+        return this.cvObject.getShortName();
+    }
+
+    public void setShortName(String name){
+        this.cvObject.setShortName(name);
+    }
 }
