@@ -67,7 +67,6 @@
 
                     <h:outputLabel value="Shortlabel: " for="shortlabelTxt"/>
                     <p:inputText id="shortlabelTxt" value="#{bioSourceController.bioSource.commonName}" size="30" converter="trimmingConverter"
-                                 validator="#{annotatedObjectController.validateAnnotatedObject}"
                                  valueChangeListener="#{bioSourceController.unsavedValueChange}"
                                  required="true" requiredMessage="Shortlabel is required">
                         <ed:curation/>

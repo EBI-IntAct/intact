@@ -152,6 +152,9 @@ public class BioSourceService extends AbstractEditorService {
             if (bioSource.getTissue() != null){
                 initialiseCv(bioSource.getTissue());
             }
+
+            acOrganismMap.put(bioSource.getAc(), bioSource);
+            taxidOrganismMap.put(bioSource.getTaxId(), bioSource);
         }
     }
 
