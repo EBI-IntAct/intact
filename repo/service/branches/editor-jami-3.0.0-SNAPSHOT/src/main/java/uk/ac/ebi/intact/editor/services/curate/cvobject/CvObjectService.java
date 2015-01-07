@@ -604,7 +604,7 @@ public class CvObjectService extends AbstractEditorService {
         if (reloaded != null){
             initialiseXrefs(reloaded.getDbXrefs());
             initialiseAnnotations(reloaded.getDbAnnotations());
-            buildTreeNode(reloaded, tree);
+            tree = buildTreeNode(reloaded, tree);
         }
 
         return tree;

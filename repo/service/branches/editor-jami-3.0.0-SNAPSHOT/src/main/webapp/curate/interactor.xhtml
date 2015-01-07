@@ -84,7 +84,7 @@
                     <h:outputLabel value="Type: " for="interactorTxt"/>
                     <ia:inputCvTerm id="interactorTxt" value="#{interactor.interactorType}"
                                     selectItems="#{interactorController.typeSelectItems}"
-                                    cvIdentifier="MI:0313"
+                                    cvIdentifier="#{interactorController.topicRootTerm}"
                                     beforeTimeoutEvent="ia_disableSave()" oncomplete="ia_enableSave()"
                                     required="true" requiredMessage="Interactor type is required"
                                     update=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"
