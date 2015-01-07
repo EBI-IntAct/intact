@@ -165,6 +165,8 @@ public class InteractorController extends AnnotatedObjectController {
             setInternalRemark(internal != null ? internal.getValue() : null);
             Annotation noUniprotUpdate = AnnotationUtils.collectFirstAnnotationWithTopic(this.interactor.getDbAnnotations(), null, "no-uniprot-update");
             this.isNoUniprotUpdate = noUniprotUpdate != null;
+
+            this.newInteractorType = interactor.getInteractorType().getShortName();
         }
     }
 
@@ -673,5 +675,16 @@ public class InteractorController extends AnnotatedObjectController {
             this.participantImportService = ApplicationContextProvider.getBean("participantImportService");
         }
         return participantImportService;
+    }
+
+    public String getShortName(){
+        if (this.interactor == null || this.interactor.getShortName().equals("to set")){
+            return null;
+        }
+        return this.interactor.getShortName();
+    }
+
+    public void setShortName(String name){
+        this.interactor.setShortName(name);
     }
 }

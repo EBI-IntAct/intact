@@ -31,7 +31,7 @@
 
         <h:panelGroup id="info" rendered="#{interactor != null}">
 
-            <h2>#{interactor.shortName}</h2>
+            <h2>#{interactorController.newInteractorType}: #{interactorController.shortName}</h2>
 
             <p:panel id="basic" header="Interactor Details">
 
@@ -59,7 +59,7 @@
                                  size="10" readonly="true"/>
 
                     <h:outputLabel value="Shortlabel: " for="shortlabelTxt"/>
-                    <p:inputText id="shortlabelTxt" value="#{interactor.shortName}" size="30"
+                    <p:inputText id="shortlabelTxt" value="#{interactorController.shortName}" size="30"
                                  validator="#{annotatedObjectController.validateAnnotatedObject}"
                                  valueChangeListener="#{interactorController.unsavedValueChange}"
                                  required="true" requiredMessage="Shortlabel is required" converter="trimmingConverter">
@@ -89,10 +89,10 @@
                                     valueChangeAwareObject="#{interactorController}"
                                     cvClass="uk.ac.ebi.intact.model.CvInteractorType"/>
 
-                    <h:outputLabel value="Sequence: " for="sequenceTxt" rendered="#{interactorController.isPolymer}"/>
+                    <h:outputLabel value="Sequence: " for="sequenceTxt" rendered="#{interactorController.polymer}"/>
                     <p:inputTextarea id="sequenceTxt" value="#{interactorController.sequence}"
                                      valueChangeListener="#{interactorController.unsavedValueChange}"
-                                     rows="5" cols="100" converter="trimmingConverter" rendered="#{interactorController.isPolymer}">
+                                     rows="5" cols="100" converter="trimmingConverter" rendered="#{interactorController.polymer}">
                         <ed:curation/>
                     </p:inputTextarea>
 
@@ -106,7 +106,7 @@
             <p:tabView id="interactorTabs" dynamic="true">
 
                 <p:ajax event="tabChange" listener="#{interactorController.onTabChanged}" onstart="loadDialog.show()" oncomplete="loadDialog.hide()"/>
-                <p:tab id="membersTab" title="Set members (#{interactorController.membersPoolSize})" rendered="interactorController.interactorPool">
+                <p:tab id="membersTab" title="Set members (#{interactorController.membersPoolSize})" rendered="#{interactorController.interactorPool}">
 
                     <p:outputPanel id="membersPanel" autoUpdate="false">
                         <ui:include src="pool_members_table.xhtml"/>
