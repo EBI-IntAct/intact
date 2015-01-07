@@ -17,8 +17,8 @@
 
         <p:dataTable id="setMembersTable" var="member" value="#{interactorController.collectPoolMembers()}">
             <p:column headerText="AC">
-                <h:link outcome="/curate/interactor" value="#{molecule.ac}" includeViewParams="true">
-                    <f:param name="ac" value="#{molecule.ac}"/>
+                <h:link outcome="/curate/interactor" value="#{member.ac}" includeViewParams="true" rendered="#{member.ac != null}">
+                    <f:param name="ac" value="#{member.ac}"/>
                 </h:link>
             </p:column>
             <p:column>
@@ -31,22 +31,22 @@
                                     title="No Uniprot Update"/>
                 </h:panelGroup>
             </p:column>
-            <p:column headerText="Type">
-                <h:outputText value="#{member.interactorType.shortName}"/>
+            <p:column headerText="Short name">
+                <h:outputText value="#{member.shortName}"/>
+            </p:column>
+            <p:column headerText="Full name">
+                <h:outputText value="#{member.fullName}"/>
+            </p:column>
+            <p:column headerText="Identity">
+                <h:outputText value="#{interactorController.getIdentityXref( member )}"/>
             </p:column>
             <p:column headerText="Organism">
                 <h:outputText value="#{member.organism.commonName}" rendered="#{member.organism != null}"/>
                 <h:outputText value="-" rendered="#{member.organism == null}"/>
 
             </p:column>
-            <p:column headerText="Short name">
-                <h:outputText value="#{member.shortName}"/>
-            </p:column>
-            <p:column headerText="Full name">
-                <h:outputText value="#{molecule.fullName}"/>
-            </p:column>
-            <p:column headerText="Identity">
-                <h:outputText value="#{interactorController.getIdentityXref( member )}"/>
+            <p:column headerText="Type">
+                <h:outputText value="#{member.interactorType.shortName}"/>
             </p:column>
             <p:column>
                 <f:facet name="header">
