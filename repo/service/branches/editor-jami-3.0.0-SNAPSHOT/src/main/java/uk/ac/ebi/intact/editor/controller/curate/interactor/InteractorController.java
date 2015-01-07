@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import psidev.psi.mi.jami.bridges.exception.BridgeFailedException;
 import psidev.psi.mi.jami.model.*;
+import psidev.psi.mi.jami.model.impl.DefaultChecksum;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
@@ -223,6 +224,10 @@ public class InteractorController extends AnnotatedObjectController {
         }
 
         super.validateAnnotatedObject(context, component, value);
+    }
+
+    public boolean isOrganismRequired(){
+        return !(interactor instanceof BioactiveEntity);
     }
 
     @Override
@@ -583,7 +588,33 @@ public class InteractorController extends AnnotatedObjectController {
 
     @Override
     protected void addNewAnnotation(AbstractIntactAnnotation newAnnot) {
-        this.interactor.getDbAnnotations().add(newAnnot);
+        // we have a checksum
+        if (newAnnot.getValue() != null
+                && AnnotationUtils.doesAnnotationHaveTopic(newAnnot, Checksum.SMILE_MI, Checksum.SMILE)){
+            interactor.getChecksums().add(new DefaultChecksum(newAnnot.getTopic(), newAnnot.getValue()));
+            if (!interactor.getDbAnnotations().contains(newAnnot)){
+                interactor.getDbAnnotations().add(newAnnot);
+            }
+        }
+        else if (newAnnot.getValue() != null
+                && AnnotationUtils.doesAnnotationHaveTopic(newAnnot, Checksum.INCHI_MI, Checksum.INCHI)){
+            interactor.getChecksums().add(new DefaultChecksum(newAnnot.getTopic(), newAnnot.getValue()));
+            if (!interactor.getDbAnnotations().contains(newAnnot)){
+                interactor.getDbAnnotations().add(newAnnot);
+            }
+
+        }
+        else if (newAnnot.getValue() != null &&
+                AnnotationUtils.doesAnnotationHaveTopic(newAnnot, Checksum.STANDARD_INCHI_KEY_MI, Checksum.STANDARD_INCHI_KEY)){
+            interactor.getChecksums().add(new DefaultChecksum(newAnnot.getTopic(), newAnnot.getValue()));
+            if (!interactor.getDbAnnotations().contains(newAnnot)){
+                interactor.getDbAnnotations().add(newAnnot);
+            }
+        }
+        // we have a simple annotation
+        else{
+            this.interactor.getAnnotations().add(newAnnot);
+        }
     }
 
     @Override

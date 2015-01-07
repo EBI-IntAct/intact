@@ -60,7 +60,6 @@
 
                     <h:outputLabel value="Shortlabel: " for="shortlabelTxt"/>
                     <p:inputText id="shortlabelTxt" value="#{interactorController.shortName}" size="30"
-                                 validator="#{annotatedObjectController.validateAnnotatedObject}"
                                  valueChangeListener="#{interactorController.unsavedValueChange}"
                                  required="true" requiredMessage="Shortlabel is required" converter="trimmingConverter">
                         <ed:curation/>
@@ -73,13 +72,14 @@
                     </p:inputText>
 
                     <h:outputLabel value="Organism: " for="organismTxt"/>
-                    <ia:inputBioSource id="organismTxt" value="#{interactor.organism}"
+                    <ia:inputOrganism id="organismTxt" value="#{interactor.organism}"
                                        valueChangeAwareObject="#{interactorController}"
                                        oncomplete="ia_enableSave()"
                                        update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"
-                                       selectItems="#{bioSourceService.organismSelectItems}">
+                                       selectItems="#{bioSourceService.organismSelectItems}"
+                            required="#{interactorController.organismRequired}" requiredMessage="Organism is required for this interactor">
                         <ed:curation/>
-                    </ia:inputBioSource>
+                    </ia:inputOrganism>
 
                     <h:outputLabel value="Type: " for="interactorTxt"/>
                     <ia:inputCvTerm id="interactorTxt" value="#{interactor.interactorType}"
