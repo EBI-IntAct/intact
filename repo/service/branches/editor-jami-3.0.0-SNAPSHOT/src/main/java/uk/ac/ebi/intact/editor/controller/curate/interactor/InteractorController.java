@@ -583,7 +583,7 @@ public class InteractorController extends AnnotatedObjectController {
 
     @Override
     protected void addNewAnnotation(AbstractIntactAnnotation newAnnot) {
-        this.interactor.getAnnotations().add(newAnnot);
+        this.interactor.getDbAnnotations().add(newAnnot);
     }
 
     @Override
