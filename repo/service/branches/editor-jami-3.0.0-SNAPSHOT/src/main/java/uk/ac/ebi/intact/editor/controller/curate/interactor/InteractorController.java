@@ -75,6 +75,7 @@ public class InteractorController extends AnnotatedObjectController {
     private boolean isInteractorMemberTab = false;
 
     private  List<SelectItem> typeSelectItems;
+    private  String topicRootTerm;
 
     private String[] setMembers = null;
     private List<ImportCandidate> interactorCandidates;
@@ -252,32 +253,41 @@ public class InteractorController extends AnnotatedObjectController {
             getCvService().loadData();
         }
         if (interactorType.equals(Protein.PROTEIN)) {
-           this.typeSelectItems = getCvService().getProteinTypeSelectItems();
+            this.typeSelectItems = getCvService().getProteinTypeSelectItems();
+            this.topicRootTerm = Protein.PROTEIN_MI;
             return new IntactProtein("to set");
         } else if (interactorType.equals(Protein.PEPTIDE)) {
             this.typeSelectItems = getCvService().getProteinTypeSelectItems();
+            this.topicRootTerm = Protein.PEPTIDE_MI;
             return new IntactProtein("to set", IntactUtils.createMIInteractorType(Protein.PEPTIDE, Protein.PEPTIDE_MI));
         } else if (interactorType.equals(BioactiveEntity.BIOACTIVE_ENTITY)) {
+            this.topicRootTerm = BioactiveEntity.BIOACTIVE_ENTITY_MI;
             this.typeSelectItems = getCvService().getBioactiveEntitySelectItems();
             return new IntactBioactiveEntity("to set");
         } else if (interactorType.equals(NucleicAcid.NULCEIC_ACID)) {
             this.typeSelectItems = getCvService().getNucleicAcidSelectItems();
+            this.topicRootTerm = NucleicAcid.NULCEIC_ACID_MI;
             return new IntactNucleicAcid("to set");
         } else if (interactorType.equals(Complex.COMPLEX)) {
             this.typeSelectItems = getCvService().getComplexTypeSelectItems();
+            this.topicRootTerm = Complex.COMPLEX_MI;
             return new IntactComplex("to set");
         } else if (interactorType.equals(Polymer.POLYMER)) {
             this.typeSelectItems = getCvService().getPolymerTypeSelectItems();
+            this.topicRootTerm = Polymer.POLYMER_MI;
             return new IntactPolymer("to set");
         } else if (interactorType.equals(InteractorPool.MOLECULE_SET)) {
             this.typeSelectItems = getCvService().getMoleculeSetTypeSelectItems();
+            this.topicRootTerm = InteractorPool.MOLECULE_SET_MI;
             return new IntactInteractorPool("to set");
         }
         else if (interactorType.equals(Gene.GENE)) {
             this.typeSelectItems = getCvService().getGeneTypeSelectItems();
+            this.topicRootTerm = Gene.GENE_MI;
             return new IntactGene("to set");
         } else {
             this.typeSelectItems = getCvService().getInteractorTypeSelectItems();
+            this.topicRootTerm = "MI:0313";
             return new IntactInteractor("to set");
         }
     }
@@ -425,27 +435,34 @@ public class InteractorController extends AnnotatedObjectController {
         if (!getCvService().isInitialised()){
             getCvService().loadData();
         }
-
         if (interactor instanceof Protein) {
             this.typeSelectItems = getCvService().getProteinTypeSelectItems();
+            this.topicRootTerm = Protein.PROTEIN_MI;
         } else if (interactor instanceof BioactiveEntity) {
             this.typeSelectItems = getCvService().getBioactiveEntitySelectItems();
+            this.topicRootTerm = BioactiveEntity.BIOACTIVE_ENTITY_MI;
         } else if (interactor instanceof NucleicAcid) {
             this.typeSelectItems = getCvService().getNucleicAcidSelectItems();
+            this.topicRootTerm = NucleicAcid.NULCEIC_ACID_MI;
         } else if (interactor instanceof Complex) {
             this.typeSelectItems = getCvService().getComplexTypeSelectItems();
+            this.topicRootTerm = Complex.COMPLEX_MI;
         } else if (interactor instanceof Polymer) {
             this.typeSelectItems = getCvService().getPolymerTypeSelectItems();
+            this.topicRootTerm = Polymer.POLYMER_MI;
         } else if (interactor instanceof IntactInteractorPool) {
             this.typeSelectItems = getCvService().getMoleculeSetTypeSelectItems();
             if (!((IntactInteractorPool)interactor).areInteractorsInitialized()){
                 this.interactor = getInteractorEditorService().reloadFullyInitialisedInteractor(interactor);
             }
+            this.topicRootTerm = InteractorPool.MOLECULE_SET_MI;
         }
         else if (interactor instanceof Gene) {
             this.typeSelectItems = getCvService().getGeneTypeSelectItems();
+            this.topicRootTerm = Gene.GENE_MI;
         } else {
             this.typeSelectItems = getCvService().getInteractorTypeSelectItems();
+            this.topicRootTerm = "MI:0313";
         }
 
         setDescription("Interactor "+ interactor.getShortName());
@@ -542,7 +559,7 @@ public class InteractorController extends AnnotatedObjectController {
 
     @Override
     protected void addNewAlias(AbstractIntactAlias newAlias) {
-         this.interactor.getAliases().add(newAlias);
+        this.interactor.getAliases().add(newAlias);
     }
 
     @Override
@@ -629,7 +646,7 @@ public class InteractorController extends AnnotatedObjectController {
 
     @Override
     public void removeAnnotation(Annotation annotation) {
-         interactor.getDbAnnotations().remove(annotation);
+        interactor.getDbAnnotations().remove(annotation);
     }
 
     public InteractorEditorService getInteractorEditorService() {
@@ -641,6 +658,10 @@ public class InteractorController extends AnnotatedObjectController {
 
     public List<SelectItem> getTypeSelectItems() {
         return typeSelectItems;
+    }
+
+    public String getTopicRootTerm() {
+        return topicRootTerm;
     }
 
     public String[] getSetMembers() {
