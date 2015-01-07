@@ -47,13 +47,6 @@ public class ModelledFeatureCloner extends AbstractEditorCloner<Feature, IntactM
             clone.getAliases().add(new ModelledFeatureAlias(alias.getType(), alias.getName()));
         }
 
-        for (Object obj: feature.getIdentifiers()){
-            Xref ref = (Xref)obj;
-            if (ref.getDatabase() instanceof IntactCvTerm){
-                clone.getIdentifiers().add(new ModelledFeatureXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
-            }
-        }
-
         for (Object obj : feature.getXrefs()){
             Xref ref = (Xref)obj;
             clone.getXrefs().add(new ModelledFeatureXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
