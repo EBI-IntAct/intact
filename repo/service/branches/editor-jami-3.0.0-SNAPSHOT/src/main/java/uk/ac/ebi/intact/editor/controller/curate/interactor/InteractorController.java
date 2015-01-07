@@ -530,13 +530,9 @@ public class InteractorController extends AnnotatedObjectController {
         return members;
     }
 
-    public void refreshPoolMembers(){
-
-    }
-
     public void removePoolMember(Interactor interactor) {
 
-        ((InteractorPool)interactor).remove(interactor);
+        ((InteractorPool)this.interactor).remove(interactor);
     }
 
     public void importInteractor(ActionEvent evt) {
