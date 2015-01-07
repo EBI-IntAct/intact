@@ -357,7 +357,7 @@ public class CvObjectService extends AbstractEditorService {
 
         // complex type
         complexTypeSelectItems = new ArrayList<SelectItem>();
-        IntactCvTerm complexTypeParent = getIntactDao().getCvTermDao().getByMIIdentifier("MI:0314", IntactUtils.INTERACTOR_TYPE_OBJCLASS);
+        IntactCvTerm complexTypeParent = getIntactDao().getCvTermDao().getByMIIdentifier(Complex.COMPLEX_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS);
         SelectItem item = complexTypeParent != null ? createSelectItem(complexTypeParent, true):null;
         if (item != null){
             complexTypeSelectItems.add(item);
@@ -410,7 +410,7 @@ public class CvObjectService extends AbstractEditorService {
         IntactCvTerm geneTypeParent = getIntactDao().getCvTermDao().getByMIIdentifier(Gene.GENE_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS);
         SelectItem itemGene = geneTypeParent != null ? createSelectItem(geneTypeParent, true):null;
         if (itemGene != null){
-            geneTypeSelectItems.add(item);
+            geneTypeSelectItems.add(itemGene);
         }
         if (itemGene != null){
             loadChildren(geneTypeParent, geneTypeSelectItems, false, new HashSet<String>());
