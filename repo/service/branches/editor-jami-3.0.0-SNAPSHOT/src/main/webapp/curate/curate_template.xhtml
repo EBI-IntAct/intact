@@ -272,10 +272,18 @@
 
             <h:panelGrid columns="2">
                 <h:outputLabel for="interactorTxt" value="Type: "/>
-                <ia:inputCvTerm id="interactorTxt" value="#{interactorController.newInteractorType}"
-                                  selectItems="#{cvObjectService.interactorTypeSelectItems}"
-                                  cvIdentifier="MI:0313"
-                        cvClass="uk.ac.ebi.intact.model.CvInteractorType"/>
+                <h:selectOneMenu id="interactorTxt" value="#{interactorController.newInteractorType}">
+                    <f:selectItem itemLabel="-- Select --" noSelectionOption="true"/>
+                    <f:selectItem itemLabel="Protein" itemValue="protein"/>
+                    <f:selectItem itemLabel="Peptide" itemValue="peptide"/>
+                    <f:selectItem itemLabel="Bioactive entity" itemValue="bioactive entity"/>
+                    <f:selectItem itemLabel="Gene" itemValue="gene"/>
+                    <f:selectItem itemLabel="Nucleic acid" itemValue="nucleic acid"/>
+                    <f:selectItem itemLabel="Complex" itemValue="complex"/>
+                    <f:selectItem itemLabel="Polymer" itemValue="biopolymer"/>
+                    <f:selectItem itemLabel="Molecule set" itemValue="molecule set"/>
+                    <f:selectItem itemLabel="Other" itemValue="unknown participant"/>
+                </h:selectOneMenu>
             </h:panelGrid>
 
         </ia:panelDialogLayout>
