@@ -68,6 +68,14 @@
                 <h:outputText rendered="#{!complexSearchEnabled}"
                               value="#{molecule.numberComplexes}"/>
             </p:column>
+            <p:column headerText="# Molecule sets">
+                <h:link id="linkRowSets" outcome="sets" includeViewParams="true"
+                        value="#{molecule.numberMoleculeSets}">
+                    <f:param name="ac" value="#{molecule.ac}"/>
+                    <f:param name="shortLabel" value="#{molecule.shortName}"/>
+                    <f:param name="numMoleculeSets" value="#{molecule.numberMoleculeSets}"/>
+                </h:link>
+            </p:column>
 
         </p:dataTable>
     </h:panelGroup>
