@@ -897,10 +897,6 @@ public class CvObjectService extends AbstractEditorService {
     }
 
     public List<SelectItem> getInteractorTypeSelectItems() {
-        // interactor types initialise itself if not done yet so the newInteractor dialog select items is not empty
-        if (!isInitialised){
-           loadData();
-        }
         return interactorTypeSelectItems;
     }
 
