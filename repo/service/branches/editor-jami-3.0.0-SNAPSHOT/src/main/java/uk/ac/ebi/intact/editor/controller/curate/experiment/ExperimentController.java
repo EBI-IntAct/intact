@@ -412,9 +412,9 @@ public class ExperimentController extends AnnotatedObjectController {
             experiment.getXrefs().add(new ExperimentXref(pubmed, publication.getPubmedId(), primaryRef));
         }
 
-        copyPublicationAnnotations(null);
-
         setExperiment(experiment);
+
+        copyPublicationAnnotations(null);
 
         return navigateToObject(experiment);
     }
@@ -636,6 +636,8 @@ public class ExperimentController extends AnnotatedObjectController {
                 removeXref(Xref.PUBMED_MI, Xref.PUBMED, Xref.PRIMARY_MI, Xref.PRIMARY, experiment.getXrefs());
             }
 
+            setExperiment(experiment);
+
             copyPublicationAnnotations(null);
 
             // update the shortlabel
@@ -643,8 +645,6 @@ public class ExperimentController extends AnnotatedObjectController {
             if (newShortLabel != null){
                 experiment.setShortLabel(newShortLabel);
             }
-
-            setExperiment(experiment);
 
         } else {
             return null;

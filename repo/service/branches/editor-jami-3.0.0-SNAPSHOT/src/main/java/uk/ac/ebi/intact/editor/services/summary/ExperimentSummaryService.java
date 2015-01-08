@@ -175,6 +175,7 @@ public class ExperimentSummaryService extends AbstractEditorService implements I
         summary.setCaution(caution != null ? caution.getValue() : null);
         Annotation internal = AnnotationUtils.collectFirstAnnotationWithTopic(pub.getAnnotations(), null, "remark-internal");
         summary.setInternalRemark(internal != null ? internal.getValue() : null);
+        summary.setExperiment(pub);
         return summary;
     }
 

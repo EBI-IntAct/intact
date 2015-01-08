@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.editor.controller.curate.cloner;
 
 import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
+import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.model.lifecycle.Releasable;
@@ -54,7 +55,10 @@ public class ExperimentCloner extends AbstractEditorCloner<Experiment, IntactExp
         clone.getConfidences().addAll(experiment.getConfidences());
 
         for (Xref ref : experiment.getXrefs()){
-            clone.getXrefs().add(new ExperimentXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
+            if (!(XrefUtils.doesXrefHaveQualifier(ref, Xref.IMEX_PRIMARY_MI, Xref.IMEX_PRIMARY)
+                    && XrefUtils.isXrefFromDatabase(ref, Xref.IMEX_MI, Xref.IMEX))){
+                clone.getXrefs().add(new ExperimentXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
+            }
         }
 
         for (Annotation annotation : experiment.getAnnotations()){

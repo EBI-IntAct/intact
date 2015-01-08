@@ -30,7 +30,7 @@
         </h:panelGroup>
 
         <br/>
-        <h:outputText styleClass="subTitle" value="#{publicationController.publication.status.shortLabel}"/>,
+        <h:outputText styleClass="subTitle" value="#{publicationController.publication.status}"/>,
         <h:outputText styleClass="subTitle-text" value=" owned by "
                       rendered="#{publicationController.publication.currentOwner != null}"/>
         <h:outputText styleClass="subTitle" value="#{publicationController.publication.currentOwner.login}"
