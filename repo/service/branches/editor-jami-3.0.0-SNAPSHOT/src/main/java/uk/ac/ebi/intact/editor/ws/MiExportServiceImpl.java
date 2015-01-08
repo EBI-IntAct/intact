@@ -129,7 +129,6 @@ public class MiExportServiceImpl implements MiExportService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public Object exportInteraction(final String ac, final String format) {
         Response response = null;
-        InteractionWriter writer = null;
         try {
             String responseType = "application/x-download";
             String extension = calculateFileExtension(format);
@@ -146,10 +145,6 @@ public class MiExportServiceImpl implements MiExportService {
             response = Response.status(200).type(responseType).header("Content-Disposition", "attachment; filename="+ac+"."+extension).entity(output).build();
         } catch (Throwable e) {
             throw new RuntimeException("Problem exporting interaction: "+ac, e);
-        } finally {
-            if (writer != null){
-                writer.close();
-            }
         }
 
         return response;
@@ -159,7 +154,6 @@ public class MiExportServiceImpl implements MiExportService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public Object exportComplex(String ac, @DefaultValue("xml254") String format) {
         Response response = null;
-        InteractionWriter writer = null;
         try {
             String responseType = "application/x-download";
             String extension = calculateFileExtension(format);
@@ -176,10 +170,6 @@ public class MiExportServiceImpl implements MiExportService {
             response = Response.status(200).type(responseType).header("Content-Disposition", "attachment; filename="+ac+"."+extension).entity(output).build();
         } catch (Throwable e) {
             throw new RuntimeException("Problem exporting complex: "+ac, e);
-        } finally {
-            if (writer != null){
-                writer.close();
-            }
         }
 
         return response;
@@ -257,7 +247,7 @@ public class MiExportServiceImpl implements MiExportService {
         InteractionWriter writer = null;
         try {
 
-            writer = createInteractionEvidenceWriterFor(format, outputStream);
+            writer = createComplexWriterFor(format, outputStream);
 
             writer.start();
             if (!format.equals(MiExportService.FORMAT_XML254_COMPACT) && !format.equals(MiExportService.FORMAT_XML300_COMPACT)){
