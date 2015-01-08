@@ -177,6 +177,7 @@
 
     <ui:decorate template="propertiesTabs.xhtml">
         <ui:param name="annotatedObjectSelectItems" value="#{cvObjectService.participantTopicSelectItems}"/>
+        <ui:param name="updateOnChange" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:participantTabs :editorForm:acTxt"/>
     </ui:decorate>
 
     <p:tab id="experimentalPreparationsTab" title="Experimental Preparation(s) (#{participantController.experimentalPreparationsSize})">
@@ -185,7 +186,7 @@
 
             <ui:decorate template="participant_preparation_table.xhtml">
                 <ui:param name="annotatedObjectController" value="#{participantController}"/>
-                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
+                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:participantTabs :editorForm:acTxt"/>
                 <ui:param name="disablePreparationSelectItems" value="#{participantController.isExperimentalPreparationDisabled()}"/>
             </ui:decorate>
         </p:outputPanel>
@@ -198,7 +199,7 @@
 
             <ui:decorate template="participant_identification_table.xhtml">
                 <ui:param name="annotatedObjectController" value="#{participantController}"/>
-                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
+                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:participantTabs :editorForm:acTxt"/>
                 <ui:param name="disableIdentificationSelectItems" value="#{participantController.isIdentificationMethodDisabled()}"/>
             </ui:decorate>
         </p:outputPanel>
@@ -211,7 +212,7 @@
 
             <ui:decorate template="parameters_table.xhtml">
                 <ui:param name="annotatedObjectController" value="#{participantController}"/>
-                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
+                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:participantTabs :editorForm:acTxt"/>
                 <ui:param name="disableParameterSelectItems" value="#{participantController.isParameterDisabled()}"/>
             </ui:decorate>
         </p:outputPanel>
@@ -224,7 +225,7 @@
             <ui:decorate template="confidences_table.xhtml">
                 <ui:param name="annotatedObjectController" value="#{participantController}"/>
                 <ui:param name="disableConfidenceSelectItems" value="#{participantController.isConfidenceDisabled()}"/>
-                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
+                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:participantTabs :editorForm:acTxt"/>
             </ui:decorate>
         </p:outputPanel>
 
