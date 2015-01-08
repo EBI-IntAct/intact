@@ -83,7 +83,7 @@ public class MiExportServiceImpl implements MiExportService {
                     "where p.ac = :ac";
             final Map<String, Object> parameters = new HashMap<String, Object>();
             parameters.put("ac", ac);
-            output = new IntactEntryStreamingOutput(format, this, countQuery, query, parameters, true);
+            output = new IntactEntryStreamingOutput(format, query, countQuery, parameters, true);
 
             response = Response.status(200).type(responseType).header("Content-Disposition", "attachment; filename="+ac+"."+extension).entity(output).build();
         } catch (Throwable e) {
@@ -112,7 +112,7 @@ public class MiExportServiceImpl implements MiExportService {
                     "where e.ac = :ac";
             final Map<String, Object> parameters = new HashMap<String, Object>();
             parameters.put("ac", ac);
-            output = new IntactEntryStreamingOutput(format, this, countQuery, query, parameters, true);
+            output = new IntactEntryStreamingOutput(format, query, countQuery, parameters, true);
 
             response = Response.status(200).type(responseType).header("Content-Disposition", "attachment; filename="+ac+"."+extension).entity(output).build();
         } catch (Throwable e) {
@@ -140,7 +140,7 @@ public class MiExportServiceImpl implements MiExportService {
                     "where i.ac = :ac";
             final Map<String, Object> parameters = new HashMap<String, Object>();
             parameters.put("ac", ac);
-            output = new IntactEntryStreamingOutput(format, this, countQuery, query, parameters, true);
+            output = new IntactEntryStreamingOutput(format, query, countQuery, parameters, true);
 
             response = Response.status(200).type(responseType).header("Content-Disposition", "attachment; filename="+ac+"."+extension).entity(output).build();
         } catch (Throwable e) {
@@ -165,7 +165,7 @@ public class MiExportServiceImpl implements MiExportService {
                     "where i.ac = :ac";
             final Map<String, Object> parameters = new HashMap<String, Object>();
             parameters.put("ac", ac);
-            output = new IntactEntryStreamingOutput(format, this, countQuery, query, parameters, false);
+            output = new IntactEntryStreamingOutput(format, query, countQuery, parameters, false);
 
             response = Response.status(200).type(responseType).header("Content-Disposition", "attachment; filename="+ac+"."+extension).entity(output).build();
         } catch (Throwable e) {
@@ -199,7 +199,7 @@ public class MiExportServiceImpl implements MiExportService {
             return "xml";
         }
         else if (format.equals(MiExportService.FORMAT_HTML)){
-            return "xhtml";
+            return "html";
         }
         else if (format.equals(MiExportService.FORMAT_JSON)){
             return "json";
@@ -208,7 +208,7 @@ public class MiExportServiceImpl implements MiExportService {
             return "json";
         }
         else if (format.equals(MiExportService.FORMAT_FEBS_SDA)){
-            return "txt";
+            return "html";
         }
         else{
             throw new IllegalArgumentException("The format "+format +" is not recognized");

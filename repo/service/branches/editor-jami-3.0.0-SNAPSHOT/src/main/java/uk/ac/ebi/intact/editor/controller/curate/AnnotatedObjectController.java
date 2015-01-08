@@ -149,21 +149,23 @@ public abstract class AnnotatedObjectController extends BaseController implement
     protected abstract String getPageContext();
 
     protected void generalLoadChecks(){
-        // set current user
-        getEditorService().setUser(getCurrentUser());
+        if (getAnnotatedObject() != null){
+            // set current user
+            getEditorService().setUser(getCurrentUser());
 
-        if (changesController.isObjectBeingEdited(getAnnotatedObject(), false)) {
-            String who = changesController.whoIsEditingObject(getAnnotatedObject());
+            if (changesController.isObjectBeingEdited(getAnnotatedObject(), false)) {
+                String who = changesController.whoIsEditingObject(getAnnotatedObject());
 
-            addWarningMessage("This object is already being edited by: " + who, "Modifications may be lost or affect current work by the other curator");
+                addWarningMessage("This object is already being edited by: " + who, "Modifications may be lost or affect current work by the other curator");
+            }
+
+            // load cv service if not done
+            if (!getCvService().isInitialised()){
+                getCvService().loadData();
+            }
+
+            loadCautionMessages();
         }
-
-        // load cv service if not done
-        if (!getCvService().isInitialised()){
-            getCvService().loadData();
-        }
-
-        loadCautionMessages();
     }
 
     protected abstract void loadCautionMessages();
