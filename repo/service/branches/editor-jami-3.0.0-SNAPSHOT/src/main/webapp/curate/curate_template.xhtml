@@ -209,7 +209,7 @@
                                  process="newPmid"
                                  action="#{publicationController.newAutocomplete}"
                                  disabled="#{not publicationController.citexploreOnline}"
-                                 update=":editorForm"/>
+                                 update=":editorForm" onclick="publicationDialog.show()" oncomplete="publicationDialog.hide()"/>
 
                 <br/>
 
@@ -337,6 +337,7 @@
     <ia:loadingDialog widgetVar="revertDialog" message="Reverting changes..."/>
     <ia:loadingDialog widgetVar="cloningDialog" message="Cloning #{annotatedObjectController.objectCategory}..."/>
     <ia:loadingDialog widgetVar="deletingDialog" message="Deleting #{annotatedObjectController.objectCategory}..."/>
+    <ia:loadingDialog widgetVar="publicationDialog" message="Creating publication..."/>
 </ui:define>
 
 </ui:composition>
