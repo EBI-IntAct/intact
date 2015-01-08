@@ -400,7 +400,8 @@ public class ExperimentController extends AnnotatedObjectController {
     public String newExperiment(Publication publication) {
         IntactExperiment experiment = new IntactExperiment(publication);
         experiment.setShortLabel(IntactUtils.generateAutomaticExperimentShortlabelFor(experiment, IntactUtils.MAX_SHORT_LABEL_LEN));
-
+        // synchronize with db
+        IntactUtils.synchronizeExperimentShortLabel(experiment, getEditorService().getIntactDao().getEntityManager(), Collections.EMPTY_SET);
         if (publicationController.getPublication() != publication){
             publicationController.setPublication((IntactPublication)publication);
         }
