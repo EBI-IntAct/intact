@@ -471,6 +471,8 @@ public class PublicationController extends AnnotatedObjectController {
         IntactPublication publication = new IntactPublication(identifier);
         publication.setSource(userSessionController.getUserInstitution());
 
+        setPublication(publication);
+
         // add the primary reference xref
         setPrimaryReference(identifier);
 

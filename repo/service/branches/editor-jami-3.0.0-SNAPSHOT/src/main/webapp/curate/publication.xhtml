@@ -422,7 +422,7 @@
 
         <p:fieldset legend="Events">
 
-            <p:dataTable var="event" value="#{publicationController.collectLifeCycleEvents}">
+            <p:dataTable var="event" value="#{publicationController.collectLifeCycleEvents()}">
                 <p:column headerText="Date">
                     <h:outputText value="#{event.when}">
                         <f:convertDateTime pattern="dd-MM-yyyy HH:mm"/>
