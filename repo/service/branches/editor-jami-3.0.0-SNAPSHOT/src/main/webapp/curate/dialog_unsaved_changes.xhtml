@@ -9,7 +9,6 @@
     <p:dialog id="unsavedChangesDialog" widgetVar="unsavedChangesDialog" header="Unsaved changes" modal="true"
               position="center"
               width="500">
-        <h:outputLabel value="Unsaved changes: " for="unsavedTable"/>
         <p:dataTable id="unsavedTable" var="change" value="#{changesController.unsavedChangesForCurrentUser}" paginator="true" rows="10"
                 paginatorAlwaysVisible="false">
             <p:column>
