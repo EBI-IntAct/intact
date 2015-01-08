@@ -1885,7 +1885,7 @@ public class PublicationController extends AnnotatedObjectController {
             if (intactEv.getAc() == null && exp == intactEv){
                 add = false;
             }
-            else if (intactEv.getAc() != null && !intactEv.getAc().equals(exp.getAc())){
+            else if (intactEv.getAc() != null && intactEv.getAc().equals(exp.getAc())){
                 evIterator.remove();
             }
         }
@@ -1903,7 +1903,7 @@ public class PublicationController extends AnnotatedObjectController {
             if (intactEv.getAc() == null && exp == intactEv){
                 evIterator.remove();
             }
-            else if (intactEv.getAc() != null && !intactEv.getAc().equals(exp.getAc())){
+            else if (intactEv.getAc() != null && intactEv.getAc().equals(exp.getAc())){
                 evIterator.remove();
             }
         }
