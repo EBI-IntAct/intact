@@ -123,7 +123,7 @@
 
             <br/>
 
-            <p:tabView id="participantTabs" dynamic="true" cache="false">
+            <p:tabView id="participantTabs" dynamic="true">
                 <p:ajax event="tabChange" listener="#{modelledParticipantController.onTabChanged}" onstart="loadDialog.show()" oncomplete="loadDialog.hide()" />
 
                 <p:tab id="featureTab" title="Features (#{modelledParticipantController.featuresSize})">
@@ -142,7 +142,7 @@
 
                 <ui:decorate template="propertiesTabs.xhtml">
                     <ui:param name="annotatedObjectSelectItems" value="#{cvObjectService.participantTopicSelectItems}"/>
-                    <ui:param name="updateOnChange" value=":editorForm:basic"/>
+                    <ui:param name="updateOnChange" value=":editorForm:basic :editorForm:participantTabs"/>
                 </ui:decorate>
 
             </p:tabView>

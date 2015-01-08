@@ -164,19 +164,20 @@
 
                 <ui:decorate template="propertiesTabs.xhtml">
                     <ui:param name="annotatedObjectSelectItems" value="#{cvObjectService.featureTopicSelectItems}"/>
+                    <ui:param name="updateOnChange" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:acTxt :editorForm:featureTabs"/>
                 </ui:decorate>
 
                 <p:tab id="parametersTab" title="Parameters (#{featureController.parametersSizeSize})">
                     <ui:decorate template="parameters_table.xhtml">
                         <ui:param name="annotatedObjectController" value="#{featureController}"/>
-                        <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
+                        <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:acTxt :editorForm:featureTabs"/>
                         <ui:param name="disableParameterSelectItems" value="#{featureController.isParametersDisabled()}"/>
                     </ui:decorate>
                 </p:tab>
                 <p:tab id="detectionMethodsTab" title="Detection Methods (#{featureController.detectionMethodsSize})">
                     <ui:decorate template="feature_detection_table.xhtml">
                         <ui:param name="annotatedObjectController" value="#{featureController}"/>
-                        <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
+                        <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:acTxt :editorForm:featureTabs"/>
                         <ui:param name="disableMethodSelectItems" value="#{featureController.isDetectionMethodDisabled()}"/>
                     </ui:decorate>
                 </p:tab>

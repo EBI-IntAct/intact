@@ -390,18 +390,7 @@
 
     <ui:decorate template="basicPropertiesTabs.xhtml">
         <ui:param name="annotatedObjectSelectItems" value="#{cvObjectService.publicationTopicSelectItems}"/>
-        <ui:param name="updateOnChange" value=":editorForm:basic"/>
-
-        <ui:define name="xrefSyncValues">
-            <ed:syncValue with="editorForm:idTxt" rendered="#{xref.database != null and xref.database.mIIdentifier == 'MI:0446' and xref.qualifier != null and xref.qualifier.mIIdentifier == 'MI:0358'}"/>
-            <ed:syncValue with="editorForm:imexIdTxt" rendered="#{xref.database != null and xref.database.mIIdentifier == 'MI:0670' and xref.qualifier != null and xref.qualifier.mIIdentifier == 'MI:0662'}"/>
-        </ui:define>
-
-        <ui:define name="annotationSyncValues">
-            <ed:syncValue with="editorForm:onHoldTxt" rendered="#{annotation.topic.shortName == 'on-hold'}"/>
-            <ed:syncValue with="editorForm:yearTxt" rendered="#{annotation.topic.mIIdentifier != null and annotation.topic.mIIdentifier == 'MI:0886'}"/>
-            <ed:syncValue with="editorForm:contactTxt" rendered="#{annotation.topic.mIIdentifier != null and annotation.topic.mIIdentifier == 'MI:0634'}"/>
-        </ui:define>
+        <ui:param name="updateOnChange" value=":editorForm:basic :editorForm:acTxt :editorForm:publicationTabs"/>
 
     </ui:decorate>
 

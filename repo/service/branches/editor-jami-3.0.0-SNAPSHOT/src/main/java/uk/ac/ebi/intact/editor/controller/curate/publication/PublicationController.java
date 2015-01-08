@@ -1702,7 +1702,7 @@ public class PublicationController extends AnnotatedObjectController {
 
     public boolean isAssignableIMEx() {
         return getImexId() == null && curationDepth != null
-                && "imex curation".equalsIgnoreCase(curationDepth) && Pattern.matches(ImexCentralManager.PUBMED_REGEXP.toString(), publication.getPubmedId());
+                && "IMEx".equalsIgnoreCase(curationDepth) && Pattern.matches(ImexCentralManager.PUBMED_REGEXP.toString(), publication.getPubmedId());
     }
 
     @Override

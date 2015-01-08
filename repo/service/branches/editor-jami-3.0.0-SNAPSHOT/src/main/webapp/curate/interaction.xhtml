@@ -190,12 +190,7 @@
 
     <ui:decorate template="basicPropertiesTabs.xhtml">
         <ui:param name="annotatedObjectSelectItems" value="#{cvObjectService.interactionTopicSelectItems}"/>
-        <ui:param name="updateOnChange" value=":editorForm:basic"/>
-
-        <ui:define name="annotationSyncValues">
-            <ed:syncValue with=":editorForm:figLegendTxt"
-                          rendered="#{annotation.topic.mIIdentifier != null and annotation.topic.mIIdentifier == 'MI:0599'}"/>
-        </ui:define>
+        <ui:param name="updateOnChange" value=":editorForm:basic :editorForm:interactionTabs"/>
 
     </ui:decorate>
 
@@ -204,7 +199,7 @@
         <p:outputPanel id="parametersPanel" autoUpdate="false">
             <ui:decorate template="parameters_table.xhtml">
                 <ui:param name="annotatedObjectController" value="#{interactionController}"/>
-                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
+                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:acTxt :editorForm:interactionTabs"/>
                 <ui:param name="disableParameterSelectItems" value="#{interactionController.isParameterDisabled()}"/>
             </ui:decorate>
         </p:outputPanel>
@@ -216,7 +211,7 @@
         <p:outputPanel id="confidencesPanel" autoUpdate="false">
             <ui:decorate template="confidences_table.xhtml">
                 <ui:param name="annotatedObjectController" value="#{interactionController}"/>
-                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
+                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:acTxt :editorForm:interactionTabs"/>
                 <ui:param name="disableConfidenceSelectItems" value="#{interactionController.isConfidenceDisabled()}"/>
             </ui:decorate>
         </p:outputPanel>
@@ -228,7 +223,7 @@
         <p:outputPanel id="vparametersPanel" autoUpdate="false" rendered="#{interactionController.isVariableParametersTableEnabled()}">
             <ui:decorate template="interaction_vparameters_table.xhtml">
                 <ui:param name="annotatedObjectController" value="#{interactionController}"/>
-                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
+                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:acTxt :editorForm:interactionTabs"/>
                 <ui:param name="disableVariableParametersSelectItems" value="#{interactionController.isVariableParametersDisabled()}"/>
             </ui:decorate>
         </p:outputPanel>

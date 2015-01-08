@@ -332,7 +332,7 @@
 
 <br/>
 
-<p:tabView id="complexTabs" dynamic="true" cache="false">
+<p:tabView id="complexTabs" dynamic="true">
     <p:ajax event="tabChange" listener="#{complexController.onTabChanged}" onstart="loadDialog.show()" oncomplete="loadDialog.hide()"/>
 
     <p:tab id="participantsTab" title="Participants (#{complexController.participants.size()})">
@@ -380,7 +380,7 @@
             <ui:decorate template="annotations_table.xhtml">
                 <ui:param name="annotatedObjectController" value="#{complexController}"/>
                 <ui:param name="topicSelectItems" value="#{cvObjectService.complexTopicSelectItems}"/>
-                <ui:param name="update" value=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent,:editorForm:basic"/>
+                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:basic,editorForm:complexTabs"/>
                 <ui:param name="valueChangeRender" value=":editorForm:basic :editorForm:changesPanel"/>
                 <ui:param name="valueChangeAwareObject" value="#{complexController}"/>
 
@@ -396,7 +396,7 @@
         <p:outputPanel id="aliasesPanel" autoUpdate="false">
             <ui:decorate template="aliases_table.xhtml">
                 <ui:param name="annotatedObjectController" value="#{complexController}"/>
-                <ui:param name="update" value=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent :editorForm:basic"/>
+                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:basic :editorForm:complexTabs"/>
                 <ui:param name="valueChangeRender" value=":editorForm:basic :editorForm:changesPanel"/>
             </ui:decorate>
 
@@ -409,7 +409,7 @@
         <p:outputPanel id="parametersPanel" autoUpdate="false">
             <ui:decorate template="parameters_table.xhtml">
                 <ui:param name="annotatedObjectController" value="#{complexController}"/>
-                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
+                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:complexTabs :editorForm:acTxt"/>
                 <ui:param name="disableParameterSelectItems" value="#{complexController.isParameterDisabled()}"/>
             </ui:decorate>
         </p:outputPanel>
@@ -421,7 +421,7 @@
         <p:outputPanel id="confidencesPanel" autoUpdate="false">
             <ui:decorate template="confidences_table.xhtml">
                 <ui:param name="annotatedObjectController" value="#{complexController}"/>
-                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent"/>
+                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:complexTabs :editorForm:acTxt"/>
                 <ui:param name="disableConfidenceSelectItems" value="#{complexController.isConfidenceDisabled()}"/>
             </ui:decorate>
         </p:outputPanel>
