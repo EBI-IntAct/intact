@@ -520,18 +520,12 @@ public class PublicationController extends AnnotatedObjectController {
             if (publicationToOpen == null) {
                 addErrorMessage("PMID not found", "There is no publication with PMID '" + identifier + "'");
             } else {
-                publication = publicationToOpen;
-                ac = publication.getAc();
+                setPublication(publicationToOpen);
             }
 
             identifierToOpen = null;
         }
 
-    }
-
-    public void doClose(ActionEvent evt) {
-        publication = null;
-        ac = null;
     }
 
     public boolean isNewPublication() {
@@ -1577,7 +1571,7 @@ public class PublicationController extends AnnotatedObjectController {
 
     public void copyAnnotationsToExperiments(ActionEvent evt) {
         for (Experiment exp : publication.getExperiments()) {
-            for (Annotation annot : publication.getAnnotations()){
+            for (Annotation annot : publication.getDbAnnotations()){
                 exp.getAnnotations().add(new ExperimentAnnotation(annot.getTopic(), annot.getValue()));
             }
             Collection<String> parent = new ArrayList<String>();

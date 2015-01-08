@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.editor.ws;
 
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
@@ -34,11 +36,11 @@ public class IntactEntryStreamingOutput implements StreamingOutput {
     private MiExportService miExportService;
     private boolean isEvidence = true;
 
-    public IntactEntryStreamingOutput(String format, MiExportService service,
+    public IntactEntryStreamingOutput(String format,
                                       String query, String countQuery, Map<String, Object> parameters,
                                       boolean isEvidence) {
         this.format = format;
-        this.miExportService = service;
+        this.miExportService = ApplicationContextProvider.getBean("exportService");
         this.query = query;
         this.countQuery = countQuery;
         this.parameters = parameters;
