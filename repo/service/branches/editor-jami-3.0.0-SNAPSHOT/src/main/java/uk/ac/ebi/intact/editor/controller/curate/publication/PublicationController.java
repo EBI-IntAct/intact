@@ -242,7 +242,7 @@ public class PublicationController extends AnnotatedObjectController {
     }
 
     public void refreshDataModels() {
-        interactionDataModel = getInteractionSummaryService().refreshDataModels(this.publication);
+        interactionDataModel = getInteractionSummaryService().refreshDataModels(this.publication, getInteractionSummaryService());
     }
 
     private void loadFormFields() {
