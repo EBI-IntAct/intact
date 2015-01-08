@@ -252,7 +252,7 @@ public class ExperimentController extends AnnotatedObjectController {
                 if (intactEv.getAc() == null && ev == intactEv){
                     add = false;
                 }
-                else if (intactEv.getAc() != null && !intactEv.getAc().equals(ev.getAc())){
+                else if (intactEv.getAc() != null && intactEv.getAc().equals(ev.getAc())){
                     evIterator.remove();
                 }
             }
@@ -276,7 +276,7 @@ public class ExperimentController extends AnnotatedObjectController {
                 if (intactEv.getAc() == null && ev == intactEv){
                     evIterator.remove();
                 }
-                else if (intactEv.getAc() != null && !intactEv.getAc().equals(ev.getAc())){
+                else if (intactEv.getAc() != null && intactEv.getAc().equals(ev.getAc())){
                     evIterator.remove();
                 }
             }

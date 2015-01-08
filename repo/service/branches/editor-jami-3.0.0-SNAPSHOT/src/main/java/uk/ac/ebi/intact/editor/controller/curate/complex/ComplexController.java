@@ -1336,7 +1336,7 @@ public class ComplexController extends AnnotatedObjectController {
             if (intactEv.getAc() == null && f == intactEv){
                 add = false;
             }
-            else if (intactEv.getAc() != null && !intactEv.getAc().equals(f.getAc())){
+            else if (intactEv.getAc() != null && intactEv.getAc().equals(f.getAc())){
                 evIterator.remove();
             }
         }
@@ -1358,7 +1358,7 @@ public class ComplexController extends AnnotatedObjectController {
             if (intactEv.getAc() == null && f == intactEv){
                 evIterator.remove();
             }
-            else if (intactEv.getAc() != null && !intactEv.getAc().equals(f.getAc())){
+            else if (intactEv.getAc() != null && intactEv.getAc().equals(f.getAc())){
                 evIterator.remove();
             }
         }
