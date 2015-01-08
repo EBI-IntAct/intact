@@ -598,6 +598,8 @@ public class InteractionController extends AnnotatedObjectController {
         String oldLabel = interaction.getShortName();
         String shortLabel = IntactUtils.generateAutomaticInteractionEvidenceShortlabelFor(interaction, IntactUtils.MAX_SHORT_LABEL_LEN);
         interaction.setShortName(shortLabel);
+        // synchronize with db
+        IntactUtils.synchronizeInteractionEvidenceShortName(interaction, getEditorService().getIntactDao().getEntityManager(), Collections.EMPTY_SET);
         if (oldLabel == null || !oldLabel.equals(shortLabel)){
             Collection<String> parentsCs = new ArrayList<String>();
             if (interaction.getExperiment() != null && ((IntactExperiment)interaction.getExperiment()).getAc() != null){
