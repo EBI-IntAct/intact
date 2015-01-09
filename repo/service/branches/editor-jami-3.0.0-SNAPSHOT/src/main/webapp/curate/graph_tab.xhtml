@@ -20,6 +20,7 @@
 
     </h:panelGroup>
     <script type="text/javascript">
+        //<![CDATA[
         var exportUrl = '#{facesContext.externalContext.requestContextPath}/service/export/mi/#{objType}?ac=#{ac}&amp;format=json';
 
         var targetDiv = document.getElementById('networkContainer');
@@ -38,7 +39,7 @@
                 $(element).empty();
                 $(element).append("An error occurred while loading the data.");
             }});
-
+        //]]>
     </script>
 
 
