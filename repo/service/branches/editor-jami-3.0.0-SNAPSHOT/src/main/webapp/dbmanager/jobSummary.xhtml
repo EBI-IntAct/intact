@@ -18,24 +18,28 @@
 
         <h2>Running jobs</h2>
 
-        <ui:repeat value="#{adminJobController.jobNames}" var="jobName">
-            <b>#{jobName}</b><br/>
+        <h3>Running Imports of interaction evidences</h3>
 
-            <ia:jobExecutionsTable value="#{adminJobController.getRunningJobExecutions(jobName)}"/>
+        <ia:importExecutionsTable value="#{importJobController.getRunningJobExecutions('interactionMixImport')}"/>
 
-        </ui:repeat>
+        <h3>Running Imports of biological complexes</h3>
+
+        <ia:importExecutionsTable value="#{importJobController.getRunningJobExecutions('complexImport')}"/>
 
         <h2>All jobs</h2>
 
-        <ui:repeat value="#{adminJobController.jobNames}" var="jobName">
-            <b>#{jobName}</b><br/>
+        <h3>Imports of interacion evidences</h3>
+        <ui:repeat value="#{importJobController.getJobInstances('interactionMixImport')}" var="jobInstance1">
+            <i>#{jobInstance1}</i> #{jobInstance1.id}
 
-            <ui:repeat value="#{adminJobController.getJobInstances(jobName)}" var="jobInstance">
-               <i>#{jobInstance}</i> #{jobInstance.id}
+            <ia:importExecutionsTable value="#{adminJobController.getJobExecutions(jobInstance1.id)}"/>
 
-                <ia:jobExecutionsTable value="#{adminJobController.getJobExecutions(jobInstance.id)}"/>
+        </ui:repeat>
+        <h3>Imports of biological complexes</h3>
+        <ui:repeat value="#{importJobController.getJobInstances('complexImport')}" var="jobInstance2">
+            <i>#{jobInstance2}</i> #{jobInstance2.id}
 
-            </ui:repeat>
+            <ia:importExecutionsTable value="#{adminJobController.getJobExecutions(jobInstance2.id)}"/>
 
         </ui:repeat>
 
