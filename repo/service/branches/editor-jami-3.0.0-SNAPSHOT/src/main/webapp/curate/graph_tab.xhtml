@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ot="http://myfaces.apache.org/orchestra">
+
+    <h2>Network visualisation</h2>
+
+
+    <h:outputScript library="javascript" name="complexViewer-0.0.1.js"/>
+
+    <h:panelGroup>
+
+        <div id="networkContainer">
+            Interaction Graph should show here in a few moments
+            <br/>It can take a few minutes if you try to upload a lot of interactions... <h:graphicImage alt="loading..." url="/images/wait_black_indicator.gif" style="vertical-align: baseline;"/>
+        </div>
+
+
+    </h:panelGroup>
+    <script type="text/javascript">
+        var exportUrl = '#{facesContext.externalContext.requestContextPath}/service/export/mi/#{objType}?ac=#{ac}&amp;format=json';
+
+        var targetDiv = document.getElementById('networkContainer');
+        var xlv = new xiNET(targetDiv);
+
+        // wait for the data to be loaded prior, handy for larger network.
+        var miJson;
+        jQuery.ajax({
+            url: exportUrl,
+            success: function(gotJson) {
+                miJson = gotJson;
+                xlv.readMIJSON(miJson);
+            },
+            error: function() {
+                var element = document.getElementById("networkContainer");
+                $(element).empty();
+                $(element).append("An error occurred while loading the data.");
+            }});
+
+    </script>
+
+
+</ui:composition>

@@ -186,6 +186,17 @@
                 </ui:decorate>
             </p:tab>
 
+            <p:tab id="graphTab" title="Graph" rendered="#{experimentController.interactionDataModel.rowCount gt 0}">
+
+                <p:outputPanel id="graphPanel" autoUpdate="false">
+                    <ui:decorate template="graph_tab.xhtml">
+                        <ui:param name="objType" value="experiment"/>
+                        <ui:param name="ac" value="#{experimentController.ac}"/>
+                    </ui:decorate>
+                </p:outputPanel>
+
+            </p:tab>
+
         </p:tabView>
 
 

@@ -231,6 +231,16 @@
         <h:outputText value="No variable parameters were added to the experiment so there are no experimental conditions available." rendered="#{!interactionController.isVariableParametersTableEnabled()}"/>
 
     </p:tab>
+    <p:tab id="graphTab" title="Graph" rendered="#{interactionController.participantsSize gt 0}">
+
+        <p:outputPanel id="graphPanel" autoUpdate="false">
+            <ui:decorate template="graph_tab.xhtml">
+                <ui:param name="objType" value="interaction"/>
+                <ui:param name="ac" value="#{interactionController.ac}"/>
+            </ui:decorate>
+        </p:outputPanel>
+
+    </p:tab>
 
 </p:tabView>
 

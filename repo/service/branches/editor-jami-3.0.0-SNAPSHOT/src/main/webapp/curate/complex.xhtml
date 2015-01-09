@@ -476,6 +476,16 @@
         </p:fieldset>
 
     </p:tab>
+    <p:tab id="graphTab" title="Graph" rendered="#{complexController.participants.size() gt 0}">
+
+        <p:outputPanel id="graphPanel" autoUpdate="false">
+            <ui:decorate template="graph_tab.xhtml">
+                <ui:param name="objType" value="complex"/>
+                <ui:param name="ac" value="#{complexController.ac}"/>
+            </ui:decorate>
+        </p:outputPanel>
+
+    </p:tab>
 </p:tabView>
 
 </h:panelGroup>
