@@ -55,6 +55,15 @@
             </p:column>
             <p:column>
                 <f:facet name="header">
+                    <h:outputText value="Statistics"/>
+                </f:facet>
+                <ui:repeat value="#{importJobController.getImportStatistics(jobExecution)}" var="mapEntry">
+                    <h:outputText value="#{mapEntry.key}: #{mapEntry.value}"/>
+                    <br/>
+                </ui:repeat>
+            </p:column>
+            <p:column>
+                <f:facet name="header">
                     <h:outputText value="Parameters"/>
                 </f:facet>
                 <h:outputText value="#{jobExecution.jobParameters}"/>
@@ -69,9 +78,9 @@
                 <f:facet name="header">
                     <h:outputText value="Errors"/>
                 </f:facet>
-                <h:panelGroup rendered="#{adminJobController.hasJobFailed(jobExecution)}">
-                    <ui:repeat value="#{adminJobController.getFailureExceptions(jobExecution)}" var="exception">
-                        #{adminJobController.printFullStackTrace(exception)}
+                <h:panelGroup rendered="#{importJobController.hasJobFailed(jobExecution)}">
+                    <ui:repeat value="#{importJobController.getFailureExceptions(jobExecution)}" var="exception">
+                        #{importJobController.printFullStackTrace(exception)}
                     </ui:repeat>
                 </h:panelGroup>
             </p:column>
@@ -79,11 +88,14 @@
                 <f:facet name="header">
                     <h:outputText value="Action"/>
                 </f:facet>
-                <h:commandLink value="Restart" actionListener="#{adminJobController.restart}">
+                <h:commandLink value="Reload File" actionListener="#{importJobController.restart}">
+                    <f:param name="executionId" value="#{jobExecution.id}"/>
+                </h:commandLink>
+                <h:commandLink value="Restart" actionListener="#{importJobController.restart}">
                     <f:param name="executionId" value="#{jobExecution.id}"/>
                 </h:commandLink>
                 &#160;
-                <h:commandLink value="Stop" actionListener="#{adminJobController.stop}">
+                <h:commandLink value="Stop" actionListener="#{importJobController.stop}">
                     <f:param name="executionId" value="#{jobExecution.id}"/>
                 </h:commandLink>
             </p:column>
