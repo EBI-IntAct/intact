@@ -29,6 +29,11 @@
         <view-id value="/search/search.xhtml"/>
     </url-mapping>
 
+    <url-mapping id="dbmanager">
+        <pattern value="/dbmanager/"/>
+        <view-id value="/dbmanager/dbmanager.xhtml"/>
+    </url-mapping>
+
     <url-mapping id="publication">
         <pattern value="/publication/#{ac}"/>
         <view-id value="/curate/publication.xhtml"/>

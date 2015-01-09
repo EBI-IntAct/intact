@@ -8,7 +8,13 @@
                 xmlns:ot="http://myfaces.apache.org/orchestra"
                 xmlns:ia="http://java.sun.com/jsf/composite/intact-components"
 
-                template="/search/search_template.xhtml">
+                template="/main_template.xhtml">
+
+    <ui:define name="topNavigation">
+        <ui:include src="/shared/top_navigation_links.xhtml">
+            <ui:param name="selected" value="advanced"/>
+        </ui:include>
+    </ui:define>
 
 <ui:define name="metadata">
     <f:metadata>

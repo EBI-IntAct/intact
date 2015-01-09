@@ -156,6 +156,7 @@ public class UserAdminService extends AbstractEditorService {
         addMissingRole( allRoles, "REVIEWER" );
         addMissingRole( allRoles, "COMPLEX_CURATOR" );
         addMissingRole( allRoles, "COMPLEX_REVIEWER" );
+        addMissingRole( allRoles, "DATA_MANAGER" );
 
         log.info( "After loadParticipants: found " + getIntactDao().getRoleDao().getAll().size() + " role(s) in the database." );
     }

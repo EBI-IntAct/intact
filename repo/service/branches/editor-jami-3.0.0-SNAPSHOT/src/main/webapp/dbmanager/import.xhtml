@@ -1,44 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html>
-<html xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui"
 
-<f:view contentType="text/html">
+                template="/dbmanager/dbmanager_template.xhtml">
 
-    <h:head>
-        <title>#{title != null? title : 'Editor'}</title>
-        <link rel="stylesheet" type="text/css"
-              href="#{request.contextPath}/resources/css/#{editorConfig.theme}/skin.css"></link>
-        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/intact-extra.css"></link>
-
-        <link rel="shortcut icon"
-              href="#{facesContext.externalContext.request.contextPath}/favicon#{facesContext.application.projectStage == 'Development'? '-test' : ''}.ico"/>
-
-        <script type="text/javascript">
-            function fnCallback( e ) {
-                document.getElementById( "intact-blockingDiv" ).style.display = 'none';
-                //blockingDialog.hide();
-            }
-
-            YAHOO.util.Event.addListener( window, "load", fnCallback );
-        </script>
-
-    </h:head>
-
-    <h:body style="margin: 5 5 5 5;">
-
-        <p:messages showSummary="true" showDetail="true"/>
-
-        <h:outputScript library="javascript" name="intact.js"/>
-
+    <ui:define name="dbManagerContent">
         <h:graphicImage value="/resources/images/previous.png"/>
-        <h:outputLink value="/editor/admin/dashboard.xhtml">Back to admin page</h:outputLink>
+        <h:outputLink value="/editor/dbmanager/dbmanager.xhtml">Back to data management page</h:outputLink>
         &#160;&#160;|&#160;&#160;
         <h:graphicImage value="/resources/images/users.png"/>&#160;
-        <h:outputLink value="/editor/admin/jobSummary.xhtml">View jobs list</h:outputLink>
+        <h:outputLink value="/editor/dbmanager/jobSummary.xhtml">View jobs list</h:outputLink>
 
         <br/>
 
@@ -68,8 +43,11 @@
 
         </blockquote>
 
-    </h:body>
+    </ui:define>
+    <ui:define name="dialogs">
 
-</f:view>
 
-</html>
+
+    </ui:define>
+
+</ui:composition>
