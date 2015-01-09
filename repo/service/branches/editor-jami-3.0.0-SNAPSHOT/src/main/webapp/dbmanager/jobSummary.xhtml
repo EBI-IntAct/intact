@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ia="http://java.sun.com/jsf/composite/intact-components"
+
+                template="/dbmanager/dbmanager_template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{adminJobController.load}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="dbManagerContent">
+
+        <h2>Running jobs</h2>
+
+        <ui:repeat value="#{adminJobController.jobNames}" var="jobName">
+            <b>#{jobName}</b><br/>
+
+            <ia:jobExecutionsTable value="#{adminJobController.getRunningJobExecutions(jobName)}"/>
+
+        </ui:repeat>
+
+        <h2>All jobs</h2>
+
+        <ui:repeat value="#{adminJobController.jobNames}" var="jobName">
+            <b>#{jobName}</b><br/>
+
+            <ui:repeat value="#{adminJobController.getJobInstances(jobName)}" var="jobInstance">
+               <i>#{jobInstance}</i> #{jobInstance.id}
+
+                <ia:jobExecutionsTable value="#{adminJobController.getJobExecutions(jobInstance.id)}"/>
+
+            </ui:repeat>
+
+        </ui:repeat>
+
+    </ui:define>
+
+</ui:composition>

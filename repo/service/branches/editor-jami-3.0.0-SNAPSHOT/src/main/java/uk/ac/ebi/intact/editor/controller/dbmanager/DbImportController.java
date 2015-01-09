@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.editor.batch.admin;
+package uk.ac.ebi.intact.editor.controller.dbmanager;
 
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.primefaces.model.UploadedFile;
