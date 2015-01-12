@@ -81,7 +81,7 @@ public class EditorObjectService extends AbstractEditorService {
         if (intactObject.getAc() != null) {
             if (log.isDebugEnabled()) log.debug("Reverting: " + intactObject.getClass()+", Ac="+intactObject.getAc());
 
-            if (getIntactDao().getEntityManager().contains(intactObject)) {
+            if (intactObject.getAc() != null && getIntactDao().getEntityManager().contains(intactObject)) {
                 getIntactDao().getEntityManager().detach(intactObject);
             }
 
@@ -279,7 +279,7 @@ public class EditorObjectService extends AbstractEditorService {
         // reload complex without flushing changes
         Releasable reloaded = releasable;
         // merge current user because detached
-        if (!getIntactDao().getEntityManager().contains(releasable) && ((IntactPrimaryObject)releasable).getAc() != null){
+        if (((IntactPrimaryObject)releasable).getAc() != null && !getIntactDao().getEntityManager().contains(releasable)){
             reloaded = getIntactDao().getEntityManager().merge(releasable);
         }
 
@@ -289,8 +289,8 @@ public class EditorObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public void refresh(IntactPrimaryObject object) {
-        getIntactDao().getEntityManager().refresh(object);
+    public IntactPrimaryObject refresh(IntactPrimaryObject object) {
+        return getIntactDao().getEntityManager().find(object.getClass(), object.getAc());
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
@@ -298,7 +298,7 @@ public class EditorObjectService extends AbstractEditorService {
 
         T reloaded = ao;
         // merge current user because detached
-        if (!getIntactDao().getEntityManager().contains(ao) && ao.getAc() != null){
+        if (ao.getAc() != null && !getIntactDao().getEntityManager().contains(ao)){
             reloaded = getIntactDao().getEntityManager().merge(ao);
         }
 
