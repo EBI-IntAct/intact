@@ -50,7 +50,6 @@ import uk.ac.ebi.intact.jami.utils.IntactUtils;
 import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.event.ComponentSystemEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
@@ -342,7 +341,7 @@ public class InteractionController extends AnnotatedObjectController {
         }
     }
 
-    public void experimentChanged(AjaxBehaviorEvent evt) {
+    public void experimentChanged(ValueChangeEvent evt) {
         interaction.setExperiment(experiment);
 
         refreshParentControllers();
@@ -352,7 +351,7 @@ public class InteractionController extends AnnotatedObjectController {
 
     public String newInteraction(IntactPublication publication, IntactExperiment exp) {
         IntactInteractionEvidence interaction = new IntactInteractionEvidence();
-        interaction.setExperiment(exp != null ? exp : new IntactExperiment(publication));
+        interaction.setExperiment(exp);
 
         setInteraction(interaction);
 
@@ -427,7 +426,7 @@ public class InteractionController extends AnnotatedObjectController {
     public Collection<String> collectParentAcsOfCurrentAnnotatedObject(){
         Collection<String> parentAcs = new ArrayList<String>();
 
-        addParentAcsTo(parentAcs, (IntactExperiment)interaction.getExperiment());
+        addParentAcsTo(parentAcs, experiment);
 
         return parentAcs;
     }
@@ -1000,7 +999,7 @@ public class InteractionController extends AnnotatedObjectController {
     }
 
     private boolean isExperimentInitialised(IntactExperiment exp) {
-        return isCvInitialised(exp.getParticipantIdentificationMethod());
+        return exp == null || isCvInitialised(exp.getParticipantIdentificationMethod());
     }
 
     public List<Annotation> collectAnnotations() {
