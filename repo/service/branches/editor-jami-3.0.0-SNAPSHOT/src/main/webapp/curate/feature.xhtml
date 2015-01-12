@@ -146,7 +146,7 @@
                             </p:commandButton>
                         </div>
 
-                        <ui:param name="rangeToDeleteCount" value="#{changesController.getDeletedAcsByClassName('uk.ac.ebi.intact.model.Range', featureController.ac).size()}"/>
+                        <ui:param name="rangeToDeleteCount" value="#{changesController.getDeletedAcsByClassName('uk.ac.ebi.intact.jami.model.extension.ExperimentalRange', featureController.ac).size()}"/>
 
                         <h:panelGroup rendered="#{rangeToDeleteCount gt 0}">
                             <ia:panelMessage level="info">
