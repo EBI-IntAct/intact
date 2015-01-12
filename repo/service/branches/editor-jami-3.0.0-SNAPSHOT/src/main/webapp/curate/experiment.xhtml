@@ -188,12 +188,8 @@
 
             <p:tab id="graphTab" title="Graph" rendered="#{experimentController.interactionDataModel.rowCount gt 0}">
 
-                <p:outputPanel id="graphPanel" autoUpdate="false">
-                    <ui:decorate template="graph_tab.xhtml">
-                        <ui:param name="objType" value="experiment"/>
-                        <ui:param name="ac" value="#{experimentController.ac}"/>
-                    </ui:decorate>
-                </p:outputPanel>
+                <iframe frameborder="0" width="100%" height="1100" scrolling="auto"
+                        src="#{facesContext.externalContext.requestContextPath}/curate/graph_tab.xhtml?ac=#{experimentController.ac}&amp;objType=experiment"/>
 
             </p:tab>
 
