@@ -445,13 +445,8 @@
 
     </p:tab>
     <p:tab id="graphTab" title="Graph" rendered="#{publicationController.interactionDataModel != null and publicationController.interactionDataModel.rowCount gt 0}">
-
-        <p:outputPanel id="graphPanel" autoUpdate="false">
-            <ui:decorate template="graph_tab.xhtml">
-                <ui:param name="objType" value="publication"/>
-                <ui:param name="ac" value="#{publicationController.ac}"/>
-            </ui:decorate>
-        </p:outputPanel>
+        <iframe frameborder="0" width="100%" height="1100" scrolling="auto"
+                src="#{facesContext.externalContext.requestContextPath}/curate/graph_tab.xhtml?ac=#{publicationController.ac}&amp;objType=publication"/>
 
     </p:tab>
 

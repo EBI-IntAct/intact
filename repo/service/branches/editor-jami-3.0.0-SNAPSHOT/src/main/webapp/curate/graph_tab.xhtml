@@ -1,46 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:ot="http://myfaces.apache.org/orchestra">
+<html>
+<head>
+    <title>Interaction viewer Redirect</title>
 
-    <h2>Network visualisation</h2>
+    <script src="http://code.jquery.com/jquery-2.1.3.min.js" type="text/javascript"></script>
+    <script src="../resources/javascript/complexViewer-0.0.1.min.js" type="text/javascript"></script>
 
+</head>
 
-    <h:outputScript library="javascript" name="complexViewer-0.0.1.min.js"/>
+<body>
+<div id="networkContainer">
+    Interaction Graph should show here in a few moments
+    <br/>It can take a few minutes if you try to upload a lot of interactions...
+</div>
+<script type="text/javascript">
+    //<![CDATA[
+    var ac = getQueryVariable("ac");
+    var objType = getQueryVariable("objType")
 
-    <h:panelGroup>
+    function getQueryVariable(variable) {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if (pair[0] == variable) {
+                return pair[1];
+            }
+        }
+        alert('Query Variable ' + variable + ' not found');
+    }
 
-        <div id="networkContainer">
-            Interaction Graph should show here in a few moments
-            <br/>It can take a few minutes if you try to upload a lot of interactions... <h:graphicImage alt="loading..." url="/images/wait_black_indicator.gif" style="vertical-align: baseline;"/>
-        </div>
+    var exportUrl = '#{facesContext.externalContext.requestContextPath}/service/export/mi/'+objType+'?ac='+ac+'&format=json';
 
+    var targetDiv = document.getElementById('networkContainer');
+    var xlv = new xiNET(targetDiv);
 
-    </h:panelGroup>
-    <script type="text/javascript">
-        //<![CDATA[
-        var exportUrl = '#{facesContext.externalContext.requestContextPath}/service/export/mi/#{objType}?ac=#{ac}&amp;format=json';
-
-        var targetDiv = document.getElementById('networkContainer');
-        var xlv = new xiNET(targetDiv);
-
-        // wait for the data to be loaded prior, handy for larger network.
-        var miJson;
-        jQuery.ajax({
-            url: exportUrl,
-            success: function(gotJson) {
-                miJson = gotJson;
-                xlv.readMIJSON(miJson);
-            },
-            error: function() {
-                var element = document.getElementById("networkContainer");
-                $(element).empty();
-                $(element).append("An error occurred while loading the data.");
-            }});
-        //]]>
-    </script>
-
-
-</ui:composition>
+    // wait for the data to be loaded prior, handy for larger network.
+    var miJson;
+    jQuery.ajax({
+        url: exportUrl,
+        success: function(gotJson) {
+            miJson = gotJson;
+            xlv.readMIJSON(miJson, false);
+        },
+        error: function() {
+            var element = document.getElementById("networkContainer");
+            $(element).empty();
+            $(element).append("An error occurred while loading the data.");
+        }});
+    //]]>
+</script>
+</body>
+</html>
