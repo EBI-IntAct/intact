@@ -9,11 +9,6 @@
 
     <!-- Begin UrlMappings -->
 
-    <url-mapping id="login">
-        <pattern value="/login"/>
-        <view-id value="/login.xhtml"/>
-    </url-mapping>
-
     <url-mapping id="error">
         <pattern value="/error/"/>
         <view-id value="/error.xhtml"/>

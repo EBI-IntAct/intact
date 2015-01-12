@@ -165,7 +165,8 @@
                                 <ia:inputSimpleCvObject id="newDeliveryTxtInDialog" cvIdentifier="MI:0346"
                                                         value="#{participantImportController.preparationToAdd}"
                                                         modal="false"
-                                                        selectItems="#{cvObjectService.participantExperimentalPreparationsSelectItems}"/>
+                                                        selectItems="#{cvObjectService.participantExperimentalPreparationsSelectItems}"
+                                        cvClass="uk.ac.ebi.intact.model.CvExperimentalPreparation"/>
                                 <p:commandButton id="btnAddDelivery" value="Add"
                                                  actionListener="#{participantImportController.addExperimentalPreparation}" update=":editorForm:interactionTabs:candidatesDialogContent:deliveryDescription"
                                                  process="newDeliveryTxtInDialog"/>
@@ -191,7 +192,8 @@
                                 <ia:inputSimpleCvObject id="newIdentificationTxtInDialog" cvIdentifier="MI:0002"
                                                         value="#{participantImportController.identificationToAdd}"
                                                         modal="false"
-                                                        selectItems="#{cvObjectService.participantDetectionMethodSelectItems}"/>
+                                                        selectItems="#{cvObjectService.participantDetectionMethodSelectItems}"
+                                        cvClass="uk.ac.ebi.intact.model.CvIdentification"/>
                                 <p:commandButton id="btnAddIdentification" value="Add"
                                                  actionListener="#{participantImportController.addIdentificationMethod}" update=":editorForm:interactionTabs:candidatesDialogContent:identificationDescription"
                                                  process="newIdentificationTxtInDialog"/>
