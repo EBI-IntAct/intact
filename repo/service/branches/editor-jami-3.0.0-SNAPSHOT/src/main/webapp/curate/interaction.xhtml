@@ -234,7 +234,7 @@
     <p:tab id="graphTab" title="Graph" rendered="#{interactionController.participantsSize gt 0}">
 
         <iframe frameborder="0" width="100%" height="1100" scrolling="auto"
-                src="#{facesContext.externalContext.requestContextPath}/curate/graph_tab.xhtml?ac=#{interactionController.ac}&amp;objType=interaction"/>
+                src="#{facesContext.externalContext.requestContextPath}/curate/graph_tab.xhtml?ac=#{publicationController.ac}&amp;objType=interaction"/>
 
     </p:tab>
 

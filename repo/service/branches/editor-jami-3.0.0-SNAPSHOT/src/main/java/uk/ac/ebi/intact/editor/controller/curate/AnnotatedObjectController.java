@@ -455,10 +455,10 @@ public abstract class AnnotatedObjectController extends BaseController implement
             }
 
             if (!isNew) {
-                getEditorService().refresh(annotatedObject);
+                IntactPrimaryObject refreshed = getEditorService().refresh(annotatedObject);
+                initialiseDefaultProperties(refreshed);
+                return refreshed;
             }
-
-            initialiseDefaultProperties(annotatedObject);
         }
 
         return annotatedObject;
