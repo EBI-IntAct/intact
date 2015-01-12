@@ -1255,7 +1255,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
      * @param exp
      */
     public void addPublicationAcToParentAcs(Collection<String> parentAcs, Experiment exp) {
-        if (exp.getPublication() instanceof IntactPublication) {
+        if (exp != null && exp.getPublication() instanceof IntactPublication) {
             IntactPublication pub = (IntactPublication)exp.getPublication();
 
             if (pub.getAc() != null) {
@@ -1271,7 +1271,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
      * @param exp
      */
     public void addParentAcsTo(Collection<String> parentAcs, IntactExperiment exp) {
-        if (exp.getAc() != null) {
+        if (exp != null && exp.getAc() != null) {
             parentAcs.add(exp.getAc());
         }
 

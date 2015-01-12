@@ -151,10 +151,9 @@
                 <h:selectOneMenu id="experimentLists"
                                  value="#{interactionController.experiment}"
                                  required="true" requiredMessage="You must set an experiment"
-                        converter="experimentConverter">
-                    <p:ajax event="change" update=":editorForm" rendered="#{interactionController.experiment != null}"
-                            listener="#{interactionController.experimentChanged}" async="true"/>
+                        valueChangeListener="#{interactionController.experimentChanged}">
                     <f:selectItems value="#{interactionController.experimentSelectItems}"/>
+                    <ed:curation/>
                 </h:selectOneMenu>
             </td>
         </tr>
