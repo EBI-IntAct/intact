@@ -850,6 +850,9 @@ public class ExperimentController extends AnnotatedObjectController {
     }
 
     public List<VariableParameter> collectVariableParameters() {
+        if (experiment == null){
+            return Collections.EMPTY_LIST;
+        }
         // params are not always initialised
         if (!experiment.areVariableParametersInitialized()){
             setExperiment(getExperimentService().initialiseExperimentVariableParameters(this.experiment));
