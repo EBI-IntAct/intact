@@ -11,7 +11,7 @@
 
     <h:panelGroup id="participantsTableGroup">
 
-        <ui:param name="toDeleteCount" value="#{changesController.getDeletedAcsByClassName('uk.ac.ebi.intact.jami.model.extension.IntactParticipantEvidence', interactionController.ac).size()}"/>
+        <ui:param name="toDeleteCount" value="#{changesController.getDeletedAcsByClassName('uk.ac.ebi.intact.model.Component', interactionController.ac).size()}"/>
 
         <h:panelGroup rendered="#{toDeleteCount gt 0}">
             <ia:panelMessage level="info">
@@ -26,7 +26,7 @@
                      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                      rowsPerPageTemplate="10,20,50,100"
                      rows="10" paginatorAlwaysVisible="false" paginator="true" paginatorPosition="both"
-                     rowStyleClass="#{wrapper.participant.ac == null? 'intact-new' : wrapper.deleted? 'intact-deleted' : null}"
+                     rowStyleClass="#{wrapper.participant.ac == null? 'intact-new' : changesController.isDeletedAc(wrapper.participant.ac)? 'intact-deleted' : null}"
                      widgetVar="participantsTableWidget"
                 >
 
