@@ -11,7 +11,7 @@
 
     <h:panelGroup id="participantsTableGroup">
 
-        <ui:param name="toDeleteCount" value="#{changesController.getDeletedAcsByClassName('uk.ac.ebi.intact.model.Component', interactionController.ac).size()}"/>
+        <ui:param name="toDeleteCount" value="#{changesController.getDeletedAcsByClassName('uk.ac.ebi.intact.jami.model.extension.IntactParticipantEvidence', interactionController.ac).size()}"/>
 
         <h:panelGroup rendered="#{toDeleteCount gt 0}">
             <ia:panelMessage level="info">

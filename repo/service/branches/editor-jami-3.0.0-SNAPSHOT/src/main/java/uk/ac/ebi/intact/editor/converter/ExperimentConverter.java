@@ -36,7 +36,7 @@ public class ExperimentConverter implements Converter {
     public Object getAsObject( FacesContext facesContext, UIComponent uiComponent, String ac ) throws ConverterException {
         if ( ac == null ) return null;
 
-        ExperimentEditorService service = ApplicationContextProvider.getBean("experimentService");
+        ExperimentEditorService service = ApplicationContextProvider.getBean("experimentEditorService");
         return service.loadExperimentByAc(ac);
     }
 

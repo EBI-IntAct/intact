@@ -10,7 +10,7 @@
 
     <h:panelGroup id="featuresGroup">
 
-        <ui:param name="featuresToDeleteCount" value="#{changesController.getDeletedAcsByClassName('uk.ac.ebi.intact.model.Feature', participantController.ac).size()}"/>
+        <ui:param name="featuresToDeleteCount" value="#{changesController.getDeletedAcsByClassName('uk.ac.ebi.intact.jami.model.extension.IntactFeatureEvidence', participantController.ac).size()}"/>
 
         <h:panelGroup rendered="#{featuresToDeleteCount gt 0}">
             <ia:panelMessage level="info">

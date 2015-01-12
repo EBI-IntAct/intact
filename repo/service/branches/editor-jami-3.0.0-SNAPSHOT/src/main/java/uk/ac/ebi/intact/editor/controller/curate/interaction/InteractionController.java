@@ -243,8 +243,8 @@ public class InteractionController extends AnnotatedObjectController {
             // publication does have experiments so we can propose them
             if (!experiments.isEmpty()){
                 for ( ExperimentSummary e : experiments ) {
-                    String description = completeExperimentLabel((IntactExperiment)e.getExperiment());
-                    experimentSelectItems.add(new SelectItem(e, description, publicationController.getTitle()));
+                    String description = completeExperimentLabel(e.getExperiment());
+                    experimentSelectItems.add(new SelectItem(e.getExperiment(), description, publicationController.getTitle()));
                 }
             }
         }
