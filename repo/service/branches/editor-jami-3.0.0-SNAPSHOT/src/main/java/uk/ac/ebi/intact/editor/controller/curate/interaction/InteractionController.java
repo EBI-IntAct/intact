@@ -233,9 +233,7 @@ public class InteractionController extends AnnotatedObjectController {
 
         experimentSelectItems.add(selectItem);
 
-        if (interaction.getExperiment() != null) {
-            experiment = (IntactExperiment)interaction.getExperiment();
-        }
+        experiment = (IntactExperiment)interaction.getExperiment();
 
         if (publicationController.getPublication() != null) {
             List<ExperimentSummary> experiments = publicationController.collectExperiments();
