@@ -998,4 +998,11 @@ public class ExperimentController extends AnnotatedObjectController {
     public void setNewValue(String newValue) {
         this.newValue = newValue;
     }
+
+    public void markExperimentToDelete(IntactExperiment exp){
+        Collection<String> parentAcs = new ArrayList<String>(1);
+        addPublicationAcToParentAcs(parentAcs, exp);
+        getChangesController().markToDelete(exp, (IntactPublication)exp.getPublication(),
+                getDbSynchronizer(), exp.getShortLabel(), parentAcs);
+    }
 }

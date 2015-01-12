@@ -37,6 +37,7 @@ import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentController
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
 import uk.ac.ebi.intact.editor.controller.curate.util.ParticipantWrapperExperimentalRoleComparator;
 import uk.ac.ebi.intact.editor.services.curate.interaction.InteractionEditorService;
+import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
 import uk.ac.ebi.intact.editor.services.summary.ExperimentSummary;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
@@ -114,7 +115,12 @@ public class InteractionController extends AnnotatedObjectController {
     private Integer newParameterExponent;
     private Double newParameterUncertainty;
 
+    private String experimentAc;
+
     private List<ImportExperimentalCondition> conditionsToImport;
+
+    @Resource(name = "bioSourceService")
+    private transient BioSourceService bioSourceService;
 
     public InteractionController() {
     }
@@ -196,6 +202,10 @@ public class InteractionController extends AnnotatedObjectController {
     protected void generalLoadChecks() {
         super.generalLoadChecks();
         generalPublicationLoadChecks();
+
+        if (!getBioSourceService().isInitialised()){
+            getBioSourceService().loadData();
+        }
     }
 
     private void refreshParentControllers() {
@@ -233,6 +243,9 @@ public class InteractionController extends AnnotatedObjectController {
         experimentSelectItems.add(selectItem);
 
         experiment = (IntactExperiment)interaction.getExperiment();
+        if (experiment != null){
+           experimentAc = experiment.getAc();
+        }
 
         if (publicationController.getPublication() != null) {
             List<ExperimentSummary> experiments = publicationController.collectExperiments();
@@ -241,7 +254,7 @@ public class InteractionController extends AnnotatedObjectController {
             if (!experiments.isEmpty()){
                 for ( ExperimentSummary e : experiments ) {
                     String description = completeExperimentLabel(e.getExperiment());
-                    experimentSelectItems.add(new SelectItem(e.getExperiment(), description, publicationController.getTitle()));
+                    experimentSelectItems.add(new SelectItem(e.getAc(), description, publicationController.getTitle()));
                 }
             }
         }
@@ -341,7 +354,16 @@ public class InteractionController extends AnnotatedObjectController {
         }
     }
 
-    public void experimentChanged(ValueChangeEvent evt) {
+    public void experimentChanged() {
+        // collect experiment
+        List<ExperimentSummary> experiments = publicationController.collectExperiments();
+        for (ExperimentSummary summary : experiments){
+             if (experimentAc.equals(summary.getAc())){
+                 experiment = summary.getExperiment();
+                 break;
+             }
+        }
+
         interaction.setExperiment(experiment);
 
         refreshParentControllers();
@@ -455,13 +477,13 @@ public class InteractionController extends AnnotatedObjectController {
         IntactInteractionEvidence newInteraction = null;
 
         if (experimentToCopyTo != null && !experimentToCopyTo.isEmpty()) {
-            Experiment experiment = getInteractionEditorService().loadExperimentByAcOrLabel(experimentToCopyTo);
+            IntactExperiment experiment = getInteractionEditorService().loadExperimentByAcOrLabel(experimentToCopyTo);
 
             if (experiment == null) {
                 addErrorMessage("Cannot copy", "No experiment found with this AC or short label: "+experimentToCopyTo);
                 return null;
             }
-
+            experimentAc = experiment.getAc();
             newInteraction = cloneAnnotatedObject(interaction, new InteractionEvidenceCloner());
             newInteraction.setExperiment(experiment);
         } else {
@@ -478,13 +500,13 @@ public class InteractionController extends AnnotatedObjectController {
 
     public String moveToExperiment() {
         if (experimentToMoveTo != null && !experimentToMoveTo.isEmpty()) {
-            Experiment experiment = getInteractionEditorService().loadExperimentByAcOrLabel(experimentToCopyTo);
+            IntactExperiment experiment = getInteractionEditorService().loadExperimentByAcOrLabel(experimentToCopyTo);
 
             if (experiment == null) {
                 addErrorMessage("Cannot move", "No experiment found with this AC or short label: "+experimentToMoveTo);
                 return null;
             }
-
+            experimentAc = experiment.getAc();
             // set experiment
             interaction.setExperiment(experiment);
 
@@ -700,14 +722,6 @@ public class InteractionController extends AnnotatedObjectController {
 
     public IntactInteractionEvidence getInteraction() {
         return interaction;
-    }
-
-    public IntactExperiment getExperiment() {
-        return experiment;
-    }
-
-    public void setExperiment(IntactExperiment experiment) {
-        this.experiment = experiment;
     }
 
     public void setInteraction( IntactInteractionEvidence interaction ) {
@@ -948,6 +962,7 @@ public class InteractionController extends AnnotatedObjectController {
             this.interaction = getInteractionEditorService().reloadFullyInitialisedInteraction(interaction);
         }
 
+        refreshParentControllers();
         refreshExperimentLists();
         refreshParticipants();
     }
@@ -1243,5 +1258,31 @@ public class InteractionController extends AnnotatedObjectController {
 
     public void setNewParameterUncertainty(Double newParameterUncertainty) {
         this.newParameterUncertainty = newParameterUncertainty;
+    }
+
+    public String getExperimentAc() {
+        return experimentAc;
+    }
+
+    public void setExperimentAc(String experimentAc) {
+        this.experimentAc = experimentAc;
+    }
+
+    public BioSourceService getBioSourceService() {
+        if (this.bioSourceService == null){
+            this.bioSourceService = ApplicationContextProvider.getBean("bioSourceService");
+        }
+        return bioSourceService;
+    }
+
+    public void setBioSourceService(BioSourceService bioSourceService) {
+        this.bioSourceService = bioSourceService;
+    }
+
+    public void markInteractionToDelete(IntactInteractionEvidence inter){
+        Collection<String> parentAcs = new ArrayList<String>(1);
+        addParentAcsTo(parentAcs, (IntactExperiment)inter.getExperiment());
+        getChangesController().markToDelete(inter, (IntactExperiment)inter.getExperiment(),
+                getDbSynchronizer(), inter.getShortName(), parentAcs);
     }
 }

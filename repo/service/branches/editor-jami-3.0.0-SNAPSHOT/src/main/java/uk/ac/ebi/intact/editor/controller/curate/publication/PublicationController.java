@@ -150,7 +150,7 @@ public class PublicationController extends AnnotatedObjectController {
     private String toBeReviewed = null;
     private String imexId=null;
 
-    private List<ExperimentSummary> experiments;
+    private List<ExperimentSummary> experiments = Collections.EMPTY_LIST;
 
     private  List<SelectItem> datasetsSelectItems;
 
