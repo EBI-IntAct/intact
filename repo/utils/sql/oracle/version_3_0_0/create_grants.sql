@@ -2,6 +2,8 @@
 -- Update right on created objects --
 -------------------------------------
 
+grant select on DEFAULT_ID_SEQ to INTACT_CURATOR;
+
 PROMPT Creating table "Updating rights on ia_exp_causal_relations"
 grant select on ia_exp_causal_relations to INTACT_SELECT;
 grant select, insert,update,delete on ia_exp_causal_relations to INTACT_CURATOR;
