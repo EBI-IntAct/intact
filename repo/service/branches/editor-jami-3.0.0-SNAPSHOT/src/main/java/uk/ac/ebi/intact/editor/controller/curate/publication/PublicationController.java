@@ -1603,8 +1603,17 @@ public class PublicationController extends AnnotatedObjectController {
                     parentAcs.add(publication.getAc());
                 }
                 for (Experiment experiment : experiments) {
-                    experiment.getXrefs().add(new ExperimentXref(IntactUtils.createMIDatabase(Xref.PUBMED, Xref.PUBMED_MI), publication.getPubmedId(),
-                            IntactUtils.createMIQualifier(Xref.PRIMARY, Xref.PRIMARY_MI)));
+                    Collection<Xref> primaryRefs = XrefUtils.collectAllXrefsHavingDatabaseAndQualifier(experiment.getXrefs(), Xref.PUBMED_MI,
+                            Xref.PUBMED, Xref.PRIMARY_MI, Xref.PRIMARY);
+                    Xref existingPrimary = primaryRefs.isEmpty() ? null : primaryRefs.iterator().next();
+                    if (existingPrimary instanceof AbstractIntactXref){
+                        ((AbstractIntactXref)existingPrimary).setId(publication.getPubmedId());
+                    }
+                    else{
+                        experiment.getXrefs().removeAll(primaryRefs);
+                        experiment.getXrefs().add(new ExperimentXref(IntactUtils.createMIDatabase(Xref.PUBMED, Xref.PUBMED_MI), publication.getPubmedId(),
+                                IntactUtils.createMIQualifier(Xref.PRIMARY, Xref.PRIMARY_MI)));
+                    }
                     getChangesController().markAsUnsaved((IntactExperiment) experiment, getEditorService().getIntactDao().getSynchronizerContext().getExperimentSynchronizer(),
                             "Experiment: " + ((IntactExperiment) experiment).getShortLabel(), parentAcs);
                 }
