@@ -12,7 +12,7 @@
             <h:panelGrid id="newParamTxt" columns="13" class="intact-buttonBar">
                 <h:outputLabel value="Type: " for="paramType1Sel"/>
                 <h:selectOneMenu id="paramType1Sel" value="#{annotatedObjectController.newParameterType}" disabled="#{disableParameterSelectItems}"
-                                 >
+                                 converter="cvObjectConverter">
                     <f:selectItems value="#{cvObjectService.parameterTypeSelectItems}"/>
                 </h:selectOneMenu>
                 <h:outputLabel value="Value: " for="paramFactor1Txt"/>
@@ -20,7 +20,8 @@
                     <f:convertNumber/>
                 </p:inputText>
                 <h:outputLabel value="Unit: " for="paramUnit1Sel"/>
-                <h:selectOneMenu id="paramUnit1Sel" value="#{annotatedObjectController.newParameterUnit}" disabled="#{disableParameterSelectItems}">
+                <h:selectOneMenu id="paramUnit1Sel" value="#{annotatedObjectController.newParameterUnit}" disabled="#{disableParameterSelectItems}"
+                                 converter="cvObjectConverter">
                     <f:selectItems value="#{cvObjectService.parameterUnitSelectItems}"/>
                 </h:selectOneMenu>
                 <h:outputLabel value="Base: " for="paramBase1Txt"/>
@@ -51,7 +52,7 @@
                     <f:selectItems value="#{cvObjectService.parameterTypeSelectItems}"/>
                     <p:ajax event="change" process="@this" oncomplete="markAsUnsaved()" update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"/>
                 </h:selectOneMenu>
-                <h:outputText value="#{parameter.type.shortName}" rendered="#{parameterTypeSelectItems == null}"/>
+                <h:outputText value="#{parameter.type.shortName}" rendered="#{cvObjectService.parameterTypeSelectItems == null}"/>
             </p:column>
            <p:column>
                 <f:facet name="header">
@@ -70,7 +71,7 @@
                     <f:selectItems value="#{cvObjectService.parameterUnitSelectItems}"/>
                     <ed:curation/>
                 </h:selectOneMenu>
-                <h:outputText value="#{parameter.unit.shortName}" rendered="#{parameterUnitSelectItems == null}"/>
+                <h:outputText value="#{parameter.unit.shortName}" rendered="#{cvObjectService.parameterUnitSelectItems == null}"/>
             </p:column>
             <p:column>
                 <f:facet name="header">
