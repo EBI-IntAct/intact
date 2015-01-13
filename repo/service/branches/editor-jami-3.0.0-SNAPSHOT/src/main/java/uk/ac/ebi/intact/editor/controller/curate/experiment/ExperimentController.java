@@ -620,6 +620,9 @@ public class ExperimentController extends AnnotatedObjectController {
 
     public String moveToPublication() {
         if (publicationToMoveTo != null && !publicationToMoveTo.isEmpty()) {
+            if (!experiment.areXrefsInitialized()){
+                experiment = getExperimentService().initialiseExperimentXrefs(experiment);
+            }
             IntactPublication publication = getExperimentService().loadPublicationByAcOrPubmedId(publicationToMoveTo);
 
             if (publication == null) {
@@ -633,13 +636,23 @@ public class ExperimentController extends AnnotatedObjectController {
             // don't remove the experiment from the parent publication yet so the revert will work properly. It will be added only after saving
             // As an experiment can have only one publication, it will be removed from the previous publication
             experiment.setPublication(publication);
+            experiment.setShortLabel(IntactUtils.generateAutomaticExperimentShortlabelFor(experiment, IntactUtils.MAX_SHORT_LABEL_LEN));
+            IntactUtils.synchronizeExperimentShortLabel(experiment, getEditorService().getIntactDao().getEntityManager(), Collections.EMPTY_SET);
 
             // update the primary reference when moving the experiment
             if (publication.getPubmedId() != null) {
-                updateXref(Xref.PUBMED_MI, Xref.PUBMED, publication.getPubmedId(), Xref.PRIMARY_MI, Xref.PRIMARY, experiment.getXrefs());
+                updateXref(Xref.PUBMED, Xref.PUBMED_MI, publication.getPubmedId(), Xref.PRIMARY, Xref.PRIMARY_MI, experiment.getXrefs());
             }
             else{
-                removeXref(Xref.PUBMED_MI, Xref.PUBMED, Xref.PRIMARY_MI, Xref.PRIMARY, experiment.getXrefs());
+                removeXref(Xref.PUBMED, Xref.PUBMED_MI, Xref.PRIMARY, Xref.PRIMARY_MI, experiment.getXrefs());
+            }
+
+            // update the imex reference when moving the experiment
+            if (publication.getImexId() != null) {
+                updateXref(Xref.IMEX, Xref.IMEX_MI,  publication.getImexId(), Xref.IMEX_PRIMARY, Xref.IMEX_PRIMARY_MI, experiment.getXrefs());
+            }
+            else{
+                removeXref(Xref.IMEX, Xref.IMEX_MI, Xref.IMEX, Xref.IMEX_PRIMARY_MI, experiment.getXrefs());
             }
 
             setExperiment(experiment);
@@ -658,7 +671,7 @@ public class ExperimentController extends AnnotatedObjectController {
             return null;
         }
 
-        loadData(null);
+        refreshParentControllers();
         setUnsavedChanges(true);
 
         addInfoMessage("Moved experiment", "To publication: "+publicationToMoveTo);
