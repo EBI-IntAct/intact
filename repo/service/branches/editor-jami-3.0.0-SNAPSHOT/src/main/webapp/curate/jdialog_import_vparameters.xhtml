@@ -8,13 +8,13 @@
 
     <p:dialog id="vipDialog" widgetVar="importVariableParametersDialog" header="Import Experimental Conditions" modal="true"
               position="center"
-              width="500">
+              width="900">
 
         <ia:panelDialogLayout id="vipDialogPanel">
             <f:facet name="buttonBar">
                 <p:commandButton id="newvParamBtn" value="Import experimental conditions from experiment"
                                  actionListener="#{interactionController.importExperimentalConditions}"
-                                 update="vparametersTable #{update}"
+                                 update="expConditionsTable #{update}"
                                  onstart="importing_load.show()"
                                  onerror="alert('Error Importing experimental confidtions from experiment')"
                                  oncomplete="importing_load.hide()"/>
@@ -23,14 +23,14 @@
 
             <h:panelGrid columns="2">
                 <p>
-                    Import set of experimental conditions for which this interaction has been observed :<br/>
+                    Import set of experimental conditions :<br/>
                 </p>
 
                 <p:dataTable id="expConditionsTable" var="condition" paginatorAlwaysVisible="false"
-                             value="#{interactionController.ConditionsToImport}" paginator="true"  rows="10">
+                             value="#{interactionController.conditionsToImport}" paginator="true"  rows="10">
                     <p:column>
                         <f:facet name="header"><h:outputText value="Parameter description"/></f:facet>
-                        <h:selectBooleanCheckbox value="#{condition.description}"/>
+                        <h:outputText value="#{condition.description}"/>
                     </p:column>
                     <p:column>
                         <f:facet name="header"><h:outputText value="Parameter unit"/></f:facet>

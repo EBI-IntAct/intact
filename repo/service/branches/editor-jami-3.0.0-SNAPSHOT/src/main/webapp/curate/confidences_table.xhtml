@@ -29,7 +29,7 @@
             <f:facet name="header">
                 <h:outputText value="Type"/>
             </f:facet>
-            <h:selectOneMenu id="confidenceTypeSel" value="#{confidence.cvConfidenceType}" rendered="#{cvObjectService.confidenceTypeSelectItems != null}"
+            <h:selectOneMenu id="confidenceTypeSel" value="#{confidence.type}" rendered="#{cvObjectService.confidenceTypeSelectItems != null}"
                              required="true" requiredMessage="Parameter type is required" disabled="#{disableConfidenceSelectItems}"
                              converter="cvObjectConverter">
                 <f:selectItems value="#{cvObjectService.confidenceTypeSelectItems}"/>
