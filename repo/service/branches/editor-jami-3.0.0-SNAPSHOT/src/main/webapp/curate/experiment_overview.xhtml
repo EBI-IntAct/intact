@@ -19,8 +19,6 @@
         <f:viewParam id="expViewContAc" name="ac" value="#{experimentDetailedViewController.ac}"/>
     </f:metadata>
     <f:event type="preRenderView" listener="#{experimentDetailedViewController.loadData}"/>
-    <f:event type="preRenderView"
-             listener="#{curateController.setCurrentAnnotatedObjectController(experimentDetailedViewController)}"/>
 </ui:define>
 
 
