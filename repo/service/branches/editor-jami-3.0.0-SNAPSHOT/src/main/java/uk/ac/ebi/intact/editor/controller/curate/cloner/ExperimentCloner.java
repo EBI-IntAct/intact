@@ -23,6 +23,8 @@ import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.model.lifecycle.Releasable;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
+import java.util.Collections;
+
 /**
  * Editor specific cloning routine for experiment.
  *
@@ -45,6 +47,8 @@ public class ExperimentCloner extends AbstractEditorCloner<Experiment, IntactExp
         initAuditProperties(clone, dao);
 
         clone.setShortLabel(IntactUtils.generateAutomaticExperimentShortlabelFor(clone, IntactUtils.MAX_SHORT_LABEL_LEN));
+        // synchronize with db
+        IntactUtils.synchronizeExperimentShortLabel(clone, dao.getEntityManager(), Collections.EMPTY_SET);
         clone.setHostOrganism(experiment.getHostOrganism());
         clone.setInteractionDetectionMethod(experiment.getInteractionDetectionMethod());
         clone.setPublication(experiment.getPublication());

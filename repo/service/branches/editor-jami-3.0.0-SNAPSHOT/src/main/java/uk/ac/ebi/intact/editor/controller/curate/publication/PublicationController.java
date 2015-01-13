@@ -1573,7 +1573,14 @@ public class PublicationController extends AnnotatedObjectController {
     public void copyAnnotationsToExperiments(ActionEvent evt) {
         for (Experiment exp : publication.getExperiments()) {
             for (Annotation annot : publication.getDbAnnotations()){
-                exp.getAnnotations().add(new ExperimentAnnotation(annot.getTopic(), annot.getValue()));
+                Annotation existingAnnot = AnnotationUtils.collectFirstAnnotationWithTopic(exp.getAnnotations(),
+                        annot.getTopic().getMIIdentifier(), annot.getTopic().getShortName());
+                if (existingAnnot != null){
+                    existingAnnot.setValue(annot.getValue());
+                }
+                else{
+                    exp.getAnnotations().add(new ExperimentAnnotation(annot.getTopic(), annot.getValue()));
+                }
             }
             Collection<String> parent = new ArrayList<String>();
             if (publication.getAc() != null) {
