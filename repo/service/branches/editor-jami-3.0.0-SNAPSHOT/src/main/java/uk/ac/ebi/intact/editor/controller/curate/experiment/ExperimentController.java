@@ -601,9 +601,14 @@ public class ExperimentController extends AnnotatedObjectController {
     }
 
     public void copyPublicationAnnotations(ActionEvent evt) {
-        if (experiment.getPublication() != null){
-            for (Annotation annot : experiment.getPublication().getAnnotations()){
-                if (!experiment.getAnnotations().contains(annot)){
+        if (experiment.getPublication() instanceof IntactPublication){
+            for (Annotation annot : ((IntactPublication)experiment.getPublication()).getDbAnnotations()){
+                Annotation existingAnnot = AnnotationUtils.collectFirstAnnotationWithTopic(experiment.getAnnotations(),
+                        annot.getTopic().getMIIdentifier(), annot.getTopic().getShortName());
+                if (existingAnnot != null){
+                    existingAnnot.setValue(annot.getValue());
+                }
+                else{
                     experiment.getAnnotations().add(new ExperimentAnnotation(annot.getTopic(), annot.getValue()));
                 }
             }
@@ -646,6 +651,8 @@ public class ExperimentController extends AnnotatedObjectController {
             if (newShortLabel != null){
                 experiment.setShortLabel(newShortLabel);
             }
+            // synchronize with db
+            IntactUtils.synchronizeExperimentShortLabel(experiment, getEditorService().getIntactDao().getEntityManager(), Collections.EMPTY_SET);
 
         } else {
             return null;

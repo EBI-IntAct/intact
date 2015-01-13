@@ -19,6 +19,9 @@ import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.model.extension.*;
+import uk.ac.ebi.intact.jami.utils.IntactUtils;
+
+import java.util.Collections;
 
 /**
  * Editor specific cloning routine for complex participants.
@@ -33,6 +36,8 @@ public class InteractionEvidenceCloner extends AbstractEditorCloner<InteractionE
 
     public IntactInteractionEvidence clone(InteractionEvidence evidence, IntactDao dao) {
         IntactInteractionEvidence clone = new IntactInteractionEvidence(evidence.getShortName());
+        // synchronize with db
+        IntactUtils.synchronizeInteractionEvidenceShortName(clone, dao.getEntityManager(), Collections.EMPTY_SET);
 
         initAuditProperties(clone, dao);
 
