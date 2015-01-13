@@ -626,10 +626,12 @@ public class CvObjectService extends AbstractEditorService {
             }
         }
         for ( OntologyTerm child : cv.getChildren() ) {
-            // load laxzy collections collections needed
-            Hibernate.initialize(((IntactCvTerm)child).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)child).getDbXrefs());
-            buildTreeNode( (IntactCvTerm)child, childNode );
+            if (child instanceof IntactCvTerm && cv.getObjClass().equals(((IntactCvTerm)child).getObjClass())){
+                // load laxzy collections collections needed
+                Hibernate.initialize(((IntactCvTerm)child).getDbAnnotations());
+                Hibernate.initialize(((IntactCvTerm)child).getDbXrefs());
+                buildTreeNode( (IntactCvTerm)child, childNode );
+            }
         }
 
         return childNode;

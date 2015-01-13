@@ -89,13 +89,14 @@ public class UnsavedChange implements Serializable{
 
         UnsavedChange that = (UnsavedChange) o;
 
+        if (unsavedObject == that.unsavedObject){
+            return true;
+        }
+
         if (action != null ? !action.equals(that.action) : that.action != null) return false;
         if (unsavedObject != null && unsavedObject.getAc() != null && that.unsavedObject != null && that.unsavedObject.getAc() != null) {
             return unsavedObject.getAc().equals(that.unsavedObject.getAc());
         }
-
-        if (unsavedObject != null ? System.identityHashCode(unsavedObject) != System.identityHashCode(that.unsavedObject) : that.unsavedObject != null)
-            return false;
 
         return true;
     }
