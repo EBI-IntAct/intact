@@ -180,7 +180,7 @@ public class PublicationController extends AnnotatedObjectController {
             this.journal = this.publication.getJournal();
             this.identifier = this.publication.getPubmedId();
             this.curationDepth = this.publication.getCurationDepth().toString();
-            this.authors = StringUtils.join(this.publication.getAuthors(), ", ");
+            this.authors = !this.publication.getAuthors().isEmpty() ? StringUtils.join(this.publication.getAuthors(), ", ") : null;
             Annotation contactEmail = AnnotationUtils.collectFirstAnnotationWithTopic(this.publication.getAnnotations(), Annotation.CONTACT_EMAIL_MI,
                     Annotation.CONTACT_EMAIL);
             setContactEmail(contactEmail != null ? contactEmail.getValue() : null);
@@ -1138,7 +1138,6 @@ public class PublicationController extends AnnotatedObjectController {
     }
 
     public void onAuthorsChanged(ValueChangeEvent evt) {
-        setUnsavedChanges(true);
         String newValue = (String) evt.getNewValue();
         if (newValue != null && newValue.length() > 0){
             publication.getAuthors().clear();
@@ -1149,10 +1148,12 @@ public class PublicationController extends AnnotatedObjectController {
                 publication.getAuthors().add(newValue);
             }
             this.authors = newValue;
+            setUnsavedChanges(true);
         }
         else{
             this.authors = null;
             this.publication.getAuthors().clear();
+            setUnsavedChanges(true);
         }
     }
 
