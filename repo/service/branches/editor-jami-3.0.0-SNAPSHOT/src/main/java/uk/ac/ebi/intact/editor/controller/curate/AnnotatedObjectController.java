@@ -423,26 +423,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
     }
 
     protected void postProcessDeletedEvent(UnsavedChange unsaved){
-        if (unsaved.getParentObject() instanceof Publication){
-            Publication pub = (Publication)unsaved.getParentObject();
-            pub.getExperiments().remove(unsaved.getUnsavedObject());
-        }
-        else if (unsaved.getParentObject() instanceof Experiment){
-            Experiment pub = (Experiment)unsaved.getParentObject();
-            pub.getInteractionEvidences().remove(unsaved.getUnsavedObject());
-        }
-        else if (unsaved.getParentObject() instanceof Interaction){
-            Interaction pub = (Interaction)unsaved.getParentObject();
-            pub.getParticipants().remove(unsaved.getUnsavedObject());
-        }
-        else if (unsaved.getParentObject() instanceof Participant){
-            Participant pub = (Participant)unsaved.getParentObject();
-            pub.getFeatures().remove(unsaved.getUnsavedObject());
-        }
-        else if (unsaved.getParentObject() instanceof Feature){
-            Feature pub = (Feature)unsaved.getParentObject();
-            pub.getRanges().remove(unsaved.getUnsavedObject());
-        }
+        //nothing to do
     }
 
     private IntactPrimaryObject refresh(IntactPrimaryObject annotatedObject) {

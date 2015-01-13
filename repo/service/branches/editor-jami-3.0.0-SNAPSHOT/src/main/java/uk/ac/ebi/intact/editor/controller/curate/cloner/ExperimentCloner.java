@@ -76,10 +76,10 @@ public class ExperimentCloner extends AbstractEditorCloner<Experiment, IntactExp
 
         for (VariableParameter param : experiment.getVariableParameters()){
 
-            VariableParameter paramClone = new IntactVariableParameter(param.getDescription(), experiment, param.getUnit());
-            experiment.getVariableParameters().add(paramClone);
+            VariableParameter paramClone = new IntactVariableParameter(param.getDescription(), clone, param.getUnit());
+            clone.getVariableParameters().add(paramClone);
             for (VariableParameterValue value : param.getVariableValues()){
-                VariableParameterValue cloneValue = new IntactVariableParameterValue(value.getValue(), value.getVariableParameter(), value.getOrder());
+                VariableParameterValue cloneValue = new IntactVariableParameterValue(value.getValue(), paramClone, value.getOrder());
                 paramClone.getVariableValues().add(cloneValue);
             }
         }
