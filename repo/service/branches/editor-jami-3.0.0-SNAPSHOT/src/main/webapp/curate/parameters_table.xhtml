@@ -48,7 +48,7 @@
                     <h:outputText value="Type"/>
                 </f:facet>
                 <h:selectOneMenu id="paramTypeSel" value="#{parameter.type}" rendered="#{cvObjectService.parameterTypeSelectItems != null}" disabled="#{disableParameterSelectItems}"
-                                 required="true" requiredMessage="Parameter type is required">
+                                 required="true" requiredMessage="Parameter type is required" converter="cvObjectConverter">
                     <f:selectItems value="#{cvObjectService.parameterTypeSelectItems}"/>
                     <p:ajax event="change" process="@this" oncomplete="markAsUnsaved()" update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"/>
                 </h:selectOneMenu>
@@ -67,7 +67,8 @@
                 <f:facet name="header">
                     <h:outputText value="Unit"/>
                 </f:facet>
-                <h:selectOneMenu id="paramUnitSel" value="#{parameter.unit}" rendered="#{cvObjectService.parameterUnitSelectItems != null}" disabled="#{disableParameterSelectItems}">
+                <h:selectOneMenu id="paramUnitSel" value="#{parameter.unit}" rendered="#{cvObjectService.parameterUnitSelectItems != null}" disabled="#{disableParameterSelectItems}"
+                                 converter="cvObjectConverter">
                     <f:selectItems value="#{cvObjectService.parameterUnitSelectItems}"/>
                     <ed:curation/>
                 </h:selectOneMenu>
