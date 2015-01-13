@@ -48,7 +48,7 @@ public class ExperimentDetailedViewService extends AbstractEditorService {
     public ExperimentWrapper loadExperimentWrapper( IntactExperiment experiment ) {
         IntactExperiment reloaded = reattachIntactObjectIfTransient(experiment, getIntactDao().getExperimentDao());
 
-        ExperimentWrapper experimentWrapper = new ExperimentWrapper(experiment);
+        ExperimentWrapper experimentWrapper = new ExperimentWrapper(reloaded);
 
         getIntactDao().getEntityManager().detach(reloaded);
 
