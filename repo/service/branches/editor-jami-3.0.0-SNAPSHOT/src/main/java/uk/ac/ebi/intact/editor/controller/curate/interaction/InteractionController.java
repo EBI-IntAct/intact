@@ -1282,7 +1282,7 @@ public class InteractionController extends AnnotatedObjectController {
     public void markInteractionToDelete(IntactInteractionEvidence inter){
         Collection<String> parentAcs = new ArrayList<String>(1);
         addParentAcsTo(parentAcs, (IntactExperiment)inter.getExperiment());
-        getChangesController().markToDelete(inter, inter.getExperiment() != null ? (IntactPublication)inter.getExperiment().getPublication() : null,
+        getChangesController().markToDelete(inter, publicationController.getPublication(),
                 getDbSynchronizer(), inter.getShortName(), parentAcs);
     }
 }

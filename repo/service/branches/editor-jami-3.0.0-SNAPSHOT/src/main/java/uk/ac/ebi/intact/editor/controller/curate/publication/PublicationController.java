@@ -38,6 +38,7 @@ import uk.ac.ebi.intact.dataexchange.imex.idassigner.ImexCentralManager;
 import uk.ac.ebi.intact.dataexchange.imex.idassigner.actions.PublicationImexUpdaterException;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
+import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.services.curate.publication.DatasetPopulator;
 import uk.ac.ebi.intact.editor.services.curate.publication.PublicationEditorService;
@@ -1957,5 +1958,17 @@ public class PublicationController extends AnnotatedObjectController {
 
     public List<SelectItem> getDatasetsSelectItems(){
         return datasetsSelectItems;
+    }
+
+    @Override
+    protected void postProcessDeletedEvent(UnsavedChange unsaved) {
+        super.postProcessDeletedEvent(unsaved);
+        if (unsaved.getUnsavedObject() instanceof IntactExperiment){
+            removeExperiment((IntactExperiment)unsaved.getUnsavedObject());
+        }
+        else if (unsaved.getUnsavedObject() instanceof IntactInteractionEvidence){
+             refreshExperiments();
+            refreshDataModels();
+        }
     }
 }
