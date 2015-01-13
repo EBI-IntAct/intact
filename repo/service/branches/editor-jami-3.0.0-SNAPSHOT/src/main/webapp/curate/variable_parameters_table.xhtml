@@ -11,7 +11,7 @@
 
     <h:panelGrid id="newParamTxt" columns="5" class="intact-buttonBar">
         <h:outputLabel value="Description: " for="paramDescription1Txt"/>
-        <p:inputTextarea id="paramDescription1Txt" value="#{experimentController.newParameterDescription}" rows="4" cols="50" autoResize="false"
+        <p:inputTextarea id="paramDescription1Txt" value="#{experimentController.newParameterDescription}" rows="1" cols="50" autoResize="false"
                          converter="trimmingConverter">
         </p:inputTextarea>
         <h:outputLabel value="Unit: " for="paramUnit1Sel"/>
@@ -25,13 +25,13 @@
                          update="newParamTxt vparametersTable #{update}"/>
     </h:panelGrid>
 
-    <p:dataTable id="vparametersTable" var="parameter" value="#{experimentController.collectVariableParameters}" rendered="#{experimentController.isVariableParameterTab()}">
+    <p:dataTable id="vparametersTable" var="parameter" value="#{experimentController.collectVariableParameters()}" rendered="#{experimentController.isVariableParameterTab()}">
         <p:column>
             <f:facet name="header">
                 <h:outputText value="Description"/>
             </f:facet>
             <p:inputTextarea id="paramDescriptionTxt" value="#{parameter.description}" required="true" requiredMessage="Parameter description is required"
-                             rows="4" cols="50" autoResize="false"
+                             rows="1" cols="50" autoResize="false"
                              converter="trimmingConverter">
                 <ed:curation/>
             </p:inputTextarea>
@@ -51,34 +51,32 @@
             <f:facet name="header">
                 <h:outputText value="Values"/>
             </f:facet>
-            <h:panelGrid id="newValueTxt" columns="4">
+            <h:panelGrid id="newValueTxt" columns="5" class="intact-buttonBar">
                 <h:outputLabel value="Value: " for="valueInputTxt"/>
                 <p:inputText id="valueInputTxt" value="#{experimentController.newValue}" converter="trimmingConverter"/>
                 <h:outputLabel value="Order: " for="valueOrderTxt"/>
-                <p:inputText id="valueOrderTxt" value="#{experimentController.newValueOrder}">
-                    <f:convertNumber/>
-                </p:inputText>
+                <p:inputText id="valueOrderTxt" value="#{experimentController.newValueOrder}"/>
+                <p:commandButton id="newValueBtn" value="Add New Parameter Value"
+                                 actionListener="#{experimentController.newVariableParameterValue(parameter)}"
+                                 process="newValueTxt"
+                                 update=":editorForm:experimentTabs:vParametersTab"/>
             </h:panelGrid>
-            <p:commandButton id="newValueBtn" value="Add New Parameter Value"
-                             actionListener="#{experimentController.newVariableParameterValue(parameter)}"
-                             process="newValueTxt"
-                             update="vparamValueList"/>
             <h:panelGroup id="vparamValueList" rendered="#{not empty parameter.variableValues}">
                 <ul>
                     <ui:repeat value="#{parameter.variableValues}" var="value">
-                        <li>
-                            <p:inputText value="#{value.value}" required="true" requiredMessage="Parameter value is required" converter="trimmingConverter">
+                        <h:panelGrid columns="3" class="intact-variable-table">
+
+                        <p:inputText value="#{value.value}" required="true" requiredMessage="Parameter value is required" converter="trimmingConverter">
                                 <ed:curation/>
                             </p:inputText>
                             <p:inputText value="#{value.order}">
-                                <f:convertNumber/>
                                 <ed:curation/>
                             </p:inputText>
                             <p:commandLink styleClass="ui-icon ui-icon-closethick" process="@this"
                                            actionListener="#{experimentController.removeVariableParameterValue(value, parameter)}"
                                            oncomplete="markAsUnsaved()"
-                                           update="vparamValueList #{update}"/>
-                        </li>
+                                           update=":editorForm:experimentTabs:vParametersTab #{update}"/>
+                        </h:panelGrid>
                     </ui:repeat>
                 </ul>
             </h:panelGroup>
@@ -90,7 +88,7 @@
             <p:commandLink id="removeParamBtn" styleClass="ui-icon ui-icon-closethick" process="removeParamBtn"
                            actionListener="#{experimentController.removeVariableParameter(parameter)}"
                            oncomplete="markAsUnsaved()"
-                           update="vparametersTable #{update}"/>
+                           update=":editorForm:experimentTabs:vParametersTab #{update}"/>
         </p:column>
     </p:dataTable>
 
