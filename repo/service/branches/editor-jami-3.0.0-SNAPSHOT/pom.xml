@@ -209,6 +209,12 @@
 
         <dependency>
             <groupId>psidev.psi.mi.jami</groupId>
+            <artifactId>jami-xml</artifactId>
+            <version>1.1.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>psidev.psi.mi.jami</groupId>
             <artifactId>jami-batch</artifactId>
             <version>${jami.version}</version>
         </dependency>

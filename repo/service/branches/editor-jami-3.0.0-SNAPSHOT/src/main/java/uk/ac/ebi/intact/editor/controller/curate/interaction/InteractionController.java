@@ -767,6 +767,7 @@ public class InteractionController extends AnnotatedObjectController {
 
     public void onFigureLegendChanged(ValueChangeEvent evt) {
         setUnsavedChanges(true);
+        this.figureLegend = (String)evt.getNewValue();
         if (this.figureLegend != null && figureLegend.length() > 0){
             updateAnnotation(Annotation.FIGURE_LEGEND, Annotation.FIGURE_LEGEND_MI, figureLegend, interaction.getDbAnnotations());
         }
@@ -1282,7 +1283,8 @@ public class InteractionController extends AnnotatedObjectController {
     public void markInteractionToDelete(IntactInteractionEvidence inter){
         Collection<String> parentAcs = new ArrayList<String>(1);
         addParentAcsTo(parentAcs, (IntactExperiment)inter.getExperiment());
-        getChangesController().markToDelete(inter, publicationController.getPublication(),
+        getChangesController().markToDelete(inter, experimentController.getExperiment() != null ? experimentController.getExperiment() :
+                        publicationController.getPublication(),
                 getDbSynchronizer(), inter.getShortName(), parentAcs);
     }
 }
