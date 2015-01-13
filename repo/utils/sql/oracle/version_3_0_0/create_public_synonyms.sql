@@ -1,3 +1,5 @@
+create or replace public synonym DEFAULT_ID_SEQ for INTACT.DEFAULT_ID_SEQ;
+
 PROMPT "Creating public synonym ia_exp_causal_relations"
 create or replace public synonym ia_exp_causal_relations for INTACT.ia_exp_causal_relations;
 
