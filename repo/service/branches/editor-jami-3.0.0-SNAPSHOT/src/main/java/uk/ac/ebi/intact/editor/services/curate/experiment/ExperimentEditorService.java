@@ -25,6 +25,7 @@ import psidev.psi.mi.jami.utils.CvTermUtils;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
 import uk.ac.ebi.intact.jami.model.extension.IntactExperiment;
+import uk.ac.ebi.intact.jami.model.extension.IntactInteractionEvidence;
 import uk.ac.ebi.intact.jami.model.extension.IntactPublication;
 import uk.ac.ebi.intact.jami.model.lifecycle.Releasable;
 
@@ -170,6 +171,11 @@ public class ExperimentEditorService extends AbstractEditorService {
             initialiseAnnotations(((IntactPublication)reloaded.getPublication()).getDbAnnotations());
         }
 
+        // initialise evidences if not done
+        if (reloaded.areInteractionEvidencesInitialized()){
+             initialiseEvidences(reloaded.getInteractionEvidences());
+        }
+
         getIntactDao().getEntityManager().detach(reloaded);
 
         return reloaded;
@@ -236,6 +242,7 @@ public class ExperimentEditorService extends AbstractEditorService {
 
         for (InteractionEvidence ev : evidences){
             ev.getExperiment();
+            initialiseAnnotations(((IntactInteractionEvidence)ev).getDbAnnotations());
         }
     }
 

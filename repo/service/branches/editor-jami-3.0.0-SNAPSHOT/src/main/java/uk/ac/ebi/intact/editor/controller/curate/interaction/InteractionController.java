@@ -479,6 +479,8 @@ public class InteractionController extends AnnotatedObjectController {
             }
             newInteraction = cloneAnnotatedObject(interaction, new InteractionEvidenceCloner());
             newInteraction.setExperiment(experiment);
+
+            newInteraction.getVariableParameterValues().clear();
         } else {
             return null;
         }
@@ -501,6 +503,10 @@ public class InteractionController extends AnnotatedObjectController {
             }
             // set experiment
             interaction.setExperiment(experiment);
+            if (!interaction.areVariableParameterValuesInitialized()){
+                interaction = getInteractionEditorService().initialiseInteractionVariableParameterValues(interaction);
+            }
+            interaction.getVariableParameterValues().clear();
 
         } else {
             return null;
@@ -610,7 +616,7 @@ public class InteractionController extends AnnotatedObjectController {
         String shortLabel = IntactUtils.generateAutomaticInteractionEvidenceShortlabelFor(interaction, IntactUtils.MAX_SHORT_LABEL_LEN);
         interaction.setShortName(shortLabel);
         // synchronize with db
-        IntactUtils.synchronizeInteractionEvidenceShortName(interaction, getEditorService().getIntactDao().getEntityManager(), Collections.EMPTY_SET);
+        getEditorService().synchronizeInteractionShortLabel(interaction);
         if (oldLabel == null || !oldLabel.equals(shortLabel)){
             Collection<String> parentsCs = new ArrayList<String>();
             if (interaction.getExperiment() != null && ((IntactExperiment)interaction.getExperiment()).getAc() != null){
