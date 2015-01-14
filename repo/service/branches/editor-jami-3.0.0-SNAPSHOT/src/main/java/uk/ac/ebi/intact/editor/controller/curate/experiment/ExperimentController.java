@@ -16,6 +16,7 @@
 package uk.ac.ebi.intact.editor.controller.curate.experiment;
 
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
+import org.hibernate.Hibernate;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.LazyDataModel;
@@ -345,13 +346,25 @@ public class ExperimentController extends AnnotatedObjectController {
                 && (((IntactPublication)experiment.getPublication()).areAnnotationsInitialized()
                 || ((IntactPublication)experiment.getPublication()).areXrefsInitialized()))
                 || !isCvInitialised(experiment.getParticipantIdentificationMethod())
-                || !isCvInitialised(experiment.getInteractionDetectionMethod())){
+                || !isCvInitialised(experiment.getInteractionDetectionMethod())
+                || !isInitialiseInteractionEvidences(experiment.getInteractionEvidences())){
             this.experiment = getExperimentService().reloadFullyInitialisedExperiment(experiment);
         }
 
         refreshInteractions();
 
         setDescription("Experiment: "+experiment.getShortLabel());
+    }
+
+    private boolean isInitialiseInteractionEvidences(Collection<InteractionEvidence> interactionEvidences) {
+        if(Hibernate.isInitialized(interactionEvidences)) {
+            for (InteractionEvidence ev : interactionEvidences){
+                if (!((IntactInteractionEvidence)ev).areAnnotationsInitialized()){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private boolean isCvInitialised(CvTerm cv) {
@@ -401,7 +414,7 @@ public class ExperimentController extends AnnotatedObjectController {
         IntactExperiment experiment = new IntactExperiment(publication);
         experiment.setShortLabel(IntactUtils.generateAutomaticExperimentShortlabelFor(experiment, IntactUtils.MAX_SHORT_LABEL_LEN));
         // synchronize with db
-        IntactUtils.synchronizeExperimentShortLabel(experiment, getEditorService().getIntactDao().getEntityManager(), Collections.EMPTY_SET);
+        getEditorService().synchronizeExperimentShortLabel(experiment);
         if (publicationController.getPublication() != publication){
             publicationController.setPublication((IntactPublication)publication);
         }
@@ -635,37 +648,29 @@ public class ExperimentController extends AnnotatedObjectController {
 
             // don't remove the experiment from the parent publication yet so the revert will work properly. It will be added only after saving
             // As an experiment can have only one publication, it will be removed from the previous publication
-            experiment.setPublication(publication);
+            experiment.setPublication(publicationController.getPublication());
             experiment.setShortLabel(IntactUtils.generateAutomaticExperimentShortlabelFor(experiment, IntactUtils.MAX_SHORT_LABEL_LEN));
-            IntactUtils.synchronizeExperimentShortLabel(experiment, getEditorService().getIntactDao().getEntityManager(), Collections.EMPTY_SET);
+            getEditorService().synchronizeExperimentShortLabel(experiment);
+
+            setExperiment(experiment);
+
+            copyPublicationAnnotations(null);
 
             // update the primary reference when moving the experiment
-            if (publication.getPubmedId() != null) {
-                updateXref(Xref.PUBMED, Xref.PUBMED_MI, publication.getPubmedId(), Xref.PRIMARY, Xref.PRIMARY_MI, experiment.getXrefs());
+            if (publicationController.getPublication().getPubmedId() != null) {
+                updateXref(Xref.PUBMED, Xref.PUBMED_MI, publicationController.getPublication().getPubmedId(), Xref.PRIMARY, Xref.PRIMARY_MI, experiment.getXrefs());
             }
             else{
                 removeXref(Xref.PUBMED, Xref.PUBMED_MI, Xref.PRIMARY, Xref.PRIMARY_MI, experiment.getXrefs());
             }
 
             // update the imex reference when moving the experiment
-            if (publication.getImexId() != null) {
-                updateXref(Xref.IMEX, Xref.IMEX_MI,  publication.getImexId(), Xref.IMEX_PRIMARY, Xref.IMEX_PRIMARY_MI, experiment.getXrefs());
+            if (publicationController.getPublication().getImexId() != null) {
+                updateXref(Xref.IMEX, Xref.IMEX_MI,  publicationController.getPublication().getImexId(), Xref.IMEX_PRIMARY, Xref.IMEX_PRIMARY_MI, experiment.getXrefs());
             }
             else{
                 removeXref(Xref.IMEX, Xref.IMEX_MI, Xref.IMEX, Xref.IMEX_PRIMARY_MI, experiment.getXrefs());
             }
-
-            setExperiment(experiment);
-
-            copyPublicationAnnotations(null);
-
-            // update the shortlabel
-            String newShortLabel = IntactUtils.generateAutomaticExperimentShortlabelFor(experiment, IntactUtils.MAX_SHORT_LABEL_LEN);
-            if (newShortLabel != null){
-                experiment.setShortLabel(newShortLabel);
-            }
-            // synchronize with db
-            IntactUtils.synchronizeExperimentShortLabel(experiment, getEditorService().getIntactDao().getEntityManager(), Collections.EMPTY_SET);
 
         } else {
             return null;

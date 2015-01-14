@@ -41,6 +41,7 @@ import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
 import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
+import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -291,6 +292,16 @@ public class EditorObjectService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactPrimaryObject refresh(IntactPrimaryObject object) {
         return getIntactDao().getEntityManager().find(object.getClass(), object.getAc());
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public void synchronizeExperimentShortLabel(IntactExperiment object) {
+        IntactUtils.synchronizeExperimentShortLabel(object, getIntactDao().getEntityManager(), Collections.EMPTY_SET);
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public void synchronizeInteractionShortLabel(IntactInteractionEvidence object) {
+        IntactUtils.synchronizeInteractionEvidenceShortName(object, getIntactDao().getEntityManager(), Collections.EMPTY_SET);
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)

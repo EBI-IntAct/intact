@@ -258,7 +258,7 @@
         <p:inputText id="expToCopy" value="#{interactionController.experimentToCopyTo}" converter="trimmingConverter"/>
 
         <p:commandButton value="Copy" action="#{interactionController.copyToExperiment}"
-                         ajax="false" oncomplete="copyToExperimentDialog.hide()"/>
+                         ajax="false" oncomplete="copyToExperimentDialog.hide()" process="expToCopy"/>
     </h:panelGrid>
 </p:dialog>
 
