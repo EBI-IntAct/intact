@@ -233,23 +233,20 @@ public class ParticipantImportService extends AbstractEditorService {
 
         if (!identityXrefs.isEmpty()) {
             List<String> ids = new ArrayList<String>(identityXrefs.size());
+            List<String> secondaryAcs = new ArrayList<String>();
 
             for (Xref xref : identityXrefs) {
-                ids.add(xref.getId());
+                if (XrefUtils.doesXrefHaveQualifier(xref, Xref.IDENTITY_MI, Xref.IDENTITY)){
+                    ids.add(xref.getId());
+                }
+                else{
+                    secondaryAcs.add(xref.getId());
+                }
             }
 
             candidate.setPrimaryAcs(ids);
+            candidate.setSecondaryAcs(secondaryAcs);
         }
-
-        List<String> secondaryAcs = new ArrayList<String>();
-
-        for (Xref xref : interactor.getXrefs()) {
-            if (XrefUtils.doesXrefHaveQualifier(xref, Xref.SECONDARY_MI, Xref.SECONDARY) || XrefUtils.doesXrefHaveQualifier(xref, null, "intact-secondary")) {
-                secondaryAcs.add(xref.getId());
-            }
-        }
-
-        candidate.setSecondaryAcs(secondaryAcs);
 
         return candidate;
     }
