@@ -149,8 +149,8 @@
             </td>
             <td colspan="3" >
                 <h:selectOneMenu id="experimentLists"
-                                 value="#{interactionController.experimentAc}"
-                                 required="true" requiredMessage="You must set an experiment">
+                                 value="#{interactionController.experiment}"
+                                 required="true" requiredMessage="You must set an experiment" converter="experimentConverter">
                     <p:ajax event="change" update=":editorForm" listener="#{interactionController.experimentChanged}" async="true"/>
                     <f:selectItems value="#{interactionController.experimentSelectItems}"/>
                 </h:selectOneMenu>
@@ -217,16 +217,25 @@
     </p:tab>
 
     <p:tab id="vparametersTab" title="Variable experimental conditions (#{interactionController.variableParameterValuesSize})">
+        <div class="intact-buttonBar">
+            <p:commandButton id="newConditionsSetBtn" value="Import new set of experimental conditions"
+                             type="button" onclick="importVariableParametersDialog.show()"/>
+            <ia:spacer height="10" />
+        </div>
+
+        <ui:include src="jdialog_import_vparameters.xhtml"/>
 
         <p:outputPanel id="vparametersPanel" autoUpdate="false" rendered="#{interactionController.isVariableParametersTableEnabled()}">
             <ui:decorate template="interaction_vparameters_table.xhtml">
                 <ui:param name="annotatedObjectController" value="#{interactionController}"/>
-                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:acTxt :editorForm:interactionTabs"/>
+                <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent
+                :editorForm:acTxt :editorForm:interactionTabs"/>
                 <ui:param name="disableVariableParametersSelectItems" value="#{interactionController.isVariableParametersDisabled()}"/>
             </ui:decorate>
         </p:outputPanel>
 
-        <h:outputText value="No variable parameters were added to the experiment so there are no experimental conditions available." rendered="#{!interactionController.isVariableParametersTableEnabled()}"/>
+        <h:outputText value="No variable parameters were added to the experiment so there are no experimental conditions available."
+                      rendered="#{!interactionController.isVariableParametersTableEnabled()}"/>
 
     </p:tab>
     <p:tab id="graphTab" title="Graph" rendered="#{interactionController.participantsSize gt 0}">

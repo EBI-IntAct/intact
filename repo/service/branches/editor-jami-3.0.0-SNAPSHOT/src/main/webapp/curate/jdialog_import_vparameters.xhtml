@@ -8,16 +8,17 @@
 
     <p:dialog id="vipDialog" widgetVar="importVariableParametersDialog" header="Import Experimental Conditions" modal="true"
               position="center"
-              width="900">
+              width="900" dynamic="true" resizable="true">
 
         <ia:panelDialogLayout id="vipDialogPanel">
             <f:facet name="buttonBar">
                 <p:commandButton id="newvParamBtn" value="Import experimental conditions from experiment"
                                  actionListener="#{interactionController.importExperimentalConditions}"
-                                 update="expConditionsTable #{update}"
-                                 onstart="importing_load.show()"
-                                 onerror="alert('Error Importing experimental confidtions from experiment')"
-                                 oncomplete="importing_load.hide()"/>
+                                 update=":editorForm:interactionTabs :editorForm:shortlabelTxt :editorForm:messagesComponent :editorForm:changesPanel"
+                                 onstart="importing_load.show(); importVariableParametersDialog.hide();"
+                                 onerror="importing_load.hide(); importVariableParametersDialog.show();"
+                                 oncomplete="importing_load.hide();"
+                                 process=":editorForm:interactionTabs:vipDialog"/>
                 <p:commandButton type="button" value="Back" onclick="importVariableParametersDialog.hide();"/>
             </f:facet>
 
@@ -39,7 +40,7 @@
                     <p:column>
                         <f:facet name="header"><h:outputText value="Experimental values"/></f:facet>
                         <h:selectOneMenu id="parameterValuesTxt" value="#{condition.selectedValue}"
-                                         disabled="#{interactionController.isVariableParametersDisabled()}">
+                                         disabled="#{interactionController.isVariableParametersDisabled()}" converter="parameterValueConverter">
                             <f:selectItems value="#{condition.variableValues}" />
                         </h:selectOneMenu>
                     </p:column>

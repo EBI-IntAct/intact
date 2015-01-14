@@ -2,10 +2,12 @@ package uk.ac.ebi.intact.editor.controller.curate.interaction;
 
 import psidev.psi.mi.jami.model.VariableParameter;
 import psidev.psi.mi.jami.model.VariableParameterValue;
+import uk.ac.ebi.intact.jami.model.extension.IntactVariableParameterValue;
 
 import javax.faces.model.SelectItem;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A class that contains experimental conditions for a specific variable parameter
@@ -20,9 +22,9 @@ public class ImportExperimentalCondition {
     private String description;
     private String unit;
     private List<SelectItem> variableValues;
-    private VariableParameterValue selectedValue;
+    private IntactVariableParameterValue selectedValue;
 
-    public ImportExperimentalCondition(VariableParameter param){
+    public ImportExperimentalCondition(VariableParameter param, Map<String, VariableParameterValue> valuesMap){
         if (param == null){
             throw new IllegalArgumentException("The variable parameter cannot be null");
         }
@@ -33,6 +35,7 @@ public class ImportExperimentalCondition {
 
         for (VariableParameterValue v : param.getVariableValues()){
             variableValues.add(new SelectItem( v, v.getValue(), v.getValue()+", order "+v.getOrder()));
+            valuesMap.put(Long.toString(((IntactVariableParameterValue)v).getId()), v);
         }
     }
 
@@ -48,11 +51,11 @@ public class ImportExperimentalCondition {
         return variableValues;
     }
 
-    public VariableParameterValue getSelectedValue() {
+    public IntactVariableParameterValue getSelectedValue() {
         return selectedValue;
     }
 
-    public void setSelectedValue(VariableParameterValue selectedValue) {
+    public void setSelectedValue(IntactVariableParameterValue selectedValue) {
         this.selectedValue = selectedValue;
     }
 }
