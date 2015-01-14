@@ -495,7 +495,7 @@ public class InteractionController extends AnnotatedObjectController {
 
     public String moveToExperiment() {
         if (experimentToMoveTo != null && !experimentToMoveTo.isEmpty()) {
-            IntactExperiment experiment = getInteractionEditorService().loadExperimentByAcOrLabel(experimentToCopyTo);
+            IntactExperiment experiment = getInteractionEditorService().loadExperimentByAcOrLabel(experimentToMoveTo);
 
             if (experiment == null) {
                 addErrorMessage("Cannot move", "No experiment found with this AC or short label: "+experimentToMoveTo);
