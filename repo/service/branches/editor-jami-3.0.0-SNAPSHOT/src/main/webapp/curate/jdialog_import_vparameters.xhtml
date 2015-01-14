@@ -14,7 +14,8 @@
             <f:facet name="buttonBar">
                 <p:commandButton id="newvParamBtn" value="Import experimental conditions from experiment"
                                  actionListener="#{interactionController.importExperimentalConditions}"
-                                 update=":editorForm:interactionTabs :editorForm:shortlabelTxt :editorForm:messagesComponent :editorForm:changesPanel"
+                                 update=":editorForm:interactionTabs:vparametersPanel :editorForm:shortlabelTxt :editorForm:messagesComponent
+                                 :editorForm:changesPanel"
                                  onstart="importing_load.show(); importVariableParametersDialog.hide();"
                                  onerror="importing_load.hide(); importVariableParametersDialog.show();"
                                  oncomplete="importing_load.hide();"
