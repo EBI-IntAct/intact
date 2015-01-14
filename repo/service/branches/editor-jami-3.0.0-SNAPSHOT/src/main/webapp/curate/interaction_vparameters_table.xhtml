@@ -15,25 +15,18 @@
             <f:facet name="header">
                 <h:outputText value="Experimental conditions"/>
             </f:facet>
-            <ui:repeat value="#{parametersSet}" var="variableValue">
-                <h:panelGrid columns="2">
-                    <h:outputLabel value="Parameter description: " for="paramDescriptionTxt" rendered="#{variableValue.variableParameter != null}"/>
-
-                    <p:inputTextarea id="paramDescriptionTxt" value="#{variableValue.variableParameter.description}"
-                                     rows="4" cols="50" autoResize="false"
-                                     converter="trimmingConverter" readonly="true" rendered="#{variableValue.variableParameter != null}"/>
-
-                    <h:outputLabel value="Parameter Unit: " for="paramUnitTxt" rendered="#{variableValue.variableParameter != null and
+            <ui:repeat value="#{parametersSet.toArray()}" var="variableValue">
+                <h:panelGrid columns="3" styleClass="intact-variable-table" style="width: auto">
+                    <h:outputText id="paramDescriptionTxt" value="#{variableValue.variableParameter.description}"
+                                     rendered="#{variableValue.variableParameter != null}"/>
+                    <h:outputText id="paramUnitTxt" value="#{variableValue.variableParameter.unit.shortName}"
+                                     rendered="#{variableValue.variableParameter != null and
                     variableValue.variableParameter.unit != null}"/>
+                    <h:outputText value="-" rendered="#{variableValue.variableParameter != null and
+                    variableValue.variableParameter.unit == null}"/>
 
-                    <p:inputTextarea id="paramUnitTxt" value="#{variableValue.variableParameter.unit.shortName}"
-                                     rows="4" cols="50" autoResize="false"
-                                     converter="trimmingConverter" readonly="true" rendered="#{variableValue.variableParameter != null and
-                    variableValue.variableParameter.unit != null}"/>
-                    <h:outputLabel value="Value: " for="paramValueTxt"/>
-
-                    <p:inputText id="paramValueTxt" value="#{variableValue.variableParameter.unit.shortName}"
-                                     converter="trimmingConverter" readonly="true"/>
+                    <h:outputText id="paramValueTxt" value="#{variableValue.value}"
+                                     readonly="true"/>
                 </h:panelGrid>
 
             </ui:repeat>
