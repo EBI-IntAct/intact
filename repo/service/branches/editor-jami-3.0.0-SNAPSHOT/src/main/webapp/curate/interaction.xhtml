@@ -161,6 +161,33 @@
 
 <br/>
 
+
+<!-- DIALOGS -->
+<!-- Copy to Exp dialog -->
+<p:dialog header="Copy to Experiment" width="400" widgetVar="copyToExperimentDialog" draggable="false"
+          modal="true" position="center">
+    <h:panelGrid columns="3" style="margin-bottom:10px">
+        <h:outputLabel for="expToCopy" value="Experiment AC or label:"/>
+        <p:inputText id="expToCopy" value="#{interactionController.experimentToCopyTo}" converter="trimmingConverter"/>
+
+        <p:commandButton value="Copy" action="#{interactionController.copyToExperiment}"
+                         ajax="false" oncomplete="copyToExperimentDialog.hide()" process="expToCopy"/>
+    </h:panelGrid>
+</p:dialog>
+
+<!-- Move to Exp dialog -->
+<p:dialog header="Move to Experiment" width="400" widgetVar="moveToExperimentDialog" draggable="false"
+          modal="true" position="center">
+    <h:panelGrid columns="3" style="margin-bottom:10px">
+        <h:outputLabel for="expToMove" value="Experiment AC or label:"/>
+        <p:inputText id="expToMove" value="#{interactionController.experimentToMoveTo}" converter="trimmingConverter"/>
+
+        <p:commandButton value="Move" action="#{interactionController.moveToExperiment}"
+                         process="expToMove"
+                         ajax="false" oncomplete="moveToExperimentDialog.hide()"/>
+    </h:panelGrid>
+</p:dialog>
+
 <p:tabView id="interactionTabs" dynamic="true">
     <p:ajax event="tabChange" listener="#{interactionController.onTabChanged}" onstart="loadDialog.show()" oncomplete="loadDialog.hide()"/>
 
@@ -248,32 +275,6 @@
 </p:tabView>
 
 </h:panelGroup>
-
-<!-- DIALOGS -->
-<!-- Copy to Exp dialog -->
-<p:dialog header="Copy to Experiment" width="400" widgetVar="copyToExperimentDialog" draggable="false"
-          modal="true" position="center">
-    <h:panelGrid columns="3" style="margin-bottom:10px">
-        <h:outputLabel for="expToCopy" value="Experiment AC or label:"/>
-        <p:inputText id="expToCopy" value="#{interactionController.experimentToCopyTo}" converter="trimmingConverter"/>
-
-        <p:commandButton value="Copy" action="#{interactionController.copyToExperiment}"
-                         ajax="false" oncomplete="copyToExperimentDialog.hide()" process="expToCopy"/>
-    </h:panelGrid>
-</p:dialog>
-
-<!-- Move to Exp dialog -->
-<p:dialog header="Move to Experiment" width="400" widgetVar="moveToExperimentDialog" draggable="false"
-          modal="true" position="center">
-    <h:panelGrid columns="3" style="margin-bottom:10px">
-        <h:outputLabel for="expToMove" value="Experiment AC or label:"/>
-        <p:inputText id="expToMove" value="#{interactionController.experimentToMoveTo}" converter="trimmingConverter"/>
-
-        <p:commandButton value="Move" action="#{interactionController.moveToExperiment}"
-                         process="expToMove"
-                         ajax="false" oncomplete="moveToExperimentDialog.hide()"/>
-    </h:panelGrid>
-</p:dialog>
 
 </ui:define>
 
