@@ -2,6 +2,7 @@ package uk.ac.ebi.intact.editor.controller.curate.interaction;
 
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Xref;
+import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.editor.controller.curate.util.ExperimentalRoleComparator;
 import uk.ac.ebi.intact.jami.model.extension.AbstractIntactFeature;
 import uk.ac.ebi.intact.jami.model.extension.AbstractIntactParticipant;
@@ -36,7 +37,7 @@ public class ParticipantWrapper {
 
         IntactInteractor interactor = (IntactInteractor)participant.getInteractor();
 
-        final Collection<Xref> identities = interactor.getIdentifiers();
+        final Collection<Xref> identities = XrefUtils.collectAllXrefsHavingQualifier(interactor.getIdentifiers(), Xref.IDENTITY_MI, Xref.IDENTITY);
         StringBuilder sb = new StringBuilder(64);
         for ( Iterator<Xref> iterator = identities.iterator(); iterator.hasNext(); ) {
             Xref xref = iterator.next();
