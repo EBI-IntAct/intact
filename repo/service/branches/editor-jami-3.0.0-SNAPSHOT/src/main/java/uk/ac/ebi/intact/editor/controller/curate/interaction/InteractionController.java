@@ -115,14 +115,17 @@ public class InteractionController extends AnnotatedObjectController {
     private Integer newParameterExponent;
     private Double newParameterUncertainty;
 
-    private String experimentAc;
-
     private List<ImportExperimentalCondition> conditionsToImport;
+
+    private Map<String, Experiment> experimentMap;
+    private Map<String, VariableParameterValue> parameterValuesMap;
 
     @Resource(name = "bioSourceService")
     private transient BioSourceService bioSourceService;
 
     public InteractionController() {
+        experimentMap = new HashMap<String, Experiment>();
+        parameterValuesMap = new HashMap<String, VariableParameterValue>();
     }
 
     @Override
@@ -236,6 +239,7 @@ public class InteractionController extends AnnotatedObjectController {
 
     public void refreshExperimentLists() {
         this.experimentSelectItems = new ArrayList<SelectItem>();
+        this.experimentMap.clear();
 
         SelectItem selectItem = new SelectItem(null, "Select experiment");
         selectItem.setNoSelectionOption(true);
@@ -243,9 +247,6 @@ public class InteractionController extends AnnotatedObjectController {
         experimentSelectItems.add(selectItem);
 
         experiment = (IntactExperiment)interaction.getExperiment();
-        if (experiment != null){
-           experimentAc = experiment.getAc();
-        }
 
         if (publicationController.getPublication() != null) {
             List<ExperimentSummary> experiments = publicationController.collectExperiments();
@@ -254,7 +255,8 @@ public class InteractionController extends AnnotatedObjectController {
             if (!experiments.isEmpty()){
                 for ( ExperimentSummary e : experiments ) {
                     String description = completeExperimentLabel(e.getExperiment());
-                    experimentSelectItems.add(new SelectItem(e.getAc(), description, publicationController.getTitle()));
+                    experimentSelectItems.add(new SelectItem(e.getExperiment(), description, publicationController.getTitle()));
+                    this.experimentMap.put(e.getAc(), e.getExperiment());
                 }
             }
         }
@@ -355,14 +357,6 @@ public class InteractionController extends AnnotatedObjectController {
     }
 
     public void experimentChanged() {
-        // collect experiment
-        List<ExperimentSummary> experiments = publicationController.collectExperiments();
-        for (ExperimentSummary summary : experiments){
-             if (experimentAc.equals(summary.getAc())){
-                 experiment = summary.getExperiment();
-                 break;
-             }
-        }
 
         interaction.setExperiment(experiment);
 
@@ -483,7 +477,6 @@ public class InteractionController extends AnnotatedObjectController {
                 addErrorMessage("Cannot copy", "No experiment found with this AC or short label: "+experimentToCopyTo);
                 return null;
             }
-            experimentAc = experiment.getAc();
             newInteraction = cloneAnnotatedObject(interaction, new InteractionEvidenceCloner());
             newInteraction.setExperiment(experiment);
         } else {
@@ -506,7 +499,6 @@ public class InteractionController extends AnnotatedObjectController {
                 addErrorMessage("Cannot move", "No experiment found with this AC or short label: "+experimentToMoveTo);
                 return null;
             }
-            experimentAc = experiment.getAc();
             // set experiment
             interaction.setExperiment(experiment);
 
@@ -920,7 +912,6 @@ public class InteractionController extends AnnotatedObjectController {
                 isVariableParametersDisabled = true;
             }
             else if (e.getTab().getId().equals("vparametersTab")){
-                loadConditionsToImport();
                 isParticipantDisabled = true;
                 isParameterDisabled = true;
                 isConfidenceDisabled = true;
@@ -966,6 +957,7 @@ public class InteractionController extends AnnotatedObjectController {
         refreshParentControllers();
         refreshExperimentLists();
         refreshParticipants();
+        loadConditionsToImport();
     }
 
     private boolean areParticipantsInitialised(IntactInteractionEvidence interaction) {
@@ -1137,11 +1129,13 @@ public class InteractionController extends AnnotatedObjectController {
     }
 
     public void loadConditionsToImport(){
-        List<VariableParameter> params = experimentController.getExperiment() != null ? experimentController.collectVariableParameters() : Collections.EMPTY_LIST;
+        List<VariableParameter> params = experimentController.getExperiment() != null ? experimentController.collectVariableParameters() :
+                Collections.EMPTY_LIST;
+        this.parameterValuesMap.clear();
 
         this.conditionsToImport = new ArrayList<ImportExperimentalCondition>();
         for (VariableParameter param : params){
-             this.conditionsToImport.add(new ImportExperimentalCondition(param));
+             this.conditionsToImport.add(new ImportExperimentalCondition(param, this.parameterValuesMap));
         }
     }
 
@@ -1261,12 +1255,12 @@ public class InteractionController extends AnnotatedObjectController {
         this.newParameterUncertainty = newParameterUncertainty;
     }
 
-    public String getExperimentAc() {
-        return experimentAc;
+    public IntactExperiment getExperiment() {
+        return experiment;
     }
 
-    public void setExperimentAc(String experimentAc) {
-        this.experimentAc = experimentAc;
+    public void setExperiment(IntactExperiment experiment) {
+        this.experiment = experiment;
     }
 
     public BioSourceService getBioSourceService() {
@@ -1286,5 +1280,13 @@ public class InteractionController extends AnnotatedObjectController {
         getChangesController().markToDelete(inter, experimentController.getExperiment() != null ? experimentController.getExperiment() :
                         publicationController.getPublication(),
                 getDbSynchronizer(), inter.getShortName(), parentAcs);
+    }
+
+    public Map<String, Experiment> getExperimentMap() {
+        return experimentMap;
+    }
+
+    public Map<String, VariableParameterValue> getParameterValuesMap() {
+        return parameterValuesMap;
     }
 }

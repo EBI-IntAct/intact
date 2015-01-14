@@ -9,15 +9,8 @@
                 xmlns:ia="http://java.sun.com/jsf/composite/intact-components"
                 xmlns:ed="http://ebi.ac.uk/intact/editor/ui">
 
-    <div class="intact-buttonBar">
-        <p:commandButton id="newConditionsSetBtn" value="Import new set of experimental conditions"
-                         type="button" onclick="importVariableParametersDialog.show()"/>
-        <ia:spacer height="10" />
-
-        <ui:include src="jdialog_import_vparameters.xhtml"/>
-    </div>
-
-    <p:dataTable id="vparametersTable" var="parametersSet" value="#{interactionController.collectVariableParameterValues}" rendered="#{interactionController.isVariableParametersDisabled()}">
+    <p:dataTable id="vparametersTable" var="parametersSet" value="#{interactionController.collectVariableParameterValues()}"
+                 rendered="#{!interactionController.isVariableParametersDisabled()}">
         <p:column>
             <f:facet name="header">
                 <h:outputText value="Experimental conditions"/>
