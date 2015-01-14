@@ -1160,7 +1160,7 @@ public class InteractionController extends AnnotatedObjectController {
                 setInteraction(getInteractionEditorService().initialiseInteractionVariableParameterValues(this.interaction));
             }
             this.interaction.getVariableParameterValues().add(newSet);
-            setUnsavedChanges(true);
+            doSave(false);
         }
         else{
             addErrorMessage("No experimental conditions were selected so we could not import a new set of experimental conditions","No experimental conditions selected");
