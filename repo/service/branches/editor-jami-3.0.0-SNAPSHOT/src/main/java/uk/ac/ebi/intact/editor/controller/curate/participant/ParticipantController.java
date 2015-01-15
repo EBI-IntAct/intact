@@ -527,7 +527,7 @@ public class ParticipantController extends AbstractParticipantController<IntactP
 
     @Override
     public void newAnnotation(ActionEvent evt) {
-        getParticipant().getAnnotations().add(new ParticipantEvidenceAnnotation(IntactUtils.createMIAliasType("to set", null)));
+        getParticipant().getAnnotations().add(new ParticipantEvidenceAnnotation(IntactUtils.createMITopic("to set", null)));
         setUnsavedChanges(true);
     }
 

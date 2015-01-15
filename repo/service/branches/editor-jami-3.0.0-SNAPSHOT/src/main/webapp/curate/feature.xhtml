@@ -58,11 +58,6 @@
                         <ui:param name="annotatedObjectController" value="#{featureController}"/>
                     </ui:include>
 
-                    <h:panelGroup rendered="#{participantController.isNoUniprotUpdate(participant.interactor)}">
-                        <ia:panelMessage level="warn">
-                            <b>No Uniprot Update: </b>The interactor for this participant won't be updated using Uniprot.
-                        </ia:panelMessage>
-                    </h:panelGroup>
                 </p:outputPanel>
 
                 <div id="auditInfo" class="intact-auditPanel">
@@ -103,7 +98,7 @@
                             <h:outputLabel value="Feature type: " for="featureTypeTxt"/>
                         </td>
                         <td colspan="2">
-                            <ia:inputCvTerm id="featureTypeTxt" cvIdentifier="MI:0116" value="#{feature.cvFeatureType}"
+                            <ia:inputCvTerm id="featureTypeTxt" cvIdentifier="MI:0116" value="#{feature.type}"
                                               selectItems="#{cvObjectService.featureTypeSelectItems}"
                                               required="true" requiredMessage="Feature type is required"
                                               update=":editorForm:changesPanel :editorForm:unsavedChangesInfo"
@@ -167,7 +162,7 @@
                     <ui:param name="updateOnChange" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:acTxt :editorForm:featureTabs"/>
                 </ui:decorate>
 
-                <p:tab id="parametersTab" title="Parameters (#{featureController.parametersSizeSize})">
+                <p:tab id="parametersTab" title="Parameters (#{featureController.parametersSize})">
                     <ui:decorate template="parameters_table.xhtml">
                         <ui:param name="annotatedObjectController" value="#{featureController}"/>
                         <ui:param name="update" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:acTxt :editorForm:featureTabs"/>

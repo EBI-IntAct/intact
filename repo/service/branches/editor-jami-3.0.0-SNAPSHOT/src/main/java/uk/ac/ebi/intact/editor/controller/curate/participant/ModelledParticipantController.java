@@ -149,7 +149,7 @@ public class ModelledParticipantController extends AbstractParticipantController
 
     @Override
     public void newAnnotation(ActionEvent evt) {
-        getParticipant().getAnnotations().add(new ModelledParticipantAnnotation(IntactUtils.createMIAliasType("to set", null)));
+        getParticipant().getAnnotations().add(new ModelledParticipantAnnotation(IntactUtils.createMITopic("to set", null)));
         setUnsavedChanges(true);
     }
 

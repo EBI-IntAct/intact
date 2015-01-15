@@ -201,7 +201,7 @@ public class CurateController extends BaseController {
 
             FeatureEvidence feature = (FeatureEvidence)intactObject;
             if (feature.getParticipant() instanceof IntactParticipantEvidence){
-                IntactParticipantEvidence participant = (IntactParticipantEvidence)intactObject;
+                IntactParticipantEvidence participant = (IntactParticipantEvidence)feature.getParticipant();
                 if (participant.getAc() != null){
                     meta.getParents().add(participant.getAc());
                 }
