@@ -643,6 +643,7 @@ public class InteractionController extends AnnotatedObjectController {
                 }
             }
         }
+        int selectedSize = selected.size();
 
         Iterator<AbstractIntactFeature> fIterator1 = selected.iterator();
         while (fIterator1.hasNext()){
@@ -662,7 +663,7 @@ public class InteractionController extends AnnotatedObjectController {
         }
 
 
-        addInfoMessage("Features linked", "Size of linked features : "+selected.size());
+        addInfoMessage("Features linked", "Size of linked features : "+selectedSize);
         setUnsavedChanges(true);
         refreshParticipants();
     }
