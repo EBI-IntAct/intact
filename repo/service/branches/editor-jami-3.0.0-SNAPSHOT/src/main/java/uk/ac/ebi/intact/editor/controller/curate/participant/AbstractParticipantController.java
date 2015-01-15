@@ -267,8 +267,8 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
                 }
             }
         }
-        else{
-            IntactInteractorPool newPool = new IntactInteractorPool("imported");
+        else if (!interactorCandidates.isEmpty()){
+            IntactInteractorPool newPool = new IntactInteractorPool(interactor);
             for (ImportCandidate candidate : interactorCandidates) {
                 if (candidate.isSelected()) {
                     // chain or isoform, we may have to update it later

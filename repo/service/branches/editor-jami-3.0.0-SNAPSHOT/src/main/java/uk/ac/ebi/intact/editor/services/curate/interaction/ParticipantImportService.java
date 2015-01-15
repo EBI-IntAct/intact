@@ -33,6 +33,7 @@ import uk.ac.ebi.intact.editor.controller.curate.interaction.CandidateType;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.ImportCandidate;
 import uk.ac.ebi.intact.editor.controller.curate.util.CheckIdentifier;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.context.IntactConfiguration;
 import uk.ac.ebi.intact.jami.dao.InteractorDao;
 import uk.ac.ebi.intact.jami.dao.InteractorPoolDao;
@@ -243,9 +244,16 @@ public class ParticipantImportService extends AbstractEditorService {
             List<String> ids = new ArrayList<String>(identityXrefs.size());
             List<String> secondaryAcs = new ArrayList<String>();
 
+            IntactConfiguration intactConfig = ApplicationContextProvider.getBean("intactJamiConfiguration");
+
             for (Xref xref : identityXrefs) {
+                boolean isIntact = !XrefUtils.doesXrefHaveQualifier(xref,
+                        intactConfig.getDefaultInstitution().getMIIdentifier(), intactConfig.getDefaultInstitution().getShortName());
+                // exclude intact acs
                 if (XrefUtils.doesXrefHaveQualifier(xref, Xref.IDENTITY_MI, Xref.IDENTITY)){
-                    ids.add(xref.getId());
+                    if (!isIntact){
+                        ids.add(xref.getId());
+                    }
                 }
                 else{
                     secondaryAcs.add(xref.getId());
@@ -271,13 +279,17 @@ public class ParticipantImportService extends AbstractEditorService {
             initialiseAnnotations(((IntactInteractor)member).getDbAnnotations());
             initialiseCv(member.getInteractorType());
 
-            final Collection<Xref> identityXrefs = interactor.getIdentifiers();
+            final Collection<Xref> identityXrefs = member.getIdentifiers();
 
             if (!identityXrefs.isEmpty()) {
 
                 for (Xref xref : identityXrefs) {
+                    boolean isIntact = !XrefUtils.doesXrefHaveQualifier(xref,
+                            intactConfig.getDefaultInstitution().getMIIdentifier(), intactConfig.getDefaultInstitution().getShortName());
                     if (XrefUtils.doesXrefHaveQualifier(xref, Xref.IDENTITY_MI, Xref.IDENTITY)){
-                        ids.add(xref.getId());
+                        if (!isIntact){
+                            ids.add(xref.getId());
+                        }
                     }
                     else{
                         secondaryAcs.add(xref.getId());
