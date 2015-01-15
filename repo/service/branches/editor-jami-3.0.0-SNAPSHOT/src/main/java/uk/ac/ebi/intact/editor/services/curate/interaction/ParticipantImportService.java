@@ -65,7 +65,7 @@ public class ParticipantImportService extends AbstractEditorService {
 
     private final static String FEATURE_CHAIN = "PRO_";
 
-    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public Set<ImportCandidate> importParticipant(String participantToImport) throws BridgeFailedException, SynchronizerException,
             PersisterException, FinderException {
         log.debug("Importing participant: " + participantToImport);

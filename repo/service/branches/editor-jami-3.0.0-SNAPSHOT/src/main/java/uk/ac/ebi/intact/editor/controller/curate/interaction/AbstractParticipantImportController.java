@@ -176,9 +176,13 @@ public abstract class AbstractParticipantImportController<T extends AbstractInta
             }
         }
 
+        doSave();
+
         // reset load molecule set
         this.isLoadAsMoleculeSet = false;
     }
+
+    protected abstract void doSave();
 
     protected abstract void processAddedParticipant(T participant);
 

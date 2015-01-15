@@ -60,6 +60,11 @@ public class ParticipantImportController extends AbstractParticipantImportContro
     }
 
     @Override
+    protected void doSave() {
+        interactionController.doSave(false);
+    }
+
+    @Override
     protected void processAddedParticipant(IntactParticipantEvidence participant) {
         interactionController.addParticipant(participant);
 
