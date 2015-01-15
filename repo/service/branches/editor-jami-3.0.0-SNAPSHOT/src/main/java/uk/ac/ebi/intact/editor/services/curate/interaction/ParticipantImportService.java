@@ -33,7 +33,6 @@ import uk.ac.ebi.intact.editor.controller.curate.interaction.CandidateType;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.ImportCandidate;
 import uk.ac.ebi.intact.editor.controller.curate.util.CheckIdentifier;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
-import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.context.IntactConfiguration;
 import uk.ac.ebi.intact.jami.dao.InteractorDao;
 import uk.ac.ebi.intact.jami.dao.InteractorPoolDao;
@@ -243,8 +242,6 @@ public class ParticipantImportService extends AbstractEditorService {
         if (!identityXrefs.isEmpty()) {
             List<String> ids = new ArrayList<String>(identityXrefs.size());
             List<String> secondaryAcs = new ArrayList<String>();
-
-            IntactConfiguration intactConfig = ApplicationContextProvider.getBean("intactJamiConfiguration");
 
             for (Xref xref : identityXrefs) {
                 boolean isIntact = XrefUtils.isXrefFromDatabase(xref,

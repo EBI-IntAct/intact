@@ -4,6 +4,8 @@ import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Xref;
 import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.editor.controller.curate.util.ExperimentalRoleComparator;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
+import uk.ac.ebi.intact.jami.context.IntactConfiguration;
 import uk.ac.ebi.intact.jami.model.extension.AbstractIntactFeature;
 import uk.ac.ebi.intact.jami.model.extension.AbstractIntactParticipant;
 import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
@@ -38,6 +40,16 @@ public class ParticipantWrapper {
         IntactInteractor interactor = (IntactInteractor)participant.getInteractor();
 
         final Collection<Xref> identities = XrefUtils.collectAllXrefsHavingQualifier(interactor.getIdentifiers(), Xref.IDENTITY_MI, Xref.IDENTITY);
+        Iterator<Xref> refIterator = identities.iterator();
+        // filter first intact acs
+        IntactConfiguration intactConfig = ApplicationContextProvider.getBean("intactJamiConfiguration");
+        while(refIterator.hasNext()){
+            if (XrefUtils.isXrefFromDatabase(refIterator.next(),
+                    intactConfig.getDefaultInstitution().getMIIdentifier(), intactConfig.getDefaultInstitution().getShortName())){
+                refIterator.remove();
+            }
+        }
+        // build list of identifiers
         StringBuilder sb = new StringBuilder(64);
         for ( Iterator<Xref> iterator = identities.iterator(); iterator.hasNext(); ) {
             Xref xref = iterator.next();
