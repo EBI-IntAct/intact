@@ -88,6 +88,10 @@
                         <h:outputText value="#{candidate.interactor.shortName}" rendered="#{candidate.interactor != null}"/>
                     </p:column>
                     <p:column>
+                        <f:facet name="header"><h:outputText value="Interactor type"/></f:facet>
+                        <h:outputText value="#{candidate.interactor.interactorType.shortName}" rendered="#{candidate.interactor != null}"/>
+                    </p:column>
+                    <p:column>
                         <f:facet name="header"><h:outputText value="Query"/></f:facet>
                         <h:outputText value="#{candidate.query}"/>
                     </p:column>

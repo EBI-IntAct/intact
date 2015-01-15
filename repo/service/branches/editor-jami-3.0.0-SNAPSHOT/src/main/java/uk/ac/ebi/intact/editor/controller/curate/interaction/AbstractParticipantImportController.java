@@ -35,7 +35,10 @@ import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 
 import javax.annotation.Resource;
 import javax.faces.event.ActionEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -74,7 +77,6 @@ public abstract class AbstractParticipantImportController<T extends AbstractInta
 
         importCandidates = new ArrayList<ImportCandidate>();
         queriesNoResults = new ArrayList<String>();
-
         this.minStoichiometry = getEditorConfig().getDefaultStoichiometry();
         this.maxStoichiometry = getEditorConfig().getDefaultStoichiometry();
 
@@ -155,15 +157,16 @@ public abstract class AbstractParticipantImportController<T extends AbstractInta
                 }
             }
         }
-        else{
-            IntactInteractorPool newPool = new IntactInteractorPool("imported");
-            ImportCandidate firstSelected = new ImportCandidate(StringUtils.join(participantsToImport, " "), newPool);
+        else if (!importCandidates.isEmpty()){
+            String query = StringUtils.join(participantsToImport, "_");
+            IntactInteractorPool newPool = new IntactInteractorPool(query);
+            ImportCandidate firstSelected = new ImportCandidate(query, newPool);
             for (ImportCandidate candidate : importCandidates) {
                 if (candidate.isSelected()) {
                     if (candidate.isChain() || candidate.isIsoform()) {
 
                         changesController.markAsHiddenChange(candidate.getInteractor(), null, Collections.EMPTY_LIST,
-                                getParticipantImportService().getIntactDao().getSynchronizerContext().getInteractorSynchronizer(), "Interactor "+candidate.getInteractor().getShortName());
+                                getParticipantImportService().getIntactDao().getSynchronizerContext().getInteractorSynchronizer(), "Interactor " + candidate.getInteractor().getShortName());
                     }
                     newPool.add(candidate.getInteractor());
                 }
