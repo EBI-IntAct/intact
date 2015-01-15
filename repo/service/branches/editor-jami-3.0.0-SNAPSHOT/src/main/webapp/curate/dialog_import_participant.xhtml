@@ -38,7 +38,7 @@
 
 <p:dialog id="candidatesDialog" widgetVar="candidatesDialogWV" header="Import participants" dynamic="true"
           position="center" resizable="true"
-          width="800">
+          width="1000" height="800">
     <p:outputPanel id="candidatesContent">
         <ia:panelDialogLayout id="candidatesDialogContent">
             <f:facet name="buttonBar">
@@ -53,7 +53,7 @@
                 </h:panelGroup>
             </f:facet>
 
-            <p:scrollPanel mode="native"  style="max-height:600px; max-width: 600px">
+            <p:scrollPanel mode="native"  style="max-height:600px; max-width: 1000px">
 
                 <p:dataTable id="candidatesTable" var="candidate" rendered="#{not empty participantImportController.importCandidates}"
                              paginatorAlwaysVisible="false"

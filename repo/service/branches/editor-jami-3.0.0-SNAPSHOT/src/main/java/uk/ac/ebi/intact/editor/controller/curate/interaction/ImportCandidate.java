@@ -1,8 +1,10 @@
 package uk.ac.ebi.intact.editor.controller.curate.interaction;
 
+import psidev.psi.mi.jami.model.Interactor;
 import psidev.psi.mi.jami.model.Organism;
 import psidev.psi.mi.jami.model.Protein;
 import psidev.psi.mi.jami.model.Xref;
+import psidev.psi.mi.jami.utils.comparator.interactor.UnambiguousExactInteractorComparator;
 import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
 
 import java.util.ArrayList;
@@ -125,5 +127,29 @@ public class ImportCandidate {
 
     public boolean isChain() {
         return uniprotProtein != null && (uniprotProtein.getUniprotkb().contains("-PRO"));
+    }
+
+    @Override
+    public int hashCode() {
+        int hashcode = 31;
+
+        if (interactor != null){
+            hashcode = 31*hashcode + interactor.hashCode();
+        }
+
+        return hashcode;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o){
+            return true;
+        }
+
+        if (!(o instanceof Interactor)){
+            return false;
+        }
+
+        return UnambiguousExactInteractorComparator.areEquals(interactor, (Interactor) o);
     }
 }
