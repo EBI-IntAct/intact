@@ -77,10 +77,6 @@ public class ParticipantImportController extends AbstractParticipantImportContro
         if (cvExperimentalRole == null || getCvBiologicalRole() == null) {
             CvObjectService cvObjectService = getCvService();
 
-            if (!cvObjectService.isInitialised()){
-                cvObjectService.loadData();
-            }
-
             if (cvExperimentalRole == null) {
                 cvExperimentalRole = cvObjectService.getDefaultExperimentalRole();
             }

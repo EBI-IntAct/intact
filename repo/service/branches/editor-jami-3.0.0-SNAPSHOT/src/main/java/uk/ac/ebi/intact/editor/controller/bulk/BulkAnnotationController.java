@@ -30,9 +30,7 @@ import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
 import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 
 import javax.annotation.Resource;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ComponentSystemEvent;
 import javax.faces.model.SelectItem;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,15 +66,6 @@ public class BulkAnnotationController extends BaseController {
         topicSelectItems = new ArrayList<SelectItem>(1);
         topicSelectItems.add(new SelectItem(null, "* Choose object type first"));
     }
-
-    public void load(ComponentSystemEvent evt) {
-        if (!FacesContext.getCurrentInstance().isPostback()) {
-            if (!getCvService().isInitialised()){
-                getCvService().loadData();
-            }
-        }
-    }
-
 
     public void addBulkAnnotation(ActionEvent evt) {
 
@@ -121,10 +110,6 @@ public class BulkAnnotationController extends BaseController {
     public void aoClassNameChanged() {
 
         String newClassname = aoClassName;
-
-        if (!getCvService().isInitialised()){
-            getCvService().loadData();
-        }
 
         if (IntactPublication.class.getName().equals(newClassname)) {
             topicSelectItems = getCvService().getPublicationTopicSelectItems();

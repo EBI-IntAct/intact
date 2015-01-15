@@ -121,10 +121,6 @@ public class InteractionRemoteController extends BaseController {
                 }
             }
         }
-
-        if (!getCvService().isInitialised()){
-            getCvService().loadData();
-        }
     }
 
     public String createNewInteraction() {

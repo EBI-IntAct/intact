@@ -205,10 +205,6 @@ public class InteractionController extends AnnotatedObjectController {
     protected void generalLoadChecks() {
         super.generalLoadChecks();
         generalPublicationLoadChecks();
-
-        if (!getBioSourceService().isInitialised()){
-            getBioSourceService().loadData();
-        }
     }
 
     private void refreshParentControllers() {

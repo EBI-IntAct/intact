@@ -37,9 +37,6 @@ public class CvTermConverter implements Converter {
         if ( ac == null ) return null;
 
         CvObjectService service = ApplicationContextProvider.getBean("cvObjectService");
-        if (!service.isInitialised()){
-            service.loadData();
-        }
         return service.loadCvByAc(ac);
     }
 

@@ -249,10 +249,6 @@ public class ComplexController extends AnnotatedObjectController {
     protected void generalLoadChecks() {
         super.generalLoadChecks();
         generalComplexLoadChecks();
-
-        if (!getBioSourceService().isInitialised()){
-            getBioSourceService().loadData();
-        }
     }
 
     @Override

@@ -487,10 +487,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     protected void generalLoadChecks() {
         super.generalLoadChecks();
         generalPublicationLoadChecks();
-
-        if (!getBioSourceService().isInitialised()){
-            getBioSourceService().loadData();
-        }
     }
 
     public int getExperimentalPreparationsSize() {

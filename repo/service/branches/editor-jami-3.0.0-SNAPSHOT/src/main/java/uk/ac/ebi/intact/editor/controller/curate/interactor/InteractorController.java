@@ -86,11 +86,6 @@ public class InteractorController extends AnnotatedObjectController {
     @Override
     protected void generalLoadChecks() {
         super.generalLoadChecks();
-
-        // load biosource service if not done
-        if (!getBioSourceService().isInitialised()){
-            getBioSourceService().loadData();
-        }
     }
 
     @Override
@@ -249,9 +244,6 @@ public class InteractorController extends AnnotatedObjectController {
     }
 
     public IntactInteractor newInstance(String interactorType) {
-        if (!getCvService().isInitialised()){
-            getCvService().loadData();
-        }
         if (interactorType.equals(Protein.PROTEIN)) {
             this.typeSelectItems = getCvService().getProteinTypeSelectItems();
             this.topicRootTerm = Protein.PROTEIN_MI;
@@ -436,10 +428,6 @@ public class InteractorController extends AnnotatedObjectController {
             this.interactor = getInteractorEditorService().reloadFullyInitialisedInteractor(interactor);
         }
 
-        // initialise cv service if not done yet
-        if (!getCvService().isInitialised()){
-            getCvService().loadData();
-        }
         if (interactor instanceof Protein) {
             this.typeSelectItems = getCvService().getProteinTypeSelectItems();
             this.topicRootTerm = Protein.PROTEIN_MI;

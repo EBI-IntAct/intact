@@ -69,11 +69,6 @@ public class BioSourceController extends AnnotatedObjectController {
     @Override
     protected void generalLoadChecks() {
         super.generalLoadChecks();
-
-        // load biosource service if not done
-        if (!getBioSourceService().isInitialised()){
-            getBioSourceService().loadData();
-        }
     }
 
     public void loadData(ComponentSystemEvent evt) {
