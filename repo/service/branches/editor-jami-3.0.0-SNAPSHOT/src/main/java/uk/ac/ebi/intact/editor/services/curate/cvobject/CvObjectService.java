@@ -443,6 +443,7 @@ public class CvObjectService extends AbstractEditorService {
 
         // feature role
         featureRoleSelectItems = new ArrayList<SelectItem>();
+        featureRoleSelectItems.add(new SelectItem(null, "-- Select role --", "-- Select role --", false, false, true));
         IntactCvTerm roleParent = getIntactDao().getCvTermDao().getByMIIdentifier("MI:0925", IntactUtils.TOPIC_OBJCLASS);
         SelectItem item2 = roleParent != null ? createSelectItem(roleParent, false):null;
         if (item2 != null){

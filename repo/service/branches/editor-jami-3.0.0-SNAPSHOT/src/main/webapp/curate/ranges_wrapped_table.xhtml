@@ -73,7 +73,7 @@
     <f:facet name="header">
         <h:outputText value="Intramolecular"/>
     </f:facet>
-    <h:selectBooleanCheckbox value="#{rangeWrapper.range.linked}" disabled="#{annotatedObjetController.isRangeDisabled()}">
+    <h:selectBooleanCheckbox value="#{rangeWrapper.range.link}" disabled="#{annotatedObjetController.isRangeDisabled()}">
         <f:ajax event="valueChange" render=":editorForm:messagesComponent :editorForm:changesPanel :editorForm:unsavedChangesInfo"
                 onevent="markAsUnsaved()"/>
     </h:selectBooleanCheckbox>
