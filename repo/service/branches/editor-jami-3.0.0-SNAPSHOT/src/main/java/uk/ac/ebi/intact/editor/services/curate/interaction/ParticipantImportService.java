@@ -35,6 +35,7 @@ import uk.ac.ebi.intact.editor.controller.curate.util.CheckIdentifier;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.jami.context.IntactConfiguration;
 import uk.ac.ebi.intact.jami.dao.InteractorDao;
+import uk.ac.ebi.intact.jami.dao.InteractorPoolDao;
 import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
@@ -132,6 +133,7 @@ public class ParticipantImportService extends AbstractEditorService {
         Set<ImportCandidate> candidates = new HashSet<ImportCandidate>();
 
         final InteractorDao<IntactInteractor> interactorDao = getIntactDao().getInteractorDao(IntactInteractor.class);
+        final InteractorPoolDao poolDao = getIntactDao().getInteractorPoolDao();
 
         // id
         if (participantToImport.startsWith(intactConfig.getAcPrefix())) {
@@ -157,7 +159,13 @@ public class ParticipantImportService extends AbstractEditorService {
             Collection<IntactInteractor> interactorsByXref = interactorDao.getByXrefQualifier(Xref.IDENTITY, Xref.IDENTITY_MI, participantToImport);
 
             for (IntactInteractor interactorByXref : interactorsByXref) {
+                Collection<IntactInteractorPool> pools = poolDao.getByInteractorAc(interactorByXref.getAc());
                 candidates.add(toImportCandidate(participantToImport, interactorByXref));
+                if (!pools.isEmpty()){
+                    for (IntactInteractorPool pool : pools){
+                        candidates.add(toImportCandidate(participantToImport, pool));
+                    }
+                }
             }
 
             if (candidates.isEmpty()) {
@@ -246,6 +254,39 @@ public class ParticipantImportService extends AbstractEditorService {
 
             candidate.setPrimaryAcs(ids);
             candidate.setSecondaryAcs(secondaryAcs);
+        }
+
+        return candidate;
+    }
+
+    private ImportCandidate toImportCandidate(String participantToImport, IntactInteractorPool interactor) {
+        ImportCandidate candidate = new ImportCandidate(participantToImport, interactor);
+        candidate.setSource(intactConfig.getDefaultInstitution().getShortName());
+        List<String> ids = new ArrayList<String>();
+        List<String> secondaryAcs = new ArrayList<String>();
+
+        for (Interactor member : interactor){
+            // initialise some properties
+            initialiseXrefs(((IntactInteractor)member).getDbXrefs());
+            initialiseAnnotations(((IntactInteractor)member).getDbAnnotations());
+            initialiseCv(member.getInteractorType());
+
+            final Collection<Xref> identityXrefs = interactor.getIdentifiers();
+
+            if (!identityXrefs.isEmpty()) {
+
+                for (Xref xref : identityXrefs) {
+                    if (XrefUtils.doesXrefHaveQualifier(xref, Xref.IDENTITY_MI, Xref.IDENTITY)){
+                        ids.add(xref.getId());
+                    }
+                    else{
+                        secondaryAcs.add(xref.getId());
+                    }
+                }
+
+                candidate.setPrimaryAcs(ids);
+                candidate.setSecondaryAcs(secondaryAcs);
+            }
         }
 
         return candidate;

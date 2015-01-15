@@ -72,6 +72,8 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
     private String participantId;
     private boolean isNoUniprotUpdate=false;
 
+    private boolean isLoadAsMoleculeSet=false;
+
     public AbstractParticipantController() {
     }
 
@@ -246,22 +248,50 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
     }
 
     public void addInteractorToParticipant(ActionEvent evt) {
-        for (ImportCandidate importCandidate : interactorCandidates) {
-            if (importCandidate.isSelected()) {
-                // chain or isoform, we may have to update it later
-                if (importCandidate.isChain() || importCandidate.isIsoform()){
-                    Collection<String> parentAcs = new ArrayList<String>();
 
-                    getChangesController().markAsHiddenChange(importCandidate.getInteractor(), participant, parentAcs,
-                            getEditorService().getIntactDao().getSynchronizerContext().getInteractorSynchronizer(), "Interactor "+importCandidate.getInteractor().getShortName());
-                }
-                participant.setInteractor(importCandidate.getInteractor());
-                // if the participant is a new participant, we don't need to add a unsaved notice because one already exists for creating a new participant
-                if (participant.getAc() != null){
-                    setUnsavedChanges(true);
+        if (!isLoadAsMoleculeSet){
+            for (ImportCandidate importCandidate : interactorCandidates) {
+                if (importCandidate.isSelected()) {
+                    // chain or isoform, we may have to update it later
+                    if (importCandidate.isChain() || importCandidate.isIsoform()){
+                        Collection<String> parentAcs = new ArrayList<String>();
+
+                        getChangesController().markAsHiddenChange(importCandidate.getInteractor(), participant, parentAcs,
+                                getEditorService().getIntactDao().getSynchronizerContext().getInteractorSynchronizer(), "Interactor "+importCandidate.getInteractor().getShortName());
+                    }
+                    participant.setInteractor(importCandidate.getInteractor());
+                    // if the participant is a new participant, we don't need to add a unsaved notice because one already exists for creating a new participant
+                    if (participant.getAc() != null){
+                        setUnsavedChanges(true);
+                    }
                 }
             }
         }
+        else{
+            IntactInteractorPool newPool = new IntactInteractorPool("imported");
+            for (ImportCandidate candidate : interactorCandidates) {
+                if (candidate.isSelected()) {
+                    // chain or isoform, we may have to update it later
+                    if (candidate.isChain() || candidate.isIsoform()){
+                        Collection<String> parentAcs = new ArrayList<String>();
+
+                        getChangesController().markAsHiddenChange(candidate.getInteractor(), participant, parentAcs,
+                                getEditorService().getIntactDao().getSynchronizerContext().getInteractorSynchronizer(), "Interactor "+
+                                        candidate.getInteractor().getShortName());
+                    }
+                    newPool.add(candidate.getInteractor());
+                }
+            }
+
+            participant.setInteractor(newPool);
+            // if the participant is a new participant, we don't need to add a unsaved notice because one already exists for creating a new participant
+            if (participant.getAc() != null){
+                setUnsavedChanges(true);
+            }
+        }
+
+        // reset load as molecule set
+        this.isLoadAsMoleculeSet = false;
     }
 
     public void markFeatureToDelete(AbstractIntactFeature feature) {
@@ -766,5 +796,13 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
     @Override
     protected void addNewXref(AbstractIntactXref newRef) {
         this.participant.getXrefs().add(newRef);
+    }
+
+    public boolean isLoadAsMoleculeSet() {
+        return isLoadAsMoleculeSet;
+    }
+
+    public void setLoadAsMoleculeSet(boolean isLoadAsMoleculeSet) {
+        this.isLoadAsMoleculeSet = isLoadAsMoleculeSet;
     }
 }

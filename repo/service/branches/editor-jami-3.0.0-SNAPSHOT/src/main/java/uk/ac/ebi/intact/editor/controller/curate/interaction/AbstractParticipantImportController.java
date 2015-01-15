@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.intact.editor.controller.curate.interaction;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,15 +28,14 @@ import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.editor.services.curate.interaction.ParticipantImportService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.extension.AbstractIntactParticipant;
+import uk.ac.ebi.intact.jami.model.extension.IntactInteractorPool;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
 import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 
 import javax.annotation.Resource;
 import javax.faces.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -64,6 +64,8 @@ public abstract class AbstractParticipantImportController<T extends AbstractInta
 
     @Resource(name = "editorConfig")
     private transient EditorConfig editorConfig;
+
+    private boolean isLoadAsMoleculeSet=false;
 
     private final static String FEATURE_CHAIN = "PRO_";
 
@@ -145,12 +147,37 @@ public abstract class AbstractParticipantImportController<T extends AbstractInta
 
         initialiseOtherProperties();
 
-        for (ImportCandidate candidate : importCandidates) {
-            if (candidate.isSelected()) {
-                T participant = toParticipant(candidate);
+        if (!isLoadAsMoleculeSet){
+            for (ImportCandidate candidate : importCandidates) {
+                if (candidate.isSelected()) {
+                    T participant = toParticipant(candidate);
+                    processAddedParticipant(participant);
+                }
+            }
+        }
+        else{
+            IntactInteractorPool newPool = new IntactInteractorPool("imported");
+            ImportCandidate firstSelected = new ImportCandidate(StringUtils.join(participantsToImport, " "), newPool);
+            for (ImportCandidate candidate : importCandidates) {
+                if (candidate.isSelected()) {
+                    if (candidate.isChain() || candidate.isIsoform()) {
+
+                        changesController.markAsHiddenChange(candidate.getInteractor(), null, Collections.EMPTY_LIST,
+                                getParticipantImportService().getIntactDao().getSynchronizerContext().getInteractorSynchronizer(), "Interactor "+candidate.getInteractor().getShortName());
+                    }
+                    newPool.add(candidate.getInteractor());
+                }
+            }
+
+            if (firstSelected != null){
+                firstSelected.setInteractor(newPool);
+                T participant = toParticipant(firstSelected);
                 processAddedParticipant(participant);
             }
         }
+
+        // reset load molecule set
+        this.isLoadAsMoleculeSet = false;
     }
 
     protected abstract void processAddedParticipant(T participant);
@@ -226,5 +253,13 @@ public abstract class AbstractParticipantImportController<T extends AbstractInta
             this.cvService = ApplicationContextProvider.getBean("cvObjectService");
         }
         return cvService;
+    }
+
+    public boolean isLoadAsMoleculeSet() {
+        return isLoadAsMoleculeSet;
+    }
+
+    public void setLoadAsMoleculeSet(boolean isLoadAsMoleculeSet) {
+        this.isLoadAsMoleculeSet = isLoadAsMoleculeSet;
     }
 }
