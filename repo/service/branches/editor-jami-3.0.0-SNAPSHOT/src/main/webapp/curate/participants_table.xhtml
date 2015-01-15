@@ -33,14 +33,6 @@
             <ui:param name="participant" value="#{wrapper.participant}" />
             <ui:param name="interactor" value="#{participant.interactor}" />
 
-            <p:column style="width:16px">
-                <p:rowToggler/>
-            </p:column>
-
-            <p:rowExpansion>
-                <h:outputText value="AC: #{participant.ac}"/>
-            </p:rowExpansion>
-
             <p:column id="shortLabel" headerText="Name"
                       sortBy="#{interactor.shortName}"
                       filterBy="#{interactor.shortName}"

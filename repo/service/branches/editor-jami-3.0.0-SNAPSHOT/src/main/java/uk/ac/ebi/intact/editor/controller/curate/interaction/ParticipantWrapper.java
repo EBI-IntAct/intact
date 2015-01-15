@@ -1,6 +1,8 @@
 package uk.ac.ebi.intact.editor.controller.curate.interaction;
 
 import psidev.psi.mi.jami.model.CvTerm;
+import psidev.psi.mi.jami.model.Interactor;
+import psidev.psi.mi.jami.model.InteractorPool;
 import psidev.psi.mi.jami.model.Xref;
 import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.editor.controller.curate.util.ExperimentalRoleComparator;
@@ -39,26 +41,41 @@ public class ParticipantWrapper {
 
         IntactInteractor interactor = (IntactInteractor)participant.getInteractor();
 
-        final Collection<Xref> identities = XrefUtils.collectAllXrefsHavingQualifier(interactor.getIdentifiers(), Xref.IDENTITY_MI, Xref.IDENTITY);
-        Iterator<Xref> refIterator = identities.iterator();
-        // filter first intact acs
-        IntactConfiguration intactConfig = ApplicationContextProvider.getBean("intactJamiConfiguration");
-        while(refIterator.hasNext()){
-            if (XrefUtils.isXrefFromDatabase(refIterator.next(),
-                    intactConfig.getDefaultInstitution().getMIIdentifier(), intactConfig.getDefaultInstitution().getShortName())){
-                refIterator.remove();
-            }
-        }
+        this.interactorIdentity = initialiseInteractorIdentity(interactor);
+    }
+
+    private String initialiseInteractorIdentity(Interactor interactor) {
         // build list of identifiers
         StringBuilder sb = new StringBuilder(64);
-        for ( Iterator<Xref> iterator = identities.iterator(); iterator.hasNext(); ) {
-            Xref xref = iterator.next();
-            sb.append( xref.getId() );
-            if( iterator.hasNext() ) {
-                sb.append( "|" );
+        if (interactor instanceof InteractorPool){
+            Iterator<Interactor> memberIterator = ((InteractorPool)interactor).iterator();
+            while (memberIterator.hasNext()){
+                sb.append( initialiseInteractorIdentity(memberIterator.next()));
+                if( memberIterator.hasNext() ) {
+                    sb.append( "|" );
+                }
             }
         }
-        this.interactorIdentity = sb.toString();
+        else{
+            final Collection<Xref> identities = XrefUtils.collectAllXrefsHavingQualifier(interactor.getIdentifiers(), Xref.IDENTITY_MI, Xref.IDENTITY);
+            Iterator<Xref> refIterator = identities.iterator();
+            // filter first intact acs
+            IntactConfiguration intactConfig = ApplicationContextProvider.getBean("intactJamiConfiguration");
+            while(refIterator.hasNext()){
+                if (XrefUtils.isXrefFromDatabase(refIterator.next(),
+                        intactConfig.getDefaultInstitution().getMIIdentifier(), intactConfig.getDefaultInstitution().getShortName())){
+                    refIterator.remove();
+                }
+            }
+            for ( Iterator<Xref> iterator = identities.iterator(); iterator.hasNext(); ) {
+                Xref xref = iterator.next();
+                sb.append( xref.getId() );
+                if( iterator.hasNext() ) {
+                    sb.append( "|" );
+                }
+            }
+        }
+        return sb.toString();
     }
 
     public AbstractIntactParticipant getParticipant() {

@@ -63,6 +63,11 @@ public class ModelledParticipantImportController extends AbstractParticipantImpo
     }
 
     @Override
+    protected void doSave() {
+        interactionController.doSave(false);
+    }
+
+    @Override
     protected IntactModelledParticipant toParticipant(ImportCandidate candidate) {
         return toParticipant(candidate, interactionController.getComplex());
     }
