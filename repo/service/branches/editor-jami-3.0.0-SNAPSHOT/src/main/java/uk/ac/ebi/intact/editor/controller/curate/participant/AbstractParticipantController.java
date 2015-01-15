@@ -541,7 +541,7 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
             this.participant = getParticipantEditorService().reloadFullyInitialisedParticipant(part);
         }
 
-        featuresDataModel = new SelectableDataModelWrapper(new SelectableCollectionDataModel<Feature>(participant.getFeatures()), participant.getFeatures());
+        refreshFeatures();
 
         interactor = participant.getInteractor().getShortName().equals("to set") ? null : participant.getInteractor().getShortName();
 

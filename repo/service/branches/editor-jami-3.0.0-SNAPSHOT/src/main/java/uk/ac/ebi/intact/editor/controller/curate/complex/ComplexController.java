@@ -413,6 +413,8 @@ public class ComplexController extends AnnotatedObjectController {
             }
         }
 
+        int selectedSize = selected.size();
+
         Iterator<AbstractIntactFeature> fIterator1 = selected.iterator();
         while (fIterator1.hasNext()){
             AbstractIntactFeature f1 = fIterator1.next();
@@ -431,7 +433,7 @@ public class ComplexController extends AnnotatedObjectController {
         }
 
 
-        addInfoMessage("Features linked", "Size of linked features : "+selected.size());
+        addInfoMessage("Features linked", "Size of linked features : "+selectedSize);
         setUnsavedChanges(true);
         refreshParticipants();
     }
