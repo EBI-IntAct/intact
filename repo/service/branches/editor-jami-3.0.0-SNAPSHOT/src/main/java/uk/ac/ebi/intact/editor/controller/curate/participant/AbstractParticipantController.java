@@ -543,7 +543,7 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
 
         featuresDataModel = new SelectableDataModelWrapper(new SelectableCollectionDataModel<Feature>(participant.getFeatures()), participant.getFeatures());
 
-        interactor = participant.getInteractor().getShortName();
+        interactor = participant.getInteractor().getShortName().equals("to set") ? null : participant.getInteractor().getShortName();
 
         setDescription("Participant: "+(participant.getAc() != null ? participant.getAc(): participant.getInteractor().getShortName()));
     }

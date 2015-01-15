@@ -220,6 +220,9 @@ public class ParticipantEditorService extends AbstractEditorService {
 
             // load participant interactor
             initialiseInteractor((IntactInteractor)participant.getInteractor());
+
+            // load features
+            initialiseFeatures(participant.getFeatures());
         }
 
         return participant;
@@ -243,6 +246,8 @@ public class ParticipantEditorService extends AbstractEditorService {
         // load participant interactor
         initialiseInteractor((IntactInteractor)reloaded.getInteractor());
 
+        // load features
+        initialiseFeatures(participant.getFeatures());
 
         getIntactDao().getEntityManager().detach(reloaded);
 
@@ -254,12 +259,16 @@ public class ParticipantEditorService extends AbstractEditorService {
         T reloaded = getIntactDao().getEntityManager().merge(participant);
 
         Collection dets = reloaded.getFeatures();
-        for (Object det : dets){
-            initialiseFeature((Feature) det);
-        }
+        initialiseFeatures(dets);
 
         getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
+    }
+
+    private void initialiseFeatures(Collection dets) {
+        for (Object det : dets){
+            initialiseFeature((Feature) det);
+        }
     }
 
     private void initialiseFeature(Feature det) {
