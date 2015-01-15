@@ -140,9 +140,6 @@ public abstract class AbstractParticipantImportController<T extends AbstractInta
     public void importSelected(ActionEvent evt) {
         getParticipantImportService().getIntactDao().getUserContext().setUser(getCurrentUser());
 
-        this.minStoichiometry = getEditorConfig().getDefaultStoichiometry();
-        this.maxStoichiometry = getEditorConfig().getDefaultStoichiometry();
-
         CvObjectService cvObjectService = getCvService();
 
         cvBiologicalRole = cvObjectService.getDefaultBiologicalRole();
