@@ -247,7 +247,7 @@ public class ParticipantImportService extends AbstractEditorService {
             IntactConfiguration intactConfig = ApplicationContextProvider.getBean("intactJamiConfiguration");
 
             for (Xref xref : identityXrefs) {
-                boolean isIntact = XrefUtils.doesXrefHaveQualifier(xref,
+                boolean isIntact = XrefUtils.isXrefFromDatabase(xref,
                         intactConfig.getDefaultInstitution().getMIIdentifier(), intactConfig.getDefaultInstitution().getShortName());
                 // exclude intact acs
                 if (XrefUtils.doesXrefHaveQualifier(xref, Xref.IDENTITY_MI, Xref.IDENTITY)){
@@ -284,7 +284,7 @@ public class ParticipantImportService extends AbstractEditorService {
             if (!identityXrefs.isEmpty()) {
 
                 for (Xref xref : identityXrefs) {
-                    boolean isIntact = XrefUtils.doesXrefHaveQualifier(xref,
+                    boolean isIntact = XrefUtils.isXrefFromDatabase(xref,
                             intactConfig.getDefaultInstitution().getMIIdentifier(), intactConfig.getDefaultInstitution().getShortName());
                     if (XrefUtils.doesXrefHaveQualifier(xref, Xref.IDENTITY_MI, Xref.IDENTITY)){
                         if (!isIntact){
