@@ -72,11 +72,6 @@ public class ModelledParticipantImportController extends AbstractParticipantImpo
 
         if (getCvBiologicalRole() == null) {
             CvObjectService cvObjectService = getCvService();
-
-            if (!cvObjectService.isInitialised()){
-                cvObjectService.loadData();
-            }
-
             if (getCvBiologicalRole() == null) {
                 setCvBiologicalRole(cvObjectService.getDefaultBiologicalRole());
             }

@@ -50,15 +50,9 @@ public class ComplexCloner extends AbstractEditorCloner<Complex, IntactComplex> 
 
         clone.setInteractionType(evidence.getInteractionType());
         CvObjectService cvService = ApplicationContextProvider.getBean("cvObjectService");
-        if (!cvService.isInitialised()){
-           cvService.loadData();
-        }
         CvTermService cvTermService = ApplicationContextProvider.getBean("cvTermService");
 
         BioSourceService biosourceService = ApplicationContextProvider.getBean("bioSourceService");
-        if (!biosourceService.isInitialised()){
-            biosourceService.loadData();
-        }
         OrganismService organismService = ApplicationContextProvider.getBean("organismService");
 
         clone.setEvidenceType(cvService.findCvObjectByIdentifier(IntactUtils.DATABASE_OBJCLASS, "ECO:0000353"));

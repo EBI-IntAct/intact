@@ -159,11 +159,6 @@ public abstract class AnnotatedObjectController extends BaseController implement
                 addWarningMessage("This object is already being edited by: " + who, "Modifications may be lost or affect current work by the other curator");
             }
 
-            // load cv service if not done
-            if (!getCvService().isInitialised()){
-                getCvService().loadData();
-            }
-
             loadCautionMessages();
         }
     }

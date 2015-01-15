@@ -34,6 +34,8 @@ import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
 import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
+import javax.faces.context.FacesContext;
+import javax.faces.event.ComponentSystemEvent;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 import javax.persistence.Query;
@@ -1042,5 +1044,13 @@ public class CvObjectService extends AbstractEditorService {
             }
         }
         return list;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public void loadDataIfNecessary( ComponentSystemEvent event ) {
+        if (!isInitialised()) {
+
+            loadData();
+        }
     }
 }

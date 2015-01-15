@@ -9,12 +9,6 @@
 
                 template="/bulk/bulk_template.xhtml">
 
-    <ui:define name="metadata">
-        <f:metadata>
-            <f:event type="preRenderView" listener="#{bulkAnnotationController.load}"/>
-        </f:metadata>
-    </ui:define>
-
     <ui:define name="topNavigation">
         <ui:include src="/shared/top_navigation_links.xhtml">
             <ui:param name="selected" value="bulk"/>

@@ -210,10 +210,6 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
             InvocationTargetException, InstantiationException {
         this.interactor = null;
 
-        if (!getCvService().isInitialised()){
-            getCvService().loadData();
-        }
-
         IntactCvTerm defaultBiologicalRole = getCvService().getDefaultBiologicalRole();
 
         T participant = getParticipantClass().getConstructor(Interactor.class).newInstance(new IntactInteractor("to set"));

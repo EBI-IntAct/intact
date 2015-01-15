@@ -31,6 +31,7 @@ import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.extension.*;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ComponentSystemEvent;
 import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -271,6 +272,14 @@ public class BioSourceService extends AbstractEditorService {
         for (Annotation annot : annotations){
             Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbAnnotations());
             Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbXrefs());
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public void loadDataIfNecessary( ComponentSystemEvent event ) {
+        if (!isInitialised()) {
+
+            loadData();
         }
     }
 }

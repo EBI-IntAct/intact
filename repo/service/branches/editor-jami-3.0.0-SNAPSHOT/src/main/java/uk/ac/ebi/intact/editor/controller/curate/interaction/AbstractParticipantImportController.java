@@ -78,10 +78,6 @@ public abstract class AbstractParticipantImportController<T extends AbstractInta
 
         CvObjectService cvObjectService = getCvService();
 
-        if (!cvObjectService.isInitialised()){
-            cvObjectService.loadData();
-        }
-
         cvBiologicalRole = cvObjectService.getDefaultBiologicalRole();
 
         initialiseOtherProperties();
@@ -144,10 +140,6 @@ public abstract class AbstractParticipantImportController<T extends AbstractInta
         this.maxStoichiometry = getEditorConfig().getDefaultStoichiometry();
 
         CvObjectService cvObjectService = getCvService();
-
-        if (!cvObjectService.isInitialised()){
-            cvObjectService.loadData();
-        }
 
         cvBiologicalRole = cvObjectService.getDefaultBiologicalRole();
 

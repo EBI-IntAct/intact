@@ -219,11 +219,6 @@ public class ExperimentController extends AnnotatedObjectController {
     protected void generalLoadChecks() {
         super.generalLoadChecks();
         super.generalPublicationLoadChecks();
-
-        // load biosource service if not done
-        if (!getBiosourceService().isInitialised()){
-            getBiosourceService().loadData();
-        }
     }
 
     protected void refreshParentControllers() {
