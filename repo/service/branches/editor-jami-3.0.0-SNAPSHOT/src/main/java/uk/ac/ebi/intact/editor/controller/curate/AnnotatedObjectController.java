@@ -362,7 +362,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
                 // we refresh the object if it has been saved
                 if (annotatedObject != null){
                     setAnnotatedObject(annotatedObject);
-                    addInfoMessage("Saved", getAnnotatedObject().toString());
+                    addInfoMessage("Saved", getDescription());
                     doPostSave();
                 }
 
