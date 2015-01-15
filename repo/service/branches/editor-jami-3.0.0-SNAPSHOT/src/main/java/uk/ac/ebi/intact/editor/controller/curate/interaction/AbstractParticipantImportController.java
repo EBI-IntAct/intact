@@ -131,8 +131,6 @@ public abstract class AbstractParticipantImportController<T extends AbstractInta
                 }
             }
         }
-
-        participantsToImport = new String[0];
     }
 
     protected abstract void initialiseOtherProperties();
@@ -178,6 +176,7 @@ public abstract class AbstractParticipantImportController<T extends AbstractInta
 
         doSave();
 
+        participantsToImport = new String[0];
         // reset load molecule set
         this.isLoadAsMoleculeSet = false;
     }
