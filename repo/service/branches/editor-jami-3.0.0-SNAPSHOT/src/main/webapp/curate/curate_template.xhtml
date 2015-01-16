@@ -62,7 +62,7 @@
                         rendered="#{annotatedObjectController.annotatedObject != null}"/>
         </p:submenu>
 
-        <p:submenu label="Tools" rendered="#{annotatedObjectController.annotatedObject != null or annotatedObjectController.jamiObject != null}">
+        <p:submenu label="Tools" rendered="#{annotatedObjectController.annotatedObject != null}">
             <p:menuitem value="Clone #{annotatedObjectController.objectCategory}" action="#{annotatedObjectController.clone}" ajax="false"
                         onclick="cloningDialog.show()" oncomplete="cloningDialog.hide()"
                         rendered="#{annotatedObjectController.objectCategory != 'Publication'}"/>
@@ -72,7 +72,7 @@
                         onclick="if (confirm('Are you sure you sure you want to delete this sucker?')) { deletingDialog.show() } else { return false }" oncomplete="deletingDialog.hide()" />
         </p:submenu>
 
-        <p:submenu label="Debug" rendered="#{facesContext.application.projectStage == 'Development' and (annotatedObjectController.annotatedObject != null or annotatedObjectController.jamiObject != null)}">
+        <p:submenu label="Debug" rendered="#{facesContext.application.projectStage == 'Development' and (annotatedObjectController.annotatedObject != null)}">
             <p:menuitem value="Changes" action="/curate/debug/changes" ajax="false"/>
             <p:menuitem value="Refresh" update=":editorForm:contentSection" immediate="true"/>
             <p:menuitem value="Revert" actionListener="#{annotatedObjectController.doRevertChanges}" update="editorForm" immediate="true"/>
@@ -114,7 +114,7 @@
 
     <div style="width:100%;">
 
-        <h:panelGroup rendered="#{annotatedObjectController.annotatedObject != null or annotatedObjectController.jamiObject != null}">
+        <h:panelGroup rendered="#{annotatedObjectController.annotatedObject != null}">
             <h:panelGroup id="unsavedChangesInfo" style="float: right; margin-right: 40px">
                 <ui:insert name="curateTopRight">
                     <h:panelGroup rendered="#{changesController.numberUnsavedChangedForCurrentUser gt 0}">

@@ -129,4 +129,9 @@ public class FeatureWrapper {
         }
         return buffer.toString();
     }
+
+    public void reloadLinkedFeatures(){
+        this.linkedFeatures.clear();
+        this.linkedFeatures = new ArrayList<AbstractIntactFeature>(this.feature.getLinkedFeatures());
+    }
 }

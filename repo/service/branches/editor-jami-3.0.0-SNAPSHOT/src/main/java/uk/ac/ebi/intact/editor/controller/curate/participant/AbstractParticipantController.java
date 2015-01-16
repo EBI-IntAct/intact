@@ -754,23 +754,10 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
             }
         }
 
-        FeatureWrapper wrapperToRemove=null;
-        for (FeatureWrapper fw : featuresDataModel) {
-            if (fw.getFeature() == wrapper.getSelectedLinkedFeature()) {
-                wrapperToRemove = fw;
-                break;
-            }
-        }
-        if (wrapperToRemove != null){
-            wrapperToRemove.getLinkedFeatures().clear();
-            wrapperToRemove.getLinkedFeatures().addAll(feature2.getLinkedFeatures());
-        }
+        wrapper.reloadLinkedFeatures();
 
         addInfoMessage("Feature unlinked", feature2.toString());
         setUnsavedChanges(true);
-
-        wrapper.getLinkedFeatures().clear();
-        wrapper.getLinkedFeatures().addAll(feature1.getLinkedFeatures());
     }
 
     @Override
