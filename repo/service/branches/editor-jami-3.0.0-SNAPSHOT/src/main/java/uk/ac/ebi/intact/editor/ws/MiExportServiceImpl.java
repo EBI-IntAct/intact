@@ -73,8 +73,7 @@ public class MiExportServiceImpl implements MiExportService {
         Response response = null;
         InteractionWriter writer = null;
         try {
-            String responseType = "application/x-download";
-            String extension = calculateFileExtension(format);
+            String responseType = getResponseType(format);
             StreamingOutput output = null;
 
             final String query = "select distinct i from IntactInteractionEvidence i join i.dbExperiments as e join e.publication as p " +
@@ -85,7 +84,7 @@ public class MiExportServiceImpl implements MiExportService {
             parameters.put("ac", ac);
             output = new IntactEntryStreamingOutput(format, query, countQuery, parameters, true);
 
-            response = Response.status(200).type(responseType).header("Content-Disposition", "attachment; filename="+ac+"."+extension).entity(output).build();
+            response = Response.status(200).type(responseType).entity(output).build();
         } catch (Throwable e) {
             throw new RuntimeException("Problem exporting publication: "+ac, e);
         } finally {
@@ -102,8 +101,7 @@ public class MiExportServiceImpl implements MiExportService {
         Response response = null;
         InteractionWriter writer = null;
         try {
-            String responseType = "application/x-download";
-            String extension = calculateFileExtension(format);
+            String responseType = getResponseType(format);
             StreamingOutput output = null;
 
             final String query = "select distinct i from IntactInteractionEvidence i join i.dbExperiments as e " +
@@ -114,7 +112,7 @@ public class MiExportServiceImpl implements MiExportService {
             parameters.put("ac", ac);
             output = new IntactEntryStreamingOutput(format, query, countQuery, parameters, true);
 
-            response = Response.status(200).type(responseType).header("Content-Disposition", "attachment; filename="+ac+"."+extension).entity(output).build();
+            response = Response.status(200).type(responseType).entity(output).build();
         } catch (Throwable e) {
             throw new RuntimeException("Problem exporting experiment: "+ac, e);
         } finally {
@@ -130,8 +128,7 @@ public class MiExportServiceImpl implements MiExportService {
     public Object exportInteraction(final String ac, final String format) {
         Response response = null;
         try {
-            String responseType = "application/x-download";
-            String extension = calculateFileExtension(format);
+            String responseType = getResponseType(format);
             StreamingOutput output = null;
 
             final String query = "select distinct i from IntactInteractionEvidence i " +
@@ -142,7 +139,7 @@ public class MiExportServiceImpl implements MiExportService {
             parameters.put("ac", ac);
             output = new IntactEntryStreamingOutput(format, query, countQuery, parameters, true);
 
-            response = Response.status(200).type(responseType).header("Content-Disposition", "attachment; filename="+ac+"."+extension).entity(output).build();
+            response = Response.status(200).type(responseType).entity(output).build();
         } catch (Throwable e) {
             throw new RuntimeException("Problem exporting interaction: "+ac, e);
         }
@@ -155,8 +152,7 @@ public class MiExportServiceImpl implements MiExportService {
     public Object exportComplex(String ac, @DefaultValue("xml254") String format) {
         Response response = null;
         try {
-            String responseType = "application/x-download";
-            String extension = calculateFileExtension(format);
+            String responseType = getResponseType(format);
             StreamingOutput output = null;
 
             final String query = "select distinct i from IntactComplex i " +
@@ -167,52 +163,12 @@ public class MiExportServiceImpl implements MiExportService {
             parameters.put("ac", ac);
             output = new IntactEntryStreamingOutput(format, query, countQuery, parameters, false);
 
-            response = Response.status(200).type(responseType).header("Content-Disposition", "attachment; filename="+ac+"."+extension).entity(output).build();
+            response = Response.status(200).type(responseType).entity(output).build();
         } catch (Throwable e) {
             throw new RuntimeException("Problem exporting complex: "+ac, e);
         }
 
         return response;
-    }
-
-    private String calculateFileExtension(String format) {
-
-        if (format.equals(MiExportService.FORMAT_MITAB25)){
-            return "txt";
-        }
-        else if (format.equals(MiExportService.FORMAT_MITAB26)){
-            return "txt";
-        }
-        else if (format.equals(MiExportService.FORMAT_MITAB27)){
-            return "txt";
-        }
-        else if (format.equals(MiExportService.FORMAT_XML254_COMPACT)){
-            return "xml";
-        }
-        else if (format.equals(MiExportService.FORMAT_XML254_EXPANDED)){
-            return "xml";
-        }
-        else if (format.equals(MiExportService.FORMAT_XML300_COMPACT)){
-            return "xml";
-        }
-        else if (format.equals(MiExportService.FORMAT_XML300_EXPANDED)){
-            return "xml";
-        }
-        else if (format.equals(MiExportService.FORMAT_HTML)){
-            return "html";
-        }
-        else if (format.equals(MiExportService.FORMAT_JSON)){
-            return "json";
-        }
-        else if (format.equals(MiExportService.FORMAT_JSON_BINARY)){
-            return "json";
-        }
-        else if (format.equals(MiExportService.FORMAT_FEBS_SDA)){
-            return "html";
-        }
-        else{
-            throw new IllegalArgumentException("The format "+format +" is not recognized");
-        }
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
@@ -402,5 +358,20 @@ public class MiExportServiceImpl implements MiExportService {
         else{
             throw new IllegalArgumentException("The format "+format +" is not recognized");
         }
+    }
+    private String getResponseType( String format) {
+        if ( FORMAT_MITAB25.equals( format ) || FORMAT_MITAB26.equals( format ) || FORMAT_MITAB27.equals( format ) ) {
+            return "text/plain";
+        } else if ( FORMAT_XML254_COMPACT.equals( format ) || FORMAT_XML254_EXPANDED.equals( format )
+                || FORMAT_XML300_COMPACT.equals( format ) || FORMAT_XML300_EXPANDED.equals( format )) {
+            return "application/xml";
+        } else if ( FORMAT_FEBS_SDA.equals( format ) || FORMAT_HTML.equals(format)) {
+            return "text/html";
+        } else if ( FORMAT_JSON.equals(format) || FORMAT_JSON_BINARY.equals(format)) {
+            return "application/json";
+        } else{
+            return "text/plain";
+        }
+
     }
 }
