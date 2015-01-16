@@ -115,8 +115,9 @@ function ia_enableButton(id, innerHTML) {
 }
 
 function ia_showLinkedFeatures(e, c, hasLinkedFeatures) {
+    var current = document.getElementById(e);
     if (hasLinkedFeatures){
-        e.style.fontWeight = 'bold';
+        current.style.fontWeight = 'bold';
         var idNames = c.split(" ");
         for (j = 0; j < idNames.length; j++) {
             var x = document.getElementById(idNames[j]);
@@ -131,12 +132,13 @@ function ia_showLinkedFeatures(e, c, hasLinkedFeatures) {
         }
     }
     else{
-        e.style.fontWeight = 'inherit';
+        current.style.fontWeight = 'inherit';
     }
 }
 
 function ia_hideLinkedFeatures(e, c, hasLinkedFeatures) {
-    e.style.fontWeight = 'inherit';
+    var current = document.getElementById(e);
+    current.style.fontWeight = 'inherit';
     if (hasLinkedFeatures){
         var idNames = c.split(" ");
         for (j = 0; j < idNames.length; j++) {

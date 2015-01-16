@@ -118,4 +118,15 @@ public class FeatureWrapper {
         }
         return buffer.toString();
     }
+
+    public String getRelatedFeatureDivs(AbstractIntactFeature linked){
+        StringBuffer buffer = new StringBuffer();
+        if (linked.getAc() != null){
+            buffer.append("feature_").append(linked.getAc());
+        }
+        else{
+            buffer.append("feature_").append(Integer.toString(linked.hashCode()));
+        }
+        return buffer.toString();
+    }
 }
