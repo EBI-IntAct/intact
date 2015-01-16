@@ -750,7 +750,7 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
                 feature2Iterator.remove();
             }
             else if (f2.getAc() != null && f2.getAc().equals(feature1.getAc())){
-                featureIterator.remove();
+                feature2Iterator.remove();
             }
         }
 

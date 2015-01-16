@@ -148,12 +148,6 @@ public class ModelledParticipantController extends AbstractParticipantController
     }
 
     @Override
-    public void newAnnotation(ActionEvent evt) {
-        getParticipant().getAnnotations().add(new ModelledParticipantAnnotation(IntactUtils.createMITopic("to set", null)));
-        setUnsavedChanges(true);
-    }
-
-    @Override
     public ModelledParticipantAnnotation newAnnotation(CvTerm annotation, String text) {
         return new ModelledParticipantAnnotation(annotation, text);
     }

@@ -526,12 +526,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     }
 
     @Override
-    public void newAnnotation(ActionEvent evt) {
-        getParticipant().getAnnotations().add(new ParticipantEvidenceAnnotation(IntactUtils.createMITopic("to set", null)));
-        setUnsavedChanges(true);
-    }
-
-    @Override
     public ParticipantEvidenceAnnotation newAnnotation(CvTerm annotation, String text) {
         return new ParticipantEvidenceAnnotation(annotation, text);
     }
