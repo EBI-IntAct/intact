@@ -84,7 +84,8 @@
                     </h:panelGroup>
 
 
-                    <p:commandLink type="button"
+                    <p:commandLink id="unlinkBtn_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}"
+                                   type="button"
                                    oncomplete="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}#{intactComponentUtils.toJavascriptFriendlyVar(linked.ac)}.show()"
                                    styleClass="ui-icon ui-icon-link" style="display:inline-block"
                                    title="Linked to #{linked.shortName}" action="#{participantController.selectLinkedFeature(featureWrapper, linked)}"
@@ -97,7 +98,7 @@
                             widgetVar="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}#{intactComponentUtils.toJavascriptFriendlyVar(linked.ac)}"
                             message="Do you want to unlink this feature?" modal="true">
                         <p:commandButton value="Yes Sure"
-                                         actionListener="#{modelledParticipantController.unlinkFeature(featureWrapper)}"
+                                         actionListener="#{participantController.unlinkFeature(featureWrapper)}"
                                          immediate="true" process="@this"
                                          update=":editorForm:participantTabs:featuresPanel :editorForm:changesPanel :editorForm:messagesComponent :editorForm:unsavedChangesInfo"
                                          onclick="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}#{intactComponentUtils.toJavascriptFriendlyVar(linked.ac)}.hide()"/>
