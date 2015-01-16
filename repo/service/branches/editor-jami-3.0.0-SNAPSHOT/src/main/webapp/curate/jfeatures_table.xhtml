@@ -97,7 +97,7 @@
 
                     <p:confirmDialog
                             widgetVar="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}#{intactComponentUtils.toJavascriptFriendlyVar(linked.ac)}"
-                            message="Do you want to unlink this feature?" modal="true">
+                            message="Do you want to unlink this feature and save?" modal="true">
                         <p:commandButton value="Yes Sure"
                                          actionListener="#{modelledParticipantController.unlinkFeature(featureWrapper)}"
                                          immediate="true" process="@this"

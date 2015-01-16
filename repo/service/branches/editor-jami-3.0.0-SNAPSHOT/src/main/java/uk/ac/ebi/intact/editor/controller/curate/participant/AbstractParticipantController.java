@@ -314,7 +314,7 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
             if (this.participant.getAc() != null){
                 parents.add(this.participant.getAc());
             }
-            getChangesController().markToDelete(feature, (AbstractIntactParameter)feature.getParticipant(),
+            getChangesController().markToDelete(feature, (AbstractIntactParticipant)feature.getParticipant(),
                     getEditorService().getIntactDao().getSynchronizerContext().getFeatureSynchronizer(), "Feature "+feature.getShortName(), parents);
         }
     }
@@ -754,10 +754,14 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
             }
         }
 
-        wrapper.reloadLinkedFeatures();
-
         addInfoMessage("Feature unlinked", feature2.toString());
-        setUnsavedChanges(true);
+        doSave(false);
+
+        try {
+            getEditorService().doSave((IntactPrimaryObject) feature2.getParticipant(), getDbSynchronizer());
+        }catch (Throwable t) {
+            handleException(t);
+        }
     }
 
     @Override
