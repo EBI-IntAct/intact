@@ -101,12 +101,6 @@ public class ModelledFeatureController extends AbstractFeatureController<IntactM
     }
 
     @Override
-    public void newAnnotation(ActionEvent evt) {
-        getFeature().getAnnotations().add(new ModelledFeatureAnnotation(IntactUtils.createMITopic("to set", null)));
-        setUnsavedChanges(true);
-    }
-
-    @Override
     public ModelledFeatureAnnotation newAnnotation(CvTerm annotation, String text) {
         return new ModelledFeatureAnnotation(annotation, text);
     }
