@@ -56,9 +56,17 @@ public class RangeWrapper {
     private boolean isInvalid = false;
     private String badRangeInfo = null;
 
+    private CvTerm newDatabase;
+    private String newXrefId;
+    private String newSecondaryId;
+    private String newXrefVersion;
+    private CvTerm newQualifier;
+    private AnnotatedObjectController featureController;
+
     public RangeWrapper(AbstractIntactRange range, String sequence, CvObjectService cvService,
                         Class<? extends AbstractIntactResultingSequence> resultingSequenceClass,
-                        Class<? extends AbstractIntactXref> resSequenceXrefClass) {
+                        Class<? extends AbstractIntactXref> resSequenceXrefClass,
+                        AnnotatedObjectController featureController) {
         this.range = range;
         this.rangeAsString = RangeUtils.convertRangeToString(range);
         if (range.getParticipant() != null){
@@ -82,6 +90,7 @@ public class RangeWrapper {
         if (isInvalid){
             this.badRangeInfo = StringUtils.join(messages, ", ");
         }
+        this.featureController = featureController;
     }
 
     public void onRangeAsStringChanged(AjaxBehaviorEvent evt)  throws IllegalRangeException,NoSuchMethodException,InstantiationException, IllegalAccessException,InvocationTargetException {
@@ -188,6 +197,26 @@ public class RangeWrapper {
     public void newXref(ActionEvent evt) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         range.getResultingSequence().getXrefs().add(this.resSequenceXrefClass.getConstructor(CvTerm.class, String.class)
                 .newInstance(IntactUtils.createMIDatabase("to set", null), "to set"));
+        if (this.newDatabase != null && this.newXrefId != null){
+            AbstractIntactXref newRef = this.resSequenceXrefClass.getConstructor(CvTerm.class, String.class)
+                    .newInstance(this.newDatabase, this.newXrefId);
+            newRef.setSecondaryId(this.newSecondaryId);
+            newRef.setVersion(this.newXrefVersion);
+            newRef.setQualifier(this.newQualifier);
+            // add xref to object
+            range.getResultingSequence().getXrefs().add(newRef);
+            // save
+            featureController.doSave(false);
+
+            this.newDatabase = null;
+            this.newXrefId = null;
+            this.newXrefVersion = null;
+            this.newQualifier = null;
+            this.newSecondaryId = null;
+        }
+        else{
+            featureController.addErrorMessage("Cannot add new xref as the database and/or primary identifier is(are) missing","No database/primary identifier provided");
+        }
     }
 
     public void removeXref(Xref xref) {
@@ -204,5 +233,45 @@ public class RangeWrapper {
 
     public boolean isXrefsTableEnabled(){
         return !range.getResultingSequence().getXrefs().isEmpty();
+    }
+
+    public CvTerm getNewDatabase() {
+        return newDatabase;
+    }
+
+    public void setNewDatabase(CvTerm newDatabase) {
+        this.newDatabase = newDatabase;
+    }
+
+    public String getNewXrefId() {
+        return newXrefId;
+    }
+
+    public void setNewXrefId(String newXrefId) {
+        this.newXrefId = newXrefId;
+    }
+
+    public String getNewSecondaryId() {
+        return newSecondaryId;
+    }
+
+    public void setNewSecondaryId(String newSecondaryId) {
+        this.newSecondaryId = newSecondaryId;
+    }
+
+    public String getNewXrefVersion() {
+        return newXrefVersion;
+    }
+
+    public void setNewXrefVersion(String newXrefVersion) {
+        this.newXrefVersion = newXrefVersion;
+    }
+
+    public CvTerm getNewQualifier() {
+        return newQualifier;
+    }
+
+    public void setNewQualifier(CvTerm newQualifier) {
+        this.newQualifier = newQualifier;
     }
 }

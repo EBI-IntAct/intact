@@ -139,11 +139,12 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
              this.rangeWrappers = new ArrayList<RangeWrapper>(feature.getRanges().size());
             for (Object r : this.feature.getRanges()){
                 this.rangeWrappers.add(new RangeWrapper((AbstractIntactRange)r, sequence, getCvService(), getResultingSequenceClass(),
-                        getResultingSequenceXrefClass()));
+                        getResultingSequenceXrefClass(), this));
             }
         }
         else{
-            this.rangeWrappers = getFeatureEditorService().loadRangeWrappers(feature, sequence, getResultingSequenceClass(), getResultingSequenceXrefClass());
+            this.rangeWrappers = getFeatureEditorService().loadRangeWrappers(feature, sequence, getResultingSequenceClass(), getResultingSequenceXrefClass(),
+                    this);
         }
 
         containsInvalidRanges = false;
@@ -227,7 +228,7 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
 
             feature.getRanges().add(intactRange);
             this.rangeWrappers.add(new RangeWrapper(intactRange, sequence, getCvService(), getResultingSequenceClass(),
-                    getResultingSequenceXrefClass()));
+                    getResultingSequenceXrefClass(), this));
             newRangeValue = null;
             doSave(false);
         }

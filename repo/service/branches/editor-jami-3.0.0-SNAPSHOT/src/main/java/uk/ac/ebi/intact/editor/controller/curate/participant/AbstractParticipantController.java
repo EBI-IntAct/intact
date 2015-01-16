@@ -476,7 +476,7 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
     }
 
     public void refreshFeatures() {
-        if (!this.participant.areFeaturesInitialized()){
+        if (!isInitialisedFeatures(participant.getFeatures())){
             setParticipant(getParticipantEditorService().initialiseFeatures(this.participant));
         }
         List<FeatureWrapper> wrappers = new ArrayList<FeatureWrapper>(this.participant.getFeatures().size());
