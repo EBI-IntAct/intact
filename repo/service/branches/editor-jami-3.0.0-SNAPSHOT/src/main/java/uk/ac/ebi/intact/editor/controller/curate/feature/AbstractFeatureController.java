@@ -221,7 +221,7 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
             this.rangeWrappers.add(new RangeWrapper(intactRange, sequence, getCvService(), getResultingSequenceClass(),
                     getResultingSequenceXrefClass()));
             newRangeValue = null;
-            setUnsavedChanges(true);
+            doSave(false);
         }
         catch (IllegalRangeException e){
             String problemMsg =e.getMessage();

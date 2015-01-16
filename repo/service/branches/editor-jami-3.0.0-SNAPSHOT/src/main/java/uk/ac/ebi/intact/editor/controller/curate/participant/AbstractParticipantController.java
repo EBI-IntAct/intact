@@ -522,7 +522,7 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
             if (intactEv.getAc() == null && f == intactEv){
                 evIterator.remove();
             }
-            else if (intactEv.getAc() != null && !intactEv.getAc().equals(f.getAc())){
+            else if (intactEv.getAc() != null && intactEv.getAc().equals(f.getAc())){
                 evIterator.remove();
             }
         }
