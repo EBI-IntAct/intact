@@ -86,7 +86,7 @@
 
                             <h:panelGroup id="linkedFeaturePanelGroup" rendered="#{!empty featureWrapper.linkedFeatures}">
                                 <ui:repeat value="#{featureWrapper.linkedFeatures}" var="linked" varStatus="status">
-                                    <p:commandLink type="button" oncomplete="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}.show()"
+                                    <p:commandLink id="unlinkBtn_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}" type="button" oncomplete="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}.show()"
                                                    styleClass="ui-icon ui-icon-link" style="display:inline-block"
                                                    title="Linked to #{linked.shortName}" action="#{complexController.selectLinkedFeature(featureWrapper, linked)}"
                                                    update=":editorForm:complexTabs:participantsTable"
