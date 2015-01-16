@@ -10,6 +10,7 @@
                 xmlns:ed="http://ebi.ac.uk/intact/editor/ui"
                 xmlns:ot="http://myfaces.apache.org/orchestra"
         >
+<h:outputScript library="javascript" name="xref.js"/>
 
 <p:dataTable id="rangesTable" var="rangeWrapper" value="#{value}"
              paginator="true" rows="10" paginatorAlwaysVisible="false" paginatorPosition="both">
@@ -132,9 +133,8 @@
             <p:inputText id="version1Txt" value="#{rangeWrapper.newXrefVersion}" size="5"
                          converter="trimmingConverter"/>
             <p:commandButton id="newXrefBtn" value="New Mutated sequence xref" actionListener="#{rangeWrapper.newXref}"
-                             process="@this"
-                             update=":editorForm:featureTabs:rangesPanel :editorForm:messagesComponent :editorForm:changesPanel :editorForm:unsavedChangesInfo"
-                             oncomplete="markAsUnsaved()"/>
+                             process="newXrefTxt"
+                             update=":editorForm:featureTabs:rangesPanel :editorForm:messagesComponent :editorForm:changesPanel :editorForm:unsavedChangesInfo"/>
         </h:panelGrid>
 
         <h:panelGroup rendered="#{rangeWrapper.isXrefsTableEnabled()}">
