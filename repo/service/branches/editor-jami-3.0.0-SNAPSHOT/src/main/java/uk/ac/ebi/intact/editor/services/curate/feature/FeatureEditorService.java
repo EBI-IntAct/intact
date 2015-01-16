@@ -182,7 +182,7 @@ public class FeatureEditorService extends AbstractEditorService {
                                                 Class<? extends AbstractIntactXref> xrefClass) {
         AbstractIntactFeature reloaded = reattachIntactObjectIfTransient(feature, (uk.ac.ebi.intact.jami.dao.IntactBaseDao<AbstractIntactFeature>) getIntactDao().getFeatureDao(feature.getClass()));
 
-        List<RangeWrapper> rangeWrappers = new ArrayList<RangeWrapper>(feature.getRanges());
+        List<RangeWrapper> rangeWrappers = new ArrayList<RangeWrapper>(feature.getRanges().size());
         for (Object r : feature.getRanges()){
             AbstractIntactRange range = (AbstractIntactRange)r;
 
