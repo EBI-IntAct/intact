@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.*;
+import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.feature.RangeWrapper;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
@@ -179,7 +180,8 @@ public class FeatureEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public List<RangeWrapper> loadRangeWrappers(AbstractIntactFeature feature, String sequence,
                                                 Class<? extends AbstractIntactResultingSequence> resultingSeqClass,
-                                                Class<? extends AbstractIntactXref> xrefClass) {
+                                                Class<? extends AbstractIntactXref> xrefClass,
+                                                AnnotatedObjectController featureController) {
         AbstractIntactFeature reloaded = reattachIntactObjectIfTransient(feature, (uk.ac.ebi.intact.jami.dao.IntactBaseDao<AbstractIntactFeature>) getIntactDao().getFeatureDao(feature.getClass()));
 
         List<RangeWrapper> rangeWrappers = new ArrayList<RangeWrapper>(feature.getRanges().size());
@@ -193,7 +195,7 @@ public class FeatureEditorService extends AbstractEditorService {
             }
 
             rangeWrappers.add(new RangeWrapper(range, sequence, cvObjectService, resultingSeqClass,
-                    xrefClass));
+                    xrefClass, featureController));
         }
 
         getIntactDao().getEntityManager().detach(reloaded);
