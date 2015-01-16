@@ -544,7 +544,7 @@ public class CvObjectService extends AbstractEditorService {
         Collection<Annotation> annotations = reloaded.getDbAnnotations();
         initialiseAnnotations(annotations);
 
-        getIntactDao().getEntityManager().detach(cv);
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -554,7 +554,7 @@ public class CvObjectService extends AbstractEditorService {
         IntactCvTerm reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getCvTermDao());
         Hibernate.initialize(reloaded.getParents());
 
-        getIntactDao().getEntityManager().detach(cv);
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -565,7 +565,7 @@ public class CvObjectService extends AbstractEditorService {
         Collection<Alias> aliases = reloaded.getSynonyms();
         initialiseAliases(aliases);
 
-        getIntactDao().getEntityManager().detach(cv);
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -595,7 +595,7 @@ public class CvObjectService extends AbstractEditorService {
 
         DualListModel<IntactCvTerm> parents = new DualListModel<IntactCvTerm>(cvObjectsByClass, existingParents);
 
-        getIntactDao().getEntityManager().detach(cv);
+        getIntactDao().getEntityManager().detach(reloaded);
 
         return parents;
     }

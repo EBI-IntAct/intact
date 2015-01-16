@@ -71,9 +71,7 @@ public class ComplexEditorService extends AbstractEditorService {
         Collection<Xref> xrefs = reloaded.getDbXrefs();
         initialiseXrefs(xrefs);
 
-        if (reloaded.getAc() != null){
-            getIntactDao().getEntityManager().detach(reloaded);
-        }
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -84,9 +82,8 @@ public class ComplexEditorService extends AbstractEditorService {
         Collection<Alias> alias = reloaded.getAliases();
         initialiseAliases(alias);
 
-        if (reloaded.getAc() != null){
-            getIntactDao().getEntityManager().detach(reloaded);
-        }
+        getIntactDao().getEntityManager().detach(reloaded);
+
         return reloaded;
     }
 
@@ -97,9 +94,8 @@ public class ComplexEditorService extends AbstractEditorService {
         Collection<Annotation> annotations = reloaded.getDbAnnotations();
         initialiseAnnotations(annotations);
 
-        if (reloaded.getAc() != null){
-            getIntactDao().getEntityManager().detach(reloaded);
-        }
+        getIntactDao().getEntityManager().detach(reloaded);
+
         return reloaded;
     }
 
@@ -110,9 +106,8 @@ public class ComplexEditorService extends AbstractEditorService {
         Collection<ModelledParameter> parameters = reloaded.getModelledParameters();
         initialiseParameters(parameters);
 
-        if (reloaded.getAc() != null){
-            getIntactDao().getEntityManager().detach(reloaded);
-        }
+        getIntactDao().getEntityManager().detach(reloaded);
+
         return reloaded;
     }
 
@@ -125,9 +120,8 @@ public class ComplexEditorService extends AbstractEditorService {
             initialiseConfidence(det);
         }
 
-        if (reloaded.getAc() != null){
-            getIntactDao().getEntityManager().detach(reloaded);
-        }
+        getIntactDao().getEntityManager().detach(reloaded);
+
         return reloaded;
     }
 
@@ -140,9 +134,8 @@ public class ComplexEditorService extends AbstractEditorService {
             initialiseParticipant(det);
         }
 
-        if (reloaded.getAc() != null){
-            getIntactDao().getEntityManager().detach(reloaded);
-        }
+        getIntactDao().getEntityManager().detach(reloaded);
+
         return reloaded;
     }
 
@@ -153,9 +146,8 @@ public class ComplexEditorService extends AbstractEditorService {
         Collection<LifeCycleEvent> evidences = reloaded.getLifecycleEvents();
         initialiseEvents(evidences);
 
-        if (reloaded.getAc() != null){
-            getIntactDao().getEntityManager().detach(reloaded);
-        }
+        getIntactDao().getEntityManager().detach(reloaded);
+
         return reloaded;
     }
 
@@ -218,9 +210,7 @@ public class ComplexEditorService extends AbstractEditorService {
             initialiseCv(reloaded.getEvidenceType());
         }
 
-        if (reloaded.getAc() != null){
-            getIntactDao().getEntityManager().detach(reloaded);
-        }
+        getIntactDao().getEntityManager().detach(reloaded);
 
         return reloaded;
     }
@@ -232,9 +222,8 @@ public class ComplexEditorService extends AbstractEditorService {
         // initialise xrefs because of identifiers
         initialiseXrefs(reloaded.getDbXrefs());
 
-        if (reloaded.getAc() != null){
-            getIntactDao().getEntityManager().detach(reloaded);
-        }
+        getIntactDao().getEntityManager().detach(reloaded);
+
 
         return reloaded;
     }
@@ -263,9 +252,7 @@ public class ComplexEditorService extends AbstractEditorService {
             getIntactDao().getEntityManager().detach(reloaded);
             throw e;
         }
-        if (reloaded.getAc() != null){
-            getIntactDao().getEntityManager().detach(reloaded);
-        }
+        getIntactDao().getEntityManager().detach(reloaded);
 
         return clone;
     }
