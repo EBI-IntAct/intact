@@ -33,7 +33,7 @@
                                      modal="true"
                                      header="Feature deletion" severity="alert" widgetVar="confirmation">
 
-                        <p:commandButton value="Yes Sure" update=":editorForm:messagesComponent"
+                        <p:commandButton value="Yes Sure" update=":editorForm:messagesComponent :editorForm:participantTabs:featuresPanel :editorForm:changesPanel :editorForm:unsavedChangesInfo"
                                          oncomplete="confirmation.hide()"
                                          actionListener="#{participantController.deleteSelectedFeatures}"/>
                         <p:commandButton value="Not Yet" onclick="confirmation.hide()" type="button"/>
