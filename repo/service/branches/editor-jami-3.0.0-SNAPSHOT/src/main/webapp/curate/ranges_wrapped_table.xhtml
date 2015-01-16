@@ -92,7 +92,7 @@
 </p:column>
 
 <p:rowExpansion id="resultingSeqExpansion">
-    <h:panelGrid columns="2" rendered="#{rangeWrapper.range.resultingSequence != null}">
+    <h:panelGrid columns="2" rendered="#{rangeWrapper.range.resultingSequence != null}" styleClass="intact-variable-table">
         <h:outputText value="Original Sequence:"/>
         <p:inputTextarea value="#{rangeWrapper.range.resultingSequence.originalSequence}" readonly="true" cols="60" rows="3"
                          rendered="#{rangeWrapper.range.resultingSequence.originalSequence != null}"/>
@@ -101,7 +101,7 @@
         <h:outputText value="New sequence (mutated sequence):"/>
         <p:inputTextarea value="#{rangeWrapper.range.resultingSequence.newSequence}" cols="60" rows="3"/>
 
-        <h:outputText value="Refers to participant:"/>
+        <h:outputText value="Refers to participant:" rendered="#{annotatedObjetController.complexFeature}"/>
         <h:selectOneMenu id="linkedParticipantMenu" value="#{rangeWrapper.participant}" converter="participantConverter"
                          rendered="#{annotatedObjetController.complexFeature}" disabled="#{!annotatedObjetController.complexFeature
                                  or annotatedObjetController.isRangeDisabled()}">

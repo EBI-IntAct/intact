@@ -67,7 +67,10 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     @Resource(name = "featureEditorService")
     private transient FeatureEditorService featureEditorService;
 
+    private Map<String, AbstractIntactParticipant> participantsMap;
+
     public AbstractFeatureController() {
+        participantsMap = new HashMap<String, AbstractIntactParticipant>();
     }
 
     public abstract Class<T> getFeatureClass();
@@ -153,10 +156,14 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         }
     }
 
+    public Map<String, AbstractIntactParticipant> getParticipantsMap() {
+        return participantsMap;
+    }
+
     protected void refreshParticipantSelectItems() {
         participantSelectItems = new ArrayList<SelectItem>();
         participantSelectItems.add(new SelectItem(null, "select participant", "select participant", false, false, true));
-
+        participantsMap.clear();
         if (this.feature.getParticipant() != null){
             Entity participant = this.feature.getParticipant();
             if (isComplexFeature){
@@ -174,6 +181,7 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
             else{
                 SelectItem item = new SelectItem( part, part.getInteractor().getShortName()+", "+part.getAc(), part.getInteractor().getFullName());
                 selectItems.add(item);
+                participantsMap.put(part.getAc(), part);
             }
         }
     }

@@ -21,7 +21,10 @@ import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.RangeUtils;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
-import uk.ac.ebi.intact.jami.model.extension.*;
+import uk.ac.ebi.intact.jami.model.extension.AbstractIntactRange;
+import uk.ac.ebi.intact.jami.model.extension.AbstractIntactResultingSequence;
+import uk.ac.ebi.intact.jami.model.extension.AbstractIntactXref;
+import uk.ac.ebi.intact.jami.model.extension.IntactPosition;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.faces.application.FacesMessage;
@@ -153,7 +156,7 @@ public class RangeWrapper {
     }
 
     public boolean isValidRange() {
-        return isInvalid;
+        return !isInvalid;
     }
 
     public String getBadRangeInfo() {
