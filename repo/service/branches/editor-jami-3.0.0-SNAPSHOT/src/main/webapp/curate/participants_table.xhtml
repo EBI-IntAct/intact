@@ -115,16 +115,16 @@
                         <h:selectBooleanCheckbox value="#{featureWrapper.selected}"/>
                     </h:column>
                     <h:column>
-                        <div id="feature_#{featureWrapper.feature.ac}"
-                             onmouseover="ia_showLinkedFeatures(this, '#{featureWrapper.relatedFeatureDivs}', '#{!empty featureWrapper.linkedFeatures}')"
-                             onmouseout="ia_hideLinkedFeatures(this, '#{featureWrapper.relatedFeatureDivs}')">
+                        <div id="feature_#{featureWrapper.feature.ac}">
                             <h:outputText value="#{featureWrapper.feature.shortName} #{featureWrapper.ranges}"/>
                             <h:panelGroup id="linkedFeaturePanelGroup" rendered="#{!empty featureWrapper.linkedFeatures}">
                                 <ui:repeat value="#{featureWrapper.linkedFeatures}" var="linked" varStatus="status">
                                     <p:commandLink type="button" oncomplete="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}.show()"
                                                    styleClass="ui-icon ui-icon-link" style="display:inline-block"
                                                    title="Linked to #{linked.shortName}" action="#{interactionController.selectLinkedFeature(featureWrapper, linked)}"
-                                                   update=":editorForm:interactionTabs:participantsTable">
+                                                   update=":editorForm:interactionTabs:participantsTable"
+                                                   onmouseover="ia_showLinkedFeatures('feature_#{featureWrapper.feature.ac}', '#{featureWrapper.getRelatedFeatureDivs(linked)}', '#{!empty featureWrapper.linkedFeatures}')"
+                                                   onmouseout="ia_hideLinkedFeatures('feature_#{featureWrapper.feature.ac}', '#{featureWrapper.getRelatedFeatureDivs(linked)}', '#{!empty featureWrapper.linkedFeatures}')">
                                     </p:commandLink>
 
                                     <p:outputPanel rendered="#{status.index lt (status.end - 1)}">
