@@ -15,7 +15,9 @@
  */
 package uk.ac.ebi.intact.editor.converter;
 
-import uk.ac.ebi.intact.editor.services.curate.participant.ParticipantEditorService;
+import psidev.psi.mi.jami.model.Participant;
+import uk.ac.ebi.intact.editor.controller.curate.feature.FeatureController;
+import uk.ac.ebi.intact.editor.controller.curate.feature.ModelledFeatureController;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.extension.AbstractIntactParticipant;
 
@@ -34,8 +36,13 @@ public class ParticipantConverter implements Converter {
     @Override
     public Object getAsObject( FacesContext facesContext, UIComponent uiComponent, String ac ) throws ConverterException {
         if ( ac == null ) return null;
-        ParticipantEditorService dao = ApplicationContextProvider.getBean("participantEditorService");
-        return dao.loadAnyParticipantByAc(ac);
+        FeatureController dao = ApplicationContextProvider.getBean("featureController");
+        Participant p = dao.getParticipantsMap().get(ac);
+        if (p == null){
+            ModelledFeatureController dao2 = ApplicationContextProvider.getBean("modelledFeatureController");
+            p = dao2.getParticipantsMap().get(ac);
+        }
+        return p;
     }
 
     @Override
