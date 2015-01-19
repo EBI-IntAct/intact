@@ -325,7 +325,6 @@ public class ChangesController extends BaseController implements UserListener {
                 }
             }
         }
-
         return false;
     }
 

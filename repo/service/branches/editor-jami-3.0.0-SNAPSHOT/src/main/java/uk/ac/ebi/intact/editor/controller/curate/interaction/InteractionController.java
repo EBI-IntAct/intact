@@ -1122,6 +1122,7 @@ public class InteractionController extends AnnotatedObjectController {
         }
 
         refreshParticipants();
+        experimentController.reloadSingleInteractionEvidence(interaction);
     }
 
     public InteractionEditorService getInteractionEditorService() {

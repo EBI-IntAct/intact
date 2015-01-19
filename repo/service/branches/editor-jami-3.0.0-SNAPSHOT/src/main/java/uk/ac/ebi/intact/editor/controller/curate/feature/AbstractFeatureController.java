@@ -234,7 +234,6 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
             feature.getRanges().add(intactRange);
             newRangeValue = null;
             doSave(false);
-            refreshRangeWrappers();
         }
         catch (IllegalRangeException e){
             String problemMsg =e.getMessage();
