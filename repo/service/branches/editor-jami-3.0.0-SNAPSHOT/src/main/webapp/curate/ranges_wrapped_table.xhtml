@@ -73,8 +73,8 @@
         <h:outputText value="Refers to participant"/>
     </f:facet>
     <h:selectOneMenu id="linkedParticipantMenu" value="#{rangeWrapper.participant}" converter="participantConverter"
-                     rendered="#{annotatedObjetController.complexFeature}" disabled="#{!annotatedObjetController.complexFeature
-                                 or annotatedObjetController.isRangeDisabled()}">
+                     disabled="#{annotatedObjetController.isRangeDisabled()}"
+            readonly="#{!annotatedObjetController.complexFeature}">
         <f:ajax event="valueChange" render=":editorForm:featureTabs:rangesPanel :editorForm:messagesComponent :editorForm:changesPanel :editorForm:unsavedChangesInfo"
                 onevent="markAsUnsaved()"/>
         <f:selectItems value="#{annotatedObjectController.participantSelectItems}"/>
