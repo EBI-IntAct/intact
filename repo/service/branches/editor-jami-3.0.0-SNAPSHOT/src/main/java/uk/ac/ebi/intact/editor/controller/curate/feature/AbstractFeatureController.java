@@ -63,6 +63,7 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     private boolean isRangeDisabled;
     private List<SelectItem> participantSelectItems;
     private boolean isComplexFeature=false;
+    private boolean isRangeSequenceDisabled =false;
 
     @Resource(name = "featureEditorService")
     private transient FeatureEditorService featureEditorService;
@@ -401,13 +402,21 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         if (isAliasDisabled() && isXrefDisabled() && isAnnotationTopicDisabled()){
             if (e.getTab().getId().equals("rangesTab")){
                 isRangeDisabled = false;
+                isRangeSequenceDisabled = true;
+
+            }
+            else if (e.getTab().getId().equals("sequencesTab")){
+                isRangeDisabled = true;
+                isRangeSequenceDisabled = false;
             }
             else {
                 isRangeDisabled = true;
+                isRangeSequenceDisabled = true;
             }
         }
         else {
             isRangeDisabled = true;
+            isRangeSequenceDisabled = true;
         }
     }
 
@@ -590,5 +599,9 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         else{
             this.feature.getXrefs().add(newRef);
         }
+    }
+
+    public boolean isRangeSequenceDisabled() {
+        return isRangeSequenceDisabled;
     }
 }

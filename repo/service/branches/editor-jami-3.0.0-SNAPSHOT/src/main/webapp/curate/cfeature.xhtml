@@ -156,6 +156,27 @@
                     <ui:param name="updateOnChange" value=":editorForm:acTxt :editorForm:featureTabs"/>
                 </ui:decorate>
 
+                <p:tab id="sequencesTab" title="Sequence and resulting sequence">
+
+                    <p:outputPanel id="sequencesPanel" autoUpdate="false">
+
+                        <ui:param name="rangeToDeleteCount"
+                                  value="#{changesController.getDeletedAcsByClassName('uk.ac.ebi.intact.jami.model.extension.ModelledRange', modelledFeatureController.ac).size()}"/>
+
+                        <h:panelGroup rendered="#{rangeToDeleteCount gt 0}">
+                            <ia:panelMessage level="info">
+                                <h:outputText value="#{rangeToDeleteCount} ranges will be deleted on save."/>
+                            </ia:panelMessage>
+                        </h:panelGroup>
+
+                        <ui:include src="range_sequences.xhtml">
+                            <ui:param name="value" value="#{modelledFeatureController.wrappedRanges}"/>
+                        </ui:include>
+
+                    </p:outputPanel>
+
+                </p:tab>
+
             </p:tabView>
 
         </h:panelGroup>

@@ -162,6 +162,26 @@
                     <ui:param name="updateOnChange" value=":editorForm:changesPanel :editorForm:unsavedChangesInfo :editorForm:messagesComponent :editorForm:acTxt :editorForm:featureTabs"/>
                 </ui:decorate>
 
+                <p:tab id="sequencesTab" title="Sequence and resulting sequence">
+
+                    <p:outputPanel id="sequencesPanel" autoUpdate="false">
+
+                        <ui:param name="rangeToDeleteCount"
+                                  value="#{changesController.getDeletedAcsByClassName('uk.ac.ebi.intact.jami.model.extension.ExperimentalRange', featureController.ac).size()}"/>
+
+                        <h:panelGroup rendered="#{rangeToDeleteCount gt 0}">
+                            <ia:panelMessage level="info">
+                                <h:outputText value="#{rangeToDeleteCount} ranges will be deleted on save."/>
+                            </ia:panelMessage>
+                        </h:panelGroup>
+
+                        <ui:include src="range_sequences.xhtml">
+                            <ui:param name="value" value="#{featureController.wrappedRanges}"/>
+                        </ui:include>
+
+                    </p:outputPanel>
+
+                </p:tab>
                 <p:tab id="parametersTab" title="Parameters (#{featureController.parametersSize})">
                     <ui:decorate template="parameters_table.xhtml">
                         <ui:param name="annotatedObjectController" value="#{featureController}"/>
