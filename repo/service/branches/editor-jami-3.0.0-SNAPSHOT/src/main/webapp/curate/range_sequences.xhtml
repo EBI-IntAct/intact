@@ -78,7 +78,7 @@
                 <p:dataTable id="seqxrefsTable" var="xref" value="#{rangeWrapper.collectXrefs()}"
                              rowIndexVar="xrefIndex"
                              rendered="#{rangeWrapper.isXrefsTableEnabled()
-                         and !annotatedObjetController.isRangeDisabled()}">
+                         and !annotatedObjetController.isRangeSequenceDisabled()}">
                     <p:column>
                         <f:facet name="header">
                             <h:outputText value="Database"/>
