@@ -93,6 +93,16 @@ public class FeatureEditorService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public <T extends AbstractIntactFeature> T initialiseFeatureRanges(T feature) {
+        // reload feature without flushing changes
+        T reloaded = reattachIntactObjectIfTransient(feature, (uk.ac.ebi.intact.jami.dao.IntactBaseDao<T>) getIntactDao().getFeatureDao(feature.getClass()));
+        initialiseRanges(reloaded);
+
+        getIntactDao().getEntityManager().detach(reloaded);
+        return reloaded;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public <T extends AbstractIntactFeature> T initialiseFeatureAliases(T feature) {
         // reload feature without flushing changes
         T reloaded = reattachIntactObjectIfTransient(feature, (uk.ac.ebi.intact.jami.dao.IntactBaseDao<T>) getIntactDao().getFeatureDao(feature.getClass()));
@@ -184,7 +194,20 @@ public class FeatureEditorService extends AbstractEditorService {
                                                 AnnotatedObjectController featureController) {
         AbstractIntactFeature reloaded = reattachIntactObjectIfTransient(feature, (uk.ac.ebi.intact.jami.dao.IntactBaseDao<AbstractIntactFeature>) getIntactDao().getFeatureDao(feature.getClass()));
 
-        List<RangeWrapper> rangeWrappers = new ArrayList<RangeWrapper>(feature.getRanges().size());
+        List<RangeWrapper> rangeWrappers = new ArrayList<RangeWrapper>(reloaded.getRanges().size());
+        initialiseRanges(reloaded);
+
+        for (Object range : reloaded.getRanges()){
+            rangeWrappers.add(new RangeWrapper((AbstractIntactRange) range, sequence, cvObjectService, resultingSeqClass,
+                    xrefClass, featureController));
+        }
+
+        getIntactDao().getEntityManager().detach(reloaded);
+
+        return rangeWrappers;
+    }
+
+    private void initialiseRanges(AbstractIntactFeature feature) {
         for (Object r : feature.getRanges()){
             AbstractIntactRange range = (AbstractIntactRange)r;
 
@@ -193,14 +216,7 @@ public class FeatureEditorService extends AbstractEditorService {
             if (range.getResultingSequence() != null){
                 initialiseXrefs(range.getResultingSequence().getXrefs());
             }
-
-            rangeWrappers.add(new RangeWrapper(range, sequence, cvObjectService, resultingSeqClass,
-                    xrefClass, featureController));
         }
-
-        getIntactDao().getEntityManager().detach(reloaded);
-
-        return rangeWrappers;
     }
 
     private void initialiseXrefs(Collection<Xref> xrefs) {

@@ -208,6 +208,10 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
             return;
         }
 
+        if (!feature.areRangesInitialized()){
+            this.feature = getFeatureEditorService().initialiseFeatureRanges(feature);
+        }
+
         newRangeValue = newRangeValue.trim();
 
         if (!newRangeValue.contains("-")) {
@@ -228,10 +232,9 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
             intactRange.setResultingSequence(instantiateResultingSequence(RangeUtils.extractRangeSequence(intactRange, sequence), null));
 
             feature.getRanges().add(intactRange);
-            this.rangeWrappers.add(new RangeWrapper(intactRange, sequence, getCvService(), getResultingSequenceClass(),
-                    getResultingSequenceXrefClass(), this));
             newRangeValue = null;
             doSave(false);
+            refreshRangeWrappers();
         }
         catch (IllegalRangeException e){
             String problemMsg =e.getMessage();
@@ -570,7 +573,7 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
                     if (intactEv.getAc() == null && unsaved.getUnsavedObject() == intactEv){
                         rangeIterator.remove();
                     }
-                    else if (intactEv.getAc() != null && !intactEv.getAc().equals(unsaved.getUnsavedObject().getAc())){
+                    else if (intactEv.getAc() != null && intactEv.getAc().equals(unsaved.getUnsavedObject().getAc())){
                         rangeIterator.remove();
                     }
                 }

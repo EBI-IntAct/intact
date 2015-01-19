@@ -151,6 +151,7 @@
 
                         <ui:include src="ranges_wrapped_table.xhtml">
                             <ui:param name="value" value="#{featureController.wrappedRanges}"/>
+                            <ui:param name="annotatedObjetController" value="#{featureController}"/>
                         </ui:include>
 
                     </h:panelGroup>
@@ -177,6 +178,7 @@
 
                         <ui:include src="range_sequences.xhtml">
                             <ui:param name="value" value="#{featureController.wrappedRanges}"/>
+                            <ui:param name="annotatedObjetController" value="#{featureController}"/>
                         </ui:include>
 
                     </p:outputPanel>
