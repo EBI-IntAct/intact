@@ -86,7 +86,7 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
 
     @Override
     public void setAnnotatedObject(IntactPrimaryObject annotatedObject) {
-         setFeature((T)feature);
+         setFeature((T)annotatedObject);
     }
 
     @Override
