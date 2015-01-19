@@ -158,11 +158,16 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         participantSelectItems = new ArrayList<SelectItem>();
         participantSelectItems.add(new SelectItem(null, "select participant", "select participant", false, false, true));
         participantsMap.clear();
-        if (this.feature.getParticipant() != null){
+        if (isComplexFeature && this.feature.getParticipant() != null){
             Entity participant = this.feature.getParticipant();
             if (isComplexFeature){
                 loadParticipants((Complex)participant.getInteractor(), this.participantSelectItems);
             }
+        }
+        else if (this.feature.getParticipant() != null){
+            SelectItem item = new SelectItem( feature.getParticipant(), feature.getParticipant().getInteractor().getShortName(), feature.getParticipant().getInteractor().getFullName());
+            participantSelectItems.add(item);
+            participantsMap.put(((AbstractIntactParticipant)feature.getParticipant()).getAc(), (AbstractIntactParticipant)feature.getParticipant());
         }
     }
 
@@ -173,7 +178,7 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
                 loadParticipants((Complex)part.getInteractor(), selectItems);
             }
             else{
-                SelectItem item = new SelectItem( part, part.getInteractor().getShortName()+", "+part.getAc(), part.getInteractor().getFullName());
+                SelectItem item = new SelectItem( part, part.getInteractor().getShortName()+"("+part.getAc()+")", part.getInteractor().getFullName()+", Complex "+part.getInteraction().getShortName());
                 selectItems.add(item);
                 participantsMap.put(part.getAc(), part);
             }
@@ -423,13 +428,13 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
 
         if (feature.getParticipant() != null && feature.getParticipant().getInteractor() instanceof Complex){
             isComplexFeature = true;
-            refreshParticipantSelectItems();
         }
         else{
             isComplexFeature = false;
             this.participantSelectItems=Collections.EMPTY_LIST;
         }
 
+        refreshParticipantSelectItems();
         refreshRangeWrappers();
 
         setDescription("Feature: "+feature.getShortName());
