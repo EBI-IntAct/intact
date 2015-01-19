@@ -465,4 +465,6 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     public void setNewParameterType(CvTerm newParameterType) {
         this.newParameterType = newParameterType;
     }
+
+
 }
