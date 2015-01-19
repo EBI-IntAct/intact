@@ -18,7 +18,6 @@ package uk.ac.ebi.intact.editor.controller.curate.feature;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.primefaces.event.TabChangeEvent;
-import psidev.psi.mi.jami.exception.IllegalRangeException;
 import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.RangeUtils;
