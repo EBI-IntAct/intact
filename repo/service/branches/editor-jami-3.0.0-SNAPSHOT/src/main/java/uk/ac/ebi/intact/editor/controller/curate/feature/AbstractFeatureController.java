@@ -135,17 +135,10 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
 
     public void refreshRangeWrappers() {
         String sequence = getSequence();
-
-        if (feature.areRangesInitialized()){
-             this.rangeWrappers = new ArrayList<RangeWrapper>(feature.getRanges().size());
-            for (Object r : this.feature.getRanges()){
-                this.rangeWrappers.add(new RangeWrapper((AbstractIntactRange)r, sequence, getCvService(), getResultingSequenceClass(),
-                        getResultingSequenceXrefClass(), this));
-            }
-        }
-        else{
-            this.rangeWrappers = getFeatureEditorService().loadRangeWrappers(feature, sequence, getResultingSequenceClass(), getResultingSequenceXrefClass(),
-                    this);
+        this.rangeWrappers = new ArrayList<RangeWrapper>(this.feature.getRanges().size());
+        for (Object r : this.feature.getRanges()){
+            this.rangeWrappers.add(new RangeWrapper((AbstractIntactRange)r, sequence, getCvService(), getResultingSequenceClass(),
+                    getResultingSequenceXrefClass(), this));
         }
 
         containsInvalidRanges = false;
@@ -206,10 +199,6 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         if (newRangeValue == null || newRangeValue.isEmpty()) {
             addErrorMessage("Range value field is empty", "Please provide a range value before clicking on the New Range button");
             return;
-        }
-
-        if (!feature.areRangesInitialized()){
-            this.feature = getFeatureEditorService().initialiseFeatureRanges(feature);
         }
 
         newRangeValue = newRangeValue.trim();
@@ -428,7 +417,8 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         if (!feature.areAnnotationsInitialized()
                 || !isCvInitialised(feature.getType())
                 || !isCvInitialised(feature.getRole())
-                || !isInitialisedParticipant(feature.getParticipant())) {
+                || !isInitialisedParticipant(feature.getParticipant())
+                || !feature.areRangesInitialized()) {
             this.feature = getFeatureEditorService().reloadFullyInitialisedFeature(feature);
         }
 
@@ -481,9 +471,6 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     public int getFeatureRangeSize() {
         if (feature == null){
             return 0;
-        }
-        else if (feature.areRangesInitialized()){
-            return feature.getRanges().size();
         }
         else{
             return getFeatureEditorService().countRanges(this.feature);
@@ -564,24 +551,18 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     protected void postProcessDeletedEvent(UnsavedChange unsaved) {
         super.postProcessDeletedEvent(unsaved);
         if (unsaved.getUnsavedObject() instanceof AbstractIntactRange){
-            // only update if not lazy loaded
-            if (feature.areRangesInitialized()){
-                Iterator<Range> rangeIterator = feature.getRanges().iterator();
-                while (rangeIterator.hasNext()){
-                    AbstractIntactRange intactEv = (AbstractIntactRange)rangeIterator.next();
-                    if (intactEv.getAc() == null && unsaved.getUnsavedObject() == intactEv){
-                        rangeIterator.remove();
-                    }
-                    else if (intactEv.getAc() != null && intactEv.getAc().equals(unsaved.getUnsavedObject().getAc())){
-                        rangeIterator.remove();
-                    }
+            Iterator<Range> rangeIterator = feature.getRanges().iterator();
+            while (rangeIterator.hasNext()){
+                AbstractIntactRange intactEv = (AbstractIntactRange)rangeIterator.next();
+                if (intactEv.getAc() == null && unsaved.getUnsavedObject() == intactEv){
+                    rangeIterator.remove();
                 }
+                else if (intactEv.getAc() != null && intactEv.getAc().equals(unsaved.getUnsavedObject().getAc())){
+                    rangeIterator.remove();
+                }
+            }
 
-                refreshRangeWrappers();
-            }
-            else{
-                refreshRangeWrappers();
-            }
+            refreshRangeWrappers();
         }
     }
 

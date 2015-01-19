@@ -157,6 +157,9 @@ public class FeatureEditorService extends AbstractEditorService {
             if (feature.getParticipant() != null){
                 initialiseParticipant(feature.getParticipant());
             }
+
+            // load feature ranges
+            initialiseRanges(feature);
         }
 
         return feature;
@@ -181,6 +184,9 @@ public class FeatureEditorService extends AbstractEditorService {
         if (feature.getParticipant() != null){
             initialiseParticipant(reloaded.getParticipant());
         }
+
+        // load feature ranges
+        initialiseRanges(reloaded);
 
         getIntactDao().getEntityManager().detach(reloaded);
 
