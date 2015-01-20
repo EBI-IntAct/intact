@@ -14,7 +14,7 @@
         <table style="#{style}">
             <tr>
                 <td>
-                    <h:panelGrid id="newXrefTxt" columns="11" class="intact-buttonBar">
+                    <h:panelGrid id="newXrefTxt" columns="7" class="intact-buttonBar">
                         <h:outputLabel value="Database: " for="databaseSel1"/>
                         <h:selectOneMenu id="databaseSel1" value="#{annotatedObjectController.newDatabase}" disabled="#{annotatedObjectController.isXrefDisabled()}"
                                          converter="cvObjectConverter">
@@ -157,7 +157,8 @@
                             </f:facet>
                             <h:selectOneMenu id="evidenceCodeSel" value="#{xref.evidenceType}"
                                              converter="cvObjectConverter" disabled="#{annotatedObjectController.isXrefDisabled()
-                                 or annotatedObjectController.isXrefNotEditable(xref) or complexController.isComplexGoRef(xref)}">
+                                 or annotatedObjectController.isXrefNotEditable(xref) or complexController.isXrefNotEditable(xref)}"
+                                             rendered="#{complexController.isComplexGoRef(xref)}">
                                 <f:selectItems value="#{cvObjectService.evidenceTypeSelectItems}"/>
                                 <ed:curation/>
                             </h:selectOneMenu>
