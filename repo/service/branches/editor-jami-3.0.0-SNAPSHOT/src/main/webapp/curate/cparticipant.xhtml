@@ -110,7 +110,7 @@
                             <ia:inputCvTerm id="bioRoleTxt" cvIdentifier="MI:0500"
                                             cvClass="uk.ac.ebi.intact.model.CvBiologicalRole"
                                             value="#{participant.biologicalRole}"
-                                            selectItems="#{editorCvTermService.biologicalRoleSelectItems}"
+                                            selectItems="#{cvObjectService.biologicalRoleSelectItems}"
                                             required="true" requiredMessage="Biological role is required"
                                             update=":editorForm:changesPanel,:editorForm:unsavedChangesInfo,:editorForm:messagesComponent"
                                             valueChangeAwareObject="#{annotatedObjectController}"/>

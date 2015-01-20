@@ -127,7 +127,7 @@
                                             cvClass="uk.ac.ebi.intact.model.CvBiologicalRole"
                                             modal="false"
                                             value="#{modelledParticipantImportController.biologicalRole}"
-                                            selectItems="#{editorCvTermService.biologicalRoleSelectItems}" />
+                                            selectItems="#{cvObjectService.biologicalRoleSelectItems}" />
 
                             <h:outputLabel value="Min Stoichiometry: " for="minStoichiometryDialogTxt"/>
                             <p:spinner id="minStoichiometryDialogTxt" value="#{modelledParticipantImportController.minStoichiometry}" min="0" stepFactor="1" size="3" maxlength="2"/>
