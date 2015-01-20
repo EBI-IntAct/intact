@@ -122,7 +122,7 @@ public class FeatureWrapper {
     public String getRelatedFeatureDivs(AbstractIntactFeature linked){
         StringBuffer buffer = new StringBuffer();
         if (linked.getAc() != null){
-            buffer.append("feature_").append(linked.getAc());
+            buffer.append("feature_").append(linked.getAc().replaceAll("\\-","_"));
         }
         else{
             buffer.append("feature_").append(Integer.toString(linked.hashCode()));
