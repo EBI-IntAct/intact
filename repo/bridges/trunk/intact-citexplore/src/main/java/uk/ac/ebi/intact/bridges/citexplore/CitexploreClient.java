@@ -33,7 +33,7 @@ public class CitexploreClient {
     private WSCitationImplService service;
 
     public CitexploreClient(){
-        this("http://www.ebi.ac.uk/webservices/citexplore/v3.0.1/service?wsdl");
+        this("http://www.ebi.ac.uk/europepmc/webservices/soap?wsdl");
     }
 
     public CitexploreClient(String wsdlUrl){
