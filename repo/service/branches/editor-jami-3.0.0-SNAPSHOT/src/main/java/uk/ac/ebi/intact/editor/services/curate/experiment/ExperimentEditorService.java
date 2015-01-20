@@ -63,7 +63,7 @@ public class ExperimentEditorService extends AbstractEditorService {
         Collection<psidev.psi.mi.jami.model.Annotation> annotations = reloaded.getAnnotations();
         initialiseAnnotations(annotations);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -74,7 +74,7 @@ public class ExperimentEditorService extends AbstractEditorService {
         Collection<VariableParameter> parameters = reloaded.getVariableParameters();
         initialiseVariableParameters(parameters);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -85,7 +85,7 @@ public class ExperimentEditorService extends AbstractEditorService {
         Collection<InteractionEvidence> evidences = reloaded.getInteractionEvidences();
         initialiseEvidences(evidences);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -96,7 +96,7 @@ public class ExperimentEditorService extends AbstractEditorService {
         Collection<Xref> xrefs = reloaded.getXrefs();
         initialiseXrefs(xrefs);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -176,7 +176,7 @@ public class ExperimentEditorService extends AbstractEditorService {
              initialiseEvidences(reloaded.getInteractionEvidences());
         }
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
 
         return reloaded;
     }
@@ -205,7 +205,7 @@ public class ExperimentEditorService extends AbstractEditorService {
 
         boolean accepted = AnnotationUtils.collectAllAnnotationsHavingTopic(reloaded.getAnnotations(), null, Releasable.ACCEPTED)!=null;
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
 
         return accepted;
     }
@@ -216,7 +216,7 @@ public class ExperimentEditorService extends AbstractEditorService {
 
         boolean accepted = AnnotationUtils.collectAllAnnotationsHavingTopic(reloaded.getAnnotations(), null, Releasable.TO_BE_REVIEWED)!=null;
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
 
         return accepted;
     }

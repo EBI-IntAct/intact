@@ -77,7 +77,7 @@ public class FeatureEditorService extends AbstractEditorService {
         Collection<psidev.psi.mi.jami.model.Annotation> annotations = (Collection<psidev.psi.mi.jami.model.Annotation>)reloaded.getAnnotations();
         initialiseAnnotations(annotations);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -88,7 +88,7 @@ public class FeatureEditorService extends AbstractEditorService {
         Collection<Xref> xrefs = (Collection<Xref>)reloaded.getXrefs();
         initialiseXrefs(xrefs);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -98,7 +98,7 @@ public class FeatureEditorService extends AbstractEditorService {
         T reloaded = reattachIntactObjectIfTransient(feature, (uk.ac.ebi.intact.jami.dao.IntactBaseDao<T>) getIntactDao().getFeatureDao(feature.getClass()));
         initialiseRanges(reloaded);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -109,7 +109,7 @@ public class FeatureEditorService extends AbstractEditorService {
         Collection<Alias> aliases = (Collection<Alias>)reloaded.getAliases();
         initialiseAliases(aliases);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -120,7 +120,7 @@ public class FeatureEditorService extends AbstractEditorService {
         Collection<Parameter> parameters = reloaded.getParameters();
         initialiseParameters(parameters);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -133,7 +133,7 @@ public class FeatureEditorService extends AbstractEditorService {
             initialiseCv(det);
         }
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -188,7 +188,7 @@ public class FeatureEditorService extends AbstractEditorService {
         // load feature ranges
         initialiseRanges(reloaded);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
 
         return reloaded;
     }
@@ -208,7 +208,7 @@ public class FeatureEditorService extends AbstractEditorService {
                     xrefClass, featureController));
         }
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
 
         return rangeWrappers;
     }

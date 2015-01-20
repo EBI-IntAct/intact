@@ -83,7 +83,7 @@ public class EditorObjectService extends AbstractEditorService {
             if (log.isDebugEnabled()) log.debug("Reverting: " + intactObject.getClass()+", Ac="+intactObject.getAc());
 
             if (intactObject.getAc() != null && getIntactDao().getEntityManager().contains(intactObject)) {
-                getIntactDao().getEntityManager().detach(intactObject);
+                getIntactDao().getEntityManager().clear();
             }
 
             intactObject = getIntactDao().getEntityManager().find(intactObject.getClass(), intactObject.getAc());
@@ -318,7 +318,7 @@ public class EditorObjectService extends AbstractEditorService {
         }
 
         T clone = (T)cloner.clone(reloaded, getIntactDao());
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
 
         return clone;
     }

@@ -87,7 +87,7 @@ public class ParticipantEditorService extends AbstractEditorService {
         Collection<Annotation> annotations = (Collection<Annotation>)reloaded.getAnnotations();
         initialiseAnnotations(annotations);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -98,7 +98,7 @@ public class ParticipantEditorService extends AbstractEditorService {
         Collection<Xref> xrefs = (Collection<Xref>)reloaded.getXrefs();
         initialiseXrefs(xrefs);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -109,7 +109,7 @@ public class ParticipantEditorService extends AbstractEditorService {
         Collection<Alias> aliases = (Collection<Alias>)reloaded.getAliases();
         initialiseAliases(aliases);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -120,7 +120,7 @@ public class ParticipantEditorService extends AbstractEditorService {
         Collection<Parameter> parameters = reloaded.getParameters();
         initialiseParameters(parameters);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -133,7 +133,7 @@ public class ParticipantEditorService extends AbstractEditorService {
             initialiseCv(det);
         }
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -146,7 +146,7 @@ public class ParticipantEditorService extends AbstractEditorService {
             initialiseCv(det);
         }
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -159,7 +159,7 @@ public class ParticipantEditorService extends AbstractEditorService {
             initialiseConfidence(det);
         }
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -172,7 +172,7 @@ public class ParticipantEditorService extends AbstractEditorService {
             initialiseCausalRelationship(det);
         }
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -249,7 +249,7 @@ public class ParticipantEditorService extends AbstractEditorService {
         // load features
         initialiseFeatures(participant.getFeatures());
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
 
         return reloaded;
     }
@@ -261,7 +261,7 @@ public class ParticipantEditorService extends AbstractEditorService {
         Collection dets = reloaded.getFeatures();
         initialiseFeatures(dets);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 

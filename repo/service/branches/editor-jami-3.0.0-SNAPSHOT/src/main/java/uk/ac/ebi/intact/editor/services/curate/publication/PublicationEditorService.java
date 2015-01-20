@@ -16,25 +16,19 @@
 package uk.ac.ebi.intact.editor.services.curate.publication;
 
 import org.hibernate.Hibernate;
-import org.primefaces.model.LazyDataModel;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import psidev.psi.mi.jami.model.*;
-import psidev.psi.mi.jami.utils.AnnotationUtils;
-import psidev.psi.mi.jami.utils.clone.PublicationCloner;
+import psidev.psi.mi.jami.model.Annotation;
+import psidev.psi.mi.jami.model.CvTerm;
+import psidev.psi.mi.jami.model.Experiment;
+import psidev.psi.mi.jami.model.Xref;
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
-import uk.ac.ebi.intact.editor.util.LazyDataModelFactory;
 import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
-import uk.ac.ebi.intact.jami.model.extension.IntactExperiment;
-import uk.ac.ebi.intact.jami.model.extension.IntactInteractionEvidence;
 import uk.ac.ebi.intact.jami.model.extension.IntactPublication;
 import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleEvent;
 import uk.ac.ebi.intact.jami.model.lifecycle.PublicationLifeCycleEvent;
-import uk.ac.ebi.intact.jami.model.lifecycle.Releasable;
 
 import javax.persistence.Query;
 import java.util.Collection;
@@ -71,7 +65,7 @@ public class PublicationEditorService extends AbstractEditorService {
         Collection<Annotation> annotations = reloaded.getDbAnnotations();
         initialiseAnnotations(annotations);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -82,7 +76,7 @@ public class PublicationEditorService extends AbstractEditorService {
         Collection<Xref> xrefs = reloaded.getDbXrefs();
         initialiseXrefs(xrefs);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -93,7 +87,7 @@ public class PublicationEditorService extends AbstractEditorService {
         Collection<Experiment> evidences = reloaded.getExperiments();
         initialiseEvidences(evidences);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -104,7 +98,7 @@ public class PublicationEditorService extends AbstractEditorService {
         Collection<LifeCycleEvent> evidences = reloaded.getLifecycleEvents();
         initialiseEvents(evidences);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -159,7 +153,7 @@ public class PublicationEditorService extends AbstractEditorService {
         initialiseEvidences(reloaded.getExperiments());
         // initialise lifecycle events
         initialiseLifeCycleEvents(reloaded);
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
 
         return reloaded;
     }

@@ -554,6 +554,7 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     @Override
     protected void postProcessDeletedEvent(UnsavedChange unsaved) {
         super.postProcessDeletedEvent(unsaved);
+        super.postProcessDeletedEvent(unsaved);
         if (unsaved.getUnsavedObject() instanceof AbstractIntactRange){
             Iterator<Range> rangeIterator = feature.getRanges().iterator();
             while (rangeIterator.hasNext()){

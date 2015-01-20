@@ -34,12 +34,10 @@ import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
 import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ComponentSystemEvent;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 import javax.persistence.Query;
-import javax.swing.tree.TreeNode;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -506,7 +504,7 @@ public class CvObjectService extends AbstractEditorService {
         // initialise annotations because needs caution
         initialiseAnnotations(reloaded.getDbAnnotations());
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
 
         return cv;
     }
@@ -518,7 +516,7 @@ public class CvObjectService extends AbstractEditorService {
         Collection<Xref> xrefs = reloaded.getDbXrefs();
         initialiseXrefs(xrefs);
 
-        getIntactDao().getEntityManager().detach(cv);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -544,7 +542,7 @@ public class CvObjectService extends AbstractEditorService {
         Collection<Annotation> annotations = reloaded.getDbAnnotations();
         initialiseAnnotations(annotations);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -554,7 +552,7 @@ public class CvObjectService extends AbstractEditorService {
         IntactCvTerm reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getCvTermDao());
         Hibernate.initialize(reloaded.getParents());
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -565,7 +563,7 @@ public class CvObjectService extends AbstractEditorService {
         Collection<Alias> aliases = reloaded.getSynonyms();
         initialiseAliases(aliases);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
         return reloaded;
     }
 
@@ -583,8 +581,6 @@ public class CvObjectService extends AbstractEditorService {
             Hibernate.initialize(reloadedParent.getDbXrefs());
 
             existingParents.add(reloadedParent);
-
-            getIntactDao().getEntityManager().detach(reloadedParent);
         }
 
         // remove parents from source
@@ -595,7 +591,7 @@ public class CvObjectService extends AbstractEditorService {
 
         DualListModel<IntactCvTerm> parents = new DualListModel<IntactCvTerm>(cvObjectsByClass, existingParents);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
 
         return parents;
     }
