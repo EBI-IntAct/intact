@@ -334,6 +334,11 @@ public class InteractionController extends AnnotatedObjectController {
                 getChangesController().removeFromHiddenChanges(unsaved);
             }
         }
+
+        // detach parents if we have a new interaction so we don't mess up with new transaction
+        if (this.interaction.getAc() == null && this.interaction.getExperiment() != null){
+            getEditorService().detachObject((IntactExperiment)this.interaction.getExperiment());
+        }
     }
 
     public void markParticipantToDelete(IntactParticipantEvidence component) {

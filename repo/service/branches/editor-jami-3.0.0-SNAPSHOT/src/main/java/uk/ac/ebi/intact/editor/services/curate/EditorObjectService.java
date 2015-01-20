@@ -322,4 +322,12 @@ public class EditorObjectService extends AbstractEditorService {
 
         return clone;
     }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public <T extends IntactPrimaryObject> void detachObject(T ao) {
+        // detach current object if necessary
+        if (ao.getAc() != null && getIntactDao().getEntityManager().contains(ao)){
+            getIntactDao().getEntityManager().detach(ao);
+        }
+    }
 }
