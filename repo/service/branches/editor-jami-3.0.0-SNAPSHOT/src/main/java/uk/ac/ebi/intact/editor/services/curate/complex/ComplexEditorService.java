@@ -71,7 +71,7 @@ public class ComplexEditorService extends AbstractEditorService {
         Collection<Xref> xrefs = reloaded.getDbXrefs();
         initialiseXrefs(xrefs);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -82,7 +82,7 @@ public class ComplexEditorService extends AbstractEditorService {
         Collection<Alias> alias = reloaded.getAliases();
         initialiseAliases(alias);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
 
         return reloaded;
     }
@@ -94,7 +94,7 @@ public class ComplexEditorService extends AbstractEditorService {
         Collection<Annotation> annotations = reloaded.getDbAnnotations();
         initialiseAnnotations(annotations);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
 
         return reloaded;
     }
@@ -106,7 +106,7 @@ public class ComplexEditorService extends AbstractEditorService {
         Collection<ModelledParameter> parameters = reloaded.getModelledParameters();
         initialiseParameters(parameters);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
 
         return reloaded;
     }
@@ -120,7 +120,7 @@ public class ComplexEditorService extends AbstractEditorService {
             initialiseConfidence(det);
         }
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
 
         return reloaded;
     }
@@ -134,7 +134,7 @@ public class ComplexEditorService extends AbstractEditorService {
             initialiseParticipant(det);
         }
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
 
         return reloaded;
     }
@@ -146,7 +146,7 @@ public class ComplexEditorService extends AbstractEditorService {
         Collection<LifeCycleEvent> evidences = reloaded.getLifecycleEvents();
         initialiseEvents(evidences);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
 
         return reloaded;
     }
@@ -210,7 +210,7 @@ public class ComplexEditorService extends AbstractEditorService {
             initialiseCv(reloaded.getEvidenceType());
         }
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
 
         return reloaded;
     }
@@ -222,7 +222,7 @@ public class ComplexEditorService extends AbstractEditorService {
         // initialise xrefs because of identifiers
         initialiseXrefs(reloaded.getDbXrefs());
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
 
 
         return reloaded;
@@ -236,22 +236,22 @@ public class ComplexEditorService extends AbstractEditorService {
         IntactComplex clone = null;
         try {
             clone = cloner.cloneFromEvidence(ao, getIntactDao());
-            getIntactDao().getEntityManager().clear();
+            getIntactDao().getEntityManager().detach(reloaded);
             return clone;
         } catch (SynchronizerException e) {
             // clear cache
             getIntactDao().getSynchronizerContext().clearCache();
-            getIntactDao().getEntityManager().clear();
+            getIntactDao().getEntityManager().detach(reloaded);
             throw e;
         } catch (FinderException e) {
             // clear cache
             getIntactDao().getSynchronizerContext().clearCache();
-            getIntactDao().getEntityManager().clear();
+            getIntactDao().getEntityManager().detach(reloaded);
             throw e;
         } catch (PersisterException e) {
             // clear cache
             getIntactDao().getSynchronizerContext().clearCache();
-            getIntactDao().getEntityManager().clear();
+            getIntactDao().getEntityManager().detach(reloaded);
             throw e;
         }
     }

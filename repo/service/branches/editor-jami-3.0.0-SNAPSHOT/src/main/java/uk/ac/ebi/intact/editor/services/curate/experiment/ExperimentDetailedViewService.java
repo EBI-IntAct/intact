@@ -50,7 +50,7 @@ public class ExperimentDetailedViewService extends AbstractEditorService {
 
         ExperimentWrapper experimentWrapper = new ExperimentWrapper(reloaded);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
 
         return experimentWrapper;
     }
