@@ -35,9 +35,7 @@ public class InteractionEvidenceCloner extends AbstractEditorCloner<InteractionE
     private EditorCloner<ParticipantEvidence, IntactParticipantEvidence> participantCloner;
 
     public IntactInteractionEvidence clone(InteractionEvidence evidence, IntactDao dao) {
-        IntactInteractionEvidence clone = new IntactInteractionEvidence(evidence.getShortName());
-        // synchronize with db
-        IntactUtils.synchronizeInteractionEvidenceShortName(clone, dao.getEntityManager(), Collections.EMPTY_SET);
+        IntactInteractionEvidence clone = new IntactInteractionEvidence();
 
         initAuditProperties(clone, dao);
 
@@ -76,6 +74,10 @@ public class InteractionEvidenceCloner extends AbstractEditorCloner<InteractionE
            VariableParameterValueSet setClone = new IntactVariableParameterValueSet(set);
             clone.getVariableParameterValues().add(setClone);
         }
+
+        clone.setShortName(IntactUtils.generateAutomaticInteractionEvidenceShortlabelFor(clone, IntactUtils.MAX_SHORT_LABEL_LEN));
+        // synchronize with db
+        IntactUtils.synchronizeInteractionEvidenceShortName(clone, dao.getEntityManager(), Collections.EMPTY_SET);
         return clone;
     }
 
