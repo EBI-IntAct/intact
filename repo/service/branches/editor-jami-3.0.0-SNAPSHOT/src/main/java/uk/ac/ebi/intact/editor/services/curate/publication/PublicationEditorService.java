@@ -65,7 +65,7 @@ public class PublicationEditorService extends AbstractEditorService {
         Collection<Annotation> annotations = reloaded.getDbAnnotations();
         initialiseAnnotations(annotations);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -76,7 +76,7 @@ public class PublicationEditorService extends AbstractEditorService {
         Collection<Xref> xrefs = reloaded.getDbXrefs();
         initialiseXrefs(xrefs);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -87,7 +87,7 @@ public class PublicationEditorService extends AbstractEditorService {
         Collection<Experiment> evidences = reloaded.getExperiments();
         initialiseEvidences(evidences);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -98,7 +98,7 @@ public class PublicationEditorService extends AbstractEditorService {
         Collection<LifeCycleEvent> evidences = reloaded.getLifecycleEvents();
         initialiseEvents(evidences);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -153,7 +153,7 @@ public class PublicationEditorService extends AbstractEditorService {
         initialiseEvidences(reloaded.getExperiments());
         // initialise lifecycle events
         initialiseLifeCycleEvents(reloaded);
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
 
         return reloaded;
     }

@@ -504,7 +504,7 @@ public class CvObjectService extends AbstractEditorService {
         // initialise annotations because needs caution
         initialiseAnnotations(reloaded.getDbAnnotations());
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
 
         return cv;
     }
@@ -516,7 +516,7 @@ public class CvObjectService extends AbstractEditorService {
         Collection<Xref> xrefs = reloaded.getDbXrefs();
         initialiseXrefs(xrefs);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -542,7 +542,7 @@ public class CvObjectService extends AbstractEditorService {
         Collection<Annotation> annotations = reloaded.getDbAnnotations();
         initialiseAnnotations(annotations);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -552,7 +552,7 @@ public class CvObjectService extends AbstractEditorService {
         IntactCvTerm reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getCvTermDao());
         Hibernate.initialize(reloaded.getParents());
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -563,7 +563,7 @@ public class CvObjectService extends AbstractEditorService {
         Collection<Alias> aliases = reloaded.getSynonyms();
         initialiseAliases(aliases);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -591,7 +591,7 @@ public class CvObjectService extends AbstractEditorService {
 
         DualListModel<IntactCvTerm> parents = new DualListModel<IntactCvTerm>(cvObjectsByClass, existingParents);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
 
         return parents;
     }

@@ -93,7 +93,7 @@ public class InstitutionService extends AbstractEditorService {
         IntactSource reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getSourceDao());
         Collection<Xref> xrefs = reloaded.getDbXrefs();
         initialiseXrefs(xrefs);
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -103,7 +103,7 @@ public class InstitutionService extends AbstractEditorService {
         IntactSource reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getSourceDao());
         Collection<Annotation> annotations = reloaded.getDbAnnotations();
         initialiseAnnotations(annotations);
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -114,7 +114,7 @@ public class InstitutionService extends AbstractEditorService {
         IntactSource reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getSourceDao());
         Collection<Alias> aliases = reloaded.getSynonyms();
         initialiseAliases(aliases);
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -156,7 +156,7 @@ public class InstitutionService extends AbstractEditorService {
         // initialise annotations because needs caution
         initialiseAnnotations(reloaded.getDbAnnotations());
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
 
         return cv;
     }

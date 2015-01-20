@@ -60,7 +60,7 @@ public class InteractorEditorService extends AbstractEditorService {
         Collection<Annotation> annotations = reloaded.getDbAnnotations();
         initialiseAnnotations(annotations);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -71,7 +71,7 @@ public class InteractorEditorService extends AbstractEditorService {
         Collection<Xref> xrefs = reloaded.getDbXrefs();
         initialiseXrefs(xrefs);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -82,7 +82,7 @@ public class InteractorEditorService extends AbstractEditorService {
         Collection<Alias> aliases = reloaded.getDbAliases();
         initialiseAliases(aliases);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -93,7 +93,7 @@ public class InteractorEditorService extends AbstractEditorService {
         Collection<Interactor> interactors = reloaded;
         initialiseInteractorMembers(interactors);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -148,7 +148,7 @@ public class InteractorEditorService extends AbstractEditorService {
             initialiseSequence((IntactPolymer) reloaded);
         }
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
 
         return reloaded;
     }

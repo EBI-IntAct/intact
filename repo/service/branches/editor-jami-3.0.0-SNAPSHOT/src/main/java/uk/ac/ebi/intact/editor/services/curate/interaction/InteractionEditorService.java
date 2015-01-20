@@ -67,7 +67,7 @@ public class InteractionEditorService extends AbstractEditorService {
         Collection<Xref> xrefs = reloaded.getDbXrefs();
         initialiseXrefs(xrefs);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -78,7 +78,7 @@ public class InteractionEditorService extends AbstractEditorService {
         Collection<Annotation> annotations = reloaded.getDbAnnotations();
         initialiseAnnotations(annotations);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -89,7 +89,7 @@ public class InteractionEditorService extends AbstractEditorService {
         Collection<Parameter> parameters = reloaded.getParameters();
         initialiseParameters(parameters);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -100,7 +100,7 @@ public class InteractionEditorService extends AbstractEditorService {
         Collection<VariableParameterValueSet> parameters = reloaded.getVariableParameterValues();
         initialiseVariableParameters(parameters);
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -113,7 +113,7 @@ public class InteractionEditorService extends AbstractEditorService {
             initialiseConfidence(det);
         }
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -126,7 +126,7 @@ public class InteractionEditorService extends AbstractEditorService {
             initialiseParticipant(det);
         }
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
     }
 
@@ -192,7 +192,7 @@ public class InteractionEditorService extends AbstractEditorService {
             initialiseCv(reloaded.getInteractionType());
         }
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
 
         return reloaded;
     }
@@ -204,7 +204,7 @@ public class InteractionEditorService extends AbstractEditorService {
         // initialise xrefs because of identifiers
         initialiseXrefs(reloaded.getDbXrefs());
 
-        getIntactDao().getEntityManager().clear();
+        getIntactDao().getEntityManager().detach(reloaded);
 
         return reloaded;
     }
