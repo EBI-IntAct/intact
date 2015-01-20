@@ -403,6 +403,11 @@ public class ExperimentController extends AnnotatedObjectController {
                 addErrorMessage("Cannot delete value "+v.toString(), e.getCause() + ": " + e.getMessage());
             }
         }
+
+        // detach parents if we have a new experiment so we don't mess up with new transaction
+        if (this.experiment.getAc() == null && this.experiment.getPublication() != null){
+            getEditorService().detachObject((IntactPublication)this.experiment.getPublication());
+        }
     }
 
     public String newExperiment(Publication publication) {

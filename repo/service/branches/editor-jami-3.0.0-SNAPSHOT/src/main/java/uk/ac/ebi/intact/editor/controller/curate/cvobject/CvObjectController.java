@@ -6,10 +6,7 @@ import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.primefaces.model.DualListModel;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import psidev.psi.mi.jami.model.Alias;
-import psidev.psi.mi.jami.model.Annotation;
-import psidev.psi.mi.jami.model.CvTerm;
-import psidev.psi.mi.jami.model.Xref;
+import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
@@ -166,7 +163,7 @@ public class CvObjectController extends AnnotatedObjectController {
                 id,
                 secondaryId,
                 getCvService().findCvObjectByIdentifier(IntactUtils.QUALIFIER_OBJCLASS,
-                qualifierMI != null ? qualifierMI : qualifier));
+                        qualifierMI != null ? qualifierMI : qualifier));
     }
 
     private void prepareView() {
@@ -237,8 +234,13 @@ public class CvObjectController extends AnnotatedObjectController {
             }
         }
 
-        // refresh cv service
-        getCvService().clearAll();
+        // detach parents if we have a new cv so we don't mess up with new transaction
+        if (this.cvObject.getAc() == null){
+            for (OntologyTerm o : cvObject.getParents()){
+                IntactCvTerm parent = (IntactCvTerm)o;
+                getEditorService().detachObject(parent);
+            }
+        }
 
         super.doPreSave();
     }
@@ -246,6 +248,13 @@ public class CvObjectController extends AnnotatedObjectController {
     @Override
     public void postRevert(){
         prepareView();
+    }
+
+    @Override
+    public void doPostSave() {
+        // refresh cv service
+        getCvService().clearAll();
+        super.doPostSave();
     }
 
     public String[] getUsedIn() {
@@ -397,7 +406,7 @@ public class CvObjectController extends AnnotatedObjectController {
 
     @Override
     protected void addNewAlias(AbstractIntactAlias newAlias) {
-         this.cvObject.getSynonyms().add(newAlias);
+        this.cvObject.getSynonyms().add(newAlias);
     }
 
     @Override
@@ -484,7 +493,7 @@ public class CvObjectController extends AnnotatedObjectController {
 
     public String getObjClass(){
         if (this.cvObject == null){
-           return null;
+            return null;
         }
         else if (this.cvObject.getObjClass() == null){
             return "Cv Object";
