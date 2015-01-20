@@ -79,7 +79,7 @@ public class BioSourceService extends AbstractEditorService {
         Collection<Alias> aliases = reloaded.getAliases();
         initialiseAliases(aliases);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
 
         return reloaded;
     }
@@ -117,7 +117,7 @@ public class BioSourceService extends AbstractEditorService {
             initialiseCv(reloaded.getTissue());
         }
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        getIntactDao().getEntityManager().clear();
 
         return reloaded;
     }
