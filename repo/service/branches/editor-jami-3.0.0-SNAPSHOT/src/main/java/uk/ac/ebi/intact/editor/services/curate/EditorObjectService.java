@@ -312,6 +312,10 @@ public class EditorObjectService extends AbstractEditorService {
         if (ao.getAc() != null && !getIntactDao().getEntityManager().contains(ao)){
             reloaded = getIntactDao().getEntityManager().merge(ao);
         }
+        // refresh
+        else if (ao.getAc() != null){
+            getIntactDao().getEntityManager().refresh(reloaded);
+        }
 
         T clone = (T)cloner.clone(reloaded, getIntactDao());
         getIntactDao().getEntityManager().detach(reloaded);
