@@ -545,25 +545,27 @@ public class ExperimentController extends AnnotatedObjectController {
 
 
     public void onToBeReviewedChanged(ValueChangeEvent evt) {
-        setUnsavedChanges(true);
         String newValue = (String) evt.getNewValue();
         if (newValue != null && newValue.length() > 0){
             updateAnnotation(Releasable.TO_BE_REVIEWED, null, newValue, experiment.getAnnotations());
+            setUnsavedChanges(true);
         }
         else{
             removeAnnotation(Releasable.TO_BE_REVIEWED, null, experiment.getAnnotations());
+            setUnsavedChanges(true);
         }
         this.reasonForRejection = newValue;
     }
 
     public void onCorrectionCommentChanged(ValueChangeEvent evt) {
-        setUnsavedChanges(true);
         String newValue = (String) evt.getNewValue();
         if (newValue != null && newValue.length() > 0){
             updateAnnotation(Releasable.CORRECTION_COMMENT, null, newValue, experiment.getAnnotations());
+            setUnsavedChanges(true);
         }
         else{
             removeAnnotation(Releasable.CORRECTION_COMMENT, null, experiment.getAnnotations());
+            setUnsavedChanges(true);
         }
         this.correctedComment = newValue;
     }
