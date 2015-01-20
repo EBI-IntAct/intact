@@ -156,12 +156,12 @@ public class ComplexEditorService extends AbstractEditorService {
         IntactComplex interaction = getIntactDao().getEntityManager().find(IntactComplex.class, ac);
 
         if (interaction != null){
-            // initialise annotations because needs caution
+            // iniTransactionSynchtialise annotations because needs caution
             initialiseAnnotations(interaction.getDbAnnotations());
             // initialise aliases
             initialiseAliases(interaction.getAliases());
             // initialise lifecycle events
-            initialiseLifeCycleEvents(interaction);
+            initialiseEvents(interaction.getLifecycleEvents());
             // initialise participants
             Collection<ModelledParticipant> dets = interaction.getParticipants();
             for (ModelledParticipant det : dets){
@@ -192,7 +192,7 @@ public class ComplexEditorService extends AbstractEditorService {
         // initialise aliases
         initialiseAliases(reloaded.getAliases());
         // initialise lifecycle events
-        initialiseLifeCycleEvents(reloaded);
+        initialiseEvents(reloaded.getLifecycleEvents());
         // initialise participants
         Collection<ModelledParticipant> dets = reloaded.getParticipants();
         for (ModelledParticipant det : dets){
