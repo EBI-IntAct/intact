@@ -943,27 +943,27 @@ public class ComplexController extends AnnotatedObjectController {
     }
 
     public void onHoldChanged(ValueChangeEvent evt) {
-        setUnsavedChanges(true);
         String newValue = (String) evt.getNewValue();
         if (newValue != null && newValue.length() > 0){
+            setUnsavedChanges(true);
             this.complex.onHold(newValue);
             this.onHold = newValue;
         }
     }
 
     public void onToBeReviewedChanged(ValueChangeEvent evt) {
-        setUnsavedChanges(true);
         String newValue = (String) evt.getNewValue();
         if (newValue != null && newValue.length() > 0){
+            setUnsavedChanges(true);
             this.complex.onToBeReviewed(newValue);
             this.toBeReviewed = newValue;
         }
     }
 
     public void onCorrectionCommentChanged(ValueChangeEvent evt) {
-        setUnsavedChanges(true);
         String newValue = (String) evt.getNewValue();
         if (newValue != null && newValue.length() > 0){
+            setUnsavedChanges(true);
             this.complex.onCorrectionComment(newValue);
             this.correctionComment = newValue;
         }
@@ -994,29 +994,31 @@ public class ComplexController extends AnnotatedObjectController {
     }
 
     public void onRecommendedNameChanged(ValueChangeEvent evt) {
-        setUnsavedChanges(true);
         String newValue = (String) evt.getNewValue();
         if (newValue == null || newValue.length() == 0){
             this.complex.setRecommendedName(null);
             this.recommendedName = null;
+            setUnsavedChanges(true);
         }
         else{
             this.complex.setRecommendedName(newValue);
             this.recommendedName = newValue;
+            setUnsavedChanges(true);
         }
     }
 
     public void onSystematicNameChanged(ValueChangeEvent evt) {
-        setUnsavedChanges(true);
 
         String newValue = (String) evt.getNewValue();
         if (newValue == null || newValue.length() == 0){
             this.complex.setSystematicName(null);
             this.systematicName = null;
+            setUnsavedChanges(true);
         }
         else{
             this.complex.setSystematicName(newValue);
             this.systematicName = newValue;
+            setUnsavedChanges(true);
         }
     }
 
@@ -1035,16 +1037,17 @@ public class ComplexController extends AnnotatedObjectController {
     }
 
     public void onComplexPropertiesChanged(ValueChangeEvent evt) {
-        setUnsavedChanges(true);
 
         String newValue = (String) evt.getNewValue();
         if (newValue == null || newValue.length() == 0){
             this.complex.setPhysicalProperties(null);
             this.complexProperties = null;
+            setUnsavedChanges(true);
         }
         else{
             this.complex.setPhysicalProperties(newValue);
             this.complexProperties = newValue;
+            setUnsavedChanges(true);
         }
     }
 
