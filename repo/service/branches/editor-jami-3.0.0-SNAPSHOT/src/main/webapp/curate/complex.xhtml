@@ -164,7 +164,7 @@
             <h:outputLabel value="Shortlabel: " for="shortlabelTxt"/>
         </td>
         <td>
-            <p:inputText id="shortlabelTxt" value="#{interaction.shortName}" size="30"
+            <p:inputText id="shortlabelTxt" value="#{complexController.shortName}" size="30"
                          converter="trimmingConverter"
                          required="true" requiredMessage="Shortlabel is required">
                 <p:ajax event="change" update=":editorForm:messagesComponent,:editorForm:changesPanel,:editorForm:unsavedChangesInfo" async="true" process="@this" oncomplete="markAsUnsaved()"/>

@@ -1509,4 +1509,12 @@ public class ComplexController extends AnnotatedObjectController {
     public void setNewParameterType(CvTerm newParameterType) {
         this.newParameterType = newParameterType;
     }
+
+    public String getShortName(){
+        return complex !=null && !"name to specify".equals(complex.getShortName()) ? complex.getShortName() : null;
+    }
+
+    public void setShortName(String name){
+        this.complex.setShortName(name);
+    }
 }
