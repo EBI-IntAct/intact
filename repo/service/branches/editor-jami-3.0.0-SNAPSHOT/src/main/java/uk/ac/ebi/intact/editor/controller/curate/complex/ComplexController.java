@@ -660,6 +660,8 @@ public class ComplexController extends AnnotatedObjectController {
         else{
             this.complex.getXrefs().add(newRef);
         }
+        this.newXrefPubmed = null;
+        this.newXrefEvidenceCode = null;
     }
 
     @Override

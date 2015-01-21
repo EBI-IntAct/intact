@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import psidev.psi.mi.jami.bridges.exception.BridgeFailedException;
 import psidev.psi.mi.jami.bridges.fetcher.OntologyTermFetcher;
-import psidev.psi.mi.jami.bridges.ols.OlsOntologyTermFetcher;
+import psidev.psi.mi.jami.bridges.ols.CachedOlsOntologyTermFetcher;
 import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AliasUtils;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
@@ -670,6 +670,13 @@ public abstract class AnnotatedObjectController extends BaseController implement
             terms = IntactUtils.createMIQualifier(COMPONENT, COMPONENT_MI_REF);
         }
         if (terms == null){
+            for (OntologyTerm parent : parents){
+                Collection<OntologyTerm> parents2 = parent.getParents();
+                CvTerm id = calculateQualifier(parents2);
+                if (id != null){
+                   return id;
+                }
+            }
             if (log.isWarnEnabled()) log.warn("No qualifier found for category: " + goId);
         }
 
@@ -1335,7 +1342,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
 
     public OntologyTermFetcher getGoServerProxy() throws BridgeFailedException {
         if (this.goServerProxy == null){
-            this.goServerProxy = new OlsOntologyTermFetcher();
+            this.goServerProxy = new CachedOlsOntologyTermFetcher();
         }
         return goServerProxy;
     }
