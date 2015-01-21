@@ -351,6 +351,7 @@ public class CvObjectService extends AbstractEditorService {
 
         // evidence type
         evidenceTypeSelectItems = new ArrayList<SelectItem>();
+        evidenceTypeSelectItems.add(new SelectItem(null, "-- Select evidence code --", "-- Select evidence code --", false, false, true));
         IntactCvTerm evidenceTypeParent = getIntactDao().getCvTermDao().getByMIIdentifier("MI:1331", IntactUtils.DATABASE_OBJCLASS);
         if (evidenceTypeParent != null){
             loadChildren(evidenceTypeParent, evidenceTypeSelectItems, false, new HashSet<String>());
