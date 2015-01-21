@@ -469,7 +469,7 @@ public class ComplexController extends AnnotatedObjectController {
         }
     }
 
-    public void selectLinkedFeature(FeatureWrapper wrapper, IntactFeatureEvidence linked){
+    public void selectLinkedFeature(FeatureWrapper wrapper, IntactModelledFeature linked){
          wrapper.setSelectedLinkedFeature(linked);
     }
 
