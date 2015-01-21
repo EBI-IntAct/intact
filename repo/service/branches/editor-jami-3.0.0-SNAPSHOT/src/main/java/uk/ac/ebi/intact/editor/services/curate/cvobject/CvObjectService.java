@@ -362,7 +362,6 @@ public class CvObjectService extends AbstractEditorService {
 
         // complex type
         complexTypeSelectItems = new ArrayList<SelectItem>();
-        complexTypeSelectItems.add(noClassSelectItemGroup);
         IntactCvTerm complexTypeParent = getIntactDao().getCvTermDao().getByMIIdentifier(Complex.COMPLEX_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS);
         SelectItem item = complexTypeParent != null ? createSelectItem(complexTypeParent, true):null;
         if (item != null){
