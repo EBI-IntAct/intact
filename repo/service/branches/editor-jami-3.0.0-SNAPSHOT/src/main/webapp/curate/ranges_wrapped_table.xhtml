@@ -79,7 +79,7 @@
                 onevent="markAsUnsaved()"/>
         <f:selectItems value="#{annotatedObjectController.participantSelectItems}"/>
     </h:selectOneMenu>
-    <h:outputText value="#{annotatedObjectController.feature.participant.interactor.shortName}" rendered="#{annotatedObjectController.complexFeature and
+    <h:outputText value="#{annotatedObjectController.feature.participant.interactor.shortName}" rendered="#{!annotatedObjectController.complexFeature and
     annotatedObjectController.feature.participant != null}"/>
 </p:column>
 <p:column>
