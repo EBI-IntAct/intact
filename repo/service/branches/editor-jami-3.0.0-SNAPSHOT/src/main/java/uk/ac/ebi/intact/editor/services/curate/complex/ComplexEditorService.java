@@ -232,10 +232,11 @@ public class ComplexEditorService extends AbstractEditorService {
     public IntactComplex cloneInteractionEvidence(IntactInteractionEvidence ao, ComplexCloner cloner) throws SynchronizerException,
             FinderException,PersisterException {
 
+
         IntactInteractionEvidence reloaded = reattachIntactObjectIfTransient(ao, getIntactDao().getInteractionDao());
         IntactComplex clone = null;
         try {
-            clone = cloner.cloneFromEvidence(ao, getIntactDao());
+            clone = cloner.cloneFromEvidence(reloaded, getIntactDao());
             getIntactDao().getEntityManager().detach(reloaded);
             return clone;
         } catch (SynchronizerException e) {
