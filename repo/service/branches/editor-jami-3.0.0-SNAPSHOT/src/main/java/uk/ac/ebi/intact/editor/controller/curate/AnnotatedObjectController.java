@@ -41,7 +41,6 @@ import uk.ac.ebi.intact.editor.services.curate.interactor.InteractorEditorServic
 import uk.ac.ebi.intact.editor.services.curate.participant.ParticipantEditorService;
 import uk.ac.ebi.intact.editor.services.curate.publication.PublicationEditorService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
-import uk.ac.ebi.intact.jami.lifecycle.LifeCycleManager;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.audit.Auditable;
 import uk.ac.ebi.intact.jami.model.extension.*;
@@ -198,12 +197,8 @@ public abstract class AnnotatedObjectController extends BaseController implement
                     addInfoMessage("Complex already released", "This complex was released on " + (releasedDate != null ? sdf.format(releasedDate) : ""));
                     break;
                 case NEW:
-                    // we assume for now that new status means that the complex has been created using an external process (ie. XML import)
-                    LifeCycleManager lifecycleManager = ApplicationContextProvider.getBean("jamiLifeCycleManager");
-                    lifecycleManager.getStartStatus().create(complex, "Imported from external source", getCurrentUser());
 
-                    addWarningMessage("Complex with start status", "Assuming that it has been imported. Save it if you are happy with this assumption");
-                    setUnsavedChanges(true);
+                    addWarningMessage("Complex with start status", "Assuming that it has been imported. Assign it to yourself if you are happy with this assumption");
                     break;
                 default:
                     break;
@@ -244,12 +239,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
                     addInfoMessage("Publication already released", "This publication was released on " + (releasedDate != null ? sdf.format(releasedDate) : ""));
                     break;
                 case NEW:
-                    // we assume for now that new status means that the complex has been created using an external process (ie. XML import)
-                    LifeCycleManager lifecycleManager = ApplicationContextProvider.getBean("jamiLifeCycleManager");
-                    lifecycleManager.getStartStatus().create(publication, "Imported from external source", getCurrentUser());
-
-                    addWarningMessage("Publication with start status", "Assuming that it has been imported. Save it if you are happy with this assumption");
-                    setUnsavedChanges(true);
+                    addWarningMessage("Publication with start status", "Assuming that it has been imported. Assign it to yourself if you are happy with this assumption");
                     break;
                 default:
                     break;
