@@ -164,11 +164,6 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
                 loadParticipants((Complex)participant.getInteractor(), this.participantSelectItems);
             }
         }
-        else if (this.feature.getParticipant() != null){
-            SelectItem item = new SelectItem( feature.getParticipant(), feature.getParticipant().getInteractor().getShortName(), feature.getParticipant().getInteractor().getFullName());
-            participantSelectItems.add(item);
-            participantsMap.put(((AbstractIntactParticipant)feature.getParticipant()).getAc(), (AbstractIntactParticipant)feature.getParticipant());
-        }
     }
 
     private void loadParticipants(Complex parent, List<SelectItem> selectItems){

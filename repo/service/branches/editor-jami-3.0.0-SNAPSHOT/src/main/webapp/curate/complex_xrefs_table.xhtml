@@ -9,12 +9,13 @@
                 xmlns:ot="http://myfaces.apache.org/orchestra">
 
 
-        <h:outputScript library="javascript" name="xref.js"/>
+    <h:outputScript library="javascript" name="xref.js"/>
 
-        <table style="#{style}">
-            <tr>
-                <td>
-                    <h:panelGrid id="newXrefTxt" columns="7" class="intact-buttonBar">
+    <table style="#{style}">
+        <tr>
+            <td>
+                <div id="newXrefTxt" class="intact-buttonBar">
+                    <h:panelGrid columns="10" >
                         <h:outputLabel value="Database: " for="databaseSel1"/>
                         <h:selectOneMenu id="databaseSel1" value="#{annotatedObjectController.newDatabase}" disabled="#{annotatedObjectController.isXrefDisabled()}"
                                          converter="cvObjectConverter">
@@ -36,11 +37,13 @@
                         <h:outputLabel value="Version: " for="version1Txt"/>
                         <p:inputText id="version1Txt" value="#{annotatedObjectController.newXrefVersion}" size="5"
                                      converter="trimmingConverter" disabled="#{annotatedObjectController.isXrefDisabled()}"/>
-                        <h:outputLabel value="PubmedId (for GO annotations only): " for="pubmedId1Txt"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="5">
+                        <h:outputLabel value="PubmedId (GO annotations only): " for="pubmedId1Txt"/>
                         <p:inputText id="pubmedId1Txt" value="#{complexController.newXrefPubmed}" size="15"
                                      converter="trimmingConverter" disabled="#{annotatedObjectController.isXrefDisabled()}">
                         </p:inputText>
-                        <h:outputLabel value="Evidence code (for GO annotations only): " for="evidenceCode1Sel"/>
+                        <h:outputLabel value="Evidence code (GO annotations only): " for="evidenceCode1Sel"/>
                         <h:selectOneMenu id="evidenceCode1Sel" value="#{complexController.newXrefEvidenceCode}"
                                          converter="cvObjectConverter" disabled="#{annotatedObjectController.isXrefDisabled()}">
                             <f:selectItems value="#{cvObjectService.evidenceTypeSelectItems}"/>
@@ -49,32 +52,33 @@
                                          process="newXrefTxt"
                                          update="newXrefTxt xrefsTable #{update}"/>
                     </h:panelGrid>
+                </div>
 
-                    <p:dataTable id="xrefsTable" var="xref" value="#{annotatedObjectController.collectXrefs()}"
-                                 rowIndexVar="xrefIndex"
-                                 style="width:100%" rendered="#{!annotatedObjectController.isXrefDisabled()}">
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Database"/>
-                            </f:facet>
-                            <h:selectOneMenu id="databaseSel" value="#{xref.database}" required="true"
-                                             requiredMessage="Database for xref is required" disabled="#{annotatedObjectController.isXrefDisabled()
+                <p:dataTable id="xrefsTable" var="xref" value="#{annotatedObjectController.collectXrefs()}"
+                             rowIndexVar="xrefIndex"
+                             style="width:100%" rendered="#{!annotatedObjectController.isXrefDisabled()}">
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Database"/>
+                        </f:facet>
+                        <h:selectOneMenu id="databaseSel" value="#{xref.database}" required="true"
+                                         requiredMessage="Database for xref is required" disabled="#{annotatedObjectController.isXrefDisabled()
                                  or annotatedObjectController.isXrefNotEditable(xref) or complexController.isComplexGoRef(xref)}"
-                                             converter="cvObjectConverter">
-                                <f:selectItems value="#{cvObjectService.databaseSelectItems}"/>
-                                <ed:curation/>
-                            </h:selectOneMenu>
+                                         converter="cvObjectConverter">
+                            <f:selectItems value="#{cvObjectService.databaseSelectItems}"/>
+                            <ed:curation/>
+                        </h:selectOneMenu>
 
-                            <script type="text/javascript">
-                                var jsXref_#{xrefIndex} = new EditorXref(#{xrefIndex});
-                            </script>
+                        <script type="text/javascript">
+                            var jsXref_#{xrefIndex} = new EditorXref(#{xrefIndex});
+                        </script>
 
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Identifier"/>
-                            </f:facet>
-                            <h:panelGroup style="display:block; white-space:nowrap;">
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Identifier"/>
+                        </f:facet>
+                        <h:panelGroup style="display:block; white-space:nowrap;">
                             <p:inputText id="primaryIdTxt" value="#{xref.id}" widgetVar="primaryTxt_#{xrefIndex}"
                                          size="15" converter="trimmingConverter"
                                          onchange="jsXref_#{xrefIndex}.markSecondaryAsReadOnlyIfNecessary()"
@@ -92,7 +96,7 @@
                                 </h:panelGroup>
                             </h:panelGroup>
 
-                                <h:panelGroup id="linkPanel">
+                            <h:panelGroup id="linkPanel">
                                 <h:panelGroup rendered="#{annotatedObjectController.isXrefValid(xref) and annotatedObjectController.externalLink(xref) != null}">
                                     <ot:separateConversationContext>
                                         <h:outputLink value="#{annotatedObjectController.externalLink(xref)}" target="_blank">
@@ -103,82 +107,82 @@
                                 </h:panelGroup>
                             </h:panelGroup>
 
-                            </h:panelGroup>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Secondary"/>
-                            </f:facet>
-                            <p:inputText id="secondaryTxt" widgetVar="secondaryTxt_#{xrefIndex}" value="#{xref.secondaryId}" size="15"
-                                         converter="trimmingConverter" disabled="#{annotatedObjectController.isXrefDisabled()
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Secondary"/>
+                        </f:facet>
+                        <p:inputText id="secondaryTxt" widgetVar="secondaryTxt_#{xrefIndex}" value="#{xref.secondaryId}" size="15"
+                                     converter="trimmingConverter" disabled="#{annotatedObjectController.isXrefDisabled()
                                  or annotatedObjectController.isXrefNotEditable(xref)}">
-                                    <ed:curation/>
-                            </p:inputText>
+                            <ed:curation/>
+                        </p:inputText>
 
-                            <script type="text/javascript">
-                                jsXref_#{xrefIndex}.primaryElemId = primaryTxt_#{xrefIndex}.id;
-                                jsXref_#{xrefIndex}.secondaryElemId = secondaryTxt_#{xrefIndex}.id;
-                            </script>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Qualifier"/>
-                            </f:facet>
-                            <h:selectOneMenu id="qualifierSel" value="#{xref.qualifier}"
-                                             converter="cvObjectConverter" disabled="#{annotatedObjectController.isXrefDisabled()
+                        <script type="text/javascript">
+                            jsXref_#{xrefIndex}.primaryElemId = primaryTxt_#{xrefIndex}.id;
+                            jsXref_#{xrefIndex}.secondaryElemId = secondaryTxt_#{xrefIndex}.id;
+                        </script>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Qualifier"/>
+                        </f:facet>
+                        <h:selectOneMenu id="qualifierSel" value="#{xref.qualifier}"
+                                         converter="cvObjectConverter" disabled="#{annotatedObjectController.isXrefDisabled()
                                  or annotatedObjectController.isXrefNotEditable(xref) or complexController.isComplexGoRef(xref)}">
-                                <f:selectItems value="#{cvObjectService.qualifierSelectItems}"/>
-                                <ed:curation/>
-                            </h:selectOneMenu>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Version"/>
-                            </f:facet>
-                            <p:inputText value="#{xref.version}" size="5"
-                                         onchange="editorCuration.setUnsavedChanges(true)"
-                                         converter="trimmingConverter" disabled="#{annotatedObjectController.isXrefDisabled()
+                            <f:selectItems value="#{cvObjectService.qualifierSelectItems}"/>
+                            <ed:curation/>
+                        </h:selectOneMenu>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Version"/>
+                        </f:facet>
+                        <p:inputText value="#{xref.version}" size="5"
+                                     onchange="editorCuration.setUnsavedChanges(true)"
+                                     converter="trimmingConverter" disabled="#{annotatedObjectController.isXrefDisabled()
                                  or annotatedObjectController.isXrefNotEditable(xref)}"/>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Pubmed Identifier"/>
-                            </f:facet>
-                            <p:inputText id="pubmedIdTxt" widgetVar="pubmedIdTxt_#{xrefIndex}" value="#{xref.pubmed}" size="15"
-                                         converter="trimmingConverter" disabled="#{annotatedObjectController.isXrefDisabled()
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Pubmed Identifier"/>
+                        </f:facet>
+                        <p:inputText id="pubmedIdTxt" widgetVar="pubmedIdTxt_#{xrefIndex}" value="#{xref.pubmed}" size="15"
+                                     converter="trimmingConverter" disabled="#{annotatedObjectController.isXrefDisabled()
                                  or annotatedObjectController.isXrefNotEditable(xref)}" rendered="#{complexController.isComplexGoRef(xref)}">
-                                <ed:curation/>
-                            </p:inputText>
-                            <h:outputText value="-" rendered="#{!complexController.isComplexGoRef(xref)}"/>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Evidence code"/>
-                            </f:facet>
-                            <h:selectOneMenu id="evidenceCodeSel" value="#{xref.evidenceType}"
-                                             converter="cvObjectConverter" disabled="#{annotatedObjectController.isXrefDisabled()
+                            <ed:curation/>
+                        </p:inputText>
+                        <h:outputText value="-" rendered="#{!complexController.isComplexGoRef(xref)}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Evidence code"/>
+                        </f:facet>
+                        <h:selectOneMenu id="evidenceCodeSel" value="#{xref.evidenceType}"
+                                         converter="cvObjectConverter" disabled="#{annotatedObjectController.isXrefDisabled()
                                  or annotatedObjectController.isXrefNotEditable(xref) or complexController.isXrefNotEditable(xref)}"
-                                             rendered="#{complexController.isComplexGoRef(xref)}">
-                                <f:selectItems value="#{cvObjectService.evidenceTypeSelectItems}"/>
-                                <ed:curation/>
-                            </h:selectOneMenu>
-                            <h:outputText value="-" rendered="#{!complexController.isComplexGoRef(xref)}"/>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Actions"/>
-                            </f:facet>
-                            <p:commandLink id="removeXrefBtn" styleClass="ui-icon ui-icon-closethick" process="removeXrefBtn"
-                               actionListener="#{annotatedObjectController.removeXref(xref)}"
-                               oncomplete="markAsUnsaved()"
-                               update="xrefsTable,#{update}" disabled="#{annotatedObjectController.isXrefDisabled()
+                                         rendered="#{complexController.isComplexGoRef(xref)}">
+                            <f:selectItems value="#{cvObjectService.evidenceTypeSelectItems}"/>
+                            <ed:curation/>
+                        </h:selectOneMenu>
+                        <h:outputText value="-" rendered="#{!complexController.isComplexGoRef(xref)}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Actions"/>
+                        </f:facet>
+                        <p:commandLink id="removeXrefBtn" styleClass="ui-icon ui-icon-closethick" process="removeXrefBtn"
+                                       actionListener="#{annotatedObjectController.removeXref(xref)}"
+                                       oncomplete="markAsUnsaved()"
+                                       update="xrefsTable,#{update}" disabled="#{annotatedObjectController.isXrefDisabled()
                                  or annotatedObjectController.isXrefNotEditable(xref)}"/>
-                        </p:column>
-                    </p:dataTable>
+                    </p:column>
+                </p:dataTable>
 
-                </td>
-            </tr>
-        </table>
+            </td>
+        </tr>
+    </table>
 
 
 </ui:composition>
