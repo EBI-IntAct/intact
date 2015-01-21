@@ -815,8 +815,29 @@ public class ComplexController extends AnnotatedObjectController {
 
     @Override
     public void removeXref(Xref xref) {
-        this.complex.getXrefs().remove(xref);
-        this.complex.getIdentifiers().remove(xref);
+        // we need to be careful as curators can add complexGoRef which can be identical to other normal refs
+        if (XrefUtils.isXrefFromDatabase(xref, Xref.GO_MI, Xref.GO)){
+            Iterator<Xref> refIterator = complex.getXrefs().iterator();
+            boolean hasRemoved = false;
+            while (refIterator.hasNext()){
+                 if (xref == refIterator.next()){
+                     hasRemoved = true;
+                     refIterator.remove();
+                 }
+            }
+            if (!hasRemoved){
+                refIterator = complex.getIdentifiers().iterator();
+                while (refIterator.hasNext()){
+                    if (xref == refIterator.next()){
+                        refIterator.remove();
+                    }
+                }
+            }
+        }
+        else{
+            this.complex.getXrefs().remove(xref);
+            this.complex.getIdentifiers().remove(xref);
+        }
     }
 
     public boolean isNewPublication() {

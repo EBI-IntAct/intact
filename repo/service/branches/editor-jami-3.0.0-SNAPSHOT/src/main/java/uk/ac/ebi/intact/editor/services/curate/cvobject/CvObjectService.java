@@ -244,7 +244,7 @@ public class CvObjectService extends AbstractEditorService {
         final List<IntactCvTerm>participantTopics = getSortedTopicList( "uk.ac.ebi.intact.model.Component", cvObjectsByUsedInClass);
         final List<IntactCvTerm>featureTopics = getSortedTopicList( "uk.ac.ebi.intact.model.Feature", cvObjectsByUsedInClass);
         final List<IntactCvTerm>cvObjectTopics = getSortedTopicList( "uk.ac.ebi.intact.model.CvObject", cvObjectsByUsedInClass);
-        final List<IntactCvTerm>complexTopics = getSortedTopicList(IntactComplex.class.getCanonicalName(), cvObjectsByUsedInClass);
+        final Set<IntactCvTerm>complexTopics = new HashSet<IntactCvTerm>(getSortedTopicList(IntactComplex.class.getCanonicalName(), cvObjectsByUsedInClass));
         complexTopics.addAll(interactionTopics);
         interactorTopics.addAll(complexTopics);
         final List<IntactCvTerm>noClassTopics = getSortedTopicList( NO_CLASS, cvObjectsByUsedInClass);
@@ -292,6 +292,9 @@ public class CvObjectService extends AbstractEditorService {
 
         cvObjectTopicSelectItems = createSelectItems( cvObjectTopics, "-- Select topic --" );
         cvObjectTopicSelectItems.add(noClassSelectItemGroup);
+
+        complexTopicSelectItems = createSelectItems( complexTopics, "-- Select topic --" );
+        complexTopicSelectItems.add(noClassSelectItemGroup);
 
         final List<IntactCvTerm> databases = getSortedList( IntactUtils.DATABASE_OBJCLASS, cvObjectsByClass);
         databaseSelectItems = createSelectItems(databases, "-- Select database --", "ECO:");
@@ -359,6 +362,7 @@ public class CvObjectService extends AbstractEditorService {
 
         // complex type
         complexTypeSelectItems = new ArrayList<SelectItem>();
+        complexTypeSelectItems.add(noClassSelectItemGroup);
         IntactCvTerm complexTypeParent = getIntactDao().getCvTermDao().getByMIIdentifier(Complex.COMPLEX_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS);
         SelectItem item = complexTypeParent != null ? createSelectItem(complexTypeParent, true):null;
         if (item != null){
