@@ -194,6 +194,9 @@ public class ParticipantEditorService extends AbstractEditorService {
 
             // load participant interactor
             initialiseInteractor((IntactInteractor)participant.getInteractor());
+
+            // load features
+            initialiseFeatures(participant.getFeatures());
         }
 
         return participant;
