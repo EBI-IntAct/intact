@@ -250,7 +250,7 @@ public class ParticipantEditorService extends AbstractEditorService {
         initialiseInteractor((IntactInteractor)reloaded.getInteractor());
 
         // load features
-        initialiseFeatures(participant.getFeatures());
+        initialiseFeatures(reloaded.getFeatures());
 
         getIntactDao().getEntityManager().detach(reloaded);
 
