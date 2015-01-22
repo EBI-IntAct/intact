@@ -65,6 +65,7 @@ public class EditorObjectService extends AbstractEditorService {
     public <T extends IntactPrimaryObject> T doSave( IntactPrimaryObject object,
                                                      IntactDbSynchronizer dbSynchronizer) throws SynchronizerException,
             FinderException, PersisterException {
+
         if ( object == null ) {
             log.error( "No annotated object to save");
             return null;
@@ -125,6 +126,7 @@ public class EditorObjectService extends AbstractEditorService {
      */
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public void doSaveMasterProteins(IntactPrimaryObject intactObject) throws BridgeFailedException, SynchronizerException, FinderException, PersisterException {
+
         if (intactObject instanceof Protein){
             attachDaoToTransactionManager();
 

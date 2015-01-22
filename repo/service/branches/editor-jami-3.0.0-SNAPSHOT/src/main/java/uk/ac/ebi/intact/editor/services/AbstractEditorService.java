@@ -57,6 +57,9 @@ public abstract class AbstractEditorService implements EditorService {
 
     protected <T extends Auditable> void updateIntactObject(T intactObject, IntactBaseDao<T> dao) throws SynchronizerException,
             FinderException, PersisterException {
+        // clear manager first to avaoid to have remaining objects from other transactions
+        getIntactDao().getEntityManager().clear();
+
         try{
             dao.update(intactObject);
         }
@@ -80,6 +83,9 @@ public abstract class AbstractEditorService implements EditorService {
 
     protected <T extends Auditable> void persistIntactObject(T intactObject, IntactBaseDao<T> dao) throws SynchronizerException,
             FinderException, PersisterException {
+        // clear manager first to avaoid to have remaining objects from other transactions
+        getIntactDao().getEntityManager().clear();
+
         try{
             dao.persist(intactObject);
         }
@@ -103,6 +109,9 @@ public abstract class AbstractEditorService implements EditorService {
 
     protected <T extends Auditable> void deleteIntactObject(T intactObject, IntactBaseDao<T> dao) throws SynchronizerException,
             FinderException, PersisterException {
+        // clear manager first to avaoid to have remaining objects from other transactions
+        getIntactDao().getEntityManager().clear();
+
         try{
             dao.delete(intactObject);
         }
@@ -127,6 +136,8 @@ public abstract class AbstractEditorService implements EditorService {
     protected <T extends Auditable,I> T synchronizeIntactObject(I intactObject, IntactDbSynchronizer<I,T> synchronizer, boolean persist) throws SynchronizerException,
             FinderException, PersisterException {
         try{
+            // clear manager first to avaoid to have remaining objects from other transactions
+            getIntactDao().getEntityManager().clear();
 
             if (intactObject instanceof IntactCvTerm && synchronizer instanceof CvTermSynchronizer){
                 ((CvTermSynchronizer)synchronizer).setObjClass(((IntactCvTerm)intactObject).getObjClass());
