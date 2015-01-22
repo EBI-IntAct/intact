@@ -102,7 +102,7 @@
                                          actionListener="#{modelledParticipantController.unlinkFeature(featureWrapper)}"
                                          immediate="true" process="@this"
                                          update=":editorForm:participantTabs:featuresPanel :editorForm:changesPanel :editorForm:messagesComponent :editorForm:unsavedChangesInfo"
-                                         onclick="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}_#{intactComponentUtils.toJavascriptFriendlyVar(linked.ac)}.hide()"/>
+                                         onclick="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}#{intactComponentUtils.toJavascriptFriendlyVar(linked.ac)}.hide()"/>
                         <p:commandButton value="Not Yet"
                                          onclick="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}#{intactComponentUtils.toJavascriptFriendlyVar(linked.ac)}.hide()"
                                 />

@@ -157,6 +157,7 @@ public class ComplexController extends AnnotatedObjectController {
         }
 
         refreshParticipants();
+        refreshName();
     }
 
     private boolean areParticipantsInitialised(IntactComplex interaction) {
@@ -258,7 +259,6 @@ public class ComplexController extends AnnotatedObjectController {
                 setComplex(getComplexEditorService().initialiseComplexAnnotations(this.complex));
             }
 
-            refreshName();
             refreshInfoMessages();
         }
     }
@@ -820,7 +820,12 @@ public class ComplexController extends AnnotatedObjectController {
             Iterator<Xref> refIterator = complex.getXrefs().iterator();
             boolean hasRemoved = false;
             while (refIterator.hasNext()){
-                 if (xref == refIterator.next()){
+                InteractorXref next = (InteractorXref)refIterator.next();
+                 if (xref == next){
+                     hasRemoved = true;
+                     refIterator.remove();
+                 }
+                else if (next.getAc() != null && next.getAc().equals((InteractorXref)xref)){
                      hasRemoved = true;
                      refIterator.remove();
                  }
@@ -828,7 +833,13 @@ public class ComplexController extends AnnotatedObjectController {
             if (!hasRemoved){
                 refIterator = complex.getIdentifiers().iterator();
                 while (refIterator.hasNext()){
-                    if (xref == refIterator.next()){
+                    InteractorXref next = (InteractorXref)refIterator.next();
+                    if (xref == next){
+                        hasRemoved = true;
+                        refIterator.remove();
+                    }
+                    else if (next.getAc() != null && next.getAc().equals((InteractorXref)xref)){
+                        hasRemoved = true;
                         refIterator.remove();
                     }
                 }
