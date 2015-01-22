@@ -176,7 +176,7 @@ public class RangeWrapper {
     public void setParticipant(Entity entity) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         this.range.setParticipant(entity);
 
-        if (entity.getInteractor() instanceof Polymer){
+        if (entity != null && entity.getInteractor() instanceof Polymer){
             sequence = ((Polymer)entity.getInteractor()).getSequence();
         }
         else{
