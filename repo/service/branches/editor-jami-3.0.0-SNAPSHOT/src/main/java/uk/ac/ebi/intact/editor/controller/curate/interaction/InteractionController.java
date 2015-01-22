@@ -336,7 +336,7 @@ public class InteractionController extends AnnotatedObjectController {
         }
 
         // detach parents if we have a new interaction so we don't mess up with new transaction
-        if (this.interaction.getAc() == null && this.interaction.getExperiment() != null){
+        if (this.interaction.getExperiment() != null){
             getEditorService().detachObject((IntactExperiment)this.interaction.getExperiment());
         }
     }

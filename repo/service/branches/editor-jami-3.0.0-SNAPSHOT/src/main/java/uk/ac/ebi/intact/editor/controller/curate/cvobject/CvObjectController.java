@@ -235,11 +235,9 @@ public class CvObjectController extends AnnotatedObjectController {
         }
 
         // detach parents if we have a new cv so we don't mess up with new transaction
-        if (this.cvObject.getAc() == null){
-            for (OntologyTerm o : cvObject.getParents()){
-                IntactCvTerm parent = (IntactCvTerm)o;
-                getEditorService().detachObject(parent);
-            }
+        for (OntologyTerm o : cvObject.getParents()){
+            IntactCvTerm parent = (IntactCvTerm)o;
+            getEditorService().detachObject(parent);
         }
 
         super.doPreSave();

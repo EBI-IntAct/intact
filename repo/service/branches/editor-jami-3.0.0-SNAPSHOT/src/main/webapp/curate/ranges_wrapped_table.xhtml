@@ -62,7 +62,7 @@
     </f:facet>
     <h:selectOneMenu id="toCvFuzzyType" value="#{rangeWrapper.range.end.status}" converter="cvObjectConverter"
                      required="true"
-                     requiredMessage="Range to CvFuzzyType is required" disabled="#{featureController.isRangeDisabled()}">
+                     requiredMessage="Range to CvFuzzyType is required" disabled="#{annotatedObjectController.isRangeDisabled()}">
         <f:ajax event="valueChange" render=":editorForm:messagesComponent :editorForm:changesPanel :editorForm:unsavedChangesInfo"
                 listener="#{rangeWrapper.onFuzzyTypeChanged}" onevent="markAsUnsaved()"/>
         <f:selectItems value="#{cvObjectService.fuzzyTypeSelectItems}"/>
