@@ -139,6 +139,8 @@ public class CurateController extends BaseController {
             return meta;
         }
         else if (IntactComplex.class.isAssignableFrom(iaClass)) {
+            ComplexController interactionController = (ComplexController) getSpringContext().getBean("complexController");
+            interactionController.setComplex((IntactComplex)intactObject);
             return new CurateObjectMetadata((ComplexController) getSpringContext().getBean("complexController"), "complex");
         }
         else if (IntactParticipantEvidence.class.isAssignableFrom(iaClass)) {
@@ -168,7 +170,9 @@ public class CurateController extends BaseController {
             return meta;
         }
         else if (IntactModelledParticipant.class.isAssignableFrom(iaClass)) {
-            CurateObjectMetadata meta = new CurateObjectMetadata((ModelledParticipantController) getSpringContext().getBean("modelledParticipantController"),
+            ModelledParticipantController participantController = (ModelledParticipantController) getSpringContext().getBean("modelledParticipantController");
+            participantController.setParticipant((IntactModelledParticipant)intactObject);
+            CurateObjectMetadata meta = new CurateObjectMetadata(participantController,
                     "cparticipant");
             ModelledParticipant part = (ModelledParticipant)intactObject;
             if (part.getInteraction() instanceof IntactComplex){
@@ -179,7 +183,9 @@ public class CurateController extends BaseController {
             }
             return meta;
         } else if (IntactModelledFeature.class.isAssignableFrom(iaClass)) {
-            CurateObjectMetadata meta = new CurateObjectMetadata((ModelledFeatureController) getSpringContext().getBean("modelledFeatureController"), "cfeature");
+            ModelledFeatureController featureController = (ModelledFeatureController) getSpringContext().getBean("modelledFeatureController");
+            featureController.setFeature((IntactModelledFeature) intactObject);
+            CurateObjectMetadata meta = new CurateObjectMetadata(featureController, "cfeature");
             ModelledFeature feat = (ModelledFeature)intactObject;
             if (feat.getParticipant() instanceof IntactModelledParticipant){
                 IntactModelledParticipant part = (IntactModelledParticipant)feat.getParticipant();
