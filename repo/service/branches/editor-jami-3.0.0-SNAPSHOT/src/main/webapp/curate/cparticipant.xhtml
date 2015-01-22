@@ -78,12 +78,12 @@
                         <td colspan="2">
                             <p:inputText id="interactorTxt" value="#{modelledParticipantController.interactor}"
                                          readonly="true"/>
-                            <p:commandButton id="importInteractorBtn" value="Import" onclick="importInteractorDialog.show();"/>
+                            <p:commandButton id="importInteractorBtn" value="Import" onclick="jimportInteractorDialog.show();"/>
                             <p:commandButton id="newInteractorBtn" value="New" onclick="newInteractorDialog.show();"/>
                             <p:commandButton id="viewInteractorBtn" value="View" rendered="#{participant.interactor != null}"
                                              action="#{curateController.edit(participant.interactor)}" ajax="false"/>
 
-                            <ui:include src="dialog_import_interactor.xhtml"/>
+                            <ui:include src="jdialog_import_interactor.xhtml"/>
                         </td>
                     </tr>
                     <tr>
