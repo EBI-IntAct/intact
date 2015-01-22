@@ -90,6 +90,8 @@ public class ApplicationInfoService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public void saveApplicationProperties(Application application) throws SynchronizerException, FinderException, PersisterException {
+        // clear cache
+        getIntactDao().getEntityManager().clear();
         // attach dao to transaction manager to clear cache after commit
         attachDaoToTransactionManager();
 
