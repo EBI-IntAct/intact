@@ -10,7 +10,7 @@
         <property name="ignoreUnresolvablePlaceholders" value="true"/>
         <property name="locations">
             <list>
-                <value>classpath*:/dbimporter.properties</value>
+                <value>classpath:/dbimporter.properties</value>
             </list>
         </property>
     </bean>
