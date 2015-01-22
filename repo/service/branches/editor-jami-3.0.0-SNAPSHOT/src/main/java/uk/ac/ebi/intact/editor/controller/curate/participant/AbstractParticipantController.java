@@ -250,6 +250,9 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
         } catch (PersisterException e) {
             addErrorMessage("Cannot load interactor " + interactor, e.getCause() + ": " + e.getMessage());
         }
+        catch (Throwable e){
+            addErrorMessage("Cannot load interactor " + interactor, e.getCause() + ": " + e.getMessage());
+        }
     }
 
     public void addInteractorToParticipant(ActionEvent evt) {
