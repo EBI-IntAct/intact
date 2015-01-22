@@ -405,7 +405,7 @@ public class ExperimentController extends AnnotatedObjectController {
         }
 
         // detach parents if we have a new experiment so we don't mess up with new transaction
-        if (this.experiment.getAc() == null && this.experiment.getPublication() != null){
+        if (this.experiment.getPublication() != null){
             getEditorService().detachObject((IntactPublication)this.experiment.getPublication());
         }
     }

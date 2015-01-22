@@ -140,7 +140,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
             return "/curate/curate?faces-redirect=true";
         }
 
-        return "/curate/"+getPageContext()+"?faces-redirect=true&includeViewParams=true";
+        return "/curate/"+getParentController().getPageContext()+"?faces-redirect=true&includeViewParams=true";
     }
 
     protected abstract AnnotatedObjectController getParentController();
