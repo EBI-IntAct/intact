@@ -49,8 +49,8 @@ public class AssignmentReportService extends AbstractEditorService {
     public List<AssignmentInfo> calculatePublicationReviewerAssignments(Date fromDate, Date toDate) {
         List<AssignmentInfo> assignmentInfos = new ArrayList<AssignmentInfo>();
 
-        Query query = getIntactDao().getEntityManager().createQuery("select distinct p from Publication p join p.lifecycleEvents as e where " +
-                "e.cvEvent.shortName = :cvEvent and e.when >= :dateFrom and e.when <= :dateTo and e.note is null order by e.when");
+        Query query = getIntactDao().getEntityManager().createQuery("select distinct p from IntactPublication p join p.lifecycleEvents as e where " +
+                "e.cvEvent.shortName = :cvEvent and e.when >= :dateFrom and e.when <= :dateTo and e.note is null");
         query.setParameter("cvEvent", LifeCycleEventType.READY_FOR_CHECKING.shortLabel());
         query.setParameter("dateFrom", fromDate);
         query.setParameter("dateTo", new DateTime(toDate).plusDays(1).minusSeconds(1).toDate());
@@ -81,7 +81,7 @@ public class AssignmentReportService extends AbstractEditorService {
         List<AssignmentInfo> assignmentInfos = new ArrayList<AssignmentInfo>();
 
         Query query = getIntactDao().getEntityManager().createQuery("select distinct c from IntactComplex c join c.lifecycleEvents as e where " +
-                "e.cvEvent.shortName = :cvEvent and e.when >= :dateFrom and e.when <= :dateTo and e.note is null order by e.when");
+                "e.cvEvent.shortName = :cvEvent and e.when >= :dateFrom and e.when <= :dateTo and e.note is null");
         query.setParameter("cvEvent", LifeCycleEventType.READY_FOR_CHECKING.shortLabel());
         query.setParameter("dateFrom", fromDate);
         query.setParameter("dateTo", new DateTime(toDate).plusDays(1).minusSeconds(1).toDate());
