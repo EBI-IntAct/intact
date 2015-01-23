@@ -49,6 +49,9 @@
     <bean id="editorFeatureEvidenceEnricher" class="uk.ac.ebi.intact.editor.enricher.EditorFeatureEvidenceEnricher" scope="step" lazy-init="true">
         <property name="importTag" value="#{jobParameters['MIJobId']}"/>
     </bean>
+    <bean id="editorSourceEnricher" class="uk.ac.ebi.intact.editor.enricher.EditorSourceEnricher" scope="step" lazy-init="true">
+        <property name="importTag" value="#{jobParameters['MIJobId']}"/>
+    </bean>
 
     <!-- readers -->
     <bean id="errorResource" class="org.springframework.core.io.FileSystemResource" scope="step" lazy-init="true">

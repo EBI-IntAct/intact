@@ -16,7 +16,8 @@
 package uk.ac.ebi.intact.editor.enricher;
 
 import psidev.psi.mi.jami.bridges.fetcher.PublicationFetcher;
-import psidev.psi.mi.jami.enricher.PublicationEnricher;
+import psidev.psi.mi.jami.enricher.CuratedPublicationEnricher;
+import psidev.psi.mi.jami.enricher.SourceEnricher;
 import psidev.psi.mi.jami.enricher.exception.EnricherException;
 import psidev.psi.mi.jami.enricher.listener.PublicationEnricherListener;
 import psidev.psi.mi.jami.model.Publication;
@@ -31,12 +32,14 @@ import java.util.Collection;
  * Editor extension of publication enricher for importing files
  *
  */
-public class EditorPublicationEnricher implements PublicationEnricher {
+public class EditorPublicationEnricher implements CuratedPublicationEnricher {
 
     @Resource(name = "intactDao")
     private IntactDao intactDao;
     @Resource(name = "intactPublicationEnricher")
-    private PublicationEnricher intactPublicationEnricher;
+    private CuratedPublicationEnricher intactPublicationEnricher;
+    @Resource(name = "editorSourceEnricher")
+    private SourceEnricher editorSourceEnricher;
 
     private String importTag;
 
@@ -57,6 +60,8 @@ public class EditorPublicationEnricher implements PublicationEnricher {
 
     @Override
     public void enrich(Publication object) throws EnricherException {
+        intactPublicationEnricher.setSourceEnricher(editorSourceEnricher);
+
         intactPublicationEnricher.enrich(object);
 
         if (getImportTag() != null && object != null){
@@ -76,7 +81,10 @@ public class EditorPublicationEnricher implements PublicationEnricher {
 
     @Override
     public void enrich(Publication object, Publication objectSource) throws EnricherException {
+        intactPublicationEnricher.setSourceEnricher(editorSourceEnricher);
+
         intactPublicationEnricher.enrich(object, objectSource);
+
 
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
@@ -92,5 +100,15 @@ public class EditorPublicationEnricher implements PublicationEnricher {
 
     public void setImportTag(String importTag) {
         this.importTag = importTag;
+    }
+
+    @Override
+    public SourceEnricher getSourceEnricher() {
+        return editorSourceEnricher;
+    }
+
+    @Override
+    public void setSourceEnricher(SourceEnricher enricher) {
+         enricher = editorSourceEnricher;
     }
 }

@@ -8,7 +8,7 @@ import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.FeatureEvidence;
 import uk.ac.ebi.intact.dataexchange.enricher.standard.FeatureEvidenceEnricher;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
-import uk.ac.ebi.intact.jami.model.extension.InteractorAnnotation;
+import uk.ac.ebi.intact.jami.model.extension.FeatureEvidenceAnnotation;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.Resource;
@@ -66,7 +66,7 @@ public class EditorFeatureEvidenceEnricher implements psidev.psi.mi.jami.enriche
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getFeatureEvidenceSynchronizer().findAllMatchingAcs(object).isEmpty()){
-                object.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                object.getAnnotations().add(new FeatureEvidenceAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
             }
         }
     }
@@ -90,7 +90,7 @@ public class EditorFeatureEvidenceEnricher implements psidev.psi.mi.jami.enriche
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getFeatureEvidenceSynchronizer().findAllMatchingAcs(object).isEmpty()){
-                object.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                object.getAnnotations().add(new FeatureEvidenceAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
             }
         }
     }
