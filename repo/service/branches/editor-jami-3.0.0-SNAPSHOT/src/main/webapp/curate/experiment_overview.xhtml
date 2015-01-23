@@ -45,7 +45,7 @@
                              value="#{filteredExperimentAnnotations}">
 
                     <p:column headerText="Topic" styleClass="ia-#{annotation.topic.shortName}">
-                        <h:outputText value="#{annotation.cvTopic != null ? annotation.topic.shortName : ''}"
+                        <h:outputText value="#{annotation.topic != null ? annotation.topic.shortName : ''}"
                                       style="white-space: nowrap"/>
                     </p:column>
                     <p:column headerText="Text" styleClass="ia-#{annotation.topic.shortName}">
