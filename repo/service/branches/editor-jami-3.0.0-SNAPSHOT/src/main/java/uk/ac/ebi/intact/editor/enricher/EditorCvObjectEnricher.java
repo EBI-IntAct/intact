@@ -33,7 +33,6 @@ import java.util.Collection;
 public class EditorCvObjectEnricher implements CvTermEnricher<CvTerm> {
     private String importTag;
 
-    @Resource(name = "intactCvObjectEnricher")
     private CvTermEnricher<CvTerm> intactCvObjectEnricher;
     @Resource(name = "intactDao")
     private IntactDao intactDao;
@@ -93,5 +92,13 @@ public class EditorCvObjectEnricher implements CvTermEnricher<CvTerm> {
                 objectToEnrich.getAnnotations().add(new CvTermAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
             }
         }
+    }
+
+    public CvTermEnricher<CvTerm> getIntactCvObjectEnricher() {
+        return intactCvObjectEnricher;
+    }
+
+    public void setIntactCvObjectEnricher(CvTermEnricher<CvTerm> intactCvObjectEnricher) {
+        this.intactCvObjectEnricher = intactCvObjectEnricher;
     }
 }
