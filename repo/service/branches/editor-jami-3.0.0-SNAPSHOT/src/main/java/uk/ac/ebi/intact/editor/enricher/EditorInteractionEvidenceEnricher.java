@@ -15,144 +15,123 @@
  */
 package uk.ac.ebi.intact.editor.enricher;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import psidev.psi.mi.jami.enricher.CvTermEnricher;
 import psidev.psi.mi.jami.enricher.ExperimentEnricher;
-import psidev.psi.mi.jami.enricher.InteractionEnricher;
-import psidev.psi.mi.jami.enricher.ParticipantEnricher;
+import psidev.psi.mi.jami.enricher.InteractionEvidenceEnricher;
 import psidev.psi.mi.jami.enricher.exception.EnricherException;
-import psidev.psi.mi.jami.enricher.impl.full.FullInteractionEnricher;
-import psidev.psi.mi.jami.enricher.impl.full.FullInteractionEvidenceEnricher;
 import psidev.psi.mi.jami.enricher.listener.InteractionEnricherListener;
-import psidev.psi.mi.jami.enricher.listener.impl.log.InteractionEvidenceEnricherLogger;
-import psidev.psi.mi.jami.model.*;
-import uk.ac.ebi.intact.dataexchange.enricher.EnricherContext;
-import uk.ac.ebi.intact.jami.ApplicationContextProvider;
+import psidev.psi.mi.jami.model.CvTerm;
+import psidev.psi.mi.jami.model.InteractionEvidence;
+import uk.ac.ebi.intact.jami.dao.IntactDao;
+import uk.ac.ebi.intact.jami.model.extension.InteractionAnnotation;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
+
+import javax.annotation.Resource;
+import java.util.Collection;
 
 /**
  * IntAct enricher for interaction evidence
  *
  */
-public class EditorInteractionEvidenceEnricher extends FullInteractionEvidenceEnricher {
+public class EditorInteractionEvidenceEnricher implements InteractionEvidenceEnricher {
 
-    /**
-     * Sets up a logger for that class.
-     */
-    private static final Log log = LogFactory.getLog(uk.ac.ebi.intact.dataexchange.enricher.standard.InteractionEvidenceEnricher.class);
+    @Resource(name = "intactDao")
+    private IntactDao intactDao;
+    @Resource(name = "intactInteractionEvidenceEnricher")
+    private InteractionEvidenceEnricher intactInteractionEvidenceEnricher;
+    @Resource(name = "editorExperimentEnricher")
+    private ExperimentEnricher editorExperimentEnricher;
+    @Resource(name = "editorComponentEnricher")
+    private psidev.psi.mi.jami.enricher.ParticipantEnricher editorParticipantEvidenceEnricher;
+    @Resource(name = "editorMiEnricher")
+    private CvTermEnricher<CvTerm> editorMiEnricher;
 
-    @Autowired
-    private EnricherContext enricherContext;
-
-    @Autowired
-    public EditorInteractionEvidenceEnricher(@Qualifier("intactInteractionEnricher") InteractionEnricher<InteractionEvidence> interactionEnricher) {
-        super((FullInteractionEnricher<InteractionEvidence>)interactionEnricher);
-        getInteractionEnricher().setParticipantEnricher(getParticipantEnricher());
-    }
-
-    @Override
-    protected void processConfidences(InteractionEvidence objectToEnrich, InteractionEvidence objectSource) throws EnricherException {
-        if (objectSource != null){
-            super.processConfidences(objectToEnrich, objectSource);
-        }
-
-        if (enricherContext.getConfig().isUpdateCvTerms() && getCvTermEnricher() != null){
-            for (Confidence confidence : objectToEnrich.getConfidences()) {
-                getCvTermEnricher().enrich(confidence.getType());
-            }
-        }
-    }
-
-    @Override
-    protected void processParameters(InteractionEvidence objectToEnrich, InteractionEvidence objectSource) throws EnricherException {
-        if (objectSource != null){
-            super.processParameters(objectToEnrich, objectSource);
-        }
-
-        if (enricherContext.getConfig().isUpdateCvTerms() && getCvTermEnricher() != null){
-            for (Parameter parameter : objectToEnrich.getParameters()) {
-                getCvTermEnricher().enrich(parameter.getType());
-                if (parameter.getUnit() != null){
-                    getCvTermEnricher().enrich(parameter.getUnit());
-                }
-            }
-        }
-    }
-
-    @Override
-    protected void processInteractionType(InteractionEvidence objectToEnrich, InteractionEvidence objectSource) throws EnricherException {
-        if( enricherContext.getConfig().isUpdateCvTerms()
-                && getCvTermEnricher() != null &&
-                objectToEnrich.getInteractionType() != null)
-            getCvTermEnricher().enrich(objectToEnrich.getInteractionType());
-    }
-
-    @Override
-    protected void processIdentifiers(InteractionEvidence objectToEnrich, InteractionEvidence objectSource) throws EnricherException {
-        if (objectSource != null){
-            super.processIdentifiers(objectToEnrich, objectSource);
-        }
-
-        if (enricherContext.getConfig().isUpdateCvInXrefsAliasesAnnotations() && getCvTermEnricher() != null){
-            for (Object obj : objectToEnrich.getIdentifiers()) {
-                Xref xref = (Xref)obj;
-                if (xref.getQualifier()!= null) {
-                    getCvTermEnricher().enrich(xref.getQualifier());
-                }
-                getCvTermEnricher().enrich(xref.getDatabase());
-            }
-        }
-    }
-
-    @Override
-    protected void processShortName(InteractionEvidence objectToEnrich, InteractionEvidence objectSource) throws EnricherException {
-        super.processShortName(objectToEnrich, objectSource);
-
-        if (enricherContext.getConfig().isUpdateInteractionShortLabels()){
-            objectToEnrich.setShortName(IntactUtils.generateAutomaticInteractionEvidenceShortlabelFor(objectToEnrich, IntactUtils.MAX_SHORT_LABEL_LEN));
-        }
-    }
-
-    @Override
-    protected void processOtherProperties(InteractionEvidence interactionToEnrich) throws EnricherException {
-        super.processOtherProperties(interactionToEnrich);
-
-        processConfidences(interactionToEnrich, null);
-        processParameters(interactionToEnrich, null);
-    }
+    private String importTag;
 
     @Override
     public ExperimentEnricher getExperimentEnricher() {
-        if (super.getExperimentEnricher() == null){
-            super.setExperimentEnricher((uk.ac.ebi.intact.dataexchange.enricher.standard.ExperimentEnricher) ApplicationContextProvider.getBean("intactExperimentEnricher"));
-        }
-        return super.getExperimentEnricher();
+        return editorExperimentEnricher;
     }
 
     @Override
-    public ParticipantEnricher getParticipantEnricher() {
-        if (super.getParticipantEnricher() == null){
-            super.setParticipantEnricher((ParticipantEnricher) ApplicationContextProvider.getBean("intactParticipantEvidenceEnricher"));
-        }
-        return super.getParticipantEnricher();
+    public void setExperimentEnricher(ExperimentEnricher enricher) {
+         editorExperimentEnricher = enricher;
+    }
+
+    @Override
+    public psidev.psi.mi.jami.enricher.ParticipantEnricher getParticipantEnricher() {
+        return editorParticipantEvidenceEnricher;
     }
 
     @Override
     public CvTermEnricher<CvTerm> getCvTermEnricher() {
-        if (super.getCvTermEnricher() == null){
-            super.setCvTermEnricher((CvTermEnricher<CvTerm>) ApplicationContextProvider.getBean("miCvObjectEnricher"));
-        }
-        return super.getCvTermEnricher();
+        return editorMiEnricher;
     }
 
     @Override
     public InteractionEnricherListener<InteractionEvidence> getInteractionEnricherListener() {
-        if (super.getInteractionEnricherListener() == null){
-            super.setInteractionEnricherListener(new InteractionEvidenceEnricherLogger());
+        return this.intactInteractionEvidenceEnricher.getInteractionEnricherListener();
+    }
+
+    @Override
+    public void setParticipantEnricher(psidev.psi.mi.jami.enricher.ParticipantEnricher enricher) {
+       this.editorParticipantEvidenceEnricher = enricher;
+    }
+
+    @Override
+    public void setCvTermEnricher(CvTermEnricher<CvTerm> enricher) {
+        this.editorMiEnricher = enricher;
+    }
+
+    @Override
+    public void setInteractionEnricherListener(InteractionEnricherListener<InteractionEvidence> listener) {
+         this.intactInteractionEvidenceEnricher.setInteractionEnricherListener(listener);
+    }
+
+    @Override
+    public void enrich(InteractionEvidence object) throws EnricherException {
+        intactInteractionEvidenceEnricher.setExperimentEnricher(editorExperimentEnricher);
+        intactInteractionEvidenceEnricher.setCvTermEnricher(editorMiEnricher);
+        intactInteractionEvidenceEnricher.setParticipantEnricher(editorParticipantEvidenceEnricher);
+
+        intactInteractionEvidenceEnricher.enrich(object);
+
+        if (getImportTag() != null && object != null){
+            // check if object exists in database before adding a tag
+            if (intactDao.getSynchronizerContext().getInteractionSynchronizer().findAllMatchingAcs(object).isEmpty()){
+                object.getAnnotations().add(new InteractionAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+            }
         }
-        return super.getInteractionEnricherListener();
+    }
+
+    @Override
+    public void enrich(Collection<InteractionEvidence> objects) throws EnricherException {
+        for (InteractionEvidence interaction : objects){
+            enrich(interaction);
+        }
+    }
+
+    @Override
+    public void enrich(InteractionEvidence object, InteractionEvidence objectSource) throws EnricherException {
+        intactInteractionEvidenceEnricher.setExperimentEnricher(editorExperimentEnricher);
+        intactInteractionEvidenceEnricher.setCvTermEnricher(editorMiEnricher);
+        intactInteractionEvidenceEnricher.setParticipantEnricher(editorParticipantEvidenceEnricher);
+
+        intactInteractionEvidenceEnricher.enrich(object, objectSource);
+
+        if (getImportTag() != null && object != null){
+            // check if object exists in database before adding a tag
+            if (intactDao.getSynchronizerContext().getInteractionSynchronizer().findAllMatchingAcs(object).isEmpty()){
+                object.getAnnotations().add(new InteractionAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+            }
+        }
+    }
+
+    public String getImportTag() {
+        return importTag;
+    }
+
+    public void setImportTag(String importTag) {
+        this.importTag = importTag;
     }
 }
