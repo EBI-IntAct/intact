@@ -709,4 +709,25 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     public void setNewParameterType(CvTerm newParameterType) {
         this.newParameterType = newParameterType;
     }
+
+    public String participantPrimaryId(IntactParticipantEvidence component) {
+        if (component == null) return null;
+
+        if (component.getInteractor() instanceof IntactInteractor && !((IntactInteractor)component.getInteractor()).areXrefsInitialized()){
+            component = getParticipantEditorService().reloadFullyInitialisedParticipant(component);
+        }
+
+        final Collection<Xref> xrefs = component.getInteractor().getIdentifiers();
+
+        if (xrefs.isEmpty()) {
+            if (component.getInteractor() instanceof IntactInteractor){
+                return ((IntactInteractor)component.getInteractor()).getAc();
+            }
+            else{
+                return component.getInteractor().getShortName();
+            }
+        }
+
+        return joinIds(xrefs);
+    }
 }

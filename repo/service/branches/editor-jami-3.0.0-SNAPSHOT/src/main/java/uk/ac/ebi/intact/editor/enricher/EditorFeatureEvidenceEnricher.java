@@ -6,6 +6,10 @@ import psidev.psi.mi.jami.enricher.exception.EnricherException;
 import psidev.psi.mi.jami.enricher.listener.FeatureEnricherListener;
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.FeatureEvidence;
+import uk.ac.ebi.intact.dataexchange.enricher.standard.FeatureEvidenceEnricher;
+import uk.ac.ebi.intact.jami.dao.IntactDao;
+import uk.ac.ebi.intact.jami.model.extension.InteractorAnnotation;
+import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.Resource;
 import java.util.Collection;
@@ -22,6 +26,8 @@ public class EditorFeatureEvidenceEnricher implements psidev.psi.mi.jami.enriche
     private CvTermEnricher<CvTerm> editorMiEnricher;
     @Resource(name = "editorCvObjectEnricher")
     private CvTermEnricher<CvTerm> editorCvObjectEnricher;
+    @Resource(name = "intactDao")
+    private IntactDao intactDao;
 
     @Override
     public void setFeaturesWithRangesToUpdate(Collection<FeatureEvidence> features) {
@@ -50,7 +56,19 @@ public class EditorFeatureEvidenceEnricher implements psidev.psi.mi.jami.enriche
 
     @Override
     public void enrich(FeatureEvidence object) throws EnricherException {
+        intactFeatureEvidenceEnricher.setCvTermEnricher(editorMiEnricher);
+        if (intactFeatureEvidenceEnricher instanceof FeatureEvidenceEnricher){
+            ((FeatureEvidenceEnricher)intactFeatureEvidenceEnricher).setIntactCvObjectEnricher(editorCvObjectEnricher);
+        }
 
+        intactFeatureEvidenceEnricher.enrich(object);
+
+        if (getImportTag() != null && object != null){
+            // check if object exists in database before adding a tag
+            if (intactDao.getSynchronizerContext().getFeatureEvidenceSynchronizer().findAllMatchingAcs(object).isEmpty()){
+                object.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+            }
+        }
     }
 
     @Override

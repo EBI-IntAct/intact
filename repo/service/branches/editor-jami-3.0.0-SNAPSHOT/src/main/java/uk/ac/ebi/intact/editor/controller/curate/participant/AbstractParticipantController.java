@@ -405,28 +405,7 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
         }
     }
 
-    public String participantPrimaryId(T component) {
-        if (component == null) return null;
-
-        if (component.getInteractor() instanceof IntactInteractor && !((IntactInteractor)participant.getInteractor()).areXrefsInitialized()){
-            component = getParticipantEditorService().reloadFullyInitialisedParticipant(component);
-        }
-
-        final Collection<Xref> xrefs = component.getInteractor().getIdentifiers();
-
-        if (xrefs.isEmpty()) {
-            if (component.getInteractor() instanceof IntactInteractor){
-                return ((IntactInteractor)component.getInteractor()).getAc();
-            }
-            else{
-                return component.getInteractor().getShortName();
-            }
-        }
-
-        return joinIds(xrefs);
-    }
-
-    private String joinIds(Collection<Xref> xrefs) {
+    protected String joinIds(Collection<Xref> xrefs) {
         Collection<String> ids = new ArrayList<String>(xrefs.size());
 
         for (Xref xref : xrefs) {
