@@ -104,6 +104,7 @@ public class ExperimentWrapper {
                 }
                 features.add(new FeatureSummary(featureAsString(f),bindDomains));
             }
+            components.add(part);
         }
 
         Collections.sort(components, new ComponentOrder());
