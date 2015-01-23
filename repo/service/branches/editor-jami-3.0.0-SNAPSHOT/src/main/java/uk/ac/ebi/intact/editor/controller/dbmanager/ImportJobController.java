@@ -31,6 +31,8 @@ import org.springframework.stereotype.Controller;
 import psidev.psi.mi.jami.batch.MIBatchJobManager;
 import uk.ac.ebi.intact.dataexchange.dbimporter.writer.AbstractIntactDbImporter;
 import uk.ac.ebi.intact.editor.controller.BaseController;
+import uk.ac.ebi.intact.editor.services.dbmanager.BatchJobService;
+import uk.ac.ebi.intact.editor.services.dbmanager.DbImportService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 
 import javax.annotation.Resource;
@@ -58,6 +60,12 @@ public class ImportJobController extends BaseController {
 
     @Resource( name = "intactJobLauncher" )
     private transient JobLauncher intactJobLauncher;
+
+    @Resource( name = "batchJobService" )
+    private transient BatchJobService batchJobService;
+
+    @Resource( name = "dbImportService" )
+    private transient DbImportService dbImportService;
 
     private static final Log log = LogFactory.getLog(ImportJobController.class);
 
@@ -104,6 +112,118 @@ public class ImportJobController extends BaseController {
                 e.printStackTrace();
             } catch (NoSuchJobInstanceException e) {
                 addErrorMessage("Job instance does not exist", "Execution ID: " + executionId);
+            }
+        }
+    }
+
+    public void acceptEvidence( ActionEvent evt ) {
+
+        if (!evt.getComponent().getChildren().isEmpty()){
+            UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();
+
+            long executionId = ( Long ) param.getValue();
+
+            JobExecution execution = getJobExplorer().getJobExecution(executionId);
+
+            if (execution != null){
+                JobParameters params = execution.getJobParameters();
+                if (params != null){
+                    String jobId= params.getString("MIJobId");
+
+                    try {
+                        getDbImportService().acceptImportEvidence(jobId);
+
+                        getBatchJobService().deleteJob(executionId);
+
+                        addInfoMessage( "Job accepted, import annotations removed", "Execution ID: " + executionId );
+                    } catch (Throwable e) {
+                        addErrorMessage("Cannot accept job import", "Execution ID: " + executionId);
+                    }
+                }
+            }
+        }
+    }
+
+    public void acceptComplex( ActionEvent evt ) {
+
+        if (!evt.getComponent().getChildren().isEmpty()){
+            UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();
+
+            long executionId = ( Long ) param.getValue();
+
+            JobExecution execution = getJobExplorer().getJobExecution(executionId);
+
+            if (execution != null){
+                JobParameters params = execution.getJobParameters();
+                if (params != null){
+                    String jobId= params.getString("MIJobId");
+
+                    try {
+                        getDbImportService().acceptImportComplexes(jobId);
+
+                        getBatchJobService().deleteJob(executionId);
+
+                        addInfoMessage( "Job accepted, import annotations removed", "Execution ID: " + executionId );
+                    } catch (Throwable e) {
+                        addErrorMessage("Cannot accept job import", "Execution ID: " + executionId);
+                    }
+                }
+            }
+        }
+    }
+
+    public void discardEvidence( ActionEvent evt ) {
+
+        if (!evt.getComponent().getChildren().isEmpty()){
+            UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();
+
+            long executionId = ( Long ) param.getValue();
+
+            JobExecution execution = getJobExplorer().getJobExecution(executionId);
+
+            if (execution != null){
+                JobParameters params = execution.getJobParameters();
+                if (params != null){
+                    String jobId= params.getString("MIJobId");
+
+                    try {
+                        getDbImportService().deleteImportEvidence(jobId);
+
+                        getBatchJobService().deleteJob(executionId);
+
+                        addInfoMessage( "Job cleared, import objects deleted", "Execution ID: " + executionId );
+                    } catch (Throwable e) {
+                        addErrorMessage("Cannot clear job import", "Execution ID: " + executionId);
+                    }
+                }
+            }
+        }
+    }
+
+    public void discardComplexes( ActionEvent evt ) {
+
+        if (!evt.getComponent().getChildren().isEmpty()){
+            UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();
+
+            long executionId = ( Long ) param.getValue();
+
+            JobExecution execution = getJobExplorer().getJobExecution(executionId);
+
+            if (execution != null){
+                JobParameters params = execution.getJobParameters();
+                if (params != null){
+                    String jobId= params.getString("MIJobId");
+
+                    try {
+                        getDbImportService().deleteImportComplex(jobId);
+
+                        getBatchJobService().deleteJob(executionId);
+
+                        addInfoMessage( "Job cleared, import objects deleted", "Execution ID: " + executionId );
+                    } catch (Throwable e) {
+                        addErrorMessage("Cannot clear job import", "Execution ID: " + executionId);
+                    }
+                }
             }
         }
     }
@@ -194,5 +314,19 @@ public class ImportJobController extends BaseController {
             this.intactJobLauncher = ApplicationContextProvider.getBean("intactJobLauncher");
         }
         return intactJobLauncher;
+    }
+
+    public BatchJobService getBatchJobService() {
+        if (this.batchJobService == null){
+            this.batchJobService = ApplicationContextProvider.getBean("batchJobService");
+        }
+        return batchJobService;
+    }
+
+    public DbImportService getDbImportService() {
+        if (this.dbImportService == null){
+            this.dbImportService = ApplicationContextProvider.getBean("dbImportService");
+        }
+        return dbImportService;
     }
 }
