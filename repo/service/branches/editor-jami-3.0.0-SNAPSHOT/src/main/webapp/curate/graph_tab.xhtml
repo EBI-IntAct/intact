@@ -36,7 +36,11 @@
             jQuery.ajax({
                 url: exportUrl,
                 success: function(gotJson) {
+                    var element = document.getElementById("networkContainer");
+                    $(element).append("Interaction Graph should show here in a few moments.");
+
                     miJson = gotJson;
+                    $(element).empty();
                     xlv.readMIJSON(miJson, true);
                 },
                 error: function() {
