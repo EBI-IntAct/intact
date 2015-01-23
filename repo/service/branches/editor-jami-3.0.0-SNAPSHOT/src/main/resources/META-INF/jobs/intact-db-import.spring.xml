@@ -57,6 +57,9 @@
     <bean id="editorFeatureEvidenceEnricher" class="uk.ac.ebi.intact.editor.enricher.EditorFeatureEvidenceEnricher" scope="step" lazy-init="true">
         <property name="importTag" value="#{jobParameters['MIJobId']}"/>
     </bean>
+    <bean id="editorModelledFeatureEnricher" class="uk.ac.ebi.intact.editor.enricher.EditorModelledFeatureEnricher" scope="step" lazy-init="true">
+        <property name="importTag" value="#{jobParameters['MIJobId']}"/>
+    </bean>
     <bean id="editorSourceEnricher" class="uk.ac.ebi.intact.editor.enricher.EditorSourceEnricher" scope="step" lazy-init="true">
         <property name="importTag" value="#{jobParameters['MIJobId']}"/>
     </bean>
