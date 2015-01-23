@@ -24,7 +24,7 @@ import psidev.psi.mi.jami.enricher.listener.ExperimentEnricherListener;
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Experiment;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
-import uk.ac.ebi.intact.jami.model.extension.InteractorAnnotation;
+import uk.ac.ebi.intact.jami.model.extension.ExperimentAnnotation;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.Resource;
@@ -111,7 +111,7 @@ public class EditorExperimentEnricher implements ExperimentEnricher {
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getExperimentSynchronizer().findAllMatchingAcs(object).isEmpty()){
-                object.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                object.getAnnotations().add(new ExperimentAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
             }
         }
     }
@@ -134,7 +134,7 @@ public class EditorExperimentEnricher implements ExperimentEnricher {
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getExperimentSynchronizer().findAllMatchingAcs(object).isEmpty()){
-                object.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                object.getAnnotations().add(new ExperimentAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
             }
         }
     }
