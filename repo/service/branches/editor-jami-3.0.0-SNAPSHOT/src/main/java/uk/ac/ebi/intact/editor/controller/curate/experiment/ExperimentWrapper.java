@@ -104,6 +104,8 @@ public class ExperimentWrapper {
                 }
                 features.add(new FeatureSummary(featureAsString(f),bindDomains));
             }
+
+            comp.getInteractor().getIdentifiers().size();
             components.add(part);
         }
 
