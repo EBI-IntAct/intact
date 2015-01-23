@@ -132,7 +132,7 @@
 
                                     <p:column headerText="Expressed In">
                                         <h:outputText
-                                                value="#{(participant.expressedInOrganism != null)? participant.expressedInOrganism.shortName : ''}"/>
+                                                value="#{(participant.expressedInOrganism != null)? participant.expressedInOrganism.commonName : ''}"/>
                                     </p:column>
 
                                     <p:column headerText="Stoichiometry" rendered="#{participant.stoichiometry != null}">
