@@ -47,7 +47,7 @@ public class EditorComplexEnricher implements psidev.psi.mi.jami.enricher.Comple
     private ComplexEnricher intactComplexEnricher;
     @Resource(name = "intactDao")
     private IntactDao intactDao;
-    @Resource(name = "editorModelledParticipantEnricher")
+    @Resource(name = "editorModelledComponentEnricher")
     private psidev.psi.mi.jami.enricher.ParticipantEnricher editorModelledParticipantEnricher;
     @Resource(name = "editorMiEnricher")
     private CvTermEnricher<CvTerm> editorMiEnricher;
