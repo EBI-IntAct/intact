@@ -15,8 +15,6 @@
  */
 package uk.ac.ebi.intact.editor.enricher;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import psidev.psi.mi.jami.enricher.CvTermEnricher;
 import psidev.psi.mi.jami.enricher.FeatureEnricher;
 import psidev.psi.mi.jami.enricher.OrganismEnricher;
@@ -28,27 +26,29 @@ import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.FeatureEvidence;
 import psidev.psi.mi.jami.model.ParticipantEvidence;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
+import uk.ac.ebi.intact.jami.model.extension.InteractorAnnotation;
+import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.Resource;
 import java.util.Collection;
 
 /**
- * Editor enricher for participant evidences when importing files
- *
- * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * Editor participant evidence enricher for importes
  */
 public class EditorComponentEnricher implements ParticipantEvidenceEnricher<ParticipantEvidence>{
-
-    /**
-     * Sets up a logger for that class.
-     */
-    private static final Log log = LogFactory.getLog(EditorComplexEnricher.class);
 
     @Resource(name = "intactParticipantEvidenceEnricher")
     private  ParticipantEvidenceEnricher intactParticipantEvidenceEnricher;
     @Resource(name = "intactDao")
     private IntactDao intactDao;
+    @Resource(name = "editorOrganismEnricher")
+    private OrganismEnricher editorOrganismEnricher;
+    @Resource(name = "editorMiEnricher")
+    private CvTermEnricher<CvTerm> editorMiEnricher;
+    @Resource(name = "editorCompositeInteractorEnricher")
+    private CompositeInteractorEnricher editorCompositeInteractorEnricher;
+    @Resource(name = "editorFeatureEvidenceEnricher")
+    private FeatureEnricher<FeatureEvidence> editorFeatureEvidenceEnricher;
 
     private String importTag;
 
@@ -65,32 +65,32 @@ public class EditorComponentEnricher implements ParticipantEvidenceEnricher<Part
 
     @Override
     public OrganismEnricher getOrganismEnricher() {
-        return intactParticipantEvidenceEnricher.getOrganismEnricher();
+        return editorOrganismEnricher;
     }
 
     @Override
     public void setOrganismEnricher(OrganismEnricher enricher) {
-
+        editorOrganismEnricher = enricher;
     }
 
     @Override
     public CvTermEnricher<CvTerm> getCvTermEnricher() {
-        return null;
+        return editorMiEnricher;
     }
 
     @Override
     public void setCvTermEnricher(CvTermEnricher<CvTerm> enricher) {
-
+        editorMiEnricher = enricher;
     }
 
     @Override
     public CompositeInteractorEnricher getInteractorEnricher() {
-        return null;
+        return editorCompositeInteractorEnricher;
     }
 
     @Override
     public FeatureEnricher<FeatureEvidence> getFeatureEnricher() {
-        return null;
+        return editorFeatureEvidenceEnricher;
     }
 
     @Override
@@ -100,31 +100,57 @@ public class EditorComponentEnricher implements ParticipantEvidenceEnricher<Part
 
     @Override
     public void setInteractorEnricher(CompositeInteractorEnricher interactorEnricher) {
-
+        editorCompositeInteractorEnricher = interactorEnricher;
     }
 
     @Override
     public void setFeatureEnricher(FeatureEnricher<FeatureEvidence> enricher) {
-
+         editorFeatureEvidenceEnricher = enricher;
     }
 
     @Override
     public void setParticipantEnricherListener(EntityEnricherListener listener) {
-
+        this.intactParticipantEvidenceEnricher.setParticipantEnricherListener(listener);
     }
 
     @Override
     public void enrich(Collection<ParticipantEvidence> objects) throws EnricherException {
-
+         for (ParticipantEvidence p : objects){
+             enrich(p);
+         }
     }
 
     @Override
     public void enrich(ParticipantEvidence objectToEnrich, ParticipantEvidence objectSource) throws EnricherException {
+        intactParticipantEvidenceEnricher.setOrganismEnricher(editorOrganismEnricher);
+        intactParticipantEvidenceEnricher.setCvTermEnricher(editorMiEnricher);
+        intactParticipantEvidenceEnricher.setInteractorEnricher(editorCompositeInteractorEnricher);
+        intactParticipantEvidenceEnricher.setFeatureEnricher(editorFeatureEvidenceEnricher);
 
+        intactParticipantEvidenceEnricher.enrich(objectToEnrich, objectSource);
+
+        if (getImportTag() != null && objectToEnrich != null){
+            // check if object exists in database before adding a tag
+            if (intactDao.getSynchronizerContext().getParticipantEvidenceSynchronizer().findAllMatchingAcs(objectToEnrich).isEmpty()){
+                objectToEnrich.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+            }
+        }
     }
 
     @Override
-    public void enrich(ParticipantEvidence object) throws EnricherException {
+    public void enrich(ParticipantEvidence objectToEnrich) throws EnricherException {
+        intactParticipantEvidenceEnricher.setOrganismEnricher(editorOrganismEnricher);
+        intactParticipantEvidenceEnricher.setCvTermEnricher(editorMiEnricher);
+        intactParticipantEvidenceEnricher.setInteractorEnricher(editorCompositeInteractorEnricher);
+        intactParticipantEvidenceEnricher.setFeatureEnricher(editorFeatureEvidenceEnricher);
 
+        intactParticipantEvidenceEnricher.enrich(objectToEnrich);
+
+        if (getImportTag() != null && objectToEnrich != null){
+            // check if object exists in database before adding a tag
+            if (intactDao.getSynchronizerContext().getParticipantEvidenceSynchronizer().findAllMatchingAcs(objectToEnrich).isEmpty()){
+                objectToEnrich.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+            }
+        }
     }
 }
