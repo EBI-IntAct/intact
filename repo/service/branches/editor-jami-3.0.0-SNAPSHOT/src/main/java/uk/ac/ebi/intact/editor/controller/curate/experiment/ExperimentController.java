@@ -24,11 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import psidev.psi.mi.jami.model.*;
-import psidev.psi.mi.jami.model.Alias;
-import psidev.psi.mi.jami.model.Annotation;
-import psidev.psi.mi.jami.model.Experiment;
-import psidev.psi.mi.jami.model.Publication;
-import psidev.psi.mi.jami.model.Xref;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
 import uk.ac.ebi.intact.editor.controller.admin.UserManagerController;
@@ -36,23 +31,19 @@ import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ExperimentCloner;
-import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
 import uk.ac.ebi.intact.editor.services.curate.experiment.ExperimentEditorService;
+import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
 import uk.ac.ebi.intact.editor.services.summary.InteractionSummary;
 import uk.ac.ebi.intact.editor.services.summary.InteractionSummaryService;
 import uk.ac.ebi.intact.editor.util.LazyDataModelFactory;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.*;
-import uk.ac.ebi.intact.jami.model.extension.ExperimentXref;
 import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleStatus;
 import uk.ac.ebi.intact.jami.model.lifecycle.Releasable;
 import uk.ac.ebi.intact.jami.service.PublicationService;
-import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
-import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
-import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.Resource;
@@ -102,7 +93,6 @@ public class ExperimentController extends AnnotatedObjectController {
 
     private boolean isInteractionTab = true;
     private boolean isVariableParameterTab = false;
-    private List<IntactVariableParameterValue> valuesToDeleteOnSave;
 
     private String newParameterDescription;
     private CvTerm newParameterUnit;
@@ -111,7 +101,7 @@ public class ExperimentController extends AnnotatedObjectController {
     private Integer newValueOrder;
 
     public ExperimentController() {
-        valuesToDeleteOnSave = new ArrayList<IntactVariableParameterValue>();
+
     }
 
     @Override
@@ -376,7 +366,6 @@ public class ExperimentController extends AnnotatedObjectController {
         if (experiment.getPublication() != null) {
             publicationController.reloadSingleExperiment(experiment);
         }
-        this.valuesToDeleteOnSave.clear();
     }
 
     @Override
@@ -386,23 +375,6 @@ public class ExperimentController extends AnnotatedObjectController {
     }
 
     public void doPreSave() {
-        // delete all variable parameter values
-        Iterator<IntactVariableParameterValue> paramValuesIterator = this.valuesToDeleteOnSave.iterator();
-        while (paramValuesIterator.hasNext()){
-            IntactVariableParameterValue v = paramValuesIterator.next();
-            try {
-                getEditorService().deleteVariableParameterValue(v);
-                paramValuesIterator.remove();
-            }  catch (SynchronizerException e) {
-                addErrorMessage("Cannot delete value "+v.toString(), e.getCause() + ": " + e.getMessage());
-            } catch (FinderException e) {
-                addErrorMessage("Cannot delete value "+v.toString(), e.getCause() + ": " + e.getMessage());
-            } catch (PersisterException e) {
-                addErrorMessage("Cannot delete value "+v.toString(), e.getCause() + ": " + e.getMessage());
-            }  catch (Throwable e) {
-                addErrorMessage("Cannot delete value "+v.toString(), e.getCause() + ": " + e.getMessage());
-            }
-        }
 
         // detach parents if we have a new experiment so we don't mess up with new transaction
         if (this.experiment.getPublication() != null){
@@ -608,7 +580,6 @@ public class ExperimentController extends AnnotatedObjectController {
     @Override
     protected void postRevert() {
         refreshInteractions();
-        this.valuesToDeleteOnSave.clear();
     }
 
     public String getAcceptedMessage() {
@@ -922,7 +893,6 @@ public class ExperimentController extends AnnotatedObjectController {
 
     public void removeVariableParameterValue(IntactVariableParameterValue value, IntactVariableParameter param){
         param.getVariableValues().remove(value);
-        this.valuesToDeleteOnSave.add(value);
     }
 
     @Override

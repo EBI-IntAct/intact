@@ -25,9 +25,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.bridges.exception.BridgeFailedException;
 import psidev.psi.mi.jami.bridges.fetcher.ProteinFetcher;
-import psidev.psi.mi.jami.model.CvTerm;
-import psidev.psi.mi.jami.model.Protein;
-import psidev.psi.mi.jami.model.Xref;
+import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
@@ -47,6 +45,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 
 /**
  * General Editor service to save objects in the database
@@ -94,7 +93,7 @@ public class EditorObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
-    public void deleteVariableParameterValue( IntactVariableParameterValue param) throws SynchronizerException,
+    public void deleteVariableParameterValueFromInteractions(IntactVariableParameterValue param, IntactExperiment experiment) throws SynchronizerException,
             FinderException, PersisterException {
 
         if ( param == null ) {
@@ -103,6 +102,29 @@ public class EditorObjectService extends AbstractEditorService {
         else{
             // attach dao to transaction manager to clear cache
             attachDaoToTransactionManager();
+
+            if (experiment.areInteractionEvidencesInitialized()){
+                for (InteractionEvidence ev : experiment.getInteractionEvidences()){
+                    IntactInteractionEvidence intactEv = (IntactInteractionEvidence)ev;
+                    if (intactEv.areVariableParameterValuesInitialized()){
+                        for (VariableParameterValueSet v : intactEv.getVariableParameterValues()){
+                            Iterator<VariableParameterValue> valueIterator = v.iterator();
+                            while (valueIterator.hasNext()){
+                                IntactVariableParameterValue value = (IntactVariableParameterValue)valueIterator.next();
+                                if (param.getId() != null && param.getId().equals(value.getId())){
+                                    valueIterator.remove();
+                                    break;
+                                }
+                                else if (param.getId() == null && param == value){
+                                    valueIterator.remove();
+                                    break;
+                                }
+                            }
+                        }
+                        updateIntactObject(intactEv, getIntactDao().getInteractionDao());
+                    }
+                }
+            }
 
             deleteIntactObject(param, getIntactDao().getVariableParameterValueDao());
         }
