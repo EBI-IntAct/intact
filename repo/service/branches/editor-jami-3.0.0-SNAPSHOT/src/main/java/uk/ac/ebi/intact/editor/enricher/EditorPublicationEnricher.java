@@ -15,231 +15,82 @@
  */
 package uk.ac.ebi.intact.editor.enricher;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import psidev.psi.mi.jami.bridges.fetcher.PublicationFetcher;
+import psidev.psi.mi.jami.enricher.PublicationEnricher;
 import psidev.psi.mi.jami.enricher.exception.EnricherException;
-import psidev.psi.mi.jami.enricher.impl.full.FullPublicationEnricher;
 import psidev.psi.mi.jami.enricher.listener.PublicationEnricherListener;
-import psidev.psi.mi.jami.enricher.listener.impl.log.PublicationEnricherLogger;
-import psidev.psi.mi.jami.model.Annotation;
 import psidev.psi.mi.jami.model.Publication;
-import psidev.psi.mi.jami.model.Xref;
-import psidev.psi.mi.jami.utils.XrefUtils;
-import uk.ac.ebi.intact.dataexchange.enricher.EnricherContext;
-import uk.ac.ebi.intact.dataexchange.enricher.standard.InstitutionEnricher;
-import uk.ac.ebi.intact.dataexchange.enricher.standard.MiCvObjectEnricher;
+import uk.ac.ebi.intact.jami.dao.IntactDao;
+import uk.ac.ebi.intact.jami.model.extension.PublicationAnnotation;
+import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.Resource;
 import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
 
 /**
- * Intact extension of publication enricher
+ * Editor extension of publication enricher for importing files
  *
  */
-public class EditorPublicationEnricher extends FullPublicationEnricher {
+public class EditorPublicationEnricher implements PublicationEnricher {
 
-    /**
-     * Sets up a logger for that class.
-     */
-    private static final Log log = LogFactory.getLog(uk.ac.ebi.intact.dataexchange.enricher.standard.PublicationEnricher.class);
+    @Resource(name = "intactDao")
+    private IntactDao intactDao;
+    @Resource(name = "intactPublicationEnricher")
+    private PublicationEnricher intactPublicationEnricher;
 
-    @Autowired
-    private EnricherContext enricherContext;
-
-    @Resource(name = "miCvObjectEnricher")
-    private MiCvObjectEnricher miCvObjectEnricher;
-
-    @Resource(name = "intactInstitutionEnricher")
-    private InstitutionEnricher institutionEnricher;
-
-    @Autowired
-    public EditorPublicationEnricher(@Qualifier("intactPublicationFetcher") psidev.psi.mi.jami.bridges.fetcher.PublicationFetcher intactPublicationFetcher) {
-        super(intactPublicationFetcher);
-    }
+    private String importTag;
 
     @Override
-    protected void processCurationDepth(Publication publicationToEnrich, Publication fetched) throws EnricherException {
-        if (fetched != null){
-            super.processCurationDepth(publicationToEnrich, fetched);
-        }
-
-        // process source
-        if (publicationToEnrich.getSource() != null
-                && enricherContext.getConfig().isUpdateCvTerms()
-                && institutionEnricher != null){
-            institutionEnricher.enrich(publicationToEnrich.getSource());
-        }
-    }
-
-    @Override
-    protected void processXrefs(Publication objectToEnrich, Publication objectSource) throws EnricherException {
-        if (objectSource != null){
-            super.processXrefs(objectToEnrich, objectSource);
-        }
-
-        if (enricherContext.getConfig().isUpdateCvInXrefsAliasesAnnotations() && miCvObjectEnricher != null){
-            for (Object obj : objectToEnrich.getXrefs()) {
-                Xref xref = (Xref)obj;
-                if (xref.getQualifier()!= null) {
-                    miCvObjectEnricher.enrich(xref.getQualifier());
-                }
-                miCvObjectEnricher.enrich(xref.getDatabase());
-            }
-        }
-    }
-
-    @Override
-    protected void processAnnotations(Publication objectToEnrich, Publication objectSource) throws EnricherException {
-        if (objectSource != null){
-            super.processAnnotations(objectToEnrich, objectSource);
-        }
-
-        if (enricherContext.getConfig().isUpdateCvTerms() && miCvObjectEnricher != null){
-            for (Object obj : objectToEnrich.getAnnotations()) {
-                Annotation annotation = (Annotation)obj;
-                miCvObjectEnricher.enrich(annotation.getTopic());
-            }
-        }
-    }
-
-    @Override
-    protected void processJournal(Publication publicationToEnrich, Publication fetched) throws EnricherException {
-        if((fetched.getJournal() != null && !fetched.getJournal().equals(publicationToEnrich.getJournal()))
-                || (fetched.getJournal() == null && publicationToEnrich.getJournal() != null)) {
-            String oldJournal = publicationToEnrich.getJournal();
-            publicationToEnrich.setJournal(fetched.getJournal());
-            if(getPublicationEnricherListener() != null)
-                getPublicationEnricherListener().onJournalUpdated(publicationToEnrich, oldJournal);
-        }
-    }
-
-    @Override
-    protected void processPublicationTitle(Publication publicationToEnrich, Publication fetched) throws EnricherException {
-        if((fetched.getTitle() != null && !fetched.getTitle().equals(publicationToEnrich.getTitle()))
-                || (fetched.getTitle() == null && publicationToEnrich.getTitle() != null)) {
-            String oldTitle = publicationToEnrich.getTitle();
-            publicationToEnrich.setTitle(fetched.getTitle());
-            if(getPublicationEnricherListener() != null)
-                getPublicationEnricherListener().onTitleUpdated(publicationToEnrich , oldTitle);
-        }
-    }
-
-    @Override
-    protected void processPublicationDate(Publication publicationToEnrich, Publication fetched) throws EnricherException {
-        // == PUBLICATION DATE =================================================================================
-        if((fetched.getPublicationDate() != null && !fetched.getPublicationDate().equals( publicationToEnrich.getPublicationDate()) )
-                || (fetched.getPublicationDate() == null && publicationToEnrich.getPublicationDate() != null)) {
-            Date oldValue = publicationToEnrich.getPublicationDate();
-            publicationToEnrich.setPublicationDate(fetched.getPublicationDate());
-            if(getPublicationEnricherListener() != null)
-                getPublicationEnricherListener().onPublicationDateUpdated(publicationToEnrich , oldValue);
-        }
-    }
-
-    @Override
-    protected void processAuthors(Publication publicationToEnrich, Publication fetched) throws EnricherException {
-        // == AUTHORS ===========================================================================================
-        if(!CollectionUtils.isEqualCollection(publicationToEnrich.getAuthors(), fetched.getAuthors())){
-            Iterator<String> authorIterator = publicationToEnrich.getAuthors().iterator();
-            while(authorIterator.hasNext()){
-                String auth = authorIterator.next();
-                authorIterator.remove();
-                if(getPublicationEnricherListener() != null)
-                    getPublicationEnricherListener().onAuthorRemoved(publicationToEnrich, auth);
-            }
-            for(String author : fetched.getAuthors()){
-                publicationToEnrich.getAuthors().add(author);
-                if(getPublicationEnricherListener() != null)
-                    getPublicationEnricherListener().onAuthorAdded(publicationToEnrich , author);
-            }
-        }
-    }
-
-    @Override
-    protected void processIdentifiers(Publication objectToEnrich, Publication fetched) throws EnricherException {
-        if (fetched != null){
-            super.processIdentifiers(objectToEnrich, fetched);
-        }
-
-        fixPubmedXrefIfNecessary(objectToEnrich);
-
-        if (enricherContext.getConfig().isUpdateCvInXrefsAliasesAnnotations() && miCvObjectEnricher != null){
-            for (Object obj : objectToEnrich.getIdentifiers()) {
-                Xref xref = (Xref)obj;
-                if (xref.getQualifier()!= null) {
-                    miCvObjectEnricher.enrich(xref.getQualifier());
-                }
-                miCvObjectEnricher.enrich(xref.getDatabase());
-            }
-        }
-    }
-
-    @Override
-    protected void onEnrichedVersionNotFound(Publication publicationToEnrich) throws EnricherException {
-        processAnnotations(publicationToEnrich, null);
-        processIdentifiers(publicationToEnrich, null);
-        processXrefs(publicationToEnrich, null);
-        processCurationDepth(publicationToEnrich, null);
-        super.onEnrichedVersionNotFound(publicationToEnrich);
-    }
-
-    protected void fixPubmedXrefIfNecessary(Publication publication) {
-        if (publication.getPubmedId() != null){
-            Xref pubmed = XrefUtils.collectFirstIdentifierWithDatabaseAndId(publication.getIdentifiers(), Xref.PUBMED_MI, Xref.PUBMED, publication.getPubmedId());
-
-            if (pubmed != null){
-                log.warn( "Fixing pubmed xref with identity qualifier: "+pubmed.getId() );
-
-                publication.getIdentifiers().remove(pubmed);
-                publication.getIdentifiers().
-                        add(XrefUtils.createXrefWithQualifier(Xref.PUBMED, Xref.PUBMED_MI, pubmed.getId(), Xref.PRIMARY, Xref.PRIMARY_MI));
-            }
-        }
-        else{
-            Collection<Xref> pubmeds = XrefUtils.collectAllXrefsHavingDatabase(publication.getXrefs(), Xref.PUBMED_MI, Xref.PUBMED);
-            if (pubmeds.size() == 1){
-                Xref pubmed = pubmeds.iterator().next();
-                log.warn( "Fixing pubmed xref with no qualifier: "+pubmed.getId() );
-
-                publication.getIdentifiers().remove(pubmed);
-                publication.getIdentifiers().
-                        add(XrefUtils.createXrefWithQualifier(Xref.PUBMED, Xref.PUBMED_MI, pubmed.getId(), Xref.PRIMARY, Xref.PRIMARY_MI));
-            }
-        }
-
-        if (publication.getDoi() != null){
-            Xref doi = XrefUtils.collectFirstIdentifierWithDatabaseAndId(publication.getIdentifiers(), Xref.DOI_MI, Xref.DOI, publication.getDoi());
-            if (doi != null){
-                log.warn( "Fixing doi xref with identity qualifier: "+doi.getId() );
-
-                publication.getIdentifiers().remove(doi);
-                publication.getIdentifiers().
-                        add(XrefUtils.createXrefWithQualifier(Xref.DOI, Xref.DOI_MI, doi.getId(), Xref.PRIMARY, Xref.PRIMARY_MI));
-            }
-        }
-        else{
-            Collection<Xref> dois = XrefUtils.collectAllXrefsHavingDatabase(publication.getXrefs(), Xref.DOI_MI, Xref.DOI);
-            if (dois.size() == 1){
-                Xref doi = dois.iterator().next();
-                log.warn( "Fixing doi xref with identity qualifier: "+doi.getId() );
-
-                publication.getIdentifiers().remove(doi);
-                publication.getIdentifiers().
-                        add(XrefUtils.createXrefWithQualifier(Xref.DOI, Xref.DOI_MI, doi.getId(), Xref.PRIMARY, Xref.PRIMARY_MI));
-            }
-        }
+    public PublicationFetcher getPublicationFetcher() {
+        return intactPublicationEnricher.getPublicationFetcher();
     }
 
     @Override
     public PublicationEnricherListener getPublicationEnricherListener() {
-        if (super.getPublicationEnricherListener() == null){
-            super.setPublicationEnricherListener(new PublicationEnricherLogger());
+        return intactPublicationEnricher.getPublicationEnricherListener();
+    }
+
+    @Override
+    public void setPublicationEnricherListener(PublicationEnricherListener listener) {
+        intactPublicationEnricher.setPublicationEnricherListener(listener);
+    }
+
+    @Override
+    public void enrich(Publication object) throws EnricherException {
+        intactPublicationEnricher.enrich(object);
+
+        if (getImportTag() != null && object != null){
+            // check if object exists in database before adding a tag
+            if (intactDao.getSynchronizerContext().getPublicationSynchronizer().findAllMatchingAcs(object).isEmpty()){
+                object.getAnnotations().add(new PublicationAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+            }
         }
-        return super.getPublicationEnricherListener();
+    }
+
+    @Override
+    public void enrich(Collection<Publication> objects) throws EnricherException {
+        for (Publication pub : objects){
+             enrich(pub);
+        }
+    }
+
+    @Override
+    public void enrich(Publication object, Publication objectSource) throws EnricherException {
+        intactPublicationEnricher.enrich(object, objectSource);
+
+        if (getImportTag() != null && object != null){
+            // check if object exists in database before adding a tag
+            if (intactDao.getSynchronizerContext().getPublicationSynchronizer().findAllMatchingAcs(object).isEmpty()){
+                object.getAnnotations().add(new PublicationAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+            }
+        }
+    }
+
+    public String getImportTag() {
+        return importTag;
+    }
+
+    public void setImportTag(String importTag) {
+        this.importTag = importTag;
     }
 }
