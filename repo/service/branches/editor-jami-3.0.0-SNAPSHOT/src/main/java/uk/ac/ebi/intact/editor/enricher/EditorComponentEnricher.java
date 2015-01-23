@@ -27,6 +27,7 @@ import psidev.psi.mi.jami.model.FeatureEvidence;
 import psidev.psi.mi.jami.model.ParticipantEvidence;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.model.extension.InteractorAnnotation;
+import uk.ac.ebi.intact.jami.model.extension.ParticipantEvidenceAnnotation;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.Resource;
@@ -45,8 +46,6 @@ public class EditorComponentEnricher implements ParticipantEvidenceEnricher<Part
     private OrganismEnricher editorOrganismEnricher;
     @Resource(name = "editorMiEnricher")
     private CvTermEnricher<CvTerm> editorMiEnricher;
-    @Resource(name = "editorCompositeInteractorEnricher")
-    private CompositeInteractorEnricher editorCompositeInteractorEnricher;
     @Resource(name = "editorFeatureEvidenceEnricher")
     private FeatureEnricher<FeatureEvidence> editorFeatureEvidenceEnricher;
 
@@ -85,7 +84,7 @@ public class EditorComponentEnricher implements ParticipantEvidenceEnricher<Part
 
     @Override
     public CompositeInteractorEnricher getInteractorEnricher() {
-        return editorCompositeInteractorEnricher;
+        return intactParticipantEvidenceEnricher.getInteractorEnricher();
     }
 
     @Override
@@ -100,7 +99,7 @@ public class EditorComponentEnricher implements ParticipantEvidenceEnricher<Part
 
     @Override
     public void setInteractorEnricher(CompositeInteractorEnricher interactorEnricher) {
-        editorCompositeInteractorEnricher = interactorEnricher;
+        intactParticipantEvidenceEnricher.setInteractorEnricher(interactorEnricher);
     }
 
     @Override
@@ -124,7 +123,6 @@ public class EditorComponentEnricher implements ParticipantEvidenceEnricher<Part
     public void enrich(ParticipantEvidence objectToEnrich, ParticipantEvidence objectSource) throws EnricherException {
         intactParticipantEvidenceEnricher.setOrganismEnricher(editorOrganismEnricher);
         intactParticipantEvidenceEnricher.setCvTermEnricher(editorMiEnricher);
-        intactParticipantEvidenceEnricher.setInteractorEnricher(editorCompositeInteractorEnricher);
         intactParticipantEvidenceEnricher.setFeatureEnricher(editorFeatureEvidenceEnricher);
 
         intactParticipantEvidenceEnricher.enrich(objectToEnrich, objectSource);
@@ -132,7 +130,12 @@ public class EditorComponentEnricher implements ParticipantEvidenceEnricher<Part
         if (getImportTag() != null && objectToEnrich != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getParticipantEvidenceSynchronizer().findAllMatchingAcs(objectToEnrich).isEmpty()){
-                objectToEnrich.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                objectToEnrich.getAnnotations().add(new ParticipantEvidenceAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+            }
+
+            // check interactor
+            if (intactDao.getSynchronizerContext().getInteractorSynchronizer().findAllMatchingAcs(objectToEnrich.getInteractor()).isEmpty()){
+                objectToEnrich.getInteractor().getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
             }
         }
     }
@@ -141,7 +144,6 @@ public class EditorComponentEnricher implements ParticipantEvidenceEnricher<Part
     public void enrich(ParticipantEvidence objectToEnrich) throws EnricherException {
         intactParticipantEvidenceEnricher.setOrganismEnricher(editorOrganismEnricher);
         intactParticipantEvidenceEnricher.setCvTermEnricher(editorMiEnricher);
-        intactParticipantEvidenceEnricher.setInteractorEnricher(editorCompositeInteractorEnricher);
         intactParticipantEvidenceEnricher.setFeatureEnricher(editorFeatureEvidenceEnricher);
 
         intactParticipantEvidenceEnricher.enrich(objectToEnrich);
@@ -149,7 +151,12 @@ public class EditorComponentEnricher implements ParticipantEvidenceEnricher<Part
         if (getImportTag() != null && objectToEnrich != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getParticipantEvidenceSynchronizer().findAllMatchingAcs(objectToEnrich).isEmpty()){
-                objectToEnrich.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                objectToEnrich.getAnnotations().add(new ParticipantEvidenceAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+            }
+
+            // check interactor
+            if (intactDao.getSynchronizerContext().getInteractorSynchronizer().findAllMatchingAcs(objectToEnrich.getInteractor()).isEmpty()){
+                objectToEnrich.getInteractor().getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
             }
         }
     }

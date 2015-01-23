@@ -15,39 +15,83 @@
  */
 package uk.ac.ebi.intact.editor.enricher;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import psidev.psi.mi.jami.bridges.fetcher.CvTermFetcher;
 import psidev.psi.mi.jami.enricher.CvTermEnricher;
+import psidev.psi.mi.jami.enricher.exception.EnricherException;
 import psidev.psi.mi.jami.enricher.listener.CvTermEnricherListener;
-import psidev.psi.mi.jami.enricher.listener.impl.log.CvTermEnricherLogger;
 import psidev.psi.mi.jami.model.CvTerm;
-import uk.ac.ebi.intact.dataexchange.enricher.fetch.AbstractCvObjectFetcher;
-import uk.ac.ebi.intact.dataexchange.enricher.standard.AbstractCvObjectEnricher;
+import uk.ac.ebi.intact.jami.dao.IntactDao;
+import uk.ac.ebi.intact.jami.model.extension.CvTermAnnotation;
+import uk.ac.ebi.intact.jami.utils.IntactUtils;
+
+import javax.annotation.Resource;
+import java.util.Collection;
 
 /**
- * CvObject enricher.
- *
- * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id: MiCvObjectEnricher.java 13941 2010-01-04 14:01:28Z samuel.kerrien $
+ * Editor ols enricher for imports
  */
-public class EditorCvObjectEnricher extends AbstractCvObjectEnricher<CvTerm> {
+public class EditorCvObjectEnricher implements CvTermEnricher<CvTerm> {
+    private String importTag;
 
-    @Autowired
-    public EditorCvObjectEnricher(@Qualifier("intactOlsCvObjectFetcher") CvTermFetcher<CvTerm> intactCvObjectFetcher) {
-        super((AbstractCvObjectFetcher)intactCvObjectFetcher);
+    @Resource(name = "intactCvObjectEnricher")
+    private CvTermEnricher<CvTerm> intactCvObjectEnricher;
+    @Resource(name = "intactDao")
+    private IntactDao intactDao;
+
+    public EditorCvObjectEnricher() {
+    }
+
+    public String getImportTag() {
+        return importTag;
+    }
+
+    public void setImportTag(String importTag) {
+        this.importTag = importTag;
     }
 
     @Override
-    protected CvTermEnricher<CvTerm> getCvEnricher() {
-        return this;
+    public CvTermFetcher<CvTerm> getCvTermFetcher() {
+        return intactCvObjectEnricher.getCvTermFetcher();
     }
 
     @Override
     public CvTermEnricherListener<CvTerm> getCvTermEnricherListener() {
-        if (super.getCvTermEnricherListener() == null){
-            super.setCvTermEnricherListener(new CvTermEnricherLogger<CvTerm>());
+        return intactCvObjectEnricher.getCvTermEnricherListener();
+    }
+
+    @Override
+    public void setCvTermEnricherListener(CvTermEnricherListener<CvTerm> listener) {
+        intactCvObjectEnricher.setCvTermEnricherListener(listener);
+    }
+
+    @Override
+    public void enrich(CvTerm object) throws EnricherException {
+        intactCvObjectEnricher.enrich(object);
+
+        if (getImportTag() != null && object != null){
+            // check if object exists in database before adding a tag
+            if (intactDao.getSynchronizerContext().getGeneralCvSynchronizer().findAllMatchingAcs(object).isEmpty()){
+                object.getAnnotations().add(new CvTermAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+            }
         }
-        return super.getCvTermEnricherListener();
+    }
+
+    @Override
+    public void enrich(Collection<CvTerm> objects) throws EnricherException {
+        for (CvTerm cv : objects){
+            enrich(cv);
+        }
+    }
+
+    @Override
+    public void enrich(CvTerm objectToEnrich, CvTerm objectSource) throws EnricherException {
+        intactCvObjectEnricher.enrich(objectToEnrich);
+
+        if (getImportTag() != null && objectToEnrich != null){
+            // check if object exists in database before adding a tag
+            if (intactDao.getSynchronizerContext().getGeneralCvSynchronizer().findAllMatchingAcs(objectToEnrich).isEmpty()){
+                objectToEnrich.getAnnotations().add(new CvTermAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+            }
+        }
     }
 }

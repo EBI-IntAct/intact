@@ -25,6 +25,9 @@ import psidev.psi.mi.jami.enricher.exception.EnricherException;
 import psidev.psi.mi.jami.enricher.listener.ExperimentEnricherListener;
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Experiment;
+import uk.ac.ebi.intact.jami.dao.IntactDao;
+import uk.ac.ebi.intact.jami.model.extension.InteractorAnnotation;
+import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.Resource;
 import java.util.Collection;
@@ -42,6 +45,15 @@ public class EditorExperimentEnricher implements ExperimentEnricher {
 
     @Resource(name = "intactExperimentEnricher")
     private ExperimentEnricher intactExperimentEnricher;
+    @Resource(name = "editorOrganismEnricher")
+    private OrganismEnricher editorOrganismEnricher;
+    @Resource(name = "editorMiEnricher")
+    private CvTermEnricher<CvTerm> editorMiEnricher;
+    @Resource(name = "editorPublicationEnricher")
+    private PublicationEnricher editorPublicationEnricher;
+    @Resource(name = "intactDao")
+    private IntactDao intactDao;
+
     private String importTag;
 
     public EditorExperimentEnricher() {
@@ -57,56 +69,80 @@ public class EditorExperimentEnricher implements ExperimentEnricher {
 
     @Override
     public OrganismEnricher getOrganismEnricher() {
-        return null;
+        return editorOrganismEnricher;
     }
 
     @Override
     public CvTermEnricher<CvTerm> getCvTermEnricher() {
-        return null;
+        return editorMiEnricher;
     }
 
     @Override
     public PublicationEnricher getPublicationEnricher() {
-        return null;
+        return editorPublicationEnricher;
     }
 
     @Override
     public ExperimentEnricherListener getExperimentEnricherListener() {
-        return null;
+        return intactExperimentEnricher.getExperimentEnricherListener();
     }
 
     @Override
     public void setOrganismEnricher(OrganismEnricher organismEnricher) {
-
+        editorOrganismEnricher = organismEnricher;
     }
 
     @Override
     public void setCvTermEnricher(CvTermEnricher<CvTerm> cvEnricher) {
-
+        editorMiEnricher = cvEnricher;
     }
 
     @Override
     public void setPublicationEnricher(PublicationEnricher publicationEnricher) {
-
+       editorPublicationEnricher = publicationEnricher;
     }
 
     @Override
     public void setExperimentEnricherListener(ExperimentEnricherListener listener) {
-
+        intactExperimentEnricher.setExperimentEnricherListener(listener);
     }
 
     @Override
     public void enrich(Experiment object) throws EnricherException {
+        intactExperimentEnricher.setPublicationEnricher(editorPublicationEnricher);
+        intactExperimentEnricher.setCvTermEnricher(editorMiEnricher);
+        intactExperimentEnricher.setOrganismEnricher(editorOrganismEnricher);
 
+        intactExperimentEnricher.enrich(object);
+
+        if (getImportTag() != null && object != null){
+            // check if object exists in database before adding a tag
+            if (intactDao.getSynchronizerContext().getExperimentSynchronizer().findAllMatchingAcs(object).isEmpty()){
+                object.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+            }
+        }
     }
 
     @Override
     public void enrich(Collection<Experiment> objects) throws EnricherException {
-
+        for (Experiment exp : objects){
+            enrich(exp);
+        }
     }
 
     @Override
-    public void enrich(Experiment objectToEnrich, Experiment objectSource) throws EnricherException {
+    public void enrich(Experiment object, Experiment objectSource) throws EnricherException {
+        intactExperimentEnricher.setPublicationEnricher(editorPublicationEnricher);
+        intactExperimentEnricher.setCvTermEnricher(editorMiEnricher);
+        intactExperimentEnricher.setOrganismEnricher(editorOrganismEnricher);
 
+        intactExperimentEnricher.enrich(object, objectSource);
+
+        if (getImportTag() != null && object != null){
+            // check if object exists in database before adding a tag
+            if (intactDao.getSynchronizerContext().getExperimentSynchronizer().findAllMatchingAcs(object).isEmpty()){
+                object.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+            }
+        }
     }
 }

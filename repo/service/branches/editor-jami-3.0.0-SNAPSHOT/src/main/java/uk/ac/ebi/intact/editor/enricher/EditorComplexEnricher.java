@@ -51,6 +51,8 @@ public class EditorComplexEnricher implements psidev.psi.mi.jami.enricher.Comple
     private psidev.psi.mi.jami.enricher.ParticipantEnricher editorModelledParticipantEnricher;
     @Resource(name = "editorMiEnricher")
     private CvTermEnricher<CvTerm> editorMiEnricher;
+    @Resource(name = "editorCvObjectEnricher")
+    private CvTermEnricher<CvTerm> editorCvObjectEnricher;
     @Resource(name = "editorSourceEnricher")
     private SourceEnricher editorSourceEnricher;
     @Resource(name = "editorOrganismEnricher")
@@ -132,6 +134,9 @@ public class EditorComplexEnricher implements psidev.psi.mi.jami.enricher.Comple
         intactComplexEnricher.setCvTermEnricher(editorMiEnricher);
         intactComplexEnricher.setSourceEnricher(editorSourceEnricher);
         intactComplexEnricher.setOrganismEnricher(editorOrganismEnricher);
+        if (intactComplexEnricher instanceof uk.ac.ebi.intact.dataexchange.enricher.standard.ComplexEnricher){
+            ((uk.ac.ebi.intact.dataexchange.enricher.standard.ComplexEnricher)intactComplexEnricher).setIntactCvObjectEnricher(editorCvObjectEnricher);
+        }
 
         intactComplexEnricher.enrich(object);
 
@@ -156,6 +161,9 @@ public class EditorComplexEnricher implements psidev.psi.mi.jami.enricher.Comple
         intactComplexEnricher.setCvTermEnricher(editorMiEnricher);
         intactComplexEnricher.setSourceEnricher(editorSourceEnricher);
         intactComplexEnricher.setOrganismEnricher(editorOrganismEnricher);
+        if (intactComplexEnricher instanceof uk.ac.ebi.intact.dataexchange.enricher.standard.ComplexEnricher){
+            ((uk.ac.ebi.intact.dataexchange.enricher.standard.ComplexEnricher)intactComplexEnricher).setIntactCvObjectEnricher(editorCvObjectEnricher);
+        }
 
         intactComplexEnricher.enrich(objectToEnrich, objectSource);
 
