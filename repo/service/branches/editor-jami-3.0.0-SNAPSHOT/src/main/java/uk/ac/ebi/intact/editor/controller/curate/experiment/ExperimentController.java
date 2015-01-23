@@ -391,7 +391,7 @@ public class ExperimentController extends AnnotatedObjectController {
         while (paramValuesIterator.hasNext()){
             IntactVariableParameterValue v = paramValuesIterator.next();
             try {
-                getEditorService().getIntactDao().getVariableParameterValueDao().delete(v);
+                getEditorService().deleteVariableParameterValue(v);
                 paramValuesIterator.remove();
             }  catch (SynchronizerException e) {
                 addErrorMessage("Cannot delete value "+v.toString(), e.getCause() + ": " + e.getMessage());
