@@ -19,14 +19,14 @@ import java.util.Collection;
  * @version $Id$
  * @since <pre>11/02/14</pre>
  */
-public class CompositeInteractorEnricher extends psidev.psi.mi.jami.enricher.impl.CompositeInteractorEnricher {
+public class EditorCompositeInteractorEnricher extends psidev.psi.mi.jami.enricher.impl.CompositeInteractorEnricher {
 
     @Autowired
     private EnricherContext enricherContext;
 
     @Autowired
-    public CompositeInteractorEnricher(@Qualifier("intactInteractorEnricher") InteractorEnricher
-                                                   interactorEnricher){
+    public EditorCompositeInteractorEnricher(@Qualifier("intactInteractorEnricher") InteractorEnricher
+                                                     interactorEnricher){
         super((AbstractInteractorEnricher)interactorEnricher);
     }
 

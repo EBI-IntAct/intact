@@ -19,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import psidev.psi.mi.jami.bridges.fetcher.InteractorFetcher;
 import psidev.psi.mi.jami.enricher.*;
+import psidev.psi.mi.jami.enricher.ParticipantEnricher;
 import psidev.psi.mi.jami.enricher.exception.EnricherException;
 import psidev.psi.mi.jami.enricher.listener.InteractionEnricherListener;
 import psidev.psi.mi.jami.enricher.listener.InteractorEnricherListener;
@@ -47,11 +48,14 @@ public class EditorComplexEnricher implements psidev.psi.mi.jami.enricher.Comple
     @Resource(name = "intactDao")
     private IntactDao intactDao;
     @Resource(name = "editorModelledParticipantEnricher")
-    private ParticipantEnricher editorModelledParticipantEnricher;
+    private psidev.psi.mi.jami.enricher.ParticipantEnricher editorModelledParticipantEnricher;
     @Resource(name = "editorMiEnricher")
     private CvTermEnricher<CvTerm> editorMiEnricher;
     @Resource(name = "editorSourceEnricher")
     private SourceEnricher editorSourceEnricher;
+    @Resource(name = "editorOrganismEnricher")
+    private OrganismEnricher editorOrganismEnricher;
+
     private String importTag;
 
     public EditorComplexEnricher() {
@@ -79,12 +83,12 @@ public class EditorComplexEnricher implements psidev.psi.mi.jami.enricher.Comple
 
     @Override
     public OrganismEnricher getOrganismEnricher() {
-        return intactComplexEnricher.getOrganismEnricher();
+        return editorOrganismEnricher;
     }
 
     @Override
     public void setListener(InteractorEnricherListener<Complex> listener) {
-
+        intactComplexEnricher.setListener(listener);
     }
 
     @Override
@@ -94,22 +98,22 @@ public class EditorComplexEnricher implements psidev.psi.mi.jami.enricher.Comple
 
     @Override
     public void setParticipantEnricher(psidev.psi.mi.jami.enricher.ParticipantEnricher enricher) {
-
+        editorModelledParticipantEnricher = enricher;
     }
 
     @Override
     public void setCvTermEnricher(CvTermEnricher<CvTerm> enricher) {
-
+         editorMiEnricher = enricher;
     }
 
     @Override
     public void setOrganismEnricher(OrganismEnricher enricher) {
-
+        editorOrganismEnricher = enricher;
     }
 
     @Override
     public void setInteractionEnricherListener(InteractionEnricherListener<Complex> listener) {
-
+        intactComplexEnricher.setInteractionEnricherListener(listener);
     }
 
     @Override
@@ -119,16 +123,15 @@ public class EditorComplexEnricher implements psidev.psi.mi.jami.enricher.Comple
 
     @Override
     public void setSourceEnricher(SourceEnricher enricher) {
-
+        editorSourceEnricher = enricher;
     }
 
     @Override
     public void enrich(Complex object) throws EnricherException {
-        if (intactComplexEnricher instanceof uk.ac.ebi.intact.dataexchange.enricher.standard.ComplexEnricher){
-            ((uk.ac.ebi.intact.dataexchange.enricher.standard.ComplexEnricher) intactComplexEnricher).setParticipantEnricher(editorModelledParticipantEnricher);
-            ((uk.ac.ebi.intact.dataexchange.enricher.standard.ComplexEnricher) intactComplexEnricher).setCvTermEnricher(editorMiEnricher);
-            ((uk.ac.ebi.intact.dataexchange.enricher.standard.ComplexEnricher) intactComplexEnricher).setSourceEnricher(editorSourceEnricher);
-        }
+        intactComplexEnricher.setParticipantEnricher(editorModelledParticipantEnricher);
+        intactComplexEnricher.setCvTermEnricher(editorMiEnricher);
+        intactComplexEnricher.setSourceEnricher(editorSourceEnricher);
+        intactComplexEnricher.setOrganismEnricher(editorOrganismEnricher);
 
         intactComplexEnricher.enrich(object);
 
@@ -142,12 +145,26 @@ public class EditorComplexEnricher implements psidev.psi.mi.jami.enricher.Comple
 
     @Override
     public void enrich(Collection<Complex> objects) throws EnricherException {
-        intactComplexEnricher.enrich(objects);
+        for (Complex c : objects){
+            enrich(c);
+        }
     }
 
     @Override
     public void enrich(Complex objectToEnrich, Complex objectSource) throws EnricherException {
+        intactComplexEnricher.setParticipantEnricher(editorModelledParticipantEnricher);
+        intactComplexEnricher.setCvTermEnricher(editorMiEnricher);
+        intactComplexEnricher.setSourceEnricher(editorSourceEnricher);
+        intactComplexEnricher.setOrganismEnricher(editorOrganismEnricher);
+
         intactComplexEnricher.enrich(objectToEnrich, objectSource);
+
+        if (getImportTag() != null && objectToEnrich != null){
+            // check if object exists in database before adding a tag
+            if (intactDao.getSynchronizerContext().getComplexSynchronizer().findAllMatchingAcs(objectToEnrich).isEmpty()){
+                objectToEnrich.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+            }
+        }
     }
 
     public String getImportTag() {

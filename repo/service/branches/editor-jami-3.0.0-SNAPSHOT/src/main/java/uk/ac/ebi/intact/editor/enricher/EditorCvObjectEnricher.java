@@ -31,10 +31,10 @@ import uk.ac.ebi.intact.dataexchange.enricher.standard.AbstractCvObjectEnricher;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id: MiCvObjectEnricher.java 13941 2010-01-04 14:01:28Z samuel.kerrien $
  */
-public class CvObjectEnricher extends AbstractCvObjectEnricher<CvTerm> {
+public class EditorCvObjectEnricher extends AbstractCvObjectEnricher<CvTerm> {
 
     @Autowired
-    public CvObjectEnricher(@Qualifier("intactOlsCvObjectFetcher") CvTermFetcher<CvTerm> intactCvObjectFetcher) {
+    public EditorCvObjectEnricher(@Qualifier("intactOlsCvObjectFetcher") CvTermFetcher<CvTerm> intactCvObjectFetcher) {
         super((AbstractCvObjectFetcher)intactCvObjectFetcher);
     }
 

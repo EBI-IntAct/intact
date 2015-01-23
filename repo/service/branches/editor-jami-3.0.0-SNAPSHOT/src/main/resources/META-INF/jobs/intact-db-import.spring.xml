@@ -28,6 +28,12 @@
     <bean id="editorComplexEnricher" class="uk.ac.ebi.intact.editor.enricher.EditorComplexEnricher" scope="step" lazy-init="true">
         <property name="importTag" value="#{jobParameters['MIJobId']}"/>
     </bean>
+    <bean id="editorOrganismEnricher" class="uk.ac.ebi.intact.editor.enricher.EditorOrganismEnricher" scope="step" lazy-init="true">
+        <property name="importTag" value="#{jobParameters['MIJobId']}"/>
+    </bean>
+    <bean id="editorComponentEnricher" class="uk.ac.ebi.intact.editor.enricher.EditorComponentEnricher" scope="step" lazy-init="true">
+        <property name="importTag" value="#{jobParameters['MIJobId']}"/>
+    </bean>
 
     <!-- readers -->
     <bean id="errorResource" class="org.springframework.core.io.FileSystemResource" scope="step" lazy-init="true">
