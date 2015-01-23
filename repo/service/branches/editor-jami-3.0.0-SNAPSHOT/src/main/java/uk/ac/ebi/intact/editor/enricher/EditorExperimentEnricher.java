@@ -15,8 +15,6 @@
  */
 package uk.ac.ebi.intact.editor.enricher;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import psidev.psi.mi.jami.enricher.CvTermEnricher;
 import psidev.psi.mi.jami.enricher.ExperimentEnricher;
 import psidev.psi.mi.jami.enricher.OrganismEnricher;
@@ -37,11 +35,6 @@ import java.util.Collection;
  *
  */
 public class EditorExperimentEnricher implements ExperimentEnricher {
-
-    /**
-     * Sets up a logger for that class.
-     */
-    private static final Log log = LogFactory.getLog(EditorExperimentEnricher.class);
 
     @Resource(name = "intactExperimentEnricher")
     private ExperimentEnricher intactExperimentEnricher;
