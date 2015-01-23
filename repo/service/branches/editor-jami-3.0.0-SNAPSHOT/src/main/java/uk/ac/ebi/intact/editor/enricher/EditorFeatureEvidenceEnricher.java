@@ -79,8 +79,20 @@ public class EditorFeatureEvidenceEnricher implements psidev.psi.mi.jami.enriche
     }
 
     @Override
-    public void enrich(FeatureEvidence objectToEnrich, FeatureEvidence objectSource) throws EnricherException {
+    public void enrich(FeatureEvidence object, FeatureEvidence objectSource) throws EnricherException {
+        intactFeatureEvidenceEnricher.setCvTermEnricher(editorMiEnricher);
+        if (intactFeatureEvidenceEnricher instanceof FeatureEvidenceEnricher){
+            ((FeatureEvidenceEnricher)intactFeatureEvidenceEnricher).setIntactCvObjectEnricher(editorCvObjectEnricher);
+        }
 
+        intactFeatureEvidenceEnricher.enrich(object, objectSource);
+
+        if (getImportTag() != null && object != null){
+            // check if object exists in database before adding a tag
+            if (intactDao.getSynchronizerContext().getFeatureEvidenceSynchronizer().findAllMatchingAcs(object).isEmpty()){
+                object.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+            }
+        }
     }
 
     public String getImportTag() {
