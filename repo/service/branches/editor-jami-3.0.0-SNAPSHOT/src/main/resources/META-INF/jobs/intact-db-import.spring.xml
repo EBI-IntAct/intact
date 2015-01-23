@@ -89,12 +89,12 @@
     <bean id="interactionEvidenceProcessor" class="uk.ac.ebi.intact.dataexchange.dbimporter.processor.IntactEnricherProcessor"
           lazy-init="true" scope="step">
         <property name="errorResource" ref="errorResource"/>
-        <property name="enricher" ref="intactInteractionEvidenceEnricher"/>
+        <property name="enricher" ref="editorInteractionEvidenceEnricher"/>
     </bean>
     <bean id="complexProcessor" class="uk.ac.ebi.intact.dataexchange.dbimporter.processor.IntactEnricherProcessor"
           lazy-init="true" scope="step">
         <property name="errorResource" ref="errorResource"/>
-        <property name="enricher" ref="intactComplexEnricher"/>
+        <property name="enricher" ref="editorComplexEnricher"/>
     </bean>
     <bean id="interactionMixProcessor" class="uk.ac.ebi.intact.dataexchange.dbimporter.processor.IntactInteractionEnricherCompositeProcessor" lazy-init="true" scope="step">
         <property name="interactionEvidenceProcessor" ref="interactionEvidenceProcessor"/>
