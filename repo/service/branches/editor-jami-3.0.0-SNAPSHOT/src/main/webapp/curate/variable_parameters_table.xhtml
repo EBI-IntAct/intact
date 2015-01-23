@@ -59,7 +59,7 @@
                 <p:commandButton id="newValueBtn" value="Add New Parameter Value"
                                  actionListener="#{experimentController.newVariableParameterValue(parameter)}"
                                  process="newValueTxt"
-                                 update=":editorForm:experimentTabs:vParametersTab"/>
+                                 update=":editorForm:experimentTabs:vParametersTable"/>
             </h:panelGrid>
             <h:panelGroup id="vparamValueList" rendered="#{not empty parameter.variableValues}">
                 <ul>
@@ -75,7 +75,7 @@
                             <p:commandLink styleClass="ui-icon ui-icon-closethick" process="@this"
                                            actionListener="#{experimentController.removeVariableParameterValue(value, parameter)}"
                                            oncomplete="markAsUnsaved()"
-                                           update=":editorForm:experimentTabs:vParametersTab #{update}"/>
+                                           update=":editorForm:experimentTabs:vParametersTable #{update}"/>
                         </h:panelGrid>
                     </ui:repeat>
                 </ul>
@@ -88,7 +88,7 @@
             <p:commandLink id="removeParamBtn" styleClass="ui-icon ui-icon-closethick" process="removeParamBtn"
                            actionListener="#{experimentController.removeVariableParameter(parameter)}"
                            oncomplete="markAsUnsaved()"
-                           update=":editorForm:experimentTabs:vParametersTab #{update}"/>
+                           update=":editorForm:experimentTabs:vParametersTable #{update}"/>
         </p:column>
     </p:dataTable>
 

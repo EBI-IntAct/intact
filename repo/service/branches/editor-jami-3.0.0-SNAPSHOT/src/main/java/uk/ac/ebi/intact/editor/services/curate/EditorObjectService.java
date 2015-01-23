@@ -79,6 +79,36 @@ public class EditorObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
+    public void deleteVariableParameter( IntactVariableParameter param) throws SynchronizerException,
+            FinderException, PersisterException {
+
+        if ( param == null ) {
+            log.error( "No parameter to delete");
+        }
+        else{
+            // attach dao to transaction manager to clear cache
+            attachDaoToTransactionManager();
+
+            deleteIntactObject(param, getIntactDao().getVariableParameterDao());
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
+    public void deleteVariableParameterValue( IntactVariableParameterValue param) throws SynchronizerException,
+            FinderException, PersisterException {
+
+        if ( param == null ) {
+            log.error( "No parameter to delete");
+        }
+        else{
+            // attach dao to transaction manager to clear cache
+            attachDaoToTransactionManager();
+
+            deleteIntactObject(param, getIntactDao().getVariableParameterValueDao());
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public <T extends IntactPrimaryObject> T doRevert(IntactPrimaryObject intactObject) {
         if (intactObject.getAc() != null) {
             if (log.isDebugEnabled()) log.debug("Reverting: " + intactObject.getClass()+", Ac="+intactObject.getAc());
