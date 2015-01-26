@@ -8,7 +8,7 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ia="http://java.sun.com/jsf/composite/intact-components">
 
-    <h:panelGroup id="featuresGroup">
+    <h:panelGroup>
 
         <ui:param name="featuresToDeleteCount" value="#{changesController.getDeletedAcsByClassName('uk.ac.ebi.intact.jami.model.extension.IntactFeatureEvidence', participantController.ac).size()}"/>
 
@@ -18,7 +18,7 @@
             </ia:panelMessage>
         </h:panelGroup>
 
-        <p:dataTable id="featuresTable" var="featureWrapper" value="#{value}" emptyMessage="No features defined"
+        <p:dataTable var="featureWrapper" value="#{value}" emptyMessage="No features defined"
                      paginator="#{value.rowCount > 10}" rows="10"
                      paginatorAlwaysVisible="false"
                      rowsPerPageTemplate="5,10,20"

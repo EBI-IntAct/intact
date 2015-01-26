@@ -32,16 +32,12 @@ public class MailNotifierStepExecutionListener implements StepExecutionListener 
 
     private MailSender mailSender;
     private String senderAddress;
-    private String[] recipientAddresses;
 
     public MailNotifierStepExecutionListener() {
-        this.recipientAddresses = new String[0];
+
     }
 
     public void beforeStep(StepExecution stepExecution) {
-        if (!validRecipients()) {
-            return;
-        }
 
         SimpleMailMessage message = newSimpleMessage();
         message.setSubject("[Editor_import] Started step: "+stepExecution.getStepName()+"");
@@ -57,9 +53,6 @@ public class MailNotifierStepExecutionListener implements StepExecutionListener 
     }
 
     public ExitStatus afterStep(StepExecution stepExecution) {
-        if (!validRecipients()) {
-            return stepExecution.getExitStatus();
-        }
 
         SimpleMailMessage message = newSimpleMessage();
         message.setSubject("[Editor_import] Finished step: "+stepExecution.getStepName()+" Exit status: "+stepExecution.getExitStatus().getExitCode());
@@ -77,29 +70,14 @@ public class MailNotifierStepExecutionListener implements StepExecutionListener 
         return stepExecution.getExitStatus();
     }
 
-    private boolean validRecipients() {
-        for (String recipient : recipientAddresses) {
-            if (recipient.contains("@")) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private SimpleMailMessage newSimpleMessage() {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(senderAddress);
-        message.setTo(recipientAddresses);
         return message;
     }
 
     public void setMailSender(MailSender mailSender) {
         this.mailSender = mailSender;
-    }
-
-    public void setRecipientAddresses(String recipientAddresses) {
-        this.recipientAddresses = recipientAddresses.split(",");
     }
 
     public void setSenderAddress(String senderAddress) {
