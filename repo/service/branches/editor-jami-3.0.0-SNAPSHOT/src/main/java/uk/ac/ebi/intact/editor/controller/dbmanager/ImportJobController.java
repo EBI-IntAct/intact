@@ -172,6 +172,13 @@ public class ImportJobController extends BaseController {
         }
     }
 
+    public boolean isJobEvidence(JobExecution execution){
+        if (execution == null){
+            return false;
+        }
+        return "interactionMixImport".equals(execution.getJobInstance().getJobName());
+    }
+
     public void discardEvidences( ActionEvent evt ) {
 
         if (!evt.getComponent().getChildren().isEmpty()){
