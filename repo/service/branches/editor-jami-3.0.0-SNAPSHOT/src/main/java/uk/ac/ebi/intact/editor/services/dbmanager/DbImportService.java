@@ -87,6 +87,7 @@ public class DbImportService extends AbstractEditorService {
                     "where cv.ac = a.topic_ac and a.ac = fa.annotation_ac and f.ac = fa.publication_ac and " +
                     "cv.shortlabel = :remark and a.description = :jobId" +
                     " )")
+                    .setParameter("remark", "remark-internal")
                     .setParameter("jobId", importId)
                     .executeUpdate();
 
