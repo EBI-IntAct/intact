@@ -80,7 +80,7 @@
                     <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
                 </h:commandLink>
                 &#160;
-                <h:commandLink value="Stop" actionListener="#{importJobController.stop}" action="/dbmanager/summary?faces-redirect=true">
+                <h:commandLink value="Stop" actionListener="#{importJobController.stop}" action="/dbmanager/jobSummary?faces-redirect=true">
                     <f:param name="executionId" value="#{jobExecution.id}"/>
                 </h:commandLink>
             </p:column>
