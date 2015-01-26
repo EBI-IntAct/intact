@@ -148,7 +148,7 @@
         </ia:panelMessage>
     </h:panelGroup>
 
-    <h:panelGroup rendered="#{not empty publicationController.publicationOnHold}">
+    <h:panelGroup rendered="#{publicationController.publicationOnHold}">
         <ia:panelMessage level="warn">
             This publication is <b>on-hold</b>. Reason: #{publicationController.onHold}
         </ia:panelMessage>
