@@ -116,7 +116,7 @@ public class ImportJobController extends BaseController {
         }
     }
 
-    public void acceptEvidence( ActionEvent evt ) {
+    public void acceptImport( ActionEvent evt ) {
 
         if (!evt.getComponent().getChildren().isEmpty()){
             UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();
@@ -131,35 +131,7 @@ public class ImportJobController extends BaseController {
                     String jobId= params.getString("MIJobId");
 
                     try {
-                        getDbImportService().acceptImportEvidence(jobId);
-
-                        getBatchJobService().deleteJob(executionId);
-
-                        addInfoMessage( "Job accepted, import annotations removed", "Execution ID: " + executionId );
-                    } catch (Throwable e) {
-                        addErrorMessage("Cannot accept job import", "Execution ID: " + executionId);
-                    }
-                }
-            }
-        }
-    }
-
-    public void acceptComplex( ActionEvent evt ) {
-
-        if (!evt.getComponent().getChildren().isEmpty()){
-            UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();
-
-            long executionId = ( Long ) param.getValue();
-
-            JobExecution execution = getJobExplorer().getJobExecution(executionId);
-
-            if (execution != null){
-                JobParameters params = execution.getJobParameters();
-                if (params != null){
-                    String jobId= params.getString("MIJobId");
-
-                    try {
-                        getDbImportService().acceptImportComplexes(jobId);
+                        getDbImportService().acceptImport(jobId);
 
                         getBatchJobService().deleteJob(executionId);
 
@@ -179,7 +151,7 @@ public class ImportJobController extends BaseController {
         return "interactionMixImport".equals(execution.getJobInstance().getJobName());
     }
 
-    public void discardEvidences( ActionEvent evt ) {
+    public void discardImport( ActionEvent evt ) {
 
         if (!evt.getComponent().getChildren().isEmpty()){
             UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();
@@ -194,35 +166,7 @@ public class ImportJobController extends BaseController {
                     String jobId= params.getString("MIJobId");
 
                     try {
-                        getDbImportService().deleteImportEvidence(jobId);
-
-                        getBatchJobService().deleteJob(executionId);
-
-                        addInfoMessage( "Job cleared, import objects deleted", "Execution ID: " + executionId );
-                    } catch (Throwable e) {
-                        addErrorMessage("Cannot clear job import", "Execution ID: " + executionId);
-                    }
-                }
-            }
-        }
-    }
-
-    public void discardComplexes( ActionEvent evt ) {
-
-        if (!evt.getComponent().getChildren().isEmpty()){
-            UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();
-
-            long executionId = ( Long ) param.getValue();
-
-            JobExecution execution = getJobExplorer().getJobExecution(executionId);
-
-            if (execution != null){
-                JobParameters params = execution.getJobParameters();
-                if (params != null){
-                    String jobId= params.getString("MIJobId");
-
-                    try {
-                        getDbImportService().deleteImportComplex(jobId);
+                        getDbImportService().deleteImport(jobId);
 
                         getBatchJobService().deleteJob(executionId);
 

@@ -86,23 +86,13 @@
                     <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
                 </h:link>
                 &#160;
-                <h:commandLink value="Accept" actionListener="#{importJobController.acceptEvidence}"
-                               rendered="#{importJobController.isJobEvidence(jobExecution)}" action="/dbmanager/jobSummary?faces-redirect=true">
+                <h:commandLink value="Accept" actionListener="#{importJobController.acceptImport}"
+                               action="/dbmanager/jobSummary?faces-redirect=true">
                     <f:param name="executionId" value="#{jobExecution.id}"/>
                 </h:commandLink>
                 &#160;
-                <h:commandLink value="Accept" actionListener="#{importJobController.acceptComplex}"
-                               rendered="#{!importJobController.isJobEvidence(jobExecution)}" action="/dbmanager/jobSummary?faces-redirect=true">
-                    <f:param name="executionId" value="#{jobExecution.id}"/>
-                </h:commandLink>
-                &#160;
-                <h:commandLink value="Reject" actionListener="#{importJobController.discardEvidences}"
-                               rendered="#{importJobController.isJobEvidence(jobExecution)}" action="/dbmanager/jobSummary?faces-redirect=true">
-                    <f:param name="executionId" value="#{jobExecution.id}"/>
-                </h:commandLink>
-                &#160;
-                <h:commandLink value="Reject" actionListener="#{importJobController.discardComplexes}"
-                               rendered="#{!importJobController.isJobEvidence(jobExecution)}" action="/dbmanager/jobSummary?faces-redirect=true">
+                <h:commandLink value="Reject" actionListener="#{importJobController.discardImport}"
+                               action="/dbmanager/jobSummary?faces-redirect=true">
                     <f:param name="executionId" value="#{jobExecution.id}"/>
                 </h:commandLink>
                 &#160;
