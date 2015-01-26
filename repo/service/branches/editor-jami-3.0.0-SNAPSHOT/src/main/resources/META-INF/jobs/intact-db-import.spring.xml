@@ -154,22 +154,22 @@
     <!-- enricher job -->
     <batch:job id="complexImport" job-repository="basicBatchJobRepository" parent="basicBatchJob">
 
-        <batch:listeners>
+        <!--<batch:listeners>
             <batch:listener ref="temporaryFileDeleter"/>
-        </batch:listeners>
+        </batch:listeners>-->
 
         <batch:step id="complexStep" parent="complexEnricherStep">
-            <batch:end on="FAILED"/>
+            <batch:fail on="FAILED"/>
         </batch:step>
     </batch:job>
     <batch:job id="interactionMixImport" job-repository="basicBatchJobRepository" parent="basicBatchJob">
 
-        <batch:listeners>
+        <!--<batch:listeners>
             <batch:listener ref="temporaryFileDeleter"/>
-        </batch:listeners>
+        </batch:listeners>-->
 
         <batch:step id="interactionMixStep" parent="interactionEnricherStep">
-            <batch:end on="FAILED"/>
+            <batch:fail on="FAILED"/>
         </batch:step>
     </batch:job>
 </beans>
