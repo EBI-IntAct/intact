@@ -76,14 +76,7 @@
     </bean>
 
     <!-- listener -->
-    <bean id="temporaryFileDeleter" class="uk.ac.ebi.intact.editor.batch.admin.TemporaryFileDeleter" scope="step" lazy-init="true">
-        <property name="filesToDeletes">
-            <list>
-                <value>#{jobParameters['error.file']}</value>
-                <value>#{jobParameters['input.file']}</value>
-            </list>
-        </property>
-    </bean>
+    <bean id="temporaryFileDeleter" class="uk.ac.ebi.intact.editor.batch.admin.TemporaryFileDeleter" scope="prototype" lazy-init="true"/>
 
     <!-- processors -->
     <bean id="interactionEvidenceProcessor" class="uk.ac.ebi.intact.dataexchange.dbimporter.processor.IntactEnricherProcessor"
@@ -153,23 +146,27 @@
 
     <!-- enricher job -->
     <batch:job id="complexImport" job-repository="basicBatchJobRepository" parent="basicBatchJob">
-
-        <!--<batch:listeners>
-            <batch:listener ref="temporaryFileDeleter"/>
-        </batch:listeners>-->
+        <batch:listeners>
+            <batch:listener ref="basicJobLoggerListener"/>
+        </batch:listeners>
 
         <batch:step id="complexStep" parent="complexEnricherStep">
             <batch:fail on="FAILED"/>
+            <batch:listeners>
+                <batch:listener ref="temporaryFileDeleter"/>
+            </batch:listeners>
         </batch:step>
     </batch:job>
     <batch:job id="interactionMixImport" job-repository="basicBatchJobRepository" parent="basicBatchJob">
-
-        <!--<batch:listeners>
-            <batch:listener ref="temporaryFileDeleter"/>
-        </batch:listeners>-->
+        <batch:listeners>
+            <batch:listener ref="basicJobLoggerListener"/>
+        </batch:listeners>
 
         <batch:step id="interactionMixStep" parent="interactionEnricherStep">
             <batch:fail on="FAILED"/>
+            <batch:listeners>
+                <batch:listener ref="temporaryFileDeleter"/>
+            </batch:listeners>
         </batch:step>
     </batch:job>
 </beans>

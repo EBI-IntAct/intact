@@ -72,7 +72,7 @@ public class EditorSourceEnricher implements SourceEnricher{
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getSourceSynchronizer().findAllMatchingAcs(object).isEmpty()){
-                object.getAnnotations().add(new SourceAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                object.getAnnotations().add(new SourceAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
     }
@@ -91,7 +91,7 @@ public class EditorSourceEnricher implements SourceEnricher{
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getSourceSynchronizer().findAllMatchingAcs(object).isEmpty()){
-                object.getAnnotations().add(new SourceAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                object.getAnnotations().add(new SourceAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
     }

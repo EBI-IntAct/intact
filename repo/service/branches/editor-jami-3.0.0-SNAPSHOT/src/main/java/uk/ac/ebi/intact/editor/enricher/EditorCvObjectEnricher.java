@@ -70,7 +70,7 @@ public class EditorCvObjectEnricher implements CvTermEnricher<CvTerm> {
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getGeneralCvSynchronizer().findAllMatchingAcs(object).isEmpty()){
-                object.getAnnotations().add(new CvTermAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                object.getAnnotations().add(new CvTermAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
     }
@@ -89,7 +89,7 @@ public class EditorCvObjectEnricher implements CvTermEnricher<CvTerm> {
         if (getImportTag() != null && objectToEnrich != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getGeneralCvSynchronizer().findAllMatchingAcs(objectToEnrich).isEmpty()){
-                objectToEnrich.getAnnotations().add(new CvTermAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                objectToEnrich.getAnnotations().add(new CvTermAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
     }

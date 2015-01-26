@@ -66,7 +66,7 @@ public class EditorFeatureEvidenceEnricher implements psidev.psi.mi.jami.enriche
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getFeatureEvidenceSynchronizer().findAllMatchingAcs(object).isEmpty()){
-                object.getAnnotations().add(new FeatureEvidenceAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                object.getAnnotations().add(new FeatureEvidenceAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
     }
@@ -90,7 +90,7 @@ public class EditorFeatureEvidenceEnricher implements psidev.psi.mi.jami.enriche
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getFeatureEvidenceSynchronizer().findAllMatchingAcs(object).isEmpty()){
-                object.getAnnotations().add(new FeatureEvidenceAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                object.getAnnotations().add(new FeatureEvidenceAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
     }

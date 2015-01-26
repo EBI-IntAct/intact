@@ -130,12 +130,12 @@ public class EditorComponentEnricher implements ParticipantEvidenceEnricher<Part
         if (getImportTag() != null && objectToEnrich != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getParticipantEvidenceSynchronizer().findAllMatchingAcs(objectToEnrich).isEmpty()){
-                objectToEnrich.getAnnotations().add(new ParticipantEvidenceAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                objectToEnrich.getAnnotations().add(new ParticipantEvidenceAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
 
             // check interactor
             if (intactDao.getSynchronizerContext().getInteractorSynchronizer().findAllMatchingAcs(objectToEnrich.getInteractor()).isEmpty()){
-                objectToEnrich.getInteractor().getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                objectToEnrich.getInteractor().getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
     }
@@ -151,12 +151,12 @@ public class EditorComponentEnricher implements ParticipantEvidenceEnricher<Part
         if (getImportTag() != null && objectToEnrich != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getParticipantEvidenceSynchronizer().findAllMatchingAcs(objectToEnrich).isEmpty()){
-                objectToEnrich.getAnnotations().add(new ParticipantEvidenceAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                objectToEnrich.getAnnotations().add(new ParticipantEvidenceAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
 
             // check interactor
             if (intactDao.getSynchronizerContext().getInteractorSynchronizer().findAllMatchingAcs(objectToEnrich.getInteractor()).isEmpty()){
-                objectToEnrich.getInteractor().getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                objectToEnrich.getInteractor().getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
     }

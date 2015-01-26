@@ -111,7 +111,7 @@ public class EditorExperimentEnricher implements ExperimentEnricher {
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getExperimentSynchronizer().findAllMatchingAcs(object).isEmpty()){
-                object.getAnnotations().add(new ExperimentAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                object.getAnnotations().add(new ExperimentAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
     }
@@ -134,7 +134,7 @@ public class EditorExperimentEnricher implements ExperimentEnricher {
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getExperimentSynchronizer().findAllMatchingAcs(object).isEmpty()){
-                object.getAnnotations().add(new ExperimentAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                object.getAnnotations().add(new ExperimentAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
     }
