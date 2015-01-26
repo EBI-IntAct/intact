@@ -29,6 +29,7 @@ public class SearchInteractorOrganismController extends BaseController {
 	private String ac;
 	private String shortLabel;
 	private String numInteractors;
+    private String resultsOutcome;
 
 	private LazyDataModel<MoleculeSummary> interactors = null;
 
@@ -78,6 +79,14 @@ public class SearchInteractorOrganismController extends BaseController {
             this.searchQueryService = ApplicationContextProvider.getBean("searchQueryService");
         }
         return searchQueryService;
+    }
+
+    public String getResultsOutcome() {
+        return resultsOutcome;
+    }
+
+    public void setResultsOutcome(String resultsOutcome) {
+        this.resultsOutcome = resultsOutcome;
     }
 }
 

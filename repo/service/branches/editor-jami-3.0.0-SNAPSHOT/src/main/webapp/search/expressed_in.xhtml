@@ -15,13 +15,14 @@
             <f:viewParam name="ac" value="#{expressInOrganismController.ac}"/>
             <f:viewParam name="shortLabel" value="#{expressInOrganismController.shortLabel}"/>
             <f:viewParam name="numParticipants" value="#{expressInOrganismController.numParticipants}"/>
+            <f:viewParam name="resultsOutcome" value="#{expressInOrganismController.resultsOutcome}"/>
 
             <f:event type="preRenderView" listener="#{expressInOrganismController.loadData}"/>
         </f:metadata>
     </ui:define>
 
     <ui:define name="content">
-        <h:link outcome="#{resultsOutcome}" value="&lt;&lt; Back to the search results" />
+        <h:link outcome="#{expressInOrganismController.resultsOutcome}" value="&lt;&lt; Back to the search results" />
         <br/>
         <br/>
 

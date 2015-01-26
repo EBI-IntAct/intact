@@ -29,6 +29,7 @@ public class SearchExperimentHostOrganismController extends BaseController {
 	private String ac;
 	private String shortLabel;
 	private String numExperiments;
+    private String resultsOutcome;
 
 	private LazyDataModel<ExperimentSummary> experiments = null;
 
@@ -77,6 +78,14 @@ public class SearchExperimentHostOrganismController extends BaseController {
             this.searchQueryService = ApplicationContextProvider.getBean("searchQueryService");
         }
         return searchQueryService;
+    }
+
+    public String getResultsOutcome() {
+        return resultsOutcome;
+    }
+
+    public void setResultsOutcome(String resultsOutcome) {
+        this.resultsOutcome = resultsOutcome;
     }
 }
 

@@ -29,6 +29,7 @@ public class SearchInteractionsMoleculeController extends BaseController {
 	private LazyDataModel<InteractionSummary> interactions = null;
 	private String shortLabel;
 	private String numInteractions;
+    private String resultsOutcome;
 
 	public String getAc() {
 		return ac;
@@ -75,5 +76,13 @@ public class SearchInteractionsMoleculeController extends BaseController {
             this.searchQueryService = ApplicationContextProvider.getBean("searchQueryService");
         }
         return searchQueryService;
+    }
+
+    public String getResultsOutcome() {
+        return resultsOutcome;
+    }
+
+    public void setResultsOutcome(String resultsOutcome) {
+        this.resultsOutcome = resultsOutcome;
     }
 }

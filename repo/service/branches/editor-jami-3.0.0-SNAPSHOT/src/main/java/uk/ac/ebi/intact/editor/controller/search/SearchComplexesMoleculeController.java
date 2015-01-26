@@ -29,6 +29,7 @@ public class SearchComplexesMoleculeController extends BaseController {
 	private LazyDataModel<ComplexSummary> interactions = null;
 	private String shortLabel;
 	private String numInteractions;
+    private String resultsOutcome;
 
     @Resource(name = "searchQueryService")
     private transient SearchQueryService searchQueryService;
@@ -75,5 +76,13 @@ public class SearchComplexesMoleculeController extends BaseController {
             this.searchQueryService = ApplicationContextProvider.getBean("searchQueryService");
         }
         return searchQueryService;
+    }
+
+    public String getResultsOutcome() {
+        return resultsOutcome;
+    }
+
+    public void setResultsOutcome(String resultsOutcome) {
+        this.resultsOutcome = resultsOutcome;
     }
 }
