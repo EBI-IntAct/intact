@@ -143,7 +143,7 @@ public class EditorComplexEnricher implements psidev.psi.mi.jami.enricher.Comple
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getComplexSynchronizer().findAllMatchingAcs(object).isEmpty()){
-                object.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                object.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
     }
@@ -170,7 +170,7 @@ public class EditorComplexEnricher implements psidev.psi.mi.jami.enricher.Comple
         if (getImportTag() != null && objectToEnrich != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getComplexSynchronizer().findAllMatchingAcs(objectToEnrich).isEmpty()){
-                objectToEnrich.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                objectToEnrich.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
     }

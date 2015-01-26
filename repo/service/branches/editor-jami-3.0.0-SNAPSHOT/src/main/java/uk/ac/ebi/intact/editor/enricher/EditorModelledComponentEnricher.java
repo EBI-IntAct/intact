@@ -100,12 +100,12 @@ public class EditorModelledComponentEnricher implements psidev.psi.mi.jami.enric
         if (getImportTag() != null && objectToEnrich != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getModelledParticipantSynchronizer().findAllMatchingAcs(objectToEnrich).isEmpty()){
-                objectToEnrich.getAnnotations().add(new ModelledParticipantAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                objectToEnrich.getAnnotations().add(new ModelledParticipantAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
 
             // check interactor
             if (intactDao.getSynchronizerContext().getInteractorSynchronizer().findAllMatchingAcs(objectToEnrich.getInteractor()).isEmpty()){
-                objectToEnrich.getInteractor().getAnnotations().add(new ModelledParticipantAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                objectToEnrich.getInteractor().getAnnotations().add(new ModelledParticipantAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
     }
@@ -127,12 +127,12 @@ public class EditorModelledComponentEnricher implements psidev.psi.mi.jami.enric
         if (getImportTag() != null && objectToEnrich != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getModelledParticipantSynchronizer().findAllMatchingAcs(objectToEnrich).isEmpty()){
-                objectToEnrich.getAnnotations().add(new ModelledParticipantAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                objectToEnrich.getAnnotations().add(new ModelledParticipantAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
 
             // check interactor
             if (intactDao.getSynchronizerContext().getInteractorSynchronizer().findAllMatchingAcs(objectToEnrich.getInteractor()).isEmpty()){
-                objectToEnrich.getInteractor().getAnnotations().add(new ModelledParticipantAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                objectToEnrich.getInteractor().getAnnotations().add(new ModelledParticipantAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
     }

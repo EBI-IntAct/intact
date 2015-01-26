@@ -67,7 +67,7 @@ public class EditorPublicationEnricher implements CuratedPublicationEnricher {
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getPublicationSynchronizer().findAllMatchingAcs(object).isEmpty()){
-                object.getAnnotations().add(new PublicationAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                object.getAnnotations().add(new PublicationAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
     }
@@ -89,7 +89,7 @@ public class EditorPublicationEnricher implements CuratedPublicationEnricher {
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
             if (intactDao.getSynchronizerContext().getPublicationSynchronizer().findAllMatchingAcs(object).isEmpty()){
-                object.getAnnotations().add(new PublicationAnnotation(IntactUtils.createMITopic(null, "remark-internal"), getImportTag()));
+                object.getAnnotations().add(new PublicationAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
     }
