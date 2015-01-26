@@ -76,7 +76,7 @@ public class DashboardController extends BaseController {
                 isComplexTableEnabled = true;
             }
             else{
-                isPublicationTableEnabled = false;
+                isComplexTableEnabled = false;
             }
             refreshAllTables();
         }
