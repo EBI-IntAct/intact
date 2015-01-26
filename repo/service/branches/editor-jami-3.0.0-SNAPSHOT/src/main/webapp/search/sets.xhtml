@@ -15,13 +15,14 @@
             <f:viewParam name="ac" value="#{searchMoleculeSetsController.ac}"/>
             <f:viewParam name="shortLabel" value="#{searchMoleculeSetsController.shortLabel}"/>
             <f:viewParam name="numSets" value="#{searchMoleculeSetsController.numMoleculeSets}"/>
+            <f:viewParam name="resultsOutcome" value="#{searchMoleculeSetsController.resultsOutcome}"/>
 
             <f:event type="preRenderView" listener="#{searchMoleculeSetsController.loadData}"/>
         </f:metadata>
     </ui:define>
 
     <ui:define name="content">
-        <h:link outcome="#{resultsOutcome}" value="&lt;&lt; Back to the search results" />
+        <h:link outcome="#{searchMoleculeSetsController.resultsOutcome}" value="&lt;&lt; Back to the search results" />
         <br/>
         <br/>
 

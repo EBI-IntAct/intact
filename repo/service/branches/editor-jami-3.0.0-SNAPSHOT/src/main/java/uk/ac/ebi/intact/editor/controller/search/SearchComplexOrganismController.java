@@ -29,6 +29,7 @@ public class SearchComplexOrganismController extends BaseController {
 	private String ac;
 	private String shortLabel;
 	private String numComplexes;
+    private String resultsOutcome;
 
 	private LazyDataModel<ComplexSummary> complexes = null;
 
@@ -79,6 +80,12 @@ public class SearchComplexOrganismController extends BaseController {
         return searchQueryService;
     }
 
+    public String getResultsOutcome() {
+        return resultsOutcome;
+    }
 
+    public void setResultsOutcome(String resultsOutcome) {
+        this.resultsOutcome = resultsOutcome;
+    }
 }
 

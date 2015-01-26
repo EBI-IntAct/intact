@@ -15,13 +15,14 @@
             <f:viewParam name="ac" value="#{complexOrganismController.ac}"/>
             <f:viewParam name="shortLabel" value="#{complexOrganismController.shortLabel}"/>
             <f:viewParam name="numInteractors" value="#{complexOrganismController.numComplexes}"/>
+            <f:viewParam name="resultsOutcome" value="#{complexOrganismController.resultsOutcome}"/>
 
             <f:event type="preRenderView" listener="#{complexOrganismController.loadData}"/>
         </f:metadata>
     </ui:define>
 
     <ui:define name="content">
-        <h:link outcome="#{resultsOutcome}" value="&lt;&lt; Back to the search results" />
+        <h:link outcome="#{complexOrganismController.resultsOutcome}" value="&lt;&lt; Back to the search results" />
         <br/>
         <br/>
 

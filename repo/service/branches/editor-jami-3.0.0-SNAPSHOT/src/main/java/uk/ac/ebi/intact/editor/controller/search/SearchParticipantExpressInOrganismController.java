@@ -29,6 +29,7 @@ public class SearchParticipantExpressInOrganismController extends BaseController
 	private String ac;
 	private String shortLabel;
 	private String numParticipants;
+    private String resultsOutcome;
 
 	private LazyDataModel<ParticipantSummary> participants = null;
 
@@ -77,6 +78,14 @@ public class SearchParticipantExpressInOrganismController extends BaseController
             this.searchQueryService = ApplicationContextProvider.getBean("searchQueryService");
         }
         return searchQueryService;
+    }
+
+    public String getResultsOutcome() {
+        return resultsOutcome;
+    }
+
+    public void setResultsOutcome(String resultsOutcome) {
+        this.resultsOutcome = resultsOutcome;
     }
 }
 
