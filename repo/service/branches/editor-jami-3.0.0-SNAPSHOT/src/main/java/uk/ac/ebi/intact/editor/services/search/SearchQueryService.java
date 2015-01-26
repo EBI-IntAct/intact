@@ -100,6 +100,33 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public LazyDataModel<CvSummary> loadImportedCvs( String query) {
+
+        log.info( "Searching for CvObject imported with '" + query + "'..." );
+
+        final HashMap<String, String> params = Maps.<String, String>newHashMap();
+        params.put( "query", query );
+        params.put("remark", "remark-internal");
+
+        // all cvobjects
+        LazyDataModel<CvSummary> cvobjects = LazyDataModelFactory.createLazyDataModel( this.cvSummaryService,
+
+                "select distinct i " +
+                        "from IntactCvTerm i join i.dbAnnotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+
+                "select count(distinct i) " +
+                        "from IntactCvTerm i join i.dbAnnotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark)",
+
+                params, "i", "updated, i.ac", false);
+
+        log.info( "CvObject imported: " + cvobjects.getRowCount() );
+
+        return cvobjects;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public LazyDataModel<MoleculeSummary> loadMolecules( String query, String originalQuery ) {
 
         log.info( "Searching for Molecules matching '" + query + "'..." );
@@ -127,6 +154,31 @@ public class SearchQueryService extends AbstractEditorService {
                                                               params, "i", "updated, i.ac", false );
 
         log.info( "Molecules found: " + molecules.getRowCount() );
+        return molecules;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public LazyDataModel<MoleculeSummary> loadImportedMolecules( String query) {
+
+        log.info( "Searching for Molecules Imported with '" + query + "'..." );
+
+        final HashMap<String, String> params = Maps.<String, String>newHashMap();
+        params.put( "query", query );
+        params.put("remark","remark-internal");
+
+        // all molecules but interactions
+        LazyDataModel<MoleculeSummary> molecules = LazyDataModelFactory.createLazyDataModel( moleculeSummaryService,
+
+                "select distinct i " +
+                        "from IntactInteractor i join i.dbAnnotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+                "select count(distinct i) " +
+                        "from IntactInteractor i join i.dbAnnotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+
+                params, "i", "updated, i.ac", false );
+
+        log.info( "Molecules imported: " + molecules.getRowCount() );
         return molecules;
     }
 
@@ -207,6 +259,31 @@ public class SearchQueryService extends AbstractEditorService {
                                                                  params, "i", "updated, i.ac", false );
 
         log.info( "Interactions found: " + interactions.getRowCount() );
+        return interactions;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public LazyDataModel<InteractionSummary>  loadImportedInteractions( String query) {
+
+        log.info( "Searching for Interactions imported with '" + query + "'..." );
+
+        final HashMap<String, String> params = Maps.<String, String>newHashMap();
+        params.put( "query", query );
+        params.put( "remark", "remark-internal" );
+
+        // Load experiment eagerly to avoid LazyInitializationException when rendering the view
+        LazyDataModel<InteractionSummary> interactions = LazyDataModelFactory.createLazyDataModel( interactionSummaryService,
+
+                "select distinct i " +
+                        "from IntactInteractionEvidence i join i.dbAnnotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+                "select count(distinct i) " +
+                        "from IntactInteractionEvidence i join i.dbAnnotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+
+                params, "i", "updated, i.ac", false );
+
+        log.info( "Interactions imported: " + interactions.getRowCount() );
         return interactions;
     }
 
@@ -322,6 +399,30 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public LazyDataModel<ComplexSummary> loadImportedComplexes( String query ) {
+
+        log.info( "Searching for Complexes imported with '" + query + "'..." );
+
+        final HashMap<String, String> params = Maps.<String, String>newHashMap();
+        params.put( "query", query );
+        params.put( "remark", "remark-internal" );
+        // Load experiment eagerly to avoid LazyInitializationException when rendering the view
+        LazyDataModel<ComplexSummary> complexes = LazyDataModelFactory.createLazyDataModel( complexSummaryService,
+
+                "select distinct i " +
+                        "from IntactComplex i join i.dbAnnotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+                "select count(distinct i) " +
+                        "from IntactComplex i join i.dbAnnotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+
+                params, "i", "updated, i.ac", false );
+
+        log.info( "Complexes imported: " + complexes.getRowCount() );
+        return complexes;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public LazyDataModel<ExperimentSummary> loadExperiments( String query, String originalQuery ) {
 
         log.info( "Searching for experiments matching '" + query + "'..." );
@@ -350,6 +451,30 @@ public class SearchQueryService extends AbstractEditorService {
                                                                 params, "e", "updated, e.ac", false );
 
         log.info( "Experiment found: " + experiments.getRowCount() );
+        return experiments;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public LazyDataModel<ExperimentSummary> loadImportedExperiments( String query ) {
+
+        log.info( "Searching for experiments imported with '" + query + "'..." );
+
+        final HashMap<String, String> params = Maps.<String, String>newHashMap();
+        params.put( "query", query );
+        params.put( "remark", "remark-internal" );
+
+        LazyDataModel<ExperimentSummary> experiments = LazyDataModelFactory.createLazyDataModel( experimentSummaryService,
+
+                "select distinct i " +
+                        "from IntactExperiment i join i.annotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+                "select count(distinct i) " +
+                        "from IntactExperiment i join i.annotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+
+                params, "e", "updated, e.ac", false );
+
+        log.info( "Experiment imported: " + experiments.getRowCount() );
         return experiments;
     }
 
@@ -417,6 +542,29 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public LazyDataModel<PublicationSummary> loadImportedPublication( String query) {
+        log.info( "Searching for publications imported with '" + query + "'..." );
+
+        final HashMap<String, String> params = Maps.<String, String>newHashMap();
+        params.put( "query", query );
+        params.put( "remark", "remark-internal" );
+
+        LazyDataModel<PublicationSummary> publications = LazyDataModelFactory.createLazyDataModel( publicationSummaryService,
+
+                "select distinct i " +
+                        "from IntactPublication i join i.dbAnnotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+                "select count(distinct i) " +
+                        "from IntactPublication i join i.dbAnnotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+
+                params, "p", "updated, p.ac", false );
+
+        log.info( "Publications imported: " + publications.getRowCount() );
+        return publications;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public LazyDataModel<FeatureSummary> loadFeatures( String query, String originalQuery ) {
         log.info( "Searching for features matching '" + query + "' or AC '"+originalQuery+"'..." );
 
@@ -443,6 +591,29 @@ public class SearchQueryService extends AbstractEditorService {
                                                                  params, "p", "updated, p.ac", false);
 
         log.info( "Features found: " + features.getRowCount() );
+        return features;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public LazyDataModel<FeatureSummary> loadImportedFeatures( String query) {
+        log.info( "Searching for features imported with '" + query  );
+
+        final HashMap<String, String> params = Maps.<String, String>newHashMap();
+        params.put( "query", query );
+        params.put( "remark", "remark-internal" );
+
+        LazyDataModel<FeatureSummary> features = LazyDataModelFactory.createLazyDataModel( featureEvidenceSummaryService,
+
+                "select distinct f " +
+                        "from IntactFeatureEvidence i join i.annotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+                "select count(distinct i) " +
+                        "from IntactFeatureEvidence i join i.annotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+
+                params, "p", "updated, p.ac", false);
+
+        log.info( "Features imported: " + features.getRowCount() );
         return features;
     }
 
@@ -478,6 +649,30 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public LazyDataModel<OrganismSummary> loadImportedOrganisms( String query ) {
+        log.info( "Searching for organisms imported with '" + query + "'..." );
+
+        final HashMap<String, String> params = Maps.newHashMap();
+        params.put( "query", query );
+        params.put( "synonym", "synonym" );
+
+        // Load experiment eagerly to avoid LazyInitializationException when redering the view
+        LazyDataModel<OrganismSummary> organisms = LazyDataModelFactory.createLazyDataModel( organismSummaryService,
+
+                "select distinct i " +
+                        "from IntactOrganism i join i.aliases as a " +
+                        "where a.name = :query and a.type.shortName = :synonym) ",
+                "select count(distinct i) " +
+                        "from IntactOrganism i join i.aliases as a " +
+                        "where a.name = :query and a.type.shortName = :synonym) ",
+
+                params, "b", "updated, b.ac", false);
+
+        log.info( "Organisms imported: " + organisms.getRowCount() );
+        return organisms;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public LazyDataModel<ParticipantSummary> loadParticipants( String query, String originalQuery ) {
         log.info( "Searching for participants matching '" + query + "'..." );
 
@@ -501,6 +696,30 @@ public class SearchQueryService extends AbstractEditorService {
                 params, "p", "updated, p.ac", false);
 
         log.info( "Participants found: " + participants.getRowCount() );
+        return participants;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public LazyDataModel<ParticipantSummary> loadImportedParticipants( String query) {
+        log.info( "Searching for participants imported with '" + query + "'..." );
+
+        final HashMap<String, String> params = Maps.newHashMap();
+        params.put( "query", query );
+        params.put( "remark", "remark-internal" );
+
+        // Load experiment eagerly to avoid LazyInitializationException when redering the view
+        LazyDataModel<ParticipantSummary> participants = LazyDataModelFactory.createLazyDataModel( participantEvidenceSummaryService,
+
+                "select distinct i " +
+                        "from IntactParticipantEvidence i join i.annotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+                "select count(distinct i) " +
+                        "from IntactParticipantEvidence i join i.annotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+
+                params, "p", "updated, p.ac", false);
+
+        log.info( "Participants imported: " + participants.getRowCount() );
         return participants;
     }
 
@@ -559,6 +778,29 @@ public class SearchQueryService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public LazyDataModel<FeatureSummary>  loadImportedModelledFeatures(String query) {
+        log.info( "Searching for complex features imported with '" + query  );
+
+        final HashMap<String, String> params = Maps.<String, String>newHashMap();
+        params.put( "query", query );
+        params.put( "remark", "remark-internal" );
+
+        LazyDataModel<FeatureSummary>  modelledFeatures = LazyDataModelFactory.createLazyDataModel( modelledFeatureSummaryService,
+
+                "select distinct i " +
+                        "from IntactModelledFeature i join i.annotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+                "select count(distinct i) " +
+                        "from IntactModelledFeature i join i.annotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+
+                params, "p", "updated, p.ac", false);
+
+        log.info( "Complex Features imported: " + modelledFeatures.getRowCount() );
+        return modelledFeatures;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public LazyDataModel<ParticipantSummary> loadModelledParticipants(String finalQuery, String originalQuery) {
         log.info( "Searching for complex participants matching '" + finalQuery + "'..." );
 
@@ -582,6 +824,30 @@ public class SearchQueryService extends AbstractEditorService {
                 params, "p", "updated, p.ac", false);
 
         log.info( "Complex Participants found: " + modelledParticipants.getRowCount() );
+        return modelledParticipants;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public LazyDataModel<ParticipantSummary> loadImportedModelledParticipants(String finalQuery) {
+        log.info( "Searching for complex participants imported with '" + finalQuery + "'..." );
+
+        final HashMap<String, String> params = Maps.newHashMap();
+        params.put( "query", finalQuery );
+        params.put( "remark", "remark-internal" );
+
+        // Load experiment eagerly to avoid LazyInitializationException when redering the view
+        LazyDataModel<ParticipantSummary> modelledParticipants = LazyDataModelFactory.createLazyDataModel( modelledParticipantSummaryService,
+
+                "select distinct i " +
+                        "from IntactModelledParticipant i join i.annotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+                "select count(distinct i) " +
+                        "from IntactModelledParticipant i join i.annotations as a " +
+                        "where a.value = :query and a.topic.shortName = :remark) ",
+
+                params, "p", "updated, p.ac", false);
+
+        log.info( "Complex Participants imported: " + modelledParticipants.getRowCount() );
         return modelledParticipants;
     }
 }
