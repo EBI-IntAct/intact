@@ -41,7 +41,7 @@ public class BatchJobService {
 
     @Transactional(value = "basicBatchTransactionManager", propagation = Propagation.REQUIRED)
     public void deleteJob(Long jobId){
-        int rowCount = getJdbcTemplate().update(SQL_DELETE_BATCH_STEP_EXECUTION_CONTEXT + "'"+jobId+"'");
+        int rowCount = getJdbcTemplate().update(SQL_DELETE_BATCH_STEP_EXECUTION_CONTEXT + "'"+jobId+"')");
         logger.info("Deleted rows number from the BATCH_STEP_EXECUTION_CONTEXT table: {}", rowCount);
         rowCount = getJdbcTemplate().update(SQL_DELETE_BATCH_STEP_EXECUTION+ "'"+jobId+"'");
         logger.info("Deleted rows number from the BATCH_STEP_EXECUTION table: {}", rowCount);
