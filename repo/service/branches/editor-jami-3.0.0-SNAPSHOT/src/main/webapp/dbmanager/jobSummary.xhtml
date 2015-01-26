@@ -32,14 +32,14 @@
         <ui:repeat value="#{importJobController.getJobInstances('interactionMixImport')}" var="jobInstance1">
             <i>#{jobInstance1}</i> #{jobInstance1.id}
 
-            <ia:importExecutionsTable value="#{importJobController.getJobExecutions(jobInstance1.id)}"/>
+            <ia:jobImportExecutionsTable value="#{importJobController.getJobExecutions(jobInstance1.id)}"/>
 
         </ui:repeat>
         <h3>Imports of biological complexes</h3>
         <ui:repeat value="#{importJobController.getJobInstances('complexImport')}" var="jobInstance2">
             <i>#{jobInstance2}</i> #{jobInstance2.id}
 
-            <ia:importExecutionsTable value="#{importJobController.getJobExecutions(jobInstance2.id)}"/>
+            <ia:jobImportExecutionsTable value="#{importJobController.getJobExecutions(jobInstance2.id)}"/>
 
         </ui:repeat>
 
