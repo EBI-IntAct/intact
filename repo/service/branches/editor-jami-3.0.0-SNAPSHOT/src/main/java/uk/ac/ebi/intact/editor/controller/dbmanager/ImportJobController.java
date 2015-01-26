@@ -172,7 +172,7 @@ public class ImportJobController extends BaseController {
         }
     }
 
-    public void discardEvidence( ActionEvent evt ) {
+    public void discardEvidences( ActionEvent evt ) {
 
         if (!evt.getComponent().getChildren().isEmpty()){
             UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();

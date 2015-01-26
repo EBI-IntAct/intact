@@ -86,11 +86,19 @@
                     <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
                 </h:commandLink>
                 &#160;
-                <h:commandLink value="Accept" action="/dbmanager/summary?faces-redirect=true" ajax="false">
+                <h:commandLink value="Accept" actionListener="#{importJobController.acceptEvidence}" rendered="#{importJobController.isJobEvidence(jobExecution)}">
                     <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
                 </h:commandLink>
                 &#160;
-                <h:commandLink value="Reject" action="/dbmanager/summary?faces-redirect=true" ajax="false">
+                <h:commandLink value="Accept" actionListener="#{importJobController.acceptComplex}" rendered="#{!importJobController.isJobEvidence(jobExecution)}">
+                    <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
+                </h:commandLink>
+                &#160;
+                <h:commandLink value="Reject" actionListener="#{importJobController.discardEvidences}" rendered="#{importJobController.isJobEvidence(jobExecution)}">
+                    <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
+                </h:commandLink>
+                &#160;
+                <h:commandLink value="Reject" actionListener="#{importJobController.discardComplexes}" rendered="#{importJobController.isJobEvidence(jobExecution)}">
                     <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
                 </h:commandLink>
                 &#160;
