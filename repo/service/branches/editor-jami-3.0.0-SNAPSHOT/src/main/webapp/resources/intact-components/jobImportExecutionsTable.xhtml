@@ -98,7 +98,7 @@
                     <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
                 </h:commandLink>
                 &#160;
-                <h:commandLink value="Reject" actionListener="#{importJobController.discardComplexes}" rendered="#{importJobController.isJobEvidence(jobExecution)}">
+                <h:commandLink value="Reject" actionListener="#{importJobController.discardComplexes}" rendered="#{!importJobController.isJobEvidence(jobExecution)}">
                     <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
                 </h:commandLink>
                 &#160;

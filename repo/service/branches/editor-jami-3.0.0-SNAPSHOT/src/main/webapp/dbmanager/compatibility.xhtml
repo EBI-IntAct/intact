@@ -14,10 +14,10 @@
 
         <h:panelGrid columns="2">
 
-            <p:commandButton value="CvObject Sync" actionListener="#{cvObjectService.refresh}" update=":editorForm:messagesComponent"/>
+            <p:commandButton value="CvObject Sync" actionListener="#{cvObjectService.loadData}" update=":editorForm:messagesComponent"/>
             <h:outputText value="Updates the drop down lists for CvObjects if changes have been made externally"/>
 
-            <p:commandButton value="BioSource Sync" actionListener="#{bioSourceService.refresh}" update=":editorForm:messagesComponent"/>
+            <p:commandButton value="BioSource Sync" actionListener="#{bioSourceService.loadData}" update=":editorForm:messagesComponent"/>
             <h:outputText value="Updates the drop down lists for organisms if changes have been made externally"/>
         </h:panelGrid>
 

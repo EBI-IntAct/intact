@@ -89,7 +89,7 @@ public class ImportJobController extends BaseController {
         if (!evt.getComponent().getChildren().isEmpty()){
             UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();
 
-            long executionId = ( Long ) param.getValue();
+            long executionId = Long.parseLong(( String ) param.getValue());
 
             try {
                 getPsiMIJobManager().restartJob(executionId);
@@ -121,7 +121,7 @@ public class ImportJobController extends BaseController {
         if (!evt.getComponent().getChildren().isEmpty()){
             UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();
 
-            long executionId = ( Long ) param.getValue();
+            long executionId = Long.parseLong(( String ) param.getValue());
 
             JobExecution execution = getJobExplorer().getJobExecution(executionId);
 
@@ -149,7 +149,7 @@ public class ImportJobController extends BaseController {
         if (!evt.getComponent().getChildren().isEmpty()){
             UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();
 
-            long executionId = ( Long ) param.getValue();
+            long executionId = Long.parseLong(( String ) param.getValue());
 
             JobExecution execution = getJobExplorer().getJobExecution(executionId);
 
@@ -184,7 +184,7 @@ public class ImportJobController extends BaseController {
         if (!evt.getComponent().getChildren().isEmpty()){
             UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();
 
-            long executionId = ( Long ) param.getValue();
+            long executionId = Long.parseLong(( String ) param.getValue());
 
             JobExecution execution = getJobExplorer().getJobExecution(executionId);
 
@@ -212,7 +212,7 @@ public class ImportJobController extends BaseController {
         if (!evt.getComponent().getChildren().isEmpty()){
             UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();
 
-            long executionId = ( Long ) param.getValue();
+            long executionId = Long.parseLong(( String ) param.getValue());
 
             JobExecution execution = getJobExplorer().getJobExecution(executionId);
 
@@ -237,7 +237,7 @@ public class ImportJobController extends BaseController {
 
     public void stop( ActionEvent evt ) {
         UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();
-        long executionId = ( Long ) param.getValue();
+        long executionId = Long.parseLong(( String ) param.getValue());
 
         try {
             getPsiMIJobManager().getJobOperator().stop(executionId);

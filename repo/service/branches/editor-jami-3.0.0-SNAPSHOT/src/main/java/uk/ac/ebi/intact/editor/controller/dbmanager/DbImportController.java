@@ -42,7 +42,7 @@ import java.io.IOException;
  */
 @Controller
 @Scope( "conversation.access" )
-@ConversationName( "admin" )
+@ConversationName( "dbmanager" )
 public class DbImportController extends BaseController {
 
     @Resource( name = "psiMIJobManager" )
