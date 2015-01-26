@@ -87,19 +87,19 @@
                 </h:commandLink>
                 &#160;
                 <h:commandLink value="Accept" actionListener="#{importJobController.acceptEvidence}" rendered="#{importJobController.isJobEvidence(jobExecution)}">
-                    <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
+                    <f:param name="executionId" value="#{jobExecution.id}"/>
                 </h:commandLink>
                 &#160;
                 <h:commandLink value="Accept" actionListener="#{importJobController.acceptComplex}" rendered="#{!importJobController.isJobEvidence(jobExecution)}">
-                    <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
+                    <f:param name="executionId" value="#{jobExecution.id}"/>
                 </h:commandLink>
                 &#160;
                 <h:commandLink value="Reject" actionListener="#{importJobController.discardEvidences}" rendered="#{importJobController.isJobEvidence(jobExecution)}">
-                    <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
+                    <f:param name="executionId" value="#{jobExecution.id}"/>
                 </h:commandLink>
                 &#160;
                 <h:commandLink value="Reject" actionListener="#{importJobController.discardComplexes}" rendered="#{!importJobController.isJobEvidence(jobExecution)}">
-                    <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
+                    <f:param name="executionId" value="#{jobExecution.id}"/>
                 </h:commandLink>
                 &#160;
                 <h:commandLink value="Restart" actionListener="#{adminJobController.restart}">

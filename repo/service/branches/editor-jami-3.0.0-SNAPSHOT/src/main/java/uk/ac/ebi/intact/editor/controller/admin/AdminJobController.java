@@ -81,7 +81,7 @@ public class AdminJobController extends BaseController {
         if (!evt.getComponent().getChildren().isEmpty()){
             UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();
 
-            long executionId = Long.parseLong(( String ) param.getValue());
+            long executionId = ( Long ) param.getValue();
 
             try {
                 getPsiMIJobManager().restartJob(executionId);
@@ -110,7 +110,7 @@ public class AdminJobController extends BaseController {
 
     public void stop( ActionEvent evt ) {
         UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();
-        long executionId = Long.parseLong(( String ) param.getValue());
+        long executionId = ( Long ) param.getValue();
 
         try {
             getPsiMIJobManager().getJobOperator().stop(executionId);
