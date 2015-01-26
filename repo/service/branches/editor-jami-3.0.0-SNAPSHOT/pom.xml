@@ -57,7 +57,7 @@
         <!-- default E-mail settings -->
         <intact.notification.email.sender>${editor.email.sender}</intact.notification.email.sender>
         <intact.notification.email.smtpPort>${editor.email.smtpPort}</intact.notification.email.smtpPort>
-        <intact.notification.email.smtpHost>${editor.email.smtpPort}</intact.notification.email.smtpHost>
+        <intact.notification.email.smtpHost>${editor.email.smtpHost}</intact.notification.email.smtpHost>
 
 
         <!-- other property defaults -->

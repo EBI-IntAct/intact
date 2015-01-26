@@ -76,9 +76,9 @@
                 <f:facet name="header">
                     <h:outputText value="Action"/>
                 </f:facet>
-                <h:commandLink value="View" action="/dbmanager/summary?faces-redirect=true" ajax="false">
+                <h:link value="View" outcome="/dbmanager/summary" includeViewParams="true">
                     <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
-                </h:commandLink>
+                </h:link>
                 &#160;
                 <h:commandLink value="Stop" actionListener="#{importJobController.stop}" action="/dbmanager/jobSummary?faces-redirect=true">
                     <f:param name="executionId" value="#{jobExecution.id}"/>
