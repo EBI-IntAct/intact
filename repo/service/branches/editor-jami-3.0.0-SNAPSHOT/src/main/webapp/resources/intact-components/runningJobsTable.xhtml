@@ -66,7 +66,7 @@
                 <f:facet name="header">
                     <h:outputText value="Errors"/>
                 </f:facet>
-                <h:panelGroup rendered="#{importJobController.getImportStatistics(jobExecution)}">
+                <h:panelGroup rendered="#{importJobController.hasJobFailed(jobExecution)}">
                     <ui:repeat value="#{importJobController.getFailureExceptions(jobExecution)}" var="exception">
                         #{importJobController.printFullStackTrace(exception)}
                     </ui:repeat>

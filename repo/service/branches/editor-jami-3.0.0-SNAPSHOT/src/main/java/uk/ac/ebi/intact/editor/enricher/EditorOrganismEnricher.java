@@ -37,7 +37,7 @@ public class EditorOrganismEnricher implements OrganismEnricher {
 
     @Resource(name = "intactBioSourceEnricher")
     private OrganismEnricher intactBioSourceEnricher;
-    @Resource(name = "editorOlsEnricher")
+    @Resource(name = "editorCvObjectEnricher")
     private CvTermEnricher<CvTerm> editorOlsEnricher;
     private String importTag;
     @Resource(name = "intactDao")
