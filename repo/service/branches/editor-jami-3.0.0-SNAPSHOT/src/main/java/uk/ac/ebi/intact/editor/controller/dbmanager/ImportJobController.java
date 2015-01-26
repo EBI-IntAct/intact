@@ -249,6 +249,16 @@ public class ImportJobController extends BaseController {
         return new ArrayList<JobExecution>( getJobExplorer().findRunningJobExecutions(jobName) );
     }
 
+    public String extractJobId( JobExecution execution ) {
+        if (execution != null){
+           JobParameters param = execution.getJobParameters();
+            if (param != null){
+                return param.getString("MIJobId");
+            }
+        }
+        return null;
+    }
+
     public List<JobInstance> getJobInstances( String jobName ) {
         return getJobExplorer().getJobInstances(jobName, 0, 10);
     }

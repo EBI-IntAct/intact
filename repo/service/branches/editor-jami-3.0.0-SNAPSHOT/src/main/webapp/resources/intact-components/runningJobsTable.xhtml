@@ -31,12 +31,6 @@
             </p:column>
             <p:column>
                 <f:facet name="header">
-                    <h:outputText value="End time"/>
-                </f:facet>
-                <h:outputText value="#{jobExecution.endTime}"/>
-            </p:column>
-            <p:column>
-                <f:facet name="header">
                     <h:outputText value="Last updated"/>
                 </f:facet>
                 <h:outputText value="#{jobExecution.lastUpdated}"/>
@@ -49,15 +43,18 @@
             </p:column>
             <p:column>
                 <f:facet name="header">
-                    <h:outputText value="Exit code"/>
-                </f:facet>
-                <h:outputText value="#{jobExecution.exitStatus.exitCode}"/>
-            </p:column>
-            <p:column>
-                <f:facet name="header">
                     <h:outputText value="Parameters"/>
                 </f:facet>
                 <h:outputText value="#{jobExecution.jobParameters}"/>
+            </p:column>
+            <p:column>
+                <f:facet name="header">
+                    <h:outputText value="Statistics"/>
+                </f:facet>
+                <ui:repeat value="#{importJobController.getImportStatistics(jobExecution)}" var="mapEntry">
+                    <h:outputText value="#{mapEntry.key}: #{mapEntry.value}"/>
+                    <br/>
+                </ui:repeat>
             </p:column>
             <p:column>
                 <f:facet name="header">
@@ -69,9 +66,9 @@
                 <f:facet name="header">
                     <h:outputText value="Errors"/>
                 </f:facet>
-                <h:panelGroup rendered="#{adminJobController.hasJobFailed(jobExecution)}">
-                    <ui:repeat value="#{adminJobController.getFailureExceptions(jobExecution)}" var="exception">
-                        #{adminJobController.printFullStackTrace(exception)}
+                <h:panelGroup rendered="#{importJobController.getImportStatistics(jobExecution)}">
+                    <ui:repeat value="#{importJobController.getFailureExceptions(jobExecution)}" var="exception">
+                        #{importJobController.printFullStackTrace(exception)}
                     </ui:repeat>
                 </h:panelGroup>
             </p:column>
@@ -79,11 +76,11 @@
                 <f:facet name="header">
                     <h:outputText value="Action"/>
                 </f:facet>
-                <h:commandLink value="Restart" actionListener="#{adminJobController.restart}">
-                    <f:param name="executionId" value="#{jobExecution.id}"/>
+                <h:commandLink value="View" action="/dbmanager/summary?faces-redirect=true" ajax="false">
+                    <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
                 </h:commandLink>
                 &#160;
-                <h:commandLink value="Stop" actionListener="#{adminJobController.stop}">
+                <h:commandLink value="Stop" actionListener="#{importJobController.stop}">
                     <f:param name="executionId" value="#{jobExecution.id}"/>
                 </h:commandLink>
             </p:column>
