@@ -41,17 +41,17 @@ public class BatchJobService {
 
     @Transactional(value = "basicBatchTransactionManager", propagation = Propagation.REQUIRED)
     public void deleteJob(Long jobId){
-        int rowCount = jdbcTemplate.update(SQL_DELETE_BATCH_STEP_EXECUTION_CONTEXT + "'"+jobId+"'");
+        int rowCount = getJdbcTemplate().update(SQL_DELETE_BATCH_STEP_EXECUTION_CONTEXT + "'"+jobId+"'");
         logger.info("Deleted rows number from the BATCH_STEP_EXECUTION_CONTEXT table: {}", rowCount);
-        rowCount = jdbcTemplate.update(SQL_DELETE_BATCH_STEP_EXECUTION+ "'"+jobId+"'");
+        rowCount = getJdbcTemplate().update(SQL_DELETE_BATCH_STEP_EXECUTION+ "'"+jobId+"'");
         logger.info("Deleted rows number from the BATCH_STEP_EXECUTION table: {}", rowCount);
-        rowCount = jdbcTemplate.update(SQL_DELETE_BATCH_JOB_EXECUTION_CONTEXT+ "'"+jobId+"'");
+        rowCount = getJdbcTemplate().update(SQL_DELETE_BATCH_JOB_EXECUTION_CONTEXT+ "'"+jobId+"'");
         logger.info("Deleted rows number from the BATCH_JOB_EXECUTION_CONTEXT table: {}", rowCount);
-        rowCount = jdbcTemplate.update(SQL_DELETE_BATCH_JOB_EXECUTION_PARAMS+ "'"+jobId+"'");
+        rowCount = getJdbcTemplate().update(SQL_DELETE_BATCH_JOB_EXECUTION_PARAMS+ "'"+jobId+"'");
         logger.info("Deleted rows number from the BATCH_JOB_EXECUTION_PARAMS table: {}", rowCount);
-        rowCount = jdbcTemplate.update(SQL_DELETE_BATCH_JOB_EXECUTION+ "'"+jobId+"'");
+        rowCount = getJdbcTemplate().update(SQL_DELETE_BATCH_JOB_EXECUTION+ "'"+jobId+"'");
         logger.info("Deleted rows number from the BATCH_JOB_EXECUTION table: {}", rowCount);
-        rowCount = jdbcTemplate.update(SQL_DELETE_BATCH_JOB_INSTANCE);
+        rowCount = getJdbcTemplate().update(SQL_DELETE_BATCH_JOB_INSTANCE);
         logger.info("Deleted rows number from the BATCH_JOB_INSTANCE table", rowCount);
     }
 }
