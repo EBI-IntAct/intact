@@ -46,6 +46,7 @@ public class MailNotifierStepExecutionListener implements StepExecutionListener 
         SimpleMailMessage message = newSimpleMessage();
         message.setSubject("[Editor_import] Started step: "+stepExecution.getStepName()+"");
         message.setText(stepExecution.getSummary()+"\n"+stepExecution.getJobExecution());
+        message.setTo(stepExecution.getJobParameters().getString("email.recipient"));
 
         try{
             mailSender.send(message);
@@ -64,6 +65,7 @@ public class MailNotifierStepExecutionListener implements StepExecutionListener 
         message.setSubject("[Editor_import] Finished step: "+stepExecution.getStepName()+" Exit status: "+stepExecution.getExitStatus().getExitCode());
         message.setText(stepExecution.toString()+"\n"+stepExecution.getExecutionContext());
         message.setText(stepExecution.toString()+"\n"+stepExecution.getSummary()+"\n"+stepExecution.getJobExecution());
+        message.setTo(stepExecution.getJobParameters().getString("email.recipient"));
 
         try{
             mailSender.send(message);

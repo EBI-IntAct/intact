@@ -54,6 +54,12 @@
         <ic.endpoint>${imex.endpoint}</ic.endpoint>
         <update.log.directory>target/imex-report</update.log.directory>
 
+        <!-- default E-mail settings -->
+        <intact.notification.email.sender>${editor.email.sender}</intact.notification.email.sender>
+        <intact.notification.email.smtpPort>${editor.email.smtpPort}</intact.notification.email.smtpPort>
+        <intact.notification.email.smtpHost>${editor.email.smtpPort}</intact.notification.email.smtpHost>
+
+
         <!-- other property defaults -->
         <webapp.logo.url>http://www.ebi.ac.uk/~intact/images/intact_logo.png</webapp.logo.url>
         <intact.instance.name>Not Set</intact.instance.name>
