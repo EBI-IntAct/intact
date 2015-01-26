@@ -161,6 +161,7 @@
 
         <batch:step id="complexStep" parent="complexEnricherStep">
             <batch:fail on="FAILED"/>
+            <batch:end on="*"/>
             <batch:listeners>
                 <batch:listener ref="temporaryFileDeleter"/>
                 <batch:listener ref="mailStepListener"/>
@@ -174,6 +175,7 @@
 
         <batch:step id="interactionMixStep" parent="interactionEnricherStep">
             <batch:fail on="FAILED"/>
+            <batch:end on="*"/>
             <batch:listeners>
                 <batch:listener ref="temporaryFileDeleter"/>
                 <batch:listener ref="mailStepListener"/>
