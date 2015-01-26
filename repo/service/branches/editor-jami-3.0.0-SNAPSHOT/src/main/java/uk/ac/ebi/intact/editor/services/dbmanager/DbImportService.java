@@ -96,7 +96,7 @@ public class DbImportService extends AbstractEditorService {
             // then delete organisms imported
             updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_biosource where ac in ( " +
                     "select distinct f.ac from ia_biosource f, ia_biosource_alias a, ia_controlledvocab cv " +
-                    "where cv.ac = a.aliastype_ac and a.biosource_ac = f.ac and " +
+                    "where cv.ac = a.aliastype_ac and a.parent_ac = f.ac and " +
                     "cv.shortlabel = :synonym and a.name = :jobId" +
                     " )")
                     .setParameter("synonym", Alias.SYNONYM)
