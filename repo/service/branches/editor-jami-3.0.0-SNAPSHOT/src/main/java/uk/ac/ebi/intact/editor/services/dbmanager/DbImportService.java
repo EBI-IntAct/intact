@@ -69,7 +69,7 @@ public class DbImportService extends AbstractEditorService {
 
             // then delete organisms imported
             updated = getIntactDao().getEntityManager().createQuery("delete OrganismAlias where ac in (select distinct a.ac from OrganismAlias a " +
-                    "where a.type.shortName = :synonym and a.value = :jobId) ")
+                    "where a.type.shortName = :synonym and a.name = :jobId) ")
                     .setParameter("synonym", Alias.SYNONYM)
                     .executeUpdate();
 
@@ -146,7 +146,7 @@ public class DbImportService extends AbstractEditorService {
 
             // then delete organisms imported
             updated = getIntactDao().getEntityManager().createQuery("delete IntactOrganism where ac in (select distinct f.ac from IntactOrganism f " +
-                    "join f.aliases as a where a.type.shortName = :synonym and a.value = :jobId) ")
+                    "join f.aliases as a where a.type.shortName = :synonym and a.name = :jobId) ")
                     .setParameter("synonym", Alias.SYNONYM)
                     .executeUpdate();
 
@@ -199,7 +199,7 @@ public class DbImportService extends AbstractEditorService {
 
             // then delete organisms imported
             updated = getIntactDao().getEntityManager().createQuery("delete OrganismAlias where ac in (select distinct a.ac from OrganismAlias a " +
-                    "where a.type.shortName = :synonym and a.value = :jobId) ")
+                    "where a.type.shortName = :synonym and a.name = :jobId) ")
                     .setParameter("synonym", Alias.SYNONYM)
                     .executeUpdate();
 
@@ -260,7 +260,7 @@ public class DbImportService extends AbstractEditorService {
 
             // then delete organisms imported
             updated = getIntactDao().getEntityManager().createQuery("delete IntactOrganism where ac in (select distinct f.ac from IntactOrganism f " +
-                    "join f.aliases as a where a.type.shortName = :synonym and a.value = :jobId) ")
+                    "join f.aliases as a where a.type.shortName = :synonym and a.name = :jobId) ")
                     .setParameter("synonym", Alias.SYNONYM)
                     .executeUpdate();
 

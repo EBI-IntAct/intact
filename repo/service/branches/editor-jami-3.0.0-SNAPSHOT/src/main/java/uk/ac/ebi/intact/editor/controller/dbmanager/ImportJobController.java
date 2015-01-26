@@ -48,7 +48,7 @@ import java.util.*;
  */
 @Controller
 @Scope( "conversation.access" )
-@ConversationName( "admin" )
+@ConversationName( "dbmanager" )
 @Lazy
 public class ImportJobController extends BaseController {
 
