@@ -24,12 +24,15 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import psidev.psi.mi.jami.batch.MIBatchJobManager;
 import psidev.psi.mi.jami.commons.MIFileUtils;
 import uk.ac.ebi.intact.editor.controller.BaseController;
+import uk.ac.ebi.intact.editor.controller.UserSessionController;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
+import uk.ac.ebi.intact.jami.model.user.User;
 
 import javax.annotation.Resource;
 import javax.faces.event.ActionEvent;
@@ -54,6 +57,9 @@ public class DbImportController extends BaseController {
     private UploadedFile uploadedFile;
     private String jobId = null;
 
+    @Autowired
+    private UserSessionController userSessionController;
+
     public DbImportController() {
     }
 
@@ -64,10 +70,16 @@ public class DbImportController extends BaseController {
                 try {
                     JobParametersBuilder builder = new JobParametersBuilder();
                     this.jobId = "interactionMixImport_"+System.currentTimeMillis();
+                    String eMail = "intact-dev@ebi.ac.uk";
+                    User user = userSessionController.getCurrentUser();
+                    if (user != null && user.getEmail() != null){
+                        eMail = user.getEmail();
+                    }
 
-                    getIntactJobLauncher().run((Job)ApplicationContextProvider.getBean("interactionMixImport"),
+                    getIntactJobLauncher().run((Job) ApplicationContextProvider.getBean("interactionMixImport"),
                             builder.addString("MIJobId", jobId).addString("input.file", files[0].getAbsolutePath())
-                            .addString("error.file", files[1].getAbsolutePath()).toJobParameters());
+                                    .addString("error.file", files[1].getAbsolutePath()).addString("email.recipient", eMail).toJobParameters()
+                    );
 
                     addInfoMessage( "Job started", "Job ID: " + jobId );
                 } catch ( JobParametersInvalidException e ) {
@@ -106,10 +118,15 @@ public class DbImportController extends BaseController {
                 try {
                     JobParametersBuilder builder = new JobParametersBuilder();
                     this.jobId = "complexImport_"+System.currentTimeMillis();
+                    String eMail = "intact-dev@ebi.ac.uk";
+                    User user = userSessionController.getCurrentUser();
+                    if (user != null && user.getEmail() != null){
+                        eMail = user.getEmail();
+                    }
 
                     getIntactJobLauncher().run((Job)ApplicationContextProvider.getBean("complexImport"),
                             builder.addString("MIJobId", jobId).addString("input.file", files[0].getAbsolutePath())
-                                    .addString("error.file", files[1].getAbsolutePath()).toJobParameters());
+                                    .addString("error.file", files[1].getAbsolutePath()).addString("email.recipient", eMail).toJobParameters());
                     addInfoMessage( "Job started", "Job ID: " + jobId );
                 } catch ( JobParametersInvalidException e ) {
                     addErrorMessage( "Invalid job parameters", "Job Param: " + "input.file="+files[0].getAbsolutePath()+"error.file"+files[1].getAbsolutePath() );

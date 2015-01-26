@@ -77,6 +77,16 @@
 
     <!-- listener -->
     <bean id="temporaryFileDeleter" class="uk.ac.ebi.intact.editor.batch.admin.TemporaryFileDeleter" scope="prototype" lazy-init="true"/>
+    <bean id="mailStepListener" class="uk.ac.ebi.intact.editor.batch.admin.MailNotifierStepExecutionListener" scope="prototype" lazy-init="true">
+        <property name="mailSender">
+            <bean class="org.springframework.mail.javamail.JavaMailSenderImpl">
+                <property name="host" value="${intact.notification.email.smtpHost}"/>
+                <property name="port" value="${intact.notification.email.smtpPort}"/>
+            </bean>
+        </property>
+        <property name="recipientAddresses" value="${intact.notification.email.recipients}"/>
+        <property name="senderAddress" value="${intact.notification.email.sender}"/>
+    </bean>
 
     <!-- processors -->
     <bean id="interactionEvidenceProcessor" class="uk.ac.ebi.intact.dataexchange.dbimporter.processor.IntactEnricherProcessor"
@@ -104,18 +114,6 @@
         <property name="intactService" ref="complexService"/>
     </bean>
     <bean id="interactionMixImporter" class="uk.ac.ebi.intact.dataexchange.dbimporter.writer.IntactInteractionMixDbImporter" lazy-init="true"/>
-
-    <!-- listener -->
-    <bean id="mailStepListener" class="uk.ac.ebi.intact.editor.batch.admin.MailNotifierStepExecutionListener">
-        <property name="mailSender">
-            <bean class="org.springframework.mail.javamail.JavaMailSenderImpl">
-                <property name="host" value="${intact.notification.email.smtpHost}"/>
-                <property name="port" value="${intact.notification.email.smtpPort}"/>
-            </bean>
-        </property>
-        <property name="recipientAddresses" value="${intact.notification.email.recipients}"/>
-        <property name="senderAddress" value="${intact.notification.email.sender}"/>
-    </bean>
 
     <!-- Basic Step configuration -->
 
@@ -166,6 +164,7 @@
             <batch:fail on="FAILED"/>
             <batch:listeners>
                 <batch:listener ref="temporaryFileDeleter"/>
+                <batch:listener ref="mailStepListener"/>
             </batch:listeners>
         </batch:step>
     </batch:job>
@@ -178,6 +177,7 @@
             <batch:fail on="FAILED"/>
             <batch:listeners>
                 <batch:listener ref="temporaryFileDeleter"/>
+                <batch:listener ref="mailStepListener"/>
             </batch:listeners>
         </batch:step>
     </batch:job>
