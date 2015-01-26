@@ -105,6 +105,18 @@
     </bean>
     <bean id="interactionMixImporter" class="uk.ac.ebi.intact.dataexchange.dbimporter.writer.IntactInteractionMixDbImporter" lazy-init="true"/>
 
+    <!-- listener -->
+    <bean id="mailStepListener" class="uk.ac.ebi.intact.editor.batch.admin.MailNotifierStepExecutionListener">
+        <property name="mailSender">
+            <bean class="org.springframework.mail.javamail.JavaMailSenderImpl">
+                <property name="host" value="${intact.notification.email.smtpHost}"/>
+                <property name="port" value="${intact.notification.email.smtpPort}"/>
+            </bean>
+        </property>
+        <property name="recipientAddresses" value="${intact.notification.email.recipients}"/>
+        <property name="senderAddress" value="${intact.notification.email.sender}"/>
+    </bean>
+
     <!-- Basic Step configuration -->
 
     <!-- Enricher Steps -->
