@@ -55,6 +55,7 @@
                     <f:param name="ac" value="#{molecule.ac}"/>
                     <f:param name="shortLabel" value="#{molecule.shortName}"/>
                     <f:param name="numInteractions" value="#{molecule.numberInteractions}"/>
+                    <f:param name="resultsOutcome" value="#{resultsOutcome}"/>
                 </h:link>
             </p:column>
             <p:column headerText="# Complexes">
@@ -64,6 +65,7 @@
                     <f:param name="ac" value="#{molecule.ac}"/>
                     <f:param name="shortLabel" value="#{molecule.shortName}"/>
                     <f:param name="numComplexes" value="#{molecule.numberComplexes}"/>
+                    <f:param name="resultsOutcome" value="#{resultsOutcome}"/>
                 </h:link>
                 <h:outputText rendered="#{!complexSearchEnabled}"
                               value="#{molecule.numberComplexes}"/>
@@ -74,6 +76,7 @@
                     <f:param name="ac" value="#{molecule.ac}"/>
                     <f:param name="shortLabel" value="#{molecule.shortName}"/>
                     <f:param name="numMoleculeSets" value="#{molecule.numberMoleculeSets}"/>
+                    <f:param name="resultsOutcome" value="#{resultsOutcome}"/>
                 </h:link>
             </p:column>
 

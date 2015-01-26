@@ -21,7 +21,7 @@
     </ui:define>
 
     <ui:define name="content">
-        <h:link outcome="search" value="&lt;&lt; Back to the search results" />
+        <h:link outcome="#{resultsOutcome}" value="&lt;&lt; Back to the search results" />
         <br/>
         <br/>
 
@@ -33,9 +33,10 @@
             <p:tab title="Molecules (#{interactorOrganismController.interactors.rowCount})"
                    rendered="#{interactorOrganismController.interactors.rowCount != 0}">
 
-                <ui:include src="/curate/molecules_table.xhtml">
+                <ui:include src="molecules_table.xhtml">
                     <ui:param name="molecules" value="#{interactorOrganismController.interactors}"/>
                     <ui:param name="complexSearchEnabled" value="#{searchController.complexSearchEnabled}"/>
+                    <ui:param name="resultsOutcome" value="#{resultsOutCome}"/>
                 </ui:include>
 
             </p:tab>

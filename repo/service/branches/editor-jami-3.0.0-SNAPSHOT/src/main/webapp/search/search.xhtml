@@ -130,6 +130,7 @@ Results for query: <b>#{searchController.query}</b>
     <ui:include src="/search/molecules_table.xhtml">
         <ui:param name="molecules" value="#{searchController.molecules}"/>
         <ui:param name="complexSearchEnabled" value="#{searchController.complexSearchEnabled}"/>
+        <ui:param name="resultsOutcome" value="search"/>
     </ui:include>
 
 
@@ -210,6 +211,7 @@ Results for query: <b>#{searchController.query}</b>
                 <f:param name="ac" value="#{organism.ac}"/>
                 <f:param name="shortLabel" value="#{organism.commonName}"/>
                 <f:param name="numExperiments" value="#{organism.numberExperiments}"/>
+                <f:param name="resultsOutcome" value="search"/>
             </h:link>
         </p:column>
         <p:column headerText="Interactors by Organism">
@@ -219,6 +221,7 @@ Results for query: <b>#{searchController.query}</b>
                 <f:param name="ac" value="#{organism.ac}"/>
                 <f:param name="shortLabel" value="#{organism.commonName}"/>
                 <f:param name="numInteractors" value="#{organism.numberMolecules}"/>
+                <f:param name="resultsOutcome" value="search"/>
             </h:link>
         </p:column>
         <p:column headerText="Complexes by Organism">
@@ -228,6 +231,7 @@ Results for query: <b>#{searchController.query}</b>
                 <f:param name="ac" value="#{organism.ac}"/>
                 <f:param name="shortLabel" value="#{organism.commonName}"/>
                 <f:param name="numComplexes" value="#{organism.numberComplexes}"/>
+                <f:param name="resultsOutcome" value="search"/>
             </h:link>
             <h:outputText rendered="#{organism.numberComplexes > 0 and !searchController.complexSearchEnabled}"
                           value="#{organism.numberComplexes}"/>
