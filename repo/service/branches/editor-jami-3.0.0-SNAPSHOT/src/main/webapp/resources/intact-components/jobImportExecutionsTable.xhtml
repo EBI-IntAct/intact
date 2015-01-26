@@ -37,12 +37,6 @@
             </p:column>
             <p:column>
                 <f:facet name="header">
-                    <h:outputText value="Last updated"/>
-                </f:facet>
-                <h:outputText value="#{jobExecution.lastUpdated}"/>
-            </p:column>
-            <p:column>
-                <f:facet name="header">
                     <h:outputText value="Status"/>
                 </f:facet>
                 <h:outputText value="#{jobExecution.status}"/>
@@ -58,6 +52,15 @@
                     <h:outputText value="Parameters"/>
                 </f:facet>
                 <h:outputText value="#{jobExecution.jobParameters}"/>
+            </p:column>
+            <p:column>
+                <f:facet name="header">
+                    <h:outputText value="Statistics"/>
+                </f:facet>
+                <ui:repeat value="#{importJobController.getImportStatistics(jobExecution)}" var="mapEntry">
+                    <h:outputText value="#{mapEntry.key}: #{mapEntry.value}"/>
+                    <br/>
+                </ui:repeat>
             </p:column>
             <p:column>
                 <f:facet name="header">
@@ -79,11 +82,19 @@
                 <f:facet name="header">
                     <h:outputText value="Action"/>
                 </f:facet>
-                <h:commandLink value="Restart" actionListener="#{adminJobController.restart}">
-                    <f:param name="executionId" value="#{jobExecution.id}"/>
+                <h:commandLink value="View" action="/dbmanager/summary?faces-redirect=true" ajax="false">
+                    <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
                 </h:commandLink>
                 &#160;
-                <h:commandLink value="Stop" actionListener="#{adminJobController.stop}">
+                <h:commandLink value="Accept" action="/dbmanager/summary?faces-redirect=true" ajax="false">
+                    <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
+                </h:commandLink>
+                &#160;
+                <h:commandLink value="Reject" action="/dbmanager/summary?faces-redirect=true" ajax="false">
+                    <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
+                </h:commandLink>
+                &#160;
+                <h:commandLink value="Restart" actionListener="#{adminJobController.restart}">
                     <f:param name="executionId" value="#{jobExecution.id}"/>
                 </h:commandLink>
             </p:column>

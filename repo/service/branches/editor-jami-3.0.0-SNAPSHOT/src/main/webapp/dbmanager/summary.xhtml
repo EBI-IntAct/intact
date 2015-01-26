@@ -69,6 +69,7 @@ Results for import: <b>#{jobSummaryController.query}</b>
     <ui:include src="/search/molecules_table.xhtml">
         <ui:param name="molecules" value="#{jobSummaryController.molecules}"/>
         <ui:param name="complexSearchEnabled" value="#{jobSummaryController.complexSearchEnabled}"/>
+        <ui:param name="resultsOutcome" value="/dbmanager/summary"/>
     </ui:include>
 
 
@@ -140,6 +141,7 @@ Results for import: <b>#{jobSummaryController.query}</b>
                 <f:param name="ac" value="#{organism.ac}"/>
                 <f:param name="shortLabel" value="#{organism.commonName}"/>
                 <f:param name="numParticipants" value="#{organism.numberParticipants}"/>
+                <f:param name="resultsOutcome" value="/dbmanager/summary"/>
             </h:link>
         </p:column>
         <p:column headerText="Experiments by Host Organism">
@@ -149,6 +151,7 @@ Results for import: <b>#{jobSummaryController.query}</b>
                 <f:param name="ac" value="#{organism.ac}"/>
                 <f:param name="shortLabel" value="#{organism.commonName}"/>
                 <f:param name="numExperiments" value="#{organism.numberExperiments}"/>
+                <f:param name="resultsOutcome" value="/dbmanager/summary"/>
             </h:link>
         </p:column>
         <p:column headerText="Interactors by Organism">
@@ -158,6 +161,7 @@ Results for import: <b>#{jobSummaryController.query}</b>
                 <f:param name="ac" value="#{organism.ac}"/>
                 <f:param name="shortLabel" value="#{organism.commonName}"/>
                 <f:param name="numInteractors" value="#{organism.numberMolecules}"/>
+                <f:param name="resultsOutcome" value="/dbmanager/summary"/>
             </h:link>
         </p:column>
         <p:column headerText="Complexes by Organism">
@@ -167,6 +171,7 @@ Results for import: <b>#{jobSummaryController.query}</b>
                 <f:param name="ac" value="#{organism.ac}"/>
                 <f:param name="shortLabel" value="#{organism.commonName}"/>
                 <f:param name="numComplexes" value="#{organism.numberComplexes}"/>
+                <f:param name="resultsOutcome" value="/dbmanager/summary"/>
             </h:link>
             <h:outputText rendered="#{organism.numberComplexes > 0 and !jobSummaryController.complexSearchEnabled}"
                           value="#{organism.numberComplexes}"/>
