@@ -84,7 +84,6 @@
                 <property name="port" value="${intact.notification.email.smtpPort}"/>
             </bean>
         </property>
-        <property name="recipientAddresses" value="${intact.notification.email.recipients}"/>
         <property name="senderAddress" value="${intact.notification.email.sender}"/>
     </bean>
 
