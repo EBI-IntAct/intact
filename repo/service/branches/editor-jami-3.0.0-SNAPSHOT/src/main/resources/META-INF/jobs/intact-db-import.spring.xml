@@ -112,7 +112,7 @@
           lazy-init="true" scope="prototype">
         <property name="intactService" ref="complexService"/>
     </bean>
-    <bean id="interactionMixImporter" class="uk.ac.ebi.intact.dataexchange.dbimporter.writer.IntactInteractionMixDbImporter" lazy-init="true"
+    <bean id="interactionMixImporter" class="uk.ac.ebi.intact.editor.batch.admin.EditorMixDbImporter" lazy-init="true"
             scope="prototype"/>
 
     <!-- Basic Step configuration -->
