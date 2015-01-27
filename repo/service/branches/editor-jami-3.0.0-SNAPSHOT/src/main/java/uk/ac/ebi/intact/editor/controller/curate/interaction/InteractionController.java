@@ -607,6 +607,12 @@ public class InteractionController extends AnnotatedObjectController {
         updateShortLabel(this.interaction);
     }
 
+    public void refreshShortLabel(ActionEvent evt) {
+        if (interaction != null && !interaction.getParticipants().isEmpty()) {
+            updateShortLabel();
+        }
+    }
+
     private void updateShortLabel(IntactInteractionEvidence interaction) {
 
         if (interaction.getParticipants().isEmpty()){
@@ -618,7 +624,8 @@ public class InteractionController extends AnnotatedObjectController {
         interaction.setShortName(shortLabel);
         // synchronize with db
         getEditorService().synchronizeInteractionShortLabel(interaction);
-        if (oldLabel == null || !oldLabel.equals(shortLabel)){
+        if (oldLabel == null || !oldLabel.equals(interaction.getShortName())){
+            addInfoMessage("ShortLabel updated","Interaction label updated");
             Collection<String> parentsCs = new ArrayList<String>();
             if (interaction.getExperiment() != null && ((IntactExperiment)interaction.getExperiment()).getAc() != null){
                 parentsCs.add(((IntactExperiment)interaction.getExperiment()).getAc());
