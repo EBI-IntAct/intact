@@ -8,7 +8,7 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ia="http://java.sun.com/jsf/composite/intact-components">
 
-    <h:panelGroup>
+    <h:panelGroup id="featuresPanel1">
 
         <ui:param name="featuresToDeleteCount" value="#{changesController.getDeletedAcsByClassName('uk.ac.ebi.intact.jami.model.extension.IntactFeatureEvidence', participantController.ac).size()}"/>
 
@@ -33,7 +33,7 @@
                                      modal="true"
                                      header="Feature deletion" severity="alert" widgetVar="confirmation">
 
-                        <p:commandButton value="Yes Sure" update=":editorForm:messagesComponent :editorForm:participantTabs:featuresPanel :editorForm:changesPanel :editorForm:unsavedChangesInfo"
+                        <p:commandButton value="Yes Sure" update=":editorForm:messagesComponent :editorForm:participantTabs:featuresPanel1 :editorForm:changesPanel :editorForm:unsavedChangesInfo"
                                          oncomplete="confirmation.hide()"
                                          actionListener="#{participantController.deleteSelectedFeatures}"/>
                         <p:commandButton value="Not Yet" onclick="confirmation.hide()" type="button"/>

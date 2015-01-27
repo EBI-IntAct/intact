@@ -184,7 +184,7 @@ Results for import: <b>#{jobSummaryController.query}</b>
 <p:tab title="Features (#{jobSummaryController.features.rowCount})"
        rendered="#{jobSummaryController.publicationSearchEnabled and jobSummaryController.features != null and jobSummaryController.features.rowCount != 0}">
 
-    <ui:include src="/curate/features_table.xhtml">
+    <ui:include src="/search/features_table.xhtml">
         <ui:param name="features" value="#{jobSummaryController.features}"/>
         <ui:param name="slug" value="feature"/>
     </ui:include>
@@ -194,7 +194,7 @@ Results for import: <b>#{jobSummaryController.query}</b>
 <p:tab title="Participants (#{jobSummaryController.participants.rowCount})"
        rendered="#{jobSummaryController.publicationSearchEnabled and jobSummaryController.participants != null and jobSummaryController.participants.rowCount != 0}">
 
-    <ui:include src="/curate/participants_table.xhtml">
+    <ui:include src="/search/participants_table.xhtml">
         <ui:param name="participants" value="#{jobSummaryController.participants}"/>
     </ui:include>
 
@@ -215,7 +215,7 @@ Results for import: <b>#{jobSummaryController.query}</b>
 <p:tab title="Complex Features (#{jobSummaryController.modelledFeatures.rowCount})"
        rendered="#{jobSummaryController.complexSearchEnabled and jobSummaryController.modelledFeatures != null and jobSummaryController.modelledFeatures.rowCount != 0}">
 
-    <ui:include src="/curate/features_table.xhtml">
+    <ui:include src="/search/features_table.xhtml">
         <ui:param name="features" value="#{jobSummaryController.modelledFeatures}"/>
         <ui:param name="slug" value="cfeature"/>
     </ui:include>
