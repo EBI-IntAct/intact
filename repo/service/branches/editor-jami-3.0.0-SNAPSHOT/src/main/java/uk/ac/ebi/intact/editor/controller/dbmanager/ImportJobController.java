@@ -231,7 +231,7 @@ public class ImportJobController extends BaseController {
         return new ArrayList<Throwable>( jobExecution.getAllFailureExceptions() );
     }
 
-    public Map<String,String> getImportStatistics( JobExecution jobExecution ) {
+    public List<Map.Entry<String,String>> getImportStatistics( JobExecution jobExecution ) {
         Collection<StepExecution> stepExecutions = jobExecution.getStepExecutions();
         Map<String,String> statistics = new HashMap<String, String>();
         if (!stepExecutions.isEmpty()){
@@ -241,11 +241,11 @@ public class ImportJobController extends BaseController {
             for (Map.Entry<String, Object> entry : stepContext.entrySet()){
                 // persisted count
                 if (entry.getKey().startsWith(AbstractIntactDbImporter.PERSIST_MAP_COUNT)){
-                    statistics.put(entry.getKey().substring(entry.getKey().lastIndexOf("_")+1), Integer.toString((Integer)entry.getValue()));
+                    statistics.put(entry.getKey().substring(entry.getKey().lastIndexOf(".")+1), Integer.toString((Integer)entry.getValue()));
                 }
             }
         }
-        return statistics;
+        return new ArrayList<Map.Entry<String, String>>(statistics.entrySet());
     }
 
     public boolean hasJobFailed( JobExecution jobExecution ) {
