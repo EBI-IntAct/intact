@@ -20,7 +20,8 @@ public class PublicationSummary {
     private String owner;
     private String reviewer;
     private String status;
-
+    private String firstAuthor;
+    private String year;
 
     public String getPubmedId() {
         return pubmedId;
@@ -108,5 +109,21 @@ public class PublicationSummary {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getFirstAuthor() {
+        return firstAuthor;
+    }
+
+    public void setFirstAuthor(String firstAuthor) {
+        this.firstAuthor = firstAuthor;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
     }
 }

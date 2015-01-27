@@ -34,6 +34,7 @@ import uk.ac.ebi.intact.jami.service.PublicationService;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
 import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
+import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -170,6 +171,12 @@ public class PublicationSummaryService extends AbstractEditorService implements 
         summary.setCaution(caution != null ? caution.getValue() : null);
         Annotation internal = AnnotationUtils.collectFirstAnnotationWithTopic(pub.getAnnotations(), null, "remark-internal");
         summary.setInternalRemark(internal != null ? internal.getValue() : null);
+        if (!pub.getAuthors().isEmpty()){
+            summary.setFirstAuthor(pub.getAuthors().get(0)+" et al.");
+        }
+        if (pub.getPublicationDate() != null){
+            summary.setYear(IntactUtils.YEAR_FORMAT.format(pub.getPublicationDate()));
+        }
         return summary;
     }
 
