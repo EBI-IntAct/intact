@@ -104,15 +104,16 @@
     </bean>
 
     <!-- writers -->
-    <bean id="interactionEvidenceImporter" class="uk.ac.ebi.intact.dataexchange.dbimporter.writer.IntactDbImporter"
-          lazy-init="true">
+    <bean id="interactionEvidenceImporter" class="uk.ac.ebi.intact.editor.batch.admin.EditorDbImporter"
+          lazy-init="true" scope="prototype">
         <property name="intactService" ref="interactionEvidenceService"/>
     </bean>
-    <bean id="complexImporter" class="uk.ac.ebi.intact.dataexchange.dbimporter.writer.IntactDbImporter"
-          lazy-init="true">
+    <bean id="complexImporter" class="uk.ac.ebi.intact.editor.batch.admin.EditorDbImporter"
+          lazy-init="true" scope="prototype">
         <property name="intactService" ref="complexService"/>
     </bean>
-    <bean id="interactionMixImporter" class="uk.ac.ebi.intact.dataexchange.dbimporter.writer.IntactInteractionMixDbImporter" lazy-init="true"/>
+    <bean id="interactionMixImporter" class="uk.ac.ebi.intact.dataexchange.dbimporter.writer.IntactInteractionMixDbImporter" lazy-init="true"
+            scope="prototype"/>
 
     <!-- Basic Step configuration -->
 
@@ -165,6 +166,7 @@
             <batch:listeners>
                 <batch:listener ref="temporaryFileDeleter"/>
                 <batch:listener ref="mailStepListener"/>
+                <batch:listener ref="complexImporter"/>
             </batch:listeners>
         </batch:step>
     </batch:job>
@@ -179,6 +181,7 @@
             <batch:listeners>
                 <batch:listener ref="temporaryFileDeleter"/>
                 <batch:listener ref="mailStepListener"/>
+                <batch:listener ref="interactionMixImporter"/>
             </batch:listeners>
         </batch:step>
     </batch:job>

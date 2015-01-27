@@ -78,7 +78,8 @@ public class DbImportController extends BaseController {
 
                     getIntactJobLauncher().run((Job) ApplicationContextProvider.getBean("interactionMixImport"),
                             builder.addString("MIJobId", jobId).addString("input.file", files[0].getAbsolutePath())
-                                    .addString("error.file", files[1].getAbsolutePath()).addString("email.recipient", eMail).toJobParameters()
+                                    .addString("error.file", files[1].getAbsolutePath()).addString("email.recipient", eMail)
+                                    .addString("user.login", user.getLogin()).toJobParameters()
                     );
 
                     addInfoMessage( "Job started", "Job ID: " + jobId );
