@@ -20,6 +20,8 @@ import psidev.psi.mi.jami.enricher.CvTermEnricher;
 import psidev.psi.mi.jami.enricher.exception.EnricherException;
 import psidev.psi.mi.jami.enricher.listener.CvTermEnricherListener;
 import psidev.psi.mi.jami.model.CvTerm;
+import uk.ac.ebi.intact.dataexchange.enricher.standard.AbstractCvObjectEnricher;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.model.extension.CvTermAnnotation;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
@@ -65,6 +67,10 @@ public class EditorCvObjectEnricher implements CvTermEnricher<CvTerm> {
 
     @Override
     public void enrich(CvTerm object) throws EnricherException {
+        if (intactCvObjectEnricher instanceof AbstractCvObjectEnricher){
+            ((AbstractCvObjectEnricher)intactCvObjectEnricher).setCvEnricher((CvTermEnricher<CvTerm>)ApplicationContextProvider.getBean("simpleEditorMiEnricher"));
+        }
+
         intactCvObjectEnricher.enrich(object);
 
         if (getImportTag() != null && object != null){
@@ -84,6 +90,10 @@ public class EditorCvObjectEnricher implements CvTermEnricher<CvTerm> {
 
     @Override
     public void enrich(CvTerm objectToEnrich, CvTerm objectSource) throws EnricherException {
+        if (intactCvObjectEnricher instanceof AbstractCvObjectEnricher){
+            ((AbstractCvObjectEnricher)intactCvObjectEnricher).setCvEnricher((CvTermEnricher<CvTerm>)ApplicationContextProvider.getBean("simpleEditorMiEnricher"));
+        }
+
         intactCvObjectEnricher.enrich(objectToEnrich);
 
         if (getImportTag() != null && objectToEnrich != null){
