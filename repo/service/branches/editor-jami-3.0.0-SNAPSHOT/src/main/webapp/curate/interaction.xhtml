@@ -106,6 +106,12 @@
                              required="true" requiredMessage="Shortlabel is required">
                     <p:ajax event="change" update=":editorForm:messagesComponent,:editorForm:changesPanel,:editorForm:unsavedChangesInfo" async="true" process="@this" oncomplete="markAsUnsaved()"/>
                 </p:inputText>
+                <p:commandButton id="refreshLabelBtn" value="Refresh shortlabel"
+                                 actionListener="#{interactionController.refreshShortLabel}" async="true"
+                                 process="shortlabelTxt"
+                                 onclick="loadDialog.show()"
+                                 oncomplete="loadDialog.hide()"
+                                 update=":editorForm:basic,:editorForm:changesPanel,:editorForm:messagesComponent,:editorForm:unsavedChangesInfo"/>
             </td>
             <td style="padding-left: 50px;">
                 <h:outputLabel value="AC: " for="acTxt" styleClass="intact-disabled"/>
