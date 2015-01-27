@@ -72,14 +72,16 @@ public class DbImportController extends BaseController {
                     this.jobId = "interactionMixImport_"+System.currentTimeMillis();
                     String eMail = "intact-dev@ebi.ac.uk";
                     User user = userSessionController.getCurrentUser();
+                    String userLogin = null;
                     if (user != null && user.getEmail() != null){
                         eMail = user.getEmail();
+                        userLogin = user.getLogin();
                     }
 
                     getIntactJobLauncher().run((Job) ApplicationContextProvider.getBean("interactionMixImport"),
                             builder.addString("MIJobId", jobId).addString("input.file", files[0].getAbsolutePath())
                                     .addString("error.file", files[1].getAbsolutePath()).addString("email.recipient", eMail)
-                                    .addString("user.login", user.getLogin()).toJobParameters()
+                                    .addString("user.login", userLogin).toJobParameters()
                     );
 
                     addInfoMessage( "Job started", "Job ID: " + jobId );
@@ -121,13 +123,16 @@ public class DbImportController extends BaseController {
                     this.jobId = "complexImport_"+System.currentTimeMillis();
                     String eMail = "intact-dev@ebi.ac.uk";
                     User user = userSessionController.getCurrentUser();
+                    String userLogin = null;
                     if (user != null && user.getEmail() != null){
                         eMail = user.getEmail();
+                        userLogin = user.getLogin();
                     }
 
                     getIntactJobLauncher().run((Job)ApplicationContextProvider.getBean("complexImport"),
                             builder.addString("MIJobId", jobId).addString("input.file", files[0].getAbsolutePath())
-                                    .addString("error.file", files[1].getAbsolutePath()).addString("email.recipient", eMail).toJobParameters());
+                                    .addString("error.file", files[1].getAbsolutePath()).addString("email.recipient", eMail)
+                                    .addString("user.login", userLogin).toJobParameters());
                     addInfoMessage( "Job started", "Job ID: " + jobId );
                 } catch ( JobParametersInvalidException e ) {
                     addErrorMessage( "Invalid job parameters", "Job Param: " + "input.file="+files[0].getAbsolutePath()+"error.file"+files[1].getAbsolutePath() );
