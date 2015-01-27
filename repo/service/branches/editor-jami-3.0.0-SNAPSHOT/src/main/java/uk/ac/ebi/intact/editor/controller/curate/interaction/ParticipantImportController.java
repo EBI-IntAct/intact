@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import psidev.psi.mi.jami.model.CvTerm;
+import psidev.psi.mi.jami.model.Feature;
+import psidev.psi.mi.jami.model.FeatureEvidence;
 import psidev.psi.mi.jami.model.Organism;
 import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
@@ -116,6 +118,11 @@ public class ParticipantImportController extends AbstractParticipantImportContro
         }
         if (!cvIdentifications.isEmpty()) {
             component.getIdentificationMethods().addAll(cvIdentifications);
+        }
+
+        // add cloned features
+        for (Feature f : candidate.getClonedFeatures()){
+            component.addFeature((FeatureEvidence)f);
         }
 
         return component;

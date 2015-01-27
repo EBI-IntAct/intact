@@ -1,9 +1,6 @@
 package uk.ac.ebi.intact.editor.controller.curate.interaction;
 
-import psidev.psi.mi.jami.model.Interactor;
-import psidev.psi.mi.jami.model.Organism;
-import psidev.psi.mi.jami.model.Protein;
-import psidev.psi.mi.jami.model.Xref;
+import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.comparator.interactor.UnambiguousExactInteractorComparator;
 import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
 
@@ -24,6 +21,7 @@ public class ImportCandidate {
     private String source;
     private IntactInteractor interactor;
     private Protein uniprotProtein;
+    private List<Feature> clonedFeatures=new ArrayList<Feature>();
 
     public ImportCandidate(String query, IntactInteractor interactor) {
         this.query = query;
@@ -127,6 +125,10 @@ public class ImportCandidate {
 
     public boolean isChain() {
         return uniprotProtein != null && (uniprotProtein.getUniprotkb().contains("-PRO"));
+    }
+
+    public List<Feature> getClonedFeatures() {
+        return clonedFeatures;
     }
 
     @Override
