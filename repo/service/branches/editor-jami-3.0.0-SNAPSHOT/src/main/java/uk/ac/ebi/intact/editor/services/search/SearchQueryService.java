@@ -604,7 +604,7 @@ public class SearchQueryService extends AbstractEditorService {
 
         LazyDataModel<FeatureSummary> features = LazyDataModelFactory.createLazyDataModel( featureEvidenceSummaryService,
 
-                "select distinct f " +
+                "select distinct i " +
                         "from IntactFeatureEvidence i join i.annotations as a " +
                         "where a.value = :query and a.topic.shortName = :remark) ",
                 "select count(distinct i) " +
