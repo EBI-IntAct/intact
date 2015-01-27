@@ -339,6 +339,10 @@ public class InteractionController extends AnnotatedObjectController {
         if (this.interaction.getExperiment() != null){
             getEditorService().detachObject((IntactExperiment)this.interaction.getExperiment());
         }
+        // update shortlabel if new interaction
+        if (this.interaction.getAc() == null){
+            updateShortLabel();
+        }
     }
 
     public void markParticipantToDelete(IntactParticipantEvidence component) {
