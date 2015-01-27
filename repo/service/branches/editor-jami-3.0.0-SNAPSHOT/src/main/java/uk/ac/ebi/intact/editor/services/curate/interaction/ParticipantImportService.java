@@ -29,6 +29,8 @@ import psidev.psi.mi.jami.bridges.uniprot.UniprotGeneFetcher;
 import psidev.psi.mi.jami.bridges.uniprot.UniprotProteinFetcher;
 import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.XrefUtils;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.FeatureEvidenceCloner;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.ModelledFeatureCloner;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.CandidateType;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.ImportCandidate;
 import uk.ac.ebi.intact.editor.controller.curate.util.CheckIdentifier;
@@ -145,13 +147,13 @@ public class ParticipantImportService extends AbstractEditorService {
                 Participant component = getIntactDao().getParticipantEvidenceDao().getByAc(participantToImport);
 
                 if (component != null) {
-                    candidates.add(toImportCandidate(participantToImport, (IntactInteractor)component.getInteractor()));
+                    candidates.add(toImportCandidate(participantToImport, (IntactParticipantEvidence)component));
                 }
 
                 component = getIntactDao().getModelledParticipantDao().getByAc(participantToImport);
 
                 if (component != null) {
-                    candidates.add(toImportCandidate(participantToImport, (IntactInteractor)component.getInteractor()));
+                    candidates.add(toImportCandidate(participantToImport, (IntactModelledParticipant)component));
                 }
             }
         } else {
@@ -259,6 +261,34 @@ public class ParticipantImportService extends AbstractEditorService {
 
             candidate.setPrimaryAcs(ids);
             candidate.setSecondaryAcs(secondaryAcs);
+        }
+
+        return candidate;
+    }
+
+    private ImportCandidate toImportCandidate(String participantToImport, IntactParticipantEvidence p) {
+        IntactInteractor interactor = (IntactInteractor)p.getInteractor();
+        ImportCandidate candidate = toImportCandidate(participantToImport, interactor);
+
+        if (!p.getFeatures().isEmpty()){
+            FeatureEvidenceCloner cloner = new FeatureEvidenceCloner();
+            for (FeatureEvidence f : p.getFeatures()){
+                candidate.getClonedFeatures().add(cloner.clone(f, getIntactDao()));
+            }
+        }
+
+        return candidate;
+    }
+
+    private ImportCandidate toImportCandidate(String participantToImport, IntactModelledParticipant p) {
+        IntactInteractor interactor = (IntactInteractor)p.getInteractor();
+        ImportCandidate candidate = toImportCandidate(participantToImport, interactor);
+
+        if (!p.getFeatures().isEmpty()){
+            ModelledFeatureCloner cloner = new ModelledFeatureCloner();
+            for (ModelledFeature f : p.getFeatures()){
+                candidate.getClonedFeatures().add(cloner.clone(f, getIntactDao()));
+            }
         }
 
         return candidate;

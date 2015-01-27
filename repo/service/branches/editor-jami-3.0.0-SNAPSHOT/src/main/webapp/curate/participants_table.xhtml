@@ -33,6 +33,18 @@
             <ui:param name="participant" value="#{wrapper.participant}" />
             <ui:param name="interactor" value="#{participant.interactor}" />
 
+            <p:column id="ac" headerText="AC"
+                      sortBy="#{participant.ac}"
+                      filterBy="#{participant.ac}"
+                      filterMatchMode="contains">
+                <h:panelGroup rendered="#{not changesController.isDeletedAc(participant.ac)}">
+                    <h:outputText value="#{participant.ac}" styleClass="#{participant.ac == null? 'intact-new' :''}"/>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{changesController.isDeletedAc(participant.ac)}">
+                    <h:outputText value="#{participant.ac}" styleClass="intact-deleted"/>
+                </h:panelGroup>
+            </p:column>
+
             <p:column id="shortLabel" headerText="Name"
                       sortBy="#{interactor.shortName}"
                       filterBy="#{interactor.shortName}"
