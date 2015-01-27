@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.jami.model.extension.*;
+import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import java.util.Collection;
 
@@ -176,7 +177,7 @@ public class InteractionEditorService extends AbstractEditorService {
         IntactInteractionEvidence reloaded = reattachIntactObjectIfTransient(interaction, getIntactDao().getInteractionDao());
 
         // initialise experiment
-        initialiseExperiment((IntactExperiment)reloaded.getExperiment());
+        initialiseExperiment((IntactExperiment) reloaded.getExperiment());
         // initialise annotations because needs caution
         initialiseAnnotations(reloaded.getDbAnnotations());
         // initialise xrefs because of imex
@@ -209,6 +210,26 @@ public class InteractionEditorService extends AbstractEditorService {
         return reloaded;
     }
 
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public String computesShortLabel(IntactInteractionEvidence evidence) {
+        IntactInteractionEvidence reloaded = reattachIntactObjectIfTransient(evidence, getIntactDao().getInteractionDao());
+
+        String shortLabel = IntactUtils.generateAutomaticInteractionEvidenceShortlabelFor(reloaded, IntactUtils.MAX_SHORT_LABEL_LEN);
+
+        getIntactDao().getEntityManager().detach(reloaded);
+
+        return shortLabel;
+    }
+
+    private void initialiseParticipantAliases(Collection<ParticipantEvidence> participants) {
+        for (ParticipantEvidence p : participants){
+            if (p.getInteractor() instanceof IntactInteractor
+                    && !((IntactInteractor)p.getInteractor()).areAliasesInitialized()){
+                initialiseAliases(((IntactInteractor) p.getInteractor()).getAliases());
+            }
+        }
+    }
+
     private void initialiseXrefs(Collection<Xref> xrefs) {
         for (Xref ref : xrefs){
             Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbAnnotations());
@@ -226,27 +247,18 @@ public class InteractionEditorService extends AbstractEditorService {
         }
     }
 
-    private void initialiseCv(CvTerm cv) {
-        initialiseAnnotations(((IntactCvTerm)cv).getDbAnnotations());
-        initialiseXrefs(((IntactCvTerm)cv).getDbXrefs());
-    }
-
     private void initialiseAliases(Collection<Alias> aliases) {
-        for (Alias alias : aliases){
-            if (alias.getType() != null){
-                Hibernate.initialize(((IntactCvTerm)alias.getType()).getDbXrefs());
+        for (Alias al : aliases){
+            if (al.getType() != null){
+                Hibernate.initialize(((IntactCvTerm)al.getType()).getDbAnnotations());
+                Hibernate.initialize(((IntactCvTerm)al.getType()).getDbXrefs());
             }
         }
     }
 
-    private void initialiseInteractorMembers(Collection<Interactor> interactors) {
-         for (Interactor interactor : interactors){
-             initialiseXrefs(((IntactInteractor)interactor).getDbXrefs());
-         }
-    }
-
-    private void initialiseSequence(IntactPolymer interactor) {
-         interactor.getSequence();
+    private void initialiseCv(CvTerm cv) {
+        initialiseAnnotations(((IntactCvTerm)cv).getDbAnnotations());
+        initialiseXrefs(((IntactCvTerm)cv).getDbXrefs());
     }
 
     private void initialiseParameters(Collection<Parameter> parameters) {
