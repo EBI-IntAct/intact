@@ -23,7 +23,7 @@ import psidev.psi.mi.jami.enricher.listener.OrganismEnricherListener;
 import psidev.psi.mi.jami.model.Alias;
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Organism;
-import uk.ac.ebi.intact.jami.dao.IntactDao;
+import uk.ac.ebi.intact.editor.services.enricher.DbEnricherService;
 import uk.ac.ebi.intact.jami.model.extension.OrganismAlias;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
@@ -40,8 +40,8 @@ public class EditorOrganismEnricher implements OrganismEnricher {
     @Resource(name = "editorCvObjectEnricher")
     private CvTermEnricher<CvTerm> editorOlsEnricher;
     private String importTag;
-    @Resource(name = "intactDao")
-    private IntactDao intactDao;
+    @Resource(name = "dbEnricherService")
+    private DbEnricherService dbEnricherService;
 
     @Override
     public OrganismFetcher getOrganismFetcher() {
@@ -76,7 +76,7 @@ public class EditorOrganismEnricher implements OrganismEnricher {
 
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
-            if (intactDao.getSynchronizerContext().getOrganismSynchronizer().findAllMatchingAcs(object).isEmpty()){
+            if (dbEnricherService.isNewOrganism(object)){
                 object.getAliases().add(new OrganismAlias(IntactUtils.createMIAliasType(Alias.SYNONYM, Alias.SYNONYM_MI), getImportTag()));
             }
         }
@@ -97,7 +97,7 @@ public class EditorOrganismEnricher implements OrganismEnricher {
 
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
-            if (intactDao.getSynchronizerContext().getOrganismSynchronizer().findAllMatchingAcs(object).isEmpty()){
+            if (dbEnricherService.isNewOrganism(object)){
                 object.getAliases().add(new OrganismAlias(IntactUtils.createMIAliasType(Alias.SYNONYM, Alias.SYNONYM_MI), getImportTag()));
             }
         }

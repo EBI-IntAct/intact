@@ -21,7 +21,7 @@ import psidev.psi.mi.jami.enricher.SourceEnricher;
 import psidev.psi.mi.jami.enricher.exception.EnricherException;
 import psidev.psi.mi.jami.enricher.listener.PublicationEnricherListener;
 import psidev.psi.mi.jami.model.Publication;
-import uk.ac.ebi.intact.jami.dao.IntactDao;
+import uk.ac.ebi.intact.editor.services.enricher.DbEnricherService;
 import uk.ac.ebi.intact.jami.model.extension.PublicationAnnotation;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
@@ -34,8 +34,8 @@ import java.util.Collection;
  */
 public class EditorPublicationEnricher implements CuratedPublicationEnricher {
 
-    @Resource(name = "intactDao")
-    private IntactDao intactDao;
+    @Resource(name = "dbEnricherService")
+    private DbEnricherService dbEnricherService;
     @Resource(name = "intactPublicationEnricher")
     private CuratedPublicationEnricher intactPublicationEnricher;
     @Resource(name = "editorSourceEnricher")
@@ -66,7 +66,7 @@ public class EditorPublicationEnricher implements CuratedPublicationEnricher {
 
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
-            if (intactDao.getSynchronizerContext().getPublicationSynchronizer().findAllMatchingAcs(object).isEmpty()){
+            if (dbEnricherService.isNewPublication(object)){
                 object.getAnnotations().add(new PublicationAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
@@ -88,7 +88,7 @@ public class EditorPublicationEnricher implements CuratedPublicationEnricher {
 
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
-            if (intactDao.getSynchronizerContext().getPublicationSynchronizer().findAllMatchingAcs(object).isEmpty()){
+            if (dbEnricherService.isNewPublication(object)){
                 object.getAnnotations().add(new PublicationAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }

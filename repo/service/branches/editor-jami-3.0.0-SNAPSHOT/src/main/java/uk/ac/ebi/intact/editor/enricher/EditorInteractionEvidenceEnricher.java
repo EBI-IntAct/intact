@@ -22,7 +22,7 @@ import psidev.psi.mi.jami.enricher.exception.EnricherException;
 import psidev.psi.mi.jami.enricher.listener.InteractionEnricherListener;
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.InteractionEvidence;
-import uk.ac.ebi.intact.jami.dao.IntactDao;
+import uk.ac.ebi.intact.editor.services.enricher.DbEnricherService;
 import uk.ac.ebi.intact.jami.model.extension.InteractionAnnotation;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
@@ -35,8 +35,8 @@ import java.util.Collection;
  */
 public class EditorInteractionEvidenceEnricher implements InteractionEvidenceEnricher {
 
-    @Resource(name = "intactDao")
-    private IntactDao intactDao;
+    @Resource(name = "dbEnricherService")
+    private DbEnricherService dbEnricherService;
     @Resource(name = "intactInteractionEvidenceEnricher")
     private InteractionEvidenceEnricher intactInteractionEvidenceEnricher;
     @Resource(name = "editorExperimentEnricher")
@@ -98,7 +98,7 @@ public class EditorInteractionEvidenceEnricher implements InteractionEvidenceEnr
 
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
-            if (intactDao.getSynchronizerContext().getInteractionSynchronizer().findAllMatchingAcs(object).isEmpty()){
+            if (dbEnricherService.isNewInteractionEvidence(object)){
                 object.getAnnotations().add(new InteractionAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
@@ -121,7 +121,7 @@ public class EditorInteractionEvidenceEnricher implements InteractionEvidenceEnr
 
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
-            if (intactDao.getSynchronizerContext().getInteractionSynchronizer().findAllMatchingAcs(object).isEmpty()){
+            if (dbEnricherService.isNewInteractionEvidence(object)){
                 object.getAnnotations().add(new InteractionAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }

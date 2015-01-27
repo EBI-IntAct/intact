@@ -21,7 +21,7 @@ import psidev.psi.mi.jami.enricher.SourceEnricher;
 import psidev.psi.mi.jami.enricher.exception.EnricherException;
 import psidev.psi.mi.jami.enricher.listener.CvTermEnricherListener;
 import psidev.psi.mi.jami.model.Source;
-import uk.ac.ebi.intact.jami.dao.IntactDao;
+import uk.ac.ebi.intact.editor.services.enricher.DbEnricherService;
 import uk.ac.ebi.intact.jami.model.extension.SourceAnnotation;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
@@ -36,8 +36,8 @@ public class EditorSourceEnricher implements SourceEnricher{
 
     @Resource(name = "intactInstitutionEnricher")
     private SourceEnricher intactInstitutionEnricher;
-    @Resource(name = "intactDao")
-    private IntactDao intactDao;
+    @Resource(name = "dbEnricherService")
+    private DbEnricherService dbEnricherService;
 
     @Override
     public PublicationEnricher getPublicationEnricher() {
@@ -71,7 +71,7 @@ public class EditorSourceEnricher implements SourceEnricher{
 
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
-            if (intactDao.getSynchronizerContext().getSourceSynchronizer().findAllMatchingAcs(object).isEmpty()){
+            if (dbEnricherService.isNewCvTerm(object)){
                 object.getAnnotations().add(new SourceAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
@@ -90,7 +90,7 @@ public class EditorSourceEnricher implements SourceEnricher{
 
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
-            if (intactDao.getSynchronizerContext().getSourceSynchronizer().findAllMatchingAcs(object).isEmpty()){
+            if (dbEnricherService.isNewCvTerm(object)){
                 object.getAnnotations().add(new SourceAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }

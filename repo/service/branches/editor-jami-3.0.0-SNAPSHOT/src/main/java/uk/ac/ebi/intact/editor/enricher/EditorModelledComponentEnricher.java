@@ -24,7 +24,7 @@ import psidev.psi.mi.jami.enricher.listener.EntityEnricherListener;
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.ModelledFeature;
 import psidev.psi.mi.jami.model.ModelledParticipant;
-import uk.ac.ebi.intact.jami.dao.IntactDao;
+import uk.ac.ebi.intact.editor.services.enricher.DbEnricherService;
 import uk.ac.ebi.intact.jami.model.extension.ModelledParticipantAnnotation;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
@@ -37,8 +37,8 @@ import java.util.Collection;
 public class EditorModelledComponentEnricher implements psidev.psi.mi.jami.enricher.ParticipantEnricher<ModelledParticipant, ModelledFeature> {
     @Resource(name = "intactModelledParticipantEnricher")
     private ParticipantEnricher<ModelledParticipant, ModelledFeature> intactModelledParticipantEnricher;
-    @Resource(name = "intactDao")
-    private IntactDao intactDao;
+    @Resource(name = "dbEnricherService")
+    private DbEnricherService dbEnricherService;
     @Resource(name = "editorMiEnricher")
     private CvTermEnricher<CvTerm> editorMiEnricher;
     @Resource(name = "editorModelledFeatureEnricher")
@@ -99,12 +99,12 @@ public class EditorModelledComponentEnricher implements psidev.psi.mi.jami.enric
 
         if (getImportTag() != null && objectToEnrich != null){
             // check if object exists in database before adding a tag
-            if (intactDao.getSynchronizerContext().getModelledParticipantSynchronizer().findAllMatchingAcs(objectToEnrich).isEmpty()){
+            if (dbEnricherService.isNewModelledParticipant(objectToEnrich)){
                 objectToEnrich.getAnnotations().add(new ModelledParticipantAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
 
             // check interactor
-            if (intactDao.getSynchronizerContext().getInteractorSynchronizer().findAllMatchingAcs(objectToEnrich.getInteractor()).isEmpty()){
+            if (dbEnricherService.isNewInteractor(objectToEnrich.getInteractor())){
                 objectToEnrich.getInteractor().getAnnotations().add(new ModelledParticipantAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
@@ -126,12 +126,12 @@ public class EditorModelledComponentEnricher implements psidev.psi.mi.jami.enric
 
         if (getImportTag() != null && objectToEnrich != null){
             // check if object exists in database before adding a tag
-            if (intactDao.getSynchronizerContext().getModelledParticipantSynchronizer().findAllMatchingAcs(objectToEnrich).isEmpty()){
+            if (dbEnricherService.isNewModelledParticipant(objectToEnrich)){
                 objectToEnrich.getAnnotations().add(new ModelledParticipantAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
 
             // check interactor
-            if (intactDao.getSynchronizerContext().getInteractorSynchronizer().findAllMatchingAcs(objectToEnrich.getInteractor()).isEmpty()){
+            if (dbEnricherService.isNewInteractor(objectToEnrich.getInteractor())){
                 objectToEnrich.getInteractor().getAnnotations().add(new ModelledParticipantAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }

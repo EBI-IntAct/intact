@@ -19,13 +19,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import psidev.psi.mi.jami.bridges.fetcher.InteractorFetcher;
 import psidev.psi.mi.jami.enricher.*;
-import psidev.psi.mi.jami.enricher.ParticipantEnricher;
 import psidev.psi.mi.jami.enricher.exception.EnricherException;
 import psidev.psi.mi.jami.enricher.listener.InteractionEnricherListener;
 import psidev.psi.mi.jami.enricher.listener.InteractorEnricherListener;
 import psidev.psi.mi.jami.model.Complex;
 import psidev.psi.mi.jami.model.CvTerm;
-import uk.ac.ebi.intact.jami.dao.IntactDao;
+import uk.ac.ebi.intact.editor.services.enricher.DbEnricherService;
 import uk.ac.ebi.intact.jami.model.extension.InteractorAnnotation;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
@@ -45,8 +44,8 @@ public class EditorComplexEnricher implements psidev.psi.mi.jami.enricher.Comple
 
     @Resource(name = "intactComplexEnricher")
     private ComplexEnricher intactComplexEnricher;
-    @Resource(name = "intactDao")
-    private IntactDao intactDao;
+    @Resource(name = "dbEnricherService")
+    private DbEnricherService dbEnricherService;
     @Resource(name = "editorModelledComponentEnricher")
     private psidev.psi.mi.jami.enricher.ParticipantEnricher editorModelledParticipantEnricher;
     @Resource(name = "editorMiEnricher")
@@ -142,7 +141,7 @@ public class EditorComplexEnricher implements psidev.psi.mi.jami.enricher.Comple
 
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
-            if (intactDao.getSynchronizerContext().getComplexSynchronizer().findAllMatchingAcs(object).isEmpty()){
+            if (dbEnricherService.isNewComplex(object)){
                 object.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
@@ -169,7 +168,7 @@ public class EditorComplexEnricher implements psidev.psi.mi.jami.enricher.Comple
 
         if (getImportTag() != null && objectToEnrich != null){
             // check if object exists in database before adding a tag
-            if (intactDao.getSynchronizerContext().getComplexSynchronizer().findAllMatchingAcs(objectToEnrich).isEmpty()){
+            if (dbEnricherService.isNewComplex(objectToEnrich)){
                 objectToEnrich.getAnnotations().add(new InteractorAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
