@@ -7,7 +7,7 @@ import psidev.psi.mi.jami.enricher.listener.FeatureEnricherListener;
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.FeatureEvidence;
 import uk.ac.ebi.intact.dataexchange.enricher.standard.FeatureEvidenceEnricher;
-import uk.ac.ebi.intact.jami.dao.IntactDao;
+import uk.ac.ebi.intact.editor.services.enricher.DbEnricherService;
 import uk.ac.ebi.intact.jami.model.extension.FeatureEvidenceAnnotation;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
@@ -26,8 +26,8 @@ public class EditorFeatureEvidenceEnricher implements psidev.psi.mi.jami.enriche
     private CvTermEnricher<CvTerm> editorMiEnricher;
     @Resource(name = "editorCvObjectEnricher")
     private CvTermEnricher<CvTerm> editorCvObjectEnricher;
-    @Resource(name = "intactDao")
-    private IntactDao intactDao;
+    @Resource(name = "dbEnricherService")
+    private DbEnricherService dbEnricherService;
 
     @Override
     public void setFeaturesWithRangesToUpdate(Collection<FeatureEvidence> features) {
@@ -65,7 +65,7 @@ public class EditorFeatureEvidenceEnricher implements psidev.psi.mi.jami.enriche
 
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
-            if (intactDao.getSynchronizerContext().getFeatureEvidenceSynchronizer().findAllMatchingAcs(object).isEmpty()){
+            if (dbEnricherService.isNewFeatureEvidence(object)){
                 object.getAnnotations().add(new FeatureEvidenceAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
@@ -89,7 +89,7 @@ public class EditorFeatureEvidenceEnricher implements psidev.psi.mi.jami.enriche
 
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
-            if (intactDao.getSynchronizerContext().getFeatureEvidenceSynchronizer().findAllMatchingAcs(object).isEmpty()){
+            if (dbEnricherService.isNewFeatureEvidence(object)){
                 object.getAnnotations().add(new FeatureEvidenceAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
