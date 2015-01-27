@@ -48,6 +48,11 @@ public class CurateController extends BaseController {
     private AnnotatedObjectController currentAnnotatedObjectController;
 
     public String edit(IntactPrimaryObject intactObject) {
+        if (intactObject == null) {
+            addErrorMessage("Cannot edit an object that is not set", "No AC provided");
+            FacesContext.getCurrentInstance().renderResponse();
+            return "";
+        }
         String suffix = (intactObject.getAc() != null)? "?faces-redirect=true&includeViewParams=true" : "";
 
         CurateObjectMetadata metadata = getMetadata(intactObject);
