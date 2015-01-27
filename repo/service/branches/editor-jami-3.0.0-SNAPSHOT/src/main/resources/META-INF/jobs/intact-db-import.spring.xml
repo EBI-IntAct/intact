@@ -45,6 +45,10 @@
         <property name="importTag" value="#{jobParameters['MIJobId']}"/>
         <property name="intactCvObjectEnricher" ref="miCvObjectEnricher"/>
     </bean>
+    <bean id="simpleEditorMiEnricher" class="uk.ac.ebi.intact.editor.enricher.EditorCvObjectEnricher" scope="step" lazy-init="true">
+        <property name="importTag" value="#{jobParameters['MIJobId']}"/>
+        <property name="intactCvObjectEnricher" ref="simpleMiCvObjectEnricher"/>
+    </bean>
     <bean id="editorExperimentEnricher" class="uk.ac.ebi.intact.editor.enricher.EditorExperimentEnricher" scope="step" lazy-init="true">
         <property name="importTag" value="#{jobParameters['MIJobId']}"/>
     </bean>
