@@ -90,26 +90,32 @@ public class RangeWrapper {
         this.featureController = featureController;
     }
 
-    public void onRangeAsStringChanged(AjaxBehaviorEvent evt)  throws IllegalRangeException,NoSuchMethodException,InstantiationException, IllegalAccessException,InvocationTargetException {
-        Range newRange = RangeUtils.createRangeFromString(rangeAsString, false);
+    public void onRangeAsStringChanged(AjaxBehaviorEvent evt) throws NoSuchMethodException,InstantiationException, IllegalAccessException,InvocationTargetException {
+        Range newRange = null;
+        try {
+            newRange = RangeUtils.createRangeFromString(rangeAsString, false);
+            IntactPosition start = new IntactPosition(cvObjectService.findCvObject(IntactUtils.RANGE_STATUS_OBJCLASS, newRange.getStart().getStatus().getMIIdentifier()),
+                    newRange.getStart().getStart(), newRange.getStart().getEnd());
+            IntactPosition end = new IntactPosition(cvObjectService.findCvObject(IntactUtils.RANGE_STATUS_OBJCLASS, newRange.getEnd().getStatus().getMIIdentifier()),
+                    newRange.getEnd().getStart(), newRange.getEnd().getEnd());
 
-        IntactPosition start = new IntactPosition(cvObjectService.findCvObject(IntactUtils.RANGE_STATUS_OBJCLASS, newRange.getStart().getStatus().getMIIdentifier()),
-                newRange.getStart().getStart(), newRange.getStart().getEnd());
-        IntactPosition end = new IntactPosition(cvObjectService.findCvObject(IntactUtils.RANGE_STATUS_OBJCLASS, newRange.getEnd().getStatus().getMIIdentifier()),
-                newRange.getEnd().getStart(), newRange.getEnd().getEnd());
+            this.range.setPositions(start, end);
+            if (this.range.getResultingSequence() != null){
+                this.range.getResultingSequence().setOriginalSequence(RangeUtils.extractRangeSequence(this.range, this.sequence));
+            }
+            else{
+                this.range.setResultingSequence(this.resultingSequenceClass.getConstructor(String.class, String.class).newInstance(RangeUtils.extractRangeSequence(this.range, this.sequence),null));
+            }
 
-        this.range.setPositions(start, end);
-        if (this.range.getResultingSequence() != null){
-            this.range.getResultingSequence().setOriginalSequence(RangeUtils.extractRangeSequence(this.range, this.sequence));
-        }
-        else{
-            this.range.setResultingSequence(this.resultingSequenceClass.getConstructor(String.class, String.class).newInstance(RangeUtils.extractRangeSequence(this.range, this.sequence),null));
-        }
-
-        List<String> messages = RangeUtils.validateRange(this.range, this.sequence);
-        isInvalid = !messages.isEmpty();
-        if (isInvalid){
-            this.badRangeInfo = StringUtils.join(messages, ", ");
+            List<String> messages = RangeUtils.validateRange(this.range, this.sequence);
+            isInvalid = !messages.isEmpty();
+            if (isInvalid){
+                this.badRangeInfo = StringUtils.join(messages, ", ");
+            }
+        } catch (IllegalRangeException e) {
+            String problemMsg =e.getMessage();
+            featureController.addErrorMessage("Range is not valid: "+rangeAsString, problemMsg);
+            return;
         }
     }
 
