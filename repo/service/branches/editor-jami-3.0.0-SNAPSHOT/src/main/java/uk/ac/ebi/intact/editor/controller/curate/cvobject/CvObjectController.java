@@ -202,13 +202,14 @@ public class CvObjectController extends AnnotatedObjectController {
     }
 
     public void onDefinitionChanged(ValueChangeEvent evt) {
-        setUnsavedChanges(true);
         String newValue = (String) evt.getNewValue();
         if (newValue == null || newValue.length() == 0){
+            setUnsavedChanges(true);
             this.cvObject.setDefinition(null);
             this.definition = null;
         }
         else{
+            setUnsavedChanges(true);
             this.cvObject.setDefinition(newValue);
             this.definition = newValue;
         }
