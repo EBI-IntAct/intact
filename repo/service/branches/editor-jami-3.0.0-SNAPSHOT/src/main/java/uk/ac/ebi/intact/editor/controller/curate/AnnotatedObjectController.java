@@ -1380,7 +1380,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
                     return 1;
                 }
                 else{
-                    return created1.compareTo(created2);
+                    return -created1.compareTo(created2);
                 }
             }
         }
