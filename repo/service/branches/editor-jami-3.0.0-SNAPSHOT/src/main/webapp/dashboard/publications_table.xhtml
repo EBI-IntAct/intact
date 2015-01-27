@@ -30,6 +30,12 @@
                                 title="#{publication.caution}"/>
             </h:panelGroup>
         </p:column>
+        <p:column headerText="First author">
+            <h:outputText value="#{publication.firstAuthor}"/>
+        </p:column>
+        <p:column headerText="Publication year">
+            <h:outputText value="#{publication.year}"/>
+        </p:column>
         <p:column headerText="Title" sortBy="#{publication.title}" style="width: 50%;">
             <h:outputText value="#{publication.title}"/>
         </p:column>
