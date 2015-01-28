@@ -26,7 +26,6 @@ import psidev.psi.mi.jami.model.Feature;
 import psidev.psi.mi.jami.model.FeatureEvidence;
 import psidev.psi.mi.jami.model.Organism;
 import uk.ac.ebi.intact.editor.controller.curate.ChangesController;
-import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.jami.model.extension.*;
 
 import java.util.ArrayList;
@@ -58,7 +57,9 @@ public class ParticipantImportController extends AbstractParticipantImportContro
 
     @Override
     protected void initialiseOtherProperties() {
-        cvExperimentalRole = getCvService().getDefaultExperimentalRole();
+        if (cvExperimentalRole == null){
+            cvExperimentalRole = getCvService().getDefaultExperimentalRole();
+        }
     }
 
     @Override
@@ -80,18 +81,6 @@ public class ParticipantImportController extends AbstractParticipantImportContro
 
     protected IntactParticipantEvidence toParticipant(ImportCandidate candidate, IntactInteractionEvidence interaction) {
         IntactInteractor interactor = candidate.getInteractor();
-
-        if (cvExperimentalRole == null || getCvBiologicalRole() == null) {
-            CvObjectService cvObjectService = getCvService();
-
-            if (cvExperimentalRole == null) {
-                cvExperimentalRole = cvObjectService.getDefaultExperimentalRole();
-            }
-
-            if (getCvBiologicalRole() == null) {
-                setCvBiologicalRole(cvObjectService.getDefaultBiologicalRole());
-            }
-        }
 
         IntactParticipantEvidence component = new IntactParticipantEvidence(interactor);
         component.setInteraction(interaction);

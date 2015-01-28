@@ -46,7 +46,7 @@
                         <p:commandButton id="jimportSelected" value="Import selected" rendered="#{not empty modelledParticipantImportController.importCandidates}"
                                          actionListener="#{modelledParticipantImportController.importSelected}"
                                          onstart="jcandidatesDialogWV.hide();adding_load.show()" onerror="adding_load.hide(); jcandidatesDialogWV.show();"
-                                         oncomplete="adding_load.hide(); " process=":editorForm:complexTabs:jcandidatesDialog"
+                                         oncomplete="adding_load.hide(); " process=":editorForm:complexTabs:jcandidatesContent"
                                          update=":editorForm:complexTabs:jparticipantsPanel :editorForm:shortlabelTxt :editorForm:messagesComponent :editorForm:changesPanel"/>
                         <p:commandButton type="button" value="Back" rendered="#{empty modelledParticipantImportController.importCandidates}"
                                          onclick="jcandidatesDialogWV.hide(); jimportParticipantDialog.show()"/>
@@ -123,11 +123,10 @@
                         <h:panelGrid columns="2">
 
                             <h:outputLabel value="Biological role: " for="jbioRoleDialogTxt"/>
-                            <ia:inputCvTerm id="jbioRoleDialogTxt" cvIdentifier="MI:0500"
-                                            cvClass="uk.ac.ebi.intact.model.CvBiologicalRole"
-                                            modal="false"
-                                            value="#{modelledParticipantImportController.cvBiologicalRole}"
-                                            selectItems="#{cvObjectService.biologicalRoleSelectItems}" />
+                            <h:selectOneMenu id="jbioRoleDialogTxt" value="#{modelledParticipantImportController.cvBiologicalRole}"
+                                             converter="cvObjectConverter">
+                                <f:selectItems value="#{cvObjectService.biologicalRoleSelectItems}"/>
+                            </h:selectOneMenu>
 
                             <h:outputLabel value="Min Stoichiometry: " for="minStoichiometryDialogTxt"/>
                             <p:spinner id="minStoichiometryDialogTxt" value="#{modelledParticipantImportController.minStoichiometry}" min="0" stepFactor="1" size="3" maxlength="2"/>
