@@ -431,13 +431,7 @@ public class InteractionController extends AnnotatedObjectController {
         participantWrappers.add(new ParticipantWrapper(component));
 
         if (participantWrappers.size() > 0) {
-            try {
-                updateShortLabel();
-            } catch (Exception e) {
-                addErrorMessage("Problem updating shortLabel", e.getMessage());
-            }
             Collections.sort(participantWrappers, new ParticipantWrapperExperimentalRoleComparator());
-
         }
 
         setUnsavedChanges(true);

@@ -46,7 +46,7 @@
                     <p:commandButton id="importSelected" value="Import selected" rendered="#{not empty participantImportController.importCandidates}"
                                      actionListener="#{participantImportController.importSelected}"
                                      onstart="candidatesDialogWV.hide();adding_load.show()" onerror="adding_load.hide(); candidatesDialogWV.show();"
-                                     oncomplete="adding_load.hide(); " process=":editorForm:interactionTabs:candidatesDialog"
+                                     oncomplete="adding_load.hide(); " process=":editorForm:interactionTabs:candidatesContent"
                                      update=":editorForm:interactionTabs:participantsPanel :editorForm:shortlabelTxt :editorForm:messagesComponent :editorForm:changesPanel"/>
                     <p:commandButton type="button" value="Back" rendered="#{empty participantImportController.importCandidates}"
                                      onclick="candidatesDialogWV.hide(); importParticipantDialog.show()"/>
@@ -123,18 +123,16 @@
                 <p:panel id="globalAttributesId" header="Global attributes" rendered="#{not empty participantImportController.importCandidates}">
                     <h:panelGrid columns="2">
                         <h:outputLabel value="Experimental role: " for="expRoleDialogTxt"/>
-                        <ia:inputCvTerm id="expRoleDialogTxt" cvIdentifier="MI:0495"
-                                        modal="false"
-                                        value="#{participantImportController.cvExperimentalRole}"
-                                        selectItems="#{cvObjectService.experimentalRoleSelectItems}"
-                                        cvClass="uk.ac.ebi.intact.model.CvExperimentalRole"/>
+                        <h:selectOneMenu id="expRoleDialogTxt" value="#{participantImportController.cvExperimentalRole}"
+                                         converter="cvObjectConverter">
+                            <f:selectItems value="#{cvObjectService.experimentalRoleSelectItems}"/>
+                        </h:selectOneMenu>
 
                         <h:outputLabel value="Biological role: " for="bioRoleDialogTxt"/>
-                        <ia:inputCvTerm id="bioRoleDialogTxt" cvIdentifier="MI:0500"
-                                        modal="false"
-                                        value="#{participantImportController.cvBiologicalRole}"
-                                        selectItems="#{cvObjectService.biologicalRoleSelectItems}"
-                                        cvClass="uk.ac.ebi.intact.model.CvBiologicalRole"/>
+                        <h:selectOneMenu id="bioRoleDialogTxt" value="#{participantImportController.cvBiologicalRole}"
+                                         converter="cvObjectConverter">
+                            <f:selectItems value="#{cvObjectService.biologicalRoleSelectItems}"/>
+                        </h:selectOneMenu>
 
                         <h:outputLabel value="Expressed in: " for="expressedInDialogTxt"/>
                         <ia:inputOrganism id="expressedInDialogTxt" value="#{participantImportController.expressedIn}"
@@ -167,11 +165,10 @@
                                 </p:column>
                             </p:dataList>
                             <h:panelGrid columns="2">
-                                <ia:inputSimpleCvObject id="newDeliveryTxtInDialog" cvIdentifier="MI:0346"
-                                                        value="#{participantImportController.preparationToAdd}"
-                                                        modal="false"
-                                                        selectItems="#{cvObjectService.participantExperimentalPreparationsSelectItems}"
-                                                        cvClass="uk.ac.ebi.intact.model.CvExperimentalPreparation"/>
+                                <h:selectOneMenu id="newDeliveryTxtInDialog" value="#{participantImportController.preparationToAdd}"
+                                                 converter="cvObjectConverter">
+                                    <f:selectItems value="#{cvObjectService.participantExperimentalPreparationsSelectItems}"/>
+                                </h:selectOneMenu>
                                 <p:commandButton id="btnAddDelivery" value="Add"
                                                  actionListener="#{participantImportController.addExperimentalPreparation}" update=":editorForm:interactionTabs:candidatesDialogContent:deliveryDescription"
                                                  process="newDeliveryTxtInDialog"/>
@@ -194,11 +191,10 @@
                                 </p:column>
                             </p:dataList>
                             <h:panelGrid columns="2">
-                                <ia:inputSimpleCvObject id="newIdentificationTxtInDialog" cvIdentifier="MI:0002"
-                                                        value="#{participantImportController.identificationToAdd}"
-                                                        modal="false"
-                                                        selectItems="#{cvObjectService.participantDetectionMethodSelectItems}"
-                                                        cvClass="uk.ac.ebi.intact.model.CvIdentification"/>
+                                <h:selectOneMenu id="newIdentificationTxtInDialog" value="#{participantImportController.identificationToAdd}"
+                                                 converter="cvObjectConverter">
+                                    <f:selectItems value="#{cvObjectService.participantDetectionMethodSelectItems}"/>
+                                </h:selectOneMenu>
                                 <p:commandButton id="btnAddIdentification" value="Add"
                                                  actionListener="#{participantImportController.addIdentificationMethod}" update=":editorForm:interactionTabs:candidatesDialogContent:identificationDescription"
                                                  process="newIdentificationTxtInDialog"/>

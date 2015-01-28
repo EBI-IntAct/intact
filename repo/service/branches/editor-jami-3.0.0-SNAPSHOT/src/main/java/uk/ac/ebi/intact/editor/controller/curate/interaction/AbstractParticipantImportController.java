@@ -140,7 +140,9 @@ public abstract class AbstractParticipantImportController<T extends AbstractInta
 
         CvObjectService cvObjectService = getCvService();
 
-        cvBiologicalRole = cvObjectService.getDefaultBiologicalRole();
+        if (cvBiologicalRole == null){
+            cvBiologicalRole = cvObjectService.getDefaultBiologicalRole();
+        }
 
         initialiseOtherProperties();
 
