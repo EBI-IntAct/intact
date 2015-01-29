@@ -28,9 +28,9 @@
     </h:head>
 
     <h:body style="margin: 5 5 5 5;">
-        <h:outputLink value="/editor/dbmanager/dbmanager.xhtml">Back to data management page</h:outputLink>
+        <h:outputLink value="#{facesContext.externalContext.request.contextPath}/dbmanager/dbmanager.xhtml">Back to data management page</h:outputLink>
         &#160;&#160;|&#160;&#160;
-        <h:outputLink value="/editor/dbmanager/jobSummary.xhtml">View jobs list</h:outputLink>
+        <h:outputLink value="#{facesContext.externalContext.request.contextPath}/dbmanager/jobSummary.xhtml">View jobs list</h:outputLink>
 
         <br/>
 
@@ -40,7 +40,7 @@
             <li>Until the validator is integrated with the editor, you MUST validate your file using
                 the <a href="http://www.ebi.ac.uk/intact/validator/start.xhtml">validator</a> before importing the file.</li>
             <li>The import is running in the background, you will receive e-mails when the job starts and when the job has finished</li>
-            <li>You can view the jobs running in the <h:outputLink value="/editor/dbmanager/jobSummary.xhtml">job summary page</h:outputLink>.</li>
+            <li>You can view the jobs running in the <h:outputLink value="#{facesContext.externalContext.request.contextPath}/dbmanager/jobSummary.xhtml">job summary page</h:outputLink>.</li>
             <li>When a job is finished and you are happy with the import, you will need to accept the job so import annotations are deleted.</li>
             <li>When a job is finished and you are not happy with the import, you will need to reject the job so all imported objects will be deleted.</li>
         </ul>
