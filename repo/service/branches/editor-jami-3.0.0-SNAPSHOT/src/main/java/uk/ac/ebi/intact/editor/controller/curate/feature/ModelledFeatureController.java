@@ -224,6 +224,14 @@ public class ModelledFeatureController extends AbstractFeatureController<IntactM
     }
 
     @Override
+    public void postRevert() {
+        // the feature was just created, add it to the list of features of the participant
+        if (getFeature().getParticipant() != null){
+            modelledParticipantController.reloadSingleFeature(getFeature());
+        }
+    }
+
+    @Override
     protected void generalLoadChecks() {
         super.generalLoadChecks();
         generalComplexLoadChecks();

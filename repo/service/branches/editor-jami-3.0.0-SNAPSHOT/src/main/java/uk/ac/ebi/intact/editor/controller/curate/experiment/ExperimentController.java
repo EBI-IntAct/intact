@@ -368,6 +368,18 @@ public class ExperimentController extends AnnotatedObjectController {
         }
     }
 
+
+    /**
+     * When reverting, we need to refresh the collection of wrappers because they are not part of the IntAct model.
+     */
+    @Override
+    protected void postRevert() {
+        // new object, add it to the list of experiments of its publication before saving
+        if (experiment.getPublication() != null) {
+            publicationController.reloadSingleExperiment(experiment);
+        }
+    }
+
     @Override
     public String doDelete() {
         publicationController.removeExperiment(experiment);
@@ -572,14 +584,6 @@ public class ExperimentController extends AnnotatedObjectController {
 
     public boolean isCorrected() {
         return correctedComment != null;
-    }
-
-    /**
-     * When reverting, we need to refresh the collection of wrappers because they are not part of the IntAct model.
-     */
-    @Override
-    protected void postRevert() {
-        refreshInteractions();
     }
 
     public String getAcceptedMessage() {

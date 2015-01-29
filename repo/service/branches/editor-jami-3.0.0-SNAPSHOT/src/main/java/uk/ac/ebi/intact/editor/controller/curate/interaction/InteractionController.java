@@ -274,6 +274,14 @@ public class InteractionController extends AnnotatedObjectController {
     }
 
     @Override
+    public void postRevert() {
+        // the interaction was just created, add it to the list of interactions of the experiment
+        if (interaction.getExperiment() != null){
+            experimentController.reloadSingleInteractionEvidence(interaction);
+        }
+    }
+
+    @Override
     public String doDelete() {
         experimentController.removeInteractionEvidence(interaction);
         return super.doDelete();
