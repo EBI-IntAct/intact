@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.editor.controller.curate.publication;
 
 import edu.ucla.mbi.imex.central.ws.v20.IcentralFault;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
@@ -48,6 +49,7 @@ import uk.ac.ebi.intact.editor.services.summary.InteractionSummary;
 import uk.ac.ebi.intact.editor.services.summary.InteractionSummaryService;
 import uk.ac.ebi.intact.editor.util.LazyDataModelFactory;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
+import uk.ac.ebi.intact.jami.lifecycle.IllegalTransitionException;
 import uk.ac.ebi.intact.jami.lifecycle.LifeCycleManager;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.*;
@@ -185,7 +187,7 @@ public class PublicationController extends AnnotatedObjectController {
                     Annotation.CONTACT_EMAIL);
             setContactEmail(contactEmail != null ? contactEmail.getValue() : null);
             if (publication.getPublicationDate() == null){
-               this.year = null;
+                this.year = null;
             }
             else{
                 Calendar cal = Calendar.getInstance();
@@ -499,15 +501,20 @@ public class PublicationController extends AnnotatedObjectController {
             publication.setCurationDepth(CurationDepth.rapid_curation);
         }
 
-        getLifecycleManager().getStartStatus().create(publication, "Created in Editor", userSessionController.getCurrentUser());
+        try{
+            getLifecycleManager().getStartStatus().create(publication, "Created in Editor", userSessionController.getCurrentUser());
 
-        if (assignToMe) {
-            getLifecycleManager().getNewStatus().claimOwnership(publication, userSessionController.getCurrentUser());
-            getLifecycleManager().getAssignedStatus().startCuration(publication, userSessionController.getCurrentUser());
+            if (assignToMe) {
+                getLifecycleManager().getNewStatus().claimOwnership(publication, userSessionController.getCurrentUser());
+                getLifecycleManager().getAssignedStatus().startCuration(publication, userSessionController.getCurrentUser());
+            }
+
+            setPublication(publication);
+            setUnsavedChanges(true);
         }
-
-        setPublication(publication);
-        setUnsavedChanges(true);
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot create publication: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
+        }
     }
 
     public void openByPmid(ActionEvent evt) {
@@ -558,22 +565,32 @@ public class PublicationController extends AnnotatedObjectController {
     }
 
     public void claimOwnership(ActionEvent evt) {
-        getLifecycleManager().getGlobalStatus().changeOwnership(publication, getCurrentUser(), null);
+        try{
+            getLifecycleManager().getGlobalStatus().changeOwnership(publication, getCurrentUser(), null);
 
-        // automatically set as curation in progress if no one was assigned before
-        if (isAssigned()) {
-            markAsCurationInProgress(evt);
+            // automatically set as curation in progress if no one was assigned before
+            if (isAssigned()) {
+                markAsCurationInProgress(evt);
+            }
+
+            addInfoMessage("Claimed publication ownership", "You are now the owner of this publication");
         }
-
-        addInfoMessage("Claimed publication ownership", "You are now the owner of this publication");
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot claim ownership of publication: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
+        }
     }
 
     public void markAsAssignedToMe(ActionEvent evt) {
-        getLifecycleManager().getNewStatus().assignToCurator(publication, getCurrentUser(), getCurrentUser());
+        try{
+            getLifecycleManager().getNewStatus().assignToCurator(publication, getCurrentUser(), getCurrentUser());
 
-        addInfoMessage("Ownership claimed", "The publication has been assigned to you");
+            addInfoMessage("Ownership claimed", "The publication has been assigned to you");
 
-        markAsCurationInProgress(evt);
+            markAsCurationInProgress(evt);
+        }
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot assign publication: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
+        }
     }
 
     public void markAsCurationInProgress(ActionEvent evt) {
@@ -581,17 +598,22 @@ public class PublicationController extends AnnotatedObjectController {
             addErrorMessage("Cannot mark as curation in progress", "You are not the owner of this publication");
             return;
         }
-        getLifecycleManager().getAssignedStatus().startCuration(publication, getCurrentUser());
+        try{
+            getLifecycleManager().getAssignedStatus().startCuration(publication, getCurrentUser());
 
-        addInfoMessage("Curation started", "Curation is now in progress");
+            addInfoMessage("Curation started", "Curation is now in progress");
 
-        // try to register/update record in IMEx central if they don't have IMEx. IMEx records are updated automatically with a cronjob
-        if (publication.getAc() != null && getImexId()==null){
-            try {
-                getImexCentralManager().registerAndUpdatePublication(publication.getAc());
-            } catch (EnricherException e) {
-                addWarningMessage("Impossible to register/update status of " + identifier + " in IMEx central", e.getMessage());
+            // try to register/update record in IMEx central if they don't have IMEx. IMEx records are updated automatically with a cronjob
+            if (publication.getAc() != null && getImexId()==null){
+                try {
+                    getImexCentralManager().registerAndUpdatePublication(publication.getAc());
+                } catch (EnricherException e) {
+                    addWarningMessage("Impossible to register/update status of " + identifier + " in IMEx central", e.getMessage());
+                }
             }
+        }
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot mark as curation in progress: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
         }
     }
 
@@ -619,85 +641,109 @@ public class PublicationController extends AnnotatedObjectController {
         // TODO run a proper sanity check
         boolean sanityCheckPassed = true;
 
-        getLifecycleManager().getCurationInProgressStatus().readyForChecking(publication, reasonForReadyForChecking, sanityCheckPassed, getCurrentUser());
+        try{
+            getLifecycleManager().getCurationInProgressStatus().readyForChecking(publication, reasonForReadyForChecking, sanityCheckPassed, getCurrentUser());
 
-        reasonForReadyForChecking = null;
+            reasonForReadyForChecking = null;
 
-        addInfoMessage("Publication ready for checking", "Assigned to reviewer: " + publication.getCurrentReviewer().getLogin());
-        // try to register/update record in IMEx central. IMEx records are updated automatically with a cron job so if it has an IMEx id we do nothing
-        if (publication.getAc() != null && getImexId() == null){
-            try {
-                getImexCentralManager().registerAndUpdatePublication(publication.getAc());
-            } catch (EnricherException e) {
-                addWarningMessage("Impossible to register/update status of " + identifier + " in IMEx central", e.getMessage());
+            addInfoMessage("Publication ready for checking", "Assigned to reviewer: " + publication.getCurrentReviewer().getLogin());
+            // try to register/update record in IMEx central. IMEx records are updated automatically with a cron job so if it has an IMEx id we do nothing
+            if (publication.getAc() != null && getImexId() == null){
+                try {
+                    getImexCentralManager().registerAndUpdatePublication(publication.getAc());
+                } catch (EnricherException e) {
+                    addWarningMessage("Impossible to register/update status of " + identifier + " in IMEx central", e.getMessage());
+                }
             }
+        }
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot mark as ready for checking: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
         }
     }
 
     public void revertReadyForChecking(ActionEvent evt) {
-        getLifecycleManager().getReadyForCheckingStatus().revert(this.publication, getCurrentUser());
-        // try to register/update record in IMEx central. IMEx records are updated automatically with a cron job so if it has an IMEx id we do nothing
-        if (publication.getAc() != null && getImexId() == null){
-            try {
-                getImexCentralManager().registerAndUpdatePublication(publication.getAc());
-            } catch (EnricherException e) {
-                addWarningMessage("Impossible to register/update status of " + identifier + " in IMEx central", e.getMessage());
+        try{
+            getLifecycleManager().getReadyForCheckingStatus().revert(this.publication, getCurrentUser());
+            // try to register/update record in IMEx central. IMEx records are updated automatically with a cron job so if it has an IMEx id we do nothing
+            if (publication.getAc() != null && getImexId() == null){
+                try {
+                    getImexCentralManager().registerAndUpdatePublication(publication.getAc());
+                } catch (EnricherException e) {
+                    addWarningMessage("Impossible to register/update status of " + identifier + " in IMEx central", e.getMessage());
+                }
             }
+        }
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot revert ready for checking: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
         }
     }
 
     public void revertAccepted(ActionEvent evt) {
-        if (isReadyForRelease()){
-            getLifecycleManager().getReadyForReleaseStatus().revert(this.publication, getCurrentUser());
-        }
-        else {
-            LifeCycleEvent acceptedEvt = ReleasableUtils.getLastEventOfType(publication, LifeCycleEventType.ACCEPTED);
-            publication.getLifecycleEvents().remove(acceptedEvt);
-            publication.setStatus(LifeCycleStatus.READY_FOR_CHECKING);
-        }
-
-        // try to register/update record in IMEx central. IMEx records are updated automatically with a cron job so if it has an IMEx id we do nothing
-        if (publication.getAc() != null && getImexId() == null){
-            try {
-                getImexCentralManager().registerAndUpdatePublication(publication.getAc());
-            } catch (EnricherException e) {
-                addWarningMessage("Impossible to register/update status of " + identifier + " in IMEx central", e.getMessage());
+        try{
+            if (isReadyForRelease()){
+                getLifecycleManager().getReadyForReleaseStatus().revert(this.publication, getCurrentUser());
             }
+            else {
+                LifeCycleEvent acceptedEvt = ReleasableUtils.getLastEventOfType(publication, LifeCycleEventType.ACCEPTED);
+                publication.getLifecycleEvents().remove(acceptedEvt);
+                publication.setStatus(LifeCycleStatus.READY_FOR_CHECKING);
+            }
+
+            // try to register/update record in IMEx central. IMEx records are updated automatically with a cron job so if it has an IMEx id we do nothing
+            if (publication.getAc() != null && getImexId() == null){
+                try {
+                    getImexCentralManager().registerAndUpdatePublication(publication.getAc());
+                } catch (EnricherException e) {
+                    addWarningMessage("Impossible to register/update status of " + identifier + " in IMEx central", e.getMessage());
+                }
+            }
+        }
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot revert accepted: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
         }
     }
 
     public void putOnHold(ActionEvent evt) {
-
-        if (isReadyForRelease()) {
-            getLifecycleManager().getReadyForReleaseStatus().putOnHold(publication, reasonForOnHoldFromDialog, getCurrentUser());
-            addInfoMessage("On-hold added to publication", "Publication won't be released until the 'on hold' is removed");
-        } else if (isReleased()) {
-            getLifecycleManager().getReleasedStatus().putOnHold(publication, reasonForOnHoldFromDialog, getCurrentUser());
-            addInfoMessage("On-hold added to released publication", "Data will be publicly visible until the next release");
-        }
-
-        reasonForOnHoldFromDialog = null;
-        // try to register/update record in IMEx central. IMEx records are updated automatically with a cron job so if it has an IMEx id we do nothing
-        if (publication.getAc() != null && getImexId() == null){
-            try {
-                getImexCentralManager().registerAndUpdatePublication(publication.getAc());
-            } catch (EnricherException e) {
-                addWarningMessage("Impossible to register/update status of " + identifier + " in IMEx central", e.getMessage());
+        try{
+            if (isReadyForRelease()) {
+                getLifecycleManager().getReadyForReleaseStatus().putOnHold(publication, reasonForOnHoldFromDialog, getCurrentUser());
+                addInfoMessage("On-hold added to publication", "Publication won't be released until the 'on hold' is removed");
+            } else if (isReleased()) {
+                getLifecycleManager().getReleasedStatus().putOnHold(publication, reasonForOnHoldFromDialog, getCurrentUser());
+                addInfoMessage("On-hold added to released publication", "Data will be publicly visible until the next release");
             }
+
+            reasonForOnHoldFromDialog = null;
+            // try to register/update record in IMEx central. IMEx records are updated automatically with a cron job so if it has an IMEx id we do nothing
+            if (publication.getAc() != null && getImexId() == null){
+                try {
+                    getImexCentralManager().registerAndUpdatePublication(publication.getAc());
+                } catch (EnricherException e) {
+                    addWarningMessage("Impossible to register/update status of " + identifier + " in IMEx central", e.getMessage());
+                }
+            }
+        }
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot put on hold: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
         }
     }
 
     public void readyForReleaseFromOnHold(ActionEvent evt) {
         setOnHold(null);
 
-        getLifecycleManager().getAcceptedOnHoldStatus().onHoldRemoved(publication, null, getCurrentUser());
-        // try to register/update record in IMEx central. IMEx records are updated automatically with a cron job so if it has an IMEx id we do nothing
-        if (publication.getAc() != null && getImexId() == null){
-            try {
-                getImexCentralManager().registerAndUpdatePublication(publication.getAc());
-            } catch (EnricherException e) {
-                addWarningMessage("Impossible to register/update status of " + identifier + " in IMEx central", e.getMessage());
+        try{
+            getLifecycleManager().getAcceptedOnHoldStatus().onHoldRemoved(publication, null, getCurrentUser());
+            // try to register/update record in IMEx central. IMEx records are updated automatically with a cron job so if it has an IMEx id we do nothing
+            if (publication.getAc() != null && getImexId() == null){
+                try {
+                    getImexCentralManager().registerAndUpdatePublication(publication.getAc());
+                } catch (EnricherException e) {
+                    addWarningMessage("Impossible to register/update status of " + identifier + " in IMEx central", e.getMessage());
+                }
             }
+        }
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot mark as ready for release: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
         }
     }
 
@@ -1311,9 +1357,9 @@ public class PublicationController extends AnnotatedObjectController {
         }
 
         return pub.getStatus() == LifeCycleStatus.ACCEPTED ||
-               pub.getStatus() == LifeCycleStatus.ACCEPTED_ON_HOLD ||
-               pub.getStatus() == LifeCycleStatus.READY_FOR_RELEASE ||
-               pub.getStatus() == LifeCycleStatus.RELEASED;
+                pub.getStatus() == LifeCycleStatus.ACCEPTED_ON_HOLD ||
+                pub.getStatus() == LifeCycleStatus.READY_FOR_RELEASE ||
+                pub.getStatus() == LifeCycleStatus.RELEASED;
     }
 
     public void setAcceptedMessage(String message) {
@@ -1400,15 +1446,20 @@ public class PublicationController extends AnnotatedObjectController {
 
         addInfoMessage("Publication accepted", "");
 
-        getLifecycleManager().getReadyForCheckingStatus().accept(publication, null, userSessionController.getCurrentUser());
+        try{
+            getLifecycleManager().getReadyForCheckingStatus().accept(publication, null, userSessionController.getCurrentUser());
 
-        if (!publication.isOnHold()) {
-            getLifecycleManager().getAcceptedStatus().readyForRelease(publication, "Accepted and not on-hold", userSessionController.getCurrentUser());
+            if (!publication.isOnHold()) {
+                getLifecycleManager().getAcceptedStatus().readyForRelease(publication, "Accepted and not on-hold", userSessionController.getCurrentUser());
+            }
+
+            // refresh experiments with possible changes in publication title, annotations and publication identifier
+            copyAnnotationsToExperiments(null);
+            copyPrimaryIdentifierToExperiments();
         }
-
-        // refresh experiments with possible changes in publication title, annotations and publication identifier
-        copyAnnotationsToExperiments(null);
-        copyPrimaryIdentifierToExperiments();
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot accept publication: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
+        }
     }
 
     public PublicationService getPublicationService() {
@@ -1519,11 +1570,15 @@ public class PublicationController extends AnnotatedObjectController {
 
         setToBeReviewed(date + ". " + reasonForRejection);
 
-        addInfoMessage("Publication rejected", "");
+        try{
+            getLifecycleManager().getReadyForCheckingStatus().reject(publication, this.toBeReviewed, userSessionController.getCurrentUser());
+            addInfoMessage("Publication rejected", "");
 
-        getLifecycleManager().getReadyForCheckingStatus().reject(publication, this.toBeReviewed, userSessionController.getCurrentUser());
-
-        copyPrimaryIdentifierToExperiments();
+            copyPrimaryIdentifierToExperiments();
+        }
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot reject publication: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
+        }
     }
 
     public boolean isRejected(IntactPublication publication) {
@@ -1806,7 +1861,7 @@ public class PublicationController extends AnnotatedObjectController {
 
     @Override
     public void newAlias(ActionEvent evt) {
-         // nothing to do
+        // nothing to do
     }
 
     @Override
@@ -1826,7 +1881,7 @@ public class PublicationController extends AnnotatedObjectController {
 
     @Override
     public void removeAlias(Alias alias) {
-         // nothing to do
+        // nothing to do
     }
 
     public List<Alias> collectAliases() {
@@ -1864,7 +1919,7 @@ public class PublicationController extends AnnotatedObjectController {
 
     @Override
     protected void addNewAnnotation(AbstractIntactAnnotation newAnnot) {
-         this.publication.getAnnotations().add(newAnnot);
+        this.publication.getAnnotations().add(newAnnot);
     }
 
     @Override
@@ -1879,7 +1934,7 @@ public class PublicationController extends AnnotatedObjectController {
 
     @Override
     public void removeAnnotation(psidev.psi.mi.jami.model.Annotation annotation) {
-       publication.getAnnotations().remove(annotation);
+        publication.getAnnotations().remove(annotation);
     }
 
     public List<LifeCycleEvent> collectLifeCycleEvents() {
@@ -1984,7 +2039,7 @@ public class PublicationController extends AnnotatedObjectController {
             removeExperiment((IntactExperiment)unsaved.getUnsavedObject());
         }
         else if (unsaved.getUnsavedObject() instanceof IntactInteractionEvidence){
-             refreshExperiments();
+            refreshExperiments();
             refreshDataModels();
         }
     }
