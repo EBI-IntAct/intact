@@ -149,56 +149,18 @@
                         <h:outputLabel value="Experimental preparation(s): " for="deliveryDescription"/>
                         <!-- WARNING : the p:column and immediate = true are required to make the button remove in the p:dataList work-->
                         <h:panelGroup id="deliveryDescription">
-                            <p:dataList id="deliveryListInDialog" value="#{participantImportController.cvExperimentalPreparations}" var="delivery"
-                                        type="definition" rendered="#{not empty participantImportController.cvExperimentalPreparations}" styleClass="dataList">
-                                <f:facet name="description">
-                                    <h:outputText value=""/>
-                                </f:facet>
-                                <p:column>
-                                    <p:panelGrid columns="2">
-                                        <h:outputText value="#{delivery.shortName}"/>
-                                        <p:commandButton value="Remove"
-                                                         actionListener="#{participantImportController.removeExperimentalPreparation(delivery)}"
-                                                         update=":editorForm:interactionTabs:candidatesDialogContent:deliveryDescription"
-                                                         process="@this" immediate="true"/>
-                                    </p:panelGrid>
-                                </p:column>
-                            </p:dataList>
-                            <h:panelGrid columns="2">
-                                <h:selectOneMenu id="newDeliveryTxtInDialog" value="#{participantImportController.preparationToAdd}"
-                                                 converter="cvObjectConverter">
-                                    <f:selectItems value="#{cvObjectService.participantExperimentalPreparationsSelectItems}"/>
-                                </h:selectOneMenu>
-                                <p:commandButton id="btnAddDelivery" value="Add"
-                                                 actionListener="#{participantImportController.addExperimentalPreparation}" update=":editorForm:interactionTabs:candidatesDialogContent:deliveryDescription"
-                                                 process="newDeliveryTxtInDialog"/>
-                            </h:panelGrid>
+                            <p:selectManyMenu id="newDeliveryTxtInDialog" value="#{participantImportController.cvExperimentalPreparations}"
+                                             converter="cvObjectConverter" style="height: 100px; width: 100%">
+                                <f:selectItems value="#{cvObjectService.participantExperimentalPreparationsSelectItems}"/>
+                            </p:selectManyMenu>
                         </h:panelGroup>
                         <!-- WARNING : the p:column and immediate = true are required to make the button remove in the p:dataList work-->
                         <h:outputLabel value="Identification method(s): " for="identificationDescription"/>
                         <h:panelGroup id="identificationDescription">
-                            <p:dataList id="identificationListInDialog" value="#{participantImportController.cvIdentifications}" var="identification" type="definition" rendered="#{not empty participantImportController.cvIdentifications}" styleClass="dataList">
-                                <f:facet name="description">
-                                    <h:outputText value=""/>
-                                </f:facet>
-                                <p:column>
-                                    <p:panelGrid columns="2">
-                                        <h:outputText value="#{identification.shortName}"/>
-                                        <p:commandButton value="Remove"
-                                                         actionListener="#{participantImportController.removeIdentificationMethod(identification)}" update=":editorForm:interactionTabs:candidatesDialogContent:identificationDescription"
-                                                         process="@this" immediate="true"/>
-                                    </p:panelGrid>
-                                </p:column>
-                            </p:dataList>
-                            <h:panelGrid columns="2">
-                                <h:selectOneMenu id="newIdentificationTxtInDialog" value="#{participantImportController.identificationToAdd}"
-                                                 converter="cvObjectConverter">
-                                    <f:selectItems value="#{cvObjectService.participantDetectionMethodSelectItems}"/>
-                                </h:selectOneMenu>
-                                <p:commandButton id="btnAddIdentification" value="Add"
-                                                 actionListener="#{participantImportController.addIdentificationMethod}" update=":editorForm:interactionTabs:candidatesDialogContent:identificationDescription"
-                                                 process="newIdentificationTxtInDialog"/>
-                            </h:panelGrid>
+                            <p:selectManyMenu id="newIdentificationTxtInDialog" value="#{participantImportController.cvIdentifications}"
+                                             converter="cvObjectConverter" style="height: 100px; width: 100%">
+                                <f:selectItems value="#{cvObjectService.participantDetectionMethodSelectItems}"/>
+                            </p:selectManyMenu>
                         </h:panelGroup>
                         <h:outputLabel value="Load as molecule set: " for="moleculeSetTxt"/>
                         <h:selectBooleanCheckbox id="moleculeSetTxt" value="#{participantImportController.loadAsMoleculeSet}"/>

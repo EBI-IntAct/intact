@@ -169,6 +169,12 @@ public abstract class AbstractParticipantImportController<T extends AbstractInta
         participantsToImport = new String[0];
         // reset load molecule set
         this.isLoadAsMoleculeSet = false;
+        cvBiologicalRole = cvObjectService.getDefaultBiologicalRole();
+        resetOtherProperties();
+    }
+
+    protected void resetOtherProperties(){
+
     }
 
     protected abstract void doSave();

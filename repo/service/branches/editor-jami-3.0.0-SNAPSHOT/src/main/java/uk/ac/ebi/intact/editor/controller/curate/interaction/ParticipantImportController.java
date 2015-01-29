@@ -30,6 +30,7 @@ import uk.ac.ebi.intact.jami.model.extension.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -50,10 +51,8 @@ public class ParticipantImportController extends AbstractParticipantImportContro
 
     private CvTerm cvExperimentalRole;
     private Organism expressedIn;
-    private Collection<CvTerm> cvExperimentalPreparations = new ArrayList<CvTerm>();
-    private Collection<CvTerm> cvIdentifications=new ArrayList<CvTerm>();
-    private CvTerm preparationToAdd;
-    private CvTerm identificationToAdd;
+    private List<CvTerm> cvExperimentalPreparations;
+    private List<CvTerm> cvIdentifications;
 
     @Override
     protected void initialiseOtherProperties() {
@@ -102,10 +101,10 @@ public class ParticipantImportController extends AbstractParticipantImportContro
                     getParticipantImportService().getIntactDao().getSynchronizerContext().getInteractorSynchronizer(), "Interactor " + interactor.getShortName());
         }
 
-        if (!cvExperimentalPreparations.isEmpty()) {
+        if (cvExperimentalPreparations != null) {
             component.getExperimentalPreparations().addAll(cvExperimentalPreparations);
         }
-        if (!cvIdentifications.isEmpty()) {
+        if (cvIdentifications != null) {
             component.getIdentificationMethods().addAll(cvIdentifications);
         }
 
@@ -151,55 +150,27 @@ public class ParticipantImportController extends AbstractParticipantImportContro
         this.expressedIn = expressedIn;
     }
 
-    public Collection<CvTerm> getCvExperimentalPreparations() {
+    public List<CvTerm> getCvExperimentalPreparations() {
         return cvExperimentalPreparations;
     }
 
-    public Collection<CvTerm> getCvIdentifications() {
+    public List<CvTerm> getCvIdentifications() {
         return cvIdentifications;
     }
 
-    public CvTerm getPreparationToAdd() {
-        return preparationToAdd;
+    public void setCvExperimentalPreparations(List<CvTerm> cvExperimentalPreparations) {
+        this.cvExperimentalPreparations = cvExperimentalPreparations;
     }
 
-    public void setPreparationToAdd(CvTerm preparationToAdd) {
-        this.preparationToAdd = preparationToAdd;
+    public void setCvIdentifications(List<CvTerm> cvIdentifications) {
+        this.cvIdentifications = cvIdentifications;
     }
 
-    public CvTerm getIdentificationToAdd() {
-        return identificationToAdd;
-    }
-
-    public void setIdentificationToAdd(CvTerm identificationToAdd) {
-        this.identificationToAdd = identificationToAdd;
-    }
-
-    public void removeExperimentalPreparation(CvTerm prep){
-        if (prep != null){
-            cvExperimentalPreparations.remove(prep);
-        }
-    }
-
-    public void addExperimentalPreparation(){
-        if (this.preparationToAdd != null){
-            if (!cvExperimentalPreparations.contains(this.preparationToAdd)){
-                cvExperimentalPreparations.add(this.preparationToAdd);
-            }
-        }
-    }
-
-    public void removeIdentificationMethod(CvTerm prep){
-        if (prep != null){
-            cvIdentifications.remove(prep);
-        }
-    }
-
-    public void addIdentificationMethod(){
-        if (this.identificationToAdd != null){
-            if (!cvIdentifications.contains(this.identificationToAdd)){
-                cvIdentifications.add(this.identificationToAdd);
-            }
-        }
+    @Override
+    protected void resetOtherProperties() {
+        cvExperimentalRole = getCvService().getDefaultExperimentalRole();
+        this.cvExperimentalPreparations = null;
+        this.cvIdentifications = null;
+        this.expressedIn = null;
     }
 }
