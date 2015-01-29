@@ -162,6 +162,35 @@ public abstract class AbstractEditorService implements EditorService {
         }
     }
 
+    protected <T extends Auditable,I> T convertToPersistentIntactObject(I intactObject, IntactDbSynchronizer<I,T> synchronizer) throws SynchronizerException,
+            FinderException, PersisterException {
+        try{
+            // clear manager first to avaoid to have remaining objects from other transactions
+            getIntactDao().getEntityManager().clear();
+
+            if (intactObject instanceof IntactCvTerm && synchronizer instanceof CvTermSynchronizer){
+                ((CvTermSynchronizer)synchronizer).setObjClass(((IntactCvTerm)intactObject).getObjClass());
+            }
+            return synchronizer.convertToPersistentObject(intactObject);
+        }
+        catch (SynchronizerException e){
+            getIntactDao().getSynchronizerContext().clearCache();
+            throw e;
+        }
+        catch (FinderException e){
+            getIntactDao().getSynchronizerContext().clearCache();
+            throw e;
+        }
+        catch (PersisterException e){
+            getIntactDao().getSynchronizerContext().clearCache();
+            throw e;
+        }
+        catch (Throwable e){
+            getIntactDao().getSynchronizerContext().clearCache();
+            throw new PersisterException(e.getMessage(), e);
+        }
+    }
+
     protected <T extends IntactPrimaryObject> T reattachIntactObjectIfTransient(T intactObject, IntactBaseDao<T> dao){
         // merge current user because detached
         if (dao.isTransient(intactObject) && intactObject.getAc() != null){

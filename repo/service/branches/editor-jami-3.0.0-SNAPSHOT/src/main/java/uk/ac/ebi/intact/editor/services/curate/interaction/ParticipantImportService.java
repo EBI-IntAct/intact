@@ -68,8 +68,7 @@ public class ParticipantImportService extends AbstractEditorService {
     private final static String FEATURE_CHAIN = "PRO_";
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public Set<ImportCandidate> importParticipant(String participantToImport) throws BridgeFailedException, SynchronizerException,
-            PersisterException, FinderException {
+    public Set<ImportCandidate> importParticipant(String participantToImport) throws BridgeFailedException, SynchronizerException, FinderException, PersisterException {
         log.debug("Importing participant: " + participantToImport);
         attachDaoToTransactionManager();
 
@@ -184,8 +183,7 @@ public class ParticipantImportService extends AbstractEditorService {
     }
 
 
-    private Set<ImportCandidate> importFromUniprot(String participantToImport) throws BridgeFailedException, SynchronizerException,
-            PersisterException, FinderException {
+    private Set<ImportCandidate> importFromUniprot(String participantToImport) throws BridgeFailedException, SynchronizerException, FinderException, PersisterException {
         Set<ImportCandidate> candidates = new HashSet<ImportCandidate>();
 
         final Collection<Protein> uniprotProteins = uniprotRemoteService.fetchByIdentifier(participantToImport);
@@ -201,8 +199,7 @@ public class ParticipantImportService extends AbstractEditorService {
     }
 
 
-    private Set<ImportCandidate> importFromChebi(String participantToImport) throws BridgeFailedException, SynchronizerException,
-            PersisterException, FinderException {
+    private Set<ImportCandidate> importFromChebi(String participantToImport) throws BridgeFailedException, SynchronizerException, FinderException, PersisterException {
         Set<ImportCandidate> candidates = new HashSet<ImportCandidate>();
 
         final Collection<BioactiveEntity> smallMolecules = chebiFetcher.fetchByIdentifier(participantToImport);
@@ -215,8 +212,7 @@ public class ParticipantImportService extends AbstractEditorService {
         return candidates;
     }
 
-    private Set<ImportCandidate> importFromSwissProtWithEnsemblId(String participantToImport) throws BridgeFailedException, SynchronizerException,
-            PersisterException, FinderException {
+    private Set<ImportCandidate> importFromSwissProtWithEnsemblId(String participantToImport) throws BridgeFailedException, SynchronizerException, FinderException, PersisterException {
         Set<ImportCandidate> candidates = new HashSet<ImportCandidate>();
 
         final Collection<Gene> genes = uniprotGeneFetcher.fetchByIdentifier(participantToImport);
@@ -353,32 +349,32 @@ public class ParticipantImportService extends AbstractEditorService {
         initialiseXrefs(((IntactCvTerm)term).getDbXrefs());
     }
 
-    private IntactProtein toProtein(ImportCandidate candidate) throws PersisterException, FinderException, SynchronizerException {
+    private IntactProtein toProtein(ImportCandidate candidate) throws SynchronizerException, FinderException, PersisterException {
         IntactProtein protein=null;
 
         // use the protein service to create proteins (not persist!)
         if (candidate.getUniprotProtein() != null) {
-            protein = synchronizeIntactObject(candidate.getUniprotProtein(), getIntactDao().getSynchronizerContext().getProteinSynchronizer(), false);
+            protein = convertToPersistentIntactObject(candidate.getUniprotProtein(), getIntactDao().getSynchronizerContext().getProteinSynchronizer());
         }
 
         return protein;
     }
 
-    private IntactBioactiveEntity toBioactiveEntity(BioactiveEntity candidate) throws PersisterException, FinderException, SynchronizerException {
+    private IntactBioactiveEntity toBioactiveEntity(BioactiveEntity candidate) throws SynchronizerException, FinderException, PersisterException {
         IntactBioactiveEntity entity=null;
 
         if (candidate != null) {
-            entity = synchronizeIntactObject(candidate, getIntactDao().getSynchronizerContext().getBioactiveEntitySynchronizer(), false);
+            entity = convertToPersistentIntactObject(candidate, getIntactDao().getSynchronizerContext().getBioactiveEntitySynchronizer());
         }
 
         return entity;
     }
 
-    private IntactGene toGene(Gene candidate) throws PersisterException, FinderException, SynchronizerException {
+    private IntactGene toGene(Gene candidate) throws SynchronizerException, FinderException, PersisterException {
         IntactGene entity=null;
 
         if (candidate != null) {
-            entity = synchronizeIntactObject(candidate, getIntactDao().getSynchronizerContext().getGeneSynchronizer(), false);
+            entity = convertToPersistentIntactObject(candidate, getIntactDao().getSynchronizerContext().getGeneSynchronizer());
         }
 
         return entity;

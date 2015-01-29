@@ -29,9 +29,6 @@ import uk.ac.ebi.intact.editor.services.curate.interaction.ParticipantImportServ
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.extension.AbstractIntactParticipant;
 import uk.ac.ebi.intact.jami.model.extension.IntactInteractorPool;
-import uk.ac.ebi.intact.jami.synchronizer.FinderException;
-import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
-import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 
 import javax.annotation.Resource;
 import javax.faces.event.ActionEvent;
@@ -114,15 +111,6 @@ public abstract class AbstractParticipantImportController<T extends AbstractInta
                         importCandidates.addAll(candidates);
                     }
                 } catch (BridgeFailedException e) {
-                    addErrorMessage("Cannot load interactor " + participantToImport, e.getCause() + ": " + e.getMessage());
-                    queriesNoResults.add(participantToImport);
-                } catch (FinderException e) {
-                    addErrorMessage("Cannot load interactor " + participantToImport, e.getCause() + ": " + e.getMessage());
-                    queriesNoResults.add(participantToImport);
-                } catch (SynchronizerException e) {
-                    addErrorMessage("Cannot load interactor " + participantToImport, e.getCause() + ": " + e.getMessage());
-                    queriesNoResults.add(participantToImport);
-                } catch (PersisterException e) {
                     addErrorMessage("Cannot load interactor " + participantToImport, e.getCause() + ": " + e.getMessage());
                     queriesNoResults.add(participantToImport);
                 } catch (Throwable e) {
