@@ -672,7 +672,7 @@ public class ComplexController extends AnnotatedObjectController {
 
     @Override
     protected InteractorXref newXref(CvTerm db, String id, String secondaryId, String version, CvTerm qualifier) {
-        if (CvTermUtils.isCvTerm(db, Xref.GO_MI, Xref.GO) && (this.newXrefEvidenceCode != null || this.newXrefPubmed != null)){
+        if (CvTermUtils.isCvTerm(db, Xref.GO_MI, Xref.GO)){
             ComplexGOXref goRef = new ComplexGOXref(id, version, qualifier);
             goRef.setSecondaryId(secondaryId);
             goRef.setPubmed(this.newXrefPubmed);
