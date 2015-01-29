@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.intact.editor.enricher;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import psidev.psi.mi.jami.bridges.fetcher.OrganismFetcher;
 import psidev.psi.mi.jami.enricher.CvTermEnricher;
 import psidev.psi.mi.jami.enricher.OrganismEnricher;
@@ -23,7 +24,9 @@ import psidev.psi.mi.jami.enricher.listener.OrganismEnricherListener;
 import psidev.psi.mi.jami.model.Alias;
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Organism;
+import uk.ac.ebi.intact.dataexchange.enricher.EnricherContext;
 import uk.ac.ebi.intact.editor.services.enricher.DbEnricherService;
+import uk.ac.ebi.intact.jami.model.extension.CvTermAnnotation;
 import uk.ac.ebi.intact.jami.model.extension.OrganismAlias;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
@@ -42,6 +45,8 @@ public class EditorOrganismEnricher implements OrganismEnricher {
     private String importTag;
     @Resource(name = "dbEnricherService")
     private DbEnricherService dbEnricherService;
+    @Autowired
+    private EnricherContext enricherContext;
 
     @Override
     public OrganismFetcher getOrganismFetcher() {
@@ -78,6 +83,16 @@ public class EditorOrganismEnricher implements OrganismEnricher {
             // check if object exists in database before adding a tag
             if (dbEnricherService.isNewOrganism(object)){
                 object.getAliases().add(new OrganismAlias(IntactUtils.createMIAliasType(Alias.SYNONYM, Alias.SYNONYM_MI), getImportTag()));
+            }
+
+            // tag cell types and tissues if not done
+            if (!enricherContext.getConfig().isUpdateCellTypesAndTissues()){
+                if (object.getCellType() != null && dbEnricherService.isNewCvTerm(object.getCellType())){
+                    object.getCellType().getAnnotations().add(new CvTermAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
+                }
+                if (object.getTissue() != null && dbEnricherService.isNewCvTerm(object.getTissue())){
+                    object.getTissue().getAnnotations().add(new CvTermAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
+                }
             }
         }
     }
