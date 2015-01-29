@@ -208,6 +208,17 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
         }
     }
 
+    /**
+     * When reverting, we need to refresh the collection of wrappers because they are not part of the IntAct model.
+     */
+    @Override
+    protected void postRevert() {
+        // the feature was just created, add it to the list of features of the participant
+        if (getFeature().getParticipant() != null){
+            participantController.reloadSingleFeature(getFeature());
+        }
+    }
+
     @Override
     public String doDelete() {
         participantController.removeFeature(getFeature());

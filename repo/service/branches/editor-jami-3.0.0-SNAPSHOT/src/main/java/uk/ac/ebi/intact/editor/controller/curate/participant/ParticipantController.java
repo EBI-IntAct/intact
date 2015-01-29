@@ -187,6 +187,14 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     }
 
     @Override
+    public void postRevert() {
+        // the participant was just created, add it to the list of participant of the interaction
+        if (getParticipant().getInteraction() != null){
+            interactionController.reloadSingleParticipant(getParticipant());
+        }
+    }
+
+    @Override
     protected EditorCloner<ParticipantEvidence, IntactParticipantEvidence> newClonerInstance() {
         return new ParticipantEvidenceCloner();
     }

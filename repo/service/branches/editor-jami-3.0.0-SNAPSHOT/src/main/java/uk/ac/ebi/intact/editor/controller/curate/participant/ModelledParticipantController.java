@@ -116,6 +116,14 @@ public class ModelledParticipantController extends AbstractParticipantController
     }
 
     @Override
+    public void postRevert() {
+        // the participant was just created, add it to the list of participant of the interaction
+        if (getParticipant().getInteraction() != null){
+            interactionController.reloadSingleParticipant(getParticipant());
+        }
+    }
+
+    @Override
     public void addInteractorToParticipant(ActionEvent evt) {
         super.addInteractorToParticipant(evt);
         interactionController.reloadSingleParticipant(getParticipant());

@@ -135,9 +135,8 @@ public class EditorObjectService extends AbstractEditorService {
         if (intactObject.getAc() != null) {
             if (log.isDebugEnabled()) log.debug("Reverting: " + intactObject.getClass()+", Ac="+intactObject.getAc());
 
-            if (intactObject.getAc() != null && getIntactDao().getEntityManager().contains(intactObject)) {
-                getIntactDao().getEntityManager().detach(intactObject);
-            }
+            // clear manager first to avaoid to have remaining objects from other transactions
+            getIntactDao().getEntityManager().clear();
 
             intactObject = getIntactDao().getEntityManager().find(intactObject.getClass(), intactObject.getAc());
         }
@@ -151,6 +150,7 @@ public class EditorObjectService extends AbstractEditorService {
             if (log.isDebugEnabled()) log.debug("Deleting " + intactObject.getClass()+", Ac="+intactObject.getAc());
             // attach dao to transaction manager to clear cache
             attachDaoToTransactionManager();
+            getIntactDao().getEntityManager().clear();
 
             return dbSynchronizer.delete(intactObject);
         }
