@@ -164,7 +164,7 @@ public class InteractionSummaryService extends AbstractEditorService implements 
      * WARNING: Needs to give service proxy (not this) so transactional is fired when called from LazyDataModel
      */
     public LazyDataModel<InteractionSummary> refreshDataModels(IntactPublication publication, InteractionSummaryService serviceProxy) {
-        return LazyDataModelFactory.createLazyDataModel(serviceProxy,
+        return LazyDataModelFactory.createLazyDataModel(serviceProxy, "interactionSummaryService",
                 "select i from IntactInteractionEvidence i join fetch i.dbExperiments as exp " +
                         "where exp.publication.ac = '" + publication.getAc() + "' order by exp.shortLabel asc",
                 "select count(i) from IntactInteractionEvidence i join i.dbExperiments as exp " +

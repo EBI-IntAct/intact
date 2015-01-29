@@ -44,7 +44,7 @@ public class DashboardQueryService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public LazyDataModel<PublicationSummary> loadAllPublications(String additionalSql){
-         return  LazyDataModelFactory.createLazyDataModel(publicationSummaryService,
+         return  LazyDataModelFactory.createLazyDataModel(publicationSummaryService, "publicationSummaryService",
                  "select p from IntactPublication p left join fetch p.dbXrefs as x where " +
                          "(p.shortLabel <> '14681455' and p.shortLabel <> 'unassigned638' " +
                          "and p.shortLabel <> '24288376' and p.shortLabel <> '24214965') and ( " + additionalSql+" )",
@@ -55,7 +55,7 @@ public class DashboardQueryService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public LazyDataModel<PublicationSummary> loadPublicationsOwnedBy(String userLogin, String additionalSql){
-        return LazyDataModelFactory.createLazyDataModel(publicationSummaryService,
+        return LazyDataModelFactory.createLazyDataModel(publicationSummaryService, "publicationSummaryService",
                 "select p from IntactPublication p left join fetch p.dbXrefs as x where " +
                         "(p.shortLabel <> '14681455' and p.shortLabel <> 'unassigned638' " +
                         "and p.shortLabel <> '24288376' and p.shortLabel <> '24214965') and upper(p.currentOwner.login) = '" + userLogin + "'" +
@@ -69,7 +69,7 @@ public class DashboardQueryService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public LazyDataModel<PublicationSummary> loadPublicationsReviewedBy(String userLogin, String additionalSql){
-        return LazyDataModelFactory.createLazyDataModel(publicationSummaryService,
+        return LazyDataModelFactory.createLazyDataModel(publicationSummaryService, "publicationSummaryService",
                 "select p from IntactPublication p left join fetch p.dbXrefs as x where " +
                         "(p.shortLabel <> '14681455' and p.shortLabel <> 'unassigned638' " +
                         "and p.shortLabel <> '24288376' and p.shortLabel <> '24214965') and upper(p.currentReviewer.login) = '" + userLogin + "'" +
@@ -83,14 +83,14 @@ public class DashboardQueryService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public LazyDataModel<ComplexSummary> loadAllComplexes(String additionalSql){
-        return LazyDataModelFactory.createLazyDataModel(complexSummaryService,
+        return LazyDataModelFactory.createLazyDataModel(complexSummaryService, "complexSummaryService",
                 "select p from IntactComplex p where " + additionalSql,
                 "select count(distinct p.ac) from IntactComplex p where " + additionalSql, "p", "updated, p.ac", false);
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public LazyDataModel<ComplexSummary> loadComplexesOwnedBy(String userLogin, String additionalSql){
-        return LazyDataModelFactory.createLazyDataModel(complexSummaryService,
+        return LazyDataModelFactory.createLazyDataModel(complexSummaryService, "complexSummaryService",
                 "select p from IntactComplex p where upper(p.currentOwner.login) = '" + userLogin + "'" +
                         " and (" + additionalSql + ")",
                 "select count(distinct p.ac) from IntactComplex p where upper(p.currentOwner.login) = '" + userLogin + "'" +
@@ -100,7 +100,7 @@ public class DashboardQueryService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public LazyDataModel<ComplexSummary> loadComplexesReviewedBy(String userLogin, String additionalSql){
-        return LazyDataModelFactory.createLazyDataModel(complexSummaryService,
+        return LazyDataModelFactory.createLazyDataModel(complexSummaryService, "complexSummaryService",
                 "select p from IntactComplex p where upper(p.currentReviewer.login) = '" + userLogin + "'" +
                         " and (" + additionalSql + ")",
                 "select count(distinct p.ac) from IntactComplex p where upper(p.currentReviewer.login) = '" + userLogin + "'" +
