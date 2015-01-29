@@ -170,14 +170,14 @@
                 </div>
 
             </h:panelGroup>
+
+            <p:remoteCommand name="save" actionListener="#{annotatedObjectController.doSave}"
+                             update=":editorForm"
+                             onstart="saveDialog.show(); var input = document.getElementById('topSaveButton'); input.disabled = true; input.value = 'Saving...'"
+                             onerror="alert('Error: '+error+' '+status)"
+                             oncomplete="saveDialog.hide(); var input = document.getElementById('topSaveButton'); input.disabled = false; input.value = 'Save'"/>
         </p:outputPanel>
     </div>
-
-    <p:remoteCommand name="save" actionListener="#{annotatedObjectController.doSave}"
-                     update=":editorForm"
-                     onstart="saveDialog.show(); var input = document.getElementById('topSaveButton'); input.disabled = true; input.value = 'Saving...'"
-                     onerror="alert('Error: '+error+' '+status)"
-                     oncomplete="saveDialog.hide(); var input = document.getElementById('topSaveButton'); input.disabled = false; input.value = 'Save'"/>
 
     <!-- New publication -->
     <p:dialog header="New publication" width="425" widgetVar="newPublicationDlg" visible="false" draggable="false"

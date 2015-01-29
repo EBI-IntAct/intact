@@ -176,7 +176,7 @@
                 <div style="float:right">
                     <p:commandLink id="markDeletedBtn" process="markDeletedBtn" title="Mark to be deleted" styleClass="ui-icon ui-icon-closethick"
                                    actionListener="#{interactionController.markParticipantToDelete(participant)}"
-                                   update=":editorForm:unsavedChangesInfo :editorForm:changesPanel :editorForm:messagesComponent :editorForm:interactionTabs:participantsTab"
+                                   update=":editorForm:unsavedChangesInfo,:editorForm:changesPanel,:editorForm:messagesComponent,:editorForm:interactionTabs:participantsTab"
                                    rendered="#{not changesController.isDeletedAc(participant.ac)}"/>
                 </div>
                 <div style="float:right">
