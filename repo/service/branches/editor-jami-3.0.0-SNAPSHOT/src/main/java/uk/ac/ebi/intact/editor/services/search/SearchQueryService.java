@@ -76,7 +76,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", originalQuery );
 
         // all cvobjects
-        LazyDataModel<CvSummary> cvobjects = LazyDataModelFactory.createLazyDataModel( this.cvSummaryService,
+        LazyDataModel<CvSummary> cvobjects = LazyDataModelFactory.createLazyDataModel( this.cvSummaryService, "cvSummaryService",
 
                                                               "select distinct i " +
                                                               "from IntactCvTerm i left join i.dbXrefs as x " +
@@ -109,7 +109,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put("remark", "remark-internal");
 
         // all cvobjects
-        LazyDataModel<CvSummary> cvobjects = LazyDataModelFactory.createLazyDataModel( this.cvSummaryService,
+        LazyDataModel<CvSummary> cvobjects = LazyDataModelFactory.createLazyDataModel( this.cvSummaryService, "cvSummaryService",
 
                 "select distinct i " +
                         "from IntactCvTerm i join i.dbAnnotations as a " +
@@ -136,7 +136,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", originalQuery );
 
         // all molecules but interactions
-        LazyDataModel<MoleculeSummary> molecules = LazyDataModelFactory.createLazyDataModel( moleculeSummaryService,
+        LazyDataModel<MoleculeSummary> molecules = LazyDataModelFactory.createLazyDataModel( moleculeSummaryService, "moleculeSummaryService",
 
                                                               "select distinct i " +
                                                               "from IntactInteractor i left join i.dbXrefs as x " +
@@ -167,7 +167,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put("remark","remark-internal");
 
         // all molecules but interactions
-        LazyDataModel<MoleculeSummary> molecules = LazyDataModelFactory.createLazyDataModel( moleculeSummaryService,
+        LazyDataModel<MoleculeSummary> molecules = LazyDataModelFactory.createLazyDataModel( moleculeSummaryService, "moleculeSummaryService",
 
                 "select distinct i " +
                         "from IntactInteractor i join i.dbAnnotations as a " +
@@ -191,7 +191,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", organismAc );
 
         // all molecules but interactions
-        LazyDataModel<MoleculeSummary> molecules = LazyDataModelFactory.createLazyDataModel( moleculeSummaryService,
+        LazyDataModel<MoleculeSummary> molecules = LazyDataModelFactory.createLazyDataModel( moleculeSummaryService, "moleculeSummaryService",
 
                 "select distinct i " +
                         "from IntactInteractor i join i.organism as o " +
@@ -216,7 +216,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", organismAc );
 
         // all molecules but interactions
-        LazyDataModel<ComplexSummary> molecules = LazyDataModelFactory.createLazyDataModel( complexSummaryService,
+        LazyDataModel<ComplexSummary> molecules = LazyDataModelFactory.createLazyDataModel( complexSummaryService, "complexSummaryService",
 
                 "select distinct i " +
                         "from IntactComplex i join i.organism as o " +
@@ -242,7 +242,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", originalQuery );
 
         // Load experiment eagerly to avoid LazyInitializationException when rendering the view
-        LazyDataModel<InteractionSummary> interactions = LazyDataModelFactory.createLazyDataModel( interactionSummaryService,
+        LazyDataModel<InteractionSummary> interactions = LazyDataModelFactory.createLazyDataModel( interactionSummaryService, "interactionSummaryService",
 
                                                                  "select distinct i " +
                                                                  "from IntactInteractionEvidence i left join i.dbXrefs as x " +
@@ -272,7 +272,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "remark", "remark-internal" );
 
         // Load experiment eagerly to avoid LazyInitializationException when rendering the view
-        LazyDataModel<InteractionSummary> interactions = LazyDataModelFactory.createLazyDataModel( interactionSummaryService,
+        LazyDataModel<InteractionSummary> interactions = LazyDataModelFactory.createLazyDataModel( interactionSummaryService,"interactionSummaryService",
 
                 "select distinct i " +
                         "from IntactInteractionEvidence i join i.dbAnnotations as a " +
@@ -296,7 +296,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", moleculeAc );
 
         // Load experiment eagerly to avoid LazyInitializationException when rendering the view
-        LazyDataModel<InteractionSummary> interactions = LazyDataModelFactory.createLazyDataModel( interactionSummaryService,
+        LazyDataModel<InteractionSummary> interactions = LazyDataModelFactory.createLazyDataModel( interactionSummaryService,"interactionSummaryService",
 
                 "select distinct i " +
                         "from IntactInteractionEvidence i join i.participants as p join p.interactor as inter " +
@@ -321,7 +321,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", moleculeAc );
 
         // Load experiment eagerly to avoid LazyInitializationException when rendering the view
-        LazyDataModel<ComplexSummary> interactions = LazyDataModelFactory.createLazyDataModel( complexSummaryService,
+        LazyDataModel<ComplexSummary> interactions = LazyDataModelFactory.createLazyDataModel( complexSummaryService,"complexSummaryService",
 
                 "select distinct i " +
                         "from IntactComplex i join i.participants as p join p.interactor as inter " +
@@ -345,7 +345,7 @@ public class SearchQueryService extends AbstractEditorService {
         final HashMap<String, String> params = Maps.<String, String>newHashMap();
         params.put( "ac", moleculeAc );
         // Load experiment eagerly to avoid LazyInitializationException when rendering the view
-        LazyDataModel<MoleculeSummary> interactions = LazyDataModelFactory.createLazyDataModel( moleculeSummaryService,
+        LazyDataModel<MoleculeSummary> interactions = LazyDataModelFactory.createLazyDataModel( moleculeSummaryService,"moleculeSummaryService",
 
                 "select distinct i " +
                         "from IntactInteractorPool i join i.interactors as inter " +
@@ -370,7 +370,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "query", query );
         params.put( "ac", originalQuery );
         // Load experiment eagerly to avoid LazyInitializationException when rendering the view
-        LazyDataModel<ComplexSummary> complexes = LazyDataModelFactory.createLazyDataModel( complexSummaryService,
+        LazyDataModel<ComplexSummary> complexes = LazyDataModelFactory.createLazyDataModel( complexSummaryService,"complexSummaryService",
 
                 "select distinct i " +
                         "from IntactComplex i left join i.dbXrefs as x " +
@@ -407,7 +407,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "query", query );
         params.put( "remark", "remark-internal" );
         // Load experiment eagerly to avoid LazyInitializationException when rendering the view
-        LazyDataModel<ComplexSummary> complexes = LazyDataModelFactory.createLazyDataModel( complexSummaryService,
+        LazyDataModel<ComplexSummary> complexes = LazyDataModelFactory.createLazyDataModel( complexSummaryService,"complexSummaryService",
 
                 "select distinct i " +
                         "from IntactComplex i join i.dbAnnotations as a " +
@@ -432,7 +432,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", originalQuery );
         params.put( "inferred", Experiment.INFERRED_BY_CURATOR );
 
-        LazyDataModel<ExperimentSummary> experiments = LazyDataModelFactory.createLazyDataModel( experimentSummaryService,
+        LazyDataModel<ExperimentSummary> experiments = LazyDataModelFactory.createLazyDataModel( experimentSummaryService,"experimentSummaryService",
 
                                                                 "select distinct e " +
                                                                 "from IntactExperiment e left join e.xrefs as x " +
@@ -463,7 +463,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "query", query );
         params.put( "remark", "remark-internal" );
 
-        LazyDataModel<ExperimentSummary> experiments = LazyDataModelFactory.createLazyDataModel( experimentSummaryService,
+        LazyDataModel<ExperimentSummary> experiments = LazyDataModelFactory.createLazyDataModel( experimentSummaryService,"experimentSummaryService",
 
                 "select distinct i " +
                         "from IntactExperiment i join i.annotations as a " +
@@ -487,7 +487,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", organismAc );
         params.put( "inferred", Experiment.INFERRED_BY_CURATOR );
 
-        LazyDataModel<ExperimentSummary> experiments = LazyDataModelFactory.createLazyDataModel( experimentSummaryService,
+        LazyDataModel<ExperimentSummary> experiments = LazyDataModelFactory.createLazyDataModel( experimentSummaryService,"experimentSummaryService",
 
                 "select distinct e " +
                         "from IntactExperiment e join e.hostOrganism as o " +
@@ -517,7 +517,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "pdbOnHold", "24288376" );
         params.put( "chemblOnHold", "24214965" );
 
-        LazyDataModel<PublicationSummary> publications = LazyDataModelFactory.createLazyDataModel( publicationSummaryService,
+        LazyDataModel<PublicationSummary> publications = LazyDataModelFactory.createLazyDataModel( publicationSummaryService,"publicationSummaryService",
 
                                                                  "select distinct p " +
                                                                  "from IntactPublication p left join p.dbXrefs as x " +
@@ -549,7 +549,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "query", query );
         params.put( "remark", "remark-internal" );
 
-        LazyDataModel<PublicationSummary> publications = LazyDataModelFactory.createLazyDataModel( publicationSummaryService,
+        LazyDataModel<PublicationSummary> publications = LazyDataModelFactory.createLazyDataModel( publicationSummaryService,"publicationSummaryService",
 
                 "select distinct i " +
                         "from IntactPublication i join i.dbAnnotations as a " +
@@ -572,7 +572,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "query", query );
         params.put( "ac", originalQuery );
 
-        LazyDataModel<FeatureSummary> features = LazyDataModelFactory.createLazyDataModel( featureEvidenceSummaryService,
+        LazyDataModel<FeatureSummary> features = LazyDataModelFactory.createLazyDataModel( featureEvidenceSummaryService,"featureEvidenceSummaryService",
 
                                                                  "select distinct p " +
                                                                  "from IntactFeatureEvidence p left join p.dbXrefs as x " +
@@ -602,7 +602,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "query", query );
         params.put( "remark", "remark-internal" );
 
-        LazyDataModel<FeatureSummary> features = LazyDataModelFactory.createLazyDataModel( featureEvidenceSummaryService,
+        LazyDataModel<FeatureSummary> features = LazyDataModelFactory.createLazyDataModel( featureEvidenceSummaryService,"featureEvidenceSummaryService",
 
                 "select distinct i " +
                         "from IntactFeatureEvidence i join i.annotations as a " +
@@ -626,7 +626,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", originalQuery );
 
         // Load experiment eagerly to avoid LazyInitializationException when redering the view
-        LazyDataModel<OrganismSummary> organisms = LazyDataModelFactory.createLazyDataModel( organismSummaryService,
+        LazyDataModel<OrganismSummary> organisms = LazyDataModelFactory.createLazyDataModel( organismSummaryService,"organismSummaryService",
 
                                                                  "select distinct b " +
                                                                  "from IntactOrganism b " +
@@ -657,7 +657,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "synonym", "synonym" );
 
         // Load experiment eagerly to avoid LazyInitializationException when redering the view
-        LazyDataModel<OrganismSummary> organisms = LazyDataModelFactory.createLazyDataModel( organismSummaryService,
+        LazyDataModel<OrganismSummary> organisms = LazyDataModelFactory.createLazyDataModel( organismSummaryService,"organismSummaryService",
 
                 "select distinct i " +
                         "from IntactOrganism i join i.aliases as a " +
@@ -681,7 +681,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", originalQuery );
 
         // Load experiment eagerly to avoid LazyInitializationException when redering the view
-        LazyDataModel<ParticipantSummary> participants = LazyDataModelFactory.createLazyDataModel( participantEvidenceSummaryService,
+        LazyDataModel<ParticipantSummary> participants = LazyDataModelFactory.createLazyDataModel( participantEvidenceSummaryService,"participantEvidenceSummaryService",
 
                 "select distinct p " +
                         "from IntactParticipantEvidence p left join p.xrefs as x " +
@@ -708,7 +708,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "remark", "remark-internal" );
 
         // Load experiment eagerly to avoid LazyInitializationException when redering the view
-        LazyDataModel<ParticipantSummary> participants = LazyDataModelFactory.createLazyDataModel( participantEvidenceSummaryService,
+        LazyDataModel<ParticipantSummary> participants = LazyDataModelFactory.createLazyDataModel( participantEvidenceSummaryService,"participantEvidenceSummaryService",
 
                 "select distinct i " +
                         "from IntactParticipantEvidence i join i.annotations as a " +
@@ -731,7 +731,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", organismAc );
 
         // Load experiment eagerly to avoid LazyInitializationException when redering the view
-        LazyDataModel<ParticipantSummary> participants = LazyDataModelFactory.createLazyDataModel( participantEvidenceSummaryService,
+        LazyDataModel<ParticipantSummary> participants = LazyDataModelFactory.createLazyDataModel( participantEvidenceSummaryService,"participantEvidenceSummaryService",
 
                 "select distinct p " +
                         "from IntactParticipantEvidence p join p.expressedInOrganism as o " +
@@ -755,7 +755,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "query", query );
         params.put( "ac", originalQuery );
 
-        LazyDataModel<FeatureSummary>  modelledFeatures = LazyDataModelFactory.createLazyDataModel( modelledFeatureSummaryService,
+        LazyDataModel<FeatureSummary>  modelledFeatures = LazyDataModelFactory.createLazyDataModel( modelledFeatureSummaryService,"modelledFeatureSummaryService",
 
                 "select distinct p " +
                         "from IntactModelledFeature p left join p.dbXrefs as x " +
@@ -785,7 +785,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "query", query );
         params.put( "remark", "remark-internal" );
 
-        LazyDataModel<FeatureSummary>  modelledFeatures = LazyDataModelFactory.createLazyDataModel( modelledFeatureSummaryService,
+        LazyDataModel<FeatureSummary>  modelledFeatures = LazyDataModelFactory.createLazyDataModel( modelledFeatureSummaryService,"modelledFeatureSummaryService",
 
                 "select distinct i " +
                         "from IntactModelledFeature i join i.annotations as a " +
@@ -809,7 +809,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "ac", originalQuery );
 
         // Load experiment eagerly to avoid LazyInitializationException when redering the view
-        LazyDataModel<ParticipantSummary> modelledParticipants = LazyDataModelFactory.createLazyDataModel( modelledParticipantSummaryService,
+        LazyDataModel<ParticipantSummary> modelledParticipants = LazyDataModelFactory.createLazyDataModel( modelledParticipantSummaryService,"modelledParticipantSummaryService",
 
                 "select distinct p " +
                         "from IntactModelledParticipant p left join p.xrefs as x " +
@@ -836,7 +836,7 @@ public class SearchQueryService extends AbstractEditorService {
         params.put( "remark", "remark-internal" );
 
         // Load experiment eagerly to avoid LazyInitializationException when redering the view
-        LazyDataModel<ParticipantSummary> modelledParticipants = LazyDataModelFactory.createLazyDataModel( modelledParticipantSummaryService,
+        LazyDataModel<ParticipantSummary> modelledParticipants = LazyDataModelFactory.createLazyDataModel( modelledParticipantSummaryService,"modelledParticipantSummaryService",
 
                 "select distinct i " +
                         "from IntactModelledParticipant i join i.annotations as a " +
