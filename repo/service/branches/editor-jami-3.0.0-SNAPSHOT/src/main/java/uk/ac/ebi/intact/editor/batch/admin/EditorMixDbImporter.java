@@ -19,7 +19,7 @@ import uk.ac.ebi.intact.jami.model.user.User;
 public class EditorMixDbImporter extends IntactInteractionMixDbImporter implements StepExecutionListener {
 
     @Override
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public void beforeStep(StepExecution stepExecution) {
         String userLogin = stepExecution.getJobParameters().getString("user.login");
         User user = getInteractionEvidenceService().getIntactDao().getUserDao().getByLogin(userLogin);
