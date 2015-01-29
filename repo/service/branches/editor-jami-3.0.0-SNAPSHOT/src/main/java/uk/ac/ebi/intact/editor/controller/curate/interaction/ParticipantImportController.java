@@ -102,10 +102,18 @@ public class ParticipantImportController extends AbstractParticipantImportContro
         }
 
         if (cvExperimentalPreparations != null) {
-            component.getExperimentalPreparations().addAll(cvExperimentalPreparations);
+            for (CvTerm term : cvExperimentalPreparations){
+                if (term != null){
+                    component.getExperimentalPreparations().add(term);
+                }
+            }
         }
         if (cvIdentifications != null) {
-            component.getIdentificationMethods().addAll(cvIdentifications);
+            for (CvTerm term : cvIdentifications){
+                if (term != null){
+                    component.getIdentificationMethods().add(term);
+                }
+            }
         }
 
         // add cloned features
