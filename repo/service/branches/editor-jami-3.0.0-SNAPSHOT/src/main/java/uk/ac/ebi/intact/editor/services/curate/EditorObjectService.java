@@ -358,7 +358,7 @@ public class EditorObjectService extends AbstractEditorService {
         IntactUtils.synchronizeInteractionEvidenceShortName(object, getIntactDao().getEntityManager(), Collections.EMPTY_SET);
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public <T extends IntactPrimaryObject> T cloneAnnotatedObject(T ao, EditorCloner cloner) {
 
         T reloaded = ao;
