@@ -43,6 +43,7 @@ import uk.ac.ebi.intact.editor.services.curate.complex.ComplexEditorService;
 import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.lifecycle.ComplexBCLifecycleEventListener;
+import uk.ac.ebi.intact.jami.lifecycle.IllegalTransitionException;
 import uk.ac.ebi.intact.jami.lifecycle.LifeCycleManager;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.*;
@@ -217,13 +218,18 @@ public class ComplexController extends AnnotatedObjectController {
         super.modifyClone(clone);
         // to be overrided
         IntactComplex complex = (IntactComplex) clone;
-        getLifecycleManager().getStartStatus().create(complex, "Created in Editor",
-                getCurrentUser());
+        try{
+            getLifecycleManager().getStartStatus().create(complex, "Created in Editor",
+                    getCurrentUser());
 
-        if (assignToMe) {
-            User user = getCurrentUser();
-            lifecycleManager.getNewStatus().claimOwnership(complex, user);
-            lifecycleManager.getAssignedStatus().startCuration(complex, user);
+            if (assignToMe) {
+                User user = getCurrentUser();
+                lifecycleManager.getNewStatus().claimOwnership(complex, user);
+                lifecycleManager.getAssignedStatus().startCuration(complex, user);
+            }
+        }
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot create complex: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
         }
     }
 
@@ -881,22 +887,32 @@ public class ComplexController extends AnnotatedObjectController {
 
     public void claimOwnership(ActionEvent evt) {
 
-        getLifecycleManager().getGlobalStatus().changeOwnership(complex, getCurrentUser(), null);
+        try{
+            getLifecycleManager().getGlobalStatus().changeOwnership(complex, getCurrentUser(), null);
 
-        // automatically set as curation in progress if no one was assigned before
-        if (isAssigned()) {
-            markAsCurationInProgress(evt);
+            // automatically set as curation in progress if no one was assigned before
+            if (isAssigned()) {
+                markAsCurationInProgress(evt);
+            }
+
+            addInfoMessage("Claimed complex ownership", "You are now the owner of this complex");
         }
-
-        addInfoMessage("Claimed complex ownership", "You are now the owner of this complex");
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot claim ownership: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
+        }
     }
 
     public void markAsAssignedToMe(ActionEvent evt) {
-        getLifecycleManager().getNewStatus().assignToCurator(complex, getCurrentUser(), getCurrentUser());
+        try{
+            getLifecycleManager().getNewStatus().assignToCurator(complex, getCurrentUser(), getCurrentUser());
 
-        addInfoMessage("Ownership claimed", "The complex has been assigned to you");
+            addInfoMessage("Ownership claimed", "The complex has been assigned to you");
 
-        markAsCurationInProgress(evt);
+            markAsCurationInProgress(evt);
+        }
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot assign complex: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
+        }
     }
 
     public void markAsCurationInProgress(ActionEvent evt) {
@@ -905,9 +921,14 @@ public class ComplexController extends AnnotatedObjectController {
             addErrorMessage("Cannot mark as curation in progress", "You are not the owner of this complex");
             return;
         }
-        getLifecycleManager().getAssignedStatus().startCuration(complex, getCurrentUser());
+        try{
+            getLifecycleManager().getAssignedStatus().startCuration(complex, getCurrentUser());
 
-        addInfoMessage("Curation started", "Curation is now in progress");
+            addInfoMessage("Curation started", "Curation is now in progress");
+        }
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot mark as curation in progress: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
+        }
     }
 
     public void markAsReadyForChecking(ActionEvent evt) {
@@ -917,24 +938,38 @@ public class ComplexController extends AnnotatedObjectController {
         }
 
         boolean sanityCheckPassed = true;
+        try{
+            getLifecycleManager().getCurationInProgressStatus().readyForChecking(complex, correctionComment, sanityCheckPassed, getCurrentUser());
 
-        getLifecycleManager().getCurationInProgressStatus().readyForChecking(complex, correctionComment, sanityCheckPassed, getCurrentUser());
-
-        addInfoMessage("Complex ready for checking", "Assigned to reviewer: " + complex.getCurrentReviewer().getLogin());
+            addInfoMessage("Complex ready for checking", "Assigned to reviewer: " + complex.getCurrentReviewer().getLogin());
+        }
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot mark as ready for checking: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
+        }
     }
 
     public void revertReadyForChecking(ActionEvent evt) {
-        getLifecycleManager().getReadyForCheckingStatus().revert(this.complex, getCurrentUser());
+        try{
+            getLifecycleManager().getReadyForCheckingStatus().revert(this.complex, getCurrentUser());
+        }
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot revert ready for checking: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
+        }
     }
 
     public void revertAccepted(ActionEvent evt) {
-        if (isReadyForRelease()){
-            getLifecycleManager().getReadyForReleaseStatus().revert(this.complex, getCurrentUser());
+        try{
+            if (isReadyForRelease()){
+                getLifecycleManager().getReadyForReleaseStatus().revert(this.complex, getCurrentUser());
+            }
+            else {
+                LifeCycleEvent acceptedEvt = ReleasableUtils.getLastEventOfType(complex, LifeCycleEventType.ACCEPTED);
+                complex.getLifecycleEvents().remove(acceptedEvt);
+                complex.setStatus(LifeCycleStatus.READY_FOR_CHECKING);
+            }
         }
-        else {
-            LifeCycleEvent acceptedEvt = ReleasableUtils.getLastEventOfType(complex, LifeCycleEventType.ACCEPTED);
-            complex.getLifecycleEvents().remove(acceptedEvt);
-            complex.setStatus(LifeCycleStatus.READY_FOR_CHECKING);
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot revert accepted: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
         }
     }
 
@@ -949,19 +984,28 @@ public class ComplexController extends AnnotatedObjectController {
     }
 
     public void putOnHold(ActionEvent evt) {
-        if (isReadyForRelease()) {
-            getLifecycleManager().getReadyForReleaseStatus().putOnHold(complex, onHold, getCurrentUser());
-            addInfoMessage("On-hold added to complex", "Complex won't be released until the 'on hold' is removed");
-        } else if (isReleased()) {
-            getLifecycleManager().getReleasedStatus().putOnHold(complex, onHold, getCurrentUser());
-            addInfoMessage("On-hold added to released complex", "Data will be publicly visible until the next release");
+        try{
+            if (isReadyForRelease()) {
+                getLifecycleManager().getReadyForReleaseStatus().putOnHold(complex, onHold, getCurrentUser());
+                addInfoMessage("On-hold added to complex", "Complex won't be released until the 'on hold' is removed");
+            } else if (isReleased()) {
+                getLifecycleManager().getReleasedStatus().putOnHold(complex, onHold, getCurrentUser());
+                addInfoMessage("On-hold added to released complex", "Data will be publicly visible until the next release");
+            }
+        }
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot put on-hold: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
         }
     }
 
     public void readyForReleaseFromOnHold(ActionEvent evt) {
         setOnHold(null);
-
-        getLifecycleManager().getAcceptedOnHoldStatus().onHoldRemoved(complex, null, getCurrentUser());
+        try{
+            getLifecycleManager().getAcceptedOnHoldStatus().onHoldRemoved(complex, null, getCurrentUser());
+        }
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot mark as ready for release: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
+        }
     }
 
     public void setOnHold(String reason) {
@@ -1121,13 +1165,17 @@ public class ComplexController extends AnnotatedObjectController {
     }
 
     public void acceptComplex(ActionEvent evt) {
-
-        getLifecycleManager().getReadyForCheckingStatus().accept(complex, "Accepted " + new SimpleDateFormat("yyyy-MMM-dd").format(new Date()).toUpperCase() + " by " + userSessionController.getCurrentUser().getLogin().toUpperCase(),
-                getCurrentUser());
-
-        if (!complex.isOnHold()) {
-            lifecycleManager.getAcceptedStatus().readyForRelease(complex, "Accepted and not on-hold",
+        try{
+            getLifecycleManager().getReadyForCheckingStatus().accept(complex, "Accepted " + new SimpleDateFormat("yyyy-MMM-dd").format(new Date()).toUpperCase() + " by " + userSessionController.getCurrentUser().getLogin().toUpperCase(),
                     getCurrentUser());
+
+            if (!complex.isOnHold()) {
+                lifecycleManager.getAcceptedStatus().readyForRelease(complex, "Accepted and not on-hold",
+                        getCurrentUser());
+            }
+        }
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot accept complex: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
         }
     }
 
@@ -1140,12 +1188,17 @@ public class ComplexController extends AnnotatedObjectController {
     public void rejectComplex(String reasonForRejection) {
         String date = "Rejected " + new SimpleDateFormat("yyyy-MMM-dd").format(new Date()).toUpperCase() + " by " + userSessionController.getCurrentUser().getLogin().toUpperCase();
 
-        addInfoMessage("Complex rejected", "");
+        try{
+            getLifecycleManager().getReadyForCheckingStatus().reject(this.complex, date + ". " + reasonForRejection,
+                    getCurrentUser());
 
-        getLifecycleManager().getReadyForCheckingStatus().reject(this.complex, date + ". " + reasonForRejection,
-                getCurrentUser());
+            addInfoMessage("Complex rejected", "");
 
-        this.toBeReviewed = this.complex.getToBeReviewedComment();
+            this.toBeReviewed = this.complex.getToBeReviewedComment();
+        }
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot reject complex: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
+        }
     }
 
     public boolean isBeenRejectedBefore() {
@@ -1203,14 +1256,18 @@ public class ComplexController extends AnnotatedObjectController {
 
         this.complex.setInteractorType(type);
 
-        getLifecycleManager().getStartStatus().create(this.complex, "Created in Editor",
-                user);
+        try{
+            getLifecycleManager().getStartStatus().create(this.complex, "Created in Editor",
+                    user);
 
-        if (assignToMe) {
-            lifecycleManager.getNewStatus().claimOwnership(this.complex,
-                    user);
-            lifecycleManager.getAssignedStatus().startCuration(this.complex,
-                    user);
+            if (assignToMe) {
+                lifecycleManager.getNewStatus().claimOwnership(this.complex,
+                        user);
+                lifecycleManager.getAssignedStatus().startCuration(this.complex,
+                        user);
+            }
+        }catch (IllegalTransitionException e){
+            addErrorMessage("Cannot create new complex: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
         }
 
         return "/curate/complex?faces-redirect=true";
@@ -1229,11 +1286,16 @@ public class ComplexController extends AnnotatedObjectController {
         this.complex.setCreator(user.getLogin());
         this.complex.setUpdator(user.getLogin());
         this.complex.setInteractorType(type);
-        getLifecycleManager().getStartStatus().create(this.complex, "Created in Editor", user);
+        try{
+            getLifecycleManager().getStartStatus().create(this.complex, "Created in Editor", user);
 
-        if (assignToMe) {
-            lifecycleManager.getNewStatus().claimOwnership(this.complex, user);
-            lifecycleManager.getAssignedStatus().startCuration(this.complex, user);
+            if (assignToMe) {
+                lifecycleManager.getNewStatus().claimOwnership(this.complex, user);
+                lifecycleManager.getAssignedStatus().startCuration(this.complex, user);
+            }
+        }
+        catch (IllegalTransitionException e){
+            addErrorMessage("Cannot create new complex: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
         }
 
         return "/curate/complex?faces-redirect=true";

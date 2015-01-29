@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.intact.editor.controller.curate.experiment;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.hibernate.Hibernate;
 import org.primefaces.context.RequestContext;
@@ -38,6 +39,7 @@ import uk.ac.ebi.intact.editor.services.summary.InteractionSummary;
 import uk.ac.ebi.intact.editor.services.summary.InteractionSummaryService;
 import uk.ac.ebi.intact.editor.util.LazyDataModelFactory;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
+import uk.ac.ebi.intact.jami.lifecycle.IllegalTransitionException;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleStatus;
@@ -282,7 +284,7 @@ public class ExperimentController extends AnnotatedObjectController {
 
     @Override
     protected void addNewXref(AbstractIntactXref newRef) {
-         this.experiment.getXrefs().add(newRef);
+        this.experiment.getXrefs().add(newRef);
     }
 
     @Override
@@ -447,19 +449,29 @@ public class ExperimentController extends AnnotatedObjectController {
 
         // only if publication ready for release
         if (publicationController.isReadyForRelease()){
-            getPublicationService().putReleasableOnHoldFromReadyForRelease(publicationController.getAc(),
-                    "Reverted accepted annotation of experiment " + experiment.getShortLabel(), ((UserManagerController) ApplicationContextProvider.getBean("userManagerController")).getCurrentUser().getLogin());
-            // refresh publication
-            setExperiment(getExperimentService().reloadFullyInitialisedExperiment(experiment));
-            publicationController.setPublication((IntactPublication) experiment.getPublication());
+            try{
+                getPublicationService().putReleasableOnHoldFromReadyForRelease(publicationController.getAc(),
+                        "Reverted accepted annotation of experiment " + experiment.getShortLabel(), ((UserManagerController) ApplicationContextProvider.getBean("userManagerController")).getCurrentUser().getLogin());
+                // refresh publication
+                setExperiment(getExperimentService().reloadFullyInitialisedExperiment(experiment));
+                publicationController.setPublication((IntactPublication) experiment.getPublication());
+            }
+            catch (IllegalTransitionException e){
+                addErrorMessage("Cannot put publication on-hold: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
+            }
         }
         // also if released, revert from release
         else if (publicationController.isReleased()){
-            getPublicationService().moveReleasableFromReleasedToOnHold(publicationController.getAc(),
-                    "Reverted accepted annotation of experiment " + experiment.getShortLabel(), ((UserManagerController) ApplicationContextProvider.getBean("userManagerController")).getCurrentUser().getLogin());
-            // refresh publication
-            setExperiment(getExperimentService().reloadFullyInitialisedExperiment(experiment));
-            publicationController.setPublication((IntactPublication)experiment.getPublication());
+            try{
+                getPublicationService().moveReleasableFromReleasedToOnHold(publicationController.getAc(),
+                        "Reverted accepted annotation of experiment " + experiment.getShortLabel(), ((UserManagerController) ApplicationContextProvider.getBean("userManagerController")).getCurrentUser().getLogin());
+                // refresh publication
+                setExperiment(getExperimentService().reloadFullyInitialisedExperiment(experiment));
+                publicationController.setPublication((IntactPublication)experiment.getPublication());
+            }
+            catch (IllegalTransitionException e){
+                addErrorMessage("Cannot put publication on-hold: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
+            }
         }
     }
 
@@ -495,25 +507,30 @@ public class ExperimentController extends AnnotatedObjectController {
         boolean allAccepted = expAccepted == expSize;
 
         if (allAccepted) {
-            // accept publication
-            getPublicationService().acceptReleasable(publicationController.getAc(), "Accepted " + new SimpleDateFormat("yyyy-MMM-dd").
-                            format(new Date()).toUpperCase() + " by " + userSessionController.getCurrentUser().getLogin().toUpperCase(),
-                    userSessionController.getCurrentUser().getLogin());
-
-            // ready for relase publication if not already on-hold
-            if (((Releasable)experiment.getPublication()).getStatus() != LifeCycleStatus.ACCEPTED_ON_HOLD) {
-                getPublicationService().readyForRelease(publicationController.getAc(), "Accepted and not on-hold",
+            try{
+                // accept publication
+                getPublicationService().acceptReleasable(publicationController.getAc(), "Accepted " + new SimpleDateFormat("yyyy-MMM-dd").
+                                format(new Date()).toUpperCase() + " by " + userSessionController.getCurrentUser().getLogin().toUpperCase(),
                         userSessionController.getCurrentUser().getLogin());
+
+                // ready for relase publication if not already on-hold
+                if (((Releasable)experiment.getPublication()).getStatus() != LifeCycleStatus.ACCEPTED_ON_HOLD) {
+                    getPublicationService().readyForRelease(publicationController.getAc(), "Accepted and not on-hold",
+                            userSessionController.getCurrentUser().getLogin());
+                }
+                addInfoMessage("Publication accepted", "All of its experiments have been accepted");
+
+                // refresh publication
+                setExperiment(getExperimentService().reloadFullyInitialisedExperiment(experiment));
+                publicationController.setPublication((IntactPublication)experiment.getPublication());
+
+                // refresh experiments with possible changes in publication title, annotations and publication identifier
+                publicationController.copyAnnotationsToExperiments(null);
+                publicationController.copyPrimaryIdentifierToExperiments();
             }
-            addInfoMessage("Publication accepted", "All of its experiments have been accepted");
-
-            // refresh publication
-            setExperiment(getExperimentService().reloadFullyInitialisedExperiment(experiment));
-            publicationController.setPublication((IntactPublication)experiment.getPublication());
-
-            // refresh experiments with possible changes in publication title, annotations and publication identifier
-            publicationController.copyAnnotationsToExperiments(null);
-            publicationController.copyPrimaryIdentifierToExperiments();
+            catch (IllegalTransitionException e){
+                addErrorMessage("Cannot accept publication: "+e.getMessage(), ExceptionUtils.getFullStackTrace(e));
+            }
 
         } else if (allActedUpon) {
             RequestContext requestContext = RequestContext.getCurrentInstance();
@@ -887,7 +904,7 @@ public class ExperimentController extends AnnotatedObjectController {
             this.newValueOrder = null;
         }
         else{
-           addErrorMessage("The value is required and cannot be null","Missing parameter value");
+            addErrorMessage("The value is required and cannot be null","Missing parameter value");
         }
     }
 
