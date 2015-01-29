@@ -85,7 +85,6 @@
         <property name="mailSender">
             <bean class="org.springframework.mail.javamail.JavaMailSenderImpl">
                 <property name="host" value="${intact.notification.email.smtpHost}"/>
-                <property name="port" value="${intact.notification.email.smtpPort}"/>
             </bean>
         </property>
         <property name="senderAddress" value="${intact.notification.email.sender}"/>
