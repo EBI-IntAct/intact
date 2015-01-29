@@ -725,9 +725,9 @@ public class ParticipantController extends AbstractParticipantController<IntactP
             component = getParticipantEditorService().reloadFullyInitialisedParticipant(component);
         }
 
-        final Collection<Xref> xrefs = component.getInteractor().getIdentifiers();
+        final Xref xref = component.getInteractor().getPreferredIdentifier();
 
-        if (xrefs.isEmpty()) {
+        if (xref == null) {
             if (component.getInteractor() instanceof IntactInteractor){
                 return ((IntactInteractor)component.getInteractor()).getAc();
             }
@@ -736,6 +736,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
             }
         }
 
-        return joinIds(xrefs);
+        return xref.getId();
     }
 }
