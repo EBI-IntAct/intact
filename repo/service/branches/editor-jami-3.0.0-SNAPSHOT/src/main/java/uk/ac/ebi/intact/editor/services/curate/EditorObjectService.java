@@ -30,9 +30,12 @@ import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
+import uk.ac.ebi.intact.jami.lifecycle.LifeCycleManager;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleEvent;
+import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleEventType;
+import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleStatus;
 import uk.ac.ebi.intact.jami.model.lifecycle.Releasable;
 import uk.ac.ebi.intact.jami.model.user.User;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
@@ -40,6 +43,7 @@ import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
 import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
+import uk.ac.ebi.intact.jami.utils.ReleasableUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -59,6 +63,8 @@ public class EditorObjectService extends AbstractEditorService {
 
     @Resource(name = "proteinFetcher")
     private ProteinFetcher proteinFetcher;
+    @Resource(name = "jamiLifeCycleManager")
+    private transient LifeCycleManager lifecycleManager;
 
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public <T extends IntactPrimaryObject> T doSave( IntactPrimaryObject object,
@@ -382,6 +388,118 @@ public class EditorObjectService extends AbstractEditorService {
         // detach current object if necessary
         if (ao.getAc() != null && getIntactDao().getEntityManager().contains(ao)){
             getIntactDao().getEntityManager().detach(ao);
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public void claimOwnership(Releasable releasable, User user, boolean isAssigned) {
+        if (releasable != null){
+            detachObject((IntactPrimaryObject)releasable);
+
+            lifecycleManager.getGlobalStatus().changeOwnership(releasable, user, null);
+
+            // automatically set as curation in progress if no one was assigned before
+            if (isAssigned) {
+                lifecycleManager.getAssignedStatus().startCuration(releasable, user);
+            }
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public void markAsCurationInProgress(Releasable releasable, User user) {
+        if (releasable != null){
+            detachObject((IntactPrimaryObject)releasable);
+
+            lifecycleManager.getAssignedStatus().startCuration(releasable, user);
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public void markAsReadyForChecking(Releasable releasable, User user, String reasonForReadyForChecking) {
+        if (releasable != null){
+            detachObject((IntactPrimaryObject)releasable);
+
+            lifecycleManager.getCurationInProgressStatus().readyForChecking(releasable, reasonForReadyForChecking, true, user);
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public void revertReadyForChecking(Releasable releasable, User user) {
+        if (releasable != null){
+            detachObject((IntactPrimaryObject)releasable);
+
+            lifecycleManager.getReadyForCheckingStatus().revert(releasable, user);
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public void revertAccepted(Releasable releasable, User user, boolean isReadyForReleased) {
+        if (releasable != null){
+            detachObject((IntactPrimaryObject)releasable);
+
+            if (isReadyForReleased){
+                lifecycleManager.getReadyForReleaseStatus().revert(releasable, user);
+            }
+            else {
+                LifeCycleEvent acceptedEvt = ReleasableUtils.getLastEventOfType(releasable, LifeCycleEventType.ACCEPTED);
+                releasable.getLifecycleEvents().remove(acceptedEvt);
+                releasable.setStatus(LifeCycleStatus.READY_FOR_CHECKING);
+            }
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public void putOnHold(Releasable releasable, User user, String reasonForOnHold, boolean isReadyForReleased, boolean isReleased) {
+        if (releasable != null){
+            detachObject((IntactPrimaryObject)releasable);
+
+            if (isReadyForReleased) {
+                lifecycleManager.getReadyForReleaseStatus().putOnHold(releasable, reasonForOnHold, user);
+            } else if (isReleased) {
+                lifecycleManager.getReleasedStatus().putOnHold(releasable, reasonForOnHold, user);
+            }
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public void readyForReleaseFromOnHold(Releasable releasable, User user) {
+        if (releasable != null){
+            detachObject((IntactPrimaryObject)releasable);
+
+            lifecycleManager.getAcceptedOnHoldStatus().onHoldRemoved(releasable, null, user);
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public void accept(Releasable releasable, User user, String message) {
+        if (releasable != null){
+            detachObject((IntactPrimaryObject)releasable);
+
+            lifecycleManager.getReadyForCheckingStatus().accept(releasable, message, user);
+
+            if (!releasable.isOnHold()) {
+                lifecycleManager.getAcceptedStatus().readyForRelease(releasable, "Accepted and not on-hold", user);
+            }
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public void reject(Releasable releasable, User user, String message) {
+        if (releasable != null){
+            detachObject((IntactPrimaryObject)releasable);
+
+            lifecycleManager.getReadyForCheckingStatus().reject(releasable, message, user);
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public void markAsAssignedToMe(Releasable releasable, User user) {
+        if (releasable != null){
+            detachObject((IntactPrimaryObject)releasable);
+
+            lifecycleManager.getNewStatus().assignToCurator(releasable, user, user);
+
+            markAsCurationInProgress(releasable, user);
         }
     }
 }
