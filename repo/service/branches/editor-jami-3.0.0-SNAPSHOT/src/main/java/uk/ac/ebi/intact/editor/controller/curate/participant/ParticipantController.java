@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import psidev.psi.mi.jami.model.*;
-import psidev.psi.mi.jami.utils.AliasUtils;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
@@ -41,7 +40,6 @@ import uk.ac.ebi.intact.jami.utils.IntactUtils;
 
 import javax.annotation.Resource;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -74,7 +72,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     private boolean isConfidenceDisabled;
     private boolean isExperimentalPreparationDisabled;
     private boolean isIdentificationMethodDisabled;
-    private String authorAssignedName=null;
 
     private CvTerm newConfidenceType;
     private String newConfidenceValue;
@@ -101,9 +98,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
             if (!getParticipant().areAliasesInitialized()){
                 setParticipant(getParticipantEditorService().initialiseParticipantAliases(getParticipant()));
             }
-
-            Alias author = AliasUtils.collectFirstAliasWithType(getParticipant().getAliases(), Alias.AUTHOR_ASSIGNED_NAME_MI, Alias.AUTHOR_ASSIGNED_NAME);
-            setAuthorGivenName(author != null ? author.getName() : null);
         }
     }
 
@@ -292,32 +286,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
             setParticipant(getParticipantEditorService().reloadFullyInitialisedParticipant(part));
         }
         super.initialiseDefaultProperties(annotatedObject);
-    }
-
-    public String getAuthorGivenName() {
-        return this.authorAssignedName;
-    }
-
-    public void setAuthorGivenName( String name ) {
-        this.authorAssignedName = name;
-    }
-
-    public void onAuthorAssignedNameChanged(ValueChangeEvent evt) {
-        setUnsavedChanges(true);
-        String newValue = (String) evt.getNewValue();
-        if (newValue != null && newValue.length() > 0){
-            replaceOrCreateAlias(Alias.AUTHOR_ASSIGNED_NAME, Alias.AUTHOR_ASSIGNED_NAME_MI, newValue, getParticipant().getAliases());
-        }
-        else{
-            removeAlias(Alias.AUTHOR_ASSIGNED_NAME, Alias.AUTHOR_ASSIGNED_NAME_MI, null, getParticipant().getAliases());
-        }
-        this.authorAssignedName = newValue;
-    }
-
-    public void removeAuthorAssignedName(ActionEvent evt){
-        addInfoMessage("Removed author-assigned name", authorAssignedName);
-        // aliases are always loaded
-        removeAlias(Alias.AUTHOR_ASSIGNED_NAME, Alias.AUTHOR_ASSIGNED_NAME_MI, getParticipant().getAliases());
     }
 
     // Confidence
@@ -536,11 +504,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     @Override
     public ParticipantEvidenceAnnotation newAnnotation(CvTerm annotation, String text) {
         return new ParticipantEvidenceAnnotation(annotation, text);
-    }
-
-    @Override
-    public boolean isAliasNotEditable(Alias alias) {
-        return AliasUtils.doesAliasHaveType(alias, Alias.AUTHOR_ASSIGNED_NAME_MI, Alias.AUTHOR_ASSIGNED_NAME);
     }
 
     @Override
