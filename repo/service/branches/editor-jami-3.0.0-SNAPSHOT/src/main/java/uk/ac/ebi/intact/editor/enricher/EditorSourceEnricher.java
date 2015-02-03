@@ -90,7 +90,7 @@ public class EditorSourceEnricher implements SourceEnricher{
 
         if (getImportTag() != null && object != null){
             // check if object exists in database before adding a tag
-            if (dbEnricherService.isNewCvTerm(object)){
+            if (dbEnricherService.isNewSource(object)){
                 object.getAnnotations().add(new SourceAnnotation(IntactUtils.createMITopic("remark-internal", null), getImportTag()));
             }
         }
