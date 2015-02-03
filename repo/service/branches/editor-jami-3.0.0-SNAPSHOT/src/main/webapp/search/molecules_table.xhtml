@@ -50,7 +50,7 @@
                 <h:outputText value="#{molecule.identityXref}"/>
             </p:column>
             <p:column headerText="# Interactions">
-                <h:link id="linkRow" outcome="interactions" includeViewParams="true"
+                <h:link id="linkRow" outcome="/search/interactions" includeViewParams="true"
                         value="#{molecule.numberInteractions}">
                     <f:param name="ac" value="#{molecule.ac}"/>
                     <f:param name="shortLabel" value="#{molecule.shortName}"/>
@@ -59,7 +59,7 @@
                 </h:link>
             </p:column>
             <p:column headerText="# Complexes">
-                <h:link id="linkRowComplexes" outcome="complexes" includeViewParams="true"
+                <h:link id="linkRowComplexes" outcome="/search/complexes" includeViewParams="true"
                         value="#{molecule.numberComplexes}"
                         rendered="#{complexSearchEnabled}">
                     <f:param name="ac" value="#{molecule.ac}"/>
@@ -71,7 +71,7 @@
                               value="#{molecule.numberComplexes}"/>
             </p:column>
             <p:column headerText="# Molecule sets">
-                <h:link id="linkRowSets" outcome="sets" includeViewParams="true"
+                <h:link id="linkRowSets" outcome="/search/sets" includeViewParams="true"
                         value="#{molecule.numberMoleculeSets}">
                     <f:param name="ac" value="#{molecule.ac}"/>
                     <f:param name="shortLabel" value="#{molecule.shortName}"/>

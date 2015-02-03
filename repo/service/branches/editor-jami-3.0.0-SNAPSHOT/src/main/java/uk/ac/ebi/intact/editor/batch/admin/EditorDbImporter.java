@@ -21,6 +21,8 @@ public class EditorDbImporter<I> extends IntactDbImporter<I> implements StepExec
     @Override
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public void beforeStep(StepExecution stepExecution) {
+        getIntactService().getIntactDao().getEntityManager().clear();
+
         String userLogin = stepExecution.getJobParameters().getString("user.login");
         User user = getIntactService().getIntactDao().getUserDao().getByLogin(userLogin);
         if (user != null){
