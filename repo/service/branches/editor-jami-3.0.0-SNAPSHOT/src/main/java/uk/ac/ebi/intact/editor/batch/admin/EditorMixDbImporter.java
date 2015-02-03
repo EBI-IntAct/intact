@@ -21,6 +21,10 @@ public class EditorMixDbImporter extends IntactInteractionMixDbImporter implemen
     @Override
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public void beforeStep(StepExecution stepExecution) {
+        getInteractionEvidenceService().getIntactDao().getEntityManager().clear();
+        getComplexService().getIntactDao().getEntityManager().clear();
+        getModelledInteractionService().getIntactDao().getEntityManager().clear();
+
         String userLogin = stepExecution.getJobParameters().getString("user.login");
         User user = getInteractionEvidenceService().getIntactDao().getUserDao().getByLogin(userLogin);
         if (user != null){
