@@ -122,6 +122,8 @@ public class CvObjectController extends AnnotatedObjectController {
             setInternalRemark(internal != null ? internal.getValue() : null);
 
             this.definition = this.cvObject.getDefinition();
+
+            this.cvClassName = this.cvObject.getObjClass();
         }
     }
 
@@ -395,7 +397,75 @@ public class CvObjectController extends AnnotatedObjectController {
 
     @Override
     public IntactDbSynchronizer getDbSynchronizer() {
-        return getEditorService().getIntactDao().getSynchronizerContext().getCvSynchronizer(null);
+        if (this.cvClassName == null){
+            return getEditorService().getIntactDao().getSynchronizerContext().getCvSynchronizer(null);
+        }
+        else if (this.cvClassName.equals(IntactUtils.ALIAS_TYPE_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getAliasTypeSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.QUALIFIER_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getQualifierSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.DATABASE_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getDatabaseSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.TOPIC_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getTopicSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.BIOLOGICAL_ROLE_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getBiologicalRoleSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.CELL_TYPE_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getCellTypeSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.CONFIDENCE_TYPE_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getConfidenceTypeSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.EXPERIMENTAL_ROLE_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getExperimentalRoleSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.FEATURE_METHOD_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getFeatureDetectionMethodSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.FEATURE_TYPE_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getFeatureTypeSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.INTERACTION_DETECTION_METHOD_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getInteractionDetectionMethodSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.INTERACTION_TYPE_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getInteractionTypeSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.INTERACTOR_TYPE_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getInteractorTypeSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.LIFECYCLE_EVENT_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getLifecycleEventSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.PARAMETER_TYPE_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getParameterTypeSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.PARTICIPANT_DETECTION_METHOD_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getParticipantDetectionMethodSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.PARTICIPANT_EXPERIMENTAL_PREPARATION_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getExperimentalPreparationSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.PUBLICATION_STATUS_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getLifecycleStatusSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.RANGE_STATUS_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getRangeStatusSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.UNIT_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getRangeStatusSynchronizer();
+        }
+        else if (this.cvClassName.equals(IntactUtils.TISSUE_OBJCLASS)){
+            return getEditorService().getIntactDao().getSynchronizerContext().getRangeStatusSynchronizer();
+        }
+        else{
+            return getEditorService().getIntactDao().getSynchronizerContext().getCvSynchronizer(null);
+        }
     }
 
     @Override
