@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.user.Role;
 
 import javax.annotation.Resource;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ComponentSystemEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,8 +87,10 @@ public class JobSummaryController extends BaseController {
     // Actions
 
     public void searchIfQueryPresent(ComponentSystemEvent evt) {
-        if (query != null && !query.isEmpty()) {
-            doSearch();
+        if (!FacesContext.getCurrentInstance().isPostback()) {
+            if (query != null && !query.isEmpty()) {
+                doSearch();
+            }
         }
     }
 
@@ -141,7 +144,7 @@ public class JobSummaryController extends BaseController {
                 Runnable runnablePub = new Runnable() {
                     @Override
                     public void run() {
-                       publications = getSearchService().loadImportedPublication( originalQuery );
+                        publications = getSearchService().loadImportedPublication( originalQuery );
                     }
                 };
 
