@@ -113,11 +113,11 @@ public class SearchQueryService extends AbstractEditorService {
 
                 "select distinct i " +
                         "from IntactCvTerm i join i.dbAnnotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark",
 
                 "select count(distinct i) " +
                         "from IntactCvTerm i join i.dbAnnotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark)",
+                        "where a.value = :query and a.topic.shortName = :remark",
 
                 params, "i", "updated, i.ac", false);
 
@@ -171,10 +171,10 @@ public class SearchQueryService extends AbstractEditorService {
 
                 "select distinct i " +
                         "from IntactInteractor i join i.dbAnnotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark ",
                 "select count(distinct i) " +
                         "from IntactInteractor i join i.dbAnnotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark ",
 
                 params, "i", "updated, i.ac", false );
 
@@ -276,10 +276,10 @@ public class SearchQueryService extends AbstractEditorService {
 
                 "select distinct i " +
                         "from IntactInteractionEvidence i join i.dbAnnotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark ",
                 "select count(distinct i) " +
                         "from IntactInteractionEvidence i join i.dbAnnotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark ",
 
                 params, "i", "updated, i.ac", false );
 
@@ -411,10 +411,10 @@ public class SearchQueryService extends AbstractEditorService {
 
                 "select distinct i " +
                         "from IntactComplex i join i.dbAnnotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark ",
                 "select count(distinct i) " +
                         "from IntactComplex i join i.dbAnnotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark ",
 
                 params, "i", "updated, i.ac", false );
 
@@ -467,10 +467,10 @@ public class SearchQueryService extends AbstractEditorService {
 
                 "select distinct i " +
                         "from IntactExperiment i join i.annotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark ",
                 "select count(distinct i) " +
                         "from IntactExperiment i join i.annotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark ",
 
                 params, "e", "updated, e.ac", false );
 
@@ -553,10 +553,10 @@ public class SearchQueryService extends AbstractEditorService {
 
                 "select distinct i " +
                         "from IntactPublication i join i.dbAnnotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark ",
                 "select count(distinct i) " +
                         "from IntactPublication i join i.dbAnnotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark ",
 
                 params, "p", "updated, p.ac", false );
 
@@ -606,10 +606,10 @@ public class SearchQueryService extends AbstractEditorService {
 
                 "select distinct i " +
                         "from IntactFeatureEvidence i join i.annotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark ",
                 "select count(distinct i) " +
                         "from IntactFeatureEvidence i join i.annotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark ",
 
                 params, "p", "updated, p.ac", false);
 
@@ -661,10 +661,10 @@ public class SearchQueryService extends AbstractEditorService {
 
                 "select distinct i " +
                         "from IntactOrganism i join i.aliases as a " +
-                        "where a.name = :query and a.type.shortName = :synonym) ",
+                        "where a.name = :query and a.type.shortName = :synonym ",
                 "select count(distinct i) " +
                         "from IntactOrganism i join i.aliases as a " +
-                        "where a.name = :query and a.type.shortName = :synonym) ",
+                        "where a.name = :query and a.type.shortName = :synonym ",
 
                 params, "b", "updated, b.ac", false);
 
@@ -712,10 +712,10 @@ public class SearchQueryService extends AbstractEditorService {
 
                 "select distinct i " +
                         "from IntactParticipantEvidence i join i.annotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark ",
                 "select count(distinct i) " +
                         "from IntactParticipantEvidence i join i.annotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark ",
 
                 params, "p", "updated, p.ac", false);
 
@@ -789,10 +789,10 @@ public class SearchQueryService extends AbstractEditorService {
 
                 "select distinct i " +
                         "from IntactModelledFeature i join i.annotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark ",
                 "select count(distinct i) " +
                         "from IntactModelledFeature i join i.annotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark ",
 
                 params, "p", "updated, p.ac", false);
 
@@ -840,10 +840,10 @@ public class SearchQueryService extends AbstractEditorService {
 
                 "select distinct i " +
                         "from IntactModelledParticipant i join i.annotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark ",
                 "select count(distinct i) " +
                         "from IntactModelledParticipant i join i.annotations as a " +
-                        "where a.value = :query and a.topic.shortName = :remark) ",
+                        "where a.value = :query and a.topic.shortName = :remark ",
 
                 params, "p", "updated, p.ac", false);
 

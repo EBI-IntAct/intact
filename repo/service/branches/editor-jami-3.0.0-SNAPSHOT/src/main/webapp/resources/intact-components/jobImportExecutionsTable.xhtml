@@ -86,7 +86,7 @@
                     <f:param name="query" value="#{importJobController.extractJobId(jobExecution)}"/>
                 </h:link>
                 &#160;
-                <h:commandLink value="Accept" actionListener="#{importJobController.acceptImport}"
+                <h:commandLink value="Clear" actionListener="#{importJobController.acceptImport}"
                                action="/dbmanager/jobSummary?faces-redirect=true">
                     <f:param name="executionId" value="#{jobExecution.id}"/>
                 </h:commandLink>
@@ -96,7 +96,7 @@
                     <f:param name="executionId" value="#{jobExecution.id}"/>
                 </h:commandLink>
                 &#160;
-                <h:commandLink value="Restart" actionListener="#{adminJobController.restart}" action="/dbmanager/jobSummary?faces-redirect=true">
+                <h:commandLink value="resume" actionListener="#{adminJobController.restart}" action="/dbmanager/jobSummary?faces-redirect=true">
                     <f:param name="executionId" value="#{jobExecution.id}"/>
                 </h:commandLink>
             </p:column>

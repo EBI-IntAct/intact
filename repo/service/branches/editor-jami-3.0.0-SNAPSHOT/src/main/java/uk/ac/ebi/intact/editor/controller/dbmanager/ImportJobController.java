@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.intact.editor.controller.dbmanager;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,6 +70,11 @@ public class ImportJobController extends BaseController {
 
     private static final Log log = LogFactory.getLog(ImportJobController.class);
 
+    private List<JobExecution> runningJobEvidence = Collections.EMPTY_LIST;
+    private List<JobExecution> runningJobComplex = Collections.EMPTY_LIST;
+    private List<JobExecution> completedJobEvidence = Collections.EMPTY_LIST;
+    private List<JobExecution> completedJobComplex = Collections.EMPTY_LIST;
+
     public ImportJobController() {
     }
 
@@ -77,6 +83,21 @@ public class ImportJobController extends BaseController {
         if (!FacesContext.getCurrentInstance().isPostback()) {
 
             log.debug( "Load job summary" );
+            List<JobInstance> existingJobs1 = getJobInstances("interactionMixImport");
+            List<JobInstance> existingJobs2 = getJobInstances("complexImport");
+            this.runningJobEvidence = getRunningJobExecutions("interactionMixImport");
+            this.runningJobComplex = getRunningJobExecutions("complexImport");
+            this.completedJobComplex = new ArrayList<JobExecution>();
+            this.completedJobEvidence = new ArrayList<JobExecution>();
+
+            for (JobInstance jobEvidence : existingJobs1){
+                List<JobExecution> allExecutions = getJobExecutions(jobEvidence.getId());
+                this.completedJobEvidence.addAll(CollectionUtils.subtract(allExecutions, runningJobEvidence));
+            }
+            for (JobInstance jobComplex : existingJobs2){
+                List<JobExecution> allExecutions = getJobExecutions(jobComplex.getId());
+                this.completedJobComplex.addAll(CollectionUtils.subtract(allExecutions, runningJobComplex));
+            }
         }
     }
 
@@ -95,6 +116,9 @@ public class ImportJobController extends BaseController {
                 getPsiMIJobManager().restartJob(executionId);
 
                 addInfoMessage( "Job restarted", "Execution ID: " + executionId );
+                // remove old job instance
+                getBatchJobService().deleteJob(executionId);
+
             } catch ( JobInstanceAlreadyCompleteException e ) {
                 addErrorMessage( "Job is already complete", "Execution ID: " + executionId );
                 e.printStackTrace();
@@ -289,5 +313,21 @@ public class ImportJobController extends BaseController {
             this.dbImportService = ApplicationContextProvider.getBean("dbImportService");
         }
         return dbImportService;
+    }
+
+    public List<JobExecution> getRunningJobEvidence() {
+        return runningJobEvidence;
+    }
+
+    public List<JobExecution> getRunningJobComplex() {
+        return runningJobComplex;
+    }
+
+    public List<JobExecution> getCompletedJobEvidence() {
+        return completedJobEvidence;
+    }
+
+    public List<JobExecution> getCompletedJobComplex() {
+        return completedJobComplex;
     }
 }

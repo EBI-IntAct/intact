@@ -10,7 +10,7 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:event type="preRenderView" listener="#{adminJobController.load}"/>
+            <f:event type="preRenderView" listener="#{importJobController.load}"/>
         </f:metadata>
     </ui:define>
 
@@ -20,28 +20,23 @@
 
         <h3>Running Imports of interaction evidences</h3>
 
-        <ia:runningJobsTable value="#{importJobController.getRunningJobExecutions('interactionMixImport')}"/>
+        <ia:runningJobsTable value="#{importJobController.runningJobEvidence}"/>
 
         <h3>Running Imports of biological complexes</h3>
 
-        <ia:runningJobsTable value="#{importJobController.getRunningJobExecutions('complexImport')}"/>
+        <ia:runningJobsTable value="#{importJobController.runningJobComplex}"/>
 
         <h2>All jobs</h2>
 
         <h3>Imports of interacion evidences</h3>
-        <ui:repeat value="#{importJobController.getJobInstances('interactionMixImport')}" var="jobInstance1">
-            <i>#{jobInstance1}</i> #{jobInstance1.id}
-
-            <ia:jobImportExecutionsTable value="#{importJobController.getJobExecutions(jobInstance1.id)}"/>
-
-        </ui:repeat>
+        <h:panelGroup rendered="#{not empty importJobController.completedJobEvidence}">
+            <ia:jobImportExecutionsTable value="#{importJobController.completedJobEvidence}"/>
+        </h:panelGroup>
         <h3>Imports of biological complexes</h3>
-        <ui:repeat value="#{importJobController.getJobInstances('complexImport')}" var="jobInstance2">
-            <i>#{jobInstance2}</i> #{jobInstance2.id}
+        <h:panelGroup rendered="#{not empty importJobController.completedJobComplex}">
+            <ia:jobImportExecutionsTable value="#{importJobController.completedJobComplex}"/>
 
-            <ia:jobImportExecutionsTable value="#{importJobController.getJobExecutions(jobInstance2.id)}"/>
-
-        </ui:repeat>
+        </h:panelGroup>
 
     </ui:define>
 
