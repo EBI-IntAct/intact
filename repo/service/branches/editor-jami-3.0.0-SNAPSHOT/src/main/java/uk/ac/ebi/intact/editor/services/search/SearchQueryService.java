@@ -472,7 +472,7 @@ public class SearchQueryService extends AbstractEditorService {
                         "from IntactExperiment i join i.annotations as a " +
                         "where a.value = :query and a.topic.shortName = :remark ",
 
-                params, "e", "updated, e.ac", false );
+                params, "i", "updated, i.ac", false );
 
         log.info( "Experiment imported: " + experiments.getRowCount() );
         return experiments;
@@ -558,7 +558,7 @@ public class SearchQueryService extends AbstractEditorService {
                         "from IntactPublication i join i.dbAnnotations as a " +
                         "where a.value = :query and a.topic.shortName = :remark ",
 
-                params, "p", "updated, p.ac", false );
+                params, "i", "updated, i.ac", false );
 
         log.info( "Publications imported: " + publications.getRowCount() );
         return publications;
@@ -611,7 +611,7 @@ public class SearchQueryService extends AbstractEditorService {
                         "from IntactFeatureEvidence i join i.annotations as a " +
                         "where a.value = :query and a.topic.shortName = :remark ",
 
-                params, "p", "updated, p.ac", false);
+                params, "i", "updated, i.ac", false);
 
         log.info( "Features imported: " + features.getRowCount() );
         return features;
@@ -666,7 +666,7 @@ public class SearchQueryService extends AbstractEditorService {
                         "from IntactOrganism i join i.aliases as a " +
                         "where a.name = :query and a.type.shortName = :synonym ",
 
-                params, "b", "updated, b.ac", false);
+                params, "i", "updated, i.ac", false);
 
         log.info( "Organisms imported: " + organisms.getRowCount() );
         return organisms;
@@ -717,7 +717,7 @@ public class SearchQueryService extends AbstractEditorService {
                         "from IntactParticipantEvidence i join i.annotations as a " +
                         "where a.value = :query and a.topic.shortName = :remark ",
 
-                params, "p", "updated, p.ac", false);
+                params, "i", "updated, i.ac", false);
 
         log.info( "Participants imported: " + participants.getRowCount() );
         return participants;
@@ -794,7 +794,7 @@ public class SearchQueryService extends AbstractEditorService {
                         "from IntactModelledFeature i join i.annotations as a " +
                         "where a.value = :query and a.topic.shortName = :remark ",
 
-                params, "p", "updated, p.ac", false);
+                params, "i", "updated, i.ac", false);
 
         log.info( "Complex Features imported: " + modelledFeatures.getRowCount() );
         return modelledFeatures;
@@ -845,7 +845,7 @@ public class SearchQueryService extends AbstractEditorService {
                         "from IntactModelledParticipant i join i.annotations as a " +
                         "where a.value = :query and a.topic.shortName = :remark ",
 
-                params, "p", "updated, p.ac", false);
+                params, "i", "updated, i.ac", false);
 
         log.info( "Complex Participants imported: " + modelledParticipants.getRowCount() );
         return modelledParticipants;
