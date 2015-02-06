@@ -65,6 +65,9 @@
                 <property name="generateDdl" value="false"/>
             </bean>
         </property>
+        <property name="jpaDialect">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+        </property>
     </bean>
     <!-- Intact core basic datasource for testing -->
     <bean id="jamiCoreDataSourceTest" class="org.springframework.jdbc.datasource.DriverManagerDataSource">

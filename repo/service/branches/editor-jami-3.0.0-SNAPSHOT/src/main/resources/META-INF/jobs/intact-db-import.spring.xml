@@ -122,7 +122,7 @@
 
     <!-- Enricher Steps -->
     <batch:step id="complexEnricherStep" parent="basicBatchStep">
-        <batch:tasklet transaction-manager="basicBatchTransactionManager">
+        <batch:tasklet transaction-manager="jamiTransactionManager">
             <batch:listeners>
                 <batch:listener ref="basicChunkLoggerListener" />
             </batch:listeners>
@@ -140,7 +140,7 @@
         </batch:tasklet>
     </batch:step>
     <batch:step id="interactionEnricherStep" parent="basicBatchStep">
-        <batch:tasklet transaction-manager="basicBatchTransactionManager">
+        <batch:tasklet transaction-manager="jamiTransactionManager">
             <batch:listeners>
                 <batch:listener ref="basicChunkLoggerListener" />
             </batch:listeners>

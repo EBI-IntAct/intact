@@ -29,7 +29,7 @@ public class BatchJobService {
     private final Logger logger = LoggerFactory.getLogger(BatchJobService.class.getName());
 
     private JdbcTemplate jdbcTemplate;
-    @Resource(name = "basicBatchDataSource")
+    @Resource(name = "jamiJNDIDataSource")
     private DataSource dataSource;
 
     protected JdbcTemplate getJdbcTemplate() {
@@ -39,7 +39,7 @@ public class BatchJobService {
         return jdbcTemplate;
     }
 
-    @Transactional(value = "basicBatchTransactionManager", propagation = Propagation.REQUIRED)
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public void deleteJob(Long jobId){
         int rowCount = getJdbcTemplate().update(SQL_DELETE_BATCH_STEP_EXECUTION_CONTEXT + "'"+jobId+"')");
         logger.info("Deleted rows number from the BATCH_STEP_EXECUTION_CONTEXT table: {}", rowCount);
