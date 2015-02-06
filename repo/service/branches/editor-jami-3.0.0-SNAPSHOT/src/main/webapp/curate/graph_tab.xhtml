@@ -34,11 +34,12 @@
 
             // wait for the data to be loaded prior, handy for larger network.
             var miJson;
+            var element = document.getElementById("messageContainer");
+            $(element).append("Interaction Graph should show here in a few moments.");
             jQuery.ajax({
                 url: exportUrl,
                 success: function(gotJson) {
-                    var element = document.getElementById("messageContainer");
-                    $(element).append("Interaction Graph should show here in a few moments.");
+
                     miJson = gotJson;
                     $(element).empty();
                     xlv.readMIJSON(miJson, true);
