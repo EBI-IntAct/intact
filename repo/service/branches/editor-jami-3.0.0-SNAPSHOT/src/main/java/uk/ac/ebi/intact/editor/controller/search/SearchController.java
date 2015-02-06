@@ -506,7 +506,7 @@ public class SearchController extends BaseController {
         return molecules;
     }
 
-    public LazyDataModel<CvSummary> getCvobjects() {
+    public LazyDataModel<CvSummary> getCvbjects() {
         return cvobjects;
     }
 

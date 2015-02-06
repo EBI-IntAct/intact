@@ -236,7 +236,7 @@ public class JobSummaryController extends BaseController {
             resetSearchResults();
         }
 
-        return "search.results";
+        return "import.results";
     }
 
     private void checkAndResumeTasks() {
