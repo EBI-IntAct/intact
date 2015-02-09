@@ -41,6 +41,7 @@ import javax.faces.component.UIParameter;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
+import java.io.File;
 import java.util.*;
 
 /**
@@ -197,6 +198,18 @@ public class ImportJobController extends BaseController {
                         addInfoMessage( "Job cleared, import objects deleted", "Execution ID: " + executionId );
                     } catch (Throwable e) {
                         addErrorMessage("Cannot clear job import", "Execution ID: " + executionId);
+                    }
+
+                    String errorFileName = params.getString("error.file");
+                    String fileName = params.getString("input.file");
+
+                    File file = new File(fileName);
+                    if (file.exists()){
+                        file.delete();
+                    }
+                    File errorFile = new File(errorFileName);
+                    if (errorFile.exists()){
+                        errorFile.delete();
                     }
                 }
             }
