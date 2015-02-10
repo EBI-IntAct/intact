@@ -173,13 +173,13 @@ public abstract class AnnotatedObjectController extends BaseController implement
 
             switch (complex.getStatus()){
                 case CURATION_IN_PROGRESS:
-                    if (!getUserSessionController().isItMe(complex.getCurrentOwner())) {
+                    if (!getUserSessionController().isItMe(complex.getCurrentOwner()) && complex.getCurrentOwner() != null) {
                         addWarningMessage("Complex being curated by '" + complex.getCurrentOwner().getLogin() + "'",
                                 "Please do not modify it without permission");
                     }
                     break;
                 case READY_FOR_CHECKING:
-                    if (!getUserSessionController().isItMe(complex.getCurrentReviewer())) {
+                    if (!getUserSessionController().isItMe(complex.getCurrentReviewer()) && complex.getCurrentReviewer() != null) {
                         addWarningMessage("Complex under review", "This complex is being reviewed by '" + complex.getCurrentReviewer().getLogin() + "'");
                     }
                     break;
@@ -215,13 +215,13 @@ public abstract class AnnotatedObjectController extends BaseController implement
 
             switch (publication.getStatus()){
                 case CURATION_IN_PROGRESS:
-                    if (!getUserSessionController().isItMe(publication.getCurrentOwner())) {
+                    if (!getUserSessionController().isItMe(publication.getCurrentOwner()) && publication.getCurrentOwner() != null) {
                         addWarningMessage("Publication being curated by '" + publication.getCurrentOwner().getLogin() + "'",
                                 "Please do not modify it without permission");
                     }
                     break;
                 case READY_FOR_CHECKING:
-                    if (!getUserSessionController().isItMe(publication.getCurrentReviewer())) {
+                    if (!getUserSessionController().isItMe(publication.getCurrentReviewer()) && publication.getCurrentReviewer() != null) {
                         addWarningMessage("Publication under review", "This publication is being reviewed by '" + publication.getCurrentReviewer().getLogin() + "'");
                     }
                     break;

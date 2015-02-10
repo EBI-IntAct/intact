@@ -185,7 +185,7 @@ public class PublicationController extends AnnotatedObjectController {
             this.authors = !this.publication.getAuthors().isEmpty() ? StringUtils.join(this.publication.getAuthors(), ", ") : null;
             Annotation contactEmail = AnnotationUtils.collectFirstAnnotationWithTopic(this.publication.getAnnotations(), Annotation.CONTACT_EMAIL_MI,
                     Annotation.CONTACT_EMAIL);
-            setContactEmail(contactEmail != null ? contactEmail.getValue() : null);
+            this.contactEmail = contactEmail != null ? contactEmail.getValue() : null;
             if (publication.getPublicationDate() == null){
                 this.year = null;
             }
@@ -1255,13 +1255,16 @@ public class PublicationController extends AnnotatedObjectController {
 
     public void contactEmailChanged(ValueChangeEvent evt) {
         setUnsavedChanges(true);
-        if (this.contactEmail != null && contactEmail.length() > 0){
-            updateAnnotation(Annotation.CONTACT_EMAIL, Annotation.CONTACT_EMAIL_MI, contactEmail, publication.getAnnotations());
+        String newValue = (String) evt.getNewValue();
+
+        if (newValue != null && newValue.length() > 0){
+            updateAnnotation(Annotation.CONTACT_EMAIL, Annotation.CONTACT_EMAIL_MI, newValue, publication.getAnnotations());
+            setExperimentAnnotation(Annotation.CONTACT_EMAIL, Annotation.CONTACT_EMAIL_MI, newValue);
         }
         else{
             removeAnnotation(Annotation.CONTACT_EMAIL, Annotation.CONTACT_EMAIL_MI, publication.getAnnotations());
         }
-        setExperimentAnnotation(Annotation.CONTACT_EMAIL, Annotation.CONTACT_EMAIL_MI, (String) evt.getNewValue());
+        this.contactEmail = newValue;
     }
 
     public void publicationYearChanged(ValueChangeEvent evt) {
