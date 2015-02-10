@@ -242,9 +242,11 @@ public class ParticipantImportService extends AbstractEditorService {
         candidate.setSource(intactConfig.getDefaultInstitution().getShortName());
 
         // initialise some properties
-        initialiseXrefs(interactor.getDbXrefs());
-        initialiseAnnotations(interactor.getDbAnnotations());
-        initialiseCv(interactor.getInteractorType());
+        if (interactor.getAc() != null){
+            initialiseXrefs(interactor.getDbXrefs());
+            initialiseAnnotations(interactor.getDbAnnotations());
+            initialiseCv(interactor.getInteractorType());
+        }
 
         final Collection<Xref> identityXrefs = interactor.getIdentifiers();
 
