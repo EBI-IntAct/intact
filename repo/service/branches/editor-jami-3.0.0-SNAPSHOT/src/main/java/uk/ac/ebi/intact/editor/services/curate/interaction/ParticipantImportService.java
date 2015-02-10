@@ -17,7 +17,6 @@ package uk.ac.ebi.intact.editor.services.curate.interaction;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -339,28 +338,6 @@ public class ParticipantImportService extends AbstractEditorService {
         return candidate;
     }
 
-    private void initialiseXrefs(Collection<Xref> xrefs) {
-        for (Xref ref : xrefs){
-            Hibernate.initialize(((IntactCvTerm) ref.getDatabase()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbXrefs());
-            if (ref.getQualifier() != null){
-                Hibernate.initialize(((IntactCvTerm)ref.getQualifier()).getDbXrefs());
-            }
-        }
-    }
-
-    private void initialiseAnnotations(Collection<Annotation> annotations) {
-        for (Annotation annot : annotations){
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbXrefs());
-        }
-    }
-
-    private void initialiseCv(CvTerm term) {
-        initialiseAnnotations(((IntactCvTerm)term).getDbAnnotations());
-        initialiseXrefs(((IntactCvTerm)term).getDbXrefs());
-    }
-
     private IntactProtein toProtein(ImportCandidate candidate) throws SynchronizerException, FinderException, PersisterException {
         IntactProtein protein=null;
 
@@ -390,13 +367,5 @@ public class ParticipantImportService extends AbstractEditorService {
         }
 
         return entity;
-    }
-
-    private void initialiseAliases(Collection<Alias> aliases) {
-        for (Alias alias : aliases){
-            if (alias.getType() != null){
-                Hibernate.initialize(((IntactCvTerm) alias.getType()).getDbXrefs());
-            }
-        }
     }
 }

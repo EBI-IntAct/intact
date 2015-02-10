@@ -242,36 +242,6 @@ public class BioSourceService extends AbstractEditorService {
         return isInitialised;
     }
 
-    private void initialiseAliases(Collection<Alias> aliases) {
-        for (Alias alias : aliases){
-            if (alias.getType() != null){
-                Hibernate.initialize(((IntactCvTerm) alias.getType()).getDbXrefs());
-            }
-        }
-    }
-
-    private void initialiseCv(CvTerm cv) {
-        initialiseAnnotations(((IntactCvTerm)cv).getDbAnnotations());
-        initialiseXrefs(((IntactCvTerm)cv).getDbXrefs());
-    }
-
-    private void initialiseXrefs(Collection<Xref> xrefs) {
-        for (Xref ref : xrefs){
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbXrefs());
-            if (ref.getQualifier() != null){
-                Hibernate.initialize(((IntactCvTerm)ref.getQualifier()).getDbXrefs());
-            }
-        }
-    }
-
-    private void initialiseAnnotations(Collection<Annotation> annotations) {
-        for (Annotation annot : annotations){
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbXrefs());
-        }
-    }
-
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void loadDataIfNecessary( ComponentSystemEvent event ) {
         if (!isInitialised()) {

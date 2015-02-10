@@ -23,10 +23,7 @@ import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.CvTermUtils;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
-import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
-import uk.ac.ebi.intact.jami.model.extension.IntactExperiment;
-import uk.ac.ebi.intact.jami.model.extension.IntactInteractionEvidence;
-import uk.ac.ebi.intact.jami.model.extension.IntactPublication;
+import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.model.lifecycle.Releasable;
 
 import java.util.Collection;
@@ -176,6 +173,17 @@ public class ExperimentEditorService extends AbstractEditorService {
              initialiseEvidences(reloaded.getInteractionEvidences());
         }
 
+        CvTerm cv = initialiseCv(reloaded.getInteractionDetectionMethod());
+        if (cv != reloaded.getInteractionDetectionMethod()){
+            reloaded.setInteractionDetectionMethod(cv);
+        }
+        if (reloaded.getParticipantIdentificationMethod() != null){
+            CvTerm cv2 = initialiseCv(reloaded.getParticipantIdentificationMethod());
+            if (cv2 != reloaded.getParticipantIdentificationMethod()){
+                reloaded.setParticipantIdentificationMethod(cv2);
+            }
+        }
+
         getIntactDao().getEntityManager().detach(reloaded);
 
         return reloaded;
@@ -221,23 +229,6 @@ public class ExperimentEditorService extends AbstractEditorService {
         return accepted;
     }
 
-    private void initialiseXrefs(Collection<Xref> xrefs) {
-        for (Xref ref : xrefs){
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbXrefs());
-            if (ref.getQualifier() != null){
-                Hibernate.initialize(((IntactCvTerm)ref.getQualifier()).getDbXrefs());
-            }
-        }
-    }
-
-    private void initialiseAnnotations(Collection<psidev.psi.mi.jami.model.Annotation> annotations) {
-        for (psidev.psi.mi.jami.model.Annotation annot : annotations){
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbXrefs());
-        }
-    }
-
     private void initialiseEvidences(Collection<InteractionEvidence> evidences) {
 
         for (InteractionEvidence ev : evidences){
@@ -246,15 +237,13 @@ public class ExperimentEditorService extends AbstractEditorService {
         }
     }
 
-    private void initialiseCv(CvTerm term) {
-        initialiseAnnotations(((IntactCvTerm)term).getDbAnnotations());
-        initialiseXrefs(((IntactCvTerm)term).getDbXrefs());
-    }
-
     private void initialiseVariableParameters(Collection<VariableParameter> parameters) {
         for (VariableParameter param : parameters){
             if (param.getUnit() != null){
-                Hibernate.initialize(((IntactCvTerm)param.getUnit()).getDbXrefs());
+                CvTerm unit = initialiseCv(param.getUnit());
+                if (unit != param.getUnit()){
+                    param.setUnit(unit);
+                }
             }
 
             Hibernate.initialize(param.getVariableValues());

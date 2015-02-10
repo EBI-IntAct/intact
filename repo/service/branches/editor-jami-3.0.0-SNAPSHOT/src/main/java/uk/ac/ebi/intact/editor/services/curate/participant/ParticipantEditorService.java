@@ -15,7 +15,6 @@
  */
 package uk.ac.ebi.intact.editor.services.curate.participant;
 
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -240,14 +239,23 @@ public class ParticipantEditorService extends AbstractEditorService {
 
         // load base types
         if (reloaded.getBiologicalRole() != null){
-            initialiseCv(reloaded.getBiologicalRole());
+            CvTerm bioRole = initialiseCv(reloaded.getBiologicalRole());
+            if (bioRole != reloaded.getBiologicalRole()){
+                reloaded.setBiologicalRole(bioRole);
+            }
         }
         if (reloaded instanceof IntactParticipantEvidence){
-            initialiseCv(((IntactParticipantEvidence) reloaded).getExperimentalRole());
+            CvTerm expRole = initialiseCv(((IntactParticipantEvidence) reloaded).getExperimentalRole());
+            if (expRole != ((IntactParticipantEvidence) reloaded).getExperimentalRole()){
+                ((IntactParticipantEvidence) reloaded).setExperimentalRole(expRole);
+            }
         }
 
         // load participant interactor
-        initialiseInteractor((IntactInteractor)reloaded.getInteractor());
+        Interactor reloadedInter = initialiseInteractor((IntactInteractor)reloaded.getInteractor());
+        if (reloadedInter != reloaded.getInteractor()){
+            reloaded.setInteractor(reloadedInter);
+        }
 
         // load features
         initialiseFeatures(reloaded.getFeatures());
@@ -277,8 +285,8 @@ public class ParticipantEditorService extends AbstractEditorService {
     private void initialiseFeature(Feature det) {
          for (Object obj : det.getRanges()){
              Range range = (Range)obj;
-             initialiseCv(range.getStart().getStatus());
-             initialiseCv(range.getEnd().getStatus());
+             initialisePosition(range.getStart());
+             initialisePosition(range.getEnd());
          }
 
         for (Object linked : det.getLinkedFeatures()){
@@ -287,55 +295,20 @@ public class ParticipantEditorService extends AbstractEditorService {
     }
 
     private void initialiseCausalRelationship(CausalRelationship det) {
-        initialiseCv(det.getRelationType());
-        initialiseInteractor((IntactInteractor)det.getTarget().getInteractor());
-    }
-
-    private void initialiseXrefs(Collection<Xref> xrefs) {
-        for (Xref ref : xrefs){
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbXrefs());
-            if (ref.getQualifier() != null){
-                Hibernate.initialize(((IntactCvTerm)ref.getQualifier()).getDbXrefs());
-            }
+        CvTerm rel = initialiseCv(det.getRelationType());
+        if (rel != det.getRelationType()){
+            ((AbstractIntactCausalRelationship)det).setRelationType(rel);
+        }
+        IntactInteractor inter = initialiseInteractor((IntactInteractor)det.getTarget().getInteractor());
+        if (inter != det.getTarget().getInteractor()){
+            det.getTarget().setInteractor(inter);
         }
     }
 
-    private void initialiseAnnotations(Collection<Annotation> annotations) {
-        for (Annotation annot : annotations){
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbXrefs());
+    private IntactInteractor initialiseInteractor(IntactInteractor participant) {
+        if (!getIntactDao().getEntityManager().contains(participant)){
+           participant = getIntactDao().getEntityManager().merge(participant);
         }
-    }
-
-    private void initialiseCv(CvTerm cv) {
-        initialiseAnnotations(((IntactCvTerm)cv).getDbAnnotations());
-        initialiseXrefs(((IntactCvTerm)cv).getDbXrefs());
-    }
-
-    private void initialiseAliases(Collection<Alias> aliases) {
-        for (Alias alias : aliases){
-            if (alias.getType() != null){
-                Hibernate.initialize(((IntactCvTerm)alias.getType()).getDbXrefs());
-            }
-        }
-    }
-
-    private void initialiseParameters(Collection<Parameter> parameters) {
-        for (Parameter parameter : parameters){
-            Hibernate.initialize(((IntactCvTerm)parameter.getType()).getDbXrefs());
-
-            if (parameter.getUnit() != null){
-                Hibernate.initialize(((IntactCvTerm)parameter.getUnit()).getDbXrefs());
-            }
-        }
-    }
-
-    private void initialiseConfidence(Confidence det) {
-        Hibernate.initialize(((IntactCvTerm) det.getType()).getDbXrefs());
-    }
-
-    private void initialiseInteractor(IntactInteractor participant) {
         if (participant instanceof IntactPolymer){
             // load sequence
             ((Polymer) participant).getSequence();
@@ -343,5 +316,6 @@ public class ParticipantEditorService extends AbstractEditorService {
 
         initialiseXrefs(participant.getDbXrefs());
         initialiseAnnotations(participant.getDbAnnotations());
+        return participant;
     }
 }

@@ -15,17 +15,13 @@
  */
 package uk.ac.ebi.intact.editor.services.curate.complex;
 
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ComplexCloner;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
-import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
-import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
-import uk.ac.ebi.intact.jami.model.extension.IntactInteractionEvidence;
-import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
+import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.model.lifecycle.ComplexLifeCycleEvent;
 import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleEvent;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
@@ -178,6 +174,8 @@ public class ComplexEditorService extends AbstractEditorService {
             if (interaction.getEvidenceType() != null) {
                 initialiseCv(interaction.getEvidenceType());
             }
+
+            initialiseCv(interaction.getCvStatus());
         }
 
         return interaction;
@@ -201,13 +199,28 @@ public class ComplexEditorService extends AbstractEditorService {
 
         // load base types
         if (reloaded.getInteractionType() != null) {
-            initialiseCv(reloaded.getInteractionType());
+            CvTerm cv = initialiseCv(reloaded.getInteractionType());
+            if (cv != reloaded.getInteractionType()){
+                reloaded.setInteractionType(cv);
+            }
         }
         if (reloaded.getInteractorType() != null) {
-            initialiseCv(reloaded.getInteractorType());
+            CvTerm cv = initialiseCv(reloaded.getInteractorType());
+            if (cv != reloaded.getInteractorType()){
+                reloaded.setInteractorType(cv);
+            }
         }
         if (reloaded.getEvidenceType() != null) {
-            initialiseCv(reloaded.getEvidenceType());
+            CvTerm cv = initialiseCv(reloaded.getEvidenceType());
+            if (cv != reloaded.getEvidenceType()){
+                reloaded.setEvidenceType(cv);
+            }
+        }
+
+        // initialise status
+        CvTerm cv = initialiseCv(reloaded.getCvStatus());
+        if (cv != reloaded.getCvStatus()){
+            reloaded.setCvStatus(cv);
         }
 
         getIntactDao().getEntityManager().detach(reloaded);
@@ -257,59 +270,22 @@ public class ComplexEditorService extends AbstractEditorService {
         }
     }
 
-    private void initialiseXrefs(Collection<Xref> xrefs) {
-        for (Xref ref : xrefs){
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbXrefs());
-            if (ref.getQualifier() != null){
-                Hibernate.initialize(((IntactCvTerm)ref.getQualifier()).getDbXrefs());
-            }
-        }
-    }
-
-    private void initialiseAnnotations(Collection<Annotation> annotations) {
-        for (Annotation annot : annotations){
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbXrefs());
-        }
-    }
-
-    private void initialiseCv(CvTerm cv) {
-        initialiseAnnotations(((IntactCvTerm)cv).getDbAnnotations());
-        initialiseXrefs(((IntactCvTerm)cv).getDbXrefs());
-    }
-
-    private void initialiseAliases(Collection<Alias> aliases) {
-        for (Alias alias : aliases){
-            if (alias.getType() != null){
-                Hibernate.initialize(((IntactCvTerm)alias.getType()).getDbXrefs());
-            }
-        }
-    }
-
-    private void initialiseParameters(Collection<ModelledParameter> parameters) {
-        for (ModelledParameter parameter : parameters){
-            Hibernate.initialize(((IntactCvTerm)parameter.getType()).getDbXrefs());
-
-            if (parameter.getUnit() != null){
-                Hibernate.initialize(((IntactCvTerm)parameter.getUnit()).getDbXrefs());
-            }
-        }
-    }
-
-    private void initialiseConfidence(ModelledConfidence det) {
-        Hibernate.initialize(((IntactCvTerm) det.getType()).getDbXrefs());
-    }
-
     private void initialiseParticipant(ModelledParticipant det) {
         IntactInteractor interactor = (IntactInteractor)det.getInteractor();
+        if (!getIntactDao().getEntityManager().contains(interactor)){
+            interactor = getIntactDao().getEntityManager().merge(interactor);
+            det.setInteractor(interactor);
+        }
         initialiseXrefs(interactor.getDbXrefs());
         initialiseAnnotations(interactor.getDbAnnotations());
         if (interactor instanceof Polymer){
             ((Polymer)interactor).getSequence();
         }
 
-        initialiseCv(det.getBiologicalRole());
+        CvTerm bioRole = initialiseCv(det.getBiologicalRole());
+        if (bioRole != det.getBiologicalRole()){
+           det.setBiologicalRole(bioRole);
+        }
         for (ModelledFeature f : det.getFeatures()){
            initialiseFeature(f);
         }
@@ -318,8 +294,14 @@ public class ComplexEditorService extends AbstractEditorService {
     private void initialiseFeature(Feature det) {
         for (Object obj : det.getRanges()){
             Range range = (Range)obj;
-            initialiseCv(range.getStart().getStatus());
-            initialiseCv(range.getEnd().getStatus());
+            CvTerm startCv = initialiseCv(range.getStart().getStatus());
+            if (startCv != range.getStart().getStatus()){
+                ((IntactPosition)range.getStart()).setStatus(startCv);
+            }
+            CvTerm endCv = initialiseCv(range.getEnd().getStatus());
+            if (endCv != range.getEnd().getStatus()){
+                ((IntactPosition)range.getEnd()).setStatus(startCv);
+            }
         }
 
         for (Object linked : det.getLinkedFeatures()){
@@ -329,7 +311,10 @@ public class ComplexEditorService extends AbstractEditorService {
 
     private void initialiseEvents(Collection<LifeCycleEvent> evidences) {
         for (LifeCycleEvent evt : evidences){
-            initialiseCv(((ComplexLifeCycleEvent)evt).getCvEvent());
+            CvTerm cvEvent = initialiseCv(((ComplexLifeCycleEvent)evt).getCvEvent());
+            if (cvEvent != ((ComplexLifeCycleEvent)evt).getCvEvent()){
+                ((ComplexLifeCycleEvent)evt).setCvEvent(cvEvent);
+            }
         }
     }
 }

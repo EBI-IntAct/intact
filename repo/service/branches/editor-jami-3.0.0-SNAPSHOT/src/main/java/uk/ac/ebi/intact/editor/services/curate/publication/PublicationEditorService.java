@@ -27,6 +27,7 @@ import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationControll
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
 import uk.ac.ebi.intact.jami.model.extension.IntactPublication;
+import uk.ac.ebi.intact.jami.model.lifecycle.ComplexLifeCycleEvent;
 import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleEvent;
 import uk.ac.ebi.intact.jami.model.lifecycle.PublicationLifeCycleEvent;
 
@@ -125,6 +126,7 @@ public class PublicationEditorService extends AbstractEditorService {
             initialiseEvidences(publication.getExperiments());
             // initialise lifecycle events
             initialiseLifeCycleEvents(publication);
+            initialiseCv(publication.getCvStatus());
         }
 
         return publication;
@@ -148,7 +150,10 @@ public class PublicationEditorService extends AbstractEditorService {
         // initialise xrefs because needs pubmed
         initialiseXrefs(reloaded.getDbXrefs());
         // initialise status
-        initialiseCv(reloaded.getCvStatus());
+        CvTerm cv = initialiseCv(reloaded.getCvStatus());
+        if (cv != reloaded.getCvStatus()){
+           reloaded.setCvStatus(cv);
+        }
         // initialise experiments
         initialiseEvidences(reloaded.getExperiments());
         // initialise lifecycle events
@@ -205,23 +210,6 @@ public class PublicationEditorService extends AbstractEditorService {
         return false;
     }
 
-    private void initialiseXrefs(Collection<Xref> xrefs) {
-        for (Xref ref : xrefs){
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbXrefs());
-            if (ref.getQualifier() != null){
-                Hibernate.initialize(((IntactCvTerm)ref.getQualifier()).getDbXrefs());
-            }
-        }
-    }
-
-    private void initialiseAnnotations(Collection<Annotation> annotations) {
-        for (Annotation annot : annotations){
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbXrefs());
-        }
-    }
-
     private void initialiseEvidences(Collection<Experiment> evidences) {
 
         for (Experiment exp : evidences){
@@ -230,14 +218,12 @@ public class PublicationEditorService extends AbstractEditorService {
         }
     }
 
-    private void initialiseCv(CvTerm term) {
-        initialiseAnnotations(((IntactCvTerm)term).getDbAnnotations());
-        initialiseXrefs(((IntactCvTerm)term).getDbXrefs());
-    }
-
     private void initialiseEvents(Collection<LifeCycleEvent> evidences) {
         for (LifeCycleEvent evt : evidences){
-            initialiseCv(((PublicationLifeCycleEvent)evt).getCvEvent());
+            CvTerm cvEvent = initialiseCv(((PublicationLifeCycleEvent)evt).getCvEvent());
+            if (cvEvent != ((PublicationLifeCycleEvent)evt).getCvEvent()){
+                ((PublicationLifeCycleEvent)evt).setCvEvent(cvEvent);
+            }
         }
     }
 }

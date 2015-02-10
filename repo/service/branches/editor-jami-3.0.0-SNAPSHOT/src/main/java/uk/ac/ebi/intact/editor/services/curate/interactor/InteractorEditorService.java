@@ -15,13 +15,11 @@
  */
 package uk.ac.ebi.intact.editor.services.curate.interactor;
 
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
-import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
 import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
 import uk.ac.ebi.intact.jami.model.extension.IntactInteractorPool;
 import uk.ac.ebi.intact.jami.model.extension.IntactPolymer;
@@ -136,7 +134,10 @@ public class InteractorEditorService extends AbstractEditorService {
 
         // load base types
         if (reloaded.getInteractorType() != null){
-            initialiseCv(reloaded.getInteractorType());
+            CvTerm cv = initialiseCv(reloaded.getInteractorType());
+            if (cv != reloaded.getInteractorType()){
+                reloaded.setInteractorType(cv);
+            }
         }
 
         // load set members
@@ -151,36 +152,6 @@ public class InteractorEditorService extends AbstractEditorService {
         getIntactDao().getEntityManager().detach(reloaded);
 
         return reloaded;
-    }
-
-    private void initialiseXrefs(Collection<Xref> xrefs) {
-        for (Xref ref : xrefs){
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbXrefs());
-            if (ref.getQualifier() != null){
-                Hibernate.initialize(((IntactCvTerm)ref.getQualifier()).getDbXrefs());
-            }
-        }
-    }
-
-    private void initialiseAnnotations(Collection<Annotation> annotations) {
-        for (Annotation annot : annotations){
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbXrefs());
-        }
-    }
-
-    private void initialiseCv(CvTerm cv) {
-        initialiseAnnotations(((IntactCvTerm)cv).getDbAnnotations());
-        initialiseXrefs(((IntactCvTerm)cv).getDbXrefs());
-    }
-
-    private void initialiseAliases(Collection<Alias> aliases) {
-        for (Alias alias : aliases){
-            if (alias.getType() != null){
-                Hibernate.initialize(((IntactCvTerm)alias.getType()).getDbXrefs());
-            }
-        }
     }
 
     private void initialiseInteractorMembers(Collection<Interactor> interactors) {

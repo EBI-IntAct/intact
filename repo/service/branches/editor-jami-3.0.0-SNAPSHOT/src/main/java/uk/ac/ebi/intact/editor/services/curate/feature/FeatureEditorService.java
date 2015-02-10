@@ -15,7 +15,6 @@
  */
 package uk.ac.ebi.intact.editor.services.curate.feature;
 
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -174,15 +173,24 @@ public class FeatureEditorService extends AbstractEditorService {
 
         // load base types
         if (feature.getType() != null){
-            initialiseCv(reloaded.getType());
+            CvTerm cv = initialiseCv(reloaded.getType());
+            if (reloaded.getType() != cv){
+                reloaded.setType(cv);
+            }
         }
         if (feature.getRole() != null){
-            initialiseCv(reloaded.getRole());
+            CvTerm cv = initialiseCv(reloaded.getRole());
+            if (reloaded.getRole() != cv){
+                reloaded.setRole(cv);
+            }
         }
 
         // load participant interactor
         if (feature.getParticipant() != null){
-            initialiseParticipant(reloaded.getParticipant());
+            Entity reloadedEntity = initialiseParticipant(reloaded.getParticipant());
+            if (reloadedEntity != feature.getParticipant()){
+                reloaded.setParticipant(reloadedEntity);
+            }
         }
 
         // load feature ranges
@@ -213,66 +221,16 @@ public class FeatureEditorService extends AbstractEditorService {
         return rangeWrappers;
     }
 
-    private void initialiseRanges(AbstractIntactFeature feature) {
-        for (Object r : feature.getRanges()){
-            AbstractIntactRange range = (AbstractIntactRange)r;
-
-            initialisePosition(range.getStart());
-            initialisePosition(range.getEnd());
-            if (range.getResultingSequence() != null){
-                initialiseXrefs(range.getResultingSequence().getXrefs());
-            }
+    private Entity initialiseParticipant(Entity participant) {
+        if (!getIntactDao().getEntityManager().contains(participant)){
+            participant = getIntactDao().getEntityManager().merge(participant);
         }
-    }
-
-    private void initialiseXrefs(Collection<Xref> xrefs) {
-        for (Xref ref : xrefs){
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbXrefs());
-            if (ref.getQualifier() != null){
-                Hibernate.initialize(((IntactCvTerm)ref.getQualifier()).getDbXrefs());
-            }
-        }
-    }
-
-    private void initialiseAnnotations(Collection<psidev.psi.mi.jami.model.Annotation> annotations) {
-        for (psidev.psi.mi.jami.model.Annotation annot : annotations){
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbXrefs());
-        }
-    }
-
-    private void initialiseCv(CvTerm cv) {
-        initialiseAnnotations(((IntactCvTerm)cv).getDbAnnotations());
-        initialiseXrefs(((IntactCvTerm)cv).getDbXrefs());
-    }
-
-    private void initialiseAliases(Collection<Alias> aliases) {
-        for (Alias alias : aliases){
-            if (alias.getType() != null){
-                Hibernate.initialize(((IntactCvTerm)alias.getType()).getDbXrefs());
-            }
-        }
-    }
-
-    private void initialiseParameters(Collection<Parameter> parameters) {
-        for (Parameter parameter : parameters){
-            Hibernate.initialize(((IntactCvTerm)parameter.getType()).getDbXrefs());
-
-            if (parameter.getUnit() != null){
-                Hibernate.initialize(((IntactCvTerm)parameter.getUnit()).getDbXrefs());
-            }
-        }
-    }
-
-    private void initialisePosition(Position pos) {
-        Hibernate.initialize(((IntactCvTerm)pos.getStatus()).getDbXrefs());
-
-    }
-
-    private void initialiseParticipant(Entity participant) {
         initialiseXrefs(((IntactInteractor)participant.getInteractor()).getDbXrefs());
 
+        if (!getIntactDao().getEntityManager().contains(participant.getInteractor())){
+            Interactor interactor = getIntactDao().getEntityManager().merge(participant.getInteractor());
+            participant.setInteractor(interactor);
+        }
         if (participant.getInteractor() instanceof IntactPolymer){
             // load sequence
             ((Polymer) participant.getInteractor()).getSequence();
@@ -280,9 +238,11 @@ public class FeatureEditorService extends AbstractEditorService {
         else if (participant.getInteractor() instanceof IntactComplex){
             IntactComplex complex = (IntactComplex)participant.getInteractor();
 
-            for (ModelledParticipant p : complex.getParticipants()){
+            List<ModelledParticipant> participants = new ArrayList<ModelledParticipant>(complex.getParticipants());
+            for (ModelledParticipant p : participants){
                  initialiseParticipant(p);
             }
         }
+        return participant;
     }
 }

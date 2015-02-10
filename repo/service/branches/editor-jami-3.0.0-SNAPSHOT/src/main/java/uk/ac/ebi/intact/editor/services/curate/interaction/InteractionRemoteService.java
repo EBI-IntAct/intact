@@ -21,9 +21,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.ParticipantEvidence;
 import psidev.psi.mi.jami.model.Publication;
-import psidev.psi.mi.jami.model.Xref;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
-import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
 import uk.ac.ebi.intact.jami.model.extension.IntactInteractionEvidence;
 import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
 import uk.ac.ebi.intact.jami.model.extension.IntactPublication;
@@ -82,15 +80,5 @@ public class InteractionRemoteService extends AbstractEditorService {
             initialiseXrefs(pub.getDbXrefs());
         }
         return pub;
-    }
-
-    private void initialiseXrefs(Collection<Xref> xrefs) {
-        for (Xref ref : xrefs){
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbXrefs());
-            if (ref.getQualifier() != null){
-                Hibernate.initialize(((IntactCvTerm)ref.getQualifier()).getDbXrefs());
-            }
-        }
     }
 }
