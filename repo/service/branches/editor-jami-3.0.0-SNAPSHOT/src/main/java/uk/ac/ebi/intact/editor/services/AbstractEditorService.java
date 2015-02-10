@@ -15,17 +15,20 @@
  */
 package uk.ac.ebi.intact.editor.services;
 
+import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.intact.jami.dao.IntactBaseDao;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.interceptor.IntactTransactionSynchronization;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.audit.Auditable;
+import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
 import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 
 import javax.annotation.Resource;
+import java.util.Collection;
 
 
 /**
@@ -210,5 +213,93 @@ public abstract class AbstractEditorService implements EditorService {
         }
 
         return intactObject;
+    }
+
+
+    protected void initialiseXrefs(Collection<Xref> xrefs) {
+        for (Xref ref : xrefs){
+            CvTerm db = initialiseCv(ref.getDatabase());
+            if (db != ref.getDatabase()){
+                ((AbstractIntactXref)ref).setDatabase(db);
+            }
+            if (ref.getQualifier() != null){
+                CvTerm qual = initialiseCv(ref.getQualifier());
+                if (qual != ref.getQualifier()){
+                    ((AbstractIntactXref)ref).setQualifier(qual);
+                }
+            }
+        }
+    }
+
+    protected void initialiseAnnotations(Collection<Annotation> annotations) {
+        for (Annotation annot : annotations){
+            CvTerm type = initialiseCv(annot.getTopic());
+            if (type != annot.getTopic()){
+                ((AbstractIntactAnnotation)annot).setTopic(type);
+            }
+        }
+    }
+
+
+    protected CvTerm initialiseCv(CvTerm cv) {
+        if (!getIntactDao().getEntityManager().contains(cv)){
+            cv = getIntactDao().getEntityManager().find(IntactCvTerm.class, ((IntactCvTerm)cv).getAc());
+        }
+        initialiseAnnotations(((IntactCvTerm) cv).getDbAnnotations());
+        initialiseXrefs(((IntactCvTerm)cv).getDbXrefs());
+        return cv;
+    }
+
+    protected void initialiseAliases(Collection<Alias> aliases) {
+        for (Alias alias : aliases){
+            if (alias.getType() != null){
+                CvTerm type = initialiseCv(alias.getType());
+                if (type != alias.getType()){
+                    ((AbstractIntactAlias)alias).setType(type);
+                }
+            }
+        }
+    }
+
+    protected void initialiseParameters(Collection<? extends Parameter> parameters) {
+        for (Parameter parameter : parameters){
+            CvTerm type = initialiseCv(parameter.getType());
+            if (type != parameter.getType()){
+                ((AbstractIntactParameter)parameter).setType(type);
+            }
+
+            if (parameter.getUnit() != null){
+                CvTerm unit = initialiseCv(parameter.getUnit());
+                if (unit != parameter.getUnit()){
+                    ((AbstractIntactParameter)parameter).setUnit(unit);
+                }
+            }
+        }
+    }
+
+    protected void initialiseConfidence(Confidence det) {
+        CvTerm type = initialiseCv(det.getType());
+        if (type != det.getType()){
+            ((AbstractIntactConfidence)det).setType(type);
+        }
+    }
+
+    protected void initialisePosition(Position pos) {
+        CvTerm reloaded = initialiseCv(pos.getStatus());
+        if (reloaded != pos.getStatus()){
+            ((IntactPosition)pos).setStatus(reloaded);
+        }
+    }
+
+    protected void initialiseRanges(AbstractIntactFeature feature) {
+        for (Object r : feature.getRanges()){
+            AbstractIntactRange range = (AbstractIntactRange)r;
+
+            initialisePosition(range.getStart());
+            initialisePosition(range.getEnd());
+            if (range.getResultingSequence() != null){
+                initialiseXrefs(range.getResultingSequence().getXrefs());
+            }
+        }
     }
 }

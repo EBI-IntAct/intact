@@ -190,7 +190,10 @@ public class InteractionEditorService extends AbstractEditorService {
 
         // load base types
         if (reloaded.getInteractionType() != null) {
-            initialiseCv(reloaded.getInteractionType());
+            CvTerm cv = initialiseCv(reloaded.getInteractionType());
+            if (cv != reloaded.getInteractionType()){
+                reloaded.setInteractionType(cv);
+            }
         }
 
         getIntactDao().getEntityManager().detach(reloaded);
@@ -221,70 +224,26 @@ public class InteractionEditorService extends AbstractEditorService {
         return shortLabel;
     }
 
-    private void initialiseParticipantAliases(Collection<ParticipantEvidence> participants) {
-        for (ParticipantEvidence p : participants){
-            if (p.getInteractor() instanceof IntactInteractor
-                    && !((IntactInteractor)p.getInteractor()).areAliasesInitialized()){
-                initialiseAliases(((IntactInteractor) p.getInteractor()).getAliases());
-            }
-        }
-    }
-
-    private void initialiseXrefs(Collection<Xref> xrefs) {
-        for (Xref ref : xrefs){
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)ref.getDatabase()).getDbXrefs());
-            if (ref.getQualifier() != null){
-                Hibernate.initialize(((IntactCvTerm)ref.getQualifier()).getDbXrefs());
-            }
-        }
-    }
-
-    private void initialiseAnnotations(Collection<Annotation> annotations) {
-        for (Annotation annot : annotations){
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbAnnotations());
-            Hibernate.initialize(((IntactCvTerm)annot.getTopic()).getDbXrefs());
-        }
-    }
-
-    private void initialiseAliases(Collection<Alias> aliases) {
-        for (Alias al : aliases){
-            if (al.getType() != null){
-                Hibernate.initialize(((IntactCvTerm)al.getType()).getDbAnnotations());
-                Hibernate.initialize(((IntactCvTerm)al.getType()).getDbXrefs());
-            }
-        }
-    }
-
-    private void initialiseCv(CvTerm cv) {
-        initialiseAnnotations(((IntactCvTerm)cv).getDbAnnotations());
-        initialiseXrefs(((IntactCvTerm)cv).getDbXrefs());
-    }
-
-    private void initialiseParameters(Collection<Parameter> parameters) {
-        for (Parameter parameter : parameters){
-            Hibernate.initialize(((IntactCvTerm)parameter.getType()).getDbXrefs());
-
-            if (parameter.getUnit() != null){
-                Hibernate.initialize(((IntactCvTerm)parameter.getUnit()).getDbXrefs());
-            }
-        }
-    }
-
-    private void initialiseConfidence(Confidence det) {
-        Hibernate.initialize(((IntactCvTerm) det.getType()).getDbXrefs());
-    }
-
     private void initialiseParticipant(ParticipantEvidence det) {
         IntactInteractor interactor = (IntactInteractor)det.getInteractor();
+        if (!getIntactDao().getEntityManager().contains(interactor)){
+            interactor = getIntactDao().getEntityManager().merge(interactor);
+            det.setInteractor(interactor);
+        }
         initialiseXrefs(interactor.getDbXrefs());
         initialiseAnnotations(interactor.getDbAnnotations());
         if (interactor instanceof Polymer){
             ((Polymer)interactor).getSequence();
         }
 
-        initialiseCv(det.getExperimentalRole());
-        initialiseCv(det.getBiologicalRole());
+        CvTerm expRole = initialiseCv(det.getExperimentalRole());
+        if (expRole != det.getExperimentalRole()){
+            det.setExperimentalRole(expRole);
+        }
+        CvTerm bioRole = initialiseCv(det.getBiologicalRole());
+        if (bioRole != det.getBiologicalRole()){
+            det.setBiologicalRole(bioRole);
+        }
         for (FeatureEvidence f : det.getFeatures()){
            initialiseFeature(f);
         }
@@ -293,8 +252,8 @@ public class InteractionEditorService extends AbstractEditorService {
     private void initialiseFeature(Feature det) {
         for (Object obj : det.getRanges()){
             Range range = (Range)obj;
-            initialiseCv(range.getStart().getStatus());
-            initialiseCv(range.getEnd().getStatus());
+            initialisePosition(range.getStart());
+            initialisePosition(range.getEnd());
         }
 
         for (Object linked : det.getLinkedFeatures()){
@@ -304,7 +263,10 @@ public class InteractionEditorService extends AbstractEditorService {
 
     private void initialiseExperiment(IntactExperiment experiment) {
         if (experiment.getParticipantIdentificationMethod() != null){
-            initialiseCv(experiment.getParticipantIdentificationMethod());
+            CvTerm cv = initialiseCv(experiment.getParticipantIdentificationMethod());
+            if (cv != experiment.getParticipantIdentificationMethod()){
+                experiment.setParticipantIdentificationMethod(cv);
+            }
         }
     }
 

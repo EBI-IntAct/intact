@@ -18,9 +18,12 @@ package uk.ac.ebi.intact.editor.services.curate.experiment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import psidev.psi.mi.jami.model.InteractionEvidence;
+import psidev.psi.mi.jami.model.ParticipantEvidence;
 import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentWrapper;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.jami.model.extension.IntactExperiment;
+import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
 
 import javax.annotation.Resource;
 
@@ -48,10 +51,25 @@ public class ExperimentDetailedViewService extends AbstractEditorService {
     public ExperimentWrapper loadExperimentWrapper( IntactExperiment experiment ) {
         IntactExperiment reloaded = reattachIntactObjectIfTransient(experiment, getIntactDao().getExperimentDao());
 
+        for (InteractionEvidence inter : reloaded.getInteractionEvidences()){
+            for (ParticipantEvidence part : inter.getParticipants()){
+                initialiseParticipant(part);
+            }
+        }
         ExperimentWrapper experimentWrapper = new ExperimentWrapper(reloaded);
 
         getIntactDao().getEntityManager().detach(reloaded);
 
         return experimentWrapper;
+    }
+
+    private void initialiseParticipant(ParticipantEvidence det) {
+        IntactInteractor interactor = (IntactInteractor)det.getInteractor();
+        if (!getIntactDao().getEntityManager().contains(interactor)){
+            interactor = getIntactDao().getEntityManager().merge(interactor);
+            det.setInteractor(interactor);
+        }
+        initialiseXrefs(interactor.getDbXrefs());
+        initialiseAnnotations(interactor.getDbAnnotations());
     }
 }
