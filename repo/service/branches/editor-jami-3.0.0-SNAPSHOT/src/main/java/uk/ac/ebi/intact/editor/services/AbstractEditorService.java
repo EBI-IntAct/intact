@@ -63,18 +63,22 @@ public abstract class AbstractEditorService implements EditorService {
         }
         catch (SynchronizerException e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw e;
         }
         catch (FinderException e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw e;
         }
         catch (PersisterException e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw e;
         }
         catch (Throwable e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw new PersisterException(e.getMessage(), e);
         }
     }
@@ -89,18 +93,22 @@ public abstract class AbstractEditorService implements EditorService {
         }
         catch (SynchronizerException e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw e;
         }
         catch (FinderException e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw e;
         }
         catch (PersisterException e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw e;
         }
         catch (Throwable e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw new PersisterException(e.getMessage(), e);
         }
     }
@@ -115,18 +123,22 @@ public abstract class AbstractEditorService implements EditorService {
         }
         catch (SynchronizerException e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw e;
         }
         catch (FinderException e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw e;
         }
         catch (PersisterException e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw e;
         }
         catch (Throwable e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw new PersisterException(e.getMessage(), e);
         }
     }
@@ -141,18 +153,22 @@ public abstract class AbstractEditorService implements EditorService {
         }
         catch (SynchronizerException e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw e;
         }
         catch (FinderException e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw e;
         }
         catch (PersisterException e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw e;
         }
         catch (Throwable e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw new PersisterException(e.getMessage(), e);
         }
     }
@@ -167,18 +183,22 @@ public abstract class AbstractEditorService implements EditorService {
         }
         catch (SynchronizerException e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw e;
         }
         catch (FinderException e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw e;
         }
         catch (PersisterException e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw e;
         }
         catch (Throwable e){
             getIntactDao().getSynchronizerContext().clearCache();
+            getIntactDao().getEntityManager().clear();
             throw new PersisterException(e.getMessage(), e);
         }
     }
