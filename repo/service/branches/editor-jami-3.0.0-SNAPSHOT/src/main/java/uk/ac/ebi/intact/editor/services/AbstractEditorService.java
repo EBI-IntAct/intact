@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.intact.editor.services;
 
+import org.apache.commons.collections.map.IdentityMap;
 import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.intact.jami.dao.IntactBaseDao;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
@@ -29,6 +30,7 @@ import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 
 import javax.annotation.Resource;
 import java.util.Collection;
+import java.util.Map;
 
 
 /**
@@ -217,13 +219,14 @@ public abstract class AbstractEditorService implements EditorService {
 
 
     protected void initialiseXrefs(Collection<Xref> xrefs) {
+        Map<CvTerm, CvTerm> cvMap = new IdentityMap();
         for (Xref ref : xrefs){
-            CvTerm db = initialiseCv(ref.getDatabase());
+            CvTerm db = initialiseCvWithCache(ref.getDatabase(), cvMap);
             if (db != ref.getDatabase()){
                 ((AbstractIntactXref)ref).setDatabase(db);
             }
             if (ref.getQualifier() != null){
-                CvTerm qual = initialiseCv(ref.getQualifier());
+                CvTerm qual = initialiseCvWithCache(ref.getQualifier(), cvMap);
                 if (qual != ref.getQualifier()){
                     ((AbstractIntactXref)ref).setQualifier(qual);
                 }
@@ -232,8 +235,33 @@ public abstract class AbstractEditorService implements EditorService {
     }
 
     protected void initialiseAnnotations(Collection<Annotation> annotations) {
+        Map<CvTerm, CvTerm> cvMap = new IdentityMap();
         for (Annotation annot : annotations){
-            CvTerm type = initialiseCv(annot.getTopic());
+            CvTerm type = initialiseCvWithCache(annot.getTopic(), cvMap);
+            if (type != annot.getTopic()){
+                ((AbstractIntactAnnotation)annot).setTopic(type);
+            }
+        }
+    }
+
+    protected void initialiseXrefs(Collection<Xref> xrefs, Map<CvTerm, CvTerm> cvMap) {
+        for (Xref ref : xrefs){
+            CvTerm db = initialiseCvWithCache(ref.getDatabase(), cvMap);
+            if (db != ref.getDatabase()){
+                ((AbstractIntactXref)ref).setDatabase(db);
+            }
+            if (ref.getQualifier() != null){
+                CvTerm qual = initialiseCvWithCache(ref.getQualifier(), cvMap);
+                if (qual != ref.getQualifier()){
+                    ((AbstractIntactXref)ref).setQualifier(qual);
+                }
+            }
+        }
+    }
+
+    protected void initialiseAnnotations(Collection<Annotation> annotations, Map<CvTerm, CvTerm> cvMap) {
+        for (Annotation annot : annotations){
+            CvTerm type = initialiseCvWithCache(annot.getTopic(), cvMap);
             if (type != annot.getTopic()){
                 ((AbstractIntactAnnotation)annot).setTopic(type);
             }
@@ -247,6 +275,21 @@ public abstract class AbstractEditorService implements EditorService {
         }
         initialiseAnnotations(((IntactCvTerm) cv).getDbAnnotations());
         initialiseXrefs(((IntactCvTerm)cv).getDbXrefs());
+        return cv;
+    }
+
+    protected CvTerm initialiseCvWithCache(CvTerm cv, Map<CvTerm,CvTerm> cvMap) {
+        if (!getIntactDao().getEntityManager().contains(cv)){
+            cv = getIntactDao().getEntityManager().find(IntactCvTerm.class, ((IntactCvTerm)cv).getAc());
+        }
+        if (cvMap.containsKey(cv)){
+            return cvMap.get(cv);
+        }
+        else{
+            cvMap.put(cv,cv);
+        }
+        initialiseAnnotations(((IntactCvTerm) cv).getDbAnnotations(), cvMap);
+        initialiseXrefs(((IntactCvTerm)cv).getDbXrefs(), cvMap);
         return cv;
     }
 
