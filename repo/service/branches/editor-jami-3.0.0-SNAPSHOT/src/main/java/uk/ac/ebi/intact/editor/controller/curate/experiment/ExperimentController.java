@@ -319,9 +319,9 @@ public class ExperimentController extends AnnotatedObjectController {
         }
         else{
             interactionDataModel = LazyDataModelFactory.createLazyDataModel(getInteractionSummaryService(), "interactionSummaryService",
-                    "select i from IntactInteractionEvidence i join i.dbExperiments as exp where exp.ac = '" + experiment.getAc() + "'",
+                    "select distinct i from IntactInteractionEvidence i join i.dbExperiments as exp where exp.ac = '" + experiment.getAc() + "'",
                     "select count(distinct i.ac) from IntactInteractionEvidence i join i.dbExperiments as exp where exp.ac = '" + experiment.getAc() + "'",
-                    "i", "ac", true);
+                    "i", "i.ac", true);
         }
     }
 
