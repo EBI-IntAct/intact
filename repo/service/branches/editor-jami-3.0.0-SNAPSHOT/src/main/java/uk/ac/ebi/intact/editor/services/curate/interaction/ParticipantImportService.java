@@ -141,6 +141,8 @@ public class ParticipantImportService extends AbstractEditorService {
             IntactInteractor interactor = interactorDao.getByAc(participantToImport);
 
             if (interactor != null) {
+                initialiseXrefs(interactor.getDbXrefs());
+                initialiseAliases(interactor.getDbAliases());
                 candidates.add(toImportCandidate(participantToImport, interactor));
             } else {
                 Participant component = getIntactDao().getParticipantEvidenceDao().getByAc(participantToImport);
@@ -152,6 +154,8 @@ public class ParticipantImportService extends AbstractEditorService {
                 component = getIntactDao().getModelledParticipantDao().getByAc(participantToImport);
 
                 if (component != null) {
+                    initialiseXrefs(((IntactInteractor)component.getInteractor()).getDbXrefs());
+                    initialiseAliases(((IntactInteractor)component.getInteractor()).getDbAliases());
                     candidates.add(toImportCandidate(participantToImport, (IntactModelledParticipant)component));
                 }
             }
@@ -160,10 +164,14 @@ public class ParticipantImportService extends AbstractEditorService {
             Collection<IntactInteractor> interactorsByXref = interactorDao.getByXrefQualifier(Xref.IDENTITY, Xref.IDENTITY_MI, participantToImport);
 
             for (IntactInteractor interactorByXref : interactorsByXref) {
+                initialiseXrefs(interactorByXref.getDbXrefs());
+                initialiseAliases(interactorByXref.getDbAliases());
                 Collection<IntactInteractorPool> pools = poolDao.getByInteractorAc(interactorByXref.getAc());
                 candidates.add(toImportCandidate(participantToImport, interactorByXref));
                 if (!pools.isEmpty()){
                     for (IntactInteractorPool pool : pools){
+                        initialiseXrefs(pool.getDbXrefs());
+                        initialiseAliases(pool.getDbAliases());
                         candidates.add(toImportCandidate(participantToImport, pool));
                     }
                 }
@@ -174,6 +182,8 @@ public class ParticipantImportService extends AbstractEditorService {
                 final Collection<IntactInteractor> interactorsByLabel = interactorDao.getByShortNameLike(participantToImport);
 
                 for (IntactInteractor interactor : interactorsByLabel) {
+                    initialiseXrefs(interactor.getDbXrefs());
+                    initialiseAliases(interactor.getDbAliases());
                     candidates.add(toImportCandidate(participantToImport, interactor));
                 }
             }
@@ -378,5 +388,13 @@ public class ParticipantImportService extends AbstractEditorService {
         }
 
         return entity;
+    }
+
+    private void initialiseAliases(Collection<Alias> aliases) {
+        for (Alias alias : aliases){
+            if (alias.getType() != null){
+                Hibernate.initialize(((IntactCvTerm) alias.getType()).getDbXrefs());
+            }
+        }
     }
 }
