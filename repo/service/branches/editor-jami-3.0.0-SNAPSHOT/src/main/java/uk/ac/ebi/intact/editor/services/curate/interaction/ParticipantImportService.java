@@ -148,6 +148,8 @@ public class ParticipantImportService extends AbstractEditorService {
                 Participant component = getIntactDao().getParticipantEvidenceDao().getByAc(participantToImport);
 
                 if (component != null) {
+                    initialiseXrefs(((IntactInteractor)component.getInteractor()).getDbXrefs());
+                    initialiseAliases(((IntactInteractor)component.getInteractor()).getDbAliases());
                     candidates.add(toImportCandidate(participantToImport, (IntactParticipantEvidence)component));
                 }
 
