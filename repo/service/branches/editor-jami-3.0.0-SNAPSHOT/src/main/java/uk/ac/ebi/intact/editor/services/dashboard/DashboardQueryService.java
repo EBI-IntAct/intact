@@ -45,39 +45,39 @@ public class DashboardQueryService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public LazyDataModel<PublicationSummary> loadAllPublications(String additionalSql){
          return  LazyDataModelFactory.createLazyDataModel(publicationSummaryService, "publicationSummaryService",
-                 "select p from IntactPublication p left join fetch p.dbXrefs as x where " +
+                 "select distinct p from IntactPublication p left join fetch p.dbXrefs as x where " +
                          "(p.shortLabel <> '14681455' and p.shortLabel <> 'unassigned638' " +
                          "and p.shortLabel <> '24288376' and p.shortLabel <> '24214965') and ( " + additionalSql+" )",
                  "select count(distinct p.ac) from IntactPublication p where "+
                          "(p.shortLabel <> '14681455' and p.shortLabel <> 'unassigned638' " +
-                         "and p.shortLabel <> '24288376' and p.shortLabel <> '24214965') and ( "+ additionalSql+" )", "p", "updated, p.ac", false);
+                         "and p.shortLabel <> '24288376' and p.shortLabel <> '24214965') and ( "+ additionalSql+" )", "p", "p.updated, p.ac", false);
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public LazyDataModel<PublicationSummary> loadPublicationsOwnedBy(String userLogin, String additionalSql){
         return LazyDataModelFactory.createLazyDataModel(publicationSummaryService, "publicationSummaryService",
-                "select p from IntactPublication p left join fetch p.dbXrefs as x where " +
+                "select distinct p from IntactPublication p left join fetch p.dbXrefs as x where " +
                         "(p.shortLabel <> '14681455' and p.shortLabel <> 'unassigned638' " +
                         "and p.shortLabel <> '24288376' and p.shortLabel <> '24214965') and upper(p.currentOwner.login) = '" + userLogin + "'" +
                         " and (" + additionalSql + ")",
                 "select count(distinct p.ac) from IntactPublication p where " +
                         "(p.shortLabel <> '14681455' and p.shortLabel <> 'unassigned638' " +
                         "and p.shortLabel <> '24288376' and p.shortLabel <> '24214965') and upper(p.currentOwner.login) = '" + userLogin + "'" +
-                        " and (" + additionalSql + ")", "p", "updated, p.ac", false
+                        " and (" + additionalSql + ")", "p", "p.updated, p.ac", false
         );
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public LazyDataModel<PublicationSummary> loadPublicationsReviewedBy(String userLogin, String additionalSql){
         return LazyDataModelFactory.createLazyDataModel(publicationSummaryService, "publicationSummaryService",
-                "select p from IntactPublication p left join fetch p.dbXrefs as x where " +
+                "select distinct p from IntactPublication p left join fetch p.dbXrefs as x where " +
                         "(p.shortLabel <> '14681455' and p.shortLabel <> 'unassigned638' " +
                         "and p.shortLabel <> '24288376' and p.shortLabel <> '24214965') and upper(p.currentReviewer.login) = '" + userLogin + "'" +
                         " and (" + additionalSql + ")",
                 "select count(distinct p.ac) from IntactPublication p where " +
                         "(p.shortLabel <> '14681455' and p.shortLabel <> 'unassigned638' " +
                         "and p.shortLabel <> '24288376' and p.shortLabel <> '24214965') and upper(p.currentReviewer.login) = '" + userLogin + "'" +
-                        " and (" + additionalSql + ")", "p", "updated, p.ac", false
+                        " and (" + additionalSql + ")", "p", "p.updated, p.ac", false
         );
     }
 
@@ -85,7 +85,7 @@ public class DashboardQueryService extends AbstractEditorService {
     public LazyDataModel<ComplexSummary> loadAllComplexes(String additionalSql){
         return LazyDataModelFactory.createLazyDataModel(complexSummaryService, "complexSummaryService",
                 "select p from IntactComplex p where " + additionalSql,
-                "select count(distinct p.ac) from IntactComplex p where " + additionalSql, "p", "updated, p.ac", false);
+                "select count(distinct p.ac) from IntactComplex p where " + additionalSql, "p", "p.updated, p.ac", false);
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
@@ -94,7 +94,7 @@ public class DashboardQueryService extends AbstractEditorService {
                 "select p from IntactComplex p where upper(p.currentOwner.login) = '" + userLogin + "'" +
                         " and (" + additionalSql + ")",
                 "select count(distinct p.ac) from IntactComplex p where upper(p.currentOwner.login) = '" + userLogin + "'" +
-                        " and (" + additionalSql + ")", "p", "updated, p.ac", false
+                        " and (" + additionalSql + ")", "p", "p.updated, p.ac", false
         );
     }
 
@@ -104,7 +104,7 @@ public class DashboardQueryService extends AbstractEditorService {
                 "select p from IntactComplex p where upper(p.currentReviewer.login) = '" + userLogin + "'" +
                         " and (" + additionalSql + ")",
                 "select count(distinct p.ac) from IntactComplex p where upper(p.currentReviewer.login) = '" + userLogin + "'" +
-                        " and (" + additionalSql + ")", "p", "updated, p.ac", false
+                        " and (" + additionalSql + ")", "p", "p.updated, p.ac", false
         );
     }
 }
