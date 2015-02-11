@@ -46,8 +46,10 @@ public class ReviewerAvailabilityService extends AbstractEditorService {
     public Collection<User> loadAllReviewers() {
         Collection<User> reviewers = getIntactDao().getUserDao().getByRole(Role.ROLE_REVIEWER);
         for (User user : reviewers){
-            Hibernate.initialize(user.getPreferences());
-            Hibernate.initialize(user.getRoles());
+            if (user.getAc() != null){
+                Hibernate.initialize(user.getPreferences());
+                Hibernate.initialize(user.getRoles());
+            }
         }
         return reviewers;
     }
@@ -56,8 +58,10 @@ public class ReviewerAvailabilityService extends AbstractEditorService {
     public Collection<User> loadAllComplexReviewers() {
         Collection<User> reviewers = getIntactDao().getUserDao().getByRole(Role.ROLE_COMPLEX_REVIEWER);
         for (User user : reviewers){
-            Hibernate.initialize(user.getPreferences());
-            Hibernate.initialize(user.getRoles());
+            if (user.getAc() != null){
+                Hibernate.initialize(user.getPreferences());
+                Hibernate.initialize(user.getRoles());
+            }
         }
         return reviewers;
     }

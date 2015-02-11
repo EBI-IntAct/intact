@@ -270,7 +270,8 @@ public abstract class AbstractEditorService implements EditorService {
 
 
     protected CvTerm initialiseCv(CvTerm cv) {
-        if (!getIntactDao().getEntityManager().contains(cv)){
+        if (cv instanceof IntactCvTerm
+                && ((IntactCvTerm)cv).getAc() != null && !getIntactDao().getEntityManager().contains(cv)){
             cv = getIntactDao().getEntityManager().find(IntactCvTerm.class, ((IntactCvTerm)cv).getAc());
         }
         initialiseAnnotations(((IntactCvTerm) cv).getDbAnnotations());
@@ -279,7 +280,8 @@ public abstract class AbstractEditorService implements EditorService {
     }
 
     protected CvTerm initialiseCvWithCache(CvTerm cv, Map<CvTerm,CvTerm> cvMap) {
-        if (!getIntactDao().getEntityManager().contains(cv)){
+        if (cv instanceof IntactCvTerm
+                && ((IntactCvTerm)cv).getAc() != null && !getIntactDao().getEntityManager().contains(cv)){
             cv = getIntactDao().getEntityManager().find(IntactCvTerm.class, ((IntactCvTerm)cv).getAc());
         }
         if (cvMap.containsKey(cv)){

@@ -227,7 +227,7 @@ public class CvObjectService extends AbstractEditorService {
                     cvObjectsByUsedInClass.put(NO_CLASS, cvObject );
                 }
             }
-            else{
+            else if (cvObject.getAc() != null){
                 Hibernate.initialize(cvObject.getDbAnnotations());
             }
         }
@@ -553,7 +553,9 @@ public class CvObjectService extends AbstractEditorService {
     public IntactCvTerm initialiseCvParents(IntactCvTerm cv) {
         // reload cv without flushing changes
         IntactCvTerm reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getCvTermDao());
-        Hibernate.initialize(reloaded.getParents());
+        if (reloaded.getAc() != null){
+            Hibernate.initialize(reloaded.getParents());
+        }
 
         getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;
@@ -581,7 +583,9 @@ public class CvObjectService extends AbstractEditorService {
         // reload parents
         for (OntologyTerm parent : reloaded.getParents()){
             IntactCvTerm reloadedParent = reattachIntactObjectIfTransient((IntactCvTerm)parent, getIntactDao().getCvTermDao());
-            Hibernate.initialize(reloadedParent.getDbXrefs());
+            if (reloadedParent.getAc() != null){
+                Hibernate.initialize(reloadedParent.getDbXrefs());
+            }
 
             existingParents.add(reloadedParent);
         }
@@ -630,8 +634,10 @@ public class CvObjectService extends AbstractEditorService {
         for ( OntologyTerm child : cv.getChildren() ) {
             if (child instanceof IntactCvTerm && cv.getObjClass().equals(((IntactCvTerm)child).getObjClass())){
                 // load laxzy collections collections needed
-                Hibernate.initialize(((IntactCvTerm)child).getDbAnnotations());
-                Hibernate.initialize(((IntactCvTerm)child).getDbXrefs());
+                if (((IntactCvTerm) child).getAc() != null){
+                    Hibernate.initialize(((IntactCvTerm)child).getDbAnnotations());
+                    Hibernate.initialize(((IntactCvTerm)child).getDbXrefs());
+                }
                 buildTreeNode( (IntactCvTerm)child, childNode );
             }
         }

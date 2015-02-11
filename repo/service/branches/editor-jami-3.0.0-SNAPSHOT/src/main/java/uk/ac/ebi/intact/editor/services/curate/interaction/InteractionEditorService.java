@@ -273,7 +273,9 @@ public class InteractionEditorService extends AbstractEditorService {
     private void initialiseVariableParameters(Collection<VariableParameterValueSet> parameters) {
         for (VariableParameterValueSet set : parameters){
             for (VariableParameterValue value : set){
-                Hibernate.initialize(((IntactVariableParameterValue)value).getInteractionParameterValues());
+                if (((IntactVariableParameterValue)value).getId() != null){
+                    Hibernate.initialize(((IntactVariableParameterValue)value).getInteractionParameterValues());
+                }
             }
         }
     }

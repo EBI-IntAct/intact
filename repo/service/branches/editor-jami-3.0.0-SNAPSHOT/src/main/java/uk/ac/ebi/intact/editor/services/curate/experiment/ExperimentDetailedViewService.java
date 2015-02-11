@@ -65,7 +65,7 @@ public class ExperimentDetailedViewService extends AbstractEditorService {
 
     private void initialiseParticipant(ParticipantEvidence det) {
         IntactInteractor interactor = (IntactInteractor)det.getInteractor();
-        if (!getIntactDao().getEntityManager().contains(interactor)){
+        if (interactor.getAc() != null && !getIntactDao().getEntityManager().contains(interactor)){
             interactor = getIntactDao().getEntityManager().merge(interactor);
             det.setInteractor(interactor);
         }
