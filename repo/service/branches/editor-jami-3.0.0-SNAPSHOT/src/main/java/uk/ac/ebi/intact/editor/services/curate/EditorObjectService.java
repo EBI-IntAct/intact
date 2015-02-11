@@ -30,6 +30,8 @@ import psidev.psi.mi.jami.utils.XrefUtils;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
+import uk.ac.ebi.intact.jami.context.IntactConfiguration;
 import uk.ac.ebi.intact.jami.lifecycle.LifeCycleManager;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.*;
@@ -46,10 +48,7 @@ import uk.ac.ebi.intact.jami.utils.IntactUtils;
 import uk.ac.ebi.intact.jami.utils.ReleasableUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * General Editor service to save objects in the database
@@ -190,8 +189,8 @@ public class EditorObjectService extends AbstractEditorService {
 
             Protein proteinTranscript = (Protein) intactObject;
             Collection<psidev.psi.mi.jami.model.Xref> xrefsToDelete = new ArrayList<psidev.psi.mi.jami.model.Xref>(proteinTranscript.getXrefs().size());
-
-            for (Xref xref : proteinTranscript.getXrefs()) {
+            List<Xref> transcriptXrefs = new ArrayList<Xref>(proteinTranscript.getXrefs());
+            for (Xref xref : transcriptXrefs) {
                 CvTerm qualifier = xref.getQualifier();
 
                 if (qualifier != null){
@@ -204,11 +203,13 @@ public class EditorObjectService extends AbstractEditorService {
                         if (proteins.size() > 0){
                             xrefsToDelete.add(xref);
 
+                            IntactConfiguration intactConfig = ApplicationContextProvider.getBean("intactJamiConfiguration");
                             for (Protein prot : proteins){
                                 IntactInteractor intactprotein = synchronizeIntactObject(prot,
                                         getIntactDao().getSynchronizerContext().getProteinSynchronizer(),
                                         true);
-                                ((Protein) intactObject).getXrefs().add(new InteractorXref(xref.getDatabase(), intactprotein.getAc(), xref.getQualifier()));
+                                ((Protein) intactObject).getXrefs().add(new InteractorXref(IntactUtils.createMIDatabase(intactConfig.getDefaultInstitution().getShortName(),
+                                        intactConfig.getDefaultInstitution().getMIIdentifier()), intactprotein.getAc(), xref.getQualifier()));
                             }
                         }
                     }

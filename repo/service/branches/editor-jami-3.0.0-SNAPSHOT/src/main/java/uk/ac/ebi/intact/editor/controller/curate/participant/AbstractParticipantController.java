@@ -163,14 +163,19 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
                     getEditorService().doSaveMasterProteins(transcript);
                 } catch (BridgeFailedException e) {
                     addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                    log.error("Cannot save master protein ", e);
                 } catch (SynchronizerException e) {
                     addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                    log.error("Cannot save master protein ", e);
                 } catch (FinderException e) {
                     addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                    log.error("Cannot save master protein ", e);
                 } catch (PersisterException e) {
                     addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                    log.error("Cannot save master protein ", e);
                 }  catch (Throwable e) {
                     addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                    log.error("Cannot save master protein ", e);
                 }
                 getChangesController().removeFromHiddenChanges(unsaved);
             }
@@ -179,14 +184,19 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
                     getEditorService().doSaveMasterProteins(transcript);
                 } catch (BridgeFailedException e) {
                     addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                    log.error("Cannot save master protein ", e);
                 } catch (SynchronizerException e) {
                     addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                    log.error("Cannot save master protein ", e);
                 } catch (FinderException e) {
                     addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                    log.error("Cannot save master protein ", e);
                 } catch (PersisterException e) {
                     addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                    log.error("Cannot save master protein ", e);
                 } catch (Throwable e) {
                     addErrorMessage("Cannot save master protein " + transcript.toString(), e.getCause() + ": " + e.getMessage());
+                    log.error("Cannot save master protein ", e);
                 }
                 getChangesController().removeFromHiddenChanges(unsaved);
             }
@@ -243,15 +253,20 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
             }
         } catch (BridgeFailedException e) {
             addErrorMessage("Cannot load interactor "+interactor, e.getCause()+": "+e.getMessage());
+            log.error("Cannot load interactor  ", e);
         } catch (FinderException e) {
             addErrorMessage("Cannot load interactor " + interactor, e.getCause() + ": " + e.getMessage());
+            log.error("Cannot load interactor  ", e);
         } catch (SynchronizerException e) {
             addErrorMessage("Cannot load interactor " + interactor, e.getCause() + ": " + e.getMessage());
+            log.error("Cannot load interactor  ", e);
         } catch (PersisterException e) {
             addErrorMessage("Cannot load interactor " + interactor, e.getCause() + ": " + e.getMessage());
+            log.error("Cannot load interactor  ", e);
         }
         catch (Throwable e){
             addErrorMessage("Cannot load interactor " + interactor, e.getCause() + ": " + e.getMessage());
+            log.error("Cannot load interactor  ", e);
         }
     }
 

@@ -88,22 +88,23 @@ public class AdminJobController extends BaseController {
 
                 addInfoMessage( "Job restarted", "Execution ID: " + executionId );
             } catch ( JobInstanceAlreadyCompleteException e ) {
-                addErrorMessage( "Job is already complete", "Execution ID: " + executionId );
+                addErrorMessage( "Job is already complete "+e.getMessage(), "Execution ID: " + executionId );
                 e.printStackTrace();
             } catch ( NoSuchJobExecutionException e ) {
-                addErrorMessage( "Job execution does not exist", "Execution ID: " + executionId );
+                addErrorMessage( "Job execution does not exist"+e.getMessage(), "Execution ID: " + executionId );
                 e.printStackTrace();
             } catch ( NoSuchJobException e ) {
-                addErrorMessage( "Job does not exist", "Execution ID: " + executionId );
+                addErrorMessage( "Job does not exist"+e.getMessage(), "Execution ID: " + executionId );
                 e.printStackTrace();
             } catch ( JobRestartException e ) {
-                addErrorMessage( "Problem restarting job", "Execution ID: " + executionId );
+                addErrorMessage( "Problem restarting job"+e.getMessage(), "Execution ID: " + executionId );
                 e.printStackTrace();
             } catch ( JobParametersInvalidException e ) {
-                addErrorMessage( "Job parameters are invalid", "Execution ID: " + executionId );
+                addErrorMessage( "Job parameters are invalid"+e.getMessage(), "Execution ID: " + executionId );
                 e.printStackTrace();
             } catch (NoSuchJobInstanceException e) {
-                addErrorMessage("Job instance does not exist", "Execution ID: " + executionId);
+                addErrorMessage("Job instance does not exist"+e.getMessage(), "Execution ID: " + executionId);
+                e.printStackTrace();
             }
         }
     }
@@ -117,10 +118,10 @@ public class AdminJobController extends BaseController {
 
             addInfoMessage( "Job stopped", "Execution ID: " + executionId );
         } catch ( NoSuchJobExecutionException e ) {
-            addErrorMessage( "Job does not exist", "Execution ID: " + executionId );
+            addErrorMessage( "Job does not exist "+e.getMessage(), "Execution ID: " + executionId );
             e.printStackTrace();
         } catch ( JobExecutionNotRunningException e ) {
-            addErrorMessage( "Job is not running anymore", "Execution ID: " + executionId );
+            addErrorMessage( "Job is not running anymore "+e.getMessage(), "Execution ID: " + executionId );
             e.printStackTrace();
         }
     }
