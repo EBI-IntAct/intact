@@ -1,5 +1,7 @@
 package uk.ac.ebi.intact.editor.services.summary;
 
+import java.io.Serializable;
+
 /**
  * Summary for a participant
  *
@@ -8,7 +10,7 @@ package uk.ac.ebi.intact.editor.services.summary;
  * @since <pre>16/12/14</pre>
  */
 
-public class ParticipantSummary {
+public class ParticipantSummary implements Serializable{
 
     private String ac;
     private String caution;

@@ -1,5 +1,7 @@
 package uk.ac.ebi.intact.editor.services.summary;
 
+import java.io.Serializable;
+
 /**
  * Summary of a feature
  *
@@ -8,7 +10,7 @@ package uk.ac.ebi.intact.editor.services.summary;
  * @since <pre>16/12/14</pre>
  */
 
-public class FeatureSummary {
+public class FeatureSummary implements Serializable{
     private String ac;
     private String caution;
     private String internalRemark;
