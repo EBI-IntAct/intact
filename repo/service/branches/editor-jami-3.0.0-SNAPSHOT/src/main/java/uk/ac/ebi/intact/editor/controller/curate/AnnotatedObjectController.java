@@ -447,7 +447,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
             if (log.isDebugEnabled())
                 log.debug("Refreshing object in view: " + getAnnotatedObject().toString());
 
-            IntactPrimaryObject refreshedAo = refresh(currentAo);
+            IntactPrimaryObject refreshedAo = curateController.getCurrentAnnotatedObjectController().refresh(currentAo);
             curateController.getCurrentAnnotatedObjectController().setAnnotatedObject(refreshedAo);
         } else if (getAnnotatedObject() == null && currentAo != null) {
             if (log.isDebugEnabled())
