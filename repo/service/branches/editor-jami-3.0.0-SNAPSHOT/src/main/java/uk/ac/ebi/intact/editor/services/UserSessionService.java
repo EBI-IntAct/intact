@@ -47,7 +47,7 @@ public class UserSessionService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public User loadUser(String login) {
         User user = getIntactDao().getUserDao().getByLogin(login);
-        if (user != null) {
+        if (user != null && user.getAc() != null) {
             Hibernate.initialize(user.getRoles());
             Hibernate.initialize(user.getPreferences());
         }
@@ -97,7 +97,7 @@ public class UserSessionService extends AbstractEditorService {
         if (institution == null) {
             return jamiConfiguration.getDefaultInstitution();
         }
-        else{
+        else if (((IntactSource)institution).getAc() != null){
             Hibernate.initialize(((IntactSource)institution).getDbXrefs());
         }
 

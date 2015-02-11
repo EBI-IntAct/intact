@@ -47,7 +47,9 @@ public class FeatureWrapper {
         this.linkedFeatures = new ArrayList<AbstractIntactFeature>(this.feature.getLinkedFeatures());
 
         for (AbstractIntactFeature linked : this.linkedFeatures){
-            Hibernate.initialize(linked.getLinkedFeatures());
+            if (linked.getAc() != null){
+                Hibernate.initialize(linked.getLinkedFeatures());
+            }
         }
     }
 

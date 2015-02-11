@@ -346,7 +346,9 @@ public class EditorObjectService extends AbstractEditorService {
         }
 
         Collection<LifeCycleEvent> events = reloaded.getLifecycleEvents();
-        Hibernate.initialize(events);
+        if (((IntactPrimaryObject) releasable).getAc() != null){
+            Hibernate.initialize(events);
+        }
         return reloaded;
     }
 

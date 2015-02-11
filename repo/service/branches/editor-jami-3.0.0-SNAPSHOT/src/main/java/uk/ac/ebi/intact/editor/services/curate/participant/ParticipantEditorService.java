@@ -306,7 +306,7 @@ public class ParticipantEditorService extends AbstractEditorService {
     }
 
     private IntactInteractor initialiseInteractor(IntactInteractor participant) {
-        if (!getIntactDao().getEntityManager().contains(participant)){
+        if (participant.getAc() != null && !getIntactDao().getEntityManager().contains(participant)){
            participant = getIntactDao().getEntityManager().merge(participant);
         }
         if (participant instanceof IntactPolymer){

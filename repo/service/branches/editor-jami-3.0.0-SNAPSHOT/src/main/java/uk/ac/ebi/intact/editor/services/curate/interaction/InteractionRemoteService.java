@@ -58,7 +58,9 @@ public class InteractionRemoteService extends AbstractEditorService {
                     else{
                         for (ParticipantEvidence participant : interaction.getParticipants()){
                             IntactInteractor interactor = (IntactInteractor)participant.getInteractor();
-                            Hibernate.initialize(interactor.getDbXrefs());
+                            if (interactor.getAc() != null){
+                                Hibernate.initialize(interactor.getDbXrefs());
+                            }
                         }
                     }
                 }
@@ -76,7 +78,9 @@ public class InteractionRemoteService extends AbstractEditorService {
         IntactPublication pub = getIntactDao().getPublicationDao().getByPubmedId(pubRef);
 
         if (pub != null){
-            Hibernate.initialize(pub.getExperiments());
+            if (pub.getAc() != null){
+                Hibernate.initialize(pub.getExperiments());
+            }
             initialiseXrefs(pub.getDbXrefs());
         }
         return pub;

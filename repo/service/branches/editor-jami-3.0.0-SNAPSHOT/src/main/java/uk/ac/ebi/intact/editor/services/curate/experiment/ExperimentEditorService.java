@@ -246,7 +246,9 @@ public class ExperimentEditorService extends AbstractEditorService {
                 }
             }
 
-            Hibernate.initialize(param.getVariableValues());
+            if (((IntactVariableParameter)param).getId() != null){
+                Hibernate.initialize(param.getVariableValues());
+            }
         }
     }
 }

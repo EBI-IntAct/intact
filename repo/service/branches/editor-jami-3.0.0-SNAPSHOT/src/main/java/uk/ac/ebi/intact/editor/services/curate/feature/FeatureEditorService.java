@@ -222,7 +222,7 @@ public class FeatureEditorService extends AbstractEditorService {
     }
 
     private Entity initialiseParticipant(Entity participant) {
-        if (!getIntactDao().getEntityManager().contains(participant)){
+        if (((AbstractIntactParticipant)participant).getAc() != null && !getIntactDao().getEntityManager().contains(participant)){
             participant = getIntactDao().getEntityManager().merge(participant);
         }
         initialiseXrefs(((IntactInteractor)participant.getInteractor()).getDbXrefs());
