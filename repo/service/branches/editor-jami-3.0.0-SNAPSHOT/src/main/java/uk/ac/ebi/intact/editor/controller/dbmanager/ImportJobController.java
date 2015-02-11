@@ -216,6 +216,58 @@ public class ImportJobController extends BaseController {
         }
     }
 
+    public void stopAndDiscardImport( ActionEvent evt ) {
+
+        if (!evt.getComponent().getChildren().isEmpty()){
+            UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();
+
+            long executionId = ( Long ) param.getValue();
+
+            try {
+                getPsiMIJobManager().getJobOperator().stop(executionId);
+
+                addInfoMessage( "Job stopped", "Execution ID: " + executionId );
+            } catch ( NoSuchJobExecutionException e ) {
+                addErrorMessage( "Job does not exist: "+e.getMessage(), "Execution ID: " + executionId );
+                e.printStackTrace();
+            } catch ( JobExecutionNotRunningException e ) {
+                addErrorMessage( "Job is not running anymore: "+e.getMessage(), "Execution ID: " + executionId );
+                e.printStackTrace();
+            }
+
+            JobExecution execution = getJobExplorer().getJobExecution(executionId);
+
+            if (execution != null){
+                JobParameters params = execution.getJobParameters();
+                if (params != null){
+                    String jobId= params.getString("MIJobId");
+
+                    try {
+                        getDbImportService().deleteImport(jobId);
+
+                        getBatchJobService().deleteJob(executionId);
+
+                        addInfoMessage( "Job cleared, import objects deleted", "Execution ID: " + executionId );
+                    } catch (Throwable e) {
+                        addErrorMessage("Cannot clear job import "+e.getMessage(), "Execution ID: " + executionId+", "+ExceptionUtils.getFullStackTrace(e));
+                    }
+
+                    String errorFileName = params.getString("error.file");
+                    String fileName = params.getString("input.file");
+
+                    File file = new File(fileName);
+                    if (file.exists()){
+                        file.delete();
+                    }
+                    File errorFile = new File(errorFileName);
+                    if (errorFile.exists()){
+                        errorFile.delete();
+                    }
+                }
+            }
+        }
+    }
+
     public void stop( ActionEvent evt ) {
         UIParameter param = ( UIParameter ) evt.getComponent().getChildren().iterator().next();
         long executionId = ( Long ) param.getValue();
