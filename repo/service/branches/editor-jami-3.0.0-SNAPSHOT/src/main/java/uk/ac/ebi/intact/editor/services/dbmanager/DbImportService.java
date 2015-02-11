@@ -34,6 +34,7 @@ public class DbImportService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public void deleteImport(String importId){
         if (importId != null && importId.length() > 0){
+
             // first delete features imported
             int updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_feature where ac in ( " +
                     "select distinct f.ac from ia_feature f, ia_feature2annot fa, ia_annotation a, ia_controlledvocab cv " +
@@ -116,6 +117,17 @@ public class DbImportService extends AbstractEditorService {
                     .executeUpdate();
 
             log.info("Deleted sources "+updated);
+
+            // before deleting cvs, check all annotations used in this cv
+            updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_annotation where topic_ac in ( " +
+                    "select distinct f.ac from ia_controlledvocab f, ia_cvobject2annot fa, ia_annotation a, ia_controlledvocab cv " +
+                    "where cv.ac = a.topic_ac and a.ac = fa.annotation_ac and f.ac = fa.cvobject_ac and " +
+                    "cv.shortlabel = :remark and a.description = :jobId " +
+                    ")")
+                    .setParameter("remark", "remark-internal")
+                    .setParameter("jobId", importId)
+                    .executeUpdate();
+            log.info("Deleted annotations involving new cv "+updated);
 
             // then delete cv imported
             updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_controlledvocab where ac in ( " +

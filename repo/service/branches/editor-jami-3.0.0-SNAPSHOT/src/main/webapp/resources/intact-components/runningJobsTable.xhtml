@@ -83,6 +83,10 @@
                 <h:commandLink value="Stop" actionListener="#{importJobController.stop}" action="/dbmanager/jobSummary?faces-redirect=true">
                     <f:param name="executionId" value="#{jobExecution.id}"/>
                 </h:commandLink>
+                &#160;
+                <h:commandLink value="Stop and Reject" actionListener="#{importJobController.stopAndDiscardImport}" action="/dbmanager/jobSummary?faces-redirect=true">
+                    <f:param name="executionId" value="#{jobExecution.id}"/>
+                </h:commandLink>
             </p:column>
         </p:dataTable>
 
