@@ -226,6 +226,7 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         catch (Throwable e){
             String problemMsg =e.getMessage();
             addErrorMessage("Range is not valid: "+newRangeValue, problemMsg);
+            log.error(problemMsg, e);
             return;
         }
     }
