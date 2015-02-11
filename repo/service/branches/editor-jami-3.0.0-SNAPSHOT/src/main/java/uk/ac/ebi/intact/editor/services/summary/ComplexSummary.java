@@ -1,5 +1,7 @@
 package uk.ac.ebi.intact.editor.services.summary;
 
+import java.io.Serializable;
+
 /**
  * Class that summarizes a complex for the dashboard
  *
@@ -8,7 +10,7 @@ package uk.ac.ebi.intact.editor.services.summary;
  * @since <pre>15/12/14</pre>
  */
 
-public class ComplexSummary {
+public class ComplexSummary implements Serializable{
     private String rowStyle;
     private String ac;
     private String name;

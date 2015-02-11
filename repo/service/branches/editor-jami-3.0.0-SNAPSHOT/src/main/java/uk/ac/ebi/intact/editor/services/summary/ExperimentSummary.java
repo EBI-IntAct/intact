@@ -2,6 +2,8 @@ package uk.ac.ebi.intact.editor.services.summary;
 
 import uk.ac.ebi.intact.jami.model.extension.IntactExperiment;
 
+import java.io.Serializable;
+
 /**
  * Summary classes for viewing properties of an experiment
  *
@@ -10,7 +12,7 @@ import uk.ac.ebi.intact.jami.model.extension.IntactExperiment;
  * @since <pre>15/12/14</pre>
  */
 
-public class ExperimentSummary {
+public class ExperimentSummary implements Serializable{
 
     private String ac;
     private String rowStyleClass;

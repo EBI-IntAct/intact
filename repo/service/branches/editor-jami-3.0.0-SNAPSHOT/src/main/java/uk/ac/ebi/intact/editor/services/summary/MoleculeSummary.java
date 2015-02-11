@@ -2,6 +2,8 @@ package uk.ac.ebi.intact.editor.services.summary;
 
 import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
 
+import java.io.Serializable;
+
 /**
  * Class that summarizes a complex for the dashboard
  *
@@ -10,7 +12,7 @@ import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
  * @since <pre>15/12/14</pre>
  */
 
-public class MoleculeSummary {
+public class MoleculeSummary implements Serializable{
     private String ac;
     private String caution;
     private String internalRemark;

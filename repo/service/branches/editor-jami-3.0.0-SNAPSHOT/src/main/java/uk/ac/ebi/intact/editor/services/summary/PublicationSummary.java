@@ -1,5 +1,7 @@
 package uk.ac.ebi.intact.editor.services.summary;
 
+import java.io.Serializable;
+
 /**
  * Class that summarizes a publication for the dashboard
  *
@@ -8,7 +10,7 @@ package uk.ac.ebi.intact.editor.services.summary;
  * @since <pre>15/12/14</pre>
  */
 
-public class PublicationSummary {
+public class PublicationSummary implements Serializable{
     private String rowStyle;
     private String pubmedId;
     private String ac;
