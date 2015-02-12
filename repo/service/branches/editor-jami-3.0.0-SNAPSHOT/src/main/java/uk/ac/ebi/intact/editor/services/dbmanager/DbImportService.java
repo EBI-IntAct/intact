@@ -32,7 +32,7 @@ public class DbImportService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
-    public void deleteImport(String importId){
+    public void deleteImportedFeatures(String importId){
         if (importId != null && importId.length() > 0){
 
             // first delete features imported
@@ -46,8 +46,15 @@ public class DbImportService extends AbstractEditorService {
                     .executeUpdate();
 
             log.info("Deleted features "+updated);
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
+    public void deleteImportedParticipants(String importId){
+        if (importId != null && importId.length() > 0){
+
             // then delete participants imported
-            updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_component where ac in ( " +
+            int updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_component where ac in ( " +
                     "select distinct f.ac from ia_component f, ia_component2annot fa, ia_annotation a, ia_controlledvocab cv " +
                     "where cv.ac = a.topic_ac and a.ac = fa.annotation_ac and f.ac = fa.component_ac and " +
                     "cv.shortlabel = :remark and a.description = :jobId" +
@@ -57,9 +64,15 @@ public class DbImportService extends AbstractEditorService {
                     .executeUpdate();
 
             log.info("Deleted participants "+updated);
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
+    public void deleteImportedInteractions(String importId){
+        if (importId != null && importId.length() > 0){
 
             // then delete interactions imported
-            updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_interactor where ac in ( " +
+            int updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_interactor where ac in ( " +
                     "select distinct f.ac from ia_interactor f, ia_int2annot fa, ia_annotation a, ia_controlledvocab cv " +
                     "where cv.ac = a.topic_ac and a.ac = fa.annotation_ac and f.ac = fa.interactor_ac and " +
                     "cv.shortlabel = :remark and a.description = :jobId" +
@@ -69,9 +82,15 @@ public class DbImportService extends AbstractEditorService {
                     .executeUpdate();
 
             log.info("Deleted interactions/complexes/interactors"+updated);
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
+    public void deleteImportedExperiments(String importId){
+        if (importId != null && importId.length() > 0){
 
             // then delete experiments imported
-            updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_experiment where ac in ( " +
+            int updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_experiment where ac in ( " +
                     "select distinct f.ac from ia_experiment f, ia_exp2annot fa, ia_annotation a, ia_controlledvocab cv " +
                     "where cv.ac = a.topic_ac and a.ac = fa.annotation_ac and f.ac = fa.experiment_ac and " +
                     "cv.shortlabel = :remark and a.description = :jobId" +
@@ -81,9 +100,15 @@ public class DbImportService extends AbstractEditorService {
                     .executeUpdate();
 
             log.info("Deleted experiments "+updated);
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
+    public void deleteImportedPublications(String importId){
+        if (importId != null && importId.length() > 0){
 
             // then delete publications imported
-            updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_publication where ac in ( " +
+            int updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_publication where ac in ( " +
                     "select distinct f.ac from ia_publication f, ia_pub2annot fa, ia_annotation a, ia_controlledvocab cv " +
                     "where cv.ac = a.topic_ac and a.ac = fa.annotation_ac and f.ac = fa.publication_ac and " +
                     "cv.shortlabel = :remark and a.description = :jobId" +
@@ -93,9 +118,15 @@ public class DbImportService extends AbstractEditorService {
                     .executeUpdate();
 
             log.info("Deleted publications "+updated);
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
+    public void deleteImportedOrganisms(String importId){
+        if (importId != null && importId.length() > 0){
 
             // then delete organisms imported
-            updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_biosource where ac in ( " +
+            int updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_biosource where ac in ( " +
                     "select distinct f.ac from ia_biosource f, ia_biosource_alias a, ia_controlledvocab cv " +
                     "where cv.ac = a.aliastype_ac and a.parent_ac = f.ac and " +
                     "cv.shortlabel = :synonym and a.name = :jobId" +
@@ -105,9 +136,15 @@ public class DbImportService extends AbstractEditorService {
                     .executeUpdate();
 
             log.info("Deleted Organisms "+updated);
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
+    public void deleteImportedSources(String importId){
+        if (importId != null && importId.length() > 0){
 
             // then delete source imported
-            updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_institution where ac in ( " +
+            int updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_institution where ac in ( " +
                     "select distinct f.ac from ia_institution f, ia_institution2annot fa, ia_annotation a, ia_controlledvocab cv " +
                     "where cv.ac = a.topic_ac and a.ac = fa.annotation_ac and f.ac = fa.institution_ac and " +
                     "cv.shortlabel = :remark and a.description = :jobId" +
@@ -117,9 +154,15 @@ public class DbImportService extends AbstractEditorService {
                     .executeUpdate();
 
             log.info("Deleted sources "+updated);
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
+    public void deleteImportedCvs(String importId){
+        if (importId != null && importId.length() > 0){
 
             // before deleting cvs, check all annotations used in this cv
-            updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_annotation where topic_ac in ( " +
+            int updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_annotation where topic_ac in ( " +
                     "select distinct f.ac from ia_controlledvocab f, ia_cvobject2annot fa, ia_annotation a, ia_controlledvocab cv " +
                     "where cv.ac = a.topic_ac and a.ac = fa.annotation_ac and f.ac = fa.cvobject_ac and " +
                     "cv.shortlabel = :remark and a.description = :jobId " +

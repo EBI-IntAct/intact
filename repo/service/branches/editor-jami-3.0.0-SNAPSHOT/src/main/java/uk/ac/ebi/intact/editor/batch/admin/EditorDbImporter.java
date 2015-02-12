@@ -22,6 +22,7 @@ public class EditorDbImporter<I> extends IntactDbImporter<I> {
     @Override
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public void write(List<? extends I> is) throws Exception {
+        getIntactService().getIntactDao().getEntityManager().clear();
         User user = getIntactService().getIntactDao().getUserDao().getByLogin(userLogin);
         if (user != null){
             getIntactService().getIntactDao().getUserContext().setUser(user);
