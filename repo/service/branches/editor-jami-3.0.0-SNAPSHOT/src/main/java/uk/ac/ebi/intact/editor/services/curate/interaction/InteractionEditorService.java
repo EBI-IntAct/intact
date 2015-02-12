@@ -230,9 +230,11 @@ public class InteractionEditorService extends AbstractEditorService {
             interactor = getIntactDao().getEntityManager().merge(interactor);
             det.setInteractor(interactor);
         }
-        initialiseXrefs(interactor.getDbXrefs());
-        initialiseAnnotations(interactor.getDbAnnotations());
-        initialiseAliases(interactor.getDbAliases());
+        if (interactor.getAc() != null){
+            initialiseXrefs(interactor.getDbXrefs());
+            initialiseAnnotations(interactor.getDbAnnotations());
+            initialiseAliases(interactor.getDbAliases());
+        }
         if (interactor instanceof Polymer){
             ((Polymer)interactor).getSequence();
         }
