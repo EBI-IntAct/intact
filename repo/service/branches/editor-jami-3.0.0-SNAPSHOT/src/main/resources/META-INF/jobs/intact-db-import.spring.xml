@@ -69,9 +69,6 @@
     </bean>
 
     <!-- readers -->
-    <bean id="errorResource" class="org.springframework.core.io.FileSystemResource" scope="step" lazy-init="true">
-        <constructor-arg value="file://#{jobParameters['error.file']}"/>
-    </bean>
     <bean id="complexReader" class="uk.ac.ebi.intact.dataexchange.dbimporter.reader.ComplexFileReader" scope="step" lazy-init="true">
         <property name="resource" value="file://#{jobParameters['input.file']}"/>
     </bean>
@@ -93,12 +90,12 @@
     <!-- processors -->
     <bean id="interactionEvidenceProcessor" class="uk.ac.ebi.intact.dataexchange.dbimporter.processor.IntactEnricherProcessor"
           lazy-init="true" scope="step">
-        <property name="errorResource" ref="errorResource"/>
+        <property name="errorResource" value="file://#{jobParameters['error.file']}"/>
         <property name="enricher" ref="editorInteractionEvidenceEnricher"/>
     </bean>
     <bean id="complexProcessor" class="uk.ac.ebi.intact.dataexchange.dbimporter.processor.IntactEnricherProcessor"
           lazy-init="true" scope="step">
-        <property name="errorResource" ref="errorResource"/>
+        <property name="errorResource" value="file://#{jobParameters['error.file']}"/>
         <property name="enricher" ref="editorComplexEnricher"/>
     </bean>
     <bean id="interactionMixProcessor" class="uk.ac.ebi.intact.dataexchange.dbimporter.processor.IntactInteractionEnricherCompositeProcessor" lazy-init="true" scope="step">
