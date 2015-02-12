@@ -191,7 +191,21 @@ public class ImportJobController extends BaseController {
                     String jobId= params.getString("MIJobId");
 
                     try {
-                        getDbImportService().deleteImport(jobId);
+                        getDbImportService().deleteImportedFeatures(jobId);
+
+                        getDbImportService().deleteImportedParticipants(jobId);
+
+                        getDbImportService().deleteImportedInteractions(jobId);
+
+                        getDbImportService().deleteImportedExperiments(jobId);
+
+                        getDbImportService().deleteImportedPublications(jobId);
+
+                        getDbImportService().deleteImportedOrganisms(jobId);
+
+                        getDbImportService().deleteImportedSources(jobId);
+
+                        getDbImportService().deleteImportedCvs(jobId);
 
                         getBatchJobService().deleteJob(executionId);
 
@@ -243,7 +257,21 @@ public class ImportJobController extends BaseController {
                     String jobId= params.getString("MIJobId");
 
                     try {
-                        getDbImportService().deleteImport(jobId);
+                        getDbImportService().deleteImportedFeatures(jobId);
+
+                        getDbImportService().deleteImportedParticipants(jobId);
+
+                        getDbImportService().deleteImportedInteractions(jobId);
+
+                        getDbImportService().deleteImportedExperiments(jobId);
+
+                        getDbImportService().deleteImportedPublications(jobId);
+
+                        getDbImportService().deleteImportedOrganisms(jobId);
+
+                        getDbImportService().deleteImportedSources(jobId);
+
+                        getDbImportService().deleteImportedCvs(jobId);
 
                         getBatchJobService().deleteJob(executionId);
 

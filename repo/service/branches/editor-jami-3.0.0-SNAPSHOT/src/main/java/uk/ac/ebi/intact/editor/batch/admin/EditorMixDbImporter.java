@@ -23,6 +23,9 @@ public class EditorMixDbImporter extends IntactInteractionMixDbImporter {
     @Override
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public void write(List<? extends Interaction> is) throws Exception {
+        getInteractionEvidenceService().getIntactDao().getEntityManager().clear();
+        getComplexService().getIntactDao().getEntityManager().clear();
+        getModelledInteractionService().getIntactDao().getEntityManager().clear();
         User user = getInteractionEvidenceService().getIntactDao().getUserDao().getByLogin(userLogin);
         if (user != null){
             getInteractionEvidenceService().getIntactDao().getUserContext().setUser(user);
