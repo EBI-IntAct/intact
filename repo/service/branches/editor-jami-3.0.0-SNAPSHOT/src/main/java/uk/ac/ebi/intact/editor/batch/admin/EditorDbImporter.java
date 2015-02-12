@@ -1,12 +1,11 @@
 package uk.ac.ebi.intact.editor.batch.admin;
 
-import org.springframework.batch.core.ExitStatus;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.dataexchange.dbimporter.writer.IntactDbImporter;
 import uk.ac.ebi.intact.jami.model.user.User;
+
+import java.util.List;
 
 /**
  * Editor extension of db importer
@@ -16,22 +15,25 @@ import uk.ac.ebi.intact.jami.model.user.User;
  * @since <pre>27/01/15</pre>
  */
 
-public class EditorDbImporter<I> extends IntactDbImporter<I> implements StepExecutionListener {
+public class EditorDbImporter<I> extends IntactDbImporter<I> {
+
+    private String userLogin;
 
     @Override
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
-    public void beforeStep(StepExecution stepExecution) {
-        getIntactService().getIntactDao().getEntityManager().clear();
-
-        String userLogin = stepExecution.getJobParameters().getString("user.login");
+    public void write(List<? extends I> is) throws Exception {
         User user = getIntactService().getIntactDao().getUserDao().getByLogin(userLogin);
         if (user != null){
             getIntactService().getIntactDao().getUserContext().setUser(user);
         }
+        super.write(is);
     }
 
-    @Override
-    public ExitStatus afterStep(StepExecution stepExecution) {
-        return null;
+    public String getUserLogin() {
+        return userLogin;
+    }
+
+    public void setUserLogin(String userLogin) {
+        this.userLogin = userLogin;
     }
 }

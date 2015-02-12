@@ -108,15 +108,19 @@
 
     <!-- writers -->
     <bean id="interactionEvidenceImporter" class="uk.ac.ebi.intact.editor.batch.admin.EditorDbImporter"
-          lazy-init="true" scope="prototype">
+          lazy-init="true" scope="step">
         <property name="intactService" ref="interactionEvidenceService"/>
+        <property name="userLogin" value="#{jobParameters['user.login']}"/>
     </bean>
     <bean id="complexImporter" class="uk.ac.ebi.intact.editor.batch.admin.EditorDbImporter"
-          lazy-init="true" scope="prototype">
+          lazy-init="true" scope="step">
         <property name="intactService" ref="complexService"/>
+        <property name="userLogin" value="#{jobParameters['user.login']}"/>
     </bean>
     <bean id="interactionMixImporter" class="uk.ac.ebi.intact.editor.batch.admin.EditorMixDbImporter" lazy-init="true"
-            scope="prototype"/>
+            scope="step">
+        <property name="userLogin" value="#{jobParameters['user.login']}"/>
+    </bean>
 
     <!-- Basic Step configuration -->
 
@@ -152,6 +156,8 @@
                 <batch:streams>
                     <batch:stream ref="interactionReader"/>
                     <batch:stream ref="interactionMixImporter"/>
+                    <batch:stream ref="interactionEvidenceProcessor"/>
+                    <batch:stream ref="complexProcessor"/>
                 </batch:streams>
             </batch:chunk>
         </batch:tasklet>
@@ -169,7 +175,6 @@
             <batch:listeners>
                 <batch:listener ref="temporaryFileDeleter"/>
                 <batch:listener ref="mailStepListener"/>
-                <batch:listener ref="complexImporter"/>
             </batch:listeners>
         </batch:step>
     </batch:job>
@@ -184,7 +189,6 @@
             <batch:listeners>
                 <batch:listener ref="temporaryFileDeleter"/>
                 <batch:listener ref="mailStepListener"/>
-                <batch:listener ref="interactionMixImporter"/>
             </batch:listeners>
         </batch:step>
     </batch:job>
