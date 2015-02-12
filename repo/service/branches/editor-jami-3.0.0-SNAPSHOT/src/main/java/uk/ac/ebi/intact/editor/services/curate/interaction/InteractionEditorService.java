@@ -232,6 +232,7 @@ public class InteractionEditorService extends AbstractEditorService {
         }
         initialiseXrefs(interactor.getDbXrefs());
         initialiseAnnotations(interactor.getDbAnnotations());
+        initialiseAliases(interactor.getDbAliases());
         if (interactor instanceof Polymer){
             ((Polymer)interactor).getSequence();
         }
