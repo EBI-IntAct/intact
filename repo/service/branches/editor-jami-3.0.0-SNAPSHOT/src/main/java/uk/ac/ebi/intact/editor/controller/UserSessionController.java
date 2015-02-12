@@ -107,7 +107,9 @@ public class UserSessionController extends BaseController implements DisposableB
 
     @Override
     public void destroy() throws Exception {
-        log.info( "UserSessionController for user '" + currentUser.getLogin() + "' destroyed" );
+        if (currentUser != null){
+            log.info( "UserSessionController for user '" + currentUser.getLogin() + "' destroyed" );
+        }
     }
 
     public UserSessionService getUserSessionService() {

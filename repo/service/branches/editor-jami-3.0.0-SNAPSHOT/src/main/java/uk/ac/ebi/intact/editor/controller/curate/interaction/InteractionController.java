@@ -988,7 +988,7 @@ public class InteractionController extends AnnotatedObjectController {
 
         for (ParticipantEvidence part : interaction.getParticipants()){
             IntactInteractor interactor = (IntactInteractor)part.getInteractor();
-            if (!interactor.areXrefsInitialized() || !interactor.areAnnotationsInitialized()){
+            if (!interactor.areXrefsInitialized() || !interactor.areAnnotationsInitialized() || !interactor.areAliasesInitialized()){
                 return false;
             }
 

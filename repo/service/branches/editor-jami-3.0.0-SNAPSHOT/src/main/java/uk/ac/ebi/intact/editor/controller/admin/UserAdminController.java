@@ -35,7 +35,7 @@ public class UserAdminController extends AbstractUserController {
     private String loginParam;
     private DualListModel<String> roles;
 
-    private DataModel<User> allUsers;
+    private transient DataModel<User> allUsers;
 
     private User[] selectedUsers;
 
