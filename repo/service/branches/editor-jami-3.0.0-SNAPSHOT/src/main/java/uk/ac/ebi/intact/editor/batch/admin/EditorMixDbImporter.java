@@ -1,12 +1,12 @@
 package uk.ac.ebi.intact.editor.batch.admin;
 
-import org.springframework.batch.core.ExitStatus;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import psidev.psi.mi.jami.model.Interaction;
 import uk.ac.ebi.intact.dataexchange.dbimporter.writer.IntactInteractionMixDbImporter;
 import uk.ac.ebi.intact.jami.model.user.User;
+
+import java.util.List;
 
 /**
  * Editor extension of db importer
@@ -16,26 +16,27 @@ import uk.ac.ebi.intact.jami.model.user.User;
  * @since <pre>27/01/15</pre>
  */
 
-public class EditorMixDbImporter extends IntactInteractionMixDbImporter implements StepExecutionListener {
+public class EditorMixDbImporter extends IntactInteractionMixDbImporter {
+
+    private String userLogin;
 
     @Override
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
-    public void beforeStep(StepExecution stepExecution) {
-        getInteractionEvidenceService().getIntactDao().getEntityManager().clear();
-        getComplexService().getIntactDao().getEntityManager().clear();
-        getModelledInteractionService().getIntactDao().getEntityManager().clear();
-
-        String userLogin = stepExecution.getJobParameters().getString("user.login");
+    public void write(List<? extends Interaction> is) throws Exception {
         User user = getInteractionEvidenceService().getIntactDao().getUserDao().getByLogin(userLogin);
         if (user != null){
             getInteractionEvidenceService().getIntactDao().getUserContext().setUser(user);
             getComplexService().getIntactDao().getUserContext().setUser(user);
             getModelledInteractionService().getIntactDao().getUserContext().setUser(user);
         }
+        super.write(is);
     }
 
-    @Override
-    public ExitStatus afterStep(StepExecution stepExecution) {
-        return null;
+    public String getUserLogin() {
+        return userLogin;
+    }
+
+    public void setUserLogin(String userLogin) {
+        this.userLogin = userLogin;
     }
 }
