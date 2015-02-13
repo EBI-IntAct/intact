@@ -187,7 +187,7 @@ public class DbImportService extends AbstractEditorService {
                     .executeUpdate();
             log.info("Deleted xrefs involving new cv "+updated);
 
-            updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_controllecvocab_alias where aliastype_ac in ( " +
+            updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_controlledvocab_alias where aliastype_ac in ( " +
                     "select distinct f.ac from ia_controlledvocab f, ia_cvobject2annot fa, ia_annotation a, ia_controlledvocab cv " +
                     "where cv.ac = a.topic_ac and a.ac = fa.annotation_ac and f.ac = fa.cvobject_ac and " +
                     "cv.shortlabel = :remark and a.description = :jobId " +
