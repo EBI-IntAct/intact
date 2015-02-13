@@ -316,6 +316,8 @@ public class ParticipantEditorService extends AbstractEditorService {
 
         initialiseXrefs(participant.getDbXrefs());
         initialiseAnnotations(participant.getDbAnnotations());
+
+        getIntactDao().getEntityManager().detach(participant);
         return participant;
     }
 }

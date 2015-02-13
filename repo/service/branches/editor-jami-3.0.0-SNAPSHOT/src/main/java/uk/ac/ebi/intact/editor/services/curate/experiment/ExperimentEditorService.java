@@ -164,8 +164,14 @@ public class ExperimentEditorService extends AbstractEditorService {
 
         // initialise publication annotations and xrefs
         if (reloaded.getPublication() != null){
+            IntactPublication pub = (IntactPublication)reloaded.getPublication();
+            if (pub.getAc() != null && !getIntactDao().getEntityManager().contains(pub)){
+                pub = getIntactDao().getEntityManager().merge(pub);
+                reloaded.setPublication(pub);
+            }
             initialiseXrefs(((IntactPublication)reloaded.getPublication()).getDbXrefs());
             initialiseAnnotations(((IntactPublication)reloaded.getPublication()).getDbAnnotations());
+            getIntactDao().getEntityManager().detach(pub);
         }
 
         // initialise evidences if not done

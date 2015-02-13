@@ -190,6 +190,7 @@ public class FeatureEditorService extends AbstractEditorService {
             Entity reloadedEntity = initialiseParticipant(reloaded.getParticipant());
             if (reloadedEntity != feature.getParticipant()){
                 reloaded.setParticipant(reloadedEntity);
+                getIntactDao().getEntityManager().detach(reloadedEntity);
             }
         }
 
@@ -225,12 +226,13 @@ public class FeatureEditorService extends AbstractEditorService {
         if (((AbstractIntactParticipant)participant).getAc() != null && !getIntactDao().getEntityManager().contains(participant)){
             participant = getIntactDao().getEntityManager().merge(participant);
         }
-        initialiseXrefs(((IntactInteractor)participant.getInteractor()).getDbXrefs());
 
         if (!getIntactDao().getEntityManager().contains(participant.getInteractor())){
             Interactor interactor = getIntactDao().getEntityManager().merge(participant.getInteractor());
             participant.setInteractor(interactor);
         }
+        initialiseXrefs(((IntactInteractor)participant.getInteractor()).getDbXrefs());
+
         if (participant.getInteractor() instanceof IntactPolymer){
             // load sequence
             ((Polymer) participant.getInteractor()).getSequence();
@@ -243,6 +245,8 @@ public class FeatureEditorService extends AbstractEditorService {
                  initialiseParticipant(p);
             }
         }
+
+        getIntactDao().getEntityManager().detach(participant.getInteractor());
         return participant;
     }
 }

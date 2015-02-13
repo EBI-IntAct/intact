@@ -588,6 +588,7 @@ public class CvObjectService extends AbstractEditorService {
             }
 
             existingParents.add(reloadedParent);
+            getIntactDao().getEntityManager().detach(reloaded);
         }
 
         // remove parents from source
