@@ -71,5 +71,7 @@ public class ExperimentDetailedViewService extends AbstractEditorService {
         }
         initialiseXrefs(interactor.getDbXrefs());
         initialiseAnnotations(interactor.getDbAnnotations());
+
+        getIntactDao().getEntityManager().detach(interactor);
     }
 }

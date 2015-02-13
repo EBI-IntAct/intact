@@ -289,6 +289,8 @@ public class ComplexEditorService extends AbstractEditorService {
         for (ModelledFeature f : det.getFeatures()){
            initialiseFeature(f);
         }
+
+        getIntactDao().getEntityManager().detach(interactor);
     }
 
     private void initialiseFeature(Feature det) {

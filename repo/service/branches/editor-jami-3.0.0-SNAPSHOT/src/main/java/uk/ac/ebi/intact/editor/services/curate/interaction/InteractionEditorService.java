@@ -177,7 +177,10 @@ public class InteractionEditorService extends AbstractEditorService {
         IntactInteractionEvidence reloaded = reattachIntactObjectIfTransient(interaction, getIntactDao().getInteractionDao());
 
         // initialise experiment
-        initialiseExperiment((IntactExperiment) reloaded.getExperiment());
+        Experiment exp = initialiseExperiment((IntactExperiment) reloaded.getExperiment());
+        if (exp != interaction.getExperiment()){
+            getIntactDao().getEntityManager().detach(exp);
+        }
         // initialise annotations because needs caution
         initialiseAnnotations(reloaded.getDbAnnotations());
         // initialise xrefs because of imex
@@ -239,6 +242,8 @@ public class InteractionEditorService extends AbstractEditorService {
             ((Polymer)interactor).getSequence();
         }
 
+        getIntactDao().getEntityManager().detach(interactor);
+
         CvTerm expRole = initialiseCv(det.getExperimentalRole());
         if (expRole != det.getExperimentalRole()){
             det.setExperimentalRole(expRole);
@@ -264,13 +269,17 @@ public class InteractionEditorService extends AbstractEditorService {
         }
     }
 
-    private void initialiseExperiment(IntactExperiment experiment) {
+    private Experiment initialiseExperiment(IntactExperiment experiment) {
+        if (experiment.getAc() != null && !getIntactDao().getEntityManager().contains(experiment)){
+            experiment = getIntactDao().getEntityManager().merge(experiment);
+        }
         if (experiment.getParticipantIdentificationMethod() != null){
             CvTerm cv = initialiseCv(experiment.getParticipantIdentificationMethod());
             if (cv != experiment.getParticipantIdentificationMethod()){
                 experiment.setParticipantIdentificationMethod(cv);
             }
         }
+        return experiment;
     }
 
     private void initialiseVariableParameters(Collection<VariableParameterValueSet> parameters) {
