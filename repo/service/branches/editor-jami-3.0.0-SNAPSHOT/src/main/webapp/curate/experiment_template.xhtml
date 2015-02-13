@@ -17,7 +17,7 @@
         <p:commandButton value="Accept Experiment"
                          styleClass="important-button-good"
                          rendered="#{publicationController.readyForChecking and userSessionController.isItMe(publicationController.publication.currentReviewer)
-                         and !experimentController.acceptedi}"
+                         and !experimentController.accepted}"
                          actionListener="#{experimentController.acceptExperiment}"
                          action="/curate/experiment?faces-redirect=true&amp;includeViewParams=true"/>
         <p:commandButton value="Revert Accepted"
