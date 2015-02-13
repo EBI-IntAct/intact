@@ -201,11 +201,6 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
                 getChangesController().removeFromHiddenChanges(unsaved);
             }
         }
-
-        // detach parents if we have a new feature so we don't mess up with new transaction
-        if (this.participant.getInteraction() != null){
-            getEditorService().detachObject((IntactPrimaryObject)this.participant.getInteraction());
-        }
     }
 
     @Override

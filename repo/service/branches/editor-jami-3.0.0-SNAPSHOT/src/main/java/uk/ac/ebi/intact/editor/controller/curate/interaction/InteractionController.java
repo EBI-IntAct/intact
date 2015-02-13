@@ -343,10 +343,6 @@ public class InteractionController extends AnnotatedObjectController {
             }
         }
 
-        // detach parents if we have a new interaction so we don't mess up with new transaction
-        if (this.interaction.getExperiment() != null){
-            getEditorService().detachObject((IntactExperiment)this.interaction.getExperiment());
-        }
         // update shortlabel if new interaction
         if (this.interaction.getAc() == null){
             updateShortLabel();

@@ -388,14 +388,6 @@ public class ExperimentController extends AnnotatedObjectController {
         return super.doDelete();
     }
 
-    public void doPreSave() {
-
-        // detach parents if we have a new experiment so we don't mess up with new transaction
-        if (this.experiment.getPublication() != null){
-            getEditorService().detachObject((IntactPublication)this.experiment.getPublication());
-        }
-    }
-
     public String newExperiment(Publication publication) {
         IntactExperiment experiment = new IntactExperiment(publication);
         experiment.setShortLabel(IntactUtils.generateAutomaticExperimentShortlabelFor(experiment, IntactUtils.MAX_SHORT_LABEL_LEN));
