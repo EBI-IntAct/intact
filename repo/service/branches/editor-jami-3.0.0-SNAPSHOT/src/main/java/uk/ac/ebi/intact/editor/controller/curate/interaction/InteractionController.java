@@ -261,8 +261,8 @@ public class InteractionController extends AnnotatedObjectController {
     public String completeExperimentLabel(IntactExperiment e) {
         return e.getShortLabel()+" | "+
                 e.getInteractionDetectionMethod().getShortName()+
-                (e.getParticipantIdentificationMethod() != null? e.getParticipantIdentificationMethod().getShortName()+", " : "")+
-                (e.getHostOrganism() != null? e.getHostOrganism().getCommonName() : "");
+                (e.getParticipantIdentificationMethod() != null? ", "+e.getParticipantIdentificationMethod().getShortName() : "")+
+                (e.getHostOrganism() != null? ", "+e.getHostOrganism().getCommonName() : "");
     }
 
     @Override
