@@ -172,6 +172,31 @@ public class DbImportService extends AbstractEditorService {
                     .executeUpdate();
             log.info("Deleted annotations involving new cv "+updated);
 
+            updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_controlledvocab_xref where database_ac in ( " +
+                    "select distinct f.ac from ia_controlledvocab f, ia_cvobject2annot fa, ia_annotation a, ia_controlledvocab cv " +
+                    "where cv.ac = a.topic_ac and a.ac = fa.annotation_ac and f.ac = fa.cvobject_ac and " +
+                    "cv.shortlabel = :remark and a.description = :jobId " +
+                    ") " +
+                    " or qualifier_ac in ( " +
+                    "select distinct f.ac from ia_controlledvocab f, ia_cvobject2annot fa, ia_annotation a, ia_controlledvocab cv " +
+                    "where cv.ac = a.topic_ac and a.ac = fa.annotation_ac and f.ac = fa.cvobject_ac and " +
+                    "cv.shortlabel = :remark and a.description = :jobId" +
+                    " )")
+                    .setParameter("remark", "remark-internal")
+                    .setParameter("jobId", importId)
+                    .executeUpdate();
+            log.info("Deleted xrefs involving new cv "+updated);
+
+            updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_controllecvocab_alias where aliastype_ac in ( " +
+                    "select distinct f.ac from ia_controlledvocab f, ia_cvobject2annot fa, ia_annotation a, ia_controlledvocab cv " +
+                    "where cv.ac = a.topic_ac and a.ac = fa.annotation_ac and f.ac = fa.cvobject_ac and " +
+                    "cv.shortlabel = :remark and a.description = :jobId " +
+                    ")")
+                    .setParameter("remark", "remark-internal")
+                    .setParameter("jobId", importId)
+                    .executeUpdate();
+            log.info("Deleted aliases involving new cv "+updated);
+
             // then delete cv imported
             updated = getIntactDao().getEntityManager().createNativeQuery("delete from ia_controlledvocab where ac in ( " +
                     "select distinct f.ac from ia_controlledvocab f, ia_cvobject2annot fa, ia_annotation a, ia_controlledvocab cv " +
