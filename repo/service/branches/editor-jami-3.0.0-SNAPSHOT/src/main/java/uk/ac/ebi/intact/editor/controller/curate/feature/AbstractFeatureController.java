@@ -592,9 +592,5 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     @Override
     public void doPreSave() {
         super.doPostSave();
-        // detach parents if we have a new feature so we don't mess up with new transaction
-        if (this.feature.getParticipant() != null){
-            getEditorService().detachObject((AbstractIntactParticipant)this.feature.getParticipant());
-        }
     }
 }
