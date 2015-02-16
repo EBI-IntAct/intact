@@ -22,7 +22,7 @@
         <p:commandButton id="newParamBtn" value="Add New Variable Parameter"
                          actionListener="#{experimentController.newVariableParameter}"
                          process="newParamTxt"
-                         update="newParamTxt vparametersTable #{update}"/>
+                         update="newParamTxt vparametersTable #{update}" onclick="loadDialog.show()" oncomplete="loadDialog.hide()"/>
     </h:panelGrid>
 
     <p:dataTable id="vparametersTable" var="parameter" value="#{experimentController.collectVariableParameters()}" rendered="#{experimentController.isVariableParameterTab()}">
@@ -59,7 +59,7 @@
                 <p:commandButton id="newValueBtn" value="Add New Parameter Value"
                                  actionListener="#{experimentController.newVariableParameterValue(parameter)}"
                                  process="newValueTxt"
-                                 update=":editorForm:experimentTabs"/>
+                                 update=":editorForm:experimentTabs" onclick="loadDialog.show()" oncomplete="loadDialog.hide()"/>
             </h:panelGrid>
             <h:panelGroup id="vparamValueList" rendered="#{not empty parameter.variableValues}">
                 <ul>
