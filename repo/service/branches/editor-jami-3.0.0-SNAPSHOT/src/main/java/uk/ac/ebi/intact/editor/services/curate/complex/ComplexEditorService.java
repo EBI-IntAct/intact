@@ -157,54 +157,55 @@ public class ComplexEditorService extends AbstractEditorService {
             getIntactDao().getEntityManager().detach(reloaded);
             ComplexCloner cloner = new ComplexCloner();
             cloner.copyInitialisedProperties(interactor, reloaded);
+            interactor = reloaded;
         }
 
         // initialise properties now
         // initialise annotations because needs caution
-        initialiseAnnotations(reloaded.getDbAnnotations());
+        initialiseAnnotations(interactor.getDbAnnotations());
         // initialise aliases
-        initialiseAliases(reloaded.getAliases());
+        initialiseAliases(interactor.getAliases());
         // initialise lifecycle events
-        initialiseEvents(reloaded.getLifecycleEvents());
+        initialiseEvents(interactor.getLifecycleEvents());
 
         // initialise participants
-        Collection<ModelledParticipant> dets = reloaded.getParticipants();
+        Collection<ModelledParticipant> dets = interactor.getParticipants();
         initialiseParticipants(reloaded, dets);
 
         // load base types
-        if (reloaded.getInteractionType() != null && !isCvInitialised(reloaded.getInteractionType())) {
-            CvTerm cv = initialiseCv(reloaded.getInteractionType());
-            if (cv != reloaded.getInteractionType()){
-                reloaded.setInteractionType(cv);
+        if (interactor.getInteractionType() != null && !isCvInitialised(interactor.getInteractionType())) {
+            CvTerm cv = initialiseCv(interactor.getInteractionType());
+            if (cv != interactor.getInteractionType()){
+                interactor.setInteractionType(cv);
             }
         }
-        if (reloaded.getInteractorType() != null && !isCvInitialised(reloaded.getInteractorType())) {
-            CvTerm cv = initialiseCv(reloaded.getInteractorType());
-            if (cv != reloaded.getInteractorType()){
-                reloaded.setInteractorType(cv);
+        if (interactor.getInteractorType() != null && !isCvInitialised(interactor.getInteractorType())) {
+            CvTerm cv = initialiseCv(interactor.getInteractorType());
+            if (cv != interactor.getInteractorType()){
+                interactor.setInteractorType(cv);
             }
         }
-        if (reloaded.getEvidenceType() != null && !isCvInitialised(reloaded.getEvidenceType())) {
-            CvTerm cv = initialiseCv(reloaded.getEvidenceType());
-            if (cv != reloaded.getEvidenceType()){
-                reloaded.setEvidenceType(cv);
+        if (interactor.getEvidenceType() != null && !isCvInitialised(interactor.getEvidenceType())) {
+            CvTerm cv = initialiseCv(interactor.getEvidenceType());
+            if (cv != interactor.getEvidenceType()){
+                interactor.setEvidenceType(cv);
             }
         }
 
         // initialise status
-        if (reloaded.getCvStatus() != null && !isCvInitialised(reloaded.getCvStatus())){
-            CvTerm cv = initialiseCv(reloaded.getCvStatus());
-            if (cv != reloaded.getCvStatus()){
-                reloaded.setCvStatus(cv);
+        if (interactor.getCvStatus() != null && !isCvInitialised(interactor.getCvStatus())){
+            CvTerm cv = initialiseCv(interactor.getCvStatus());
+            if (cv != interactor.getCvStatus()){
+                interactor.setCvStatus(cv);
             }
         }
 
         // initialise xrefs
-        initialiseXrefs(reloaded.getDbXrefs());
+        initialiseXrefs(interactor.getDbXrefs());
         // initialise confidences
-        initialiseConfidence(reloaded.getModelledConfidences());
+        initialiseConfidence(interactor.getModelledConfidences());
         // initialise parameters
-        initialiseParameters(reloaded.getModelledParameters());
+        initialiseParameters(interactor.getModelledParameters());
 
         return reloaded;
     }
