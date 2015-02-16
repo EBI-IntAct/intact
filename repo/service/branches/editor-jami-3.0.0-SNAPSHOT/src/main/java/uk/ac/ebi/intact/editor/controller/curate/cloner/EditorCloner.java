@@ -14,4 +14,6 @@ import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 public interface EditorCloner<I, T extends IntactPrimaryObject> {
 
     public T clone(I object, IntactDao dao);
+
+    public void copyInitialisedProperties(T source, T target);
 }

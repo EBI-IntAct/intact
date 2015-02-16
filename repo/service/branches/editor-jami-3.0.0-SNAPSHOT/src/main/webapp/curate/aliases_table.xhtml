@@ -19,7 +19,7 @@
                      disabled="#{annotatedObjectController.isAliasDisabled()}"/>
         <p:commandButton id="newAliasBtn" value="Add New Alias" process="newAliasTxt"
                          actionListener="#{annotatedObjectController.newAlias}"
-                         update="newAliasTxt aliasTable #{update}"/>
+                         update="newAliasTxt aliasTable #{update}" onclick="loadDialog.show()" oncomplete="loadDialog.hide()"/>
     </h:panelGrid>
 
     <p:dataTable id="aliasTable" var="alias" value="#{annotatedObjectController.collectAliases()}"

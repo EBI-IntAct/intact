@@ -77,5 +77,40 @@ public class InteractorCloner extends AbstractEditorCloner<Interactor, IntactInt
             throw new IllegalStateException("Cannot clone interactor "+interactor, e);
         }
     }
+
+    @Override
+    public void copyInitialisedProperties(IntactInteractor source, IntactInteractor target) {
+        target.setShortName(source.getShortName());
+        target.setFullName(source.getFullName());
+        target.setInteractorType(source.getInteractorType());
+        target.setOrganism(source.getOrganism());
+        target.getChecksums().addAll(source.getChecksums());
+
+        if (source.areAliasesInitialized()){
+            target.getAliases().clear();
+            target.getAliases().addAll(source.getAliases());
+        }
+
+        if (source.areXrefsInitialized()){
+            target.getIdentifiers().clear();
+            target.getIdentifiers().addAll(source.getIdentifiers());
+            target.getXrefs().clear();
+            target.getXrefs().addAll(source.getXrefs());
+        }
+
+        if (source.areAnnotationsInitialized()){
+            target.getAnnotations().clear();
+            target.getAnnotations().addAll(source.getAnnotations());
+        }
+
+        if (source instanceof Polymer && target instanceof Polymer){
+            ((Polymer)target).setSequence(((Polymer) source).getSequence());
+        }
+        else if (source instanceof IntactInteractorPool
+                && target instanceof InteractorPool
+                && ((IntactInteractorPool) source).areInteractorsInitialized()){
+            ((InteractorPool)target).addAll((InteractorPool)source);
+        }
+    }
 }
 

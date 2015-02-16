@@ -112,9 +112,6 @@ public class CvObjectController extends AnnotatedObjectController {
     @Override
     protected void loadCautionMessages() {
         if (this.cvObject != null){
-            if (!cvObject.areAnnotationsInitialized()){
-                setCvObject(getCvService().initialiseCvAnnotations(this.cvObject));
-            }
 
             Annotation caution = AnnotationUtils.collectFirstAnnotationWithTopic(this.cvObject.getAnnotations(), Annotation.CAUTION_MI, Annotation.CAUTION);
             setCautionMessage(caution != null ? caution.getValue() : null);
@@ -220,9 +217,6 @@ public class CvObjectController extends AnnotatedObjectController {
     @Override
     public void doPreSave() {
 
-        if (!cvObject.areParentsInitialized()){
-            this.cvObject = getCvService().initialiseCvParents(this.cvObject);
-        }
         Collection<IntactCvTerm> parentsToRemove = CollectionUtils.subtract(cvObject.getParents(), parents.getTarget());
         Collection<IntactCvTerm> parentsToAdd = CollectionUtils.subtract(parents.getTarget(), cvObject.getParents());
 
@@ -293,10 +287,9 @@ public class CvObjectController extends AnnotatedObjectController {
         if (this.cvObject == null){
             return 0;
         }
-        else if (this.cvObject.areSynonymsInitialized()){
+        else {
             return this.cvObject.getSynonyms().size();
         }
-        return getCvService().countAliases(this.cvObject);
     }
 
     @Override
@@ -356,7 +349,7 @@ public class CvObjectController extends AnnotatedObjectController {
     @Override
     protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
         IntactCvTerm cv = (IntactCvTerm)annotatedObject;
-        if (!cv.areAnnotationsInitialized() || !cv.areXrefsInitialized()){
+        if (!getCvService().isCvFullyLoaded(cv)){
             this.cvObject = getCvService().reloadFullyInitialisedCv(cv);
         }
         prepareView();
@@ -493,9 +486,6 @@ public class CvObjectController extends AnnotatedObjectController {
     @Override
     public List<Alias> collectAliases() {
         // aliases are not always initialised
-        if (!cvObject.areSynonymsInitialized()){
-            setCvObject(getCvService().initialiseCvSynonyms(this.cvObject));
-        }
 
         List<Alias> aliases = new ArrayList<Alias>(cvObject.getSynonyms());
         Collections.sort(aliases, new AuditableComparator());

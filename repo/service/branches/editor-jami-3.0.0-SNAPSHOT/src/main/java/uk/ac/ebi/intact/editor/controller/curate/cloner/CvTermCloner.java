@@ -49,4 +49,34 @@ public class CvTermCloner extends AbstractCvTermCloner<CvTerm, IntactCvTerm>{
 
         return clone;
     }
+
+    @Override
+    public void copyInitialisedProperties(IntactCvTerm source, IntactCvTerm target) {
+        super.copyInitialisedProperties(source, target);
+        // copy collections
+        if (source.areSynonymsInitialized()){
+            target.getSynonyms().clear();
+            target.getSynonyms().addAll(source.getSynonyms());
+        }
+
+        if (source.areXrefsInitialized()){
+            target.getIdentifiers().clear();
+            target.getIdentifiers().addAll(source.getIdentifiers());
+            target.getXrefs().clear();
+            target.getXrefs().addAll(source.getXrefs());
+        }
+
+        if (source.areAnnotationsInitialized()){
+            target.getAnnotations().clear();
+            target.getAnnotations().addAll(source.getAnnotations());
+        }
+        target.setDefinition(source.getDefinition());
+        target.setObjClass(source.getObjClass());
+        if (source.areParentsInitialized()){
+            target.getParents().clear();
+            for (OntologyTerm p : source.getParents()){
+                target.addParent(p);
+            }
+        }
+    }
 }

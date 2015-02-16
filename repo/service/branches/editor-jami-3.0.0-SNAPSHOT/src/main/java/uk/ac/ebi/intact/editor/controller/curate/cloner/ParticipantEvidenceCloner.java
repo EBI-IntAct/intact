@@ -42,7 +42,6 @@ public class ParticipantEvidenceCloner extends AbstractEditorCloner<ParticipantE
         clone.setStoichiometry(new IntactStoichiometry(participant.getStoichiometry().getMinValue(), participant.getStoichiometry().getMaxValue()));
         clone.getExperimentalPreparations().addAll(participant.getExperimentalPreparations());
         clone.getIdentificationMethods().addAll(participant.getIdentificationMethods());
-        clone.getConfidences().addAll(participant.getConfidences());
 
         for (Object obj : participant.getAliases()){
             Alias alias = (Alias)obj;
@@ -76,6 +75,53 @@ public class ParticipantEvidenceCloner extends AbstractEditorCloner<ParticipantE
 
         // don't need to add it to the feature component because it is already done by the cloner
         return clone;
+    }
+
+    @Override
+    public void copyInitialisedProperties(IntactParticipantEvidence source, IntactParticipantEvidence target) {
+        target.setBiologicalRole(source.getBiologicalRole());
+        target.setStoichiometry(source.getStoichiometry());
+        target.setExperimentalRole(source.getExperimentalRole());
+        target.setExpressedInOrganism(source.getExpressedInOrganism());
+        if (source.areAliasesInitialized()){
+            target.getAliases().clear();
+            target.getAliases().addAll(source.getAliases());
+        }
+
+        if (source.areXrefsInitialized()){
+            target.getXrefs().clear();
+            target.getXrefs().addAll(source.getXrefs());
+        }
+
+        if (source.areAnnotationsInitialized()){
+            target.getAnnotations().clear();
+            target.getAnnotations().addAll(source.getAnnotations());
+        }
+
+        if (source.areFeaturesInitialized()){
+            target.getFeatures().clear();
+            target.addAllFeatures(source.getFeatures());
+        }
+
+        if (source.areConfidencesInitialized()){
+            target.getConfidences().clear();
+            target.getConfidences().addAll(source.getConfidences());
+        }
+
+        if (source.areParametersInitialized()){
+            target.getParameters().clear();
+            target.getParameters().addAll(source.getParameters());
+        }
+
+        if (source.areExperimentalPreparationsInitialized()){
+            target.getExperimentalPreparations().clear();
+            target.getExperimentalPreparations().addAll(source.getExperimentalPreparations());
+        }
+
+        if (source.areIdentificationMethodsInitialized()){
+            target.getIdentificationMethods().clear();
+            target.getIdentificationMethods().addAll(source.getIdentificationMethods());
+        }
     }
 
     public EditorCloner<FeatureEvidence, IntactFeatureEvidence> getFeatureCloner() {

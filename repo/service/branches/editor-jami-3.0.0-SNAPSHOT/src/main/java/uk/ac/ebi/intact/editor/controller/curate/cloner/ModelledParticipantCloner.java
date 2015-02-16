@@ -67,6 +67,32 @@ public class ModelledParticipantCloner extends AbstractEditorCloner<Participant,
         return clone;
     }
 
+    @Override
+    public void copyInitialisedProperties(IntactModelledParticipant source, IntactModelledParticipant target) {
+        target.setBiologicalRole(source.getBiologicalRole());
+        target.setStoichiometry(source.getStoichiometry());
+
+        if (source.areAliasesInitialized()){
+            target.getAliases().clear();
+            target.getAliases().addAll(source.getAliases());
+        }
+
+        if (source.areXrefsInitialized()){
+            target.getXrefs().clear();
+            target.getXrefs().addAll(source.getXrefs());
+        }
+
+        if (source.areAnnotationsInitialized()){
+            target.getAnnotations().clear();
+            target.getAnnotations().addAll(source.getAnnotations());
+        }
+
+        if (source.areFeaturesInitialized()){
+           target.getFeatures().clear();
+            target.addAllFeatures(source.getFeatures());
+        }
+    }
+
     public EditorCloner<Feature, IntactModelledFeature> getFeatureCloner() {
         if (this.featureCloner == null){
             this.featureCloner = new ModelledFeatureCloner();

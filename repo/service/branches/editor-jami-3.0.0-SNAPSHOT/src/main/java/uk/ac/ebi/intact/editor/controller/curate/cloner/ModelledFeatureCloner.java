@@ -73,5 +73,35 @@ public class ModelledFeatureCloner extends AbstractEditorCloner<Feature, IntactM
         // don't need to add it to the feature component because it is already done by the cloner
         return clone;
     }
+
+    @Override
+    public void copyInitialisedProperties(IntactModelledFeature source, IntactModelledFeature target) {
+        target.setShortName(source.getShortName());
+        target.setFullName(source.getFullName());
+        target.setRole(source.getRole());
+        target.setType(source.getType());
+
+        if (source.areAliasesInitialized()){
+            target.getAliases().clear();
+            target.getAliases().addAll(source.getAliases());
+        }
+
+        if (source.areXrefsInitialized()){
+            target.getIdentifiers().clear();
+            target.getIdentifiers().addAll(source.getIdentifiers());
+            target.getXrefs().clear();
+            target.getXrefs().addAll(source.getXrefs());
+        }
+
+        if (source.areAnnotationsInitialized()){
+            target.getAnnotations().clear();
+            target.getAnnotations().addAll(source.getAnnotations());
+        }
+
+        if (source.areRangesInitialized()){
+            target.getRanges().clear();
+            target.getRanges().addAll(source.getRanges());
+        }
+    }
 }
 

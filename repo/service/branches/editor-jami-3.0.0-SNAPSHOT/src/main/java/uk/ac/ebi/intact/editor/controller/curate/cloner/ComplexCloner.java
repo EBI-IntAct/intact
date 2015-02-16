@@ -196,10 +196,53 @@ public class ComplexCloner extends AbstractEditorCloner<Complex, IntactComplex> 
         return clone;
     }
 
+    public void copyInitialisedProperties(IntactComplex source, IntactComplex target) {
+        target.setShortName(source.getShortName());
+        target.setOrganism(source.getOrganism());
+        target.setEvidenceType(source.getEvidenceType());
+        target.setInteractionType(source.getInteractionType());
+        target.setInteractorType(source.getInteractorType());
+        target.setFullName(source.getFullName());
+        target.setSource(source.getSource());
+
+        if (source.areAliasesInitialized()){
+            target.getAliases().clear();
+            target.getAliases().addAll(source.getAliases());
+        }
+
+        // do not clone identifiers, only xrefs
+        if (source.areXrefsInitialized()){
+            target.getIdentifiers().clear();
+            target.getIdentifiers().addAll(source.getIdentifiers());
+            target.getXrefs().clear();
+            target.getXrefs().addAll(source.getXrefs());
+        }
+
+        if (source.areAnnotationsInitialized()){
+            target.getAnnotations().clear();
+            target.getAnnotations().addAll(source.getAnnotations());
+        }
+
+        if (source.areParticipantsInitialized()){
+            target.getParticipants().clear();
+            target.addAllParticipants(source.getParticipants());
+        }
+
+        if (source.areConfidencesInitialized()){
+            target.getModelledConfidences().clear();
+            target.getModelledConfidences().addAll(source.getModelledConfidences());
+        }
+
+        if (source.areParametersInitialized()){
+            target.getModelledParameters().clear();
+            target.getModelledParameters().addAll(source.getModelledParameters());
+        }
+    }
+
     public EditorCloner<Participant, IntactModelledParticipant> getModelledParticipantCloner(){
-         if (this.participantCloner == null){
-             this.participantCloner = new ModelledParticipantCloner();
-         }
+        if (this.participantCloner == null){
+            this.participantCloner = new ModelledParticipantCloner();
+        }
         return this.participantCloner;
     }
 

@@ -61,5 +61,10 @@ public abstract class AbstractCvTermCloner<I extends CvTerm, T extends AbstractI
     protected abstract Alias instantiateAliase(CvTerm type, String name);
 
     protected abstract T instantiateNewCloneFrom(I cv);
+
+    public void copyInitialisedProperties(T source, T target) {
+        target.setShortName(source.getShortName());
+        target.setFullName(source.getShortName());
+    }
 }
 

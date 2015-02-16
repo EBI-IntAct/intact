@@ -60,6 +60,11 @@ public class FeatureEvidenceCloner extends AbstractEditorCloner<FeatureEvidence,
             clone.getAnnotations().add(new FeatureEvidenceAnnotation(annotation.getTopic(), annotation.getValue()));
         }
 
+        for (Object obj : feature.getParameters()){
+            Parameter param = (Parameter)obj;
+            clone.getParameters().add(new FeatureEvidenceParameter(param.getType(), param.getValue(), param.getUnit(), param.getUncertainty()));
+        }
+
         for (Object obj : feature.getRanges()){
             Range range = (Range)obj;
             ModelledRange r = new ModelledRange(range.getStart(), range.getEnd(), range.isLink());
@@ -77,6 +82,46 @@ public class FeatureEvidenceCloner extends AbstractEditorCloner<FeatureEvidence,
 
         // don't need to add it to the feature component because it is already done by the cloner
         return clone;
+    }
+
+    @Override
+    public void copyInitialisedProperties(IntactFeatureEvidence source, IntactFeatureEvidence target) {
+        target.setShortName(source.getShortName());
+        target.setFullName(source.getFullName());
+        target.setRole(source.getRole());
+        target.setType(source.getType());
+
+        if (source.areDetectionMethodsInitialized()){
+            target.getDetectionMethods().clear();
+            target.getDetectionMethods().addAll(source.getDetectionMethods());
+        }
+
+        if (source.areParametersInitialized()){
+            target.getParameters().clear();
+            target.getParameters().addAll(source.getParameters());
+        }
+
+        if (source.areAliasesInitialized()){
+            target.getAliases().clear();
+            target.getAliases().addAll(source.getAliases());
+        }
+
+        if (source.areXrefsInitialized()){
+            target.getIdentifiers().clear();
+            target.getIdentifiers().addAll(source.getIdentifiers());
+            target.getXrefs().clear();
+            target.getXrefs().addAll(source.getXrefs());
+        }
+
+        if (source.areAnnotationsInitialized()){
+            target.getAnnotations().clear();
+            target.getAnnotations().addAll(source.getAnnotations());
+        }
+
+        if (source.areRangesInitialized()){
+            target.getRanges().clear();
+            target.getRanges().addAll(source.getRanges());
+        }
     }
 }
 

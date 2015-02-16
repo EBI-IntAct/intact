@@ -642,7 +642,7 @@ public class SearchQueryService extends AbstractEditorService {
                                                                  "      or lower(b.scientificName) like :query " +
                                                                  "      or lower(b.dbTaxid) like :query ",
 
-                                                                 params, "b", "b.updated, b.ac", false);
+                                                                 params, "b", "updated, b.ac", false);
 
         log.info( "Organisms found: " + organisms.getRowCount() );
         return organisms;

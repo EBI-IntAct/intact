@@ -81,6 +81,47 @@ public class InteractionEvidenceCloner extends AbstractEditorCloner<InteractionE
         return clone;
     }
 
+    @Override
+    public void copyInitialisedProperties(IntactInteractionEvidence source, IntactInteractionEvidence target) {
+        target.setShortName(source.getShortName());
+        target.setInteractionType(source.getInteractionType());
+        target.setExperiment(source.getExperiment());
+        target.setAvailability(source.getAvailability());
+        target.setInferred(source.isInferred());
+        target.setNegative(source.isNegative());
+
+        if (source.areXrefsInitialized()){
+            target.getIdentifiers().clear();
+            target.getIdentifiers().addAll(source.getIdentifiers());
+            target.getXrefs().clear();
+            target.getXrefs().addAll(source.getXrefs());
+        }
+
+        if (source.areAnnotationsInitialized()){
+            target.getAnnotations().clear();
+            target.getAnnotations().addAll(source.getAnnotations());
+        }
+
+        if (source.areParticipantsInitialized()){
+            target.addAllParticipants(source.getParticipants());
+        }
+
+        if (source.areConfidencesInitialized()){
+            target.getConfidences().clear();
+            target.getConfidences().addAll(source.getConfidences());
+        }
+
+        if (source.areParametersInitialized()){
+            target.getParameters().clear();
+            target.getParameters().addAll(source.getParameters());
+        }
+
+        if (source.areVariableParameterValuesInitialized()){
+            target.getVariableParameterValues().clear();
+            target.getVariableParameterValues().addAll(source.getVariableParameterValues());
+        }
+    }
+
     public EditorCloner<ParticipantEvidence, IntactParticipantEvidence> getParticipantCloner() {
         if (this.participantCloner == null){
             this.participantCloner = new ParticipantEvidenceCloner();
