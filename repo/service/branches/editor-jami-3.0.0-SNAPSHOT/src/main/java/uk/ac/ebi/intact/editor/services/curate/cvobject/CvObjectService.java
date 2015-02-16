@@ -1033,16 +1033,17 @@ public class CvObjectService extends AbstractEditorService {
             getIntactDao().getEntityManager().detach(reloaded);
             uk.ac.ebi.intact.editor.controller.curate.cloner.CvTermCloner cloner = new uk.ac.ebi.intact.editor.controller.curate.cloner.CvTermCloner();
             cloner.copyInitialisedProperties(cv, reloaded);
+            cv = reloaded;
         }
 
         // initialise xrefs because are first tab visible
-        initialiseXrefs(reloaded.getDbXrefs());
+        initialiseXrefs(cv.getDbXrefs());
         // initialise annotations because needs caution
-        initialiseAnnotations(reloaded.getDbAnnotations());
+        initialiseAnnotations(cv.getDbAnnotations());
         // initialise aliases
-        initialiseAliases(reloaded.getSynonyms());
+        initialiseAliases(cv.getSynonyms());
         // initialise parents
-        initialiseParents(reloaded, reloaded.getParents());
+        initialiseParents(cv, cv.getParents());
 
         return cv;
     }
