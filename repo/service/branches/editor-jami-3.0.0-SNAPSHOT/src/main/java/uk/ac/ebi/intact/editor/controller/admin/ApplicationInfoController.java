@@ -1,5 +1,7 @@
 package uk.ac.ebi.intact.editor.controller.admin;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -39,6 +41,8 @@ public class ApplicationInfoController extends BaseController {
     private String lastCvUpdate;
     private String databaseCounts;
 
+    private static final Log log = LogFactory.getLog(ApplicationInfoController.class);
+
     @Resource(name = "defaultApp")
     private Application application;
 
@@ -56,7 +60,7 @@ public class ApplicationInfoController extends BaseController {
     public ApplicationInfoController() {
     }
 
-    public void init() {
+    public synchronized void init() {
         ApplicationInfoService.ApplicationInfo appInfo = getApplicationInfoService().getCurrentApplicationInfo();
         uniprotJapiVersion = appInfo.getUniprotJapiVersion();
         schemaVersion = appInfo.getSchemaVersion();
@@ -67,32 +71,38 @@ public class ApplicationInfoController extends BaseController {
     }
 
     public void saveApplicationProperties(ActionEvent evt) {
-        try {
-            getApplicationInfoService().getIntactDao().getUserContext().setUser(getCurrentUser());
-            getApplicationInfoService().saveApplicationProperties(this.application);
-        } catch (SynchronizerException e) {
-            addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
-        } catch (FinderException e) {
-            addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
-        } catch (PersisterException e) {
-            addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
-        }catch (Throwable e) {
-            addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+        // lock application
+        synchronized (this.application){
+            try {
+                getApplicationInfoService().getIntactDao().getUserContext().setUser(getCurrentUser());
+                getApplicationInfoService().saveApplicationProperties(this.application);
+            } catch (SynchronizerException e) {
+                addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+            } catch (FinderException e) {
+                addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+            } catch (PersisterException e) {
+                addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+            }catch (Throwable e) {
+                addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+            }
         }
     }
 
     public void persistConfig(ActionEvent evt) {
-        try {
-            getApplicationInfoService().getIntactDao().getUserContext().setUser(getCurrentUser());
-            this.application = getApplicationInfoService().persistConfig(this.application, getEditorConfig(), getIntactConfiguration());
-        } catch (SynchronizerException e) {
-            addErrorMessage("Cannot save application details ", e.getCause()+": "+e.getMessage());
-        } catch (FinderException e) {
-            addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
-        } catch (PersisterException e) {
-            addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
-        }catch (Throwable e) {
-            addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+        // lock application
+        synchronized (this.application){
+            try {
+                getApplicationInfoService().getIntactDao().getUserContext().setUser(getCurrentUser());
+                this.application = getApplicationInfoService().persistConfig(this.application, getEditorConfig(), getIntactConfiguration());
+            } catch (SynchronizerException e) {
+                addErrorMessage("Cannot save application details ", e.getCause()+": "+e.getMessage());
+            } catch (FinderException e) {
+                addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+            } catch (PersisterException e) {
+                addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+            }catch (Throwable e) {
+                addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+            }
         }
     }
 
@@ -112,7 +122,7 @@ public class ApplicationInfoController extends BaseController {
         return getApplicationInfoService().getBeanNames();
     }
 
-    public String getUniprotJapiVersion() {
+    public synchronized String getUniprotJapiVersion() {
         if (!isInitialised){
            init();
         }
@@ -127,28 +137,28 @@ public class ApplicationInfoController extends BaseController {
         return System.getProperty(propName);
     }
 
-    public String getSchemaVersion() {
+    public synchronized String getSchemaVersion() {
         if (!isInitialised){
             init();
         }
         return schemaVersion;
     }
 
-    public String getLastUniprotUpdate() {
+    public synchronized String getLastUniprotUpdate() {
         if (!isInitialised){
             init();
         }
         return lastUniprotUpdate;
     }
 
-    public String getLastCvUpdate() {
+    public synchronized String getLastCvUpdate() {
         if (!isInitialised){
             init();
         }
         return lastCvUpdate;
     }
 
-    public String getDatabaseCounts() {
+    public synchronized String getDatabaseCounts() {
         if (!isInitialised){
             init();
         }
@@ -184,15 +194,16 @@ public class ApplicationInfoController extends BaseController {
         return editorConfig;
     }
 
-    public IntactSource getDefaultInstitution(){
+    public synchronized IntactSource getDefaultInstitution(){
         Source defaultSource = getIntactConfiguration().getDefaultInstitution();
-        if (!(defaultSource instanceof IntactSource)){
+        if (!(defaultSource instanceof IntactSource) || ((IntactSource)defaultSource).getAc() == null){
             try {
                 getApplicationInfoService().getIntactDao().getUserContext().setUser(getCurrentUser());
                 defaultSource = getApplicationInfoService().synchronizeDefaultSource(defaultSource);
-                getIntactConfiguration().setDefaultInstitution((IntactSource)defaultSource);
+                setDefaultInstitution((IntactSource)defaultSource);
             } catch (SynchronizerException e) {
                 addErrorMessage("Cannot save default source "+defaultSource, e.getCause()+": "+e.getMessage());
+
             } catch (FinderException e) {
                 addErrorMessage("Cannot save default source "+defaultSource, e.getCause() + ": " + e.getMessage());
             } catch (PersisterException e) {
@@ -205,7 +216,7 @@ public class ApplicationInfoController extends BaseController {
         return (IntactSource)defaultSource;
     }
 
-    public void setDefaultInstitution(IntactSource source){
+    public synchronized void setDefaultInstitution(IntactSource source){
         getIntactConfiguration().setDefaultInstitution(source);
     }
 }
