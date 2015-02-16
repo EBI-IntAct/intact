@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.intact.editor.controller.admin;
 
+import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.editor.controller.BaseController;
@@ -34,7 +35,8 @@ import java.util.List;
  * @version $Id$
  */
 @Controller
-@Scope("session")
+@Scope( "conversation.access" )
+@ConversationName("hqlSearch")
 public class HqlRunnerController extends BaseController {
 
     private String hqlQuery;
@@ -43,11 +45,10 @@ public class HqlRunnerController extends BaseController {
 
     private Collection<? extends IntactPrimaryObject> results;
     private Collection<Object[]> nativeResults;
-    Integer o;
     private List<String> columns;
 
     @Resource(name = "hqlQueryService")
-    private HqlQueryService hqlQueryService;
+    private transient HqlQueryService hqlQueryService;
 
     public HqlRunnerController() {
         super();
@@ -58,7 +59,7 @@ public class HqlRunnerController extends BaseController {
         return columns != null ? columns :Collections.EMPTY_LIST;
     }
 
-    public void runQuery(ActionEvent evt) {
+    public  void runQuery(ActionEvent evt) {
         if (hqlQuery != null && hqlQuery.length() > 0){
             try {
                 long startTime = System.currentTimeMillis();
@@ -77,7 +78,6 @@ public class HqlRunnerController extends BaseController {
     }
 
     public void runNativeQuery(ActionEvent evt) {
-
         if (nativeQuery != null && nativeQuery.length() > 0){
             try {
                 long startTime = System.currentTimeMillis();
