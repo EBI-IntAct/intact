@@ -21,7 +21,7 @@
         <p:commandButton id="newConfidenceBtn" value="Add New Confidence"
                          actionListener="#{annotatedObjectController.newConfidence}"
                          process="newConfidenceTxt"
-                         update="confidencesTable #{update}"/>
+                         update="confidencesTable #{update}" onclick="loadDialog.show()" oncomplete="loadDialog.hide()"/>
     </h:panelGrid>
 
     <p:dataTable id="confidencesTable" var="confidence" value="#{annotatedObjectController.collectConfidences()}">

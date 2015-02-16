@@ -39,7 +39,7 @@
                 <p:commandButton id="newParamBtn" value="Add New Parameter"
                                  actionListener="#{annotatedObjectController.newParameter}"
                                  process="newParamTxt"
-                                 update="parametersTable #{update}"/>
+                                 update="parametersTable #{update}" onclick="loadDialog.show()" oncomplete="loadDialog.hide()"/>
             </h:panelGrid>
 
         <p:dataTable id="parametersTable" var="parameter" value="#{annotatedObjectController.collectParameters()}">

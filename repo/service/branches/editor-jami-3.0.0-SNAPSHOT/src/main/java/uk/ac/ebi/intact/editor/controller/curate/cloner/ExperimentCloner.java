@@ -93,6 +93,35 @@ public class ExperimentCloner extends AbstractEditorCloner<Experiment, IntactExp
         return clone;
     }
 
+    @Override
+    public void copyInitialisedProperties(IntactExperiment source, IntactExperiment target) {
+        target.setShortLabel(source.getShortLabel());
+        target.setHostOrganism(source.getHostOrganism());
+        target.setInteractionDetectionMethod(source.getInteractionDetectionMethod());
+        target.setPublication(source.getPublication());
+        target.setParticipantIdentificationMethod(source.getParticipantIdentificationMethod());
+
+        if (source.areXrefsInitialized()){
+            target.getXrefs().clear();
+            target.getXrefs().addAll(source.getXrefs());
+        }
+
+        if (source.areAnnotationsInitialized()){
+            target.getAnnotations().clear();
+            target.getAnnotations().addAll(source.getAnnotations());
+        }
+
+        if (source.areVariableParametersInitialized()){
+            target.getVariableParameters().clear();
+            target.addAllVariableParameters(source.getVariableParameters());
+        }
+
+        if (source.areInteractionEvidencesInitialized()){
+            target.getInteractionEvidences().clear();
+            target.addAllInteractionEvidences(source.getInteractionEvidences());
+        }
+    }
+
     public EditorCloner<InteractionEvidence, IntactInteractionEvidence> getInteractionEvidenceCloner(){
         if (this.evidenceCloner == null){
             this.evidenceCloner = new InteractionEvidenceCloner();

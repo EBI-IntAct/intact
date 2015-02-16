@@ -34,4 +34,26 @@ public class  InstitutionCloner extends AbstractCvTermCloner<Source, IntactSourc
     protected IntactSource instantiateNewCloneFrom(Source cv) {
         return new IntactSource(cv.getShortName());
     }
+
+    @Override
+    public void copyInitialisedProperties(IntactSource source, IntactSource target) {
+        super.copyInitialisedProperties(source, target);
+        // copy collections
+        if (source.areSynonymsInitialized()){
+            target.getSynonyms().clear();
+            target.getSynonyms().addAll(source.getSynonyms());
+        }
+
+        if (source.areXrefsInitialized()){
+            target.getIdentifiers().clear();
+            target.getIdentifiers().addAll(source.getIdentifiers());
+            target.getXrefs().clear();
+            target.getXrefs().addAll(source.getXrefs());
+        }
+
+        if (source.areAnnotationsInitialized()){
+            target.getAnnotations().clear();
+            target.getAnnotations().addAll(source.getAnnotations());
+        }
+    }
 }

@@ -22,7 +22,7 @@
         </p:inputTextarea>
         <p:commandButton id="newAnnotBtn" value="Add New Annotation" actionListener="#{annotatedObjectController.newAnnotation}"
                          process="newAnnotationTxt"
-                         update="newAnnotationTxt annotationsTable #{update}"/>
+                         update="newAnnotationTxt annotationsTable #{update}" onclick="loadDialog.show()" oncomplete="loadDialog.hide()"/>
     </h:panelGrid>
 
     <p:dataTable id="annotationsTable" var="annotation" value="#{annotatedObjectController.collectAnnotations()}"

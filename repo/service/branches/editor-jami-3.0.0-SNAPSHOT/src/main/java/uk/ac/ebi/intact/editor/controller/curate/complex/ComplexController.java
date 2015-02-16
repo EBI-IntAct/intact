@@ -147,61 +147,12 @@ public class ComplexController extends AnnotatedObjectController {
     @Override
     protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
         IntactComplex interaction = (IntactComplex)annotatedObject;
-        if (!interaction.areAnnotationsInitialized()
-                || !interaction.areLifeCycleEventsInitialized()
-                || !isCvInitialised(interaction.getInteractionType())
-                || !areParticipantsInitialised(interaction)
-                || !isCvInitialised(interaction.getInteractorType())
-                || !isCvInitialised(interaction.getEvidenceType())
-                || !interaction.areAliasesInitialized()){
+        if (!getComplexEditorService().isComplexFullyLoaded(interaction)){
             this.complex = getComplexEditorService().reloadFullyInitialisedComplex(interaction);
         }
 
         refreshParticipants();
         refreshName();
-    }
-
-    private boolean areParticipantsInitialised(IntactComplex interaction) {
-        if (!interaction.areParticipantsInitialized()){
-            return false;
-        }
-
-        for (ModelledParticipant part : interaction.getParticipants()){
-            IntactInteractor interactor = (IntactInteractor)part.getInteractor();
-            if (!interactor.areXrefsInitialized() || !interactor.areAnnotationsInitialized()){
-                return false;
-            }
-
-            if (!isCvInitialised(part.getBiologicalRole())){
-                return false;
-            }
-            if (!((IntactModelledParticipant)part).areFeaturesInitialized()){
-                return false;
-            }
-            for (ModelledFeature f : part.getFeatures()){
-                if (!((IntactModelledFeature)f).areRangesInitialized()){
-                    return false;
-                }
-                if (!((IntactModelledFeature)f).areLinkedFeaturesInitialized()){
-                    return false;
-                }
-                for (Range obj : f.getRanges()){
-                    if (!isCvInitialised(obj.getStart().getStatus())
-                            || !isCvInitialised(obj.getEnd().getStatus())){
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    private boolean isCvInitialised(CvTerm cv) {
-        if (cv instanceof IntactCvTerm){
-            IntactCvTerm intactCv = (IntactCvTerm)cv;
-            return intactCv.areXrefsInitialized() && intactCv.areAnnotationsInitialized();
-        }
-        return true;
     }
 
     public String getOrganism(){
@@ -261,10 +212,6 @@ public class ComplexController extends AnnotatedObjectController {
     @Override
     protected void loadCautionMessages() {
         if (this.complex != null) {
-            if (!complex.areAnnotationsInitialized()) {
-                setComplex(getComplexEditorService().initialiseComplexAnnotations(this.complex));
-            }
-
             refreshInfoMessages();
         }
     }
@@ -810,10 +757,6 @@ public class ComplexController extends AnnotatedObjectController {
 
     @Override
     public List<Xref> collectXrefs() {
-        if (!this.complex.areXrefsInitialized()){
-            setComplex(getComplexEditorService().initialiseComplexXrefs(this.complex));
-        }
-
         List<Xref> xrefs = new ArrayList<Xref>(this.complex.getDbXrefs());
         Collections.sort(xrefs, new AuditableComparator());
         return xrefs;
@@ -1331,11 +1274,8 @@ public class ComplexController extends AnnotatedObjectController {
         if (this.complex == null){
             return 0;
         }
-        else if (this.complex.areConfidencesInitialized()){
+        else {
             return this.complex.getModelledConfidences().size();
-        }
-        else{
-            return getComplexEditorService().countConfidences(this.complex);
         }
     }
 
@@ -1343,11 +1283,8 @@ public class ComplexController extends AnnotatedObjectController {
         if (this.complex == null){
             return 0;
         }
-        else if (this.complex.areParametersInitialized()){
-            return this.complex.getModelledParameters().size();
-        }
         else{
-            return getComplexEditorService().countParameters(this.complex);
+            return this.complex.getModelledParameters().size();
         }
     }
 
@@ -1356,27 +1293,18 @@ public class ComplexController extends AnnotatedObjectController {
         if (this.complex == null){
             return 0;
         }
-        else if (this.complex.areXrefsInitialized()){
-            return this.complex.getDbXrefs().size();
-        }
         else{
-            return getComplexEditorService().countXrefs(this.complex);
+            return this.complex.getDbXrefs().size();
         }
     }
 
     public List<Confidence> collectConfidences() {
-        if (!this.complex.areConfidencesInitialized()){
-            setComplex(getComplexEditorService().initialiseComplexConfidences(complex));
-        }
         List<Confidence> confidences = new ArrayList<Confidence>(this.complex.getModelledConfidences());
         Collections.sort(confidences, new AuditableComparator());
         return confidences;
     }
 
     public List<Parameter> collectParameters() {
-        if (!this.complex.areParametersInitialized()){
-            setComplex(getComplexEditorService().initialiseComplexParameters(complex));
-        }
         List<Parameter> params = new ArrayList<Parameter>(this.complex.getModelledParameters());
         Collections.sort(params, new AuditableComparator());
         return params;
@@ -1413,9 +1341,6 @@ public class ComplexController extends AnnotatedObjectController {
     }
 
     public void reloadSingleParticipant(IntactModelledParticipant f){
-        if (!this.complex.areParticipantsInitialized()){
-            setComplex(getComplexEditorService().initialiseParticipants(this.complex));
-        }
         Iterator<ModelledParticipant> evIterator = complex.getParticipants().iterator();
         boolean add = true;
         while (evIterator.hasNext()){
@@ -1436,9 +1361,6 @@ public class ComplexController extends AnnotatedObjectController {
     }
 
     public void removeParticipant(IntactModelledParticipant f){
-        if (!this.complex.areParticipantsInitialized()){
-            setComplex(getComplexEditorService().initialiseParticipants(this.complex));
-        }
         Iterator<ModelledParticipant> evIterator = complex.getParticipants().iterator();
         while (evIterator.hasNext()){
             IntactModelledParticipant intactEv = (IntactModelledParticipant)evIterator.next();

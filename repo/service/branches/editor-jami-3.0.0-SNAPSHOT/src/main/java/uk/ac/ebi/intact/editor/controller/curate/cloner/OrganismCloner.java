@@ -34,4 +34,18 @@ public class OrganismCloner extends AbstractEditorCloner<Organism, IntactOrganis
 
         return clone;
     }
+
+    @Override
+    public void copyInitialisedProperties(IntactOrganism source, IntactOrganism target) {
+        target.setCommonName(source.getCommonName());
+        target.setScientificName(source.getScientificName());
+        target.setTaxId(source.getTaxId());
+        target.setCellType(source.getCellType());
+        target.setTissue(source.getTissue());
+
+        if (source.areAliasesInitialized()){
+            target.getAliases().clear();
+            target.getAliases().addAll(source.getAliases());
+        }
+    }
 }
