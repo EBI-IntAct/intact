@@ -6,12 +6,15 @@ import org.primefaces.model.DualListModel;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.editor.controller.misc.AbstractUserController;
+import uk.ac.ebi.intact.editor.services.admin.InstitutionAdminService;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.user.Role;
 import uk.ac.ebi.intact.jami.model.user.User;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
 import uk.ac.ebi.intact.jami.synchronizer.SynchronizerException;
 
+import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ComponentSystemEvent;
 import javax.faces.model.DataModel;
@@ -42,6 +45,8 @@ public class UserAdminController extends AbstractUserController {
     private List<SelectItem> reviewerSelectItems;
     private List<SelectItem> complexReviewerSelectItems;
     private List<SelectItem> allReviewerSelectItems;
+    @Resource(name = "institutionAdminService")
+    private transient InstitutionAdminService institutionAdminService;
 
     /////////////////
     // Users
@@ -240,5 +245,17 @@ public class UserAdminController extends AbstractUserController {
             this.allReviewerSelectItems = getUserAdminService().loadAllReviewerSelectItems();
         }
         return allReviewerSelectItems;
+    }
+
+    public InstitutionAdminService getInstitutionAdminService() {
+        if (this.institutionAdminService == null){
+            this.institutionAdminService = ApplicationContextProvider.getBean("institutionAdminService");
+        }
+        return institutionAdminService;
+    }
+
+    public List<SelectItem> getInstitutionItems() {
+
+        return getInstitutionAdminService().getInstitutionItems();
     }
 }

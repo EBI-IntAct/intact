@@ -51,7 +51,7 @@
 
                     <h:outputLabel value="Institution: " for="institutionTxt"/>
                     <p:selectOneMenu id="institutionTxt" value="#{userAdminController.institution}" converter="institutionConverter">
-                        <f:selectItems value="#{institutionAdminService.institutionItems}"/>
+                        <f:selectItems value="#{userAdminController.institutionItems}"/>
                     </p:selectOneMenu>
 
                     <h:outputLabel value="Role(s):" for="rolesPick"/>

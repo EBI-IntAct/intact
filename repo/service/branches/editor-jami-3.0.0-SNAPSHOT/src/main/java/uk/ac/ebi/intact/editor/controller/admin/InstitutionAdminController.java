@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.editor.controller.admin;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.primefaces.model.DualListModel;
 import org.springframework.context.annotation.Scope;
@@ -33,6 +35,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
 import javax.faces.model.DataModel;
+import javax.faces.model.SelectItem;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +55,8 @@ public class InstitutionAdminController extends BaseController {
 
     @Resource(name = "institutionAdminService")
     private transient InstitutionAdminService institutionAdminService;
+
+    private static final Log log = LogFactory.getLog(InstitutionAdminController.class);
 
     public InstitutionAdminController() {
 
@@ -86,12 +91,16 @@ public class InstitutionAdminController extends BaseController {
             addInfoMessage(selectedInstitutions.length + " Institutions merged", updated + " annotated objects updated");
         } catch (SynchronizerException e) {
             addErrorMessage("Cannot merge institutions ", e.getCause() + ": " + e.getMessage());
+            log.error("Cannot merge institutions", e);
         } catch (FinderException e) {
             addErrorMessage("Cannot merge institutions ", e.getCause() + ": " + e.getMessage());
+            log.error("Cannot merge institutions", e);
         } catch (PersisterException e) {
             addErrorMessage("Cannot merge institutions ", e.getCause() + ": " + e.getMessage());
+            log.error("Cannot merge institutions", e);
         } catch (Throwable e) {
             addErrorMessage("Cannot merge institutions ", e.getCause() + ": " + e.getMessage());
+            log.error("Cannot merge institutions", e);
         }
 
         reloadDataModels();
@@ -104,12 +113,16 @@ public class InstitutionAdminController extends BaseController {
             getInstitutionAdminService().deleteSelected(selectedInstitutions);
         } catch (SynchronizerException e) {
             addErrorMessage("Cannot delete institutions ", e.getCause() + ": " + e.getMessage());
+            log.error("Cannot delete institutions", e);
         } catch (FinderException e) {
             addErrorMessage("Cannot delete institutions ", e.getCause() + ": " + e.getMessage());
+            log.error("Cannot delete institutions", e);
         } catch (PersisterException e) {
             addErrorMessage("Cannot delete institutions ", e.getCause() + ": " + e.getMessage());
+            log.error("Cannot delete institutions", e);
         } catch (Throwable e) {
             addErrorMessage("Cannot delete institutions ", e.getCause() + ": " + e.getMessage());
+            log.error("Cannot delete institutions", e);
         }
 
         reloadDataModels();
@@ -128,6 +141,7 @@ public class InstitutionAdminController extends BaseController {
             addInfoMessage("Users object ownership fixed", "Updated annotated objects: "+updatedCount);
         } catch (Throwable e) {
             addErrorMessage("Problem updating user annotated objects", e.getCause()+": "+e.getMessage());
+            log.error("Problem updating user annotated objects", e);
         }
 
         reloadDataModels();
@@ -159,6 +173,11 @@ public class InstitutionAdminController extends BaseController {
 
     public DataModel<IntactSource> getInstitutionsDataModel() {
         return institutionsDataModel;
+    }
+
+    public List<SelectItem> getInstitutionItems() {
+
+        return getInstitutionAdminService().getInstitutionItems();
     }
 
     public InstitutionAdminService getInstitutionAdminService() {
