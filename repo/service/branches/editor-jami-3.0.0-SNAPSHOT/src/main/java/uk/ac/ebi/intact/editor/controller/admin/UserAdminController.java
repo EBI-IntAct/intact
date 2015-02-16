@@ -2,6 +2,7 @@ package uk.ac.ebi.intact.editor.controller.admin;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
 import org.primefaces.model.DualListModel;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -30,7 +31,8 @@ import java.util.List;
  * @since 2.0
  */
 @Controller
-@Scope( "session" )
+@Scope("conversation.access")
+@ConversationName("general")
 public class UserAdminController extends AbstractUserController {
 
     private static final Log log = LogFactory.getLog( UserAdminController.class );

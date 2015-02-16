@@ -21,11 +21,8 @@ import org.springframework.stereotype.Controller;
 import uk.ac.ebi.intact.editor.controller.BaseController;
 import uk.ac.ebi.intact.editor.controller.UserListener;
 import uk.ac.ebi.intact.editor.controller.UserSessionController;
-import uk.ac.ebi.intact.jami.ApplicationContextProvider;
-import uk.ac.ebi.intact.jami.context.UserContext;
 import uk.ac.ebi.intact.jami.model.user.User;
 
-import javax.annotation.Resource;
 import java.util.*;
 
 /**
@@ -38,9 +35,6 @@ public class UserManagerController extends BaseController implements UserListene
     private static final Log log = LogFactory.getLog( UserManagerController.class );
 
     private Set<User> loggedInUsers;
-
-    @Resource(name = "jamiUserContext")
-    private transient UserContext userContext;
 
     public UserManagerController() {
         loggedInUsers = new HashSet<User>();
@@ -75,19 +69,20 @@ public class UserManagerController extends BaseController implements UserListene
     public void userLoggedIn(User user) {
         if (user == null) return;
 
-        user.setLastLogin(new Date());
-        UserSessionController userSessionController = ( UserSessionController ) getSpringContext().getBean( "userSessionController" );
-        userSessionController.setCurrentUser(user);
+        synchronized (loggedInUsers){
+            user.setLastLogin(new Date());
+            UserSessionController userSessionController = ( UserSessionController ) getSpringContext().getBean( "userSessionController" );
+            userSessionController.setCurrentUser(user);
 
-        // set the user to be used when writing into the database
-        this.userContext.setUser( user );
-
-        loggedInUsers.add(user);
+            loggedInUsers.add(user);
+        }
     }
 
     @Override
     public void userLoggedOut(User user) {
-        loggedInUsers.remove(user);
+        synchronized (loggedInUsers){
+            loggedInUsers.remove(user);
+        }
     }
 
     /**
@@ -96,15 +91,5 @@ public class UserManagerController extends BaseController implements UserListene
      */
     public TimeZone getTimeZone() {
         return TimeZone.getDefault();
-    }
-
-    public UserContext getUserContext() {
-        if (userContext == null){
-           userContext = ApplicationContextProvider.getBean("jamiUserContext");
-            if (getCurrentUser() != null){
-                userContext.setUser(getCurrentUser());
-            }
-        }
-        return userContext;
     }
 }
