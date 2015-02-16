@@ -319,40 +319,18 @@ public class ComplexEditorService extends AbstractEditorService {
         return true;
     }
 
-    private Interactor initialiseInteractor(Interactor inter, uk.ac.ebi.intact.editor.controller.curate.cloner.InteractorCloner interactorCloner) {
-        if (inter instanceof IntactInteractor){
-            if (areInteractorCollectionsLazy((IntactInteractor) inter)
-                    && ((IntactInteractor)inter).getAc() != null && !getIntactDao().getEntityManager().contains(inter)){
-                IntactInteractor reloaded = getIntactDao().getEntityManager().find(IntactInteractor.class, ((IntactInteractor)inter).getAc());
-                if (reloaded != null){
-                    // initialise freshly loaded properties
-                    initialiseAnnotations(reloaded.getDbAnnotations());
-                    initialiseXrefs(reloaded.getDbXrefs());
-                    if (reloaded instanceof Polymer){
-                        ((Polymer)reloaded).getSequence().length();
-                    }
-                    // detach object so no changes will be flushed
-                    getIntactDao().getEntityManager().detach(reloaded);
-                    interactorCloner.copyInitialisedProperties((IntactInteractor) inter, reloaded);
-                    // will return reloaded object
-                    inter = reloaded;
-                }
-            }
-            initialiseAnnotations(((IntactInteractor) inter).getDbAnnotations());
-            initialiseXrefs(((IntactInteractor)inter).getDbXrefs());
-            if (inter instanceof Polymer){
-                ((Polymer)inter).getSequence().length();
-            }
-        }
-        return inter;
+    @Override
+    protected void initialiseOtherInteractorProperties(IntactInteractor inter) {
+        // initialise aliases
+        initialiseAliases(inter.getAliases());
     }
 
-    private boolean areInteractorCollectionsLazy(IntactInteractor inter) {
+    protected boolean areInteractorCollectionsLazy(IntactInteractor inter) {
         return !inter.areAliasesInitialized() || !inter.areXrefsInitialized()
                 || !inter.areAnnotationsInitialized();
     }
 
-    private boolean isInteractorInitialised(Interactor interactor) {
+    protected boolean isInteractorInitialised(Interactor interactor) {
         if(interactor instanceof IntactInteractor){
             IntactInteractor intactInteractor = (IntactInteractor)interactor;
             if (!intactInteractor.areXrefsInitialized()
