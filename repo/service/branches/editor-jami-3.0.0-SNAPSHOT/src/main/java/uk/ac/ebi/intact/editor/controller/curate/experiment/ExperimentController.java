@@ -17,7 +17,6 @@ package uk.ac.ebi.intact.editor.controller.curate.experiment;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.myfaces.orchestra.conversation.annotations.ConversationName;
-import org.hibernate.Hibernate;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.LazyDataModel;
@@ -129,9 +128,6 @@ public class ExperimentController extends AnnotatedObjectController {
     @Override
     protected void loadCautionMessages() {
         if (this.experiment != null){
-            if (!experiment.areAnnotationsInitialized()){
-                setExperiment(getExperimentService().initialiseExperimentAnnotations(this.experiment));
-            }
 
             Annotation caution = AnnotationUtils.collectFirstAnnotationWithTopic(this.experiment.getAnnotations(), Annotation.CAUTION_MI, Annotation.CAUTION);
             setCautionMessage(caution != null ? caution.getValue() : null);
@@ -328,38 +324,13 @@ public class ExperimentController extends AnnotatedObjectController {
     @Override
     protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
         IntactExperiment experiment = (IntactExperiment)annotatedObject;
-        if (!experiment.areAnnotationsInitialized()
-                || (experiment.getPublication() != null
-                && (((IntactPublication)experiment.getPublication()).areAnnotationsInitialized()
-                || ((IntactPublication)experiment.getPublication()).areXrefsInitialized()))
-                || !isCvInitialised(experiment.getParticipantIdentificationMethod())
-                || !isCvInitialised(experiment.getInteractionDetectionMethod())
-                || !isInitialiseInteractionEvidences(experiment.getInteractionEvidences())){
+        if (!getExperimentService().isExperimentFullyLoaded(experiment)){
             this.experiment = getExperimentService().reloadFullyInitialisedExperiment(experiment);
         }
 
         refreshInteractions();
 
         setDescription("Experiment: "+experiment.getShortLabel());
-    }
-
-    private boolean isInitialiseInteractionEvidences(Collection<InteractionEvidence> interactionEvidences) {
-        if(Hibernate.isInitialized(interactionEvidences)) {
-            for (InteractionEvidence ev : interactionEvidences){
-                if (!((IntactInteractionEvidence)ev).areAnnotationsInitialized()){
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private boolean isCvInitialised(CvTerm cv) {
-        if (cv instanceof IntactCvTerm){
-            IntactCvTerm intactCv = (IntactCvTerm)cv;
-            return intactCv.areXrefsInitialized() && intactCv.areAnnotationsInitialized();
-        }
-        return true;
     }
 
     @Override
@@ -619,9 +590,6 @@ public class ExperimentController extends AnnotatedObjectController {
 
     public String moveToPublication() {
         if (publicationToMoveTo != null && !publicationToMoveTo.isEmpty()) {
-            if (!experiment.areXrefsInitialized()){
-                experiment = getExperimentService().initialiseExperimentXrefs(experiment);
-            }
             IntactPublication publication = getExperimentService().loadPublicationByAcOrPubmedId(publicationToMoveTo);
 
             if (publication == null) {
@@ -679,11 +647,8 @@ public class ExperimentController extends AnnotatedObjectController {
         if (experiment == null){
             return 0;
         }
-        else if (experiment.areXrefsInitialized()){
+        else {
             return experiment.getXrefs().size();
-        }
-        else{
-            return getExperimentService().countXrefs(this.experiment);
         }
     }
 
@@ -691,11 +656,8 @@ public class ExperimentController extends AnnotatedObjectController {
         if (experiment == null){
             return 0;
         }
-        else if (experiment.areVariableParametersInitialized()){
-            return experiment.getVariableParameters().size();
-        }
         else{
-            return getExperimentService().countVariableParameters(this.experiment);
+            return experiment.getVariableParameters().size();
         }
     }
 
@@ -850,10 +812,7 @@ public class ExperimentController extends AnnotatedObjectController {
     }
 
     public List<Xref> collectXrefs() {
-        // xrefs are not always initialised
-        if (!experiment.areXrefsInitialized()){
-            setExperiment(getExperimentService().initialiseExperimentXrefs(this.experiment));
-        }
+        // xrefs are not always initialise
 
         List<Xref> xrefs = new ArrayList<Xref>(this.experiment.getXrefs());
         Collections.sort(xrefs, new AuditableComparator());
@@ -864,11 +823,6 @@ public class ExperimentController extends AnnotatedObjectController {
         if (experiment == null){
             return Collections.EMPTY_LIST;
         }
-        // params are not always initialised
-        if (!experiment.areVariableParametersInitialized()){
-            setExperiment(getExperimentService().initialiseExperimentVariableParameters(this.experiment));
-        }
-
         List<VariableParameter> variableParameters = new ArrayList<VariableParameter>(this.experiment.getVariableParameters());
         Collections.sort(variableParameters, new AuditableComparator());
         return variableParameters;

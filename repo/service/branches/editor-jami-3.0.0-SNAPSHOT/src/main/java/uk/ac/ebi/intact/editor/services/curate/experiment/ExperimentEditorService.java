@@ -22,10 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.CvTermUtils;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.ExperimentCloner;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.InteractionEvidenceCloner;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.model.lifecycle.Releasable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -54,51 +57,13 @@ public class ExperimentEditorService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactExperiment initialiseExperimentAnnotations(IntactExperiment experiment) {
-        // reload participant without flushing changes
-        IntactExperiment reloaded = reattachIntactObjectIfTransient(experiment, getIntactDao().getExperimentDao());
-        Collection<psidev.psi.mi.jami.model.Annotation> annotations = reloaded.getAnnotations();
-        initialiseAnnotations(annotations);
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactExperiment initialiseExperimentVariableParameters(IntactExperiment experiment) {
-        // reload participant without flushing changes
-        IntactExperiment reloaded = reattachIntactObjectIfTransient(experiment, getIntactDao().getExperimentDao());
-        Collection<VariableParameter> parameters = reloaded.getVariableParameters();
-        initialiseVariableParameters(parameters);
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactExperiment initialiseInteractionEvidences(IntactExperiment experiment) {
-        // reload participant without flushing changes
-        IntactExperiment reloaded = reattachIntactObjectIfTransient(experiment, getIntactDao().getExperimentDao());
-        Collection<InteractionEvidence> evidences = reloaded.getInteractionEvidences();
-        initialiseEvidences(evidences);
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactExperiment initialiseExperimentXrefs(IntactExperiment experiment) {
-        // reload participant without flushing changes
-        IntactExperiment reloaded = reattachIntactObjectIfTransient(experiment, getIntactDao().getExperimentDao());
-        Collection<Xref> xrefs = reloaded.getXrefs();
-        initialiseXrefs(xrefs);
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactExperiment loadExperimentByAc(String ac) {
+
+        return loadExperimentByAc(ac, false);
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public IntactExperiment loadExperimentByAc(String ac, boolean loadInteractions) {
         IntactExperiment experiment = getIntactDao().getEntityManager().find(IntactExperiment.class, ac);
 
         if (experiment != null){
@@ -109,6 +74,10 @@ public class ExperimentEditorService extends AbstractEditorService {
 
             // initialise annotations because needs caution
             initialiseAnnotations(experiment.getAnnotations());
+            // initialise xrefs
+            initialiseXrefs(experiment.getXrefs());
+            // initialise variable parameters
+            initialiseVariableParameters(experiment.getVariableParameters());
 
             // initialise publication annotations and xrefs
             if (experiment.getPublication() != null){
@@ -118,6 +87,10 @@ public class ExperimentEditorService extends AbstractEditorService {
 
             initialiseCv(experiment.getInteractionDetectionMethod());
             initialiseCv(experiment.getParticipantIdentificationMethod());
+
+            if (loadInteractions){
+                initialiseEvidences(experiment, experiment.getInteractionEvidences());
+            }
         }
 
         return experiment;
@@ -157,42 +130,56 @@ public class ExperimentEditorService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactExperiment reloadFullyInitialisedExperiment(IntactExperiment exp) {
-        IntactExperiment reloaded = reattachIntactObjectIfTransient(exp, getIntactDao().getExperimentDao());
+        if (exp == null){
+            return null;
+        }
+
+        IntactExperiment reloaded = null;
+        if (areExperimentCollectionsLazy(exp)
+                && exp.getAc() != null
+                && !getIntactDao().getEntityManager().contains(exp)){
+            reloaded = loadExperimentByAc(exp.getAc(), exp.areInteractionEvidencesInitialized());
+        }
+
+        // we need first to merge with reloaded complex
+        if (reloaded != null){
+            // detach reloaded now so not changes will be committed
+            getIntactDao().getEntityManager().detach(reloaded);
+            ExperimentCloner cloner = new ExperimentCloner(exp.areInteractionEvidencesInitialized());
+            cloner.copyInitialisedProperties(exp, reloaded);
+            exp = reloaded;
+        }
 
         // initialise annotations because needs caution
-        initialiseAnnotations(reloaded.getAnnotations());
+        initialiseAnnotations(exp.getAnnotations());
 
         // initialise publication annotations and xrefs
-        if (reloaded.getPublication() != null){
-            IntactPublication pub = (IntactPublication)reloaded.getPublication();
-            if (pub.getAc() != null && !getIntactDao().getEntityManager().contains(pub)){
-                pub = getIntactDao().getEntityManager().merge(pub);
-                reloaded.setPublication(pub);
+        if (exp.getPublication() != null && !isPublicationInitialised(exp.getPublication())){
+            Publication pub = initialisePublication(exp.getPublication());
+            if (pub != exp.getPublication()){
+                exp.setPublication(pub);
             }
-            initialiseXrefs(((IntactPublication)reloaded.getPublication()).getDbXrefs());
-            initialiseAnnotations(((IntactPublication)reloaded.getPublication()).getDbAnnotations());
-            getIntactDao().getEntityManager().detach(pub);
         }
 
         // initialise evidences if not done
-        if (reloaded.areInteractionEvidencesInitialized()){
-             initialiseEvidences(reloaded.getInteractionEvidences());
+        if (exp.areInteractionEvidencesInitialized()){
+             initialiseEvidences(exp, exp.getInteractionEvidences());
         }
 
-        CvTerm cv = initialiseCv(reloaded.getInteractionDetectionMethod());
-        if (cv != reloaded.getInteractionDetectionMethod()){
-            reloaded.setInteractionDetectionMethod(cv);
+        if (!isCvInitialised(exp.getInteractionDetectionMethod())){
+            CvTerm cv = initialiseCv(exp.getInteractionDetectionMethod());
+            if (cv != exp.getInteractionDetectionMethod()){
+                exp.setInteractionDetectionMethod(cv);
+            }
         }
-        if (reloaded.getParticipantIdentificationMethod() != null){
-            CvTerm cv2 = initialiseCv(reloaded.getParticipantIdentificationMethod());
-            if (cv2 != reloaded.getParticipantIdentificationMethod()){
-                reloaded.setParticipantIdentificationMethod(cv2);
+        if (exp.getParticipantIdentificationMethod() != null && !isCvInitialised(exp.getParticipantIdentificationMethod())){
+            CvTerm cv2 = initialiseCv(exp.getParticipantIdentificationMethod());
+            if (cv2 != exp.getParticipantIdentificationMethod()){
+                exp.setParticipantIdentificationMethod(cv2);
             }
         }
 
-        getIntactDao().getEntityManager().detach(reloaded);
-
-        return reloaded;
+        return exp;
     }
 
 
@@ -213,39 +200,44 @@ public class ExperimentEditorService extends AbstractEditorService {
         return pub;
     }
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public boolean isAccepted(IntactExperiment exp) {
-        IntactExperiment reloaded = reattachIntactObjectIfTransient(exp, getIntactDao().getExperimentDao());
-
-        boolean accepted = AnnotationUtils.collectAllAnnotationsHavingTopic(reloaded.getAnnotations(), null, Releasable.ACCEPTED)!=null;
-
-        getIntactDao().getEntityManager().detach(reloaded);
-
-        return accepted;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public boolean isRejected(IntactExperiment exp) {
-        IntactExperiment reloaded = reattachIntactObjectIfTransient(exp, getIntactDao().getExperimentDao());
-
-        boolean accepted = AnnotationUtils.collectAllAnnotationsHavingTopic(reloaded.getAnnotations(), null, Releasable.TO_BE_REVIEWED)!=null;
-
-        getIntactDao().getEntityManager().detach(reloaded);
-
-        return accepted;
-    }
-
-    private void initialiseEvidences(Collection<InteractionEvidence> evidences) {
-
-        for (InteractionEvidence ev : evidences){
-            ev.getExperiment();
-            initialiseAnnotations(((IntactInteractionEvidence)ev).getDbAnnotations());
+    private void initialiseEvidences(IntactExperiment parent, Collection<InteractionEvidence> evidences) {
+        Collection<InteractionEvidence> originalInteractions = new ArrayList<InteractionEvidence>(evidences);
+        InteractionEvidenceCloner cloner = new InteractionEvidenceCloner();
+        for (InteractionEvidence ev : originalInteractions){
+            if (ev instanceof IntactInteractionEvidence && !isInteractionEvidenceInitialised((IntactInteractionEvidence)ev)){
+                InteractionEvidence reloaded = initialiseInteraction(ev, cloner);
+                if (reloaded != ev){
+                    evidences.remove(ev);
+                    parent.addInteractionEvidence(reloaded);
+                }
+            }
         }
+    }
+
+    private InteractionEvidence initialiseInteraction(InteractionEvidence inter, InteractionEvidenceCloner interactionCloner) {
+        if (inter instanceof IntactInteractionEvidence){
+            if (((IntactInteractionEvidence) inter).areAnnotationsInitialized()
+                    && ((IntactInteractionEvidence)inter).getAc() != null && !getIntactDao().getEntityManager().contains(inter)){
+                IntactInteractionEvidence reloaded = getIntactDao().getEntityManager().find(IntactInteractionEvidence.class, ((IntactInteractionEvidence)inter).getAc());
+                if (reloaded != null){
+                    // initialise freshly loaded properties
+                    initialiseAnnotations(reloaded.getDbAnnotations());
+                    // detach object so no changes will be flushed
+                    getIntactDao().getEntityManager().detach(reloaded);
+                    interactionCloner.copyInitialisedProperties((IntactInteractionEvidence) inter, reloaded);
+                    // will return reloaded object
+                    inter = reloaded;
+                }
+            }
+            inter.getExperiment();
+            initialiseAnnotations(((IntactInteractor) inter).getDbAnnotations());
+        }
+        return inter;
     }
 
     private void initialiseVariableParameters(Collection<VariableParameter> parameters) {
         for (VariableParameter param : parameters){
-            if (param.getUnit() != null){
+            if (param.getUnit() != null && !isCvInitialised(param.getUnit())){
                 CvTerm unit = initialiseCv(param.getUnit());
                 if (unit != param.getUnit()){
                     param.setUnit(unit);
@@ -256,5 +248,81 @@ public class ExperimentEditorService extends AbstractEditorService {
                 Hibernate.initialize(param.getVariableValues());
             }
         }
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public boolean isExperimentFullyLoaded(IntactExperiment experiment){
+        if (experiment == null){
+            return true;
+        }
+        if (areExperimentCollectionsLazy(experiment)
+                || !isCvInitialised(experiment.getInteractionDetectionMethod())
+                || !areInteractionInitialised(experiment)
+                || (experiment.getParticipantIdentificationMethod() != null && !isCvInitialised(experiment.getParticipantIdentificationMethod()))){
+            return false;
+        }
+        return true;
+    }
+
+    private boolean areExperimentCollectionsLazy(IntactExperiment experiment) {
+        return !experiment.areAnnotationsInitialized()
+                || !experiment.areXrefsInitialized()
+                || !experiment.areVariableParametersInitialized();
+    }
+
+    private boolean areInteractionInitialised(IntactExperiment experiment) {
+        if (experiment.areInteractionEvidencesInitialized()){
+            for (InteractionEvidence ev : experiment.getInteractionEvidences()){
+                if (!isInteractionEvidenceInitialised((IntactInteractionEvidence) ev)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean isInteractionEvidenceInitialised(IntactInteractionEvidence ev) {
+        if (!ev.areAnnotationsInitialized()){
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isPublicationInitialised(Publication pub){
+        if (pub instanceof IntactPublication){
+            return !arePublicationCollectionsLazy((IntactPublication)pub);
+        }
+        return true;
+    }
+
+    private Publication initialisePublication(Publication det) {
+        if (det instanceof IntactPublication){
+            if (arePublicationCollectionsLazy((IntactPublication) det)
+                    && ((IntactPublication)det).getAc() != null
+                    && !getIntactDao().getEntityManager().contains(det)){
+                IntactPublication reloaded = getIntactDao().getEntityManager().find(IntactPublication.class, ((IntactPublication) det).getAc());
+                if (reloaded != null){
+                    // initialise properties freshly loaded from db
+                    initialiseXrefs(reloaded.getDbXrefs());
+                    initialiseAnnotations(reloaded.getDbAnnotations());
+
+                    // detach relaoded object so no changes will be flushed
+                    getIntactDao().getEntityManager().detach(reloaded);
+                    uk.ac.ebi.intact.editor.controller.curate.cloner.PublicationCloner cloner = new uk.ac.ebi.intact.editor.controller.curate.cloner.PublicationCloner();
+                    cloner.copyInitialisedProperties((IntactPublication)det, reloaded);
+                    // will return reloaded object
+                    det = reloaded;
+                }
+
+                // initialise properties freshly loaded from db
+                initialiseXrefs(((IntactPublication) det).getDbXrefs());
+                initialiseAnnotations(((IntactPublication) det).getDbAnnotations());
+            }
+        }
+        return det;
+    }
+
+    private boolean arePublicationCollectionsLazy(IntactPublication det) {
+        return !((IntactPublication) det).areAnnotationsInitialized() || !((IntactPublication) det).areXrefsInitialized();
     }
 }
