@@ -207,7 +207,7 @@ public class ComplexEditorService extends AbstractEditorService {
         // initialise parameters
         initialiseParameters(interactor.getModelledParameters());
 
-        return reloaded;
+        return interactor;
     }
 
     private boolean areComplexCollectionsLazy(IntactComplex interactor) {
