@@ -18,12 +18,13 @@ package uk.ac.ebi.intact.editor.services.curate.experiment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import psidev.psi.mi.jami.model.FeatureEvidence;
 import psidev.psi.mi.jami.model.InteractionEvidence;
 import psidev.psi.mi.jami.model.ParticipantEvidence;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.InteractorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentWrapper;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
-import uk.ac.ebi.intact.jami.model.extension.IntactExperiment;
-import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
+import uk.ac.ebi.intact.jami.model.extension.*;
 
 import javax.annotation.Resource;
 
@@ -49,29 +50,74 @@ public class ExperimentDetailedViewService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
     public ExperimentWrapper loadExperimentWrapper( IntactExperiment experiment ) {
-        IntactExperiment reloaded = reattachIntactObjectIfTransient(experiment, getIntactDao().getExperimentDao());
+        if (!isExperimentFullyInitialised(experiment)
+                && experiment.getAc() != null
+                && !getIntactDao().getEntityManager().contains(experiment)){
+            return loadExperimentWrapperByAc(experiment.getAc());
+        }
 
-        for (InteractionEvidence inter : reloaded.getInteractionEvidences()){
+        InteractorCloner cloner = new InteractorCloner();
+        for (InteractionEvidence inter : experiment.getInteractionEvidences()){
             for (ParticipantEvidence part : inter.getParticipants()){
-                initialiseParticipant(part);
+                initialiseParticipant(part, cloner);
             }
         }
-        ExperimentWrapper experimentWrapper = new ExperimentWrapper(reloaded);
-
-        getIntactDao().getEntityManager().detach(reloaded);
+        ExperimentWrapper experimentWrapper = new ExperimentWrapper(experiment);
 
         return experimentWrapper;
     }
 
-    private void initialiseParticipant(ParticipantEvidence det) {
+    private void initialiseParticipant(ParticipantEvidence det, InteractorCloner cloner) {
         IntactInteractor interactor = (IntactInteractor)det.getInteractor();
-        if (interactor.getAc() != null && !getIntactDao().getEntityManager().contains(interactor)){
-            interactor = getIntactDao().getEntityManager().merge(interactor);
-            det.setInteractor(interactor);
+        if (!isInteractorInitialised(interactor)){
+            IntactInteractor interactorReloaded = (IntactInteractor)initialiseInteractor(interactor, cloner);
+            if (interactorReloaded != interactor){
+                det.setInteractor(interactor);
+            }
         }
         initialiseXrefs(interactor.getDbXrefs());
         initialiseAnnotations(interactor.getDbAnnotations());
+    }
 
-        getIntactDao().getEntityManager().detach(interactor);
+    private boolean isExperimentFullyInitialised(IntactExperiment experiment){
+
+        if (!experiment.areInteractionEvidencesInitialized() || !experiment.areAnnotationsInitialized()){
+            return false;
+        }
+        else{
+            for (InteractionEvidence inter : experiment.getInteractionEvidences()){
+                if (inter instanceof IntactInteractionEvidence){
+                    IntactInteractionEvidence ev = (IntactInteractionEvidence)inter;
+
+                    if (!ev.areParticipantsInitialized()){
+                        return false;
+                    }
+                    else if (!ev.areXrefsInitialized() || !ev.areParametersInitialized() || !ev.areAnnotationsInitialized()){
+                        return false;
+                    }
+                    else{
+                        for (ParticipantEvidence p : ev.getParticipants()){
+                            if (p instanceof IntactParticipantEvidence){
+                                IntactParticipantEvidence part = (IntactParticipantEvidence)p;
+                                if (!part.areFeaturesInitialized()){
+                                    return false;
+                                }
+                                else{
+                                    for (FeatureEvidence f : part.getFeatures()){
+                                        if (f instanceof IntactFeatureEvidence){
+                                            IntactFeatureEvidence feat = (IntactFeatureEvidence)f;
+                                            if (!feat.areLinkedFeaturesInitialized() || !feat.areRangesInitialized()){
+                                                return false;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 }
