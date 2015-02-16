@@ -129,8 +129,10 @@ public class UserAdminService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public User loadMentorReviewer(User user) {
         User mentor = UserUtils.getMentorReviewer(getIntactDao().getUserDao(), user);
-        Hibernate.initialize(mentor.getRoles());
-        Hibernate.initialize(mentor.getPreferences());
+        if (mentor != null){
+            Hibernate.initialize(mentor.getRoles());
+            Hibernate.initialize(mentor.getPreferences());
+        }
         return mentor;
     }
 
