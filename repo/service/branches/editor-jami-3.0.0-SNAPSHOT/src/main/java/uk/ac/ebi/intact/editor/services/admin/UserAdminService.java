@@ -2,6 +2,7 @@ package uk.ac.ebi.intact.editor.services.admin;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Hibernate;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.SelectableDataModelWrapper;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -127,7 +128,10 @@ public class UserAdminService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public User loadMentorReviewer(User user) {
-        return UserUtils.getMentorReviewer(getIntactDao().getUserDao(), user);
+        User mentor = UserUtils.getMentorReviewer(getIntactDao().getUserDao(), user);
+        Hibernate.initialize(mentor.getRoles());
+        Hibernate.initialize(mentor.getPreferences());
+        return mentor;
     }
 
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)

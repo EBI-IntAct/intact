@@ -78,12 +78,16 @@ public class ApplicationInfoController extends BaseController {
                 getApplicationInfoService().saveApplicationProperties(this.application);
             } catch (SynchronizerException e) {
                 addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+                log.error("Cannot save application details ", e);
             } catch (FinderException e) {
                 addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+                log.error("Cannot save application details ", e);
             } catch (PersisterException e) {
                 addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+                log.error("Cannot save application details ", e);
             }catch (Throwable e) {
                 addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+                log.error("Cannot save application details ", e);
             }
         }
     }
@@ -96,12 +100,16 @@ public class ApplicationInfoController extends BaseController {
                 this.application = getApplicationInfoService().persistConfig(this.application, getEditorConfig(), getIntactConfiguration());
             } catch (SynchronizerException e) {
                 addErrorMessage("Cannot save application details ", e.getCause()+": "+e.getMessage());
+                log.error("Cannot save application details ", e);
             } catch (FinderException e) {
                 addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+                log.error("Cannot save application details ", e);
             } catch (PersisterException e) {
                 addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+                log.error("Cannot save application details ", e);
             }catch (Throwable e) {
                 addErrorMessage("Cannot save application details ", e.getCause() + ": " + e.getMessage());
+                log.error("Cannot save application details ", e);
             }
         }
     }

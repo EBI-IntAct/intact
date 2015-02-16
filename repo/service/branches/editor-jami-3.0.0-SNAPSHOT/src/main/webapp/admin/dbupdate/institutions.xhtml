@@ -33,7 +33,7 @@
                             <h:selectOneMenu value="#{institutionAdminController.mergeDestinationInstitution}">
                                 <f:selectItem itemLabel="-- Merge into --" itemValue="#{null}"
                                               noSelectionOption="true"/>
-                                <f:selectItems value="#{institutionAdminService.institutionItems}"/>
+                                <f:selectItems value="#{institutionAdminController.institutionItems}"/>
                             </h:selectOneMenu>
                             <p:commandButton value="Merge" actionListener="#{institutionAdminController.mergeSelected}"
                                              onstart="mergeDialog.show();"
