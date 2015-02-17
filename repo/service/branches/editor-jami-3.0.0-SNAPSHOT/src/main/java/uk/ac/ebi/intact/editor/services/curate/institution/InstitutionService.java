@@ -21,15 +21,12 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import psidev.psi.mi.jami.model.Alias;
-import psidev.psi.mi.jami.model.Annotation;
-import psidev.psi.mi.jami.model.Xref;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.InstitutionCloner;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.jami.model.extension.IntactSource;
 
 import javax.faces.model.SelectItem;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -86,37 +83,6 @@ public class InstitutionService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactSource initialiseSourceXrefs(IntactSource cv) {
-        // reload IntactInteractionEvidence without flushing changes
-        IntactSource reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getSourceDao());
-        Collection<Xref> xrefs = reloaded.getDbXrefs();
-        initialiseXrefs(xrefs);
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactSource initialiseSourceAnnotations(IntactSource cv) {
-        // reload IntactInteractionEvidence without flushing changes
-        IntactSource reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getSourceDao());
-        Collection<Annotation> annotations = reloaded.getDbAnnotations();
-        initialiseAnnotations(annotations);
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactSource initialiseSourceSynonyms(IntactSource cv) {
-        // reload IntactInteractionEvidence without flushing changes
-        IntactSource reloaded = reattachIntactObjectIfTransient(cv, getIntactDao().getSourceDao());
-        Collection<Alias> aliases = reloaded.getSynonyms();
-        initialiseAliases(aliases);
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public int countXrefs(IntactSource cv) {
         return getIntactDao().getSourceDao().countXrefsForSource(cv.getAc());
     }
@@ -140,6 +106,8 @@ public class InstitutionService extends AbstractEditorService {
             initialiseXrefs(cv.getDbXrefs());
             // initialise annotations because needs caution, url, etc
             initialiseAnnotations(cv.getDbAnnotations());
+            // initialise aliases
+            initialiseAliases(cv.getSynonyms());
         }
 
         return cv;
@@ -147,15 +115,46 @@ public class InstitutionService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactSource reloadFullyInitialisedSource(IntactSource cv) {
-        IntactSource reloaded = getIntactDao().getEntityManager().merge(cv);
+        if (cv == null){
+            return null;
+        }
+        IntactSource reloaded = null;
+        if (areSourceCollectionsLazy(cv)
+                && cv.getAc() != null
+                && !getIntactDao().getEntityManager().contains(cv)){
+            reloaded = loadSourceByAc(cv.getAc());
+        }
+
+        // we need first to merge with reloaded complex
+        if (reloaded != null){
+            // detach reloaded now so not changes will be committed
+            getIntactDao().getEntityManager().detach(reloaded);
+            InstitutionCloner cloner = new InstitutionCloner();
+            cloner.copyInitialisedProperties(cv, reloaded);
+            cv = reloaded;
+        }
 
         // initialise xrefs because are first tab visible
         initialiseXrefs(reloaded.getDbXrefs());
         // initialise annotations because needs caution
         initialiseAnnotations(reloaded.getDbAnnotations());
-
-        getIntactDao().getEntityManager().detach(reloaded);
+        // initialise aliases
+        initialiseAliases(cv.getSynonyms());
 
         return cv;
+    }
+
+    private boolean areSourceCollectionsLazy(IntactSource cv) {
+        return !cv.areAnnotationsInitialized()
+                || !cv.areXrefsInitialized()
+                || !cv.areSynonymsInitialized();
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public boolean isSourceFullyLoaded(IntactSource cv){
+        if (cv == null){
+            return true;
+        }
+        return !areSourceCollectionsLazy(cv);
     }
 }

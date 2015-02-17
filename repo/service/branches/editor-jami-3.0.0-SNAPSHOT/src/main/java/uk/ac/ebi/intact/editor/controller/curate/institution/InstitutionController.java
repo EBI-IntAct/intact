@@ -74,9 +74,6 @@ public class InstitutionController extends AnnotatedObjectController {
     @Override
     protected void loadCautionMessages() {
         if (this.institution != null){
-            if (!institution.areAnnotationsInitialized()){
-                setInstitution(getInstitutionService().initialiseSourceAnnotations(this.institution));
-            }
 
             Annotation caution = AnnotationUtils.collectFirstAnnotationWithTopic(this.institution.getAnnotations(), Annotation.CAUTION_MI, Annotation.CAUTION);
             setCautionMessage(caution != null ? caution.getValue() : null);
@@ -91,8 +88,7 @@ public class InstitutionController extends AnnotatedObjectController {
     @Override
     protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
         IntactSource institution = (IntactSource)annotatedObject;
-        if (!institution.areAnnotationsInitialized()
-                || !institution.areXrefsInitialized()) {
+        if (!getInstitutionService().isSourceFullyLoaded(institution)) {
             this.institution = getInstitutionService().reloadFullyInitialisedSource(institution);
         }
 
@@ -184,11 +180,8 @@ public class InstitutionController extends AnnotatedObjectController {
         if (institution == null){
             return 0;
         }
-        else if (institution.areSynonymsInitialized()){
-            return institution.getSynonyms().size();
-        }
         else {
-            return getInstitutionService().countAliases(institution);
+            return institution.getSynonyms().size();
         }
     }
 
@@ -337,10 +330,6 @@ public class InstitutionController extends AnnotatedObjectController {
     }
 
     public List<Alias> collectAliases() {
-        // aliases are not always initialised
-        if (!this.institution.areSynonymsInitialized()){
-            setInstitution(getInstitutionService().initialiseSourceSynonyms(this.institution));
-        }
 
         List<Alias> aliases = new ArrayList<Alias>(this.institution.getSynonyms());
         Collections.sort(aliases, new AuditableComparator());
