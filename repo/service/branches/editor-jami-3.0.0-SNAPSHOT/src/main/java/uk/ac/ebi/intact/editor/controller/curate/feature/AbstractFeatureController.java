@@ -92,10 +92,6 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     @Override
     protected void loadCautionMessages() {
         if (this.feature != null){
-            if (!feature.areAnnotationsInitialized()){
-                setFeature(getFeatureEditorService().initialiseFeatureAnnotations(this.feature));
-            }
-
             Annotation caution = AnnotationUtils.collectFirstAnnotationWithTopic(this.feature.getAnnotations(), Annotation.CAUTION_MI, Annotation.CAUTION);
             setCautionMessage(caution != null ? caution.getValue() : null);
             Annotation internal = AnnotationUtils.collectFirstAnnotationWithTopic(this.feature.getAnnotations(), null, "remark-internal");
@@ -286,11 +282,8 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         if (feature == null){
             return 0;
         }
-        else if (feature.areXrefsInitialized()){
+        else {
             return feature.getDbXrefs().size();
-        }
-        else{
-            return getFeatureEditorService().countXrefs(this.feature);
         }
     }
 
@@ -299,11 +292,8 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         if (feature == null){
             return 0;
         }
-        else if (feature.areAliasesInitialized()){
+        else {
             return feature.getAliases().size();
-        }
-        else{
-            return getFeatureEditorService().countAliases(this.feature);
         }
     }
 
@@ -414,12 +404,8 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     @Override
     protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
         T feature = (T) annotatedObject;
-        if (!feature.areAnnotationsInitialized()
-                || !isCvInitialised(feature.getType())
-                || !isCvInitialised(feature.getRole())
-                || !isInitialisedParticipant(feature.getParticipant())
-                || !feature.areRangesInitialized()) {
-            this.feature = getFeatureEditorService().reloadFullyInitialisedFeature(feature);
+        if (!getFeatureEditorService().isFeatureFullyLoaded(feature)) {
+            this.feature = getFeatureEditorService().reloadFullyInitialisedFeature(feature, newClonerInstance());
         }
 
         if (feature.getParticipant() != null && feature.getParticipant().getInteractor() instanceof Complex){
@@ -473,7 +459,7 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
             return 0;
         }
         else{
-            return getFeatureEditorService().countRanges(this.feature);
+            return this.feature.getRanges().size();
         }
     }
 
@@ -501,10 +487,6 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     }
 
     public List<Alias> collectAliases() {
-        // aliases are not always initialised
-        if (!feature.areAliasesInitialized()){
-            setFeature(getFeatureEditorService().initialiseFeatureAliases(this.feature));
-        }
 
         List<Alias> aliases = new ArrayList<Alias>(this.feature.getAliases());
         Collections.sort(aliases, new AuditableComparator());
@@ -512,10 +494,6 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
     }
 
     public List<Xref> collectXrefs() {
-        // xrefs are not always initialised
-        if (!feature.areXrefsInitialized()){
-            setFeature(getFeatureEditorService().initialiseFeatureXrefs(this.feature));
-        }
 
         List<Xref> xrefs = new ArrayList<Xref>(this.feature.getDbXrefs());
         Collections.sort(xrefs, new AuditableComparator());

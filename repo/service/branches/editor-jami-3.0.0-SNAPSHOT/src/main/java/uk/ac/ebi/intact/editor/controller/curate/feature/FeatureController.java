@@ -172,11 +172,8 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
         if (getFeature() == null){
             return 0;
         }
-        else if (getFeature().areParametersInitialized()){
+        else {
             return getFeature().getParameters().size();
-        }
-        else{
-            return getFeatureEditorService().countParameters(getFeature());
         }
     }
 
@@ -184,11 +181,8 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
         if (getFeature() == null){
             return 0;
         }
-        else if (getFeature().areDetectionMethodsInitialized()){
+        else {
             return getFeature().getDetectionMethods().size();
-        }
-        else{
-            return getFeatureEditorService().countDetectionMethods(getFeature());
         }
     }
 
@@ -373,10 +367,6 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     }
 
     public List<Parameter> collectParameters() {
-        // xrefs are not always initialised
-        if (!getFeature().areParametersInitialized()){
-            setFeature(getFeatureEditorService().initialiseFeatureParameters(getFeature()));
-        }
 
         List<Parameter> variableParameters = new ArrayList<Parameter>(getFeature().getParameters());
         Collections.sort(variableParameters, new AuditableComparator());
@@ -384,10 +374,6 @@ public class FeatureController extends AbstractFeatureController<IntactFeatureEv
     }
 
     public List<CvTerm> collectDetectionMethods() {
-        // cvs are not always initialised
-        if (!getFeature().areDetectionMethodsInitialized()){
-            setFeature(getFeatureEditorService().initialiseFeatureDetectionMethods(getFeature()));
-        }
 
         List<CvTerm> methods = new ArrayList<CvTerm>(getFeature().getDetectionMethods());
         Collections.sort(methods, new AuditableComparator());

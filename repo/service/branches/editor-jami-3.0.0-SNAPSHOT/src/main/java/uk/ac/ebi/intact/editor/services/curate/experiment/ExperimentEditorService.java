@@ -152,6 +152,10 @@ public class ExperimentEditorService extends AbstractEditorService {
 
         // initialise annotations because needs caution
         initialiseAnnotations(exp.getAnnotations());
+        // initialise xrefs
+        initialiseXrefs(exp.getXrefs());
+        // initialise variable parameters
+        initialiseVariableParameters(exp.getVariableParameters());
 
         // initialise publication annotations and xrefs
         if (exp.getPublication() != null && !isPublicationInitialised(exp.getPublication())){
@@ -258,7 +262,8 @@ public class ExperimentEditorService extends AbstractEditorService {
         if (areExperimentCollectionsLazy(experiment)
                 || !isCvInitialised(experiment.getInteractionDetectionMethod())
                 || !areInteractionInitialised(experiment)
-                || (experiment.getParticipantIdentificationMethod() != null && !isCvInitialised(experiment.getParticipantIdentificationMethod()))){
+                || (experiment.getParticipantIdentificationMethod() != null && !isCvInitialised(experiment.getParticipantIdentificationMethod()))
+                || (experiment.getPublication() != null && !isPublicationInitialised(experiment.getPublication()))){
             return false;
         }
         return true;

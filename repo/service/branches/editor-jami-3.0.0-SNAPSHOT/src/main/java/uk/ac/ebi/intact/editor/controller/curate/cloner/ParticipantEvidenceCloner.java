@@ -83,6 +83,7 @@ public class ParticipantEvidenceCloner extends AbstractEditorCloner<ParticipantE
         target.setStoichiometry(source.getStoichiometry());
         target.setExperimentalRole(source.getExperimentalRole());
         target.setExpressedInOrganism(source.getExpressedInOrganism());
+        target.setInteraction(source.getInteraction());
         if (source.areAliasesInitialized()){
             target.getAliases().clear();
             target.getAliases().addAll(source.getAliases());
