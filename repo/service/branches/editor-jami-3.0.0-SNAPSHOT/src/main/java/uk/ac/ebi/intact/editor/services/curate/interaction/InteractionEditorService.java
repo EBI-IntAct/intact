@@ -110,9 +110,7 @@ public class InteractionEditorService extends AbstractEditorService {
         // reload feature without flushing changes
         IntactInteractionEvidence reloaded = reattachIntactObjectIfTransient(interaction, getIntactDao().getInteractionDao());
         Collection<Confidence> dets = reloaded.getConfidences();
-        for (Confidence det : dets){
-            initialiseConfidence(det);
-        }
+        initialiseConfidence(dets);
 
         getIntactDao().getEntityManager().detach(reloaded);
         return reloaded;

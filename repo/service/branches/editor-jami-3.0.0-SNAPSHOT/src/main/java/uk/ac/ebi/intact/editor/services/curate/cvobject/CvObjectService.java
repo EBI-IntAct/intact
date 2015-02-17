@@ -130,62 +130,10 @@ public class CvObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public void clearAll(){
-        synchronized (this){
-            if (isInitialised){
-                this.allCvObjectMap.clear();
-                this.acCvObjectMap.clear();
-                this.publicationTopicSelectItems=null;
-                this.experimentTopicSelectItems=null;
-                this.interactionTopicSelectItems=null;
-                this.interactorTopicSelectItems=null;
-                this.participantTopicSelectItems=null;
-                this.featureTopicSelectItems=null;
-                this.complexTopicSelectItems=null;
-                this.cvObjectTopicSelectItems=null;
-                this.noClassSelectItems=null;
-                this.databaseSelectItems=null;
-                this.qualifierSelectItems=null;
-                this.aliasTypeSelectItems=null;
-                this.interactionDetectionMethodSelectItems=null;
-                this.participantDetectionMethodSelectItems=null;
-                this.participantExperimentalPreparationsSelectItems=null;
-                this.interactionTypeSelectItems=null;
-                this.interactorTypeSelectItems=null;
-                this.experimentalRoleSelectItems=null;
-                this.biologicalRoleSelectItems=null;
-                this.featureDetectionMethodSelectItems=null;
-                this.featureTypeSelectItems=null;
-                this.fuzzyTypeSelectItems=null;
-                this.cellTypeSelectItems=null;
-                this.tissueSelectItems=null;
-                this.parameterTypeSelectItems=null;
-                this.parameterUnitSelectItems=null;
-                this.confidenceTypeSelectItems=null;
-                this.featureRoleSelectItems=null;
-                this.complexTypeSelectItems=null;
-                this.evidenceTypeSelectItems=null;
-                this.defaultExperimentalRole=null;
-                this.defaultBiologicalRole=null;
-                this.proteinTypeSelectItems=null;
-                this.bioactiveEntitySelectItems=null;
-                this.nucleicAcidSelectItems=null;
-                this.polymerTypeSelectItems=null;
-                this.moleculeSetTypeSelectItems=null;
-                this.geneTypeSelectItems=null;
-                isInitialised=false;
-            }
-        }
-        loadData();
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void loadData( ) {
         if ( log.isDebugEnabled() ) log.debug( "Loading Controlled Vocabularies" );
 
         synchronized (this){
-            publicationTopicSelectItems = new ArrayList<SelectItem>();
-
             String cvQuery = "select c from IntactCvTerm c " +
                     "where c.ac not in (" +
                     " select c2.ac from IntactCvTerm c2 join c2.dbAnnotations as a join a.topic as t " +
@@ -461,6 +409,289 @@ public class CvObjectService extends AbstractEditorService {
             }
 
             isInitialised=true;
+        }
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public void refreshCvs(String objClass){
+         if (objClass != null){
+             if (objClass.equals(IntactUtils.ALIAS_TYPE_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.ALIAS_TYPE_OBJCLASS, this.aliasTypeSelectItems, null, "-- Select type --");
+             }
+             else if (objClass.equals(IntactUtils.QUALIFIER_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.QUALIFIER_OBJCLASS, this.qualifierSelectItems, null, "-- Select qualifier --");
+             }
+             else if (objClass.equals(IntactUtils.DATABASE_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.DATABASE_OBJCLASS, this.databaseSelectItems, "ECO:", "-- Select database --");
+
+                 refreshDependencies(this.evidenceTypeSelectItems, "MI:1331", IntactUtils.DATABASE_OBJCLASS, "Select evidence type", false);
+             }
+             else if (objClass.equals(IntactUtils.TOPIC_OBJCLASS)){
+
+                 refreshAllTopics();
+
+                 refreshDependencies(this.featureRoleSelectItems, "MI:0925", IntactUtils.TOPIC_OBJCLASS, "Select role", true);
+             }
+             else if (objClass.equals(IntactUtils.BIOLOGICAL_ROLE_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.BIOLOGICAL_ROLE_OBJCLASS, this.biologicalRoleSelectItems, null, "-- Select biological role --");
+             }
+             else if (objClass.equals(IntactUtils.CELL_TYPE_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.CELL_TYPE_OBJCLASS, this.cellTypeSelectItems, null, "-- Select cell type --");
+             }
+             else if (objClass.equals(IntactUtils.CONFIDENCE_TYPE_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.CONFIDENCE_TYPE_OBJCLASS, this.confidenceTypeSelectItems, null, "-- Select type --");
+             }
+             else if (objClass.equals(IntactUtils.EXPERIMENTAL_ROLE_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.EXPERIMENTAL_ROLE_OBJCLASS, this.experimentalRoleSelectItems, null, "-- Select experimental role --");
+             }
+             else if (objClass.equals(IntactUtils.FEATURE_METHOD_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.FEATURE_METHOD_OBJCLASS, this.featureDetectionMethodSelectItems, null, "-- Select method --");
+             }
+             else if (objClass.equals(IntactUtils.FEATURE_TYPE_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.FEATURE_TYPE_OBJCLASS, this.featureTypeSelectItems, null, "-- Select type --");
+             }
+             else if (objClass.equals(IntactUtils.INTERACTION_DETECTION_METHOD_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.INTERACTION_DETECTION_METHOD_OBJCLASS, this.interactionDetectionMethodSelectItems, null, "-- Select detection method --");
+             }
+             else if (objClass.equals(IntactUtils.INTERACTION_TYPE_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.INTERACTION_TYPE_OBJCLASS, this.interactionTypeSelectItems, null, "-- Select type --");
+             }
+             else if (objClass.equals(IntactUtils.INTERACTOR_TYPE_OBJCLASS)){
+                 // reset all interactor types
+                 refreshSelectItems(IntactUtils.INTERACTOR_TYPE_OBJCLASS, this.interactorTypeSelectItems, null, "-- Select type --");
+                 // reset specialiased types
+                 // complex type
+                 refreshDependencies(this.complexTypeSelectItems, Complex.COMPLEX_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select complex type --", true);
+
+                 // nucleic acid type
+                 refreshDependencies(this.nucleicAcidSelectItems, NucleicAcid.NULCEIC_ACID_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select type --", true);
+
+                 // polymer and protein type
+                 List<SelectItem> proteins = new ArrayList<SelectItem>(proteinTypeSelectItems);
+                 List<SelectItem> peptides = new ArrayList<SelectItem>();
+                 refreshDependencies(this.polymerTypeSelectItems, Polymer.POLYMER_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select type --", true);
+                 synchronized (this.proteinTypeSelectItems){
+                     refreshDependencies(proteins, Protein.PROTEIN, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select type --", true);
+                     refreshDependencies(peptides, Protein.PEPTIDE, IntactUtils.INTERACTOR_TYPE_OBJCLASS, null, true);
+
+                     this.proteinTypeSelectItems.clear();
+                     this.proteinTypeSelectItems.addAll(proteins);
+                     this.proteinTypeSelectItems.addAll(peptides);
+                 }
+
+                 // gene type
+                 refreshDependencies(this.geneTypeSelectItems, Gene.GENE_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select type --", true);
+
+                 // molecule set type
+                 refreshDependencies(this.moleculeSetTypeSelectItems, InteractorPool.MOLECULE_SET_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select type --", true);
+
+                 // bioactive entity type
+                 refreshDependencies(this.bioactiveEntitySelectItems, BioactiveEntity.BIOACTIVE_ENTITY_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select type --", true);
+             }
+             else if (objClass.equals(IntactUtils.LIFECYCLE_EVENT_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.LIFECYCLE_EVENT_OBJCLASS, null, null, null);
+             }
+             else if (objClass.equals(IntactUtils.PARAMETER_TYPE_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.PARAMETER_TYPE_OBJCLASS, parameterTypeSelectItems, null, null);
+             }
+             else if (objClass.equals(IntactUtils.PARTICIPANT_DETECTION_METHOD_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.PARTICIPANT_DETECTION_METHOD_OBJCLASS, participantDetectionMethodSelectItems, null, "-- Select identification method --");
+             }
+             else if (objClass.equals(IntactUtils.PARTICIPANT_EXPERIMENTAL_PREPARATION_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.PARTICIPANT_EXPERIMENTAL_PREPARATION_OBJCLASS, participantExperimentalPreparationsSelectItems, null, "-- Select experimental preparation --");
+             }
+             else if (objClass.equals(IntactUtils.PUBLICATION_STATUS_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.PUBLICATION_STATUS_OBJCLASS, null, null, null);
+             }
+             else if (objClass.equals(IntactUtils.RANGE_STATUS_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.RANGE_STATUS_OBJCLASS, fuzzyTypeSelectItems, null, "-- Select status --");
+             }
+             else if (objClass.equals(IntactUtils.UNIT_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.UNIT_OBJCLASS, parameterUnitSelectItems, null, "-- Select unit --");
+             }
+             else if (objClass.equals(IntactUtils.TISSUE_OBJCLASS)){
+                 refreshSelectItems(IntactUtils.TISSUE_OBJCLASS, tissueSelectItems, null, "-- Select tissue --");
+             }
+         }
+    }
+
+    private void refreshAllTopics() {
+        HashMultimap<String, IntactCvTerm> cvObjectsByUsedInClass = HashMultimap.create();
+        HashMultimap<String, IntactCvTerm> cvObjectsByClass = HashMultimap.create();
+
+        final Collection<IntactCvTerm> topics = getIntactDao().getCvTermDao().getByObjClass(IntactUtils.TOPIC_OBJCLASS);
+
+        for ( IntactCvTerm cvObject : topics ) {
+            cvObjectsByClass.put(cvObject.getObjClass(), cvObject);
+            Hibernate.initialize(cvObject.getDbXrefs());
+            String[] usedInClasses = findUsedInClass( cvObject );
+
+            for ( String usedInClass : usedInClasses ) {
+                cvObjectsByUsedInClass.put( usedInClass, cvObject );
+            }
+
+            if ( usedInClasses.length == 0 ) {
+                cvObjectsByUsedInClass.put(NO_CLASS, cvObject );
+            }
+        }
+
+        // topics
+        final List<IntactCvTerm> publicationTopics = getSortedTopicList("uk.ac.ebi.intact.model.Publication", cvObjectsByUsedInClass);
+        final List<IntactCvTerm>experimentTopics = getSortedTopicList("uk.ac.ebi.intact.model.Experiment", cvObjectsByUsedInClass);
+        final List<IntactCvTerm>interactionTopics = getSortedTopicList( "uk.ac.ebi.intact.model.Interaction", cvObjectsByUsedInClass);
+        final List<IntactCvTerm>interactorTopics = getSortedTopicList( "uk.ac.ebi.intact.model.Interactor", cvObjectsByUsedInClass);
+        interactorTopics.addAll(getSortedTopicList("uk.ac.ebi.intact.model.NulceicAcid", cvObjectsByUsedInClass));
+        interactorTopics.addAll(getSortedTopicList("uk.ac.ebi.intact.model.SmallMolecule", cvObjectsByUsedInClass));
+        interactorTopics.addAll(getSortedTopicList("uk.ac.ebi.intact.model.Protein", cvObjectsByUsedInClass));
+        final List<IntactCvTerm>participantTopics = getSortedTopicList( "uk.ac.ebi.intact.model.Component", cvObjectsByUsedInClass);
+        final List<IntactCvTerm>featureTopics = getSortedTopicList( "uk.ac.ebi.intact.model.Feature", cvObjectsByUsedInClass);
+        final List<IntactCvTerm>cvObjectTopics = getSortedTopicList( "uk.ac.ebi.intact.model.CvObject", cvObjectsByUsedInClass);
+        final Set<IntactCvTerm> complexTopics = new HashSet<IntactCvTerm>(getSortedTopicList(IntactComplex.class.getCanonicalName(), cvObjectsByUsedInClass));
+        complexTopics.addAll(interactionTopics);
+        interactorTopics.addAll(complexTopics);
+        final List<IntactCvTerm>noClassTopics = getSortedTopicList( NO_CLASS, cvObjectsByUsedInClass);
+
+        // select items
+        noClassSelectItems = createSelectItems(noClassTopics, null);
+
+        SelectItemGroup noClassSelectItemGroup = new SelectItemGroup("Not classified");
+        noClassSelectItemGroup.setSelectItems(noClassSelectItems.toArray(new SelectItem[noClassSelectItems.size()]));
+
+        SelectItemGroup pubSelectItemGroup = new SelectItemGroup("Publication");
+        List<SelectItem> pubTopicSelectItems = createSelectItems(publicationTopics, null);
+        pubSelectItemGroup.setSelectItems(pubTopicSelectItems.toArray(new SelectItem[pubTopicSelectItems.size()]));
+
+        SelectItemGroup expSelectItemGroup = new SelectItemGroup("Experiment");
+        List<SelectItem> expTopicSelectItems = createSelectItems(experimentTopics, null);
+        expSelectItemGroup.setSelectItems(expTopicSelectItems.toArray(new SelectItem[expTopicSelectItems.size()]));
+
+        synchronized (publicationTopicSelectItems){
+            publicationTopicSelectItems = new ArrayList<SelectItem>();
+            publicationTopicSelectItems.add( new SelectItem( null, "-- Select topic --", "-- Select topic --", false, false, true ) );
+            publicationTopicSelectItems.add(pubSelectItemGroup);
+            publicationTopicSelectItems.add(expSelectItemGroup);
+            publicationTopicSelectItems.add(noClassSelectItemGroup);
+        }
+
+        synchronized (experimentTopicSelectItems){
+            experimentTopicSelectItems = createSelectItems( experimentTopics, "-- Select topic --" );
+            experimentTopicSelectItems.add(noClassSelectItemGroup);
+        }
+
+        synchronized (interactionTopicSelectItems){
+            interactionTopicSelectItems = createSelectItems( interactionTopics, "-- Select topic --" );
+            interactionTopicSelectItems.add(noClassSelectItemGroup);
+        }
+        synchronized (interactorTopicSelectItems){
+            SelectItemGroup interactorSelectItemGroup = new SelectItemGroup("Interactor");
+            interactorTopicSelectItems = createSelectItems(interactorTopics, null);
+            interactorSelectItemGroup.setSelectItems(interactorTopicSelectItems.toArray(new SelectItem[interactorTopicSelectItems.size()]));
+
+            interactorTopicSelectItems = new ArrayList<SelectItem>();
+            interactorTopicSelectItems.add( new SelectItem( null, "-- Select topic --", "-- Select topic --", false, false, true ) );
+            interactorTopicSelectItems.add(interactorSelectItemGroup);
+            interactorTopicSelectItems.add(noClassSelectItemGroup);
+        }
+        synchronized (participantTopicSelectItems) {
+            participantTopicSelectItems = createSelectItems( participantTopics, "-- Select topic --" );
+            participantTopicSelectItems.add(noClassSelectItemGroup);
+        }
+        synchronized (featureTopicSelectItems) {
+            featureTopicSelectItems = createSelectItems( featureTopics, "-- Select topic --" );
+            featureTopicSelectItems.add(noClassSelectItemGroup);
+        }
+        synchronized (cvObjectTopicSelectItems){
+            cvObjectTopicSelectItems = createSelectItems( cvObjectTopics, "-- Select topic --" );
+            cvObjectTopicSelectItems.add(noClassSelectItemGroup);
+        }
+        synchronized (complexTopicSelectItems){
+            complexTopicSelectItems = createSelectItems( complexTopics, "-- Select topic --" );
+            complexTopicSelectItems.add(noClassSelectItemGroup);
+        }
+    }
+
+    private void refreshDependencies(List<SelectItem> items, String MIIdentifier, String objClass, String select, boolean addParent) {
+        synchronized (items){
+            // collect all cvs and give previous select item
+            IntactCvTerm evidenceTypeParent = getIntactDao().getCvTermDao().getByMIIdentifier(MIIdentifier, objClass);
+            Set<IntactCvTerm> terms = new HashSet<IntactCvTerm>();
+            if (evidenceTypeParent != null){
+                terms = loadChildren(evidenceTypeParent, false, new HashSet<String>());
+                refreshMaps(terms, items);
+            }
+            items.clear();
+            if (addParent && evidenceTypeParent != null){
+               items.add(createSelectItem(evidenceTypeParent, true));
+            }
+            items.addAll(createSelectItems(terms, select));
+        }
+    }
+
+    private void refreshSelectItems(String objClass, List<SelectItem> items, String filter, String select) {
+        synchronized (items){
+            final Collection<IntactCvTerm> intactCvs = getIntactDao().getCvTermDao().getByObjClass(objClass);
+            refreshMaps(intactCvs, items);
+            if (items != null){
+                items.clear();
+                if (filter == null){
+                    items.addAll(createSelectItems(intactCvs, select));
+
+                }else{
+                    items.addAll(createSelectItems(intactCvs, select, filter));
+                }
+            }
+        }
+    }
+
+    private void refreshMaps(Collection<IntactCvTerm> intactCvs, List<SelectItem> items) {
+        synchronized (this.allCvObjectMap){
+            synchronized (this.acCvObjectMap){
+                // first remove previous intact objects
+                if (items != null){
+                    for (SelectItem item : items){
+                        IntactCvTerm term = (IntactCvTerm)item.getValue();
+                        if (term != null){
+                            acCvObjectMap.remove(term.getAc());
+                            CvKey keyId = null;
+                            if ( term.getMIIdentifier() != null ) {
+                                keyId = new CvKey( term.getMIIdentifier(), term.getObjClass() );
+                            }
+                            else if(term.getMODIdentifier() != null){
+                                keyId = new CvKey( term.getMIIdentifier(), term.getObjClass() );
+                            }
+                            else if (!term.getIdentifiers().isEmpty()){
+                                keyId = new CvKey(term.getIdentifiers().iterator().next().getId(), term.getObjClass());
+                            }
+                            else {
+                                keyId = new CvKey(term.getAc(), term.getObjClass());
+                            }
+                            CvKey keyLabel = new CvKey( term.getShortName(), term.getObjClass() );
+                            allCvObjectMap.remove( keyId );
+                            allCvObjectMap.remove( keyLabel );
+                        }
+                    }
+                }
+                // add reloaded intact objects
+                for (IntactCvTerm cvObject : intactCvs){
+                    acCvObjectMap.put( cvObject.getAc(), cvObject );
+                    CvKey keyId = null;
+                    if ( cvObject.getMIIdentifier() != null ) {
+                        keyId = new CvKey( cvObject.getMIIdentifier(), cvObject.getObjClass() );
+                    }
+                    else if(cvObject.getMODIdentifier() != null){
+                        keyId = new CvKey( cvObject.getMIIdentifier(), cvObject.getObjClass() );
+                    }
+                    else if (!cvObject.getIdentifiers().isEmpty()){
+                        keyId = new CvKey(cvObject.getIdentifiers().iterator().next().getId(), cvObject.getObjClass());
+                    }
+                    else {
+                        keyId = new CvKey(cvObject.getAc(), cvObject.getObjClass());
+                    }
+                    CvKey keyLabel = new CvKey( cvObject.getShortName(), cvObject.getObjClass() );
+                    allCvObjectMap.put( keyId, cvObject );
+                    allCvObjectMap.put( keyLabel, cvObject );
+                }
+            }
         }
     }
 
@@ -962,10 +1193,29 @@ public class CvObjectService extends AbstractEditorService {
                     list.add(cv.getAc());
                     selectItems.add(item);
                 }
+                if (!cv.getChildren().isEmpty()){
+                    list.addAll(loadChildren(cv, selectItems, ignoreHidden, processedAcs));
+                }
             }
+        }
+        return list;
+    }
 
-            if (!cv.getChildren().isEmpty()){
-                list.addAll(loadChildren(cv, selectItems, ignoreHidden, processedAcs));
+    private Set<IntactCvTerm> loadChildren(IntactCvTerm parent, boolean ignoreHidden, Set<String> processedAcs){
+        Set<IntactCvTerm> list = new HashSet<IntactCvTerm>(parent.getChildren().size());
+        for (OntologyTerm child : parent.getChildren()){
+            IntactCvTerm cv = (IntactCvTerm)child;
+            if (!processedAcs.contains(cv.getAc())){
+                processedAcs.add(cv.getAc());
+                if (!ignoreHidden && AnnotationUtils.collectAllAnnotationsHavingTopic(cv.getAnnotations(), null, "hidden").isEmpty()){
+                    list.add(cv);
+                }
+                else if (ignoreHidden){
+                    list.add(cv);
+                }
+                if (!cv.getChildren().isEmpty()){
+                    list.addAll(loadChildren(cv, ignoreHidden, processedAcs));
+                }
             }
         }
         return list;

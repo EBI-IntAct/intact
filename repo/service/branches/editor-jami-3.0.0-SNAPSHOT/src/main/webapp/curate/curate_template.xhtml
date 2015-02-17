@@ -10,9 +10,6 @@
                 xmlns:ot="http://myfaces.apache.org/orchestra"
                 template="/main_template.xhtml">
 
-<f:event type="preRenderView" listener="#{cvObjectService.loadDataIfNecessary}"/>
-<f:event type="preRenderView" listener="#{bioSourceService.loadDataIfNecessary}"/>
-
 <ui:param name="title" value="#{annotatedObjectController.title}"/>
 
 <ui:define name="topNavigation">

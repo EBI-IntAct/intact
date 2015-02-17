@@ -86,8 +86,7 @@ public class ComplexCloner extends AbstractEditorCloner<Complex, IntactComplex> 
                 expEvidence = new IntactCvTerm("exp-evidence");
                 expEvidence.setObjClass(IntactUtils.QUALIFIER_OBJCLASS);
                 cvTermService.saveOrUpdate(expEvidence);
-                cvService.clearAll();
-                cvService.loadData();
+                cvService.refreshCvs(IntactUtils.QUALIFIER_OBJCLASS);
                 expEvidence = cvService.findCvObject(IntactUtils.QUALIFIER_OBJCLASS, "exp-evidence");
             }
 
@@ -99,8 +98,7 @@ public class ComplexCloner extends AbstractEditorCloner<Complex, IntactComplex> 
                         db = new IntactCvTerm(ref.getDatabase().getShortName());
                         ((IntactCvTerm)db).setObjClass(IntactUtils.DATABASE_OBJCLASS);
                         cvTermService.saveOrUpdate(db);
-                        cvService.clearAll();
-                        cvService.loadData();
+                        cvService.refreshCvs(IntactUtils.DATABASE_OBJCLASS);
                         db = cvService.findCvObject(IntactUtils.DATABASE_OBJCLASS, ref.getDatabase().getShortName());
                     }
                 }
