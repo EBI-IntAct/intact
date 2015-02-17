@@ -714,19 +714,6 @@ public class CvObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactCvTerm loadCvByName(String name, String objClass) {
-        IntactCvTerm cv = getIntactDao().getCvTermDao().getByShortName(name, objClass);
-
-        if (cv != null){
-            // initialise xrefs because are first tab visible
-            initialiseXrefs(cv.getDbXrefs());
-            // initialise annotations because needs caution
-            initialiseAnnotations(cv.getDbAnnotations());
-        }
-        return cv;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactCvTerm loadCvByIdentifier(String id, String objClass) {
         IntactCvTerm cv = getIntactDao().getCvTermDao().getByUniqueIdentifier(id, objClass);
 
@@ -1248,7 +1235,6 @@ public class CvObjectService extends AbstractEditorService {
             loadData();
         }
     }
-
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public boolean isCvFullyLoaded(IntactCvTerm cv){

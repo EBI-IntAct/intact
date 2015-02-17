@@ -171,7 +171,7 @@ public class FeatureEditorService extends AbstractEditorService {
         // load feature ranges
         initialiseRanges(feature.getRanges());
 
-        return reloaded;
+        return feature;
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
