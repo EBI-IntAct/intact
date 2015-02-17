@@ -915,11 +915,7 @@ public class InteractionController extends AnnotatedObjectController {
     @Override
     protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
         IntactInteractionEvidence interaction = (IntactInteractionEvidence)annotatedObject;
-        if (!interaction.areAnnotationsInitialized()
-                || !interaction.areXrefsInitialized()
-                || !isCvInitialised(interaction.getInteractionType())
-                || !areParticipantsInitialised(interaction)
-                || !isExperimentInitialised((IntactExperiment)interaction.getExperiment())){
+        if (!getInteractionEditorService().isInteractionFullyLoaded(interaction)){
             this.interaction = getInteractionEditorService().reloadFullyInitialisedInteraction(interaction);
         }
 
