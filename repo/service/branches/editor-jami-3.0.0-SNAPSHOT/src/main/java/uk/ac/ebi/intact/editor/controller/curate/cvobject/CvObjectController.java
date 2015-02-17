@@ -119,8 +119,6 @@ public class CvObjectController extends AnnotatedObjectController {
             setInternalRemark(internal != null ? internal.getValue() : null);
 
             this.definition = this.cvObject.getDefinition();
-
-            this.cvClassName = this.cvObject.getObjClass();
         }
     }
 
@@ -242,7 +240,7 @@ public class CvObjectController extends AnnotatedObjectController {
     @Override
     public void doPostSave() {
         // refresh cv service
-        getCvService().clearAll();
+        getCvService().refreshCvs(getObjClass());
         super.doPostSave();
     }
 
@@ -355,6 +353,8 @@ public class CvObjectController extends AnnotatedObjectController {
         prepareView();
 
         setDescription("Cv Object: " + cv.getShortName());
+
+        this.cvClassName = this.cvObject.getObjClass();
     }
 
     @Override
@@ -539,8 +539,9 @@ public class CvObjectController extends AnnotatedObjectController {
 
     @Override
     public String doDelete() {
+        String objClass = getObjClass();
         String value = super.doDelete();
-        getCvService().clearAll();
+        getCvService().refreshCvs(objClass);
         return value;
     }
 
