@@ -80,6 +80,7 @@ public class ModelledFeatureCloner extends AbstractEditorCloner<Feature, IntactM
         target.setFullName(source.getFullName());
         target.setRole(source.getRole());
         target.setType(source.getType());
+        target.setParticipant(source.getParticipant());
 
         if (source.areAliasesInitialized()){
             target.getAliases().clear();

@@ -71,7 +71,7 @@ public class ModelledParticipantCloner extends AbstractEditorCloner<Participant,
     public void copyInitialisedProperties(IntactModelledParticipant source, IntactModelledParticipant target) {
         target.setBiologicalRole(source.getBiologicalRole());
         target.setStoichiometry(source.getStoichiometry());
-
+        target.setInteraction(source.getInteraction());
         if (source.areAliasesInitialized()){
             target.getAliases().clear();
             target.getAliases().addAll(source.getAliases());

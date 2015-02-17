@@ -111,17 +111,6 @@ public class ModelledFeatureController extends AbstractFeatureController<IntactM
     }
 
     @Override
-    public void newAlias(ActionEvent evt) {
-        // aliases are not always initialised
-        if (!getFeature().areAliasesInitialized()){
-            setFeature(getFeatureEditorService().initialiseFeatureAliases(getFeature()));
-        }
-
-        getFeature().getAliases().add(new ModelledFeatureAlias("to set"));
-        setUnsavedChanges(true);
-    }
-
-    @Override
     public ModelledFeatureAlias newAlias(CvTerm aliasType, String name) {
         return new ModelledFeatureAlias(aliasType, name);
     }
