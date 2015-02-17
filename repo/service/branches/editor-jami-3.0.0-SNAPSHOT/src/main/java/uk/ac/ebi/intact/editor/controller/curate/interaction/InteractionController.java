@@ -151,12 +151,6 @@ public class InteractionController extends AnnotatedObjectController {
     @Override
     protected void loadCautionMessages() {
         if (this.interaction != null){
-            if (!interaction.areAnnotationsInitialized()){
-                setInteraction(getInteractionEditorService().initialiseInteractionAnnotations(this.interaction));
-            }
-            if (!interaction.areXrefsInitialized()){
-                setInteraction(getInteractionEditorService().initialiseInteractionXrefs(this.interaction));
-            }
 
             Annotation caution = AnnotationUtils.collectFirstAnnotationWithTopic(this.interaction.getDbAnnotations(), psidev.psi.mi.jami.model.Annotation.CAUTION_MI, psidev.psi.mi.jami.model.Annotation.CAUTION);
             setCautionMessage(caution != null ? caution.getValue() : null);
@@ -506,9 +500,6 @@ public class InteractionController extends AnnotatedObjectController {
             }
             // set experiment
             interaction.setExperiment(experiment);
-            if (!interaction.areVariableParameterValuesInitialized()){
-                interaction = getInteractionEditorService().initialiseInteractionVariableParameterValues(interaction);
-            }
             interaction.getVariableParameterValues().clear();
 
         } else {
@@ -533,11 +524,8 @@ public class InteractionController extends AnnotatedObjectController {
         if (interaction == null){
             return 0;
         }
-        else if (interaction.areXrefsInitialized()){
+        else {
             return interaction.getDbXrefs().size();
-        }
-        else{
-            return getInteractionEditorService().countXrefs(this.interaction);
         }
     }
 
@@ -569,11 +557,8 @@ public class InteractionController extends AnnotatedObjectController {
         if (interaction == null){
             return 0;
         }
-        else if (interaction.areConfidencesInitialized()){
+        else {
             return interaction.getConfidences().size();
-        }
-        else{
-            return getInteractionEditorService().countConfidences(this.interaction);
         }
     }
 
@@ -581,11 +566,8 @@ public class InteractionController extends AnnotatedObjectController {
         if (interaction == null){
             return 0;
         }
-        else if (interaction.areParametersInitialized()){
+        else {
             return interaction.getParameters().size();
-        }
-        else{
-            return getInteractionEditorService().countParameters(this.interaction);
         }
     }
 
@@ -593,11 +575,8 @@ public class InteractionController extends AnnotatedObjectController {
         if (interaction == null){
             return 0;
         }
-        else if (interaction.areVariableParameterValuesInitialized()){
+        else {
             return interaction.getVariableParameterValues().size();
-        }
-        else{
-            return getInteractionEditorService().countVariableParameterValues(this.interaction);
         }
     }
 
@@ -785,27 +764,6 @@ public class InteractionController extends AnnotatedObjectController {
         }
     }
 
-    //////////////////////////////////
-    // Participant related methods
-
-    public String getInteractorIdentity(IntactInteractor interactor) {
-        if (interactor == null) return null;
-
-        if (!interactor.areXrefsInitialized()){
-            interactor = getInteractionEditorService().reloadFullyInitialisedInteractor(interactor);
-        }
-
-        final Collection<Xref> identities = interactor.getIdentifiers();
-        StringBuilder sb = new StringBuilder(64);
-        for ( Iterator<Xref> iterator = identities.iterator(); iterator.hasNext(); ) {
-            Xref xref = iterator.next();
-            sb.append( xref.getId() );
-            if( iterator.hasNext() ) {
-                sb.append( "|" );
-            }
-        }
-        return sb.toString();
-    }
 
     // Confidence
     ///////////////////////////////////////////////
@@ -849,18 +807,12 @@ public class InteractionController extends AnnotatedObjectController {
     }
 
     public List<Confidence> collectConfidences() {
-        if (!interaction.areConfidencesInitialized()){
-            setInteraction(getInteractionEditorService().initialiseInteractionConfidences(interaction));
-        }
         final List<Confidence> confidences = new ArrayList<Confidence>( interaction.getConfidences() );
         Collections.sort( confidences, new AuditableComparator() );
         return confidences;
     }
 
     public List<Parameter> collectParameters() {
-        if (!interaction.areParametersInitialized()){
-            setInteraction(getInteractionEditorService().initialiseInteractionParameters(interaction));
-        }
         final List<Parameter> parameters = new ArrayList<Parameter>( interaction.getParameters() );
         Collections.sort( parameters, new AuditableComparator() );
         return parameters;
@@ -1098,9 +1050,6 @@ public class InteractionController extends AnnotatedObjectController {
     }
 
     public void reloadSingleParticipant(IntactParticipantEvidence f){
-        if (!this.interaction.areParticipantsInitialized()){
-            setInteraction(getInteractionEditorService().initialiseParticipants(this.interaction));
-        }
         Iterator<ParticipantEvidence> evIterator = interaction.getParticipants().iterator();
         boolean add = true;
         while (evIterator.hasNext()){
@@ -1121,9 +1070,6 @@ public class InteractionController extends AnnotatedObjectController {
     }
 
     public void removeParticipant(IntactParticipantEvidence f){
-        if (!this.interaction.areParticipantsInitialized()){
-            setInteraction(getInteractionEditorService().initialiseParticipants(this.interaction));
-        }
         Iterator<ParticipantEvidence> evIterator = interaction.getParticipants().iterator();
         while (evIterator.hasNext()){
             IntactParticipantEvidence intactEv = (IntactParticipantEvidence)evIterator.next();
@@ -1174,9 +1120,6 @@ public class InteractionController extends AnnotatedObjectController {
         }
 
         if (!newSet.isEmpty()){
-            if (!this.interaction.areVariableParameterValuesInitialized()){
-                setInteraction(getInteractionEditorService().initialiseInteractionVariableParameterValues(this.interaction));
-            }
             this.interaction.getVariableParameterValues().add(newSet);
             doSave(false);
         }
@@ -1186,18 +1129,12 @@ public class InteractionController extends AnnotatedObjectController {
     }
 
     public List<VariableParameterValueSet> collectVariableParameterValues(){
-        if (!this.interaction.areVariableParameterValuesInitialized()){
-            setInteraction(getInteractionEditorService().initialiseInteractionVariableParameterValues(this.interaction));
-        }
         List<VariableParameterValueSet> conditions = new ArrayList<VariableParameterValueSet>(this.interaction.getVariableParameterValues());
         Collections.sort(conditions, new AuditableComparator());
         return conditions;
     }
 
     public void removeVariableParameterValuesSet(VariableParameterValueSet toRemove){
-        if (!this.interaction.areVariableParameterValuesInitialized()){
-            setInteraction(getInteractionEditorService().initialiseInteractionVariableParameterValues(this.interaction));
-        }
         this.interaction.getVariableParameterValues().remove(toRemove);
     }
 
