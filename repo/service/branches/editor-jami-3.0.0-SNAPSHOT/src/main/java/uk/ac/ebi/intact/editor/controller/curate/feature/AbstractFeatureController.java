@@ -422,38 +422,6 @@ public abstract class AbstractFeatureController<T extends AbstractIntactFeature>
         setDescription("Feature: "+feature.getShortName());
     }
 
-    private boolean isCvInitialised(CvTerm cv) {
-        if (cv instanceof IntactCvTerm){
-            IntactCvTerm intactCv = (IntactCvTerm)cv;
-            return intactCv.areXrefsInitialized() && intactCv.areAnnotationsInitialized();
-        }
-        return true;
-    }
-
-
-    private boolean isInitialisedParticipant(Entity entity) {
-        if (entity != null && entity.getInteractor() instanceof IntactComplex){
-            IntactComplex intactComplex = (IntactComplex) entity.getInteractor();
-            if (!intactComplex.areParticipantsInitialized()){
-                return false;
-            }
-            else{
-                for (ModelledParticipant p : intactComplex.getParticipants()){
-                     if (!isInitialisedParticipant(p)){
-                          return false;
-                     }
-                }
-            }
-        }
-
-        if (entity != null){
-            if (!((IntactInteractor)entity.getInteractor()).areXrefsInitialized()){
-                return false;
-            }
-        }
-        return true;
-    }
-
     public int getFeatureRangeSize() {
         if (feature == null){
             return 0;
