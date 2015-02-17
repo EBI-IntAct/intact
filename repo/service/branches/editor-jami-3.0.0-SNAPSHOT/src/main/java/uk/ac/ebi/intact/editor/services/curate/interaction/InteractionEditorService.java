@@ -157,7 +157,7 @@ public class InteractionEditorService extends AbstractEditorService {
             }
         }
 
-        return reloaded;
+        return interaction;
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
