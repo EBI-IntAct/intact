@@ -19,12 +19,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.*;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.InteractorCloner;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
-import uk.ac.ebi.intact.jami.model.extension.*;
+import uk.ac.ebi.intact.jami.model.extension.AbstractIntactFeature;
+import uk.ac.ebi.intact.jami.model.extension.AbstractIntactParticipant;
+import uk.ac.ebi.intact.jami.model.extension.IntactFeatureEvidence;
+import uk.ac.ebi.intact.jami.model.extension.IntactParticipantEvidence;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  */
@@ -80,244 +87,267 @@ public class ParticipantEditorService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public <T extends AbstractIntactParticipant> T initialiseParticipantAnnotations(T participant) {
-        // reload feature without flushing changes
-        T reloaded = (T)reattachIntactObjectIfTransient(participant, (uk.ac.ebi.intact.jami.dao.IntactBaseDao<AbstractIntactParticipant>) getIntactDao().getParticipantDao(participant.getClass()));
-        Collection<Annotation> annotations = (Collection<Annotation>)reloaded.getAnnotations();
-        initialiseAnnotations(annotations);
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public <T extends AbstractIntactParticipant> T initialiseParticipantXrefs(T participant) {
-        // reload feature without flushing changes
-        T reloaded = (T)reattachIntactObjectIfTransient(participant, (uk.ac.ebi.intact.jami.dao.IntactBaseDao<AbstractIntactParticipant>) getIntactDao().getParticipantDao(participant.getClass()));
-        Collection<Xref> xrefs = (Collection<Xref>)reloaded.getXrefs();
-        initialiseXrefs(xrefs);
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public <T extends AbstractIntactParticipant> T initialiseParticipantAliases(T participant) {
-        // reload feature without flushing changes
-        T reloaded = (T)reattachIntactObjectIfTransient(participant, (uk.ac.ebi.intact.jami.dao.IntactBaseDao<AbstractIntactParticipant>) getIntactDao().getParticipantDao(participant.getClass()));
-        Collection<Alias> aliases = (Collection<Alias>)reloaded.getAliases();
-        initialiseAliases(aliases);
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactParticipantEvidence initialiseParticipantParameters(IntactParticipantEvidence participantEvidence) {
-        // reload feature without flushing changes
-        IntactParticipantEvidence reloaded = reattachIntactObjectIfTransient(participantEvidence, getIntactDao().getParticipantEvidenceDao());
-        Collection<Parameter> parameters = reloaded.getParameters();
-        initialiseParameters(parameters);
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactParticipantEvidence initialiseParticipantIdentificationMethods(IntactParticipantEvidence participantEvidence) {
-        // reload feature without flushing changes
-        IntactParticipantEvidence reloaded = reattachIntactObjectIfTransient(participantEvidence, getIntactDao().getParticipantEvidenceDao());
-        Collection<CvTerm> dets = reloaded.getDbIdentificationMethods();
-        for (CvTerm det : dets){
-            initialiseCv(det);
-        }
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactParticipantEvidence initialiseParticipantExperimentalPreparations(IntactParticipantEvidence participantEvidence) {
-        // reload feature without flushing changes
-        IntactParticipantEvidence reloaded = reattachIntactObjectIfTransient(participantEvidence, getIntactDao().getParticipantEvidenceDao());
-        Collection<CvTerm> dets = reloaded.getExperimentalPreparations();
-        for (CvTerm det : dets){
-            initialiseCv(det);
-        }
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactParticipantEvidence initialiseParticipantConfidences(IntactParticipantEvidence participantEvidence) {
-        // reload feature without flushing changes
-        IntactParticipantEvidence reloaded = reattachIntactObjectIfTransient(participantEvidence, getIntactDao().getParticipantEvidenceDao());
-        Collection<Confidence> dets = reloaded.getConfidences();
-        for (Confidence det : dets){
-            initialiseConfidence(det);
-        }
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public <T extends AbstractIntactParticipant> T initialiseCausalRelationships(T participantEvidence) {
-        // reload feature without flushing changes
-        T reloaded = getIntactDao().getEntityManager().merge(participantEvidence);
-        Collection<CausalRelationship> dets = reloaded.getCausalRelationships();
-        for (CausalRelationship det : dets){
-            initialiseCausalRelationship(det);
-        }
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public <T extends AbstractIntactParticipant> T loadParticipantByAc(String ac, Class<T> participantClass) {
+    public <T extends AbstractIntactParticipant> T loadParticipantByAc(String ac, Class<T> participantClass, EditorCloner featureCloner) {
         T participant = getIntactDao().getEntityManager().find(participantClass, ac);
 
         if (participant != null){
             // initialise annotations because needs caution
             initialiseAnnotations(participant.getAnnotations());
+            // initialise aliases
+            initialiseAliases(participant.getAliases());
+            // initialise xrefs
+            initialiseXrefs(participant.getXrefs());
 
             // load base types
             if (participant.getBiologicalRole() != null){
                 initialiseCv(participant.getBiologicalRole());
             }
             if (participant instanceof IntactParticipantEvidence){
-                initialiseCv(((IntactParticipantEvidence) participant).getExperimentalRole());
+                IntactParticipantEvidence evidence = (IntactParticipantEvidence)participant;
+                if (evidence.getExperimentalRole() != null){
+                    initialiseCv(evidence.getExperimentalRole());
+                }
+                // initialise experimental preparations
+                initialiseCvs(evidence.getExperimentalPreparations());
+                // initialise identification methods
+                initialiseCvs(evidence.getDbIdentificationMethods());
+                // initialise confidences
+                initialiseConfidence(evidence.getConfidences());
+                // initialise parameters
+                initialiseParameters(evidence.getParameters());
             }
 
             // load participant interactor
-            initialiseInteractor((IntactInteractor)participant.getInteractor());
+            initialiseInteractor(participant.getInteractor(), new InteractorCloner());
 
             // load features
-            initialiseFeatures(participant.getFeatures());
+            initialiseFeatures(participant, participant.getFeatures(), featureCloner);
         }
 
         return participant;
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public AbstractIntactParticipant loadAnyParticipantByAc(String ac) {
-        AbstractIntactParticipant participant = getIntactDao().getEntityManager().find(IntactParticipantEvidence.class, ac);
+    public <T extends AbstractIntactParticipant> T reloadFullyInitialisedParticipant(T participant, EditorCloner participantCloner, EditorCloner featureCloner) {
         if (participant == null){
-            participant = getIntactDao().getEntityManager().find(IntactModelledParticipant.class, ac);
+            return null;
         }
 
-        if (participant != null){
-            // initialise annotations because needs caution
-            initialiseAnnotations(participant.getAnnotations());
-
-            // load base types
-            if (participant.getBiologicalRole() != null){
-                initialiseCv(participant.getBiologicalRole());
-            }
-            if (participant instanceof IntactParticipantEvidence){
-                initialiseCv(((IntactParticipantEvidence) participant).getExperimentalRole());
-            }
-
-            // load participant interactor
-            initialiseInteractor((IntactInteractor)participant.getInteractor());
-
-            // load features
-            initialiseFeatures(participant.getFeatures());
+        T reloaded = null;
+        if (areParticipantCollectionsLazy(participant)
+                && participant.getAc() != null
+                && !getIntactDao().getEntityManager().contains(participant)){
+            reloaded = (T) loadParticipantByAc(participant.getAc(), participant.getClass(), featureCloner);
         }
 
-        return participant;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public <T extends AbstractIntactParticipant> T reloadFullyInitialisedParticipant(T participant) {
-        T reloaded = (T)reattachIntactObjectIfTransient(participant, (uk.ac.ebi.intact.jami.dao.IntactBaseDao<AbstractIntactParticipant>) getIntactDao().getParticipantDao(participant.getClass()));
-
+        // we need first to merge with reloaded complex
+        if (reloaded != null){
+            // detach reloaded now so not changes will be committed
+            getIntactDao().getEntityManager().detach(reloaded);
+            participantCloner.copyInitialisedProperties(participant, reloaded);
+            participant = reloaded;
+        }
         // initialise annotations because needs caution
-        initialiseAnnotations(reloaded.getAnnotations());
+        initialiseAnnotations(participant.getAnnotations());
+        // initialise aliases
+        initialiseAliases(participant.getAliases());
+        // initialise xrefs
+        initialiseXrefs(participant.getXrefs());
 
         // load base types
-        if (reloaded.getBiologicalRole() != null){
-            CvTerm bioRole = initialiseCv(reloaded.getBiologicalRole());
-            if (bioRole != reloaded.getBiologicalRole()){
-                reloaded.setBiologicalRole(bioRole);
+        if (participant.getBiologicalRole() != null && !isCvInitialised(participant.getBiologicalRole())){
+            CvTerm cv = initialiseCv(participant.getBiologicalRole());
+            if (cv != participant.getBiologicalRole()){
+                participant.setBiologicalRole(cv);
             }
         }
-        if (reloaded instanceof IntactParticipantEvidence){
-            CvTerm expRole = initialiseCv(((IntactParticipantEvidence) reloaded).getExperimentalRole());
-            if (expRole != ((IntactParticipantEvidence) reloaded).getExperimentalRole()){
-                ((IntactParticipantEvidence) reloaded).setExperimentalRole(expRole);
+        if (participant instanceof IntactParticipantEvidence){
+            IntactParticipantEvidence evidence = (IntactParticipantEvidence)participant;
+            if (evidence.getExperimentalRole() != null && !isCvInitialised(evidence.getExperimentalRole())){
+                CvTerm cv = initialiseCv(evidence.getExperimentalRole());
+                if (cv != evidence.getExperimentalRole()){
+                    evidence.setExperimentalRole(cv);
+                }
             }
+            // initialise experimental preparations
+            initialiseCvs(evidence.getExperimentalPreparations());
+            // initialise identification methods
+            initialiseCvs(evidence.getDbIdentificationMethods());
+            // initialise confidences
+            initialiseConfidence(evidence.getConfidences());
+            // initialise parameters
+            initialiseParameters(evidence.getParameters());
         }
 
         // load participant interactor
-        Interactor reloadedInter = initialiseInteractor((IntactInteractor)reloaded.getInteractor());
-        if (reloadedInter != reloaded.getInteractor()){
-            reloaded.setInteractor(reloadedInter);
+        if (!isInteractorInitialised(participant.getInteractor())){
+            Interactor reloadedInteractor = initialiseInteractor(participant.getInteractor(), new InteractorCloner());
+            if (reloadedInteractor != participant.getInteractor()){
+                participant.setInteractor(reloadedInteractor);
+            }
         }
 
         // load features
-        initialiseFeatures(reloaded.getFeatures());
+        initialiseFeatures(participant, participant.getFeatures(), featureCloner);
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        return participant;
+    }
 
-        return reloaded;
+    private <T extends AbstractIntactParticipant> boolean areParticipantCollectionsLazy(T participant) {
+        return !participant.areAnnotationsInitialized()
+                || !participant.areAliasesInitialized()
+                || !participant.areFeaturesInitialized()
+                || !participant.areXrefsInitialized()
+                || (participant instanceof IntactParticipantEvidence && !isParticipantEvidenceFullyInitialised((IntactParticipantEvidence)participant, false));
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public <T extends AbstractIntactParticipant> T initialiseFeatures(T participant) {
-        T reloaded = getIntactDao().getEntityManager().merge(participant);
-
-        Collection dets = reloaded.getFeatures();
-        initialiseFeatures(dets);
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
+    public <T extends AbstractIntactParticipant> boolean isParticipantFullyLoaded(T participant){
+        if (participant == null){
+            return true;
+        }
+        if (!participant.areAnnotationsInitialized()
+                || !participant.areAliasesInitialized()
+                || !areFeaturesInitialised(participant)
+                || (participant.getBiologicalRole() != null && !isCvInitialised(participant.getBiologicalRole()))
+                || !participant.areXrefsInitialized()
+                || !isInteractorInitialised(participant.getInteractor())
+                || (participant instanceof IntactParticipantEvidence && !isParticipantEvidenceFullyInitialised((IntactParticipantEvidence)participant, true))){
+            return false;
+        }
+        return true;
     }
 
-    private void initialiseFeatures(Collection dets) {
-        for (Object det : dets){
-            initialiseFeature((Feature) det);
+    @Override
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public boolean isInteractorInitialised(Interactor interactor) {
+        return super.isInteractorInitialised(interactor);
+    }
+
+    @Override
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public Interactor initialiseInteractor(Interactor inter, InteractorCloner interactorCloner) {
+        return super.initialiseInteractor(inter, interactorCloner);
+    }
+
+    private boolean isParticipantEvidenceFullyInitialised(IntactParticipantEvidence participant, boolean checkExpRole) {
+        return !participant.areIdentificationMethodsInitialized()
+                        || !participant.areExperimentalPreparationsInitialized()
+                        || !participant.areConfidencesInitialized()
+                        || !participant.areParametersInitialized()
+                        || (checkExpRole && participant.getExperimentalRole() != null && !isCvInitialised(participant.getExperimentalRole()));
+    }
+
+    private void initialiseCvs(Collection<CvTerm> detectionMethods) {
+        Collection<CvTerm> dets = new ArrayList<CvTerm>(detectionMethods);
+        for (CvTerm det : dets){
+            if (!isCvInitialised(det)){
+                CvTerm reloaded = initialiseCv(det);
+                if (reloaded != det){
+                    detectionMethods.remove(det);
+                    detectionMethods.add(reloaded);
+                }
+            }
         }
     }
 
-    private void initialiseFeature(Feature det) {
-         for (Object obj : det.getRanges()){
-             Range range = (Range)obj;
-             initialisePosition(range.getStart());
-             initialisePosition(range.getEnd());
-         }
-
-        for (Object linked : det.getLinkedFeatures()){
-            ((Feature)linked).getLinkedFeatures();
+    private <T extends Participant, F extends Feature> void initialiseFeatures(T parent, Collection<F> features, EditorCloner featureCloner) {
+        List<F> originalFeatures = new ArrayList<F>(features);
+        for (F r : originalFeatures){
+            if (!isFeatureInitialised(r)){
+                F reloaded = initialiseFeature(r, featureCloner);
+                if (reloaded != r ){
+                    features.remove(r);
+                    parent.addFeature(reloaded);
+                }
+            }
         }
     }
 
-    private void initialiseCausalRelationship(CausalRelationship det) {
-        CvTerm rel = initialiseCv(det.getRelationType());
-        if (rel != det.getRelationType()){
-            ((AbstractIntactCausalRelationship)det).setRelationType(rel);
+    private <T extends Feature> T initialiseFeature(T det, EditorCloner featCloner) {
+        if (det instanceof AbstractIntactFeature){
+            if (areFeatureCollectionsLazy((AbstractIntactFeature) det)
+                    && ((AbstractIntactFeature)det).getAc() != null
+                    && !getIntactDao().getEntityManager().contains(det)){
+                AbstractIntactFeature reloaded = (AbstractIntactFeature)getIntactDao().getEntityManager().find(det.getClass(), ((AbstractIntactFeature) det).getAc());
+                if (reloaded != null){
+                    // initialise properties freshly loaded from db
+                    initialiseRanges(reloaded.getRanges());
+
+                    for (Object linked : reloaded.getLinkedFeatures()){
+                        ((Feature)linked).getLinkedFeatures().size();
+                    }
+
+                    // detach relaoded object so no changes will be flushed
+                    getIntactDao().getEntityManager().detach(reloaded);
+                    featCloner.copyInitialisedProperties((IntactFeatureEvidence)det, reloaded);
+                    // will return reloaded object
+                    det = (T)reloaded;
+                }
+            }
+
+            initialiseRanges(det.getRanges());
+
+            for (Object linked : det.getLinkedFeatures()){
+                ((Feature)linked).getLinkedFeatures().size();
+            }
         }
-        IntactInteractor inter = initialiseInteractor((IntactInteractor)det.getTarget().getInteractor());
-        if (inter != det.getTarget().getInteractor()){
-            det.getTarget().setInteractor(inter);
-        }
+        return det;
     }
 
-    private IntactInteractor initialiseInteractor(IntactInteractor participant) {
-        if (participant.getAc() != null && !getIntactDao().getEntityManager().contains(participant)){
-           participant = getIntactDao().getEntityManager().merge(participant);
-        }
-        if (participant instanceof IntactPolymer){
-            // load sequence
-            ((Polymer) participant).getSequence();
+    private boolean areFeaturesInitialised(AbstractIntactParticipant participant) {
+        if (!participant.areFeaturesInitialized()){
+            return false;
         }
 
-        initialiseXrefs(participant.getDbXrefs());
-        initialiseAnnotations(participant.getDbAnnotations());
+        for (Object part : participant.getFeatures()){
+            if (!isFeatureInitialised((Feature) part)){
+                return false;
+            }
+        }
+        return true;
+    }
 
-        getIntactDao().getEntityManager().detach(participant);
-        return participant;
+    private boolean areFeatureCollectionsLazy(AbstractIntactFeature det) {
+        return !det.areLinkedFeaturesInitialized() || !det.areRangesInitialized();
+    }
+
+    private <F extends Feature> boolean isFeatureInitialised(F feature) {
+        if (feature.getType() != null && !isCvInitialised(feature.getType())){
+            return false;
+        }
+        else if (feature.getRole() != null && !isCvInitialised(feature.getRole())){
+            return false;
+        }
+        else if (feature instanceof AbstractIntactFeature){
+            AbstractIntactFeature intactFeature = (AbstractIntactFeature)feature;
+            if (!intactFeature.areLinkedFeaturesInitialized()){
+                return false;
+            }
+            else if (!intactFeature.areRangesInitialized()){
+                return false;
+            }
+            else{
+                for (Object r : intactFeature.getRanges()){
+                    if (!isRangeInitialised((Range)r)){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    protected Range initialiseRange(Range range) {
+        initialisePosition(range.getStart());
+        initialisePosition(range.getEnd());
+        return range;
+    }
+
+    protected boolean isRangeInitialised(Range range) {
+        if (!isPositionInitialised(range.getStart()) || !isPositionInitialised(range.getEnd())){
+            return false;
+        }
+        return true;
     }
 }
