@@ -337,19 +337,22 @@ public class EditorObjectService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public Releasable initialiseLifecycleEvents(Releasable releasable) {
+    public Collection<LifeCycleEvent> initialiseLifecycleEvents(Releasable releasable) {
         // reload complex without flushing changes
         Releasable reloaded = releasable;
         // merge current user because detached
         if (((IntactPrimaryObject)releasable).getAc() != null && !getIntactDao().getEntityManager().contains(releasable)){
-            reloaded = getIntactDao().getEntityManager().merge(releasable);
+            reloaded = getIntactDao().getEntityManager().find(releasable.getClass(), ((IntactPrimaryObject) releasable).getAc());
+            if (reloaded == null){
+                reloaded = releasable;
+            }
         }
 
         Collection<LifeCycleEvent> events = reloaded.getLifecycleEvents();
         if (((IntactPrimaryObject) releasable).getAc() != null){
             Hibernate.initialize(events);
         }
-        return reloaded;
+        return reloaded.getLifecycleEvents();
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
@@ -372,12 +375,8 @@ public class EditorObjectService extends AbstractEditorService {
 
         T reloaded = ao;
         // merge current user because detached
-        if (ao.getAc() != null && !getIntactDao().getEntityManager().contains(ao)){
-            reloaded = getIntactDao().getEntityManager().merge(ao);
-        }
-        // refresh
-        else if (ao.getAc() != null){
-            getIntactDao().getEntityManager().refresh(reloaded);
+        if (ao.getAc() != null){
+            reloaded = (T)getIntactDao().getEntityManager().find(ao.getClass(), ao.getAc());
         }
 
         T clone = (T)cloner.clone(reloaded, getIntactDao());

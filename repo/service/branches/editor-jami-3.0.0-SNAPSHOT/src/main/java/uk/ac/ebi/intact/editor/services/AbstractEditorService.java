@@ -20,7 +20,6 @@ import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.intact.jami.dao.IntactBaseDao;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.interceptor.IntactTransactionSynchronization;
-import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.audit.Auditable;
 import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
@@ -208,15 +207,6 @@ public abstract class AbstractEditorService implements EditorService {
             getIntactDao().getEntityManager().clear();
             throw new PersisterException(e.getMessage(), e);
         }
-    }
-
-    protected <T extends IntactPrimaryObject> T reattachIntactObjectIfTransient(T intactObject, IntactBaseDao<T> dao){
-        // merge current user because detached
-        if (dao.isTransient(intactObject) && intactObject.getAc() != null){
-            return getIntactDao().getEntityManager().merge(intactObject);
-        }
-
-        return intactObject;
     }
 
     protected void initialiseParameters(Collection<? extends Parameter> parameters) {

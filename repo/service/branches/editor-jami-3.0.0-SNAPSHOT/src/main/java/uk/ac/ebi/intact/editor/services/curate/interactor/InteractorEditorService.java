@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.editor.services.curate.interactor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import psidev.psi.mi.jami.model.Annotation;
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Interactor;
 import psidev.psi.mi.jami.model.InteractorPool;
@@ -123,6 +124,22 @@ public class InteractorEditorService extends AbstractEditorService {
         }
 
         return interactor;
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public Collection<Annotation> initialiseInteractorAnnotations(IntactInteractor releasable) {
+        // reload complex without flushing changes
+        IntactInteractor reloaded = releasable;
+        // merge current user because detached
+        if (releasable.getAc() != null && !getIntactDao().getEntityManager().contains(releasable)){
+            reloaded = getIntactDao().getEntityManager().find(IntactInteractor.class, releasable.getAc());
+            if (reloaded == null){
+                reloaded = releasable;
+            }
+        }
+
+        initialiseAnnotations(reloaded.getAnnotations());
+        return reloaded.getAnnotations();
     }
 
     private boolean areAllInteractorCollectionsLazy(IntactInteractor interactor) {
