@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.editor.services.curate.interactor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Interactor;
 import psidev.psi.mi.jami.model.InteractorPool;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.InteractorCloner;
@@ -109,8 +110,11 @@ public class InteractorEditorService extends AbstractEditorService {
         initialiseAliases(interactor.getDbAliases());
 
         // load base types
-        if (interactor.getInteractorType() != null){
-            initialiseCv(interactor.getInteractorType());
+        if (interactor.getInteractorType() != null && !isCvInitialised(interactor.getInteractorType())){
+            CvTerm cv = initialiseCv(interactor.getInteractorType() );
+            if (cv != interactor.getInteractorType() ){
+                interactor.setInteractorType(cv);
+            }
         }
 
         // load set members

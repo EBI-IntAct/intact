@@ -269,20 +269,10 @@ public class BioSourceController extends AnnotatedObjectController {
     @Override
     protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
         IntactOrganism organism = (IntactOrganism)annotatedObject;
-        if (!organism.areAliasesInitialized()
-                || (organism.getCellType() != null && !isCvInitialised(organism.getCellType()))
-                || (organism.getTissue() != null && !isCvInitialised(organism.getTissue()))) {
+        if (!getBioSourceService().isOrganismFullyLoaded(organism)) {
             this.bioSource = getBioSourceService().reloadFullyInitialisedOrganism(organism);
         }
         setDescription("BioSource "+ organism.getCommonName());
-    }
-
-    private boolean isCvInitialised(CvTerm cv) {
-        if (cv instanceof IntactCvTerm){
-            IntactCvTerm intactCv = (IntactCvTerm)cv;
-            return intactCv.areXrefsInitialized() && intactCv.areAnnotationsInitialized();
-        }
-        return true;
     }
 
     @Override
