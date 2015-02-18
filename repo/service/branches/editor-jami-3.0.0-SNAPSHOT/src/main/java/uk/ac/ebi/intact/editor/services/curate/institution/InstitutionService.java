@@ -41,19 +41,12 @@ public class InstitutionService extends AbstractEditorService {
 
     private List<SelectItem> institutionSelectItems;
 
-    public void clearAll(){
-        synchronized (institutionSelectItems) {
-            this.institutionSelectItems = null;
-        }
-    }
-
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
     public void loadInstitutions( ) {
         if ( log.isDebugEnabled() ) log.debug( "Loading Institutions" );
 
-        clearAll();
-
         synchronized (institutionSelectItems) {
+            this.institutionSelectItems = null;
             List<IntactSource> allInstitutions = getIntactDao().getSourceDao().getAllSorted(0, Integer.MAX_VALUE, "shortName", true);
 
             institutionSelectItems = new ArrayList<SelectItem>(allInstitutions.size());
@@ -75,18 +68,16 @@ public class InstitutionService extends AbstractEditorService {
 
     public List<SelectItem> getInstitutionSelectItems(boolean addDefaultNoSelection) {
         synchronized (institutionSelectItems) {
-            synchronized (institutionSelectItems) {
-                if (institutionSelectItems == null){
-                    return null;
-                }
-                List<SelectItem> items = new ArrayList(institutionSelectItems);
-
-                if (addDefaultNoSelection) {
-                    items.add( new SelectItem( null, "-- Select Institution --", "-- Select Institution --", false, false, true ) );
-                }
-
-                return items;
+            if (institutionSelectItems == null){
+                return null;
             }
+            List<SelectItem> items = new ArrayList(institutionSelectItems);
+
+            if (addDefaultNoSelection) {
+                items.add( new SelectItem( null, "-- Select Institution --", "-- Select Institution --", false, false, true ) );
+            }
+
+            return items;
         }
     }
 

@@ -46,31 +46,30 @@ public class DatasetPopulator extends AbstractEditorService {
 
     }
 
-    public synchronized void clearAll(){
-        if (isInitialised){
-            this.allDatasets=null;
-            this.allDatasetSelectItems=null;
-            isInitialised=false;
-        }
-    }
-
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public synchronized void loadData( ) {
+    public void loadData( ) {
         if ( log.isInfoEnabled() ) log.info( "Loading datasets" );
 
-        final Query query = getIntactDao().getEntityManager()
-                .createQuery("select distinct(a.value) from PublicationAnnotation a where a.topic.shortName = :datasetTopic order by a.value asc");
-        query.setParameter( "datasetTopic", PublicationController.DATASET);
+        synchronized (this) {
+            if (isInitialised) {
+                this.allDatasets = null;
+                this.allDatasetSelectItems = null;
+                isInitialised = false;
+            }
+            final Query query = getIntactDao().getEntityManager()
+                    .createQuery("select distinct(a.value) from PublicationAnnotation a where a.topic.shortName = :datasetTopic order by a.value asc");
+            query.setParameter("datasetTopic", PublicationController.DATASET);
 
-        allDatasets = query.getResultList();
+            allDatasets = query.getResultList();
 
-        allDatasetSelectItems = new ArrayList<SelectItem>( allDatasets.size() + 1 );
-        allDatasetSelectItems.add( new SelectItem( null, "-- Select Dataset --" ) );
+            allDatasetSelectItems = new ArrayList<SelectItem>(allDatasets.size() + 1);
+            allDatasetSelectItems.add(new SelectItem(null, "-- Select Dataset --"));
 
-        for ( String dataset : allDatasets ) {
-            if (dataset != null) {
-                final SelectItem selectItem = createSelectItem(dataset);
-                allDatasetSelectItems.add(selectItem);
+            for (String dataset : allDatasets) {
+                if (dataset != null) {
+                    final SelectItem selectItem = createSelectItem(dataset);
+                    allDatasetSelectItems.add(selectItem);
+                }
             }
         }
     }
