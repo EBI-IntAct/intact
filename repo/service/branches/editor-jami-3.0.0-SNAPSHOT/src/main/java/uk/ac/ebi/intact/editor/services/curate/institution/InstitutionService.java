@@ -41,22 +41,26 @@ public class InstitutionService extends AbstractEditorService {
 
     private List<SelectItem> institutionSelectItems;
 
-    public synchronized void clearAll(){
-        this.institutionSelectItems = null;
+    public void clearAll(){
+        synchronized (institutionSelectItems) {
+            this.institutionSelectItems = null;
+        }
     }
 
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-    public synchronized void loadInstitutions( ) {
+    public void loadInstitutions( ) {
         if ( log.isDebugEnabled() ) log.debug( "Loading Institutions" );
 
         clearAll();
 
-        List<IntactSource> allInstitutions = getIntactDao().getSourceDao().getAllSorted(0,Integer.MAX_VALUE, "shortName", true);
+        synchronized (institutionSelectItems) {
+            List<IntactSource> allInstitutions = getIntactDao().getSourceDao().getAllSorted(0, Integer.MAX_VALUE, "shortName", true);
 
-        institutionSelectItems = new ArrayList<SelectItem>(allInstitutions.size());
+            institutionSelectItems = new ArrayList<SelectItem>(allInstitutions.size());
 
-        for (IntactSource institution : allInstitutions) {
-            institutionSelectItems.add(new SelectItem(institution, institution.getShortName(), institution.getFullName()));
+            for (IntactSource institution : allInstitutions) {
+                institutionSelectItems.add(new SelectItem(institution, institution.getShortName(), institution.getFullName()));
+            }
         }
     }
 
@@ -69,17 +73,21 @@ public class InstitutionService extends AbstractEditorService {
         return getInstitutionSelectItems(true);
     }
 
-    public synchronized List<SelectItem> getInstitutionSelectItems(boolean addDefaultNoSelection) {
-        if (institutionSelectItems == null){
-            return null;
-        }
-        List<SelectItem> items = new ArrayList(institutionSelectItems);
+    public List<SelectItem> getInstitutionSelectItems(boolean addDefaultNoSelection) {
+        synchronized (institutionSelectItems) {
+            synchronized (institutionSelectItems) {
+                if (institutionSelectItems == null){
+                    return null;
+                }
+                List<SelectItem> items = new ArrayList(institutionSelectItems);
 
-        if (addDefaultNoSelection) {
-            items.add( new SelectItem( null, "-- Select Institution --", "-- Select Institution --", false, false, true ) );
-        }
+                if (addDefaultNoSelection) {
+                    items.add( new SelectItem( null, "-- Select Institution --", "-- Select Institution --", false, false, true ) );
+                }
 
-        return items;
+                return items;
+            }
+        }
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
