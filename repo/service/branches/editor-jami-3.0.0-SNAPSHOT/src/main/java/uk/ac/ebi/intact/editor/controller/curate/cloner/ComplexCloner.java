@@ -68,7 +68,6 @@ public class ComplexCloner extends AbstractEditorCloner<Complex, IntactComplex> 
                 if (org == null){
                     org = new IntactOrganism(host.getTaxId(), host.getCommonName(), host.getScientificName());
                     organismService.saveOrUpdate(org);
-                    biosourceService.clearAll();
                     biosourceService.loadData();
                     org = biosourceService.findBiosourceByTaxid(host.getTaxId());
                 }

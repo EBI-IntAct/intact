@@ -53,19 +53,6 @@ public class BioSourceService extends AbstractEditorService {
 
     private boolean isInitialised = false;
 
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public synchronized void clearAll(){
-        if (isInitialised){
-            this.acOrganismMap.clear();
-            this.taxidOrganismMap.clear();
-            this.bioSourceSelectItems=null;
-            this.organismSelectItems=null;
-            isInitialised=false;
-        }
-
-        loadData();
-    }
-
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public int countAliases(IntactOrganism organis) {
@@ -146,38 +133,46 @@ public class BioSourceService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public synchronized void loadData( ) {
+    public void loadData( ) {
         if ( log.isDebugEnabled() ) log.debug( "Loading BioSources" );
-
-        List<IntactOrganism> allBioSources = getIntactDao().getOrganismDao().getAllSorted(0, Integer.MAX_VALUE, "commonName", true);
-
-        bioSourceSelectItems = new ArrayList<SelectItem>(allBioSources.size());
-        organismSelectItems = new ArrayList<SelectItem>(allBioSources.size());
-
-        acOrganismMap = new HashMap<String, IntactOrganism>();
-        taxidOrganismMap = new HashMap<Integer, IntactOrganism>();
-
-        bioSourceSelectItems.add( new SelectItem( null, "-- Select BioSource --", "-- Select BioSource --", false, false, true ) );
-        organismSelectItems.add( new SelectItem( null, "-- Select Organism --", "-- Select Organism --", false, false, true ) );
-        for (IntactOrganism bioSource : allBioSources) {
-
-            SelectItem item = new SelectItem(bioSource, bioSource.getCommonName(), bioSource.getScientificName());
-            bioSourceSelectItems.add(item);
-            if (bioSource.getCellType() == null && bioSource.getTissue() == null){
-                organismSelectItems.add(item);
+        synchronized (this) {
+            if (isInitialised) {
+                this.acOrganismMap.clear();
+                this.taxidOrganismMap.clear();
+                this.bioSourceSelectItems = null;
+                this.organismSelectItems = null;
+                isInitialised = false;
             }
+            List<IntactOrganism> allBioSources = getIntactDao().getOrganismDao().getAllSorted(0, Integer.MAX_VALUE, "commonName", true);
 
-            if (bioSource.getCellType() != null){
-                initialiseCv(bioSource.getCellType());
-            }
-            if (bioSource.getTissue() != null){
-                initialiseCv(bioSource.getTissue());
-            }
+            bioSourceSelectItems = new ArrayList<SelectItem>(allBioSources.size());
+            organismSelectItems = new ArrayList<SelectItem>(allBioSources.size());
 
-            acOrganismMap.put(bioSource.getAc(), bioSource);
-            taxidOrganismMap.put(bioSource.getTaxId(), bioSource);
+            acOrganismMap = new HashMap<String, IntactOrganism>();
+            taxidOrganismMap = new HashMap<Integer, IntactOrganism>();
+
+            bioSourceSelectItems.add(new SelectItem(null, "-- Select BioSource --", "-- Select BioSource --", false, false, true));
+            organismSelectItems.add(new SelectItem(null, "-- Select Organism --", "-- Select Organism --", false, false, true));
+            for (IntactOrganism bioSource : allBioSources) {
+
+                SelectItem item = new SelectItem(bioSource, bioSource.getCommonName(), bioSource.getScientificName());
+                bioSourceSelectItems.add(item);
+                if (bioSource.getCellType() == null && bioSource.getTissue() == null) {
+                    organismSelectItems.add(item);
+                }
+
+                if (bioSource.getCellType() != null) {
+                    initialiseCv(bioSource.getCellType());
+                }
+                if (bioSource.getTissue() != null) {
+                    initialiseCv(bioSource.getTissue());
+                }
+
+                acOrganismMap.put(bioSource.getAc(), bioSource);
+                taxidOrganismMap.put(bioSource.getTaxId(), bioSource);
+            }
+            isInitialised = true;
         }
-        isInitialised = true;
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)

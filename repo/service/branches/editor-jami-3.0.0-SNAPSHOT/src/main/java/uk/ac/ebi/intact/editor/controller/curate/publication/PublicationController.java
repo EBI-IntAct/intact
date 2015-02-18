@@ -991,7 +991,7 @@ public class PublicationController extends AnnotatedObjectController {
                 newDatasetDescriptionToCreate = null;
                 newDatasetNameToCreate = null;
 
-                getDatasetPopulator().clearAll();
+                getDatasetPopulator().loadData();
 
                 // save publication and refresh datasetPopulator
                 doSave();
@@ -1020,7 +1020,7 @@ public class PublicationController extends AnnotatedObjectController {
                 }
             }
             setUnsavedChanges(true);
-            getDatasetPopulator().clearAll();
+            getDatasetPopulator().loadData();
         }
     }
 
