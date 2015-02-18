@@ -161,6 +161,22 @@ public class InteractionEditorService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public Collection<Annotation> initialiseInteractionAnnotations(IntactInteractionEvidence releasable) {
+        // reload complex without flushing changes
+        IntactInteractionEvidence reloaded = releasable;
+        // merge current user because detached
+        if (releasable.getAc() != null && !getIntactDao().getEntityManager().contains(releasable)){
+            reloaded = getIntactDao().getEntityManager().find(IntactInteractionEvidence.class, releasable.getAc());
+            if (reloaded == null){
+                reloaded = releasable;
+            }
+        }
+
+        initialiseAnnotations(reloaded.getAnnotations());
+        return reloaded.getAnnotations();
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public String computesShortLabel(IntactInteractionEvidence evidence) {
         return IntactUtils.generateAutomaticInteractionEvidenceShortlabelFor(evidence, IntactUtils.MAX_SHORT_LABEL_LEN);
     }

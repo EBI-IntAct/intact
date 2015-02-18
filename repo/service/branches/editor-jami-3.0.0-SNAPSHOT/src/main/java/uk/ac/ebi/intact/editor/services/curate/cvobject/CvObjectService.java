@@ -29,9 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.CvTermUtils;
-import psidev.psi.mi.jami.utils.clone.CvTermCloner;
-import uk.ac.ebi.intact.editor.controller.curate.cloner.ComplexCloner;
-import uk.ac.ebi.intact.editor.controller.curate.cloner.ModelledFeatureCloner;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
 import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
@@ -1242,6 +1239,22 @@ public class CvObjectService extends AbstractEditorService {
             return true;
         }
         return !areCvCollectionsLazy(cv);
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public Collection<Annotation> initialiseCvAnnotations(IntactCvTerm releasable) {
+        // reload complex without flushing changes
+        IntactCvTerm reloaded = releasable;
+        // merge current user because detached
+        if (releasable.getAc() != null && !getIntactDao().getEntityManager().contains(releasable)){
+            reloaded = getIntactDao().getEntityManager().find(IntactCvTerm.class, releasable.getAc());
+            if (reloaded == null){
+                reloaded = releasable;
+            }
+        }
+
+        initialiseAnnotations(reloaded.getAnnotations());
+        return reloaded.getAnnotations();
     }
 
     private boolean areCvCollectionsLazy(IntactCvTerm cv) {

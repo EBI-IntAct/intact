@@ -254,7 +254,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
         }
         else{
             // reload releasable without flushing changes
-            return getEditorService().initialiseLifecycleEvents(releasable).getLifecycleEvents();
+            return getEditorService().initialiseLifecycleEvents(releasable);
         }
     }
 
@@ -1044,7 +1044,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
                annotations = publication.getAnnotations();
             }
             else{
-                annotations = ((PublicationEditorService)ApplicationContextProvider.getBean("publicationEditorService")).initialisePublicationAnnotations(publication).getDbAnnotations();
+                annotations = ((PublicationEditorService)ApplicationContextProvider.getBean("publicationEditorService")).initialisePublicationAnnotations(publication);
             }
         }
         else if (ao instanceof IntactExperiment){
@@ -1053,7 +1053,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
                 annotations = experiment.getAnnotations();
             }
             else{
-                annotations = ((ExperimentEditorService)ApplicationContextProvider.getBean("experimentEditorService")).initialiseExperimentAnnotations(experiment).getAnnotations();
+                annotations = ((ExperimentEditorService)ApplicationContextProvider.getBean("experimentEditorService")).initialiseExperimentAnnotations(experiment);
             }
         }
         else if (ao instanceof IntactInteractionEvidence){
@@ -1062,7 +1062,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
                 annotations = interaction.getAnnotations();
             }
             else{
-                annotations = ((InteractionEditorService)ApplicationContextProvider.getBean("interactionEditorService")).initialiseInteractionAnnotations(interaction).getAnnotations();
+                annotations = ((InteractionEditorService)ApplicationContextProvider.getBean("interactionEditorService")).initialiseInteractionAnnotations(interaction);
             }
         }
         else if (ao instanceof IntactInteractor){
@@ -1071,7 +1071,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
                 annotations = interactor.getAnnotations();
             }
             else{
-                annotations = ((InteractorEditorService)ApplicationContextProvider.getBean("interactorEditorService")).initialiseInteractorAnnotations(interactor).getDbAnnotations();
+                annotations = ((InteractorEditorService)ApplicationContextProvider.getBean("interactorEditorService")).initialiseInteractorAnnotations(interactor);
             }
         }
         else if (ao instanceof AbstractIntactParticipant){
@@ -1080,7 +1080,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
                 annotations = participant.getAnnotations();
             }
             else{
-                annotations = ((ParticipantEditorService)ApplicationContextProvider.getBean("participantEditorService")).initialiseParticipantAnnotations(participant).getAnnotations();
+                annotations = ((ParticipantEditorService)ApplicationContextProvider.getBean("participantEditorService")).initialiseParticipantAnnotations(participant);
             }
         }
         else if (ao instanceof AbstractIntactFeature){
@@ -1089,7 +1089,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
                 annotations = participant.getAnnotations();
             }
             else{
-                annotations = ((FeatureEditorService)ApplicationContextProvider.getBean("featureEditorService")).initialiseFeatureAnnotations(participant).getAnnotations();
+                annotations = ((FeatureEditorService)ApplicationContextProvider.getBean("featureEditorService")).initialiseFeatureAnnotations(participant);
             }
         }
         else if (ao instanceof IntactCvTerm){
@@ -1098,7 +1098,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
                 annotations = cv.getAnnotations();
             }
             else{
-                annotations = getCvService().initialiseCvAnnotations(cv).getAnnotations();
+                annotations = getCvService().initialiseCvAnnotations(cv);
             }
         }
         else if (ao instanceof IntactSource){
@@ -1107,7 +1107,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
                 annotations = source.getAnnotations();
             }
             else{
-                annotations = ((InstitutionService)ApplicationContextProvider.getBean("institutionService")).initialiseSourceAnnotations(source).getAnnotations();
+                annotations = ((InstitutionService)ApplicationContextProvider.getBean("institutionService")).initialiseSourceAnnotations(source);
             }
         }
 

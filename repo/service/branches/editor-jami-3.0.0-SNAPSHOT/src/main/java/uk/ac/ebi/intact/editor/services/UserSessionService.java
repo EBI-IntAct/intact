@@ -58,15 +58,10 @@ public class UserSessionService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public void notifyLastActivity(User user) throws SynchronizerException, FinderException, PersisterException {
 
-        // register dao for clearing cache after commit
-        attachDaoToTransactionManager();
-
         DateTime dateTime = new DateTime();
         String dateTimeStr = dateTime.toString("dd/MM/yyyy HH:mm");
 
         if (user != null) {
-            user = reattachIntactObjectIfTransient(user, getIntactDao().getUserDao());
-
             Preference pref = user.getPreference("last.activity");
 
             if (pref == null) {

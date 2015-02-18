@@ -164,12 +164,6 @@ public class PublicationController extends AnnotatedObjectController {
     @Override
     protected void loadCautionMessages() {
         if (this.publication != null){
-            if (!publication.areAnnotationsInitialized()){
-                setPublication(getPublicationEditorService().initialisePublicationAnnotations(this.publication));
-            }
-            if (!publication.areXrefsInitialized()){
-                setPublication(getPublicationEditorService().initialisePublicationXrefs(this.publication));
-            }
 
             Annotation caution = AnnotationUtils.collectFirstAnnotationWithTopic(this.publication.getAnnotations(), Annotation.CAUTION_MI, Annotation.CAUTION);
             setCautionMessage(caution != null ? caution.getValue() : null);
@@ -1028,18 +1022,6 @@ public class PublicationController extends AnnotatedObjectController {
         return publication.getPubmedId() != null && publication.getPubmedId().startsWith("unassigned");
     }
 
-    public int countExperiments(IntactPublication pub) {
-        if (pub.areExperimentsInitialized()) {
-            return pub.getExperiments().size();
-        } else {
-            return getPublicationEditorService().countExperiments(pub);
-        }
-    }
-
-    public int countInteractions(IntactPublication pub) {
-        return getPublicationEditorService().countInteractions(pub);
-    }
-
     public String getAc() {
         return ac;
     }
@@ -1378,16 +1360,6 @@ public class PublicationController extends AnnotatedObjectController {
     }
 
     public boolean isToBeReviewed(IntactPublication pub) {
-        if (!pub.areAnnotationsInitialized()){
-            pub = getPublicationEditorService().initialisePublicationAnnotations(pub);
-            if (pub.isToBeReviewed()){
-                return true;
-            }
-        }
-        if (!pub.areExperimentsInitialized()) {
-            pub = getPublicationEditorService().initialiseExperiments(pub);
-        }
-
         if (pub.getExperiments().isEmpty()) {
             return false;
         }
@@ -1589,16 +1561,10 @@ public class PublicationController extends AnnotatedObjectController {
     }
 
     public boolean isRejected(IntactPublication publication) {
-        if (!publication.areLifeCycleEventsInitialized()){
-            publication = getPublicationEditorService().initialiseLifeCycleEvents(publication);
-        }
         return ReleasableUtils.isRejected(publication);
     }
 
     public String getReasonForRejection(IntactPublication publication) {
-        if (!publication.areLifeCycleEventsInitialized()){
-            publication = getPublicationEditorService().initialiseLifeCycleEvents(publication);
-        }
         LifeCycleEvent event = ReleasableUtils.getLastEventOfType(publication, LifeCycleEventType.REJECTED);
 
         if (event != null) {

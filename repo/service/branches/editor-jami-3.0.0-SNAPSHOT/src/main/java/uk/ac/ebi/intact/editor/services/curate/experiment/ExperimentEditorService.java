@@ -129,6 +129,22 @@ public class ExperimentEditorService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public Collection<Annotation> initialiseExperimentAnnotations(IntactExperiment releasable) {
+        // reload complex without flushing changes
+        IntactExperiment reloaded = releasable;
+        // merge current user because detached
+        if (releasable.getAc() != null && !getIntactDao().getEntityManager().contains(releasable)){
+            reloaded = getIntactDao().getEntityManager().find(IntactExperiment.class, releasable.getAc());
+            if (reloaded == null){
+                reloaded = releasable;
+            }
+        }
+
+        initialiseAnnotations(reloaded.getAnnotations());
+        return reloaded.getAnnotations();
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactExperiment reloadFullyInitialisedExperiment(IntactExperiment exp) {
         if (exp == null){
             return null;

@@ -23,10 +23,7 @@ import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.InteractorCloner;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
-import uk.ac.ebi.intact.jami.model.extension.AbstractIntactFeature;
-import uk.ac.ebi.intact.jami.model.extension.AbstractIntactParticipant;
-import uk.ac.ebi.intact.jami.model.extension.IntactFeatureEvidence;
-import uk.ac.ebi.intact.jami.model.extension.IntactParticipantEvidence;
+import uk.ac.ebi.intact.jami.model.extension.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -228,6 +225,22 @@ public class ParticipantEditorService extends AbstractEditorService {
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public Interactor initialiseInteractor(Interactor inter, InteractorCloner interactorCloner) {
         return super.initialiseInteractor(inter, interactorCloner);
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public Collection<Annotation> initialiseParticipantAnnotations(AbstractIntactParticipant releasable) {
+        // reload complex without flushing changes
+        AbstractIntactParticipant reloaded = releasable;
+        // merge current user because detached
+        if (releasable.getAc() != null && !getIntactDao().getEntityManager().contains(releasable)){
+            reloaded = getIntactDao().getEntityManager().find(releasable.getClass(), releasable.getAc());
+            if (reloaded == null){
+                reloaded = releasable;
+            }
+        }
+
+        initialiseAnnotations(reloaded.getAnnotations());
+        return reloaded.getAnnotations();
     }
 
     private boolean isParticipantEvidenceFullyInitialised(IntactParticipantEvidence participant, boolean checkExpRole) {
