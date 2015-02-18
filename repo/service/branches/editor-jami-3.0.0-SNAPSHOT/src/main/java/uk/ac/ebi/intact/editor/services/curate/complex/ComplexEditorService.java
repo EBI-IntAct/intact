@@ -111,7 +111,7 @@ public class ComplexEditorService extends AbstractEditorService {
 
         IntactInteractionEvidence reloaded = ao;
         // reload fully initialised object if not done yet
-        if (reloaded.getAc() != null && !getIntactDao().getEntityManager().contains(ao)){
+        if (reloaded.getAc() != null){
             reloaded = getIntactDao().getEntityManager().find(IntactInteractionEvidence.class, ao.getAc());
         }
 
