@@ -71,6 +71,7 @@ public class DatasetPopulator extends AbstractEditorService {
                     allDatasetSelectItems.add(selectItem);
                 }
             }
+            isInitialised = true;
         }
     }
 
