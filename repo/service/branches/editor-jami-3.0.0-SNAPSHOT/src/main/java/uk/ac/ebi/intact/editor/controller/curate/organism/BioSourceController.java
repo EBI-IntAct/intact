@@ -170,6 +170,13 @@ public class BioSourceController extends AnnotatedObjectController {
     }
 
     @Override
+    public String doDelete() {
+        String value = super.doDelete();
+        getBioSourceService().clearAll();
+        return value;
+    }
+
+    @Override
     public void doPostSave() {
         getBioSourceService().clearAll();
     }
