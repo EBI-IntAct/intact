@@ -22,10 +22,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import psidev.psi.mi.jami.model.Alias;
-import psidev.psi.mi.jami.model.Annotation;
-import psidev.psi.mi.jami.model.CvTerm;
-import psidev.psi.mi.jami.model.Xref;
+import psidev.psi.mi.jami.model.*;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.InteractorCloner;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.OrganismCloner;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.extension.*;
@@ -74,18 +73,6 @@ public class BioSourceService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactOrganism initialiseOrganismAliases(IntactOrganism interactor) {
-        // reload interactor without flushing changes
-        IntactOrganism reloaded = reattachIntactObjectIfTransient(interactor, getIntactDao().getOrganismDao());
-        Collection<Alias> aliases = reloaded.getAliases();
-        initialiseAliases(aliases);
-
-        getIntactDao().getEntityManager().detach(reloaded);
-
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactOrganism loadOrganismByAc(String ac) {
         IntactOrganism organism = getIntactDao().getEntityManager().find(IntactOrganism.class, ac);
 
@@ -106,21 +93,56 @@ public class BioSourceService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactOrganism reloadFullyInitialisedOrganism(IntactOrganism organism) {
-        IntactOrganism reloaded = reattachIntactObjectIfTransient(organism, getIntactDao().getOrganismDao());
+        if (organism == null){
+            return null;
+        }
+
+        IntactOrganism reloaded = null;
+        if (!organism.areAliasesInitialized()
+                && organism.getAc() != null
+                && !getIntactDao().getEntityManager().contains(organism)){
+            reloaded = loadOrganismByAc(organism.getAc());
+        }
+
+        // we need first to merge with reloaded complex
+        if (reloaded != null){
+            // detach reloaded now so not changes will be committed
+            getIntactDao().getEntityManager().detach(reloaded);
+            OrganismCloner cloner = new OrganismCloner();
+            cloner.copyInitialisedProperties(organism, reloaded);
+            organism = reloaded;
+        }
 
         // initialise aliases because first tab
-        initialiseAliases(reloaded.getAliases());
+        initialiseAliases(organism.getAliases());
 
-        if (organism.getCellType() != null){
-            initialiseCv(reloaded.getCellType());
+        if (organism.getCellType() != null && !isCvInitialised(organism.getCellType())){
+            CvTerm cv = initialiseCv(organism.getCellType() );
+            if (cv != organism.getCellType()  ){
+                organism.setCellType(cv);
+            }
         }
-        if (organism.getTissue() != null){
-            initialiseCv(reloaded.getTissue());
+        if (organism.getTissue() != null && !isCvInitialised(organism.getTissue())){
+            CvTerm cv = initialiseCv(organism.getTissue() );
+            if (cv != organism.getTissue()  ){
+                organism.setTissue(cv);
+            }
         }
 
-        getIntactDao().getEntityManager().detach(reloaded);
+        return organism;
+    }
 
-        return reloaded;
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public boolean isOrganismFullyLoaded(IntactOrganism organism){
+        if (organism == null){
+            return true;
+        }
+        if (!organism.areAliasesInitialized()
+                || (organism.getCellType() != null && !isCvInitialised(organism.getCellType()))
+                || (organism.getTissue() != null && !isCvInitialised(organism.getTissue()))){
+            return false;
+        }
+        return true;
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
