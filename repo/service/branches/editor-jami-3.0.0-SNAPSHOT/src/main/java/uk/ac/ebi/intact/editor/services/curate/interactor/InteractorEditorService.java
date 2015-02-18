@@ -22,10 +22,8 @@ import psidev.psi.mi.jami.model.Interactor;
 import psidev.psi.mi.jami.model.InteractorPool;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.InteractorCloner;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
-import uk.ac.ebi.intact.jami.model.extension.IntactInteractionEvidence;
 import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
 import uk.ac.ebi.intact.jami.model.extension.IntactInteractorPool;
-import uk.ac.ebi.intact.jami.model.extension.IntactPolymer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -76,10 +74,6 @@ public class InteractorEditorService extends AbstractEditorService {
             if (interactor instanceof IntactInteractorPool){
                 initialiseInteractorMembers((IntactInteractorPool) interactor);
             }
-            // load sequence
-            if (interactor instanceof IntactPolymer){
-                initialiseSequence((IntactPolymer) interactor);
-            }
         }
 
         return interactor;
@@ -87,7 +81,25 @@ public class InteractorEditorService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactInteractor reloadFullyInitialisedInteractor(IntactInteractor interactor) {
-        IntactInteractor reloaded = reattachIntactObjectIfTransient(interactor, getIntactDao().getInteractorDao(IntactInteractor.class));
+        if (interactor == null){
+            return null;
+        }
+
+        IntactInteractor reloaded = null;
+        if (areAllInteractorCollectionsLazy(interactor)
+                && interactor.getAc() != null
+                && !getIntactDao().getEntityManager().contains(interactor)){
+            reloaded = loadInteractorByAc(interactor.getAc());
+        }
+
+        // we need first to merge with reloaded complex
+        if (reloaded != null){
+            // detach reloaded now so not changes will be committed
+            getIntactDao().getEntityManager().detach(reloaded);
+            InteractorCloner cloner = new InteractorCloner();
+            cloner.copyInitialisedProperties(interactor, reloaded);
+            interactor = reloaded;
+        }
 
         // initialise xrefs because needs id
         initialiseXrefs(interactor.getDbXrefs());
@@ -105,21 +117,15 @@ public class InteractorEditorService extends AbstractEditorService {
         if (interactor instanceof IntactInteractorPool){
             initialiseInteractorMembers((IntactInteractorPool) interactor);
         }
-        // load sequence
-        if (interactor instanceof IntactPolymer){
-            initialiseSequence((IntactPolymer) interactor);
-        }
 
-        return reloaded;
+        return interactor;
     }
 
-    private boolean areInteractionCollectionsLazy(IntactInteractionEvidence interactor) {
+    private boolean areAllInteractorCollectionsLazy(IntactInteractor interactor) {
         return !interactor.areAnnotationsInitialized()
-                || !interactor.areVariableParameterValuesInitialized()
-                || !interactor.areParametersInitialized()
-                || !interactor.areConfidencesInitialized()
+                || !interactor.areAliasesInitialized()
                 || !interactor.areXrefsInitialized()
-                || !interactor.areParticipantsInitialized();
+                || (interactor instanceof IntactInteractorPool && !((IntactInteractorPool) interactor).areInteractorsInitialized());
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
@@ -164,10 +170,6 @@ public class InteractorEditorService extends AbstractEditorService {
                  }
              }
          }
-    }
-
-    private void initialiseSequence(IntactPolymer interactor) {
-         interactor.getSequence().length();
     }
 
     @Override

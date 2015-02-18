@@ -152,9 +152,6 @@ public class InteractorController extends AnnotatedObjectController {
     @Override
     protected void loadCautionMessages() {
         if (this.interactor != null){
-            if (!interactor.areAnnotationsInitialized()){
-                setInteractor(getInteractorEditorService().initialiseInteractorAnnotations(this.interactor));
-            }
 
             Annotation caution = AnnotationUtils.collectFirstAnnotationWithTopic(this.interactor.getDbAnnotations(), Annotation.CAUTION_MI, Annotation.CAUTION);
             setCautionMessage(caution != null ? caution.getValue() : null);
@@ -370,11 +367,8 @@ public class InteractorController extends AnnotatedObjectController {
         if (interactor == null){
             return 0;
         }
-        else if (interactor.areAliasesInitialized()){
-            return interactor.getAliases().size();
-        }
         else {
-            return getInteractorEditorService().countAliases(interactor);
+            return interactor.getAliases().size();
         }
     }
 
@@ -422,9 +416,7 @@ public class InteractorController extends AnnotatedObjectController {
     @Override
     protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
         IntactInteractor interactor = (IntactInteractor)annotatedObject;
-        if (!interactor.areAnnotationsInitialized()
-                || !interactor.areXrefsInitialized()
-                || !isCvInitialised(interactor.getInteractorType())) {
+        if (!getInteractorEditorService().isInteractorFullyLoaded(interactor)) {
             this.interactor = getInteractorEditorService().reloadFullyInitialisedInteractor(interactor);
         }
 
@@ -459,14 +451,6 @@ public class InteractorController extends AnnotatedObjectController {
         }
 
         setDescription("Interactor "+ interactor.getShortName());
-    }
-
-    private boolean isCvInitialised(CvTerm cv) {
-        if (cv instanceof IntactCvTerm){
-            IntactCvTerm intactCv = (IntactCvTerm)cv;
-            return intactCv.areXrefsInitialized() && intactCv.areAnnotationsInitialized();
-        }
-        return true;
     }
 
     @Override
@@ -569,10 +553,6 @@ public class InteractorController extends AnnotatedObjectController {
     }
 
     public List<Alias> collectAliases() {
-        // aliases are not always initialised
-        if (!interactor.areAliasesInitialized()){
-            setInteractor(getInteractorEditorService().initialiseInteractorAliases(this.interactor));
-        }
 
         List<Alias> aliases = new ArrayList<Alias>(this.interactor.getAliases());
         Collections.sort(aliases, new AuditableComparator());
