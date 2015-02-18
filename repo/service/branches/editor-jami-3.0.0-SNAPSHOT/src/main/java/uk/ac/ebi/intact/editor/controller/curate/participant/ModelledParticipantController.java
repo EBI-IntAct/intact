@@ -188,11 +188,6 @@ public class ModelledParticipantController extends AbstractParticipantController
     }
 
     @Override
-    protected boolean isInitialisedOtherProperties(IntactModelledParticipant part) {
-        return true;
-    }
-
-    @Override
     protected EditorCloner<Participant, IntactModelledParticipant> newClonerInstance() {
         return new ModelledParticipantCloner();
     }
