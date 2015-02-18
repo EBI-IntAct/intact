@@ -26,6 +26,8 @@ import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.FeatureEvidenceCloner;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.InteractorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ParticipantEvidenceCloner;
 import uk.ac.ebi.intact.editor.controller.curate.experiment.ExperimentController;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.FeatureWrapper;
@@ -33,7 +35,6 @@ import uk.ac.ebi.intact.editor.controller.curate.interaction.InteractionControll
 import uk.ac.ebi.intact.editor.controller.curate.publication.PublicationController;
 import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
-import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
 import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.synchronizer.IntactDbSynchronizer;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
@@ -91,14 +92,10 @@ public class ParticipantController extends AbstractParticipantController<IntactP
         return IntactParticipantEvidence.class;
     }
 
+
     @Override
-    protected void loadCautionMessages() {
-        super.loadCautionMessages();
-        if (getParticipant() != null){
-            if (!getParticipant().areAliasesInitialized()){
-                setParticipant(getParticipantEditorService().initialiseParticipantAliases(getParticipant()));
-            }
-        }
+    protected EditorCloner newFeatureClonerInstance() {
+        return new FeatureEvidenceCloner();
     }
 
     @Override
@@ -279,15 +276,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
         }
     }
 
-    @Override
-    protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
-        IntactParticipantEvidence part = (IntactParticipantEvidence) annotatedObject;
-        if (!isCvInitialised(part.getExperimentalRole())){
-            setParticipant(getParticipantEditorService().reloadFullyInitialisedParticipant(part));
-        }
-        super.initialiseDefaultProperties(annotatedObject);
-    }
-
     // Confidence
     ///////////////////////////////////////////////
 
@@ -329,9 +317,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     }
 
     public List<Confidence> collectConfidences() {
-        if (!getParticipant().areConfidencesInitialized()){
-            setParticipant(getParticipantEditorService().initialiseParticipantConfidences(getParticipant()));
-        }
 
         final List<Confidence> confidences = new ArrayList<Confidence>( getParticipant().getConfidences() );
         Collections.sort( confidences, new AuditableComparator() );
@@ -339,9 +324,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     }
 
     public List<Parameter> collectParameters() {
-        if (!getParticipant().areParametersInitialized()){
-            setParticipant(getParticipantEditorService().initialiseParticipantParameters(getParticipant()));
-        }
 
         final List<Parameter> parameters = new ArrayList<Parameter>( getParticipant().getParameters() );
         Collections.sort( parameters, new AuditableComparator() );
@@ -349,9 +331,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     }
 
     public List<CvTerm> collectExperimentalPreparations() {
-        if (!getParticipant().areExperimentalPreparationsInitialized()){
-            setParticipant(getParticipantEditorService().initialiseParticipantExperimentalPreparations(getParticipant()));
-        }
 
         final List<CvTerm> parameters = new ArrayList<CvTerm>( getParticipant().getExperimentalPreparations() );
         Collections.sort( parameters, new AuditableComparator() );
@@ -359,9 +338,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     }
 
     public List<CvTerm> collectIdentificationMethods() {
-        if (!getParticipant().areIdentificationMethodsInitialized()){
-            setParticipant(getParticipantEditorService().initialiseParticipantIdentificationMethods(getParticipant()));
-        }
 
         final List<CvTerm> parameters = new ArrayList<CvTerm>( getParticipant().getDbIdentificationMethods() );
         Collections.sort( parameters, new AuditableComparator() );
@@ -469,11 +445,8 @@ public class ParticipantController extends AbstractParticipantController<IntactP
         if (getParticipant() == null){
             return 0;
         }
-        else if (getParticipant().areExperimentalPreparationsInitialized()){
+        else {
             return getParticipant().getExperimentalPreparations().size();
-        }
-        else{
-            return getParticipantEditorService().countExperimentalPreparations(getParticipant());
         }
     }
 
@@ -481,11 +454,8 @@ public class ParticipantController extends AbstractParticipantController<IntactP
         if (getParticipant() == null){
             return 0;
         }
-        else if (getParticipant().areIdentificationMethodsInitialized()){
+        else {
             return getParticipant().getDbIdentificationMethods().size();
-        }
-        else{
-            return getParticipantEditorService().countIdentificationMethods(getParticipant());
         }
     }
 
@@ -591,11 +561,8 @@ public class ParticipantController extends AbstractParticipantController<IntactP
         if (getParticipant() == null){
             return 0;
         }
-        else if (getParticipant().areParametersInitialized()){
+        else {
             return getParticipant().getParameters().size();
-        }
-        else{
-            return getParticipantEditorService().countParameters(getParticipant());
         }
     }
 
@@ -603,11 +570,8 @@ public class ParticipantController extends AbstractParticipantController<IntactP
         if (getParticipant() == null){
             return 0;
         }
-        else if (getParticipant().areConfidencesInitialized()){
+        else {
             return getParticipant().getConfidences().size();
-        }
-        else{
-            return getParticipantEditorService().countConfidences(getParticipant());
         }
     }
 
@@ -684,18 +648,19 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     public String participantPrimaryId(IntactParticipantEvidence component) {
         if (component == null) return null;
 
-        if (component.getInteractor() instanceof IntactInteractor && !((IntactInteractor)component.getInteractor()).areXrefsInitialized()){
-            component = getParticipantEditorService().reloadFullyInitialisedParticipant(component);
+        Interactor interactor = component.getInteractor();
+        if (!getParticipantEditorService().isInteractorInitialised(interactor)){
+            interactor = getParticipantEditorService().initialiseInteractor(interactor, new InteractorCloner());
         }
 
-        final Xref xref = component.getInteractor().getPreferredIdentifier();
+        final Xref xref = interactor.getPreferredIdentifier();
 
         if (xref == null) {
-            if (component.getInteractor() instanceof IntactInteractor){
-                return ((IntactInteractor)component.getInteractor()).getAc();
+            if (interactor instanceof IntactInteractor){
+                return ((IntactInteractor)interactor).getAc();
             }
             else{
-                return component.getInteractor().getShortName();
+                return interactor.getShortName();
             }
         }
 

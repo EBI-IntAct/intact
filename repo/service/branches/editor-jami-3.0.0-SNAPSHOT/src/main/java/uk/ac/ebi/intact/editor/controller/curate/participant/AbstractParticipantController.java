@@ -26,6 +26,7 @@ import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.FeatureWrapper;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.ImportCandidate;
 import uk.ac.ebi.intact.editor.services.curate.interaction.ParticipantImportService;
@@ -92,9 +93,6 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
     @Override
     protected void loadCautionMessages() {
         if (this.participant != null){
-            if (!participant.areAnnotationsInitialized()){
-                setParticipant(getParticipantEditorService().initialiseParticipantAnnotations(this.participant));
-            }
 
             Annotation caution = AnnotationUtils.collectFirstAnnotationWithTopic(this.participant.getAnnotations(), Annotation.CAUTION_MI, Annotation.CAUTION);
             setCautionMessage(caution != null ? caution.getValue() : null);
@@ -103,7 +101,7 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
 
             if (this.participant.getInteractor() instanceof IntactInteractor
                     && !((IntactInteractor)participant.getInteractor()).areXrefsInitialized()){
-                setParticipant(getParticipantEditorService().reloadFullyInitialisedParticipant(this.participant));
+                setParticipant(getParticipantEditorService().reloadFullyInitialisedParticipant(this.participant, newClonerInstance(), newFeatureClonerInstance()));
             }
             this.participantId = this.participant.getInteractor().getPreferredIdentifier() != null ?
                     this.participant.getInteractor().getPreferredIdentifier().getId():this.participant.getInteractor().getShortName();
@@ -118,7 +116,7 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
 
             if ( ac != null ) {
                 if ( participant == null || !ac.equals( participant.getAc() ) ) {
-                    setParticipant(getParticipantEditorService().loadParticipantByAc(ac, getParticipantClass()));
+                    setParticipant(getParticipantEditorService().loadParticipantByAc(ac, getParticipantClass(), newFeatureClonerInstance()));
                 }
             } else {
                 if ( participant != null ) ac = participant.getAc();
@@ -135,6 +133,8 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
 
         generalLoadChecks();
     }
+
+    protected abstract EditorCloner newFeatureClonerInstance();
 
     @Override
     public void refreshTabs(){
@@ -354,11 +354,8 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
         if (participant == null){
             return 0;
         }
-        else if (participant.areXrefsInitialized()){
+        else {
             return participant.getXrefs().size();
-        }
-        else{
-            return getParticipantEditorService().countXrefs(this.participant);
         }
     }
 
@@ -379,18 +376,6 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
         }
         else {
             return participant.getAnnotations().size();
-        }
-    }
-
-    public int getCausalityStatementsSize() {
-        if (participant == null){
-            return 0;
-        }
-        else if (participant.areCausalRelationshipsInitialized()){
-            return participant.getCausalRelationships().size();
-        }
-        else{
-            return getParticipantEditorService().countCausalityStatements(this.participant);
         }
     }
 
@@ -473,9 +458,6 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
     }
 
     public void refreshFeatures() {
-        if (!isInitialisedFeatures(participant.getFeatures())){
-            setParticipant(getParticipantEditorService().initialiseFeatures(this.participant));
-        }
         List<FeatureWrapper> wrappers = new ArrayList<FeatureWrapper>(this.participant.getFeatures().size());
 
         for ( Object obj : this.participant.getFeatures() ) {
@@ -487,9 +469,6 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
 
 
     public void reloadSingleFeature(AbstractIntactFeature f){
-        if (!this.participant.areFeaturesInitialized()){
-            setParticipant(getParticipantEditorService().initialiseFeatures(this.participant));
-        }
         Iterator<? extends Feature> evIterator = participant.getFeatures().iterator();
         boolean add = true;
         while (evIterator.hasNext()){
@@ -510,9 +489,6 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
     }
 
     public void removeFeature(AbstractIntactFeature f){
-        if (!this.participant.areFeaturesInitialized()){
-            setParticipant(getParticipantEditorService().initialiseFeatures(this.participant));
-        }
         Iterator<? extends Feature> evIterator = participant.getFeatures().iterator();
         while (evIterator.hasNext()){
             AbstractIntactFeature intactEv = (AbstractIntactFeature)evIterator.next();
@@ -530,12 +506,8 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
     @Override
     protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
         T part = (T) annotatedObject;
-        if (!part.areAnnotationsInitialized()
-                || !isCvInitialised(part.getBiologicalRole())
-                || !isInitialisedFeatures(part.getFeatures())
-                || !isInitialisedInteractor(part.getInteractor())
-                || !isInitialisedOtherProperties(part)) {
-            this.participant = getParticipantEditorService().reloadFullyInitialisedParticipant(part);
+        if (!getParticipantEditorService().isParticipantFullyLoaded(part)) {
+            this.participant = getParticipantEditorService().reloadFullyInitialisedParticipant(part, newClonerInstance(), newFeatureClonerInstance());
         }
 
         refreshFeatures();
@@ -595,11 +567,8 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
         if (participant == null){
             return 0;
         }
-        else if (participant.areFeaturesInitialized()){
+        else {
             return participant.getFeatures().size();
-        }
-        else{
-            return getParticipantEditorService().countFeatures(this.participant);
         }
     }
 
@@ -608,16 +577,6 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
         Collections.sort(annotations, new AuditableComparator());
         // annotations are always initialised
         return annotations;
-    }
-
-    public List<CausalRelationship> collectCausalStatements() {
-        if (!participant.areCausalRelationshipsInitialized()){
-            setParticipant(getParticipantEditorService().initialiseCausalRelationships(participant));
-        }
-        List<CausalRelationship> statements = new ArrayList<CausalRelationship>(participant.getCausalRelationships());
-        Collections.sort(statements, new AuditableComparator());
-        // annotations are always initialised
-        return statements;
     }
 
     @Override
@@ -631,30 +590,13 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
         this.participant.getAnnotations().add(newAnnot);
     }
 
-    public void removeCausalRelationship(CausalRelationship rel) {
-        if (!participant.areCausalRelationshipsInitialized()){
-            setParticipant(getParticipantEditorService().initialiseCausalRelationships(participant));
-        }
-
-        participant.getCausalRelationships().remove(rel);
-    }
-
     public List<Alias> collectAliases() {
-        // aliases are not always initialised
-        if (!participant.areAliasesInitialized()){
-            setParticipant(getParticipantEditorService().initialiseParticipantAliases(this.participant));
-        }
-
         List<Alias> aliases = new ArrayList<Alias>(this.participant.getAliases());
         Collections.sort(aliases, new AuditableComparator());
         return aliases;
     }
 
     public List<Xref> collectXrefs() {
-        // causal statements are not always initialised
-        if (!participant.areXrefsInitialized()){
-            setParticipant(getParticipantEditorService().initialiseParticipantXrefs(this.participant));
-        }
 
         List<Xref> xrefs = new ArrayList<Xref>(this.participant.getXrefs());
         Collections.sort(xrefs, new AuditableComparator());

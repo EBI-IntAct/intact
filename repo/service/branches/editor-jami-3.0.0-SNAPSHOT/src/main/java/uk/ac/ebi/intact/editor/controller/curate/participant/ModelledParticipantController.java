@@ -27,6 +27,7 @@ import psidev.psi.mi.jami.model.Participant;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.UnsavedChange;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.ModelledFeatureCloner;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.ModelledParticipantCloner;
 import uk.ac.ebi.intact.editor.controller.curate.complex.ComplexController;
 import uk.ac.ebi.intact.editor.controller.curate.interaction.FeatureWrapper;
@@ -58,6 +59,11 @@ public class ModelledParticipantController extends AbstractParticipantController
     @Override
     public Class<IntactModelledParticipant> getParticipantClass() {
         return IntactModelledParticipant.class;
+    }
+
+    @Override
+    protected EditorCloner newFeatureClonerInstance() {
+        return new ModelledFeatureCloner();
     }
 
     @Override
