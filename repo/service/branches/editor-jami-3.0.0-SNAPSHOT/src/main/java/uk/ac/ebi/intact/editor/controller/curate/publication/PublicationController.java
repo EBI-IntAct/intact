@@ -823,10 +823,7 @@ public class PublicationController extends AnnotatedObjectController {
     @Override
     protected void initialiseDefaultProperties(IntactPrimaryObject annotatedObject) {
         IntactPublication publication = (IntactPublication)annotatedObject;
-        if (!publication.areAnnotationsInitialized()
-                || !publication.areXrefsInitialized()
-                || !areLifeCycleInitialised(publication)
-                || !areExperimentsInitialised(publication)){
+        if (!getPublicationEditorService().isPublicationFullyLoaded(publication)){
             this.publication = getPublicationEditorService().reloadFullyInitialisedPublication(publication);
         }
 
@@ -835,42 +832,6 @@ public class PublicationController extends AnnotatedObjectController {
         refreshExperiments();
 
         setDescription("Publication: "+(publication.getPubmedId() != null ? publication.getPubmedId() : publication.getShortLabel()));
-    }
-
-    private boolean areExperimentsInitialised(IntactPublication publication) {
-        if(!publication.areExperimentsInitialized()){
-            return false;
-        }
-
-        for (Experiment exp : publication.getExperiments()){
-            if (!((IntactExperiment)exp).areAnnotationsInitialized()
-                    || !((IntactExperiment)exp).areXrefsInitialized() ){
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private boolean areLifeCycleInitialised(IntactPublication publication) {
-        if(!publication.areLifeCycleEventsInitialized()){
-            return false;
-        }
-
-        for (LifeCycleEvent event : publication.getLifecycleEvents()){
-            if (!isCvInitialised(((PublicationLifeCycleEvent)event).getCvEvent())){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean isCvInitialised(CvTerm cv) {
-        if (cv instanceof IntactCvTerm){
-            IntactCvTerm intactCv = (IntactCvTerm)cv;
-            return intactCv.areXrefsInitialized() && intactCv.areAnnotationsInitialized();
-        }
-        return true;
     }
 
     @Override
