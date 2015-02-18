@@ -25,7 +25,6 @@ import uk.ac.ebi.intact.editor.controller.curate.cloner.ModelledParticipantClone
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
 import uk.ac.ebi.intact.jami.model.extension.*;
 import uk.ac.ebi.intact.jami.model.lifecycle.AbstractLifeCycleEvent;
-import uk.ac.ebi.intact.jami.model.lifecycle.ComplexLifeCycleEvent;
 import uk.ac.ebi.intact.jami.model.lifecycle.LifeCycleEvent;
 import uk.ac.ebi.intact.jami.synchronizer.FinderException;
 import uk.ac.ebi.intact.jami.synchronizer.PersisterException;
@@ -447,9 +446,9 @@ public class ComplexEditorService extends AbstractEditorService {
         for (LifeCycleEvent evt : evidences){
             if (evt instanceof AbstractLifeCycleEvent
                     && !isCvInitialised(((AbstractLifeCycleEvent) evt).getCvEvent())){
-                CvTerm cvEvent = initialiseCv(((ComplexLifeCycleEvent)evt).getCvEvent());
-                if (cvEvent != ((ComplexLifeCycleEvent)evt).getCvEvent()){
-                    ((ComplexLifeCycleEvent)evt).setCvEvent(cvEvent);
+                CvTerm cvEvent = initialiseCv(((AbstractLifeCycleEvent)evt).getCvEvent());
+                if (cvEvent != ((AbstractLifeCycleEvent)evt).getCvEvent()){
+                    ((AbstractLifeCycleEvent)evt).setCvEvent(cvEvent);
                 }
             }
         }

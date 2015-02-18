@@ -292,9 +292,9 @@ public class PublicationEditorService extends AbstractEditorService {
         for (LifeCycleEvent evt : evidences){
             if (evt instanceof AbstractLifeCycleEvent
                     && !isCvInitialised(((AbstractLifeCycleEvent) evt).getCvEvent())){
-                CvTerm cvEvent = initialiseCv(((ComplexLifeCycleEvent)evt).getCvEvent());
-                if (cvEvent != ((ComplexLifeCycleEvent)evt).getCvEvent()){
-                    ((ComplexLifeCycleEvent)evt).setCvEvent(cvEvent);
+                CvTerm cvEvent = initialiseCv(((AbstractLifeCycleEvent)evt).getCvEvent());
+                if (cvEvent != ((AbstractLifeCycleEvent)evt).getCvEvent()){
+                    ((AbstractLifeCycleEvent)evt).setCvEvent(cvEvent);
                 }
             }
         }
