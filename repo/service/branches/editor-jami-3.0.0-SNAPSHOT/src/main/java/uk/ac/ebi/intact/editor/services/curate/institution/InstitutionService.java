@@ -135,9 +135,9 @@ public class InstitutionService extends AbstractEditorService {
         }
 
         // initialise xrefs because are first tab visible
-        initialiseXrefs(reloaded.getDbXrefs());
+        initialiseXrefs(cv.getDbXrefs());
         // initialise annotations because needs caution
-        initialiseAnnotations(reloaded.getDbAnnotations());
+        initialiseAnnotations(cv.getDbAnnotations());
         // initialise aliases
         initialiseAliases(cv.getSynonyms());
 
