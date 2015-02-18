@@ -132,7 +132,7 @@ public class InteractionEditorService extends AbstractEditorService {
             interaction = reloaded;
         }
         // initialise experiment
-        if (interaction.getExperiment() != null){
+        if (interaction.getExperiment() != null && !isExperimentInitialised(interaction.getExperiment())){
             initialiseExperiment((IntactExperiment) interaction.getExperiment());
         }
         // initialise annotations because needs caution

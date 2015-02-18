@@ -925,56 +925,6 @@ public class InteractionController extends AnnotatedObjectController {
         loadConditionsToImport();
     }
 
-    private boolean areParticipantsInitialised(IntactInteractionEvidence interaction) {
-        if (!interaction.areParticipantsInitialized()){
-            return false;
-        }
-
-        for (ParticipantEvidence part : interaction.getParticipants()){
-            IntactInteractor interactor = (IntactInteractor)part.getInteractor();
-            if (!interactor.areXrefsInitialized() || !interactor.areAnnotationsInitialized() || !interactor.areAliasesInitialized()){
-                return false;
-            }
-
-            if (!isCvInitialised(part.getExperimentalRole())){
-                return false;
-            }
-            if (!isCvInitialised(part.getBiologicalRole())){
-                return false;
-            }
-            if (!((IntactParticipantEvidence)part).areFeaturesInitialized()){
-                return false;
-            }
-            for (FeatureEvidence f : part.getFeatures()){
-                if (!((IntactFeatureEvidence)f).areRangesInitialized()){
-                    return false;
-                }
-                if (!((IntactFeatureEvidence)f).areLinkedFeaturesInitialized()){
-                    return false;
-                }
-                for (Range obj : f.getRanges()){
-                    if (!isCvInitialised(obj.getStart().getStatus())
-                            || !isCvInitialised(obj.getEnd().getStatus())){
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    private boolean isCvInitialised(CvTerm cv) {
-        if (cv instanceof IntactCvTerm){
-            IntactCvTerm intactCv = (IntactCvTerm)cv;
-            return intactCv.areXrefsInitialized() && intactCv.areAnnotationsInitialized();
-        }
-        return true;
-    }
-
-    private boolean isExperimentInitialised(IntactExperiment exp) {
-        return exp == null || isCvInitialised(exp.getParticipantIdentificationMethod());
-    }
-
     public List<Annotation> collectAnnotations() {
         List<Annotation> annotations = new ArrayList<Annotation>(interaction.getDbAnnotations());
         Collections.sort(annotations, new AuditableComparator());
