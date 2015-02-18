@@ -99,11 +99,6 @@ public class ParticipantController extends AbstractParticipantController<IntactP
     }
 
     @Override
-    protected boolean isInitialisedOtherProperties(IntactParticipantEvidence part) {
-        return isCvInitialised(part.getExperimentalRole());
-    }
-
-    @Override
     public Collection<String> collectParentAcsOfCurrentAnnotatedObject(){
         Collection<String> parentAcs = new ArrayList<String>();
 

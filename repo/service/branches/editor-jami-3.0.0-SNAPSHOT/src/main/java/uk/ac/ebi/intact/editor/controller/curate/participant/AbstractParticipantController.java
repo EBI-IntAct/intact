@@ -18,7 +18,6 @@ package uk.ac.ebi.intact.editor.controller.curate.participant;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Hibernate;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.SelectableDataModelWrapper;
 import psidev.psi.mi.jami.bridges.exception.BridgeFailedException;
@@ -520,47 +519,6 @@ public abstract class AbstractParticipantController<T extends AbstractIntactPart
     @Override
     public String getObjectName() {
         return participant != null && participant.getAc() != null ? participant.getAc() : participantId;
-    }
-
-    protected abstract boolean isInitialisedOtherProperties(T part);
-
-    protected boolean isInitialisedFeatures(Collection features){
-        if (!Hibernate.isInitialized(features)){
-             return false;
-        }
-
-        for (Object f : features){
-            AbstractIntactFeature feature = (AbstractIntactFeature)f;
-            if (!feature.areRangesInitialized()){
-                 return false;
-            }
-            if (!feature.areLinkedFeaturesInitialized()){
-                return false;
-            }
-            for (Object f2 : feature.getLinkedFeatures()){
-                AbstractIntactFeature feature2 = (AbstractIntactFeature)f2;
-                if (!feature2.areLinkedFeaturesInitialized()){
-                     return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    protected boolean isCvInitialised(CvTerm cv) {
-        if (cv instanceof IntactCvTerm){
-            IntactCvTerm intactCv = (IntactCvTerm)cv;
-            return intactCv.areXrefsInitialized() && intactCv.areAnnotationsInitialized();
-        }
-        return true;
-    }
-
-    protected boolean isInitialisedInteractor(Interactor entity) {
-
-        if (!((IntactInteractor)entity).areXrefsInitialized() || !((IntactInteractor)entity).areAnnotationsInitialized()){
-            return false;
-        }
-        return true;
     }
 
     public int getFeaturesSize() {
