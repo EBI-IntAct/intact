@@ -18,12 +18,16 @@ package uk.ac.ebi.intact.editor.services.curate.interactor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import psidev.psi.mi.jami.model.*;
+import psidev.psi.mi.jami.model.Interactor;
+import psidev.psi.mi.jami.model.InteractorPool;
+import uk.ac.ebi.intact.editor.controller.curate.cloner.InteractorCloner;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
+import uk.ac.ebi.intact.jami.model.extension.IntactInteractionEvidence;
 import uk.ac.ebi.intact.jami.model.extension.IntactInteractor;
 import uk.ac.ebi.intact.jami.model.extension.IntactInteractorPool;
 import uk.ac.ebi.intact.jami.model.extension.IntactPolymer;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -52,50 +56,6 @@ public class InteractorEditorService extends AbstractEditorService {
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactInteractor initialiseInteractorAnnotations(IntactInteractor interactor) {
-        // reload IntactInteractor without flushing changes
-        IntactInteractor reloaded = reattachIntactObjectIfTransient(interactor, getIntactDao().getInteractorDao(IntactInteractor.class));
-        Collection<Annotation> annotations = reloaded.getDbAnnotations();
-        initialiseAnnotations(annotations);
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactInteractor initialiseInteractorXrefs(IntactInteractor interactor) {
-        // reload IntactInteractor without flushing changes
-        IntactInteractor reloaded = reattachIntactObjectIfTransient(interactor, getIntactDao().getInteractorDao(IntactInteractor.class));
-        Collection<Xref> xrefs = reloaded.getDbXrefs();
-        initialiseXrefs(xrefs);
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactInteractor initialiseInteractorAliases(IntactInteractor interactor) {
-        // reload interactor without flushing changes
-        IntactInteractor reloaded = reattachIntactObjectIfTransient(interactor, getIntactDao().getInteractorDao(IntactInteractor.class));
-        Collection<Alias> aliases = reloaded.getDbAliases();
-        initialiseAliases(aliases);
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
-    public IntactInteractorPool initialisePoolMembers(IntactInteractorPool pool) {
-        // reload feature without flushing changes
-        IntactInteractorPool reloaded = reattachIntactObjectIfTransient(pool, getIntactDao().getInteractorPoolDao());
-        Collection<Interactor> interactors = reloaded;
-        initialiseInteractorMembers(interactors);
-
-        getIntactDao().getEntityManager().detach(reloaded);
-        return reloaded;
-    }
-
-    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public IntactInteractor loadInteractorByAc(String ac) {
         IntactInteractor interactor = getIntactDao().getEntityManager().find(IntactInteractor.class, ac);
 
@@ -104,6 +64,8 @@ public class InteractorEditorService extends AbstractEditorService {
             initialiseXrefs(interactor.getDbXrefs());
             // initialise annotations because needs caution
             initialiseAnnotations(interactor.getDbAnnotations());
+            // initialise aliases
+            initialiseAliases(interactor.getDbAliases());
 
             // load base types
             if (interactor.getInteractorType() != null){
@@ -128,39 +90,106 @@ public class InteractorEditorService extends AbstractEditorService {
         IntactInteractor reloaded = reattachIntactObjectIfTransient(interactor, getIntactDao().getInteractorDao(IntactInteractor.class));
 
         // initialise xrefs because needs id
-        initialiseXrefs(reloaded.getDbXrefs());
+        initialiseXrefs(interactor.getDbXrefs());
         // initialise annotations because needs caution
-        initialiseAnnotations(reloaded.getDbAnnotations());
+        initialiseAnnotations(interactor.getDbAnnotations());
+        // initialise aliases
+        initialiseAliases(interactor.getDbAliases());
 
         // load base types
-        if (reloaded.getInteractorType() != null){
-            CvTerm cv = initialiseCv(reloaded.getInteractorType());
-            if (cv != reloaded.getInteractorType()){
-                reloaded.setInteractorType(cv);
-            }
+        if (interactor.getInteractorType() != null){
+            initialiseCv(interactor.getInteractorType());
         }
 
         // load set members
-        if (reloaded instanceof IntactInteractorPool){
-            initialiseInteractorMembers((IntactInteractorPool) reloaded);
+        if (interactor instanceof IntactInteractorPool){
+            initialiseInteractorMembers((IntactInteractorPool) interactor);
         }
         // load sequence
-        if (reloaded instanceof IntactPolymer){
-            initialiseSequence((IntactPolymer) reloaded);
+        if (interactor instanceof IntactPolymer){
+            initialiseSequence((IntactPolymer) interactor);
         }
-
-        getIntactDao().getEntityManager().detach(reloaded);
 
         return reloaded;
     }
 
+    private boolean areInteractionCollectionsLazy(IntactInteractionEvidence interactor) {
+        return !interactor.areAnnotationsInitialized()
+                || !interactor.areVariableParameterValuesInitialized()
+                || !interactor.areParametersInitialized()
+                || !interactor.areConfidencesInitialized()
+                || !interactor.areXrefsInitialized()
+                || !interactor.areParticipantsInitialized();
+    }
+
+    @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
+    public boolean isInteractorFullyLoaded(IntactInteractor interactor){
+        if (interactor == null){
+            return true;
+        }
+        if (!interactor.areAnnotationsInitialized()
+                || !interactor.areXrefsInitialized()
+                || !interactor.areAliasesInitialized()
+                || !isCvInitialised(interactor.getInteractorType())
+                || (interactor instanceof InteractorPool && !isInteractorSetInitialised((InteractorPool)interactor))){
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isInteractorSetInitialised(InteractorPool participant) {
+        if (participant instanceof IntactInteractorPool
+                && !((IntactInteractorPool) participant).areInteractorsInitialized()){
+            return false;
+        }
+        else {
+            for (Interactor f : participant){
+                if (!isInteractorInitialised(f)){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private void initialiseInteractorMembers(Collection<Interactor> interactors) {
-         for (Interactor interactor : interactors){
-             initialiseXrefs(((IntactInteractor)interactor).getDbXrefs());
+        Collection<Interactor> originalMembers = new ArrayList<Interactor>(interactors);
+        InteractorCloner cloner = new InteractorCloner();
+         for (Interactor interactor : originalMembers){
+             if (!isInteractorInitialised(interactor)){
+                 Interactor reloaded = initialiseInteractor(interactor, cloner);
+                 if (reloaded != null){
+                     interactors.remove(interactor);
+                     interactors.add(reloaded);
+                 }
+             }
          }
     }
 
     private void initialiseSequence(IntactPolymer interactor) {
-         interactor.getSequence();
+         interactor.getSequence().length();
+    }
+
+    @Override
+    protected void initialiseOtherInteractorProperties(IntactInteractor inter) {
+        // initialise aliases
+        initialiseAliases(inter.getAliases());
+    }
+
+    protected boolean areInteractorCollectionsLazy(IntactInteractor inter) {
+        return !inter.areAliasesInitialized() || !inter.areXrefsInitialized()
+                || !inter.areAnnotationsInitialized();
+    }
+
+    protected boolean isInteractorInitialised(Interactor interactor) {
+        if(interactor instanceof IntactInteractor){
+            IntactInteractor intactInteractor = (IntactInteractor)interactor;
+            if (!intactInteractor.areXrefsInitialized()
+                    || !intactInteractor.areAnnotationsInitialized()
+                    || !intactInteractor.areAliasesInitialized()){
+                return false;
+            }
+        }
+        return true;
     }
 }
