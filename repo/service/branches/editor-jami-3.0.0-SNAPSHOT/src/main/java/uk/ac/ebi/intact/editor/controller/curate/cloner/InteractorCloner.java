@@ -16,6 +16,9 @@
 package uk.ac.ebi.intact.editor.controller.curate.cloner;
 
 import psidev.psi.mi.jami.model.*;
+import psidev.psi.mi.jami.utils.XrefUtils;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
+import uk.ac.ebi.intact.jami.context.IntactConfiguration;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.model.extension.*;
 
@@ -47,6 +50,16 @@ public class InteractorCloner extends AbstractEditorCloner<Interactor, IntactInt
             for (Object obj : interactor.getAliases()){
                 Alias alias = (Alias)obj;
                 clone.getAliases().add(new InteractorAlias(alias.getType(), alias.getName()));
+            }
+
+            IntactConfiguration config = ApplicationContextProvider.getBean("intactJamiConfiguration");
+            for (Object obj : interactor.getIdentifiers()){
+                Xref ref = (Xref)obj;
+                // exclude feature accession
+                if (!XrefUtils.isXrefFromDatabase(ref, config.getDefaultInstitution().getMIIdentifier(), config.getDefaultInstitution().getShortName())
+                        || !XrefUtils.doesXrefHaveQualifier(ref, Xref.IDENTITY_MI, Xref.IDENTITY)){
+                    clone.getIdentifiers().add(new InteractorXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
+                }
             }
 
             for (Object obj : interactor.getXrefs()){

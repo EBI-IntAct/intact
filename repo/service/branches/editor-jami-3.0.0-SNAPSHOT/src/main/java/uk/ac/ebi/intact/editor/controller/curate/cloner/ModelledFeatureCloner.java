@@ -16,6 +16,9 @@
 package uk.ac.ebi.intact.editor.controller.curate.cloner;
 
 import psidev.psi.mi.jami.model.*;
+import psidev.psi.mi.jami.utils.XrefUtils;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
+import uk.ac.ebi.intact.jami.context.IntactConfiguration;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.model.extension.*;
 
@@ -47,6 +50,15 @@ public class ModelledFeatureCloner extends AbstractEditorCloner<Feature, IntactM
             clone.getAliases().add(new ModelledFeatureAlias(alias.getType(), alias.getName()));
         }
 
+        IntactConfiguration config = ApplicationContextProvider.getBean("intactJamiConfiguration");
+        for (Object obj : feature.getIdentifiers()){
+            Xref ref = (Xref)obj;
+            // exclude feature accession
+            if (!XrefUtils.isXrefFromDatabase(ref, config.getDefaultInstitution().getMIIdentifier(), config.getDefaultInstitution().getShortName())
+                    || !XrefUtils.doesXrefHaveQualifier(ref, Xref.IDENTITY_MI, Xref.IDENTITY)){
+                clone.getIdentifiers().add(new ModelledFeatureXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
+            }
+        }
         for (Object obj : feature.getXrefs()){
             Xref ref = (Xref)obj;
             clone.getXrefs().add(new ModelledFeatureXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
