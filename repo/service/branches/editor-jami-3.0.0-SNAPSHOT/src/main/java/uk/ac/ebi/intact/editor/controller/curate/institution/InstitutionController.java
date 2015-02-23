@@ -64,14 +64,6 @@ public class InstitutionController extends AnnotatedObjectController {
     }
 
     @Override
-    protected void generalLoadChecks() {
-        super.generalLoadChecks();
-        if (this.institutionService.getInstitutionSelectItems(false) == null){
-            this.institutionService.loadInstitutions();
-        }
-    }
-
-    @Override
     protected void loadCautionMessages() {
         if (this.institution != null){
 

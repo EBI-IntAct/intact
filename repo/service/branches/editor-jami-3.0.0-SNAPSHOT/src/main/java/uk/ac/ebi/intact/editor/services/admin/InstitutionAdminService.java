@@ -123,13 +123,10 @@ public class InstitutionAdminService extends AbstractEditorService {
     }
 
     public List<SelectItem> getInstitutionItems() {
-        List<SelectItem> institutions = institutionService.getInstitutionSelectItems(false);
-        if (institutions == null){
+        if (!institutionService.isInitialised()){
             institutionService.loadInstitutions();
-            institutions = institutionService.getInstitutionSelectItems(false);
         }
-
-        return institutions;
+        return institutionService.getInstitutionSelectItems();
     }
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
