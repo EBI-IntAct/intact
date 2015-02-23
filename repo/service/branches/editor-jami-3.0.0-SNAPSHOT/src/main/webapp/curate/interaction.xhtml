@@ -194,6 +194,8 @@
     </h:panelGrid>
 </p:dialog>
 
+<ui:include src="jdialog_import_vparameters.xhtml"/>
+
 <p:tabView id="interactionTabs" dynamic="true">
     <p:ajax event="tabChange" listener="#{interactionController.onTabChanged}" onstart="loadDialog.show()" oncomplete="loadDialog.hide()"/>
 
@@ -255,8 +257,6 @@
                              type="button" onclick="importVariableParametersDialog.show()"/>
         </div>
         <ia:spacer height="10" />
-
-        <ui:include src="jdialog_import_vparameters.xhtml"/>
 
         <p:outputPanel id="vparametersPanel" autoUpdate="false" rendered="#{interactionController.isVariableParametersTableEnabled()}">
             <ui:decorate template="interaction_vparameters_table.xhtml">
