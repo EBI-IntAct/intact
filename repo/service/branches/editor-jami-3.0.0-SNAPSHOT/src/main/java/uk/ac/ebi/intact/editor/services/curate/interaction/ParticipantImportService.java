@@ -233,6 +233,7 @@ public class ParticipantImportService extends AbstractEditorService {
         if (interactor.getAc() != null){
             initialiseXrefs(interactor.getDbXrefs());
             initialiseAnnotations(interactor.getDbAnnotations());
+            initialiseAliases(interactor.getDbAliases());
             initialiseCv(interactor.getInteractorType());
         }
 
@@ -269,6 +270,7 @@ public class ParticipantImportService extends AbstractEditorService {
 
         if (interactor.getAc() != null){
             initialiseXrefs(interactor.getDbXrefs());
+            initialiseAnnotations(interactor.getDbAnnotations());
             initialiseAliases(interactor.getDbAliases());
             initialiseCv(interactor.getInteractorType());
         }
@@ -289,6 +291,7 @@ public class ParticipantImportService extends AbstractEditorService {
 
         if (interactor.getAc() != null){
             initialiseXrefs(interactor.getDbXrefs());
+            initialiseAnnotations(interactor.getDbAnnotations());
             initialiseAliases(interactor.getDbAliases());
             initialiseCv(interactor.getInteractorType());
         }
@@ -311,13 +314,16 @@ public class ParticipantImportService extends AbstractEditorService {
 
         if (interactor.getAc() != null){
             initialiseXrefs(interactor.getDbXrefs());
+            initialiseAnnotations(interactor.getDbAnnotations());
             initialiseAliases(interactor.getDbAliases());
+            initialiseCv(interactor.getInteractorType());
         }
         for (Interactor member : interactor){
             // initialise some properties
             if (((IntactInteractor)member).getAc() != null){
                 initialiseXrefs(((IntactInteractor)member).getDbXrefs());
                 initialiseAnnotations(((IntactInteractor)member).getDbAnnotations());
+                initialiseAliases(((IntactInteractor)member).getDbAliases());
                 initialiseCv(member.getInteractorType());
             }
 
