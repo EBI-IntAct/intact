@@ -372,7 +372,7 @@ public class EditorObjectService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", propagation = Propagation.REQUIRED)
     public <T extends IntactPrimaryObject> T cloneAnnotatedObject(T ao, EditorCloner cloner) {
-
+        getIntactDao().getEntityManager().clear();
         T reloaded = ao;
         // merge current user because detached
         if (ao.getAc() != null){
@@ -380,7 +380,6 @@ public class EditorObjectService extends AbstractEditorService {
         }
 
         T clone = (T)cloner.clone(reloaded, getIntactDao());
-        getIntactDao().getEntityManager().detach(reloaded);
 
         return clone;
     }
