@@ -19,9 +19,6 @@ import psidev.psi.mi.jami.model.Alias;
 import psidev.psi.mi.jami.model.Annotation;
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Xref;
-import psidev.psi.mi.jami.utils.XrefUtils;
-import uk.ac.ebi.intact.jami.ApplicationContextProvider;
-import uk.ac.ebi.intact.jami.context.IntactConfiguration;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.model.extension.AbstractIntactCvTerm;
 
@@ -46,15 +43,6 @@ public abstract class AbstractCvTermCloner<I extends CvTerm, T extends AbstractI
             clone.getSynonyms().add(instantiateAliase(alias.getType(), alias.getName()));
         }
 
-        IntactConfiguration config = ApplicationContextProvider.getBean("intactJamiConfiguration");
-        for (Object obj : cv.getIdentifiers()){
-            Xref ref = (Xref)obj;
-            // exclude feature accession
-            if (!XrefUtils.isXrefFromDatabase(ref, config.getDefaultInstitution().getMIIdentifier(), config.getDefaultInstitution().getShortName())
-                    || !XrefUtils.doesXrefHaveQualifier(ref, Xref.IDENTITY_MI, Xref.IDENTITY)){
-                clone.getIdentifiers().add(instantiateXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
-            }
-        }
         for (Xref ref : cv.getXrefs()){
             clone.getXrefs().add(instantiateXref(ref.getDatabase(), ref.getId(), ref.getVersion(), ref.getQualifier()));
         }
