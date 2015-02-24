@@ -13,6 +13,8 @@ import uk.ac.ebi.kraken.interfaces.uniprot.description.Field;
 import uk.ac.ebi.kraken.interfaces.uniprot.description.FieldType;
 import uk.ac.ebi.kraken.interfaces.uniprot.description.Name;
 import uk.ac.ebi.kraken.interfaces.uniprot.features.*;
+import uk.ac.ebi.kraken.interfaces.uniprot.features.Feature;
+import uk.ac.ebi.kraken.interfaces.uniprot.features.FeatureType;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.GeneNameSynonym;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.ORFName;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.OrderedLocusName;
@@ -23,6 +25,7 @@ import uk.ac.ebi.uniprot.dataservice.client.exception.ServiceException;
 import uk.ac.ebi.uniprot.dataservice.client.uniprot.UniProtQueryBuilder;
 import uk.ac.ebi.uniprot.dataservice.client.uniprot.UniProtService;
 import uk.ac.ebi.uniprot.dataservice.query.Query;
+import uk.ac.ebi.uniprot.services.data.serializer.model.ft.*;
 
 import java.util.*;
 
@@ -52,12 +55,14 @@ public class SimpleUniprotRemoteService extends AbstractUniprotService {
         super();
         serviceFactoryInstance = Client.getServiceFactoryInstance();
         uniprotService = serviceFactoryInstance.getUniProtQueryService();
+        uniprotService.start();
     }
 
     public SimpleUniprotRemoteService(CrossReferenceFilter filter) {
         super(filter);
         serviceFactoryInstance = Client.getServiceFactoryInstance();
         uniprotService = serviceFactoryInstance.getUniProtQueryService();
+        uniprotService.start();
     }
 
     public Collection<UniprotProtein> retrieve( String ac ) {
@@ -278,7 +283,7 @@ public class SimpleUniprotRemoteService extends AbstractUniprotService {
                 acFixed = upperCaseAc.substring(index);
             }
             // we only use this search for feature chains
-            Query query = UniProtQueryBuilder.fullText(FEATURE_CHAIN_FIELD + acFixed + " OR " + FEATURE_PEPTIDE_FIELD + acFixed + " OR " + FEATURE_PRO_PEPTIDE_FIELD + acFixed);
+            Query query = UniProtQueryBuilder.fullText(FeatureType.CHAIN + ":" + acFixed + " OR " + FeatureType.PEPTIDE + ":" + acFixed + " OR " + FeatureType.PROPEP + ":" + acFixed);
             iterator = uniprotService.getEntries(query);
         }
         else {

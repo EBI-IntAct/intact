@@ -95,6 +95,7 @@ public class UniprotRemoteServiceTest {
         // This protein contains a chain PRO_0000296200, with boundaries 1-?
 
         Collection<UniprotProtein> prots = getUniprotService().retrieve( "P18850" );
+        Assert.assertFalse(prots.isEmpty());
         final UniprotProtein uniprotProtein = prots.iterator().next();
         assertEquals( "P18850", uniprotProtein.getPrimaryAc() );
     }
@@ -102,12 +103,14 @@ public class UniprotRemoteServiceTest {
     @Test
     public void retrieveBySpliceVariantId() throws Exception {
         Collection<UniprotProtein> prots = getUniprotService().retrieve( "Q13535-1" );
+        Assert.assertFalse(prots.isEmpty());
         assertEquals( "ATR_HUMAN", prots.iterator().next().getId() );
     }
 
     @Test
     public void retrieveSpliceVariant() throws Exception {
         Collection<UniprotSpliceVariant> prots = getUniprotService().retrieveSpliceVariant( "Q13535-1" );
+        Assert.assertFalse(prots.isEmpty());
         UniprotSpliceVariant spliceVariant = prots.iterator().next();
 
         assertEquals("Q13535-1", spliceVariant.getPrimaryAc());
@@ -117,6 +120,7 @@ public class UniprotRemoteServiceTest {
     @Test
     public void retrieveFeatureChain() throws Exception {
         Collection<UniprotFeatureChain> prots = getUniprotService().retrieveFeatureChain( "P97887-PRO_0000025599" );
+        Assert.assertFalse(prots.isEmpty());
         assertEquals( "Presenilin-1 NTF subunit", prots.iterator().next().getDescription() );
     }
 
