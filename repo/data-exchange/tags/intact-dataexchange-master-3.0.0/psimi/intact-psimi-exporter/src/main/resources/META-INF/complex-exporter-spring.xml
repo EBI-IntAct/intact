@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+           http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.2.xsd">
+
+    <import resource="classpath*:/META-INF/intact-exporter-base-spring.xml"/>
+
+    <!-- readers -->
+    <!-- simple complex reader -->
+    <bean id="intactComplexOrderedBySpeciesReader" class="org.springframework.batch.item.database.JpaPagingItemReader" lazy-init="true" scope="prototype">
+        <property name="queryString" value="select i from IntactComplex i
+        order by i.organism.ac, i.ac"/>
+        <property name="entityManagerFactory" ref="intactEntityManagerFactory"/>
+    </bean>
+    <!-- complex archive reader -->
+    <bean id="complexSpeciesArchive25Reader" class="uk.ac.ebi.intact.dataexchange.psimi.exporter.archive.SubDirectoryArchiveReader" lazy-init="true">
+        <property name="directory" value="${release.folder}/complex/psi25"/>
+    </bean>
+    <bean id="complexSpeciesArchive30Reader" class="uk.ac.ebi.intact.dataexchange.psimi.exporter.archive.SubDirectoryArchiveReader" lazy-init="true">
+        <property name="directory" value="${release.folder}/complex/psi30"/>
+    </bean>
+
+    <!-- processor -->
+    <bean id="intactComplexXmlProcessor" class="uk.ac.ebi.intact.dataexchange.psimi.exporter.complexes.ComplexProcessor" lazy-init="true">
+        <property name="speciesNameGenerator" value="releaseFileNameGenerator"/>
+    </bean>
+
+   <!-- writers -->
+    <bean id="intactComplexXml25Writer" class="uk.ac.ebi.intact.dataexchange.psimi.exporter.complexes.ComplexXmlWriter" lazy-init="true">
+        <property name="parentFolderPaths" value="${release.folder}/complex/psi25"/>
+        <property name="extension" value=".xml"/>
+        <property name="writerOptions">
+            <map>
+                <entry key="output_format_key" value="psimi_xml"/>
+                <entry key="xml25_type_key" value-type="psidev.psi.mi.jami.xml.PsiXmlType" value="compact"/>
+                <entry key="write_complex_as_interactor_key" value-type="java.lang.Boolean" value="false"/>
+                <entry key="xml_version_key" value-type="psidev.psi.mi.jami.xml.PsiXmlVersion" value="v2_5_4"/>
+                <entry key="xml25_extended_key" value-type="java.lang.Boolean" value="false" />
+                <entry key="interaction_category_key" value-type="psidev.psi.mi.jami.model.InteractionCategory" value="complex"/>
+                <entry key="complex_type_key" value-type="psidev.psi.mi.jami.model.ComplexType" value="n_ary"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="intactComplexXml30Writer" class="uk.ac.ebi.intact.dataexchange.psimi.exporter.complexes.ComplexXmlWriter" lazy-init="true">
+        <property name="parentFolderPaths" value="${release.folder}/complex/psi30"/>
+        <property name="extension" value=".xml"/>
+        <property name="writerOptions">
+            <map>
+                <entry key="output_format_key" value="psimi_xml"/>
+                <entry key="xml25_type_key" value-type="psidev.psi.mi.jami.xml.PsiXmlType" value="compact"/>
+                <entry key="write_complex_as_interactor_key" value-type="java.lang.Boolean" value="false"/>
+                <entry key="xml_version_key" value-type="psidev.psi.mi.jami.xml.PsiXmlVersion" value="v3_0_0"/>
+                <entry key="xml25_extended_key" value-type="java.lang.Boolean" value="false" />
+                <entry key="interaction_category_key" value-type="psidev.psi.mi.jami.model.InteractionCategory" value="complex"/>
+                <entry key="complex_type_key" value-type="psidev.psi.mi.jami.model.ComplexType" value="n_ary"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="intactComplexXmlWriter" class="uk.ac.ebi.intact.dataexchange.psimi.exporter.complexes.CompositeComplexWriter" lazy-init="true">
+        <property name="delegates">
+            <list>
+                <ref bean="intactComplexXml25Writer"/>
+                <ref bean="intactComplexXml30Writer"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- tasklets -->
+    <bean id="compressorComplexesXml25Tasklet" class="uk.ac.ebi.intact.dataexchange.psimi.exporter.archive.CompressorByFileExtensionsTasklet">
+        <property name="outputFile" value="${release.folder}/complex/psi25/complexesMIF25.zip"/>
+        <property name="compressor" ref="zipCompressor"/>
+        <property name="directory" value="${release.folder}/complex/psi25"/>
+        <property name="extensions">
+            <list>
+                <value>xml</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="compressorComplexesXml30Tasklet" class="uk.ac.ebi.intact.dataexchange.psimi.exporter.archive.CompressorByFileExtensionsTasklet">
+        <property name="outputFile" value="${release.folder}/complex/psi30/complexesMIF30.zip"/>
+        <property name="compressor" ref="zipCompressor"/>
+        <property name="directory" value="${release.folder}/complex/psi30"/>
+        <property name="extensions">
+            <list>
+                <value>xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- steps -->
+    <!-- step to export complex XML 2.5 files -->
+    <batch:step id="xml25.complexStep" job-repository="basicBatchJobRepository">
+        <batch:tasklet start-limit="100" transaction-manager="jamiTransactionManager">
+            <batch:listeners>
+                <batch:listener ref="basicChunkLoggerListener" />
+            </batch:listeners>
+
+            <batch:chunk reader="intactComplexOrderedBySpeciesReader"
+                         processor="intactComplexXmlProcessor"
+                         writer="intactComplexXml25Writer"
+                         commit-interval="10">
+                <batch:streams>
+                    <batch:stream ref="intactComplexOrderedBySpeciesReader"/>
+                    <batch:stream ref="intactComplexXml25Writer"/>
+                </batch:streams>
+            </batch:chunk>
+        </batch:tasklet>
+    </batch:step>
+    <!-- step to export complex XML 3.0 files -->
+    <batch:step id="xml30.complexStep" job-repository="basicBatchJobRepository">
+        <batch:tasklet start-limit="100" transaction-manager="jamiTransactionManager">
+            <batch:listeners>
+                <batch:listener ref="basicChunkLoggerListener" />
+            </batch:listeners>
+
+            <batch:chunk reader="intactComplexOrderedBySpeciesReader"
+                         processor="intactComplexXmlProcessor"
+                         writer="intactComplexXml30Writer"
+                         commit-interval="10">
+                <batch:streams>
+                    <batch:stream ref="intactComplexOrderedBySpeciesReader"/>
+                    <batch:stream ref="intactComplexXml30Writer"/>
+                </batch:streams>
+            </batch:chunk>
+        </batch:tasklet>
+    </batch:step>
+    <!-- step to export complex XML 2.5 and 3.0 files -->
+    <batch:step id="xml.complexStep" job-repository="basicBatchJobRepository">
+        <batch:tasklet start-limit="100" transaction-manager="jamiTransactionManager">
+            <batch:listeners>
+                <batch:listener ref="basicChunkLoggerListener" />
+            </batch:listeners>
+
+            <batch:chunk reader="intactComplexOrderedBySpeciesReader"
+                         processor="intactComplexXmlProcessor"
+                         writer="intactComplexXmlWriter"
+                         commit-interval="10">
+                <batch:streams>
+                    <batch:stream ref="intactComplexOrderedBySpeciesReader"/>
+                    <batch:stream ref="intactComplexXml25Writer"/>
+                    <batch:stream ref="intactComplexXml30Writer"/>
+                </batch:streams>
+            </batch:chunk>
+        </batch:tasklet>
+    </batch:step>
+    <!-- step to zip each complex XML 2.5 files -->
+    <batch:step id="zip.singleComplexXml25Step" job-repository="basicBatchJobRepository">
+        <batch:tasklet start-limit="100" transaction-manager="jamiTransactionManager">
+            <batch:listeners>
+                <batch:listener ref="basicChunkLoggerListener" />
+            </batch:listeners>
+
+            <batch:chunk reader="complexSpeciesArchive25Reader"
+                         writer="intactFileArchiveWriter"
+                         commit-interval="50">
+                <batch:streams>
+                    <batch:stream ref="complexSpeciesArchive25Reader"/>
+                    <batch:stream ref="intactFileArchiveWriter"/>
+                </batch:streams>
+            </batch:chunk>
+        </batch:tasklet>
+    </batch:step>
+    <!-- step to zip each complex XML 3.0 files -->
+    <batch:step id="zip.singleComplexXml30Step" job-repository="basicBatchJobRepository">
+        <batch:tasklet start-limit="100" transaction-manager="jamiTransactionManager">
+            <batch:listeners>
+                <batch:listener ref="basicChunkLoggerListener" />
+            </batch:listeners>
+
+            <batch:chunk reader="complexSpeciesArchive30Reader"
+                         writer="intactFileArchiveWriter"
+                         commit-interval="50">
+                <batch:streams>
+                    <batch:stream ref="complexSpeciesArchive30Reader"/>
+                    <batch:stream ref="intactFileArchiveWriter"/>
+                </batch:streams>
+            </batch:chunk>
+        </batch:tasklet>
+    </batch:step>
+    <!-- step to zip all xml 2.5 complex files -->
+    <batch:step id="zip.allComplexesXml25Step" job-repository="basicBatchJobRepository">
+        <batch:tasklet start-limit="100" ref="compressorComplexesXml25Tasklet" transaction-manager="jamiTransactionManager">
+            <batch:listeners>
+                <batch:listener ref="basicChunkLoggerListener" />
+            </batch:listeners>
+        </batch:tasklet>
+    </batch:step>
+    <!-- step to zip all xml 3.0  complex files -->
+    <batch:step id="zip.allComplexesXml30Step" job-repository="basicBatchJobRepository">
+        <batch:tasklet start-limit="100" ref="compressorComplexesXml30Tasklet" transaction-manager="jamiTransactionManager">
+            <batch:listeners>
+                <batch:listener ref="basicChunkLoggerListener" />
+            </batch:listeners>
+        </batch:tasklet>
+    </batch:step>
+
+    <!-- Job which will export complexes in XML files -->
+    <batch:job id="exportComplexXmlJob" job-repository="basicBatchJobRepository">
+
+        <batch:listeners>
+            <batch:listener ref="basicJobLoggerListener"/>
+        </batch:listeners>
+
+        <!-- Export  complex in XML -->
+        <batch:step  id="exportComplexXml" parent="xml.complexStep">
+            <batch:tasklet task-executor="syncTaskExecutor"/>
+            <batch:end on="FAILED"/>
+        </batch:step>
+
+        <!-- zip xml-->
+        <batch:split id="xml.zip" task-executor="asyncTaskExecutor" >
+            <!-- flow1: zip all individual xml25 files -->
+            <batch:flow>
+                <batch:step id="zip.complexXml25" parent="zip.singleComplexXml25Step">
+                    <batch:tasklet task-executor="syncTaskExecutor"/>
+                    <batch:end on="FAILED"/>
+                </batch:step>
+            </batch:flow>
+            <!-- flow2: zip all individual xml30 files -->
+            <batch:flow>
+                <batch:step  id="zip.complexXml30" parent="zip.singleComplexXml30Step">
+                    <batch:tasklet task-executor="syncTaskExecutor"/>
+                    <batch:end on="FAILED"/>
+                </batch:step>
+            </batch:flow>
+
+            <!-- flow3: zip all files in one xml25 archive -->
+            <batch:flow>
+                <batch:step id="zip.allcomplexXml25" parent="zip.allComplexesXml25Step">
+                    <batch:tasklet task-executor="syncTaskExecutor"/>
+                    <batch:end on="FAILED"/>
+                </batch:step>
+            </batch:flow>
+
+            <!-- flow4: zip all files in one xml30 archive -->
+            <batch:flow>
+                <batch:step id="zip.allcomplexXml30" parent="zip.allComplexesXml30Step">
+                    <batch:tasklet task-executor="syncTaskExecutor"/>
+                    <batch:end on="FAILED"/>
+                </batch:step>
+            </batch:flow>
+
+            <batch:end on="FAILED"/>
+        </batch:split>
+    </batch:job>
+</beans>
