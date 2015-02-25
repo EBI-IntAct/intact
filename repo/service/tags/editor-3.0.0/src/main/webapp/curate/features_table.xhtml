@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ia="http://java.sun.com/jsf/composite/intact-components">
+
+    <h:panelGroup id="featuresPanel1">
+
+        <ui:param name="featuresToDeleteCount" value="#{changesController.getDeletedAcsByClassName('uk.ac.ebi.intact.jami.model.extension.IntactFeatureEvidence', participantController.ac).size()}"/>
+
+        <h:panelGroup rendered="#{featuresToDeleteCount gt 0}">
+            <ia:panelMessage level="info">
+                <h:outputText value="#{featuresToDeleteCount} features will be deleted on save."/>
+            </ia:panelMessage>
+        </h:panelGroup>
+
+        <p:dataTable var="featureWrapper" value="#{value}" emptyMessage="No features defined"
+                     paginator="#{value.rowCount > 10}" rows="10"
+                     paginatorAlwaysVisible="false"
+                     rowsPerPageTemplate="5,10,20"
+                     selection="#{participantController.selectedFeatures}">
+
+            <f:facet name="header">
+                <h:panelGroup>
+                    Selected:&#160;
+                    <p:commandButton id="deleteFeatureBtn" value="Delete" onclick="confirmation.show()" type="button"/>
+
+                    <p:confirmDialog message="Are you sure you want to delete the suckers?"
+                                     modal="true"
+                                     header="Feature deletion" severity="alert" widgetVar="confirmation">
+
+                        <p:commandButton value="Yes Sure" update=":editorForm:messagesComponent :editorForm:participantTabs:featuresPanel1 :editorForm:changesPanel :editorForm:unsavedChangesInfo"
+                                         oncomplete="confirmation.hide()"
+                                         actionListener="#{participantController.deleteSelectedFeatures}"/>
+                        <p:commandButton value="Not Yet" onclick="confirmation.hide()" type="button"/>
+
+                    </p:confirmDialog>
+                </h:panelGroup>
+            </f:facet>
+
+            <p:column selectionMode="multiple"/>
+            <p:column headerText="AC">
+                <h:outputText value="#{featureWrapper.feature.ac}" styleClass="#{changesController.isDeletedAc(featureWrapper.feature.ac)? 'intact-deleted' : ''}"/>
+            </p:column>
+            <p:column>
+                <ui:include src="/curate/common_column_notifications.xhtml">
+                    <ui:param name="annotatedObjectController" value="#{featureController}"/>
+                    <ui:param name="ao" value="#{featureWrapper.feature}"/>
+                </ui:include>
+            </p:column>
+            <p:column headerText="Shortlabel">
+                <h:panelGroup rendered="#{not changesController.isDeletedAc(featureWrapper.feature.ac)}">
+                    <p:commandLink onclick="load_feature.show()" action="#{curateController.edit(featureWrapper.feature)}"
+                                   style="#{featureWrapper.feature.ac == null? 'color:blue' :''}"
+                                   value="#{featureWrapper.feature.shortName}" ajax="false"/>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{changesController.isDeletedAc(featureWrapper.feature.ac)}">
+                    <h:outputText value="#{featureWrapper.feature.shortName}" style="color:red; text-decoration:line-through"/>
+                </h:panelGroup>
+
+            </p:column>
+            <p:column headerText="Type">
+                <h:outputText value="#{featureWrapper.feature.type.shortName}"/>
+            </p:column>
+            <p:column headerText="Role">
+                <h:outputText value="#{featureWrapper.feature.role == null ? '-' : featureWrapper.feature.role.shortName}"/>
+            </p:column>
+            <p:column headerText="Linked feature">
+                <h:outputText value="-" rendered="#{empty featureWrapper.linkedFeatures}"/>
+
+                <ui:repeat value="#{featureWrapper.linkedFeatures}" var="linked" varStatus="status">
+                    <h:panelGroup rendered="#{linked.ac != null and not changesController.isDeletedAc(featureWrapper.feature.ac)}">
+                        <p:commandLink onclick="load_feature.show()" action="#{curateController.edit(linked)}"
+                                       style="#{linked.ac == null? 'color:blue' :''}"
+                                       value="#{linked.shortName}" ajax="false"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{linked.ac == null}">
+                        <h:outputText value="#{linked.shortName}"/>
+                    </h:panelGroup>
+
+
+                    <p:commandLink id="unlinkBtn_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}"
+                                   type="button"
+                                   oncomplete="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}#{intactComponentUtils.toJavascriptFriendlyVar(linked.ac)}.show()"
+                                   styleClass="ui-icon ui-icon-link" style="display:inline-block"
+                                   title="Linked to #{linked.shortName}" action="#{participantController.selectLinkedFeature(featureWrapper, linked)}"
+                                   update=":editorForm:participantTabs:featuresPanel" immediate="true" process="@this">
+                    </p:commandLink>
+                    <p:outputPanel rendered="#{status.index lt (status.end - 1)}">
+                        <br/>
+                    </p:outputPanel>
+                    <p:confirmDialog
+                            widgetVar="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}#{intactComponentUtils.toJavascriptFriendlyVar(linked.ac)}"
+                            message="Do you want to unlink this feature and save?" modal="true">
+                        <p:commandButton value="Yes Sure"
+                                         actionListener="#{participantController.unlinkFeature(featureWrapper)}"
+                                         immediate="true" process="@this"
+                                         update=":editorForm:participantTabs:featuresPanel :editorForm:changesPanel :editorForm:messagesComponent :editorForm:unsavedChangesInfo"
+                                         onclick="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}#{intactComponentUtils.toJavascriptFriendlyVar(linked.ac)}.hide()"/>
+                        <p:commandButton value="Not Yet"
+                                         onclick="unlinkConfirm_#{intactComponentUtils.toJavascriptFriendlyVar(featureWrapper.feature.ac)}#{intactComponentUtils.toJavascriptFriendlyVar(linked.ac)}.hide()"
+                                />
+                    </p:confirmDialog>
+                </ui:repeat>
+
+            </p:column>
+            <p:column headerText="Range(s)">
+                <h:outputText value="#{featureWrapper.ranges}"/>
+            </p:column>
+            <p:column headerText="Actions">
+                <p:commandLink id="markDeletedBtn" process="markDeletedBtn" immediate="true" title="Mark to be deleted" styleClass="ui-icon ui-icon-closethick"
+                               actionListener="#{participantController.markFeatureToDelete(featureWrapper.feature)}"
+                               update=":editorForm:participantTabs:featuresPanel :editorForm:changesPanel :editorForm:messagesComponent :editorForm:unsavedChangesInfo" rendered="#{not changesController.isDeletedAc(featureWrapper.feature.ac)}"/>
+                <p:commandLink id="revertBtn" process="revertBtn" immediate="true" title="Revert" styleClass="ui-icon ui-icon-arrowreturnthick-1-w"
+                               actionListener="#{changesController.revert(featureWrapper.feature)}"
+                               update=":editorForm:participantTabs:featuresPanel :editorForm:changesPanel :editorForm:messagesComponent :editorForm:unsavedChangesInfo" rendered="#{changesController.isDeletedAc(featureWrapper.feature.ac)}"/>
+            </p:column>
+        </p:dataTable>
+
+        <ia:loadingDialog widgetVar="load_feature" message="Loading feature..."/>
+
+    </h:panelGroup>
+
+</ui:composition>
