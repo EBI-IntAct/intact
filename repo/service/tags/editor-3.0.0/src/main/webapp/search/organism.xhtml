@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ot="http://myfaces.apache.org/orchestra"
+                xmlns:ia="http://java.sun.com/jsf/composite/intact-components"
+
+                template="/search/search_template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="ac" value="#{interactorOrganismController.ac}"/>
+            <f:viewParam name="shortLabel" value="#{interactorOrganismController.shortLabel}"/>
+            <f:viewParam name="numInteractors" value="#{interactorOrganismController.numInteractors}"/>
+            <f:viewParam name="resultsOutcome" value="#{interactorOrganismController.resultsOutcome}"/>
+
+            <f:event type="preRenderView" listener="#{interactorOrganismController.loadData}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:link outcome="#{interactorOrganismController.resultsOutcome}" value="&lt;&lt; Back to the search results" />
+        <br/>
+        <br/>
+
+        <p:outputPanel>
+            Molecules with <b>#{interactorOrganismController.shortLabel}</b> involved.
+            <hr/>
+        </p:outputPanel>
+        <p:accordionPanel autoHeight="false">
+            <p:tab title="Molecules (#{interactorOrganismController.interactors.rowCount})"
+                   rendered="#{interactorOrganismController.interactors.rowCount != 0}">
+
+                <ui:include src="molecules_table.xhtml">
+                    <ui:param name="molecules" value="#{interactorOrganismController.interactors}"/>
+                    <ui:param name="complexSearchEnabled" value="#{searchController.complexSearchEnabled}"/>
+                    <ui:param name="resultsOutcome" value="#{resultsOutcome}"/>
+                </ui:include>
+
+            </p:tab>
+        </p:accordionPanel>
+
+    </ui:define>
+
+</ui:composition>

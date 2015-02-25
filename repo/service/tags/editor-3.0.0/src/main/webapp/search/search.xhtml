@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ot="http://myfaces.apache.org/orchestra"
+                xmlns:ia="http://java.sun.com/jsf/composite/intact-components"
+
+                template="/search/search_template.xhtml">
+
+<ui:define name="metadata">
+    <f:metadata>
+        <f:viewParam name="query" value="#{searchController.query}"/>
+        <f:viewParam name="quickQuery" value="#{searchController.quickQuery}"/>
+    </f:metadata>
+</ui:define>
+
+<ui:define name="content">
+
+<br/>
+
+<p:outputPanel rendered="#{searchController.hasNoResults() and not searchController.emptyQuery}">
+    Your query (<b>#{searchController.query}</b>) didn't return any results.
+    <br/>
+    <br/>
+</p:outputPanel>
+
+<p:outputPanel rendered="#{searchController.hasNoResults() and searchController.emptyQuery}">
+
+    When searching for a keyword, the following objects and their respective attributes are being search on:
+    <br/>
+
+    <blockquote>
+        <table cellspacing="10">
+            <tr>
+                <td style="text-align: right; font-weight: bold;">Publication</td>
+                <td>PMID, title, Xref.primaryId</td>
+            </tr>
+            <tr>
+                <td style="text-align: right; font-weight: bold;">Experiment</td>
+                <td>AC, shortLabel, Xref.primaryId</td>
+            </tr>
+            <tr>
+                <td style="text-align: right; font-weight: bold;">Interaction</td>
+                <td>AC, shortLabel, Xref.primaryId</td>
+            </tr>
+            <tr>
+                <td style="text-align: right; font-weight: bold;">Biological complexes</td>
+                <td>AC, names, Xref.primaryId, species Tax Id</td>
+            </tr>
+            <tr>
+                <td style="text-align: right; font-weight: bold;">Molecules</td>
+                <td>AC, shortLabel, fullName, Xref.primaryId</td>
+            </tr>
+            <tr>
+                <td style="text-align: right; font-weight: bold;">Controlled vocabularies</td>
+                <td>AC, shortlabel, fullName, Identifier, Xref.primaryId, Organism taxid</td>
+            </tr>
+            <tr>
+                <td style="text-align: right; font-weight: bold;">Participants</td>
+                <td>AC, Xref.primaryId</td>
+            </tr>
+            <tr>
+                <td style="text-align: right; font-weight: bold;">Features</td>
+                <td>AC, shortlabel</td>
+            </tr>
+            <tr>
+                <td style="text-align: right; font-weight: bold;">Organisms</td>
+                <td>AC, shortlabel, fullName, Tax Id</td>
+            </tr>
+        </table>
+    </blockquote>
+
+    <table>
+        <tr>
+            <td>
+                <h:graphicImage alt="infoIcon" url="/resources/images/info.png"/>&#160;Queries are not case-sensitive
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h:graphicImage alt="infoIcon"
+                                url="/resources/images/info.png"/>&#160;Leading and trailing blank characters in your query are automatically removed.
+            </td>
+        </tr>
+    </table>
+</p:outputPanel>
+
+<p:outputPanel rendered="#{not searchController.emptyQuery and not searchController.hasNoResults()}">
+Results for query: <b>#{searchController.query}</b>
+<hr/>
+
+<p:accordionPanel autoHeight="false">
+
+<p:tab title="Publications (#{searchController.publications.rowCount})"
+       rendered="#{searchController.publicationSearchEnabled and searchController.publications != null and searchController.publications.rowCount != 0}">
+
+    <ui:include src="/dashboard/publications_table.xhtml">
+        <ui:param name="publicationsDataModel" value="#{searchController.publications}"/>
+    </ui:include>
+
+</p:tab>
+
+<p:tab title="Experiments (#{searchController.experiments.rowCount})"
+       rendered="#{searchController.publicationSearchEnabled and searchController.experiments != null and searchController.experiments.rowCount != 0}">
+
+    <ui:include src="/curate/experiments_table.xhtml">
+        <ui:param name="value" value="#{searchController.experiments}"/>
+        <ui:param name="lazy" value="#{true}"/>
+        <ui:param name="readonly" value="#{true}"/>
+    </ui:include>
+
+</p:tab>
+
+<p:tab title="Interactions (#{searchController.interactions.rowCount})"
+       rendered="#{searchController.publicationSearchEnabled and searchController.interactions != null and searchController.interactions.rowCount != 0}">
+
+    <ui:include src="/curate/interactions_table.xhtml">
+        <ui:param name="value" value="#{searchController.interactions}"/>
+        <ui:param name="readonly" value="#{true}"/>
+    </ui:include>
+
+</p:tab>
+
+<p:tab title="Molecules (#{searchController.molecules.rowCount})"
+       rendered="#{searchController.molecules != null and searchController.molecules.rowCount != 0}">
+
+    <ui:include src="/search/molecules_table.xhtml">
+        <ui:param name="molecules" value="#{searchController.molecules}"/>
+        <ui:param name="complexSearchEnabled" value="#{searchController.complexSearchEnabled}"/>
+        <ui:param name="resultsOutcome" value="search"/>
+    </ui:include>
+
+
+</p:tab>
+
+<p:tab title="Controlled Vocabularies (#{searchController.cvobjects.rowCount})"
+       rendered="#{searchController.cvobjects != null and searchController.cvobjects.rowCount != 0}">
+
+    <p:dataTable id="searchCvObjectTable" var="cvobject" value="#{searchController.cvobjects}"
+                 paginatorPosition="both"
+                 paginator="true" paginatorAlwaysVisible="false" rows="10"
+                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                 rowsPerPageTemplate="10,20,50,100"
+                 dynamic="true">
+        <p:column headerText="Name" sortBy="#{cvobject.shortName}">
+            <h:link outcome="/curate/cvobject" value="#{cvobject.shortName}" includeViewParams="true">
+                <f:param name="ac" value="#{cvobject.ac}"/>
+            </h:link>
+        </p:column>
+        <p:column>
+            <h:panelGroup rendered="#{cvobject.caution != null}">
+                <h:graphicImage alt="caution" library="images" name="warn.gif"
+                                title="#{cvobject.caution}"/>
+            </h:panelGroup>
+        </p:column>
+        <p:column headerText="Type">
+            <h:outputText value="#{cvobject.type}"/>
+        </p:column>
+        <p:column headerText="Identifier">
+            <h:outputText value="#{cvobject.identifier}"/>
+        </p:column>
+        <p:column headerText="AC" sortBy="#{cvobject.ac}">
+            <h:outputText value="#{cvobject.ac}"/>
+        </p:column>
+    </p:dataTable>
+
+</p:tab>
+
+<p:tab title="Organisms (#{searchController.organisms.rowCount})"
+       rendered="#{searchController.organisms != null and searchController.organisms.rowCount != 0}">
+
+    <p:dataTable id="organismFeaturesTable" var="organism" value="#{searchController.organisms}"
+                 paginatorPosition="both"
+                 paginator="true" paginatorAlwaysVisible="false" rows="10"
+                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                 rowsPerPageTemplate="10,20,50,100"
+                 dynamic="true">
+        <p:column headerText="Shortlabel" sortBy="#{organism.commonName}">
+            <h:link outcome="/curate/organism" value="#{organism.commonName}" includeViewParams="true">
+                <f:param name="ac" value="#{organism.ac}"/>
+            </h:link>
+        </p:column>
+        <p:column headerText="Short Name" sortBy="#{organism.commonName}">
+            <h:outputText value="#{organism.commonName}"/>
+        </p:column>
+        <p:column headerText="Full Name" sortBy="#{organism.scientificName}">
+            <h:outputText value="#{organism.scientificName}"/>
+        </p:column>
+        <p:column headerText="Tax ID" sortBy="#{organism.taxId}">
+            <h:outputText value="#{organism.taxId}"/>
+        </p:column>
+        <p:column headerText="AC" sortBy="#{organism.ac}">
+            <h:outputText value="#{organism.ac}"/>
+        </p:column>
+        <p:column headerText="Participants Express In">
+            <h:link outcome="/search/expressed_in" includeViewParams="true"
+                    value="#{organism.numberParticipants}"
+                    rendered="#{organism.numberParticipants > 0}">
+                <f:param name="ac" value="#{organism.ac}"/>
+                <f:param name="shortLabel" value="#{organism.commonName}"/>
+                <f:param name="numParticipants" value="#{organism.numberParticipants}"/>
+            </h:link>
+        </p:column>
+        <p:column headerText="Experiments by Host Organism">
+            <h:link outcome="/search/host_organism" includeViewParams="true"
+                    value="#{organism.numberExperiments}"
+                    rendered="#{organism.numberExperiments > 0}">
+                <f:param name="ac" value="#{organism.ac}"/>
+                <f:param name="shortLabel" value="#{organism.commonName}"/>
+                <f:param name="numExperiments" value="#{organism.numberExperiments}"/>
+                <f:param name="resultsOutcome" value="search"/>
+            </h:link>
+        </p:column>
+        <p:column headerText="Interactors by Organism">
+            <h:link outcome="/search/organism" includeViewParams="true"
+                    value="#{organism.numberMolecules}"
+                    rendered="#{organism.numberMolecules > 0}">
+                <f:param name="ac" value="#{organism.ac}"/>
+                <f:param name="shortLabel" value="#{organism.commonName}"/>
+                <f:param name="numInteractors" value="#{organism.numberMolecules}"/>
+                <f:param name="resultsOutcome" value="search"/>
+            </h:link>
+        </p:column>
+        <p:column headerText="Complexes by Organism">
+            <h:link outcome="/search/complex" includeViewParams="true"
+                    value="#{organism.numberComplexes}"
+                    rendered="#{organism.numberComplexes > 0 and searchController.complexSearchEnabled}">
+                <f:param name="ac" value="#{organism.ac}"/>
+                <f:param name="shortLabel" value="#{organism.commonName}"/>
+                <f:param name="numComplexes" value="#{organism.numberComplexes}"/>
+                <f:param name="resultsOutcome" value="search"/>
+            </h:link>
+            <h:outputText rendered="#{organism.numberComplexes > 0 and !searchController.complexSearchEnabled}"
+                          value="#{organism.numberComplexes}"/>
+        </p:column>
+
+    </p:dataTable>
+
+</p:tab>
+
+<p:tab title="Features (#{searchController.features.rowCount})"
+       rendered="#{searchController.publicationSearchEnabled and searchController.features != null and searchController.features.rowCount != 0}">
+
+    <ui:include src="features_table.xhtml">
+        <ui:param name="features" value="#{searchController.features}"/>
+        <ui:param name="slug" value="feature"/>
+    </ui:include>
+
+</p:tab>
+
+<p:tab title="Participants (#{searchController.participants.rowCount})"
+       rendered="#{searchController.publicationSearchEnabled and searchController.participants != null and searchController.participants.rowCount != 0}">
+
+    <ui:include src="participants_table.xhtml">
+        <ui:param name="participants" value="#{searchController.participants}"/>
+    </ui:include>
+
+</p:tab>
+
+<br/>
+
+<p:tab title="Biological Complexes (#{searchController.complexes.rowCount})"
+       rendered="#{searchController.complexSearchEnabled and searchController.complexes != null and searchController.complexes.rowCount != 0}">
+
+    <ui:include src="/dashboard/complexes_table.xhtml">
+        <ui:param name="complexesDataModel" value="#{searchController.complexes}"/>
+    </ui:include>
+
+</p:tab>
+
+
+<p:tab title="Complex Features (#{searchController.modelledFeatures.rowCount})"
+       rendered="#{searchController.complexSearchEnabled and searchController.modelledFeatures != null and searchController.modelledFeatures.rowCount != 0}">
+
+    <ui:include src="features_table.xhtml">
+        <ui:param name="features" value="#{searchController.modelledFeatures}"/>
+        <ui:param name="slug" value="cfeature"/>
+    </ui:include>
+
+</p:tab>
+
+<p:tab title="Complex Participants (#{searchController.modelledParticipants.rowCount})"
+       rendered="#{searchController.complexSearchEnabled and searchController.modelledParticipants != null and searchController.modelledParticipants.rowCount != 0}">
+
+    <p:dataTable id="searchModelledParticipantsTable" var="participant" value="#{searchController.modelledParticipants}"
+                 paginatorPosition="both"
+                 paginator="true" paginatorAlwaysVisible="false" rows="10"
+                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                 rowsPerPageTemplate="10,20,50,100"
+                 dynamic="true">
+
+        <p:column headerText="AC">
+            <h:outputText value="#{participant.ac}" rendered="#{participant.ac != null}"/>
+        </p:column>
+
+        <p:column headerText="Name" sortBy="#{participant.interactorShortName}">
+            <ot:separateConversationContext>
+                <h:link outcome="/curate/cparticipant" value="#{participant.interactorShortName}"
+                        rendered="#{not changesController.isDeletedAc(participant.ac)}" includeViewParams="true">
+                    <f:param name="ac" value="#{participant.ac}"/>
+                </h:link>
+            </ot:separateConversationContext>
+            <h:panelGroup rendered="#{changesController.isDeletedAc(participant.ac)}">
+                <h:outputText value="#{participant.interactorShortName}" styleClass="intact-deleted"/>
+            </h:panelGroup>
+
+        </p:column>
+
+        <p:column>
+            <h:panelGroup rendered="#{participant.caution != null}">
+                <h:graphicImage alt="caution" library="images" name="warn.gif"
+                                title="#{participant.caution}"/>
+            </h:panelGroup>
+            <h:panelGroup rendered="#{participant.noUniprotUpdate}">
+                <h:graphicImage alt="no uniprot update" library="images" name="no_uni_update.png"
+                                title="No Uniprot Update"/>
+            </h:panelGroup>
+        </p:column>
+
+        <p:column headerText="Identity">
+            <h:outputText id="participantId"
+                          value="#{participant.identityXref}"
+                          styleClass="#{changesController.isDeletedAc(participant.ac)? 'intact-deleted' : ''}"/>
+        </p:column>
+
+        <p:column headerText="Biological role">
+
+            <h:outputText
+                    value="#{participant.biologicalRole}"/>
+        </p:column>
+
+        <p:column headerText="# Features">
+            <h:outputText value="#{participant.featuresNumber}"/>
+        </p:column>
+
+        <p:column headerText="Min Stoich.">
+            <h:outputText id="minStoichiometryTxt1" value="#{participant.minStoichiometry}"/>
+        </p:column>
+        <p:column headerText="Max Stoich.">
+            <h:outputText id="maxStoichiometryTxt2" value="#{participant.maxStoichiometry}"/>
+        </p:column>
+    </p:dataTable>
+
+</p:tab>
+
+</p:accordionPanel>
+
+</p:outputPanel>
+
+<br/><br/>
+
+</ui:define>
+
+</ui:composition>
