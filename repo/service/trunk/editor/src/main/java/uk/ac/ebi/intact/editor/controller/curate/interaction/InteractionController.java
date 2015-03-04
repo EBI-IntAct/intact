@@ -624,6 +624,7 @@ public class InteractionController extends AnnotatedObjectController {
 
         IntactParticipantEvidence clone = getEditorService().cloneAnnotatedObject((IntactParticipantEvidence)participantWrapper.getParticipant(), cloner);
         addParticipant(clone);
+        doSave(false);
     }
 
     public void linkSelectedFeatures(ActionEvent evt) {
@@ -939,7 +940,7 @@ public class InteractionController extends AnnotatedObjectController {
 
     @Override
     protected void addNewAlias(AbstractIntactAlias newAlias) {
-         // nothing to do
+        // nothing to do
     }
 
     @Override
@@ -977,7 +978,7 @@ public class InteractionController extends AnnotatedObjectController {
 
     @Override
     protected void addNewAnnotation(AbstractIntactAnnotation newAnnot) {
-         this.interaction.getAnnotations().add(newAnnot);
+        this.interaction.getAnnotations().add(newAnnot);
     }
 
     @Override
@@ -1045,7 +1046,7 @@ public class InteractionController extends AnnotatedObjectController {
 
         this.conditionsToImport = new ArrayList<ImportExperimentalCondition>();
         for (VariableParameter param : params){
-             this.conditionsToImport.add(new ImportExperimentalCondition(param, this.parameterValuesMap));
+            this.conditionsToImport.add(new ImportExperimentalCondition(param, this.parameterValuesMap));
         }
     }
 
@@ -1060,9 +1061,9 @@ public class InteractionController extends AnnotatedObjectController {
         VariableParameterValueSet newSet = new IntactVariableParameterValueSet();
 
         for (ImportExperimentalCondition condition : this.conditionsToImport){
-           if (condition.getSelectedValue() != null){
-               newSet.add(condition.getSelectedValue());
-           }
+            if (condition.getSelectedValue() != null){
+                newSet.add(condition.getSelectedValue());
+            }
         }
 
         if (!newSet.isEmpty()){
