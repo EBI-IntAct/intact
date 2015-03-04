@@ -82,9 +82,9 @@ public class FeatureEditorService extends AbstractEditorService {
             initialiseAliases(feature.getAliases());
             // initialise parameters and detection methods
             if (feature instanceof IntactFeatureEvidence){
-               initialiseCv(((IntactFeatureEvidence) feature).getFeatureIdentification());
-               initialiseParameters(((IntactFeatureEvidence) feature).getParameters());
-               initialiseDetectionMethods(((IntactFeatureEvidence) feature).getDbDetectionMethods());
+                initialiseCv(((IntactFeatureEvidence) feature).getFeatureIdentification());
+                initialiseParameters(((IntactFeatureEvidence) feature).getParameters());
+                initialiseDetectionMethods(((IntactFeatureEvidence) feature).getDbDetectionMethods());
             }
 
             // load base types
@@ -177,7 +177,7 @@ public class FeatureEditorService extends AbstractEditorService {
             return true;
         }
         if (areFeatureCollectionsLazy(feature)
-                || (((IntactFeatureEvidence) feature).getFeatureIdentification() != null && !isCvInitialised(((IntactFeatureEvidence) feature).getFeatureIdentification()))
+                || (feature instanceof IntactFeatureEvidence && ((IntactFeatureEvidence) feature).getFeatureIdentification() != null && !isCvInitialised(((IntactFeatureEvidence) feature).getFeatureIdentification()))
                 || (feature.getType() != null && !isCvInitialised(feature.getType()))
                 || (feature.getRole() != null && !isCvInitialised(feature.getRole()))
                 || (feature.getParticipant() != null && !isParticipantInitialised(feature.getParticipant()))
@@ -206,9 +206,9 @@ public class FeatureEditorService extends AbstractEditorService {
     }
 
     private boolean isParticipantInitialised(Entity participant){
-         if (!isInteractorInitialised(participant.getInteractor())){
-             return false;
-         }
+        if (!isInteractorInitialised(participant.getInteractor())){
+            return false;
+        }
         return true;
     }
 
