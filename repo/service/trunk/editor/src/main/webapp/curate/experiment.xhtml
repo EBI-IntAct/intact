@@ -161,10 +161,10 @@
 
                 |&#160;
 
-                <p:commandLink id="overviewLink" value="Summary view" action="/curate/experiment_overview?faces-redirect=true&amp;includeViewParams=true"
-                               ajax="false">
-                    <f:param name="ac" value="#{experimentController.experiment.ac}"/>
-                </p:commandLink>
+                <h:link outcome="/curate/experiment_overview" value="Summary view"
+                        includeViewParams="true">
+                    <f:param name="ac" value="#{experimentController.ac}"/>
+                </h:link>
             </div>
 
             <ui:include src="interactions_table.xhtml">

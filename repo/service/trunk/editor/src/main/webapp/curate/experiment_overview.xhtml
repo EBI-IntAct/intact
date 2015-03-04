@@ -16,9 +16,9 @@
 
 <ui:define name="metadata">
     <f:metadata>
-        <f:viewParam id="expViewContAc" name="ac" value="#{experimentDetailedViewController.ac}"/>
+        <f:viewParam name="ac" value="#{experimentDetailedViewController.ac}"/>
+        <f:event type="preRenderView" listener="#{experimentDetailedViewController.loadData}"/>
     </f:metadata>
-    <f:event type="preRenderView" listener="#{experimentDetailedViewController.loadData}"/>
 </ui:define>
 
 
