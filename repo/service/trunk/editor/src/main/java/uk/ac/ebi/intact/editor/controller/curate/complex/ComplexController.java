@@ -353,6 +353,7 @@ public class ComplexController extends AnnotatedObjectController {
 
         IntactModelledParticipant clone = getEditorService().cloneAnnotatedObject((IntactModelledParticipant)participantWrapper.getParticipant(), cloner);
         addParticipant(clone);
+        doSave(false);
     }
 
     public void linkSelectedFeatures(ActionEvent evt) {
@@ -423,7 +424,7 @@ public class ComplexController extends AnnotatedObjectController {
     }
 
     public void selectLinkedFeature(FeatureWrapper wrapper, IntactModelledFeature linked){
-         wrapper.setSelectedLinkedFeature(linked);
+        wrapper.setSelectedLinkedFeature(linked);
     }
 
     public void setAc( String ac ) {
@@ -647,7 +648,7 @@ public class ComplexController extends AnnotatedObjectController {
 
     @Override
     protected void addNewAnnotation(AbstractIntactAnnotation newAnnot) {
-         this.complex.getAnnotations().add(newAnnot);
+        this.complex.getAnnotations().add(newAnnot);
     }
 
     @Override
@@ -662,7 +663,7 @@ public class ComplexController extends AnnotatedObjectController {
 
     @Override
     public void removeAnnotation(Annotation annotation) {
-         this.complex.getAnnotations().remove(annotation);
+        this.complex.getAnnotations().remove(annotation);
     }
 
 
@@ -674,7 +675,7 @@ public class ComplexController extends AnnotatedObjectController {
 
     @Override
     public void removeAlias(Alias alias) {
-         this.complex.getAliases().remove(alias);
+        this.complex.getAliases().remove(alias);
     }
 
     @Override
@@ -770,14 +771,14 @@ public class ComplexController extends AnnotatedObjectController {
             boolean hasRemoved = false;
             while (refIterator.hasNext()){
                 InteractorXref next = (InteractorXref)refIterator.next();
-                 if (xref == next){
-                     hasRemoved = true;
-                     refIterator.remove();
-                 }
+                if (xref == next){
+                    hasRemoved = true;
+                    refIterator.remove();
+                }
                 else if (next.getAc() != null && next.getAc().equals((InteractorXref)xref)){
-                     hasRemoved = true;
-                     refIterator.remove();
-                 }
+                    hasRemoved = true;
+                    refIterator.remove();
+                }
             }
             if (!hasRemoved){
                 refIterator = complex.getIdentifiers().iterator();
@@ -1324,7 +1325,7 @@ public class ComplexController extends AnnotatedObjectController {
 
     public LifeCycleManager getLifecycleManager() {
         if (this.lifecycleManager == null){
-           this.lifecycleManager = ApplicationContextProvider.getBean("jamiLifeCycleManager");
+            this.lifecycleManager = ApplicationContextProvider.getBean("jamiLifeCycleManager");
         }
         this.lifecycleManager.registerListener(new ComplexBCLifecycleEventListener());
         return lifecycleManager;
@@ -1403,7 +1404,7 @@ public class ComplexController extends AnnotatedObjectController {
 
     public ComplexEditorService getComplexEditorService() {
         if (this.complexEditorService == null){
-           this.complexEditorService = ApplicationContextProvider.getBean("complexEditorService");
+            this.complexEditorService = ApplicationContextProvider.getBean("complexEditorService");
         }
         return complexEditorService;
     }
