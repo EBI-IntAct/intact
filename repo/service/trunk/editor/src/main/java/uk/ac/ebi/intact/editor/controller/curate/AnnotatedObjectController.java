@@ -433,11 +433,12 @@ public abstract class AnnotatedObjectController extends BaseController implement
     protected abstract void initialiseDefaultProperties(IntactPrimaryObject annotatedObject);
 
     protected void refreshCurrentViewObject() {
+        if (curateController.getCurrentAnnotatedObjectController() != null){
+            final IntactPrimaryObject currentAo = curateController.getCurrentAnnotatedObjectController().getAnnotatedObject();
 
-        final IntactPrimaryObject currentAo = curateController.getCurrentAnnotatedObjectController().getAnnotatedObject();
-
-        if (currentAo != null && currentAo.getAc() != null) {
-            refreshCurrentViewIntactObject(curateController, currentAo);
+            if (currentAo != null && currentAo.getAc() != null) {
+                refreshCurrentViewIntactObject(curateController, currentAo);
+            }
         }
     }
 
@@ -674,7 +675,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
                 Collection<OntologyTerm> parents2 = parent.getParents();
                 CvTerm id = calculateQualifier(parents2);
                 if (id != null){
-                   return id;
+                    return id;
                 }
             }
             if (log.isWarnEnabled()) log.warn("No qualifier found for category: " + goId);
@@ -1041,7 +1042,7 @@ public abstract class AnnotatedObjectController extends BaseController implement
         if (ao instanceof IntactPublication){
             IntactPublication publication = (IntactPublication)ao;
             if (publication.areAnnotationsInitialized()){
-               annotations = publication.getAnnotations();
+                annotations = publication.getAnnotations();
             }
             else{
                 annotations = ((PublicationEditorService)ApplicationContextProvider.getBean("publicationEditorService")).initialisePublicationAnnotations(publication);
