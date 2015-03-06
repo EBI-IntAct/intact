@@ -1217,8 +1217,9 @@ public class PublicationController extends AnnotatedObjectController {
         if (newValue != null && newValue > 0){
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy");
             try{
-                this.publication.setPublicationDate(formatter.parse(Short.toString(this.year)));
+                this.publication.setPublicationDate(formatter.parse(Short.toString(newValue)));
                 this.year = newValue;
+                setExperimentAnnotation(Annotation.PUBLICATION_YEAR, Annotation.PUBLICATION_YEAR_MI, Short.toString(newValue));
             }
             catch (ParseException e){
                 this.year = null;
@@ -1229,8 +1230,6 @@ public class PublicationController extends AnnotatedObjectController {
             this.publication.setPublicationDate(null);
             this.year = null;
         }
-
-        setExperimentAnnotation(Annotation.PUBLICATION_YEAR, Annotation.PUBLICATION_YEAR_MI, Short.toString(newValue));
     }
 
     public void publicationTitleChanged(ValueChangeEvent evt) {
@@ -1241,7 +1240,7 @@ public class PublicationController extends AnnotatedObjectController {
         setUnsavedChanges(true);
         String newValue = (String)evt.getNewValue();
         if (newValue != null && newValue.length() > 0){
-            setPrimaryReference(identifier);
+            setPrimaryReference(newValue);
 
             Collection<Experiment> experiments = publication.getExperiments();
 
@@ -1251,7 +1250,7 @@ public class PublicationController extends AnnotatedObjectController {
                     parentAcs.add(publication.getAc());
                 }
                 for (Experiment experiment : experiments) {
-                    experiment.getXrefs().add(new ExperimentXref(IntactUtils.createMIDatabase(Xref.PUBMED, Xref.PUBMED_MI), identifier,
+                    experiment.getXrefs().add(new ExperimentXref(IntactUtils.createMIDatabase(Xref.PUBMED, Xref.PUBMED_MI), newValue,
                             IntactUtils.createMIQualifier(Xref.PRIMARY, Xref.PRIMARY_MI)));
                     getChangesController().markAsUnsaved((IntactExperiment) experiment, getEditorService().getIntactDao().getSynchronizerContext().getExperimentSynchronizer(),
                             "Experiment: " + ((IntactExperiment) experiment).getShortLabel(), parentAcs);
