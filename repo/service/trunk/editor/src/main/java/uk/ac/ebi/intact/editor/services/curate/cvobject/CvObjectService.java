@@ -411,105 +411,105 @@ public class CvObjectService extends AbstractEditorService {
 
     @Transactional(value = "jamiTransactionManager", readOnly = true, propagation = Propagation.REQUIRED)
     public void refreshCvs(String objClass){
-         if (objClass != null){
-             if (objClass.equals(IntactUtils.ALIAS_TYPE_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.ALIAS_TYPE_OBJCLASS, this.aliasTypeSelectItems, null, "-- Select type --");
-             }
-             else if (objClass.equals(IntactUtils.QUALIFIER_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.QUALIFIER_OBJCLASS, this.qualifierSelectItems, null, "-- Select qualifier --");
-             }
-             else if (objClass.equals(IntactUtils.DATABASE_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.DATABASE_OBJCLASS, this.databaseSelectItems, "ECO:", "-- Select database --");
+        if (objClass != null){
+            if (objClass.equals(IntactUtils.ALIAS_TYPE_OBJCLASS)){
+                refreshSelectItems(IntactUtils.ALIAS_TYPE_OBJCLASS, this.aliasTypeSelectItems, null, "-- Select type --");
+            }
+            else if (objClass.equals(IntactUtils.QUALIFIER_OBJCLASS)){
+                refreshSelectItems(IntactUtils.QUALIFIER_OBJCLASS, this.qualifierSelectItems, null, "-- Select qualifier --");
+            }
+            else if (objClass.equals(IntactUtils.DATABASE_OBJCLASS)){
+                refreshSelectItems(IntactUtils.DATABASE_OBJCLASS, this.databaseSelectItems, "ECO:", "-- Select database --");
 
-                 refreshDependencies(this.evidenceTypeSelectItems, "MI:1331", IntactUtils.DATABASE_OBJCLASS, "Select evidence type", false);
-             }
-             else if (objClass.equals(IntactUtils.TOPIC_OBJCLASS)){
+                refreshDependencies(this.evidenceTypeSelectItems, "MI:1331", IntactUtils.DATABASE_OBJCLASS, "Select evidence type", false);
+            }
+            else if (objClass.equals(IntactUtils.TOPIC_OBJCLASS)){
 
-                 refreshAllTopics();
+                refreshAllTopics();
 
-                 refreshDependencies(this.featureRoleSelectItems, "MI:0925", IntactUtils.TOPIC_OBJCLASS, "Select role", true);
-             }
-             else if (objClass.equals(IntactUtils.BIOLOGICAL_ROLE_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.BIOLOGICAL_ROLE_OBJCLASS, this.biologicalRoleSelectItems, null, "-- Select biological role --");
-             }
-             else if (objClass.equals(IntactUtils.CELL_TYPE_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.CELL_TYPE_OBJCLASS, this.cellTypeSelectItems, null, "-- Select cell type --");
-             }
-             else if (objClass.equals(IntactUtils.CONFIDENCE_TYPE_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.CONFIDENCE_TYPE_OBJCLASS, this.confidenceTypeSelectItems, null, "-- Select type --");
-             }
-             else if (objClass.equals(IntactUtils.EXPERIMENTAL_ROLE_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.EXPERIMENTAL_ROLE_OBJCLASS, this.experimentalRoleSelectItems, null, "-- Select experimental role --");
-             }
-             else if (objClass.equals(IntactUtils.FEATURE_METHOD_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.FEATURE_METHOD_OBJCLASS, this.featureDetectionMethodSelectItems, null, "-- Select method --");
-             }
-             else if (objClass.equals(IntactUtils.FEATURE_TYPE_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.FEATURE_TYPE_OBJCLASS, this.featureTypeSelectItems, null, "-- Select type --");
-             }
-             else if (objClass.equals(IntactUtils.INTERACTION_DETECTION_METHOD_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.INTERACTION_DETECTION_METHOD_OBJCLASS, this.interactionDetectionMethodSelectItems, null, "-- Select detection method --");
-             }
-             else if (objClass.equals(IntactUtils.INTERACTION_TYPE_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.INTERACTION_TYPE_OBJCLASS, this.interactionTypeSelectItems, null, "-- Select type --");
-             }
-             else if (objClass.equals(IntactUtils.INTERACTOR_TYPE_OBJCLASS)){
-                 // reset all interactor types
-                 refreshSelectItems(IntactUtils.INTERACTOR_TYPE_OBJCLASS, this.interactorTypeSelectItems, null, "-- Select type --");
-                 // reset specialiased types
-                 // complex type
-                 refreshDependencies(this.complexTypeSelectItems, Complex.COMPLEX_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select complex type --", true);
+                refreshDependencies(this.featureRoleSelectItems, "MI:0925", IntactUtils.TOPIC_OBJCLASS, "Select role", true);
+            }
+            else if (objClass.equals(IntactUtils.BIOLOGICAL_ROLE_OBJCLASS)){
+                refreshSelectItems(IntactUtils.BIOLOGICAL_ROLE_OBJCLASS, this.biologicalRoleSelectItems, null, "-- Select biological role --");
+            }
+            else if (objClass.equals(IntactUtils.CELL_TYPE_OBJCLASS)){
+                refreshSelectItems(IntactUtils.CELL_TYPE_OBJCLASS, this.cellTypeSelectItems, null, "-- Select cell type --");
+            }
+            else if (objClass.equals(IntactUtils.CONFIDENCE_TYPE_OBJCLASS)){
+                refreshSelectItems(IntactUtils.CONFIDENCE_TYPE_OBJCLASS, this.confidenceTypeSelectItems, null, "-- Select type --");
+            }
+            else if (objClass.equals(IntactUtils.EXPERIMENTAL_ROLE_OBJCLASS)){
+                refreshSelectItems(IntactUtils.EXPERIMENTAL_ROLE_OBJCLASS, this.experimentalRoleSelectItems, null, "-- Select experimental role --");
+            }
+            else if (objClass.equals(IntactUtils.FEATURE_METHOD_OBJCLASS)){
+                refreshSelectItems(IntactUtils.FEATURE_METHOD_OBJCLASS, this.featureDetectionMethodSelectItems, null, "-- Select method --");
+            }
+            else if (objClass.equals(IntactUtils.FEATURE_TYPE_OBJCLASS)){
+                refreshSelectItems(IntactUtils.FEATURE_TYPE_OBJCLASS, this.featureTypeSelectItems, null, "-- Select type --");
+            }
+            else if (objClass.equals(IntactUtils.INTERACTION_DETECTION_METHOD_OBJCLASS)){
+                refreshSelectItems(IntactUtils.INTERACTION_DETECTION_METHOD_OBJCLASS, this.interactionDetectionMethodSelectItems, null, "-- Select detection method --");
+            }
+            else if (objClass.equals(IntactUtils.INTERACTION_TYPE_OBJCLASS)){
+                refreshSelectItems(IntactUtils.INTERACTION_TYPE_OBJCLASS, this.interactionTypeSelectItems, null, "-- Select type --");
+            }
+            else if (objClass.equals(IntactUtils.INTERACTOR_TYPE_OBJCLASS)){
+                // reset all interactor types
+                refreshSelectItems(IntactUtils.INTERACTOR_TYPE_OBJCLASS, this.interactorTypeSelectItems, null, "-- Select type --");
+                // reset specialiased types
+                // complex type
+                refreshDependencies(this.complexTypeSelectItems, Complex.COMPLEX_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select complex type --", true);
 
-                 // nucleic acid type
-                 refreshDependencies(this.nucleicAcidSelectItems, NucleicAcid.NULCEIC_ACID_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select type --", true);
+                // nucleic acid type
+                refreshDependencies(this.nucleicAcidSelectItems, NucleicAcid.NULCEIC_ACID_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select type --", true);
 
-                 // polymer and protein type
-                 List<SelectItem> proteins = new ArrayList<SelectItem>(proteinTypeSelectItems);
-                 List<SelectItem> peptides = new ArrayList<SelectItem>();
-                 refreshDependencies(this.polymerTypeSelectItems, Polymer.POLYMER_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select type --", true);
-                 synchronized (this.proteinTypeSelectItems){
-                     refreshDependencies(proteins, Protein.PROTEIN, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select type --", true);
-                     refreshDependencies(peptides, Protein.PEPTIDE, IntactUtils.INTERACTOR_TYPE_OBJCLASS, null, true);
+                // polymer and protein type
+                List<SelectItem> proteins = new ArrayList<SelectItem>(proteinTypeSelectItems);
+                List<SelectItem> peptides = new ArrayList<SelectItem>();
+                refreshDependencies(this.polymerTypeSelectItems, Polymer.POLYMER_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select type --", true);
+                synchronized (this.proteinTypeSelectItems){
+                    refreshDependencies(proteins, Protein.PROTEIN, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select type --", true);
+                    refreshDependencies(peptides, Protein.PEPTIDE, IntactUtils.INTERACTOR_TYPE_OBJCLASS, null, true);
 
-                     this.proteinTypeSelectItems.clear();
-                     this.proteinTypeSelectItems.addAll(proteins);
-                     this.proteinTypeSelectItems.addAll(peptides);
-                 }
+                    this.proteinTypeSelectItems.clear();
+                    this.proteinTypeSelectItems.addAll(proteins);
+                    this.proteinTypeSelectItems.addAll(peptides);
+                }
 
-                 // gene type
-                 refreshDependencies(this.geneTypeSelectItems, Gene.GENE_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select type --", true);
+                // gene type
+                refreshDependencies(this.geneTypeSelectItems, Gene.GENE_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select type --", true);
 
-                 // molecule set type
-                 refreshDependencies(this.moleculeSetTypeSelectItems, InteractorPool.MOLECULE_SET_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select type --", true);
+                // molecule set type
+                refreshDependencies(this.moleculeSetTypeSelectItems, InteractorPool.MOLECULE_SET_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select type --", true);
 
-                 // bioactive entity type
-                 refreshDependencies(this.bioactiveEntitySelectItems, BioactiveEntity.BIOACTIVE_ENTITY_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select type --", true);
-             }
-             else if (objClass.equals(IntactUtils.LIFECYCLE_EVENT_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.LIFECYCLE_EVENT_OBJCLASS, null, null, null);
-             }
-             else if (objClass.equals(IntactUtils.PARAMETER_TYPE_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.PARAMETER_TYPE_OBJCLASS, parameterTypeSelectItems, null, null);
-             }
-             else if (objClass.equals(IntactUtils.PARTICIPANT_DETECTION_METHOD_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.PARTICIPANT_DETECTION_METHOD_OBJCLASS, participantDetectionMethodSelectItems, null, "-- Select identification method --");
-             }
-             else if (objClass.equals(IntactUtils.PARTICIPANT_EXPERIMENTAL_PREPARATION_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.PARTICIPANT_EXPERIMENTAL_PREPARATION_OBJCLASS, participantExperimentalPreparationsSelectItems, null, "-- Select experimental preparation --");
-             }
-             else if (objClass.equals(IntactUtils.PUBLICATION_STATUS_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.PUBLICATION_STATUS_OBJCLASS, null, null, null);
-             }
-             else if (objClass.equals(IntactUtils.RANGE_STATUS_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.RANGE_STATUS_OBJCLASS, fuzzyTypeSelectItems, null, "-- Select status --");
-             }
-             else if (objClass.equals(IntactUtils.UNIT_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.UNIT_OBJCLASS, parameterUnitSelectItems, null, "-- Select unit --");
-             }
-             else if (objClass.equals(IntactUtils.TISSUE_OBJCLASS)){
-                 refreshSelectItems(IntactUtils.TISSUE_OBJCLASS, tissueSelectItems, null, "-- Select tissue --");
-             }
-         }
+                // bioactive entity type
+                refreshDependencies(this.bioactiveEntitySelectItems, BioactiveEntity.BIOACTIVE_ENTITY_MI, IntactUtils.INTERACTOR_TYPE_OBJCLASS, "-- Select type --", true);
+            }
+            else if (objClass.equals(IntactUtils.LIFECYCLE_EVENT_OBJCLASS)){
+                refreshSelectItems(IntactUtils.LIFECYCLE_EVENT_OBJCLASS, null, null, null);
+            }
+            else if (objClass.equals(IntactUtils.PARAMETER_TYPE_OBJCLASS)){
+                refreshSelectItems(IntactUtils.PARAMETER_TYPE_OBJCLASS, parameterTypeSelectItems, null, null);
+            }
+            else if (objClass.equals(IntactUtils.PARTICIPANT_DETECTION_METHOD_OBJCLASS)){
+                refreshSelectItems(IntactUtils.PARTICIPANT_DETECTION_METHOD_OBJCLASS, participantDetectionMethodSelectItems, null, "-- Select identification method --");
+            }
+            else if (objClass.equals(IntactUtils.PARTICIPANT_EXPERIMENTAL_PREPARATION_OBJCLASS)){
+                refreshSelectItems(IntactUtils.PARTICIPANT_EXPERIMENTAL_PREPARATION_OBJCLASS, participantExperimentalPreparationsSelectItems, null, "-- Select experimental preparation --");
+            }
+            else if (objClass.equals(IntactUtils.PUBLICATION_STATUS_OBJCLASS)){
+                refreshSelectItems(IntactUtils.PUBLICATION_STATUS_OBJCLASS, null, null, null);
+            }
+            else if (objClass.equals(IntactUtils.RANGE_STATUS_OBJCLASS)){
+                refreshSelectItems(IntactUtils.RANGE_STATUS_OBJCLASS, fuzzyTypeSelectItems, null, "-- Select status --");
+            }
+            else if (objClass.equals(IntactUtils.UNIT_OBJCLASS)){
+                refreshSelectItems(IntactUtils.UNIT_OBJCLASS, parameterUnitSelectItems, null, "-- Select unit --");
+            }
+            else if (objClass.equals(IntactUtils.TISSUE_OBJCLASS)){
+                refreshSelectItems(IntactUtils.TISSUE_OBJCLASS, tissueSelectItems, null, "-- Select tissue --");
+            }
+        }
     }
 
     private void refreshAllTopics() {
@@ -543,9 +543,17 @@ public class CvObjectService extends AbstractEditorService {
         final List<IntactCvTerm>participantTopics = getSortedTopicList( "uk.ac.ebi.intact.model.Component", cvObjectsByUsedInClass);
         final List<IntactCvTerm>featureTopics = getSortedTopicList( "uk.ac.ebi.intact.model.Feature", cvObjectsByUsedInClass);
         final List<IntactCvTerm>cvObjectTopics = getSortedTopicList( "uk.ac.ebi.intact.model.CvObject", cvObjectsByUsedInClass);
-        final Set<IntactCvTerm> complexTopics = new HashSet<IntactCvTerm>(getSortedTopicList(IntactComplex.class.getCanonicalName(), cvObjectsByUsedInClass));
-        complexTopics.addAll(interactionTopics);
-        interactorTopics.addAll(complexTopics);
+        final List<IntactCvTerm> complexTopics = getSortedTopicList(IntactComplex.class.getCanonicalName(), cvObjectsByUsedInClass);
+        for (IntactCvTerm cv : interactionTopics){
+            if (!complexTopics.contains(cv)){
+                complexTopics.add(cv);
+            }
+        }
+        for (IntactCvTerm cv : interactorTopics){
+            if (!complexTopics.contains(cv)){
+                complexTopics.add(cv);
+            }
+        }
         final List<IntactCvTerm>noClassTopics = getSortedTopicList( NO_CLASS, cvObjectsByUsedInClass);
 
         // select items
@@ -618,9 +626,11 @@ public class CvObjectService extends AbstractEditorService {
             }
             items.clear();
             if (addParent && evidenceTypeParent != null){
-               items.add(createSelectItem(evidenceTypeParent, true));
+                items.add(createSelectItem(evidenceTypeParent, true));
             }
             items.addAll(createSelectItems(terms, select));
+
+            Collections.sort(items, new CvSelectItemComparator());
         }
     }
 
@@ -637,6 +647,8 @@ public class CvObjectService extends AbstractEditorService {
                     items.addAll(createSelectItems(intactCvs, select, filter));
                 }
             }
+
+            Collections.sort(items, new CvSelectItemComparator());
         }
     }
 
@@ -1147,6 +1159,21 @@ public class CvObjectService extends AbstractEditorService {
             }
 
             return o1.getShortName().compareTo(o2.getShortName());
+        }
+    }
+
+    public static class CvSelectItemComparator implements Comparator<SelectItem> {
+        @Override
+        public int compare( SelectItem o1, SelectItem o2 ) {
+            if ( o1 == null ) {
+                return 1;
+            }
+
+            if ( o2 == null ) {
+                return -1;
+            }
+
+            return o1.getLabel().compareTo(o2.getLabel());
         }
     }
 
