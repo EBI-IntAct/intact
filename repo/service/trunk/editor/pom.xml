@@ -34,7 +34,7 @@
         <jami.core.version>1.2.2-SNAPSHOT</jami.core.version>
         <jami.bridges.version>1.1.2-SNAPSHOT</jami.bridges.version>
         <jami.interactionViewer.version>2.0.2-SNAPSHOT</jami.interactionViewer.version>
-        <intact.jami.version>1.2.4</intact.jami.version>
+        <intact.jami.version>1.2.5</intact.jami.version>
         <jami.html.version>1.1.2-SNAPSHOT</jami.html.version>
         <jami.commons.version>1.1.2-SNAPSHOT</jami.commons.version>
         <dataexchange.version>3.0.0</dataexchange.version>
