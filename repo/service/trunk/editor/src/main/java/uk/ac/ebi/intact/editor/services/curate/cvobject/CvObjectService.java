@@ -30,6 +30,8 @@ import psidev.psi.mi.jami.model.*;
 import psidev.psi.mi.jami.utils.AnnotationUtils;
 import psidev.psi.mi.jami.utils.CvTermUtils;
 import uk.ac.ebi.intact.editor.services.AbstractEditorService;
+import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
+import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.extension.IntactComplex;
 import uk.ac.ebi.intact.jami.model.extension.IntactCvTerm;
 import uk.ac.ebi.intact.jami.utils.IntactUtils;
@@ -413,27 +415,37 @@ public class CvObjectService extends AbstractEditorService {
     public void refreshCvs(String objClass){
         if (objClass != null){
             if (objClass.equals(IntactUtils.ALIAS_TYPE_OBJCLASS)){
-                refreshSelectItems(IntactUtils.ALIAS_TYPE_OBJCLASS, this.aliasTypeSelectItems, null, "-- Select type --");
+                // load all cvs as this alias type can be used by other cvs
+                loadData();
+                BioSourceService biosourceService = ApplicationContextProvider.getBean("BioSourceService");
+                biosourceService.loadData();
             }
             else if (objClass.equals(IntactUtils.QUALIFIER_OBJCLASS)){
-                refreshSelectItems(IntactUtils.QUALIFIER_OBJCLASS, this.qualifierSelectItems, null, "-- Select qualifier --");
+                // load all cvs as this qualifier can be used by other cvs
+                loadData();
+                BioSourceService biosourceService = ApplicationContextProvider.getBean("BioSourceService");
+                biosourceService.loadData();
             }
             else if (objClass.equals(IntactUtils.DATABASE_OBJCLASS)){
-                refreshSelectItems(IntactUtils.DATABASE_OBJCLASS, this.databaseSelectItems, "ECO:", "-- Select database --");
-
-                refreshDependencies(this.evidenceTypeSelectItems, "MI:1331", IntactUtils.DATABASE_OBJCLASS, "Select evidence type", false);
+                // load all cvs as this database can be used by other cvs
+                loadData();
+                BioSourceService biosourceService = ApplicationContextProvider.getBean("BioSourceService");
+                biosourceService.loadData();
             }
             else if (objClass.equals(IntactUtils.TOPIC_OBJCLASS)){
 
-                refreshAllTopics();
-
-                refreshDependencies(this.featureRoleSelectItems, "MI:0925", IntactUtils.TOPIC_OBJCLASS, "Select role", true);
+                // load all cvs as this topic can be used by other cvs
+                loadData();
+                BioSourceService biosourceService = ApplicationContextProvider.getBean("BioSourceService");
+                biosourceService.loadData();
             }
             else if (objClass.equals(IntactUtils.BIOLOGICAL_ROLE_OBJCLASS)){
                 refreshSelectItems(IntactUtils.BIOLOGICAL_ROLE_OBJCLASS, this.biologicalRoleSelectItems, null, "-- Select biological role --");
             }
             else if (objClass.equals(IntactUtils.CELL_TYPE_OBJCLASS)){
                 refreshSelectItems(IntactUtils.CELL_TYPE_OBJCLASS, this.cellTypeSelectItems, null, "-- Select cell type --");
+                BioSourceService biosourceService = ApplicationContextProvider.getBean("BioSourceService");
+                biosourceService.loadData();
             }
             else if (objClass.equals(IntactUtils.CONFIDENCE_TYPE_OBJCLASS)){
                 refreshSelectItems(IntactUtils.CONFIDENCE_TYPE_OBJCLASS, this.confidenceTypeSelectItems, null, "-- Select type --");
@@ -508,6 +520,8 @@ public class CvObjectService extends AbstractEditorService {
             }
             else if (objClass.equals(IntactUtils.TISSUE_OBJCLASS)){
                 refreshSelectItems(IntactUtils.TISSUE_OBJCLASS, tissueSelectItems, null, "-- Select tissue --");
+                BioSourceService biosourceService = ApplicationContextProvider.getBean("BioSourceService");
+                biosourceService.loadData();
             }
         }
     }
@@ -636,7 +650,7 @@ public class CvObjectService extends AbstractEditorService {
 
     private void refreshSelectItems(String objClass, List<SelectItem> items, String filter, String select) {
         synchronized (items){
-            final Collection<IntactCvTerm> intactCvs = getIntactDao().getCvTermDao().getByObjClass(objClass);
+            Collection<IntactCvTerm> intactCvs = getIntactDao().getCvTermDao().getByObjClass(objClass);
             refreshMaps(intactCvs, items);
             if (items != null){
                 items.clear();
