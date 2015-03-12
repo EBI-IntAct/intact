@@ -7,6 +7,7 @@ import psidev.psi.mi.jami.bridges.fetcher.OrganismFetcher;
 import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.intact.editor.controller.curate.AnnotatedObjectController;
 import uk.ac.ebi.intact.editor.controller.curate.cloner.EditorCloner;
+import uk.ac.ebi.intact.editor.services.curate.cvobject.CvObjectService;
 import uk.ac.ebi.intact.editor.services.curate.organism.BioSourceService;
 import uk.ac.ebi.intact.jami.ApplicationContextProvider;
 import uk.ac.ebi.intact.jami.model.IntactPrimaryObject;
@@ -150,8 +151,20 @@ public class BioSourceController extends AnnotatedObjectController {
             if (term != null){
                 this.bioSource.setCommonName(name);
                 this.bioSource.setScientificName(name);
-                for (Alias alias :term.getAliases()){
-                    this.bioSource.getAliases().add(new OrganismAlias(alias.getType(), alias.getName()));
+                if (!term.getAliases().isEmpty()){
+                    CvObjectService cvService = ApplicationContextProvider.getBean("cvObjectService");
+                    for (Alias alias :term.getAliases()){
+                        OrganismAlias organismAlias = new OrganismAlias(alias.getType(), alias.getName());
+                        if (organismAlias.getType() != null){
+                            if (organismAlias.getType().getMIIdentifier() != null){
+                                organismAlias.setType(cvService.findCvObjectByIdentifier(IntactUtils.ALIAS_TYPE_OBJCLASS, alias.getType().getMIIdentifier()));
+                            }
+                            else{
+                                organismAlias.setType(cvService.findCvObjectByIdentifier(IntactUtils.ALIAS_TYPE_OBJCLASS, alias.getType().getShortName()));
+                            }
+                        }
+                        this.bioSource.getAliases().add(organismAlias);
+                    }
                 }
             }
 
