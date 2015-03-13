@@ -100,6 +100,10 @@ public class FeatureEditorService extends AbstractEditorService {
                 initialiseParticipant(feature.getParticipant());
             }
 
+            for (Object linked : feature.getLinkedFeatures()){
+                ((Feature)linked).getLinkedFeatures().size();
+            }
+
             // load feature ranges
             initialiseRanges(feature.getRanges());
         }
@@ -168,6 +172,10 @@ public class FeatureEditorService extends AbstractEditorService {
         // load feature ranges
         initialiseRanges(feature.getRanges());
 
+        for (Object linked : feature.getLinkedFeatures()){
+            ((Feature)linked).getLinkedFeatures().size();
+        }
+
         return feature;
     }
 
@@ -190,6 +198,7 @@ public class FeatureEditorService extends AbstractEditorService {
     private boolean areFeatureCollectionsLazy(AbstractIntactFeature feature) {
         return !feature.areAnnotationsInitialized()
                 || !feature.areXrefsInitialized()
+                || !feature.areLinkedFeaturesInitialized()
                 || (feature instanceof IntactFeatureEvidence
                 && (!((IntactFeatureEvidence) feature).areDetectionMethodsInitialized()
                 || !((IntactFeatureEvidence) feature).areParametersInitialized()));
