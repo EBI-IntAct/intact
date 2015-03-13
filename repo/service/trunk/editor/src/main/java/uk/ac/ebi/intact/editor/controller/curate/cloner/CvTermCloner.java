@@ -1,9 +1,6 @@
 package uk.ac.ebi.intact.editor.controller.curate.cloner;
 
-import psidev.psi.mi.jami.model.Alias;
-import psidev.psi.mi.jami.model.Annotation;
-import psidev.psi.mi.jami.model.CvTerm;
-import psidev.psi.mi.jami.model.OntologyTerm;
+import psidev.psi.mi.jami.model.*;
 import uk.ac.ebi.intact.jami.dao.IntactDao;
 import uk.ac.ebi.intact.jami.model.extension.*;
 
@@ -15,7 +12,7 @@ import uk.ac.ebi.intact.jami.model.extension.*;
  * @since <pre>02/12/14</pre>
  */
 
-public class CvTermCloner extends AbstractCvTermCloner<CvTerm, IntactCvTerm> {
+public class CvTermCloner extends AbstractCvTermCloner<CvTerm, IntactCvTerm>{
     @Override
     protected Annotation instantiateAnnotation(CvTerm topic, String value) {
         return new CvTermAnnotation(topic, value);
@@ -69,8 +66,8 @@ public class CvTermCloner extends AbstractCvTermCloner<CvTerm, IntactCvTerm> {
         if (source.areAnnotationsInitialized()){
             target.getAnnotations().clear();
             target.getAnnotations().addAll(source.getAnnotations());
+            target.setDefinition(source.getDefinition());
         }
-        target.setDefinition(source.getDefinition());
         target.setObjClass(source.getObjClass());
         if (source.areParentsInitialized()){
             target.getParents().clear();
