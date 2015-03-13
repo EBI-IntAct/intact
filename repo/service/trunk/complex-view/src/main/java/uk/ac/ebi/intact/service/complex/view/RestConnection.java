@@ -17,7 +17,6 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.complex.ComplexSearchResults;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
