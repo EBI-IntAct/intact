@@ -208,7 +208,7 @@ public class WebAppController {
         setDefaultModelMapValues(model, request);
         Page total = restConnection.getPage(null, "*", null, this.facets);
         ComplexRestResult result = restConnection.query("*", total, null, this.facets, null);
-        session.setAttribute("stats_total", total.getTotalNumberOfElements());
+//        session.setAttribute("stats_total", total.getTotalNumberOfElements());
         for (String key : result.getFacets().keySet()) {
             if (key.equalsIgnoreCase(ComplexFieldNames.COMPLEX_ORGANISM_F)) {
                 session.setAttribute("stats_species", result.getFacets().get(key));

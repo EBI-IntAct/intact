@@ -1,10 +1,10 @@
 <html>
 
 <%@include file="header.jsp"%>
-<jsp:useBean id="stats_total" class="java.lang.Integer" scope="session"/>
-<jsp:useBean id="stats_species" class="java.util.ArrayList" type="java.util.List" scope="session"/>
-<jsp:useBean id="stats_interactor" class="java.util.ArrayList" type="java.util.List" scope="session"/>
-<jsp:useBean id="stats_biorole" class="java.util.ArrayList" type="java.util.List" scope="session"/>
+<%--<jsp:useBean id="stats_total"       class="java.lang.Integer"   type="java.lang.Integer"    scope="session"/>--%>
+<jsp:useBean id="stats_species"     class="java.util.ArrayList" type="java.util.List"       scope="session"/>
+<jsp:useBean id="stats_interactor"  class="java.util.ArrayList" type="java.util.List"       scope="session"/>
+<jsp:useBean id="stats_biorole"     class="java.util.ArrayList" type="java.util.List"       scope="session"/>
 
 <div class="grid_12 omega">
     <form id="local-search" name="local-search" action="${complex_search_form}" method="get">
