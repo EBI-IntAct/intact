@@ -177,7 +177,7 @@ public class ChangesController extends BaseController implements UserListener {
      * @param object
      */
     public void removeObsoleteChangesOnSave(IntactPrimaryObject object, Collection<String> parentAcs){
-        if (object.getAc() != null){
+        if (object != null && object.getAc() != null){
 
             List<UnsavedChange> changes = new ArrayList(getUnsavedChangesForCurrentUser());
             for (UnsavedChange change : changes){
