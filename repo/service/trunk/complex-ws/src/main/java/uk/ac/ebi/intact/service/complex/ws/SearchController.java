@@ -5,7 +5,6 @@ import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.xpath.operations.Bool;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -136,6 +135,7 @@ public class SearchController {
         mapper.writeValue(writer, searchResult);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+        headers.add("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
         return new ResponseEntity<String>(writer.toString(), headers, HttpStatus.OK);
 	}
 
@@ -179,6 +179,7 @@ public class SearchController {
         mapper.writeValue(writer, details);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+        headers.add("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
         return new ResponseEntity<String>(writer.toString(), headers, HttpStatus.OK);
     }
 
@@ -258,6 +259,7 @@ public class SearchController {
         }
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Content-Type", MediaType.APPLICATION_XML_VALUE);
+        httpHeaders.add("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
         enableCORS(httpHeaders);
         if (exportAsFile) {
             httpHeaders.set("Content-Disposition", "attachment; filename=" + complexes.toString());
@@ -281,6 +283,7 @@ public class SearchController {
         }
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+        httpHeaders.add("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
         enableCORS(httpHeaders);
         if (exportAsFile) {
             httpHeaders.set("Content-Disposition", "attachment; filename=" + complexes.toString());
