@@ -1,0 +1,88 @@
+# Local install #
+
+This section will explain how to create a local instance of the database, which can be used to work with your own molecular interaction data. Having a local instance allows you to use the full power of the API, save time and even re-use the web applications already created for IntAct to show and browse your data.
+
+## Database ##
+
+IntAct uses a database to store all the interactions and related information, but it is not tied to any specific database brand. You can use the database of your choice, the only requirement is that it has to support sequences (most modern databases fall into this category). IntAct has been tested to run successfully on Oracle, PostgreSQL, HSQLDB and H2 databases.
+
+In this tutorial, we are going to use PostgreSQL. If you want to use another database, just install it and skip the following section.
+
+### Installing PosgreSQL ###
+
+Install [PostgreSQL 8.x](http://www.postgresql.org/download/) or above (please refer to the [PostgreSQL web site](http://www.postgresql.org/) to download it of if you require support).
+
+The Windows 'one-click' installer comes with a handy client application called [pgAdmin III](http://www.pgadmin.org/download/), which you may want to use to run queries or to view the data in the database. You may want to install the tool manually if using a different OS (e.g. Linux, Mac OS X...).
+
+After the database has been installed and started, we can now connect to it. At this point, using a tool like pgAdmin III is possible, but for simplicity we are going to show how to do this using the command line. Before doing this, PostgreSQL must be running already (in port 5432 by default, user postgres).
+
+_Connect using Linux_:
+
+```
+$POSTGRES_HOME/bin/psql -h localhost -p 5432 postgres
+```
+
+_Or Windows_:
+
+```
+$POSTGRES_HOME/psql.exe" -h localhost -p 5432 postgres 
+```
+
+**Note**: _$POSTGRES\_HOME_ is the directory where PostgreSQL has been installed.
+
+Now, run the following commands in order to create the _intact_ user. Instead of _'change-me'_ use your own password within quotes:
+
+```
+CREATE USER intact WITH encrypted password 'change-me' CREATEDB;
+```
+
+And create the database with INTACT as its owner:
+
+```
+CREATE DATABASE "intact-db" WITH OWNER = intact ENCODING = 'SQL_ASCII' TABLESPACE = pg_default;
+```
+
+We can now connect to the newly created database, using the user _intact_. To do so, write the following in the console:
+
+```
+\c intact-db intact
+```
+
+It will return:
+
+```
+You are now connected to database "intact-db" as user "intact".
+```
+
+And we are now ready to work with this database. The next step is creating the schema (the database tables) IntAct is going to need.
+
+
+### Creating the schema ###
+
+Once we have any database installed and ready, it is time to create the IntAct schema.
+
+You can find the DDLs -the scripts to create the tables- for IntAct Core 2.0 by clicking the following links. If you want to use another database, read below.
+
+  * [PostgreSQL](http://intact.googlecode.com/svn/wiki/ddl/postgres-2.0.ddl)
+  * [Oracle](http://intact.googlecode.com/svn/wiki/ddl/oracle-2.0.ddl)
+  * [HSQL](http://intact.googlecode.com/svn/wiki/ddl/hsql-2.0.ddl)
+
+These have been generated using the [SchemaHelper](http://code.google.com/p/intact/source/browse/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/SchemaHelper.java) class present in the [IntAct Kickstart project](http://code.google.com/p/intact/wiki/GettingStarted). You can create DDLs for other databases by invoking `SchemaUtils.generateCreateSchemaDDL(Dialect)`, like it is done in the `SchemaHelper`, using the corresponding [Hibernate dialect](https://www.hibernate.org/hib_docs/v3/api/org/hibernate/dialect/package-summary.html) class.
+
+To create the PostgreSQL database, copy the [PostgreSQL](http://intact.googlecode.com/svn/wiki/ddl/postgres-2.0.ddl) into your filesystem. Then, execute the following command in the _psql_ console:
+
+```
+\i /path/to/your/postgresDDL
+```
+
+At this point, the tables should have been created already. You can check that by executing the following command to list the tables:
+
+```
+\dt
+```
+
+And you should see the list of tables. Now you can already start to work with the database. To get started you can check the GettingStarted page, which explains how to use the IntAct Kickstart project that contains common examples.
+
+#### Updating an schema ####
+
+We maintain scripts to do incremental changes whenever an update of the model happens. At the moment, the scripts are for Oracle and PostgreSQL, and they can be obtained [here](http://code.google.com/p/intact/source/browse/repo#repo/utils/scripts)

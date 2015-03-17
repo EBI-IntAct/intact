@@ -1,0 +1,67 @@
+# Getting started #
+
+There exists a little project with examples to get you started with the Intact API. The project is called `intact-kickstart` and it can be checked out using Subversion:
+
+```
+svn co http://intact.googlecode.com/svn/repo/site/trunk/intact-kickstart
+```
+
+
+## Examples ##
+
+The goal is two-fold:
+
+  * To help you initializing your local IntAct database with real data.
+  * To take you through examples that highlight how to use the IntAct API.
+
+The first thing to do is to load IntAct with controlled vocabularies (CVs). Cvs are a corner stone of the IntAct data model. They allow to represent unambiguously concept such as database (eg. UniProt), interaction detection method (eg. yeast two hybrid), participant identification (eg. mass spectrometry) ...
+
+### Create a database with the IntAct schema ###
+
+Creating a database can be very simple. Is it a matter of starting the IntAct context with an specific configuration.
+
+Run the following program: [CreateDatabase](http://code.google.com/p/intact/source/browse/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/CreateDatabase.java)
+
+### Importing Controlled vocabularies ###
+
+Now you are going to run your first program: [ImportControlledVocabularies](http://code.google.com/p/intact/source/browse/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/ImportControlledVocabularies.java)
+
+Note: Once this is completed, you should have over 900 rows inserted in the table `ia_controlledvocab`.
+
+### Importing PSI-MI XML Data ###
+
+Now we are going to import some interaction data.
+
+Run the following program: [ImportPsiData](http://code.google.com/p/intact/source/browse/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/ImportPsiData.java)
+
+This program uses a PSI-MI XML 2.5 file that is stored locally in the intact-kickstart. Of course, feel free to alter this program to load your own data file, for instance, found on the intact web site. There are currently over 3000 scientific publication manually annotated on the web site. You can download more data on : [ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25](ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25)
+
+### Exporting all data to FASTA format ###
+
+Now we are going to use the intact-core API to browse the data model and extract some data. In this example we are going to browse all interactions available in the database and export all protein's sequence involved in FASTA format.
+
+Run the program: [ExportToFasta](http://code.google.com/p/intact/source/browse/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/ExportToFasta.java)
+
+Note that if you take a closer look at the programs provided we have left a lot of comments for you to read, their purpose being to explain how things are managed in the API. Exporting data `PSI-MI XML`
+
+### Exporting data in PSI-MI XML format ###
+
+Now we are going to export some of the data we have stored in the database in PSI-MI XML 2.5 format.
+
+Run the program: [ExportToPsiXml](http://code.google.com/p/intact/source/browse/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/ExportToPsiXml.java)
+
+This program selects all interactions involved in the publication having the shortlabel '16469704' which essentially is its pubmed accession number. The XML output is printed on the screen. Should you need to export the data you have stored in your local instance of IntAct, you could use this script as a starting point. PSI-MI TAB
+
+In this stage we are going to export the interactions of a publication in PSI-MITAB2.5 format.
+
+### Export data in PSI-MI TAB format ###
+
+Run the program: [ExportToPsiMiTab](http://code.google.com/p/intact/source/browse/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/ExportToPsiMitab.java)
+
+This format provides a very simple tabular format on IntAct binary interactions. Now obviously not all interaction in the data have to be binary, but you can parameterize the converter to expand any n-ary interaction into binary using, for instance, the Spoke model (bianry interactions between bait and each preys). Indexing data
+
+### Indexing data with LUCENE for fast searches ###
+
+Here we are going to index a PSI-MI TAB 2.5 file (provided in the kickstart application) and do a search on the indexed data.
+
+Run the program: [IndexingAndSearchingPsiMiTab](http://code.google.com/p/intact/source/browse/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/IndexingAndSearchingPsiMiTab.java)

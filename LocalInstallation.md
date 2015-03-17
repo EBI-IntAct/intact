@@ -1,0 +1,242 @@
+Introduction
+
+The aim of this page is to give IntAct? users an overview of how to perform a local installation of the IntAct? framework. This is going to cover the installation of the database, import/export of data...
+
+Note: The following tutorial has been tested under both Windows XP and Linux CentOS (kernel 2.6.9).
+Prerequisites
+
+> In the following tutorial, we will assume that you ahve already installed the following packages:
+
+  * SVN 1.4 or higher
+  * Maven 2.x
+  * Tomcat 5.5.x
+
+> Please refer to their respective installation notes to get more information.
+
+Setup your database management system
+
+The IntAct framework can use most of the databases available at the moment. We are going to use !PostgreSQL in this tutorial as an example.
+Installing PostgreSQL
+
+Install !PostgreSQL 8.x or above (please refer to the postgreSQL web site should you require support). If you are installing under Windows, {{{http://pginstaller.projects.postgresql.org/}this website could help}}.
+
+Note: do install pgAdmin III as we will need it later.
+
+Note 2: if you need to run PSQL to execute the commands below, you can do as follow:
+
+psql -h localhost -p 5432 postgres "postgres"
+
+> or under windows (you might have to replace "C:\Program Files\PostgreSQL\8.2\bin\" by your own install directory)
+
+"C:\Program Files\PostgreSQL\8.2\bin\psql.exe" -h localhost -p 5432 postgres "postgres"
+
+Creating the basic infrastructure in the database
+
+You now have to create a database for IntAct in !PostgreSQL
+
+  * Open PgAdmin? III
+  * in the left panel, right click on the postgreSQL server you want to use and 'connect' to it.
+  * Create a new user: 'intact' and give it the right to create database.
+
+In the version of pgAdminIII we have done this procedure with (v1.6.3) we haven't found a GUI to create the user (though I'm sure it was available in previous version ... bug ?). We have consequently used a little bit of DDL to create our user:
+
+CREATE USER intact WITH encrypted password 'change-me' CREATEDB;
+
+Note: the password for user intact is included in this DDL statement, feel free to change it but bear in mind that in the following steps we will still be refering to the password as 'change-me'.
+
+  * Create a new 'database': intact-db
+
+> set the owner to 'intact'
+
+> If you are more confortable with the DDL way, do execute:
+
+CREATE DATABASE "intact-db" WITH OWNER = intact ENCODING = 'SQL\_ASCII' TABLESPACE = pg\_default;
+
+  * You can now open a Shell and type:
+
+psql -h localhost -p 5432 intact-db "intact"
+
+Doing database backups
+
+At any stage you can do a backup of your database by using pgAdmin III
+
+  * Right click on 'intact-db' under 'Databases' and select 'Backup'.
+  * input into the form where you want to save the dataabse backup (eg. C:\intact.backup)
+  * Press 'OK'
+
+Reloading a backup is about as easy:
+
+  * Right click on 'intact-db' under 'Databases' and select 'Restore'.
+  * Choose the appropriate option 'only data'
+
+Create the IntAct? database schema
+
+Check out the schema creation for the script from SVN
+
+svn co http://intact.googlecode.com/svn/repo/utils/sql/postgres/version_X_X_X
+
+To know which version\_X\_X\_X to use, browse the sources to know which one is the latest.
+
+In this directory you will find a file called create\_schema.ddl. (Note: alternatively, you may want to use the DDL creation script SchemaHelper from the IntAct? Kickstart application described later. We use this script to create the file create\_schema.ddl).
+
+Now, follow these steps to create the schema:
+
+  1. Back to pgAdmin III, select 'intact-db' under 'Databases'
+> 2. open a Query Tool (Tools > Query Tool)
+> 3. Copy the content of 'create\_schema.ddl' and paste it into the top left window of the Query Tool and execute it (press F5 or Query > Execute).
+> 4. You should now have 51 tables and 3 sequences created in 'intact-db'.
+> 5. Now the last step is to grant access to your user on these tables by executing this script: grants.ddl.
+
+Preparing your Maven Configuration
+
+Updating your maven settings so it contains the profile that will allow you to connect to your PostgreSQL database. This configuration can be found in $\{home.directory\}\.m2\settings.xml Note 1: Under windows, ${home.directory} will be looking like: C:\Documents and Settings\username Note 2: Under linux the file separator are '/', and under windows '\', please replace them accordingly.
+Create a profile
+
+Create the PostgreSQL profile that describes how to connext to the database we have just created:
+
+
+
+&lt;profile&gt;
+
+
+> 
+
+&lt;id&gt;
+
+pg-intact
+
+&lt;/id&gt;
+
+
+> 
+
+&lt;properties&gt;
+
+
+> > 
+
+&lt;db&gt;
+
+postgres
+
+&lt;/db&gt;
+
+
+> > <db.host>localhost</db.host>
+> > <db.port>5432</db.port>
+> > <db.alias>intact-db</db.alias>
+> > <db.user>intact</db.user>
+> > <db.password>change-me</db.password>
+
+
+> 
+
+&lt;sessionFactoryName&gt;
+
+PG\_INTACT\_LOCAL
+
+&lt;/sessionFactoryName&gt;
+
+
+> 
+
+&lt;/properties&gt;
+
+
+
+
+&lt;/profile&gt;
+
+
+
+This profile will have to be specified on the command line (-Ppg-intact) when you try to build an application that relies on a database access. Note that a profile is specific to a database instance.
+Using the IntAct? API though Kick Start
+Check out the IntAct? KickStart? application
+
+svn co https://intact.svn.sourceforge.net/svnroot/intact/repo/site/trunk/intact-kickstart
+
+> Once you have retreived intact-kickstart, go inside the newly created directory. You should find there a file: pom.xml and a directory src. The following step assumes you are in that directory before launching the commands.
+
+Configure your favorite IDE and open this project
+
+> IntelliJ:
+
+> If you are using IntelliJ 7.x or highier, just open a project and select the file pom.xml, intelliJ will take care of the rest. If you are using an older version, you will have to go into the intact-kickstart directory and type
+
+mvn idea:idea
+
+> This will create the necessary files for intelliJ to start (.ipr, .iws...), now just open a project (File > open project) and select the .ipr file.
+
+> Eclipse:
+
+> go into the intact-kickstart directory and type:
+
+mvn eclipse:eclipse
+
+> Then open a project (File > New > new Java project) and open the directory intact-kickstart. You will also have to install the plugin 'm2 plugin' available at http://m2eclipse.codehaus.org Once this is done, in the 'Package explorer' (left pane), right click on the intact-kickstart project, a sub-menu called Maven2 should be there, choose the option enable. That will take care of updating your classpath based on the dependencies specified in the pom.xml.
+
+Running some Java programs
+
+The goal is two-fold:
+
+  * To help you initializing your local IntAct? database with real data.
+  * To take you though examples that highlight how to use the IntAct? API.
+
+The first thing to do is to load IntAct? with controlled vocabularies (CVs). Cvs are a corner stone of the IntAct data model. They allow to represent unambiguously concept such as database (eg. UniProt), interaction detection method (eg. yeast two hybrid), participant identification (eg. mass spectrometry) ...
+Importing Controlled vocabularies
+
+Now you are going to run your first program: ImportControlledVocabularies
+
+Note: Once this is completed, you should have over 900 rows inserted in the table ia\_controlledvocab.
+Importing Interaction data
+
+Now we are going to import some interaction data.
+
+Run the following program: ImportPsiData
+
+This program uses a PSI-MI XML 2.5 file that is stored locally in the intact-kickstart. Of course, feel free to alter this program to load your own data file, for instance, found on the intact web site. There are currently over 3000 scientific publication manually annotated on the web site. You can download more data on : [ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25](ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25)
+Browsing the data
+
+Now we are going to use the intact-core API to browse the data model and extract some data. In this example we are going to browse all interactions available in the database and export all protein's sequence involved in FASTA format.
+
+Run the program: ExportToFasta
+
+Note that if you take a closer look at the programs provided we have left a lot of comments for you to read, their purpose being to explain how things are managed in the API.
+Exporting data
+PSI-MI XML
+
+Now we are going to export some of the data we have stored in the database in PSI-MI XML 2.5 format.
+
+Run the program: ExportToPsiXml
+
+This program selects all interactions involved in the publication having the shortlabel '16469704' which essentially is its pubmed accession number. The XML output is printed on the screen. Should you need to export the data you have stored in your local instance of IntAct?, you could use this script as a starting point.
+PSI-MI TAB
+
+In this stage we are going to export the interactions of a publication in PSI-MITAB2.5 format.
+
+Run the program: ExportToPsiMiTab
+
+This format provides a very simple tabular format on IntAct? binary interactions. Now obviously not all interaction in the data have to be binary, but you can parameterize the converter to expand any n-ary interaction into binary using, for instance, the Spoke model (bianry interactions between bait and each preys).
+Indexing data
+
+Here we are going to index a PSI-MITAB2.5 file (provided in the kickstart application) and do a search on the indexed data.
+
+Run the program: IndexingAndSearchingPsiMiTab
+
+Running web applications on your local database
+
+Browsing the database using Search:
+
+svn co https://intact.svn.sourceforge.net/svnroot/intact/repo/service/trunk/search/legacy/search-app
+cd search-app
+mvn clean -Ddb=postgres -Ppg-intact jetty:run
+
+Editing the database using Editor:
+
+svn co https://intact.svn.sourceforge.net/svnroot/intact/repo/service/trunk/editor/editor-app
+cd editor-app
+mvn clean -Ddb=postgres -Ppg-intact jetty:run
+
+Want to go further ?
+
+> Should you need help to run the IntAct Kick Start or have any other requests, please send an email to intact-help.ebi.ac.uk

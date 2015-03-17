@@ -1,0 +1,62 @@
+# Database schema 1.3.0 #
+
+In order to make the representation of the database simpler we have chosen to split the diagram into many of smaller size. So first of all, we will see the major object types and their respective tables allowing to store their Annotations, Xrefs and Aliases.
+
+Then we will see how these object types relate to each other.
+
+
+#### Controlled Vocabulary ####
+
+The column objclass (used by hibernate) allow to discriminate the interactor type of a specific instance.
+
+<img width='800' src='http://intact.googlecode.com/svn/wiki/images/database/1.3.0/ControlledVocab.png' />
+
+
+#### Publication ####
+
+This provide for representing a scientific publication to which we can attach experiments.
+
+<img width='800' src='http://intact.googlecode.com/svn/wiki/images/database/1.3.0/Publication.png' />
+
+
+#### Experiment ####
+
+This is the description of an experimental setting. One can define the interactor, interaction and feature  detection method through controlled vocabularies.
+
+<img width='800' src='http://intact.googlecode.com/svn/wiki/images/database/1.3.0/Experiment.png' />
+
+
+#### Generic Interactor ####
+
+Interactor is a generic type that covers for Interaction, Protein, NucleicAcid, Polymer...
+The column objclass (used by hibernate) and the interactorType\_ac (controlled vocabulary) allow to discriminate the interactor type of a specific instance.
+
+<img width='800' src='http://intact.googlecode.com/svn/wiki/images/database/1.3.0/Interactor.png' />
+
+
+#### Component ####
+
+This is the object that allows to specify which iteractor interacts in an interaction. The interactor can be annotated to specify experimental condition such as the role (bait, prey...), the organism the interactor was expressed in...
+
+<img width='800' src='http://intact.googlecode.com/svn/wiki/images/database/1.3.0/Component.png' />
+
+
+#### BioSource ####
+
+This is the instance of an organism. Cell type, Tissue, Cell compartment can be specified through controlled vocabulary.
+
+<img width='800' src='http://intact.googlecode.com/svn/wiki/images/database/1.3.0/BioSource.png' />
+
+
+#### Feature ####
+
+This is the definition of an interacting interface such as a tag or a binding region.
+
+<img width='800' src='http://intact.googlecode.com/svn/wiki/images/database/1.3.0/Feature.png' />
+
+
+#### Full data model ####
+
+Here we show the main tables the IntAct data model is relying on. Note that all Xref, Annotation and Alias tables haven't been repeated for clarity purpose.
+
+<img width='800' src='http://intact.googlecode.com/svn/wiki/images/database/1.3.0/Model.png' />

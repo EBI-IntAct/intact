@@ -1,0 +1,31 @@
+# Changes #
+
+## Package renaming ##
+
+Intact-core 2.0 uses a new package for the classes:
+
+```
+uk.ac.ebi.intact.core.*
+```
+
+So all the packages that were in `uk.ac.ebi.intact.*` directly now they are children of `uk.ac.ebi.intact.core`. There is one exception, the package `uk.ac.ebi.intact.model` has not changed the name.
+
+## Transaction control ##
+
+Transaction control has now been changed for intact-core 2.0. Because it is using the full power of the Spring Framework, not it is possible to control the transactions using the annotation `@Transactional`. You can use this annotation to wrap spring bean methods.
+
+If the transaction happens outside a spring bean, you can still control the transaction in a similar fashion as in intact-core 1.9.x, through the `DataContext` class.
+
+```
+DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
+
+TransactionStatus transaction = dataContext.beginTransaction();
+
+// your transactional logic here
+
+// commit the transaction
+dataContext.commitTransaction(transaction);
+
+```
+
+So now, intact-core uses this `TransactionStatus` object that contains the transaction information.

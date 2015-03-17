@@ -1,0 +1,156 @@
+# Introduction #
+
+!IMExCentral is a core component of the IMEx collaboration in that it allows tracking of curated literature by the various partners and thus prevent the same publication from being curated multiple times. !IMExCentral does provide a secure web service that exposes the main functionalities of the web site. IntAct has implemented a small client that facilitates the use of this web service.
+
+
+# Details #
+
+## Setting up your environment ##
+
+
+
+This web service is running over SSL and you will need to setup your machine so that when you run the client it knows that you are trusting the server that is hosting the web service. The way to do that is do download a certificate (available on the server) and install it into a local KeyStore. The screenshots below illustrate how to download the IMExCentral certificate.
+
+### Downloading the SSL certificate from IMExCentral ###
+
+1. Open the IMExCentral web site in a web browser (e.g. FireFox): https://imexcentral.org/icentraltest/
+
+2. Right click on the page select the option 'View page info':
+
+<img src='http://intact.googlecode.com/svn/wiki/images/imex-central/certificate/step1.png' />
+<br />
+<br />
+
+3. In the Security tab, click the button 'View certificate':
+
+<img src='http://intact.googlecode.com/svn/wiki/images/imex-central/certificate/step2.png' />
+<br />
+<br />
+
+4. In the details tab, click the 'Export' button:
+
+<img src='http://intact.googlecode.com/svn/wiki/images/imex-central/certificate/step3.png' />
+<br />
+<br />
+
+### Installing the certificate locally ###
+
+Now that we have the certificate (assuming you saved it on your disk and called it imexcentral.cer) you can do the following:
+
+1. Add the certificate into a local KeyStore using the following command line:
+
+```
+keytool -import -alias imexcentral -file imexcentral.cer -keystore myKeyStore
+```
+
+Note: keytool is a utility that is part of the JDK, so it should be already available on the command line. If not, you will need to install <a href='http://www.java.com'>Java</a>
+<br />
+In this process you will be asked if you want to setup a password on your keystore.
+
+2. Now that you have created your KeyStore you will be able to run a Java program that can communicate with the server from which the certificate originate by specifying the following arguments when running the following command:
+
+
+`  java   -Djavax.net.ssl.trustStore=myKeyStore <class> `
+
+and if you ahve setup a password on your KeyStore, you will need to add the following argument:
+
+` -Djavax.net.ssl.trustStorePassword=<password> `
+
+
+## Using the Client ##
+
+### Maven dependency ###
+
+If you are a maven user, you will need to add the following in the dependency section of your POM file:
+
+```
+        <dependency>
+            <groupId>uk.ac.ebi.intact.bridges</groupId>
+            <artifactId>intact-imexcentral</artifactId>
+            <version>2.1.2-SNAPSHOT</version>
+        </dependency>
+```
+
+as well as this in your repository section:
+
+```
+        <repository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+```
+
+
+### Writing your first program using the !IMExCentral ###
+
+```
+import edu.ucla.mbi.imex.central.ws.Publication;
+
+import uk.ac.ebi.intact.bridges.imexcentral;
+import java.io.File;
+import java.util.Date;
+
+public class Playground {
+    public static void main( String[] args ) throws Exception {
+
+        if ( args.length < 3 ) {
+            System.err.println( "Usage: java " +
+                                "-Djavax.net.ssl.trustStore=<path.to.keystore> " +
+                                "-Djavax.net.ssl.keyStorePassword=<password> " +
+                                "Playground <imexcentral.username> <imexcentral.password> <pmid>" );
+            System.exit( 1 );
+        }
+
+        final String icUsername = args[0];
+        final String icPassword = args[1];
+        final String pmid = args[2];
+
+        ImexCentralClient client = new DefaultImexCentralClient( icUsername, icPassword, DefaultImexCentralClient.IC_TEST );
+
+        final Publication publication = client.getPublicationById( pmid );
+
+        if( publication == null ) {
+            System.err.println( "Could not find this publication in IMExCentral." );
+        } else {
+            System.out.println( "Identifier: " + publication.getIdentifier() );
+            System.out.println( "Title: " + publication.getTitle() );
+            System.out.println( "IMEx ID: " + publication.getImexAccession() );
+            System.out.println( "Owner: " + publication.getOwner() );
+            System.out.println( "Status: " + publication.getStatus() );
+        }
+    }
+}
+```
+
+
+### More goodies ###
+
+If you are planning to write unit test (why would you not ?!!) that involve the IMExCentral, you will be please to know that you can do it with that same library, the following class can be used to Mock an ImexCentralClient:
+
+`uk.ac.ebi.intact.bridges.imexcentral.mock.MockImexCentralClient`
+
+You can use it as follow:
+
+```
+       MockImexCentralClient client = new MockImexCentralClient();
+       client.addPublication( "123456789", null, "NEW", "SAM" );
+       client.initImexSequence( 999 );
+```
