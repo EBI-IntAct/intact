@@ -40,9 +40,11 @@ public class WebAppController {
                                    @RequestParam ( required = false ) String type,
                                    ModelMap model,
                                    HttpSession session,
-                                   HttpServletRequest request) throws Exception {
+                                   HttpServletRequest request,
+                                   HttpServletResponse response) throws Exception {
         model.addAttribute("complex_search_form", request.getRequestURL().toString());
         model.addAttribute("page_title", "Complex Search");
+        response.addHeader("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
         setDefaultModelMapValues(model, request);
         query = cleanQuery(query);
         if ( !query.equals("") && query.length()> 0 ) {
@@ -82,7 +84,7 @@ public class WebAppController {
             }
         }
         return "home";
-	}
+    }
 
     // GET SEARCH
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -94,9 +96,11 @@ public class WebAppController {
                          @RequestParam ( required = false ) String type,
                          ModelMap model,
                          HttpSession session,
-                         HttpServletRequest request) throws Exception {
+                         HttpServletRequest request,
+                         HttpServletResponse response) throws Exception {
         model.addAttribute("complex_search_form", request.getRequestURL().toString());
         setDefaultModelMapValues(model, request);
+        response.addHeader("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
         if ( q !=null && !q.equals("") && q.length()> 0 ) {
             model.addAttribute("page_title", "Complex Search");
             q = cleanQuery(q);
@@ -159,7 +163,9 @@ public class WebAppController {
     public String showDetails(@PathVariable String ac,
                                     ModelMap model,
                                     HttpSession session,
-                                    HttpServletRequest request) throws Exception {
+                                    HttpServletRequest request,
+                                    HttpServletResponse response) throws Exception {
+        response.addHeader("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
         ComplexDetails details = restConnection.getDetails(cleanQuery(ac), QueryTypes.DETAILS.value);
         session.setAttribute("details", details);
         String json = restConnection.getJsonToVisualize(ac);
@@ -173,7 +179,9 @@ public class WebAppController {
     // HELP
     @RequestMapping(value = "/help/", method = RequestMethod.GET)
     public String goHelp(ModelMap model,
-                                 HttpServletRequest request) {
+                                 HttpServletRequest request,
+                                 HttpServletResponse response) {
+        response.addHeader("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
         setDefaultModelMapValues(model, request);
         model.addAttribute("page_title", "Complex Help");
         model.addAttribute("complex_search_form", request.getRequestURL().toString().split("help/")[0]);
@@ -183,7 +191,9 @@ public class WebAppController {
     // DOCUMENTATION
     @RequestMapping(value = "/documentation/", method = RequestMethod.GET)
     public String goDocumentation(ModelMap model,
-                                 HttpServletRequest request) {
+                                 HttpServletRequest request,
+                                 HttpServletResponse response) {
+        response.addHeader("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
         setDefaultModelMapValues(model, request);
         model.addAttribute("page_title", "Complex Documentation");
         model.addAttribute("complex_search_form", request.getRequestURL().toString().split("documentation/")[0]);
@@ -193,7 +203,9 @@ public class WebAppController {
     // ABOUT
     @RequestMapping(value = "/about/", method = RequestMethod.GET)
     public String goAbout(ModelMap model,
-                                  HttpServletRequest request) {
+                                  HttpServletRequest request,
+                                  HttpServletResponse response) {
+        response.addHeader("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
         setDefaultModelMapValues(model, request);
         model.addAttribute("page_title", "Complex About");
         model.addAttribute("complex_search_form", request.getRequestURL().toString().split("about/")[0]);
@@ -204,7 +216,9 @@ public class WebAppController {
     @RequestMapping(value = "/stats/", method = RequestMethod.GET)
     public String goStatistics(ModelMap model,
                                HttpServletRequest request,
-                               HttpSession session) throws Exception {
+                               HttpSession session,
+                               HttpServletResponse response) throws Exception {
+        response.addHeader("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
         setDefaultModelMapValues(model, request);
         Page total = restConnection.getPage(null, "*", null, this.facets);
         ComplexRestResult result = restConnection.query("*", total, null, this.facets, null);
@@ -228,7 +242,9 @@ public class WebAppController {
     // DOWNLOAD
     @RequestMapping(value = "/download/", method = RequestMethod.GET)
     public String goDownload(ModelMap model,
-                          HttpServletRequest request) {
+                          HttpServletRequest request,
+                          HttpServletResponse response) {
+        response.addHeader("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
         setDefaultModelMapValues(model, request);
         model.addAttribute("page_title", "Complex Download");
         model.addAttribute("complex_search_form", request.getRequestURL().toString().split("download/")[0]);
