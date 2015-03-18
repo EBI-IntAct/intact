@@ -87,23 +87,28 @@ public class SearchController {
     /*      Public methods      */
     /****************************/
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String showHomeHelp(){
+    public String showHomeHelp(HttpServletResponse response){
+        response.addHeader("X-Clacks-Overhead","GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
         return "home";
     }
     @RequestMapping(value = "/search/", method = RequestMethod.GET)
-    public String showSearchHelp(){
+    public String showSearchHelp(HttpServletResponse response){
+        response.addHeader("X-Clacks-Overhead","GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
         return "search";
     }
     @RequestMapping(value = "/details/", method = RequestMethod.GET)
-    public String showDetailsHelp(){
+    public String showDetailsHelp(HttpServletResponse response){
+        response.addHeader("X-Clacks-Overhead","GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
         return "details";
     }
     @RequestMapping(value = "/export/", method = RequestMethod.GET)
-    public String showExportHelp(){
+    public String showExportHelp(HttpServletResponse response){
+        response.addHeader("X-Clacks-Overhead","GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
         return "export";
     }
     @RequestMapping(value = "/count/{query}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public String count(@PathVariable String query, ModelMap model) throws SolrServerException {
+    public String count(@PathVariable String query, ModelMap model, HttpServletResponse response) throws SolrServerException {
+        response.addHeader("X-Clacks-Overhead","GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
         String q = null;
         try {
             q = URIUtil.decode(query);
@@ -128,7 +133,8 @@ public class SearchController {
                                     @RequestParam (required = false) String first,
                                     @RequestParam (required = false) String number,
                                     @RequestParam (required = false) String filters,
-                                    @RequestParam (required = false) String facets) throws SolrServerException, IOException {
+                                    @RequestParam (required = false) String facets,
+                                    HttpServletResponse response) throws SolrServerException, IOException {
         ComplexRestResult searchResult = query(query, first, number, filters, facets);
         StringWriter writer = new StringWriter();
         ObjectMapper mapper = new ObjectMapper();
@@ -150,7 +156,7 @@ public class SearchController {
      */
     @RequestMapping(value = "/details/{ac}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED, value = "jamiTransactionManager")
-    public ResponseEntity<String> retrieveComplex(@PathVariable String ac) throws Exception {
+    public ResponseEntity<String> retrieveComplex(@PathVariable String ac, HttpServletResponse response) throws Exception {
         IntactComplex complex = intactDao.getComplexDao().getByAc(ac);
         ComplexDetails details = null;
         // Function
@@ -187,7 +193,8 @@ public class SearchController {
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED, value = "jamiTransactionManager")
     public ResponseEntity<String> exportComplex(@PathVariable String query,
                                                 @RequestParam (required = false) String filters,
-                                                @RequestParam (required = false) String format) throws Exception {
+                                                @RequestParam (required = false) String format,
+                                                HttpServletResponse response) throws Exception {
         Boolean exportAsFile = false;
         List<IntactComplex> complexes;
         if(isQueryASingleId(query)) {
