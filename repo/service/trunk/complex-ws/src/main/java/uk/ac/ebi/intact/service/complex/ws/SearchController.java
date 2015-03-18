@@ -88,27 +88,27 @@ public class SearchController {
     /****************************/
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String showHomeHelp(HttpServletResponse response){
-        response.addHeader("X-Clacks-Overhead","GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
+        enableClacks(response);
         return "home";
     }
     @RequestMapping(value = "/search/", method = RequestMethod.GET)
     public String showSearchHelp(HttpServletResponse response){
-        response.addHeader("X-Clacks-Overhead","GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
+        enableClacks(response);
         return "search";
     }
     @RequestMapping(value = "/details/", method = RequestMethod.GET)
     public String showDetailsHelp(HttpServletResponse response){
-        response.addHeader("X-Clacks-Overhead","GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
+        enableClacks(response);
         return "details";
     }
     @RequestMapping(value = "/export/", method = RequestMethod.GET)
     public String showExportHelp(HttpServletResponse response){
-        response.addHeader("X-Clacks-Overhead","GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
+        enableClacks(response);
         return "export";
     }
     @RequestMapping(value = "/count/{query}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public String count(@PathVariable String query, ModelMap model, HttpServletResponse response) throws SolrServerException {
-        response.addHeader("X-Clacks-Overhead","GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
+        enableClacks(response);
         String q = null;
         try {
             q = URIUtil.decode(query);
@@ -334,6 +334,10 @@ public class SearchController {
         headers.add("Access-Control-Allow-Methods", "GET");
         headers.add("Access-Control-Max-Age", "3600");
         headers.add("Access-Control-Allow-Headers", "x-requested-with");
+    }
+
+    private void enableClacks(HttpServletResponse response) {
+        response.addHeader("X-Clacks-Overhead","GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
     }
 
     @ExceptionHandler(SolrServerException.class)
