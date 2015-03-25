@@ -44,7 +44,7 @@ public class WebAppController {
                                    HttpServletResponse response) throws Exception {
         model.addAttribute("complex_search_form", request.getRequestURL().toString());
         model.addAttribute("page_title", "Complex Search");
-        response.addHeader("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
+        enableClacks(response);
         setDefaultModelMapValues(model, request);
         query = cleanQuery(query);
         if ( !query.equals("") && query.length()> 0 ) {
@@ -100,7 +100,7 @@ public class WebAppController {
                          HttpServletResponse response) throws Exception {
         model.addAttribute("complex_search_form", request.getRequestURL().toString());
         setDefaultModelMapValues(model, request);
-        response.addHeader("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
+        enableClacks(response);
         if ( q !=null && !q.equals("") && q.length()> 0 ) {
             model.addAttribute("page_title", "Complex Search");
             q = cleanQuery(q);
@@ -165,7 +165,7 @@ public class WebAppController {
                                     HttpSession session,
                                     HttpServletRequest request,
                                     HttpServletResponse response) throws Exception {
-        response.addHeader("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
+        enableClacks(response);
         ComplexDetails details = restConnection.getDetails(cleanQuery(ac), QueryTypes.DETAILS.value);
         session.setAttribute("details", details);
         String json = restConnection.getJsonToVisualize(ac);
@@ -181,7 +181,7 @@ public class WebAppController {
     public String goHelp(ModelMap model,
                                  HttpServletRequest request,
                                  HttpServletResponse response) {
-        response.addHeader("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
+        enableClacks(response);
         setDefaultModelMapValues(model, request);
         model.addAttribute("page_title", "Complex Help");
         model.addAttribute("complex_search_form", request.getRequestURL().toString().split("help/")[0]);
@@ -193,7 +193,7 @@ public class WebAppController {
     public String goDocumentation(ModelMap model,
                                  HttpServletRequest request,
                                  HttpServletResponse response) {
-        response.addHeader("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
+        enableClacks(response);
         setDefaultModelMapValues(model, request);
         model.addAttribute("page_title", "Complex Documentation");
         model.addAttribute("complex_search_form", request.getRequestURL().toString().split("documentation/")[0]);
@@ -205,7 +205,7 @@ public class WebAppController {
     public String goAbout(ModelMap model,
                                   HttpServletRequest request,
                                   HttpServletResponse response) {
-        response.addHeader("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
+        enableClacks(response);
         setDefaultModelMapValues(model, request);
         model.addAttribute("page_title", "Complex About");
         model.addAttribute("complex_search_form", request.getRequestURL().toString().split("about/")[0]);
@@ -218,7 +218,7 @@ public class WebAppController {
                                HttpServletRequest request,
                                HttpSession session,
                                HttpServletResponse response) throws Exception {
-        response.addHeader("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
+        enableClacks(response);
         setDefaultModelMapValues(model, request);
         Page total = restConnection.getPage(null, "*", null, this.facets);
         ComplexRestResult result = restConnection.query("*", total, null, this.facets, null);
@@ -244,7 +244,7 @@ public class WebAppController {
     public String goDownload(ModelMap model,
                           HttpServletRequest request,
                           HttpServletResponse response) {
-        response.addHeader("X-Clacks-Overhead", "GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
+        enableClacks(response);
         setDefaultModelMapValues(model, request);
         model.addAttribute("page_title", "Complex Download");
         model.addAttribute("complex_search_form", request.getRequestURL().toString().split("download/")[0]);
@@ -302,6 +302,10 @@ public class WebAppController {
             return f.toString();
         }
         return null;
+    }
+
+    private void enableClacks(HttpServletResponse response) {
+        response.addHeader("X-Clacks-Overhead","GNU Terry Pratchett"); //In memory of Sir Terry Pratchett
     }
 
     @ExceptionHandler(ComplexPortalException.class)
